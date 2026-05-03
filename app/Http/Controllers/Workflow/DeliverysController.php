@@ -358,7 +358,6 @@ class DeliverysController extends Controller
     {
         $Delivery = Deliverys::find($request->id);
         $Delivery->label                  = $request->label;
-        $Delivery->statu                  = $request->statu;
         $Delivery->purchases_id           = $request->purchases_id;
         $Delivery->tracking_number        = $request->tracking_number;
         $Delivery->comment                = $request->comment;

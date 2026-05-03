@@ -3,7 +3,6 @@
 @section('title', __('general_content.compare_rfq_trans_key'))
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <h1>{{ __('general_content.compare_rfq_trans_key') }} : {{ $rfqGroup->code }}</h1>
 @stop
 

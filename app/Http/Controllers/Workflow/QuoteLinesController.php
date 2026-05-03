@@ -10,6 +10,7 @@ use App\Events\OrderCreated;
 use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Factory;
 use App\Models\Admin\CustomField;
@@ -32,6 +33,13 @@ use App\Http\Requests\Workflow\UpdateQuoteLineDetailsRequest;
 
 class QuoteLinesController extends Controller
 {
+    protected SelectDataService $selectDataService;
+
+    public function __construct(SelectDataService $selectDataService)
+    {
+        $this->selectDataService = $selectDataService;
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
@@ -233,7 +241,7 @@ class QuoteLinesController extends Controller
             ->orderBy('ordre', 'asc')
             ->get();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale', 'fr');
 
@@ -247,12 +255,12 @@ class QuoteLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $quote   = Quotes::with('companie')->findOrFail($quoteId);
-        $factory = Factory::first();
+        $factory = app('Factory');
 
         return response()->json([
-            'products'         => Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->orderBy('code')->get(),
-            'units'            => MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get(),
-            'vats'             => AccountingVat::select('id', 'label', 'rate', 'default')->orderBy('rate')->get(),
+            'products'         => $this->selectDataService->getProductsSelect(),
+            'units'            => $this->selectDataService->getUnitsSelect(),
+            'vats'             => $this->selectDataService->getVATSelect(),
             'currency'         => $factory->curency ?? 'EUR',
             'customer_discount'=> (float) ($quote->companie->discount ?? 0),
             'customer_id'      => $quote->companie?->id,
@@ -265,7 +273,7 @@ class QuoteLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $quote       = Quotes::with('companie')->findOrFail($quoteId);
-        $factory     = Factory::first();
+        $factory     = app('Factory');
         $currency    = $factory->curency ?? 'EUR';
         $locale      = config('app.locale', 'fr');
         $customerId  = $quote->companie?->id;
@@ -354,7 +362,7 @@ class QuoteLinesController extends Controller
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))], 201);
@@ -383,7 +391,7 @@ class QuoteLinesController extends Controller
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -426,7 +434,7 @@ class QuoteLinesController extends Controller
         });
 
         $line->loadCount(['Task', 'SubAssembly']);
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -468,7 +476,7 @@ class QuoteLinesController extends Controller
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $newLine->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($newLine, $currency, config('app.locale'))], 201);
@@ -530,7 +538,7 @@ class QuoteLinesController extends Controller
             ->where('quotes_id', $idQuote)
             ->firstOrFail();
 
-        $factory              = Factory::first();
+        $factory              = app('Factory');
         $customFieldService   = app(CustomFieldService::class);
         $productCustomFields  = $customFieldService->getProductCustomFieldsForQuoteLine(
             $line->product_id ? (int) $line->product_id : null,
@@ -593,7 +601,7 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
         }
 
-        $factory = Factory::first();
+        $factory = app('Factory');
 
         $order = DB::transaction(function () use ($quote, $lineIds, $factory) {
             $lastOrder = Orders::latest('id')->first();
@@ -720,7 +728,7 @@ class QuoteLinesController extends Controller
         abort_unless(auth()->check(), 403);
         $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale');
 
@@ -761,7 +769,7 @@ class QuoteLinesController extends Controller
 
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -988,7 +996,7 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Aucune TVA ou unité par défaut configurée'], 422);
         }
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale');
 

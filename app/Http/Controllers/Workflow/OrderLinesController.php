@@ -14,6 +14,7 @@ use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
 use App\Services\SerialNumberService;
 use App\Services\DocumentCodeGenerator;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
@@ -33,6 +34,13 @@ use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
 {
+    protected SelectDataService $selectDataService;
+
+    public function __construct(SelectDataService $selectDataService)
+    {
+        $this->selectDataService = $selectDataService;
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
@@ -220,7 +228,7 @@ class OrderLinesController extends Controller
             ->orderBy('ordre', 'asc')
             ->get();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale', 'fr');
 
@@ -235,12 +243,12 @@ class OrderLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $order   = Orders::with('companie')->findOrFail($orderId);
-        $factory = Factory::first();
+        $factory = app('Factory');
 
         return response()->json([
-            'products'          => Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->orderBy('code')->get(),
-            'units'             => MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get(),
-            'vats'              => AccountingVat::select('id', 'label', 'rate', 'default')->orderBy('rate')->get(),
+            'products'          => $this->selectDataService->getProductsSelect(),
+            'units'             => $this->selectDataService->getUnitsSelect(),
+            'vats'              => $this->selectDataService->getVATSelect(),
             'currency'          => $factory->curency ?? 'EUR',
             'customer_discount' => (float) ($order->companie->discount ?? 0),
             'customer_id'       => $order->companie?->id,
@@ -253,7 +261,7 @@ class OrderLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $order        = Orders::with('companie')->findOrFail($orderId);
-        $factory      = Factory::first();
+        $factory      = app('Factory');
         $currency     = $factory->curency ?? 'EUR';
         $locale       = config('app.locale', 'fr');
         $customerId   = $order->companie?->id;
@@ -344,7 +352,7 @@ class OrderLinesController extends Controller
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))], 201);
@@ -372,7 +380,7 @@ class OrderLinesController extends Controller
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -418,7 +426,7 @@ class OrderLinesController extends Controller
         $line->save();
 
         $line->loadCount(['Task', 'SubAssembly']);
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -468,7 +476,7 @@ class OrderLinesController extends Controller
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $newLine->loadCount(['Task', 'SubAssembly']);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($newLine, $currency, config('app.locale'))], 201);
@@ -530,7 +538,7 @@ class OrderLinesController extends Controller
             ->where('orders_id', $idOrder)
             ->firstOrFail();
 
-        $factory = Factory::first();
+        $factory = app('Factory');
 
         return view('workflow.order-line-detail-edit', compact('line', 'idOrder', 'factory'));
     }
@@ -540,7 +548,7 @@ class OrderLinesController extends Controller
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale');
 
@@ -581,7 +589,7 @@ class OrderLinesController extends Controller
 
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -603,8 +611,10 @@ class OrderLinesController extends Controller
             'product_drawing_file' => $l->Product?->drawing_file,
             'label'                => $l->label,
             'qty'                  => $l->qty,
-            'delivered_qty'        => $l->delivered_qty,
-            'invoiced_qty'         => $l->invoiced_qty,
+            'delivered_qty'           => $l->delivered_qty,
+            'delivered_remaining_qty' => $l->delivered_remaining_qty,
+            'invoiced_qty'            => $l->invoiced_qty,
+            'invoiced_remaining_qty'  => $l->invoiced_remaining_qty,
             'methods_units_id'     => $l->methods_units_id,
             'unit_label'           => $l->Unit?->label,
             'unit_code'            => $l->Unit?->code,
@@ -706,10 +716,12 @@ class OrderLinesController extends Controller
             return response()->json(['error' => 'Erreur lors de la création du BL'], 500);
         }
 
-        $ordre = 10;
+        $ordre          = 10;
+        $linesProcessed = 0;
         foreach ($lineIds as $lineId) {
             $line = OrderLines::find($lineId);
             if (! $line || $line->orders_id !== $orderId) continue;
+            if ($line->delivered_remaining_qty <= 0) continue;
 
             $deliveryLineService->createDeliveryLine($delivery, $lineId, $ordre, $line->delivered_remaining_qty);
 
@@ -721,11 +733,17 @@ class OrderLinesController extends Controller
 
             $line->delivered_qty             += $line->delivered_remaining_qty;
             $line->delivered_remaining_qty    = 0;
-            $line->delivery_status            = $line->delivered_remaining_qty == 0 ? 3 : 2;
+            $line->delivery_status            = 3;
             $line->save();
             event(new OrderLineUpdated($line));
 
             $ordre += 10;
+            $linesProcessed++;
+        }
+
+        if ($linesProcessed === 0) {
+            $delivery->delete();
+            return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement livrées.'], 422);
         }
 
         return response()->json([
@@ -773,10 +791,12 @@ class OrderLinesController extends Controller
             return response()->json(['error' => 'Erreur lors de la création de la facture'], 500);
         }
 
-        $ordre = 10;
+        $ordre          = 10;
+        $linesProcessed = 0;
         foreach ($lineIds as $lineId) {
             $line = OrderLines::find($lineId);
             if (! $line || $line->orders_id !== $orderId) continue;
+            if ($line->invoiced_remaining_qty <= 0) continue;
 
             $invoiceLineService->createInvoiceLine($invoice, $lineId, null, $ordre, $line->invoiced_remaining_qty, $line->accounting_vats_id);
 
@@ -788,15 +808,21 @@ class OrderLinesController extends Controller
 
             $line->delivered_qty             += $line->delivered_remaining_qty;
             $line->delivered_remaining_qty    = 0;
-            $line->delivery_status            = $line->delivered_remaining_qty == 0 ? 3 : 2;
+            $line->delivery_status            = 3;
 
             $line->invoiced_qty              += $line->invoiced_remaining_qty;
             $line->invoiced_remaining_qty     = 0;
-            $line->invoice_status             = $line->invoiced_remaining_qty == 0 ? 3 : 2;
+            $line->invoice_status             = 3;
             $line->save();
             event(new OrderLineUpdated($line));
 
             $ordre += 10;
+            $linesProcessed++;
+        }
+
+        if ($linesProcessed === 0) {
+            $invoice->delete();
+            return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement facturées.'], 422);
         }
 
         return response()->json([
@@ -926,7 +952,7 @@ class OrderLinesController extends Controller
             return response()->json(['error' => 'Aucune TVA ou unité par défaut configurée'], 422);
         }
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale');
 

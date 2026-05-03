@@ -164,7 +164,7 @@ class KpiController extends Controller
         InvoiceKPIService  $invoices,
         PurchaseKPIService $purchases,
     ) {
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $fiscal   = $factory?->getCurrentFiscalYear();
         $fiscalStart = $fiscal['start'] ?? Carbon::now()->startOfYear();
         $fiscalEnd   = $fiscal['end']   ?? Carbon::now()->endOfYear();

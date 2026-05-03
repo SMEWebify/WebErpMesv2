@@ -284,5 +284,12 @@
    
    /* AdminLTE "small-box" */
    .small-box.bg-primary { background-color: var(--wem-primary) !important; }
-   .small-box.bg-success {
+   .small-box.bg-success { background-color: var(--wem-success) !important; }
+   .small-box.bg-info    { background-color: var(--wem-info)    !important; }
+   .small-box.bg-warning { background-color: var(--wem-warning) !important; }
+   .small-box.bg-danger  { background-color: var(--wem-danger)  !important; }
+
+   /* Global table alignment */
+   .table th,
+   .table td { vertical-align: middle; }
    

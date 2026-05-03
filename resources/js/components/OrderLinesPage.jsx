@@ -1177,9 +1177,19 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     };
 
     const handleStoreDelivery = async () => {
-        const ids = [...selected];
-        if (ids.length === 0) return;
-        if (!confirm(`Créer un BL à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        const ids = [...selected].filter(id => {
+            const line = lines.find(l => l.id === id);
+            return line && line.delivered_remaining_qty > 0;
+        });
+        if (ids.length === 0) {
+            showFlash('warning', 'Toutes les lignes sélectionnées sont déjà entièrement livrées.');
+            return;
+        }
+        const skipped = selected.size - ids.length;
+        const msg = skipped > 0
+            ? `Créer un BL à partir des ${ids.length} ligne(s) à livrer ? (${skipped} ligne(s) déjà livrée(s) ignorée(s))`
+            : `Créer un BL à partir des ${ids.length} ligne(s) sélectionnée(s) ?`;
+        if (!confirm(msg)) return;
         try {
             const res  = await apiFetch(endpoints.storeDelivery, {
                 method: 'POST',
@@ -1197,9 +1207,19 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     };
 
     const handleStoreInvoice = async () => {
-        const ids = [...selected];
-        if (ids.length === 0) return;
-        if (!confirm(`Créer une facture à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        const ids = [...selected].filter(id => {
+            const line = lines.find(l => l.id === id);
+            return line && line.invoiced_remaining_qty > 0;
+        });
+        if (ids.length === 0) {
+            showFlash('warning', 'Toutes les lignes sélectionnées sont déjà entièrement facturées.');
+            return;
+        }
+        const skipped = selected.size - ids.length;
+        const msg = skipped > 0
+            ? `Créer une facture à partir des ${ids.length} ligne(s) à facturer ? (${skipped} ligne(s) déjà facturée(s) ignorée(s))`
+            : `Créer une facture à partir des ${ids.length} ligne(s) sélectionnée(s) ?`;
+        if (!confirm(msg)) return;
         try {
             const res  = await apiFetch(endpoints.storeInvoice, {
                 method: 'POST',

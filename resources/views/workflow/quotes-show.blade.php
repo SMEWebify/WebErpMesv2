@@ -3,7 +3,6 @@
 @section('title', __('general_content.quote_trans_key')  . ' - ' . $Quote->code)
 
 @section('content_header')
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
     <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop

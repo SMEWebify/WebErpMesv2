@@ -16,12 +16,14 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Accounting\AccountingVat;
 use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseReceiptService;
+use App\Services\SelectDataService;
 
 class PurchaseLinesController extends Controller
 {
     public function __construct(
         protected DocumentCodeGenerator $documentCodeGenerator,
         protected PurchaseReceiptService $purchaseReceiptService,
+        protected SelectDataService $selectDataService,
     ) {}
 
     // -------------------------------------------------------------------------
@@ -44,7 +46,7 @@ class PurchaseLinesController extends Controller
             ->orderBy('ordre', 'asc')
             ->get();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale', 'fr');
 
@@ -62,7 +64,7 @@ class PurchaseLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $purchase = Purchases::findOrFail($purchaseId);
-        $factory  = Factory::first();
+        $factory  = app('Factory');
 
         // Filter products by preferred suppliers for this purchase company
         $productsQuery = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price');
@@ -74,8 +76,8 @@ class PurchaseLinesController extends Controller
 
         return response()->json([
             'products' => $productsQuery->orderBy('code')->get(),
-            'units'    => MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get(),
-            'vats'     => AccountingVat::select('id', 'label', 'rate', 'default')->orderBy('rate')->get(),
+            'units'    => $this->selectDataService->getUnitsSelect(),
+            'vats'     => $this->selectDataService->getVATSelect(),
             'currency' => $factory->curency ?? 'EUR',
         ]);
     }
@@ -134,7 +136,7 @@ class PurchaseLinesController extends Controller
             'purchaseReceiptLines.purchaseReceipt:id,code',
         ]);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))], 201);
@@ -172,7 +174,7 @@ class PurchaseLinesController extends Controller
             'purchaseReceiptLines.purchaseReceipt:id,code',
         ]);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
@@ -216,7 +218,7 @@ class PurchaseLinesController extends Controller
             'purchaseReceiptLines.purchaseReceipt:id,code',
         ]);
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($newLine, $currency, config('app.locale'))], 201);

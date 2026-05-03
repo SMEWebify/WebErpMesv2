@@ -3,7 +3,6 @@
 @section('title', __('general_content.purchase_trans_key')   . ' - ' . $Purchase->code)
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <x-Content-header-previous-button  h1="{{  __('general_content.purchase_trans_key') }} : {{  $Purchase->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"/>
 @stop
 

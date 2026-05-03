@@ -193,7 +193,7 @@ class TaskManageApiController extends Controller
 
         $line    = $this->resolveLine($idType, $idPage, $idLine);
         $lineQty = $this->resolveLineQty($idType, $line);
-        $factory = Factory::first();
+        $factory = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         // Custom requirements
@@ -362,7 +362,7 @@ class TaskManageApiController extends Controller
             OrderLines::where('id', $idLine)->update(['tasks_status' => 2]);
         }
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $task->load(['service', 'component', 'MethodsTools']);
 
@@ -407,7 +407,7 @@ class TaskManageApiController extends Controller
             'qty_init' => $validated['qty'] ?? $task->qty_init,
         ]));
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $task->load(['service', 'component', 'MethodsTools']);
 
@@ -442,7 +442,7 @@ class TaskManageApiController extends Controller
         $new->origin = '5';
         $new->save();
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $new->load(['service', 'component', 'MethodsTools']);
 
@@ -580,7 +580,7 @@ class TaskManageApiController extends Controller
             $successCount++;
         }
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
         $bomTasks = Task::with(['service', 'Component', 'MethodsTools'])
@@ -624,7 +624,7 @@ class TaskManageApiController extends Controller
             Task::create($taskData);
         }
 
-        $factory  = Factory::first();
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
 

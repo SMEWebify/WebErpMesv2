@@ -3,7 +3,6 @@
 @section('title', __('general_content.products_trans_key'))
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <h1>{{ __('general_content.product_list_trans_key') }}</h1>
 @stop
 

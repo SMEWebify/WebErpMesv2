@@ -1077,16 +1077,16 @@ return [
             ],
         ],
         'Summernote' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/summernote/summernote-bs4.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/summernote/summernote-bs4.min.css',
                 ],
             ],
