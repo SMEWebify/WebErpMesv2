@@ -66,6 +66,13 @@ return [
             'days' => 30,
         ],
 
+        'product_import' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/product_import.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

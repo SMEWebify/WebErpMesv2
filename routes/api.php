@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboardController;
@@ -40,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients',            [CompanyController::class, 'clients'])->name('api.clients.index');
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');
+    Route::post('product',           [ProductController::class, 'store'])->name('api.product.store');
+    Route::put('product/{product}',  [ProductController::class, 'update'])->name('api.product.update');
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -48,6 +51,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('quote', QuoteController::class)->only(['index', 'show']);
     Route::apiResource('order', OrderController::class);
+    Route::apiResource('product', ProductController::class)->only(['index', 'show']);
     Route::apiResource('tasks', TaskController::class);
     Route::apiResource('energy-consumptions', EnergyConsumptionController::class)
         ->only(['index','store'])

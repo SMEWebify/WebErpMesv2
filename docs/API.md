@@ -12,16 +12,17 @@
 2. [Clients](#clients)
 3. [Companies](#companies)
 4. [Devis](#devis)
-5. [Commandes](#commandes)
-6. [Tâches de production](#tâches-de-production)
-7. [Statut de tâche (MES)](#statut-de-tâche-mes)
-8. [KPI & Dashboard](#kpi--dashboard)
-9. [Consommation énergie](#consommation-énergie)
-10. [Export commandes](#export-commandes)
-11. [Inspection qualité](#inspection-qualité)
-12. [Collaboration — Tableaux blancs](#collaboration--tableaux-blancs)
-13. [Intégration Qonto](#intégration-qonto)
-14. [Objets de réponse](#objets-de-réponse)
+5. [Articles (produits)](#articles-produits)
+6. [Commandes](#commandes)
+7. [Tâches de production](#tâches-de-production)
+8. [Statut de tâche (MES)](#statut-de-tâche-mes)
+9. [KPI & Dashboard](#kpi--dashboard)
+10. [Consommation énergie](#consommation-énergie)
+11. [Export commandes](#export-commandes)
+12. [Inspection qualité](#inspection-qualité)
+13. [Collaboration — Tableaux blancs](#collaboration--tableaux-blancs)
+14. [Intégration Qonto](#intégration-qonto)
+15. [Objets de réponse](#objets-de-réponse)
 
 ---
 
@@ -42,6 +43,8 @@ Routes concernées :
 - `GET /api/clients`
 - `POST /api/quote`
 - `PUT /api/quote/{id}`
+- `POST /api/product`
+- `PUT /api/product/{id}`
 
 ### Routes internes — `auth:api`
 
@@ -349,6 +352,169 @@ Met à jour un devis existant. Même payload que `POST`.
 | Tâche existante absente de `tasks[]`       | Soft-delete                            |
 
 **Réponse `200`** → même structure que `POST`
+
+---
+
+## Articles (produits)
+
+Endpoints destinés aux intégrations externes qui créent des articles dans WEM (ex. : **Nest4Quote** pour les pièces issues du nesting/CAO).
+
+### `GET /api/product`
+
+Liste paginée des articles avec service, famille et unité.
+
+**Pagination** : 10 par page
+
+**Réponse `200`** → collection de [ProductResource](#productresource)
+
+---
+
+### `GET /api/product/{id}`
+
+Détail d'un article.
+
+**Réponse `200`** → [ProductResource](#productresource)
+
+---
+
+### `POST /api/product` `🔑 Bearer`
+
+Crée un article. Conçu pour recevoir un payload depuis Nest4Quote ou tout outil externe.
+
+**Logique de résolution des références**
+
+Pour chaque référence (service, famille, unité), trois sources sont essayées dans l'ordre :
+
+| Référence       | 1. ID direct          | 2. Code (string)            | 3. Fallback serveur                                  |
+|-----------------|-----------------------|-----------------------------|------------------------------------------------------|
+| Service         | `methods_services_id` | `service_code` (ex. `COMPO`)| Premier `methods_services` avec `type=8` (composant) |
+| Famille         | `methods_families_id` | `family_code`               | Première famille rattachée au service retenu         |
+| Unité           | `methods_units_id`    | `unit_code`                 | `MethodsUnits::getDefault()`                         |
+
+Chaque résolution par fallback ou échec de match est tracée dans `storage/logs/product_import.log`.
+
+**Body JSON — entête**
+
+| Champ                 | Type    | Requis | Notes                                                                         |
+|-----------------------|---------|--------|-------------------------------------------------------------------------------|
+| `code`                | string  | Non    | Auto-généré via la codification interne (`product`) si absent ; unique        |
+| `label`               | string  | Oui    | max 255                                                                       |
+| `service_code`        | string  | Non    | Code du `methods_services` ; résolu vers `methods_services_id`                |
+| `family_code`         | string  | Non    | Code du `methods_families` ; résolu vers `methods_families_id`                |
+| `unit_code`           | string  | Non    | Code du `methods_units` ; résolu vers `methods_units_id`                      |
+| `methods_services_id` | integer | Non    | Prioritaire sur `service_code` ; doit exister dans `methods_services`         |
+| `methods_families_id` | integer | Non    | Prioritaire sur `family_code` ; doit exister dans `methods_families`          |
+| `methods_units_id`    | integer | Non    | Prioritaire sur `unit_code` ; doit exister dans `methods_units`               |
+| `sold`                | integer | Non    | 1=oui 2=non — défaut `1`                                                      |
+| `purchased`           | integer | Non    | 1=oui 2=non — défaut `1`                                                      |
+| `tracability_type`    | integer | Non    | 1=lot 2=série 3=aucune — défaut `1`                                           |
+| `ind`                 | string  | Non    | Indice/révision, max 50                                                       |
+
+**Body JSON — caractéristiques techniques**
+
+| Champ                | Type    | Notes |
+|----------------------|---------|-------|
+| `material`           | string  |       |
+| `finishing`          | string  |       |
+| `thickness`          | numeric | mm    |
+| `weight`             | numeric | kg    |
+| `bend_count`         | integer |       |
+| `x_size`             | numeric | mm    |
+| `y_size`             | numeric | mm    |
+| `z_size`             | numeric | mm    |
+| `x_oversize`         | numeric |       |
+| `y_oversize`         | numeric |       |
+| `z_oversize`         | numeric |       |
+| `diameter`           | numeric |       |
+| `diameter_oversize`  | numeric |       |
+| `section_size`       | numeric |       |
+
+**Body JSON — économique**
+
+| Champ              | Type    |
+|--------------------|---------|
+| `qty_eco_min`      | numeric |
+| `qty_eco_max`      | numeric |
+| `purchased_price`  | numeric |
+| `selling_price`    | numeric |
+
+**Body JSON — fichiers et commentaire**
+
+| Champ           | Type   | Notes                                            |
+|-----------------|--------|--------------------------------------------------|
+| `comment`       | string |                                                  |
+| `picture`       | string | Nom de fichier image                             |
+| `drawing_file`  | string | Plan technique                                   |
+| `stl_file`      | string |                                                  |
+| `svg_file`      | string |                                                  |
+| `cad_file_path` | string |                                                  |
+| `cam_file_path` | string |                                                  |
+| `csv_file_name` | string | Nom du CSV d'import si l'article vient d'un import |
+
+**Exemple — payload minimal**
+
+Tout est optionnel sauf `label`. Les fallbacks serveur prennent le relais.
+
+```json
+{
+  "label": "Tôle pliée 2mm",
+  "material": "S235",
+  "thickness": 2,
+  "x_size": 500,
+  "y_size": 300,
+  "weight": 2.35
+}
+```
+
+**Exemple — payload Nest4Quote (recommandé, explicite)**
+
+```json
+{
+  "label": "Flanc latéral châssis A",
+  "service_code": "COMPO",
+  "family_code": "TOLERIE",
+  "unit_code": "PCE",
+  "material": "S235",
+  "finishing": "Galvanisé",
+  "thickness": 3,
+  "weight": 4.5,
+  "bend_count": 4,
+  "x_size": 500,
+  "y_size": 300,
+  "z_size": 60,
+  "purchased_price": 8.50,
+  "selling_price": 18.00,
+  "drawing_file": "PLAN-A-001.pdf",
+  "cad_file_path": "Z:/CAO/A-001.step",
+  "cam_file_path": "Z:/CAM/A-001.lasercam"
+}
+```
+
+**Réponse `201`** → [ProductResource](#productresource)
+
+```json
+{
+  "id": 142,
+  "code": "ART-2026-142",
+  "label": "Flanc latéral châssis A",
+  "methods_services_id": 7,
+  "methods_families_id": 3,
+  "methods_units_id": 1,
+  "material": "S235",
+  "thickness": "3.000",
+  "...": "..."
+}
+```
+
+> `code` est toujours présent dans la réponse, qu'il ait été fourni ou auto-généré.
+
+---
+
+### `PUT /api/product/{id}` `🔑 Bearer`
+
+Met à jour un article existant. Même payload que `POST` (mêmes règles de résolution `*_code` → `*_id`, mêmes fallbacks). Le champ `code` reste unique mais l'article courant est exclu de la contrainte d'unicité.
+
+**Réponse `200`** → [ProductResource](#productresource)
 
 ---
 
@@ -1117,6 +1283,51 @@ Reçoit les mises à jour de statut de facture depuis Qonto.
 > `detail` et `tasks` ne sont présents que sur `GET /api/quote/{id}`, `POST /api/quote` et `PUT /api/quote/{id}`.  
 > `GET /api/quote` (liste) ne charge pas ces relations.
 
+### `ProductResource`
+
+```json
+{
+  "id": 142,
+  "code": "ART-2026-142",
+  "label": "Flanc latéral châssis A",
+  "ind": null,
+  "methods_services_id": 7,
+  "methods_families_id": 3,
+  "methods_units_id": 1,
+  "purchased": 1,
+  "purchased_price": "8.500",
+  "sold": 1,
+  "selling_price": "18.000",
+  "material": "S235",
+  "finishing": "Galvanisé",
+  "thickness": "3.000",
+  "weight": "4.500",
+  "bend_count": 4,
+  "x_size": "500.000",
+  "y_size": "300.000",
+  "z_size": "60.000",
+  "x_oversize": null,
+  "y_oversize": null,
+  "z_oversize": null,
+  "diameter": null,
+  "diameter_oversize": null,
+  "section_size": null,
+  "qty_eco_min": null,
+  "qty_eco_max": null,
+  "tracability_type": 1,
+  "comment": null,
+  "picture": null,
+  "drawing_file": "PLAN-A-001.pdf",
+  "stl_file": null,
+  "svg_file": null,
+  "cad_file_path": "Z:/CAO/A-001.step",
+  "cam_file_path": "Z:/CAM/A-001.lasercam",
+  "csv_file_name": null,
+  "created_at": "2026-05-04T09:15:00.000000Z",
+  "updated_at": "2026-05-04T09:15:00.000000Z"
+}
+```
+
 ### `OrderResource`
 
 ```json
@@ -1163,4 +1374,4 @@ Reçoit les mises à jour de statut de facture depuis Qonto.
 
 ---
 
-*Dernière mise à jour : 2026-04-29 — Section Devis mise à jour (POST/PUT full sync, code auto-généré, QuoteResource avec detail et tasks)*
+*Dernière mise à jour : 2026-05-04 — Ajout section Articles (POST/PUT /api/product) pour intégration Nest4Quote, résolution `service_code`/`family_code`/`unit_code` avec fallbacks*
