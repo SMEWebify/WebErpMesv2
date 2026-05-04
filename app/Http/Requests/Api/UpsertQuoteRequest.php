@@ -65,6 +65,10 @@ class UpsertQuoteRequest extends FormRequest
             'lines.*.detail.external_comment'    => 'nullable|string',
             'lines.*.detail.custom_requirements' => 'nullable|array',
             'lines.*.detail.picture_base64'      => 'nullable|string',
+            'lines.*.detail.cad_file'            => 'nullable|string|max:255',
+            'lines.*.detail.cam_file'            => 'nullable|string|max:255',
+            'lines.*.detail.cad_file_path'       => 'nullable|string|max:255',
+            'lines.*.detail.cam_file_path'       => 'nullable|string|max:255',
 
             // Tasks
             'lines.*.tasks'                      => 'nullable|array',

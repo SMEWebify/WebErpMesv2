@@ -200,6 +200,7 @@ class QuoteController extends Controller
                     'diameter', 'diameter_oversize', 'material', 'thickness', 'finishing',
                     'weight', 'bend_count', 'material_loss_rate',
                     'internal_comment', 'external_comment', 'custom_requirements',
+                    'cad_file', 'cam_file', 'cad_file_path', 'cam_file_path',
                 ])->all();
 
                 if (!empty($lineData['detail']['picture_base64'])) {
