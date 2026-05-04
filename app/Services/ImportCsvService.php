@@ -282,10 +282,6 @@ class ImportCsvService
         $code    = utf8_encode($data[$request->code]);
         $product = Products::firstOrNew(['code' => $code]);
 
-        if (!$product->exists) {
-            $product->uuid = Str::uuid();
-        }
-
         $product->fill([
             'label'               => $data[$request->label] ?? null,
             'ind'                 => $data[$request->ind] ?? null,
