@@ -29,6 +29,17 @@
 - Pousser une commande : `php artisan wem:n2p:push-order {orderId}`.
 - En synchrone (sans queue) : `php artisan wem:n2p:push-order {orderId} --sync`.
 
+## Calcul de `part_type`
+Le payload pousse toujours une valeur `part_type` (jamais `null`). Règle de résolution
+appliquée par `N2PPayloadBuilder::resolvePartType()` :
+
+1. `details.part_type` ou `product.part_type` si renseigné explicitement.
+2. `Assembly` — la ligne ou le produit possède des sous-ensembles (`SubAssembly`).
+3. `SymbolPart` — `cad_file_path` ou `cam_file_path` se termine par `.sym` (fichier symbole Radan).
+4. `StandardPart` — produit marqué `purchased = 1` (pièce du commerce / quincaillerie).
+5. `SymbolPart` — `thickness > 0` ou présence d’un `cad_file_path` / `cam_file_path` (indicateurs tôle).
+6. `StandardPart` — fallback (aucun signal exploitable).
+
 ## Exemple de payload envoyé
 ```json
 {
@@ -43,6 +54,7 @@
       "customer_code": "CLI1",
       "customer_name": "Client One",
       "product_ref": "PART-001",
+      "part_type": "SymbolPart",
       "tasks": [
         {
           "operation_code": "CUT",

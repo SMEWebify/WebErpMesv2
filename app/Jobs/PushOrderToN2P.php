@@ -28,7 +28,14 @@ class PushOrderToN2P implements ShouldQueue
 
     public function handle(SettingsService $settings, N2PPayloadBuilder $payloadBuilder): void
     {
-        $order = Orders::with(['OrderLines.OrderLineDetails', 'OrderLines.Product', 'OrderLines.Task', 'companie'])
+        $order = Orders::with([
+                'OrderLines.OrderLineDetails',
+                'OrderLines.Product',
+                'OrderLines.Product.SubAssembly',
+                'OrderLines.SubAssembly',
+                'OrderLines.Task',
+                'companie',
+            ])
             ->findOrFail($this->orderId);
 
         $config = $settings->getMany([

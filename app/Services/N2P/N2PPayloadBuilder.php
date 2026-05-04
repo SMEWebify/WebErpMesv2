@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\Planning\Task;
+use App\Models\Products\Products;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Log;
@@ -77,7 +78,7 @@ class N2PPayloadBuilder
             'material' => $details?->material ?? $product?->material,
             'thickness' => $this->nullableNumber($details?->thickness ?? $product?->thickness),
             'bend_count' => $details?->bend_count ?? $product?->bend_count,
-            'part_type' => $this->resolvePartType($details, $product),
+            'part_type' => $this->resolvePartType($orderLine, $details, $product),
             'dimension_x' => $this->nullableNumber($details?->x_size ?? $product?->x_size),
             'dimension_y' => $this->nullableNumber($details?->y_size ?? $product?->y_size),
             'dimension_z' => $this->nullableNumber($details?->z_size ?? $product?->z_size),
@@ -187,9 +188,58 @@ class N2PPayloadBuilder
         return (float) $number;
     }
 
-    private function resolvePartType($details, $products): string
+    private function resolvePartType(OrderLines $orderLine, $details, $product): string
     {
-        return $details?->part_type ?? $products?->part_type ?? 'SymbolPart';
+        $explicit = $details?->part_type ?? $product?->part_type ?? null;
+        if (is_string($explicit) && $explicit !== '') {
+            return $explicit;
+        }
+
+        if ($this->hasSubAssemblies($orderLine, $product)) {
+            return 'Assembly';
+        }
+
+        $cadFile = $details?->cad_file_path ?? $product?->cad_file_path;
+        $camFile = $details?->cam_file_path ?? $product?->cam_file_path;
+        if ($this->isSymFile($camFile) || $this->isSymFile($cadFile)) {
+            return 'SymbolPart';
+        }
+
+        if ($product instanceof Products && (int) $product->purchased === 1) {
+            return 'StandardPart';
+        }
+
+        $thickness = $details?->thickness ?? $product?->thickness;
+        if ((float) $thickness > 0 || !empty($cadFile) || !empty($camFile)) {
+            return 'SymbolPart';
+        }
+
+        return 'StandardPart';
+    }
+
+    private function isSymFile(?string $path): bool
+    {
+        if (!is_string($path) || $path === '') {
+            return false;
+        }
+
+        return str_ends_with(strtolower($path), '.sym');
+    }
+
+    private function hasSubAssemblies(OrderLines $orderLine, $product): bool
+    {
+        if ($orderLine->relationLoaded('SubAssembly')
+            && $orderLine->getRelation('SubAssembly')?->isNotEmpty()) {
+            return true;
+        }
+
+        if ($product instanceof Products
+            && $product->relationLoaded('SubAssembly')
+            && $product->getRelation('SubAssembly')?->isNotEmpty()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function pictureBase64(?string $detailPicture, ?string $productPicture): ?string

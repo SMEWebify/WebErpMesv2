@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Models\Methods\MethodsTools;
+use App\Models\Planning\SubAssembly;
+use App\Models\Products\Products;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
@@ -80,10 +82,84 @@ class N2PPayloadBuilderTest extends TestCase
         $this->assertSame('Client One', $job['customer_name']);
         $this->assertSame('Steel', $job['material']);
         $this->assertSame(1.5, $job['thickness']);
+        $this->assertSame('SymbolPart', $job['part_type']);
         $this->assertCount(1, $job['tasks']);
         $this->assertSame('CUT', $job['tasks'][0]['operation_code']);
         $this->assertSame('CNC01', $job['tasks'][0]['workcenter_code']);
         $this->assertSame('2026-02-21 08:00:00', $job['tasks'][0]['planned_start_at']);
         $this->assertSame(90, $job['tasks'][0]['planned_time_min']);
+    }
+
+    public function test_part_type_is_assembly_when_line_has_sub_assemblies(): void
+    {
+        $order = new Orders(['id' => 1, 'priority' => 3]);
+        $line = new OrderLines(['id' => 1, 'qty' => 1]);
+        $line->setRelation('OrderLineDetails', new OrderLineDetails(['thickness' => 2.0]));
+        $line->setRelation('Task', new Collection());
+        $line->setRelation('SubAssembly', new Collection([new SubAssembly(['ordre' => 1])]));
+        $order->setRelation('OrderLines', new Collection([$line]));
+        $order->setRelation('companie', null);
+
+        $payload = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false]);
+
+        $this->assertSame('Assembly', $payload['jobs'][0]['part_type']);
+    }
+
+    public function test_part_type_is_standard_when_product_is_purchased(): void
+    {
+        $order = new Orders(['id' => 1, 'priority' => 3]);
+        $line = new OrderLines(['id' => 1, 'qty' => 1]);
+        $line->setRelation('OrderLineDetails', null);
+        $line->setRelation('Task', new Collection());
+        $line->setRelation('SubAssembly', new Collection());
+
+        $product = new Products(['code' => 'BOLT-M6', 'purchased' => 1]);
+        $product->setRelation('SubAssembly', new Collection());
+        $line->setRelation('Product', $product);
+
+        $order->setRelation('OrderLines', new Collection([$line]));
+        $order->setRelation('companie', null);
+
+        $payload = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false]);
+
+        $this->assertSame('StandardPart', $payload['jobs'][0]['part_type']);
+    }
+
+    public function test_part_type_is_symbol_when_cam_file_path_is_sym(): void
+    {
+        $order = new Orders(['id' => 1, 'priority' => 3]);
+        $line = new OrderLines(['id' => 1, 'qty' => 1]);
+        $details = new OrderLineDetails(['cam_file_path' => '/nest/parts/PART-A.SYM']);
+        $line->setRelation('OrderLineDetails', $details);
+        $line->setRelation('Task', new Collection());
+        $line->setRelation('SubAssembly', new Collection());
+
+        $product = new Products(['code' => 'PART-A', 'purchased' => 1]);
+        $product->setRelation('SubAssembly', new Collection());
+        $line->setRelation('Product', $product);
+
+        $order->setRelation('OrderLines', new Collection([$line]));
+        $order->setRelation('companie', null);
+
+        $payload = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false]);
+
+        $this->assertSame('SymbolPart', $payload['jobs'][0]['part_type']);
+    }
+
+    public function test_part_type_falls_back_to_standard_when_no_signals(): void
+    {
+        $order = new Orders(['id' => 1, 'priority' => 3]);
+        $line = new OrderLines(['id' => 1, 'qty' => 1]);
+        $line->setRelation('OrderLineDetails', null);
+        $line->setRelation('Task', new Collection());
+        $line->setRelation('SubAssembly', new Collection());
+        $line->setRelation('Product', null);
+
+        $order->setRelation('OrderLines', new Collection([$line]));
+        $order->setRelation('companie', null);
+
+        $payload = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false]);
+
+        $this->assertSame('StandardPart', $payload['jobs'][0]['part_type']);
     }
 }
