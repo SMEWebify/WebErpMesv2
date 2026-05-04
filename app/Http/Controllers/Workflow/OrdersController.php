@@ -253,7 +253,7 @@ class OrdersController extends Controller
         $order->update($request->validated());
 
         if ($request->boolean('apply_delivery_date') && $order->validity_date) {
-            $factory = Factory::first();
+            $factory = app('Factory');
             $updates = ['delivery_date' => $order->validity_date];
 
             if ($factory) {

@@ -3,7 +3,6 @@
 @section('title', __('general_content.requests_for_quotation_list_trans_key')   . ' - ' . $PurchaseQuotation->code)
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <x-Content-header-previous-button
     h1="{{ __('general_content.requests_for_quotation_list_trans_key')}} : {{ $PurchaseQuotation->code }}"
     previous="{{ $previousUrl }}"

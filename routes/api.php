@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 use App\Http\Controllers\Integrations\QontoWebhookController;
-use App\Http\Controllers\SpreadsheetDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,11 +35,18 @@ Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->withoutMid
     Route::post('/webhook/invoice', [QontoWebhookController::class, 'handle'])->name('webhook.invoice');
 });
 
+// Routes externes — authentification par token Bearer (Sanctum)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('clients',            [CompanyController::class, 'clients'])->name('api.clients.index');
+    Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
+    Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');
+});
+
 Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('companies', CompanyController::class)->names('api.companies');
 
-    Route::apiResource('quote', QuoteController::class);
+    Route::apiResource('quote', QuoteController::class)->only(['index', 'show']);
     Route::apiResource('order', OrderController::class);
     Route::apiResource('tasks', TaskController::class);
     Route::apiResource('energy-consumptions', EnergyConsumptionController::class)

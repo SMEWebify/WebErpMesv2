@@ -292,6 +292,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
         Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
         Route::post('/{quoteId}/lines/json/import-sym', 'App\Http\Controllers\Workflow\QuoteLinesController@importSymJson')->name('quotes.lines.json.import-sym');
+        Route::post('/{quoteId}/lines/json/create-products',    'App\Http\Controllers\Workflow\QuoteLinesController@createProductsFromLinesJson')->name('quotes.lines.json.create-products');
         Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->name('quotes.lines.json.create-product');
         Route::get('/{quoteId}/lines/json/{id}/tasks', 'App\Http\Controllers\Workflow\QuoteLinesController@tasksForLineJson')->name('quotes.lines.json.tasks');
         Route::patch('/{quoteId}/lines/json/{id}/calculated-price', 'App\Http\Controllers\Workflow\QuoteLinesController@toggleCalculatedPriceJson')->name('quotes.lines.json.calculated-price');
@@ -648,6 +649,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
         Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
 
+        // Merge duplicates (permission réservée)
+        Route::group(['middleware' => ['permission:products-merge']], function () {
+            Route::get('/json/duplicates', 'App\Http\Controllers\Products\ProductsController@duplicatesJson')->name('products.json.duplicates');
+            Route::get('/json/merge/{master}/{duplicate}/preview', 'App\Http\Controllers\Products\ProductsController@mergePreviewJson')->name('products.json.merge.preview');
+            Route::post('/json/merge/{master}/{duplicate}', 'App\Http\Controllers\Products\ProductsController@mergeJson')->name('products.json.merge');
+        });
+
         Route::group(['prefix' => '{product}/customer-price-list'], function () {
             Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
             Route::put('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@update')->name('products.customer-price-list.update');
@@ -830,6 +838,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
         Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
+
+        Route::middleware(['auth'])->prefix('api-tokens')->name('admin.api-tokens.')->group(function () {
+            Route::get('/',           [\App\Http\Controllers\Admin\ApiTokenController::class, 'index'])->name('index');
+            Route::post('/',          [\App\Http\Controllers\Admin\ApiTokenController::class, 'store'])->name('store');
+            Route::delete('/{token}', [\App\Http\Controllers\Admin\ApiTokenController::class, 'destroy'])->name('destroy');
+        });
         Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->middleware(['auth'])->name('admin.logs-viewer.json.list');
     
         Route::get('/emails/templates', 'App\Http\Controllers\Admin\EmailTemplateController@index')->name('admin.emails.templates.index');

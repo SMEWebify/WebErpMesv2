@@ -181,8 +181,8 @@ class SelectDataService
      */
     public function getVATSelect()
     {
-        return Cache::rememberForever('select_data_vat', fn() =>
-            AccountingVat::select('id', 'label')->orderBy('rate')->get()
+        return Cache::rememberForever('select_data_vat_v2', fn() =>
+            AccountingVat::select('id', 'label', 'rate', 'default')->orderBy('rate')->get()
         );
     }
 
@@ -196,8 +196,8 @@ class SelectDataService
      */
     public function getProductsSelect()
     {
-        return Cache::remember('select_data_products', now()->addMinutes(30), fn() =>
-            Products::select('id', 'label', 'code', 'methods_services_id')->orderBy('code')->get()
+        return Cache::remember('select_data_products_v2', now()->addMinutes(30), fn() =>
+            Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price')->orderBy('code')->get()
         );
     }
 
@@ -211,8 +211,8 @@ class SelectDataService
      */
     public function getUnitsSelect()
     {
-        return Cache::rememberForever('select_data_units', fn() =>
-            MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get()
+        return Cache::rememberForever('select_data_units_v2', fn() =>
+            MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get()
         );
     }
 

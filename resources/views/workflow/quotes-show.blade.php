@@ -3,7 +3,6 @@
 @section('title', __('general_content.quote_trans_key')  . ' - ' . $Quote->code)
 
 @section('content_header')
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
     <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
@@ -340,6 +339,7 @@
             'move'            => route('quotes.lines.json.move',            ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'reorder'         => route('quotes.lines.json.reorder',         ['quoteId' => $Quote->id]),
             'createProduct'   => route('quotes.lines.json.create-product',  ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'createProducts'  => route('quotes.lines.json.create-products', ['quoteId' => $Quote->id]),
             'tasks'           => route('quotes.lines.json.tasks',           ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),

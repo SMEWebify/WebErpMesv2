@@ -441,6 +441,7 @@ async function mountProductsIndex() {
             chartData: parse('chart')     ?? {},
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+            canMerge:  element.dataset.canMerge === 'true',
         })
     );
 }
@@ -1471,6 +1472,20 @@ async function mountInvoicePaymentsTab() {
     );
 }
 
+async function mountApiTokensPage() {
+    const el = document.getElementById('api-tokens-app');
+    if (!el) return;
+    const { default: ApiTokensPage } = await import('./components/ApiTokensPage.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(ApiTokensPage, {
+            initialTokens: parse('tokens')    ?? [],
+            endpoints:     parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountApiTokensPage();
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();

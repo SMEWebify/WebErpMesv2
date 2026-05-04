@@ -287,7 +287,7 @@ class PrintController extends Controller
      */
     private function getFactory()
     {
-        return Factory::first();
+        return app('Factory');
     }
 
     /**

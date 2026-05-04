@@ -25,6 +25,7 @@ use App\Http\Requests\Products\UpdateProductsRequest;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsUnits;
+use App\Services\ProductMergeService;
 
 class ProductsController extends Controller
 {    
@@ -82,12 +83,18 @@ class ProductsController extends Controller
         ];
 
         $reactEndpoints = [
-            'list'       => route('products.json.list'),
-            'store'      => route('products.json.store'),
-            'selectData' => route('products.json.select-data'),
+            'list'         => route('products.json.list'),
+            'store'        => route('products.json.store'),
+            'selectData'   => route('products.json.select-data'),
         ];
 
-        return view('products/products-index', compact('reactKpi', 'reactChart', 'reactEndpoints'));
+        $canMerge = Auth::user()->can('products-merge');
+        if ($canMerge) {
+            $reactEndpoints['duplicates']   = route('products.json.duplicates');
+            $reactEndpoints['mergeBaseUrl'] = url('/products/json/merge');
+        }
+
+        return view('products/products-index', compact('reactKpi', 'reactChart', 'reactEndpoints', 'canMerge'));
     }
 
     /**
@@ -101,7 +108,7 @@ class ProductsController extends Controller
         $sold      = $request->get('sold');
         $purchased = $request->get('purchased');
 
-        $allowed = ['code', 'label', 'created_at', 'sold', 'purchased'];
+        $allowed = ['code', 'label', 'created_at', 'sold', 'purchased', 'selling_price', 'purchased_price'];
         if (!in_array($sortField, $allowed)) {
             $sortField = 'created_at';
         }
@@ -131,6 +138,8 @@ class ProductsController extends Controller
                 'service'    => $p->service?->label,
                 'family'     => $p->family?->label,
                 'task_count' => $p->task_count,
+                'selling_price'   => $p->selling_price,
+                'purchased_price' => $p->purchased_price,
                 'url'        => route('products.show', ['id' => $p->id]),
             ]),
             'meta' => [
@@ -481,6 +490,61 @@ class ProductsController extends Controller
             $newSubAssembly->products_id = $newProductId;
             $newSubAssembly->save();
         }
+    }
+
+    /**
+     * JSON endpoint — products that share the same code (exact duplicates).
+     */
+    public function duplicatesJson()
+    {
+        $duplicateCodes = Products::select('code')
+            ->groupBy('code')
+            ->havingRaw('COUNT(*) > 1')
+            ->pluck('code');
+
+        if ($duplicateCodes->isEmpty()) {
+            return response()->json([]);
+        }
+
+        $products = Products::with(['service:id,label', 'family:id,label'])
+            ->whereIn('code', $duplicateCodes)
+            ->orderBy('code')
+            ->get();
+
+        return response()->json(
+            $products->groupBy('code')->map(fn ($group, $code) => [
+                'code'     => $code,
+                'products' => $group->values()->map(fn ($p) => [
+                    'id'      => $p->id,
+                    'code'    => $p->code,
+                    'label'   => $p->label,
+                    'service' => $p->service?->label,
+                    'family'  => $p->family?->label,
+                    'url'     => route('products.show', ['id' => $p->id]),
+                ]),
+            ])->values()
+        );
+    }
+
+    /**
+     * JSON endpoint — preview the impact of merging duplicate into master.
+     */
+    public function mergePreviewJson(int $master, int $duplicate)
+    {
+        abort_if($master === $duplicate, 422, 'Master and duplicate must differ.');
+        return response()->json(
+            app(ProductMergeService::class)->preview($master, $duplicate)
+        );
+    }
+
+    /**
+     * JSON endpoint — execute the merge of duplicate into master.
+     */
+    public function mergeJson(int $master, int $duplicate)
+    {
+        abort_if($master === $duplicate, 422, 'Master and duplicate must differ.');
+        app(ProductMergeService::class)->merge($master, $duplicate);
+        return response()->json(['ok' => true]);
     }
 
     /**

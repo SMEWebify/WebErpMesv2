@@ -837,6 +837,12 @@ return [
                     'url'  => 'admin/logs-view',
                     'icon_color' => 'success',
                 ],
+                [
+                    'text'       => 'Tokens API',
+                    'url'        => 'admin/api-tokens',
+                    'icon'       => 'fas fa-key',
+                    'icon_color' => 'primary',
+                ],
             ],
         ],
         ['header' => env('APP_COMMERCIAL', false) ? 'NEST2PROD' : 'W.E.M.'],
@@ -1071,16 +1077,16 @@ return [
             ],
         ],
         'Summernote' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/summernote/summernote-bs4.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/summernote/summernote-bs4.min.css',
                 ],
             ],

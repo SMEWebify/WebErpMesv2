@@ -1,11 +1,13 @@
 <?php
 namespace App\Services;
 
+use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\Quotes;
 
 class QuoteCalculatorService
 {
     private $quote;
+    private $defaultVat;
 
     public $TotalPrice;
     public $SubTotal;
@@ -14,6 +16,7 @@ class QuoteCalculatorService
     public function __construct(Quotes $quote)
     {
         $this->quote = $quote;
+        $this->defaultVat = AccountingVat::getDefault();
     }
 
     /**
@@ -30,13 +33,16 @@ class QuoteCalculatorService
         $tableauTVA = array();
         $quoteLines = $this->quote->quoteLines;
         foreach ($quoteLines as $quoteLine) {
+            $vat = $quoteLine->VAT ?? $this->defaultVat;
+            $vatRate = $vat->rate ?? 0;
+            $vatId = $quoteLine->accounting_vats_id ?? $vat?->id;
             $TotalCurentLine = ($quoteLine->qty*$quoteLine->selling_price)-($quoteLine->qty*$quoteLine->selling_price)*($quoteLine->discount/100);
-			$TotalVATCurentLine =  $TotalCurentLine*($quoteLine->VAT['rate']/100) ;
-            if(array_key_exists($quoteLine->accounting_vats_id, $tableauTVA)){
-                $tableauTVA[$quoteLine->accounting_vats_id][1] += $TotalVATCurentLine;
+			$TotalVATCurentLine = $TotalCurentLine * ($vatRate / 100);
+            if(array_key_exists($vatId, $tableauTVA)){
+                $tableauTVA[$vatId][1] += $TotalVATCurentLine;
             }
             else{
-                $tableauTVA[$quoteLine->accounting_vats_id] = array($quoteLine->VAT['rate'], $TotalVATCurentLine);
+                $tableauTVA[$vatId] = array($vatRate, $TotalVATCurentLine);
             }
         }
         asort($tableauTVA);
@@ -56,8 +62,9 @@ class QuoteCalculatorService
         $TotalPrice = 0;
         $quoteLines = $this->quote->quoteLines;
         foreach ($quoteLines as $quoteLine) {
+            $vatRate = ($quoteLine->VAT ?? $this->defaultVat)?->rate ?? 0;
             $TotalPriceLine = ($quoteLine->qty * $quoteLine->selling_price)-($quoteLine->qty * $quoteLine->selling_price)*($quoteLine->discount/100);
-            $TotalVATPrice = $TotalPriceLine*($quoteLine->VAT['rate']/100);
+            $TotalVATPrice = $TotalPriceLine * ($vatRate / 100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;
         }
         return $TotalPrice;

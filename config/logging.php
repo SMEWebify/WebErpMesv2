@@ -59,6 +59,13 @@ return [
             'level' => env('LOG_LEVEL', 'info'),
         ],
 
+        'quote_import' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/quote_import.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

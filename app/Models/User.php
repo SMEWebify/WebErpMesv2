@@ -16,6 +16,7 @@ use App\Models\Methods\MethodsSection;
 use App\Models\HumanResources\Attendance;
 use App\Models\Products\StockLocation;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\Planning\TaskActivities;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Quality\QualityDerogation;
@@ -34,7 +35,7 @@ use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasRoles, HasFactory, LogsActivity, Notifiable, SoftDeletes;
+    use HasApiTokens, HasRoles, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
     public function sendEmailVerificationNotification(): void
     {

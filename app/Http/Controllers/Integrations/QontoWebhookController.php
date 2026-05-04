@@ -79,9 +79,12 @@ class QontoWebhookController extends Controller
     {
         $secret = config('services.qonto.webhook_secret', '');
 
-        // Si pas de secret configuré → on laisse passer (dev/test) mais on log
         if ($secret === '') {
-            Log::warning('QontoWebhook: QONTO_WEBHOOK_SECRET not configured, skipping signature check');
+            if (app()->isProduction()) {
+                Log::error('QontoWebhook: QONTO_WEBHOOK_SECRET not configured in production');
+                return false;
+            }
+            Log::warning('QontoWebhook: QONTO_WEBHOOK_SECRET not configured, skipping signature check (non-production)');
             return true;
         }
 

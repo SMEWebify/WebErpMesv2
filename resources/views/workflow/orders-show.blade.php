@@ -3,10 +3,39 @@
 @section('title', __('general_content.orders_trans_key')  . ' - ' . $Order->code)
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
   <x-Content-header-previous-button  h1="{{ __('general_content.orders_trans_key') }} : {{  $Order->code }}" previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"/>
 @stop
+
+@push('css')
+<style>
+.business-balance-table { border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; }
+.business-balance-table thead th { font-weight: 600; text-align: center; border-color: rgba(0,0,0,.04); }
+.business-balance-table td { border-color: rgba(0,0,0,.04); }
+.business-balance-table__group-row th:first-child { background-color: #f3f4f6; }
+.business-balance-table__group { color: #1f2933; font-weight: 600; }
+.business-balance-table__group--info { background-color: #34a0dc; color: #0b1f2a; }
+.business-balance-table__group--neutral { background-color: #d7dde5; color: #1f2933; }
+.business-balance-table__group--warning { background-color: #f2a65a; color: #4a2d0f; }
+.business-balance-table__subhead-row th { font-size: .85rem; text-transform: none; }
+.business-balance-table__service-head { background-color: #e9ecef; }
+.business-balance-table__subhead--info, .business-balance-table__cell--info { background-color: #e6f5ff; }
+.business-balance-table__subhead--neutral, .business-balance-table__cell--neutral { background-color: #eff2f6; }
+.business-balance-table__subhead--warning, .business-balance-table__cell--warning { background-color: #fff2e2; }
+.business-balance-table__cell--gap-positive { background-color: #e6f7ed; color: #0f3d1e; }
+.business-balance-table__cell--gap-negative { background-color: #fde9e9; color: #3a0f0f; }
+.business-balance-table__service-cell { background-color: #f8f9fb; font-weight: 600; }
+.business-balance-table__cell { text-align: center; }
+.business-balance-table__total-row td { background-color: #f0f1f5; font-weight: 600; }
+.business-balance-table__total-row .business-balance-table__cell--gap-positive { background-color: #d8f3e3; color: #0f3d1e; }
+.business-balance-table__total-row .business-balance-table__cell--gap-negative { background-color: #f9d6d6; color: #3a0f0f; }
+.business-balance-info { row-gap: 1rem; }
+.business-balance-info__card { background-color: #f8f9fb; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 20px rgba(15,23,42,.08); height: 100%; }
+.business-balance-info__label { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; margin-bottom: .35rem; }
+.business-balance-info__value { font-size: 1rem; font-weight: 600; color: #111827; margin-bottom: 0; }
+.business-balance-info__trend { font-size: .75rem; color: #22a06b; margin-left: .25rem; }
+</style>
+@endpush
 
 @section('right-sidebar')
 

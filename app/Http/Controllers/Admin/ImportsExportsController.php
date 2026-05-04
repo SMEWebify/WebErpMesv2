@@ -34,7 +34,7 @@ class ImportsExportsController extends Controller
         $UnitsSelect    = $this->SelectDataService->getUnitsSelect();
         $FamiliesSelect = $this->SelectDataService->getFamilies();
 
-        $factory = Factory::first();
+        $factory = app('Factory');
         $fiscal  = $factory ? $factory->getCurrentFiscalYear() : null;
 
         return view('admin/factory-import-export', [

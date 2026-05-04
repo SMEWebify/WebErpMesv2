@@ -3,7 +3,6 @@
 @section('title', __('general_content.load_planning_trans_key'))
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <div class="row mb-2">
       <div class="col-sm-12">
         <h1>{{ __('general_content.load_planning_trans_key') }}</h1>

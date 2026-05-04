@@ -21,8 +21,8 @@ class WhiteboardFileController extends Controller
     public function store(Request $request, Whiteboard $whiteboard): JsonResponse
     {
         $request->validate([
-            'files' => ['required', 'array'],
-            'files.*' => ['file', 'max:10240'],
+            'files'   => ['required', 'array'],
+            'files.*' => ['file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,csv,txt,jpg,jpeg,png,gif,webp,svg,zip'],
         ]);
 
         $userId = optional($request->user())->id;

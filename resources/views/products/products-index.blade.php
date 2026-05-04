@@ -3,7 +3,6 @@
 @section('title', __('general_content.products_trans_key'))
 
 @section('content_header')
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <h1>{{ __('general_content.product_list_trans_key') }}</h1>
 @stop
 
@@ -63,7 +62,8 @@
   data-kpi='@json($reactKpi, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
   data-chart='@json($reactChart, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
   data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-  data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+  data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-can-merge='{{ $canMerge ? 'true' : 'false' }}'>
 </div>
 @stop
 

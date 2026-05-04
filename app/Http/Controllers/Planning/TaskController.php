@@ -354,7 +354,7 @@ class TaskController extends Controller
             return back()->withInput()->withErrors(['msg' => 'Error, Something goes wrong ']);
         }
 
-        $Factory = Factory::first();
+        $Factory = app('Factory');
 
         return view('workflow/task-manage', compact('Document','LineInfo', 'id_type', 'id_page', 'id_line', 'Factory'));
     }
