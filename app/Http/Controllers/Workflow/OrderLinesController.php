@@ -762,11 +762,12 @@ class OrderLinesController extends Controller
 
         $invoice = $invoiceService->createInvoice(
             $invoiceCode,
-            $invoiceCode,
+            $order->label,
             $order->companies_id,
             $order->companies_addresses_id,
             $order->companies_contacts_id,
-            Auth::id()
+            Auth::id(),
+            $order->customer_reference
         );
 
         if (! $invoice) {

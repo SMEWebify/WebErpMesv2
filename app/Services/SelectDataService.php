@@ -42,19 +42,24 @@ class SelectDataService
 
 
     /**
-     * Retrieve a list of active companies with specific customer statuses,
-     * optionally filtered by provided company IDs.
+     * Retrieve companies for a select list.
+     *
+     * Without IDs: restrict to active client/prospect (statu_customer IN 2,3).
+     * With IDs: caller has already filtered on a business criterion (open order/
+     * delivery lines), so we don't re-filter — otherwise tiers left at the default
+     * statu_customer=1 (Inactif) disappear even though they have pending work.
      *
      * @param  \Illuminate\Support\Collection|array|null  $companyIdsInOrderLines
      * @return \Illuminate\Support\Collection
      */
     public function getCompanies($companyIdsInOrderLines = null)
     {
-        $query = Companies::select('id', 'code', 'client_type', 'civility', 'label', 'last_name')
-                        ->where('active', 1)
-                        ->whereIn('statu_customer', [2, 3]);
+        $query = Companies::select('id', 'code', 'client_type', 'civility', 'label', 'last_name');
 
-        if (!empty($companyIdsInOrderLines)) {
+        if ($companyIdsInOrderLines === null) {
+            $query->where('active', 1)
+                  ->whereIn('statu_customer', [2, 3]);
+        } else {
             $query->whereIn('id', $companyIdsInOrderLines);
         }
 
