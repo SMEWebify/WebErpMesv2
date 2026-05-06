@@ -30,3 +30,18 @@ Schedule::command('rgpd:purge')->weekly();
 
 // Nettoyage mensuel de l'activity_log (durée configurée dans config/activitylog.php)
 Schedule::command('activitylog:clean')->monthly();
+
+/*
+|--------------------------------------------------------------------------
+| Sauvegardes automatiques
+|--------------------------------------------------------------------------
+*/
+
+// Backup quotidien à 02h00 (DB + storage/app)
+Schedule::command('backup:run')->dailyAt('02:00');
+
+// Nettoyage des anciennes sauvegardes (rétention définie dans config/backup.php)
+Schedule::command('backup:clean')->dailyAt('01:00');
+
+// Vérification de santé des sauvegardes (alerte mail si backup > 2 jours)
+Schedule::command('backup:monitor')->dailyAt('09:00');

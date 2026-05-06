@@ -53,6 +53,21 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
+        'backup' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+        ],
+
+        'ovh' => [
+            'driver' => 's3',
+            'key' => env('OVH_S3_KEY'),
+            'secret' => env('OVH_S3_SECRET'),
+            'region' => env('OVH_S3_REGION', 'gra'),
+            'bucket' => env('OVH_S3_BUCKET'),
+            'endpoint' => env('OVH_S3_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+        ],
+
     ],
 
     /*
