@@ -25,6 +25,7 @@ use App\Http\Requests\Products\UpdateProductsRequest;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Products\ProductPriceHistory;
 use App\Services\ProductMergeService;
 
 class ProductsController extends Controller
@@ -535,6 +536,33 @@ class ProductsController extends Controller
         return response()->json(
             app(ProductMergeService::class)->preview($master, $duplicate)
         );
+    }
+
+    /**
+     * JSON endpoint — price history (purchase + sale) for a product.
+     */
+    public function priceHistoryJson(int $id)
+    {
+        Products::findOrFail($id);
+
+        $rows = ProductPriceHistory::where('products_id', $id)
+            ->with('user:id,name')
+            ->orderBy('type')
+            ->orderByDesc('started_at')
+            ->get()
+            ->map(fn ($r) => [
+                'id'         => $r->id,
+                'type'       => $r->type,
+                'price'      => (float) $r->price,
+                'started_at' => $r->started_at?->format('Y-m-d'),
+                'ended_at'   => $r->ended_at?->format('Y-m-d'),
+                'user'       => $r->user?->name,
+            ]);
+
+        return response()->json([
+            'purchase' => $rows->where('type', 'purchase')->values(),
+            'sale'     => $rows->where('type', 'sale')->values(),
+        ]);
     }
 
     /**

@@ -648,6 +648,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
         Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
+        Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
 
         // Merge duplicates (permission réservée)
         Route::group(['middleware' => ['permission:products-merge']], function () {

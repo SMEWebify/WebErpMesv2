@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Admin\Factory;
 use App\Models\User;
+use App\Models\Products\Products;
 use App\Models\Workflow\Orders;
 use App\Observers\OrdersObserver;
+use App\Observers\ProductsObserver;
 use App\Services\SelectDataService;
 use Illuminate\Console\Command;
 use Illuminate\Pagination\Paginator;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         Orders::observe(OrdersObserver::class);
+        Products::observe(ProductsObserver::class);
 
         if (config('branding.commercial')) {
             Config::set('mail.from.name', config('branding.app_name'));

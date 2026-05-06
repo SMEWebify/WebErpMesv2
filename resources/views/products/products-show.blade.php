@@ -151,6 +151,11 @@
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control" value="{{ $Product->purchased_price }}"  name="purchased_price" id="purchased_price" placeholder="{{ __('general_content.purchased_price_trans_key') }}" step=".001">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#priceHistoryModal" data-focus-type="purchase" title="Historique des prix d'achat">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group col-md-4">
@@ -159,6 +164,11 @@
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control"  value="{{ $Product->selling_price }}" name="selling_price" id="selling_price" placeholder="{{ __('general_content.price_trans_key') }}" step=".001">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#priceHistoryModal" data-focus-type="sale" title="Historique des prix de vente">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1002,7 +1012,32 @@
       </div>
       </div>
     </x-adminlte-card>
-  </div>    
+  </div>
+</div>
+
+{{-- Modal historique des prix --}}
+@php $canPurchasesPriceHist = auth()->user()?->can('purchases-menu') ? 'true' : 'false'; @endphp
+<div class="modal fade" id="priceHistoryModal" tabindex="-1" role="dialog" aria-labelledby="priceHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priceHistoryModalLabel">
+                    <i class="fas fa-chart-line mr-2"></i>Historique des prix — {{ $Product->label }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div
+                    id="product-price-history-app"
+                    data-endpoint="{{ route('products.json.price-history', ['id' => $Product->id]) }}"
+                    data-currency="{{ $Factory->curency }}"
+                    data-can-purchases="{{ $canPurchasesPriceHist }}"
+                ></div>
+            </div>
+        </div>
+    </div>
 </div>
 @stop
 
@@ -1126,7 +1161,19 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('#priceHistoryModal').on('show.bs.modal', function(e) {
+        var focusType = $(e.relatedTarget).data('focus-type');
+        if (focusType) {
+            $(this).one('shown.bs.modal', function() {
+                var target = $(this).find('[data-section="' + focusType + '"]');
+                if (target.length) {
+                    $(this).find('.modal-body').scrollTop(target.offset().top - $(this).find('.modal-body').offset().top);
+                }
+            });
+        }
+    });
   });
 </script>
 @stop

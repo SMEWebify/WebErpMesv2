@@ -478,6 +478,21 @@ async function mountOrderPurchaseHistory() {
     );
 }
 
+async function mountProductPriceHistory() {
+    const element = document.getElementById('product-price-history-app');
+    if (!element) return;
+
+    const { default: ProductPriceHistory } = await import('./components/ProductPriceHistory.jsx');
+
+    createRoot(element).render(
+        React.createElement(ProductPriceHistory, {
+            endpoint:    element.dataset.endpoint ?? '',
+            currency:    element.dataset.currency ?? '€',
+            canPurchases: element.dataset.canPurchases === 'true',
+        })
+    );
+}
+
 async function mountCompaniesIndex() {
     const element = document.getElementById('companies-index-app');
     if (!element) return;
@@ -1296,6 +1311,7 @@ mountEstimatedBudgetsIndex();
 mountChatWidget();
 mountProductHistory();
 mountOrderPurchaseHistory();
+mountProductPriceHistory();
 mountStockDetailPage();
 
 async function mountKanbanSetting() {
