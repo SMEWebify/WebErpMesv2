@@ -333,7 +333,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function ProductsTable({ products, sortField, sortAsc, onSort, trans }) {
+function ProductsTable({ products, loading, sortField, sortAsc, onSort, trans }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -468,10 +468,12 @@ function ProductsTable({ products, sortField, sortAsc, onSort, trans }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        )}
-                        {filtered.map(p => (
+                        ) : null}
+                        {!loading && filtered.map(p => (
                             <tr key={p.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -502,20 +504,41 @@ function ProductsTable({ products, sortField, sortAsc, onSort, trans }) {
 
 function Pagination({ meta, onPageChange }) {
     if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
+
+    const current = meta.current_page;
+    const last = meta.last_page;
+    const delta = 2;
+
+    const range = [];
+    for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
+        range.push(i);
+    }
+
+    const items = [1];
+    if (range[0] > 2) items.push('…left');
+    items.push(...range);
+    if (range[range.length - 1] < last - 1) items.push('…right');
+    if (last > 1) items.push(last);
+
     return (
         <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page - 1)}>«</button>
+            <ul className="pagination pagination-sm justify-content-end flex-wrap">
+                <li className={`page-item ${current === 1 ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => onPageChange(current - 1)}>«</button>
                 </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page + 1)}>»</button>
+                {items.map((p, i) =>
+                    typeof p === 'string' ? (
+                        <li key={p} className="page-item disabled">
+                            <span className="page-link">…</span>
+                        </li>
+                    ) : (
+                        <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
+                        </li>
+                    )
+                )}
+                <li className={`page-item ${current === last ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => onPageChange(current + 1)}>»</button>
                 </li>
             </ul>
         </nav>
@@ -869,8 +892,6 @@ function ListTab({ endpoints, trans }) {
                     <i className="fas fa-shopping-cart mr-1" />{trans.purchased}
                 </button>
 
-                {loading && <i className="fas fa-spinner fa-spin text-muted" />}
-
                 <div className="ml-auto">
                     <button className="btn btn-success" onClick={() => setShowModal(true)}>
                         <i className="fas fa-plus mr-1" />{trans.new_product}
@@ -880,6 +901,7 @@ function ListTab({ endpoints, trans }) {
 
             <ProductsTable
                 products={products}
+                loading={loading}
                 sortField={sortField}
                 sortAsc={sortAsc}
                 onSort={handleSort}

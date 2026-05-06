@@ -385,7 +385,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function OpportunitiesTable({ items, trans, onSort, sortField, sortAsc, currency, locale }) {
+function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -569,10 +569,12 @@ function OpportunitiesTable({ items, trans, onSort, sortField, sortAsc, currency
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_data ?? '—'}</td></tr>
-                        )}
-                        {filtered.map(o => (
+                        ) : null}
+                        {!loading && filtered.map(o => (
                             <tr key={o.id}>
                                 {visibleCols.map(colId => {
                                     const alignCls = COLS[colId]?.align === 'right' ? 'text-right' : COLS[colId]?.align === 'center' ? 'text-center' : '';
@@ -596,7 +598,10 @@ function OpportunitiesTable({ items, trans, onSort, sortField, sortAsc, currency
 // OpportunityCards
 // ---------------------------------------------------------------------------
 
-function OpportunityCards({ items, trans, currency, locale }) {
+function OpportunityCards({ items, loading, trans, currency, locale }) {
+    if (loading) {
+        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
+    }
     if (items.length === 0) {
         return <div className="text-center text-muted py-4">{trans.no_data ?? '—'}</div>;
     }
@@ -1041,11 +1046,10 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </button>
             </div>
 
-            {loading && <div className="text-center py-3"><i className="fas fa-spinner fa-spin fa-lg" /></div>}
-
-            {!loading && viewType === 'table' && (
+            {viewType === 'table' && (
                 <OpportunitiesTable
                     items={items}
+                    loading={loading}
                     trans={trans}
                     onSort={handleSort}
                     sortField={sortField}
@@ -1054,8 +1058,8 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                     locale={locale}
                 />
             )}
-            {!loading && viewType === 'card' && (
-                <OpportunityCards items={items} trans={trans} currency={currency} locale={locale} />
+            {viewType === 'card' && (
+                <OpportunityCards items={items} loading={loading} trans={trans} currency={currency} locale={locale} />
             )}
             {viewType === 'kanban' && (
                 <KanbanBoard endpoints={endpoints} trans={trans} currency={currency} locale={locale} />

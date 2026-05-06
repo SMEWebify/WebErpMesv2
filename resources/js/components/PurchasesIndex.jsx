@@ -670,7 +670,7 @@ function matchesColFilter(p, colId, value) {
     }
 }
 
-function PurchasesTable({ purchases, trans, onSort, sortField, sortAsc, currency, locale }) {
+function PurchasesTable({ purchases, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -816,10 +816,12 @@ function PurchasesTable({ purchases, trans, onSort, sortField, sortAsc, currency
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results ?? 'Aucun résultat'}</td></tr>
-                        )}
-                        {filtered.map(p => (
+                        ) : null}
+                        {!loading && filtered.map(p => (
                             <tr key={p.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -1309,19 +1311,16 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </button>
             </div>
 
-            {loading && <div className="text-center py-3"><i className="fas fa-spinner fa-spin fa-lg"></i></div>}
-
-            {!loading && (
-                <PurchasesTable
-                    purchases={purchases}
-                    trans={trans}
-                    onSort={handleSort}
-                    sortField={sortField}
-                    sortAsc={sortAsc}
-                    currency={currency}
-                    locale={locale}
-                />
-            )}
+            <PurchasesTable
+                purchases={purchases}
+                loading={loading}
+                trans={trans}
+                onSort={handleSort}
+                sortField={sortField}
+                sortAsc={sortAsc}
+                currency={currency}
+                locale={locale}
+            />
 
             {meta && (
                 <div className="d-flex justify-content-between align-items-center mt-2">

@@ -392,7 +392,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
+function LeadsTable({ items, loading, trans, onSort, sortField, sortAsc, locale }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -579,10 +579,12 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_data ?? '—'}</td></tr>
-                        )}
-                        {filtered.map(l => (
+                        ) : null}
+                        {!loading && filtered.map(l => (
                             <tr key={l.id}>
                                 {visibleCols.map(colId => {
                                     const alignCls = COLS[colId]?.align === 'right' ? 'text-right' : COLS[colId]?.align === 'center' ? 'text-center' : '';
@@ -606,7 +608,10 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
 // LeadCards
 // ---------------------------------------------------------------------------
 
-function LeadCards({ items, trans }) {
+function LeadCards({ items, loading, trans }) {
+    if (loading) {
+        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
+    }
     if (items.length === 0) {
         return <div className="text-center text-muted py-4">{trans.no_data ?? '—'}</div>;
     }
@@ -1058,11 +1063,10 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                 </button>
             </div>
 
-            {loading && <div className="text-center py-3"><i className="fas fa-spinner fa-spin fa-lg" /></div>}
-
-            {!loading && viewType === 'table' && (
+            {viewType === 'table' && (
                 <LeadsTable
                     items={items}
+                    loading={loading}
                     trans={trans}
                     onSort={handleSort}
                     sortField={sortField}
@@ -1070,8 +1074,8 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     locale={locale}
                 />
             )}
-            {!loading && viewType === 'card' && (
-                <LeadCards items={items} trans={trans} />
+            {viewType === 'card' && (
+                <LeadCards items={items} loading={loading} trans={trans} />
             )}
             {viewType === 'kanban' && (
                 <KanbanBoard endpoints={endpoints} trans={trans} />

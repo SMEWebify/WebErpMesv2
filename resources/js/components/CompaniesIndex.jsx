@@ -372,7 +372,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function CompaniesTable({ companies, sortField, sortAsc, onSort, trans }) {
+function CompaniesTable({ companies, loading, sortField, sortAsc, onSort, trans }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -524,10 +524,12 @@ function CompaniesTable({ companies, sortField, sortAsc, onSort, trans }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        )}
-                        {filtered.map(c => (
+                        ) : null}
+                        {!loading && filtered.map(c => (
                             <tr key={c.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -825,21 +827,14 @@ function ListTab({ endpoints, trans }) {
                 </button>
             </div>
 
-            {loading && (
-                <div className="text-center py-2">
-                    <i className="fas fa-spinner fa-spin text-secondary" />
-                </div>
-            )}
-
-            {!loading && (
-                <CompaniesTable
-                    companies={companies}
-                    sortField={sortField}
-                    sortAsc={sortAsc}
-                    onSort={handleSort}
-                    trans={trans}
-                />
-            )}
+            <CompaniesTable
+                companies={companies}
+                loading={loading}
+                sortField={sortField}
+                sortAsc={sortAsc}
+                onSort={handleSort}
+                trans={trans}
+            />
 
             <Pagination meta={meta} onPageChange={p => { setPage(p); fetchCompanies({ page: p }); }} />
 

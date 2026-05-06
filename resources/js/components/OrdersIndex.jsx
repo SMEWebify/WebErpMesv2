@@ -532,7 +532,7 @@ function matchesColFilter(o, colId, value) {
     }
 }
 
-function OrdersTable({ orders, trans, onSort, sortField, sortAsc, currency, locale }) {
+function OrdersTable({ orders, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -685,10 +685,12 @@ function OrdersTable({ orders, trans, onSort, sortField, sortAsc, currency, loca
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results ?? 'No results'}</td></tr>
-                        )}
-                        {filtered.map(o => (
+                        ) : null}
+                        {!loading && filtered.map(o => (
                             <tr key={o.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -736,7 +738,10 @@ function OrdersTable({ orders, trans, onSort, sortField, sortAsc, currency, loca
 // OrderCards (card view)
 // ---------------------------------------------------------------------------
 
-function OrderCards({ orders, trans, currency, locale }) {
+function OrderCards({ orders, loading, trans, currency, locale }) {
+    if (loading) {
+        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
+    }
     if (orders.length === 0) {
         return <div className="text-center text-muted py-4">{trans.no_results ?? 'No results'}</div>;
     }
@@ -1383,11 +1388,10 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </button>
             </div>
 
-            {loading && <div className="text-center py-3"><i className="fas fa-spinner fa-spin fa-lg"></i></div>}
-
-            {!loading && viewType === 'table' && (
+            {viewType === 'table' && (
                 <OrdersTable
                     orders={orders}
+                    loading={loading}
                     trans={trans}
                     onSort={handleSort}
                     sortField={sortField}
@@ -1396,8 +1400,8 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                     locale={locale}
                 />
             )}
-            {!loading && viewType === 'card' && (
-                <OrderCards orders={orders} trans={trans} currency={currency} locale={locale} />
+            {viewType === 'card' && (
+                <OrderCards orders={orders} loading={loading} trans={trans} currency={currency} locale={locale} />
             )}
             {!loading && viewType === 'kanban' && (
                 <KanbanBoard statuses={kanbanCols} trans={trans} currency={currency} locale={locale} />

@@ -472,7 +472,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function QuotesTable({ quotes, sortField, sortAsc, onSort, trans }) {
+function QuotesTable({ quotes, loading, sortField, sortAsc, onSort, trans }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -632,10 +632,12 @@ function QuotesTable({ quotes, sortField, sortAsc, onSort, trans }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        )}
-                        {filtered.map(q => (
+                        ) : null}
+                        {!loading && filtered.map(q => (
                             <tr key={q.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -684,13 +686,15 @@ function QuotesTable({ quotes, sortField, sortAsc, onSort, trans }) {
 // Quote Cards
 // ---------------------------------------------------------------------------
 
-function QuoteCards({ quotes, trans }) {
+function QuoteCards({ quotes, loading, trans }) {
     return (
         <div className="row">
-            {quotes.length === 0 && (
+            {loading ? (
+                <div className="col-12 text-center py-4"><i className="fas fa-spinner fa-spin" /></div>
+            ) : quotes.length === 0 ? (
                 <div className="col-12 text-center text-muted py-3">{trans.no_results}</div>
-            )}
-            {quotes.map(q => (
+            ) : null}
+            {!loading && quotes.map(q => (
                 <div key={q.id} className="col-md-4 col-lg-3 mb-3">
                     <div className="card h-100">
                         <div className="card-header py-1 px-2 d-flex justify-content-between align-items-center">
@@ -1409,19 +1413,12 @@ function ListTab({ endpoints, trans, companieId }) {
                 </button>
             </div>
 
-            {/* Loading indicator */}
-            {loading && (
-                <div className="text-center py-2">
-                    <i className="fas fa-spinner fa-spin text-secondary" />
-                </div>
-            )}
-
             {/* Quote views */}
-            {!loading && viewType === 'table' && (
-                <QuotesTable quotes={quotes} sortField={sortField} sortAsc={sortAsc} onSort={handleSort} trans={trans} />
+            {viewType === 'table' && (
+                <QuotesTable quotes={quotes} loading={loading} sortField={sortField} sortAsc={sortAsc} onSort={handleSort} trans={trans} />
             )}
-            {!loading && viewType === 'card' && (
-                <QuoteCards quotes={quotes} trans={trans} />
+            {viewType === 'card' && (
+                <QuoteCards quotes={quotes} loading={loading} trans={trans} />
             )}
             {!loading && viewType === 'kanban' && (
                 <KanbanBoard quotes={quotes} trans={trans} />

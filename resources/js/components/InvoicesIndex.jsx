@@ -547,7 +547,7 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function InvoicesTable({ invoices, sortField, sortAsc, onSort, trans, qontoEnabled }) {
+function InvoicesTable({ invoices, loading, sortField, sortAsc, onSort, trans, qontoEnabled }) {
     const [colOrder,   setColOrder]   = useState(() => readSavedColOrder(qontoEnabled));
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
@@ -682,10 +682,12 @@ function InvoicesTable({ invoices, sortField, sortAsc, onSort, trans, qontoEnabl
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 && (
+                        {loading ? (
+                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
+                        ) : filtered.length === 0 ? (
                             <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        )}
-                        {filtered.map(inv => (
+                        ) : null}
+                        {!loading && filtered.map(inv => (
                             <tr key={inv.id}>
                                 {visibleCols.map(colId => {
                                     const col      = COLS[colId];
@@ -869,11 +871,11 @@ function ListTab({ endpoints, trans, companieId = null }) {
                     />
                 </div>
                 <StatusFilter selected={statuses} onChange={handleStatusChange} trans={trans} />
-                {loading && <i className="fas fa-spinner fa-spin text-muted" />}
             </div>
 
             <InvoicesTable
                 invoices={invoices}
+                loading={loading}
                 sortField={sortField}
                 sortAsc={sortAsc}
                 onSort={handleSort}
