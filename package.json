@@ -8,7 +8,7 @@
     "devDependencies": {
         "@vitejs/plugin-react": "^4.4.1",
         "@vitejs/plugin-vue": "^6.0.5",
-        "alpinejs": "^2.7.3",
+        "alpinejs": "^3.15.12",
         "autoprefixer": "^10.4.17",
         "axios": "^1.15.2",
         "bootstrap": "^5.3.3",
