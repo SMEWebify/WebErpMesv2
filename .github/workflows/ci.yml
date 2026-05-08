@@ -58,6 +58,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --no-interaction --prefer-dist
 
+      - name: Security audit (Composer)
+        run: composer audit --abort-on-high
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Security audit (npm)
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Prepare Laravel env
         run: |
           cp .env.example .env
