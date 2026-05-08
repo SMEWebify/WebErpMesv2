@@ -106,4 +106,4 @@ jobs:
 
       - name: Run PHPUnit
         timeout-minutes: 15
-        run: vendor/bin/phpunit --colors=always
+        run: vendor/bin/phpunit --colors=always --testdox
