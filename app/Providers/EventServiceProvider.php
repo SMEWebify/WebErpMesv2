@@ -9,9 +9,11 @@ use App\Events\TaskChangeStatu;
 use App\Events\OrderLineUpdated;
 use App\Events\QuoteStatusChanged;
 use App\Events\DeliveryLineUpdated;
+use App\Listeners\NotifyAdminOnLockout;
 use App\Listeners\SendWelcomeEmail;
 use App\Events\PurchaseReceiptCreated;
 use App\Listeners\UpdateCompanyStatus;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\UpdateDeliveryStatus;
 use App\Listeners\UpdatePurchaseStatus;
@@ -34,6 +36,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
             SendWelcomeEmail::class,
+        ],
+        Lockout::class => [
+            NotifyAdminOnLockout::class,
         ],
         OrderLineUpdated::class => [
             CheckOrderDeliveredStatus::class,
