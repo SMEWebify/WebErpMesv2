@@ -12,6 +12,11 @@ class Factory extends Model
 
     protected $table = 'factory';
 
+    protected $casts = [
+        'iban' => 'encrypted',
+        'bic' => 'encrypted',
+    ];
+
     // Fillable attributes for mass assignment
     protected $fillable= ['name',
                             'address',

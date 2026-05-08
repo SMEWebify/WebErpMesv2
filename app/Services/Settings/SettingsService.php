@@ -5,10 +5,18 @@ namespace App\Services\Settings;
 use App\Models\Setting;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 class SettingsService
 {
     private const CACHE_PREFIX = 'settings.';
+
+    /**
+     * Clés dont la valeur est chiffrée en base (tokens d'intégration, secrets).
+     */
+    private const SECRET_KEYS = [
+        'n2p_api_token',
+    ];
 
     public function get(string $key, mixed $default = null): mixed
     {
@@ -19,7 +27,16 @@ class SettingsService
                 return $default;
             }
 
-            return $this->decodeValue($setting->value, $default);
+            $raw = $setting->value;
+            if ($this->isSecret($key) && is_string($raw) && $raw !== '') {
+                try {
+                    $raw = Crypt::decryptString($raw);
+                } catch (\Throwable $e) {
+                    // Valeur en clair (pré-migration) — on retourne tel quel.
+                }
+            }
+
+            return $this->decodeValue($raw, $default);
         });
     }
 
@@ -35,8 +52,19 @@ class SettingsService
 
     public function set(string $key, mixed $value): void
     {
-        Setting::query()->updateOrCreate(['key' => $key], ['value' => $this->encodeValue($value)]);
+        $encoded = $this->encodeValue($value);
+
+        if ($this->isSecret($key) && $encoded !== '') {
+            $encoded = Crypt::encryptString($encoded);
+        }
+
+        Setting::query()->updateOrCreate(['key' => $key], ['value' => $encoded]);
         Cache::forget($this->cacheKey($key));
+    }
+
+    private function isSecret(string $key): bool
+    {
+        return in_array($key, self::SECRET_KEYS, true);
     }
 
     public function setMany(array $values): void
