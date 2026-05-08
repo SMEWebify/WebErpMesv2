@@ -53,6 +53,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/orders/{order}', 'App\Http\Controllers\Customer\PortalController@showOrder')->name('orders.show');
             Route::get('/deliveries/{delivery}', 'App\Http\Controllers\Customer\PortalController@showDelivery')->name('deliveries.show');
             Route::get('/invoices/{invoice}', 'App\Http\Controllers\Customer\PortalController@showInvoice')->name('invoices.show');
+
+            Route::prefix('rgpd')->name('rgpd.')->group(function () {
+                Route::get('/',         [\App\Http\Controllers\Customer\CustomerRgpdController::class, 'index'])->name('index');
+                Route::get('/export',   [\App\Http\Controllers\Customer\CustomerRgpdController::class, 'export'])->name('export');
+                Route::post('/erase',   [\App\Http\Controllers\Customer\CustomerRgpdController::class, 'eraseRequest'])->name('erase');
+            });
         });
     });
 
@@ -1127,6 +1133,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/rgpd-policy', function () {return view('rgpd-policy');})->middleware(['auth'])->name('rgpd.policy');
 
     Route::get('/iframe-mode', function () {return view('iframe-mode');})->middleware(['auth'])->name('iframe.mode');
+
+    // Self-service RGPD utilisateur interne (Art. 15 / 17 / 20)
+    Route::middleware(['auth'])->prefix('me/rgpd')->name('me.rgpd.')->group(function () {
+        Route::get('/',       [\App\Http\Controllers\RgpdSelfServiceController::class, 'index'])->name('index');
+        Route::get('/export', [\App\Http\Controllers\RgpdSelfServiceController::class, 'export'])->name('export');
+        Route::post('/erase', [\App\Http\Controllers\RgpdSelfServiceController::class, 'eraseRequest'])->name('erase');
+    });
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
