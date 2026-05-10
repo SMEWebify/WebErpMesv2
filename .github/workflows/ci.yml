@@ -59,7 +59,7 @@ jobs:
         run: composer install --no-progress --no-interaction --prefer-dist
 
       - name: Security audit (Composer)
-        run: composer audit --abort-on-high
+        run: composer audit --ignore-severity=low --ignore-severity=medium
 
       - name: Setup Node
         uses: actions/setup-node@v6
