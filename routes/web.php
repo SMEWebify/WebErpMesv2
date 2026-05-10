@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboardController;
+use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
+use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\DocumentController;
@@ -131,6 +134,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
     });
+
+    Route::prefix('api/collaboration/whiteboards')
+        ->name('api.collaboration.whiteboards.')
+        ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
+        ->group(function () {
+            Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');
+            Route::post('/', [ApiWhiteboardController::class, 'store'])->name('store');
+            Route::get('/{whiteboard}', [ApiWhiteboardController::class, 'show'])->name('show');
+            Route::put('/{whiteboard}', [ApiWhiteboardController::class, 'update'])->name('update');
+
+            Route::get('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'index'])->name('snapshots.index');
+            Route::post('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'store'])->name('snapshots.store');
+
+            Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
+            Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
+        });
 
 
     Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('reports');

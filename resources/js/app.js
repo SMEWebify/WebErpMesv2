@@ -47,10 +47,7 @@ async function mountWhiteboard() {
     const element = document.getElementById('whiteboard-app');
     if (!element) return;
 
-    const [{ createApp, h }, { default: Whiteboard }] = await Promise.all([
-        import('vue'),
-        import('./components/Whiteboard.vue'),
-    ]);
+    const { default: Whiteboard } = await import('./components/Whiteboard.jsx');
 
     const props = {};
 
@@ -77,18 +74,7 @@ async function mountWhiteboard() {
         props.endpoints = parseJsonAttribute(element.dataset.endpoints) || {};
     }
 
-    if (element.children.length === 0) {
-        createApp(Whiteboard, props).mount(element);
-        return;
-    }
-
-    const whiteboardApp = createApp({
-        render() {
-            return h('whiteboard', props);
-        },
-    });
-    whiteboardApp.component('whiteboard', Whiteboard);
-    whiteboardApp.mount(element);
+    createRoot(element).render(React.createElement(Whiteboard, props));
 }
 
 async function mountNestingPage() {
