@@ -19,6 +19,9 @@ class QontoConnection extends Model
     ];
 
     protected $casts = [
+        'access_token' => 'encrypted',
+        'refresh_token' => 'encrypted',
+        'iban' => 'encrypted',
         'access_token_expires_at' => 'datetime',
         'import_bidirectionnel' => 'boolean',
         'last_sync_at' => 'datetime',

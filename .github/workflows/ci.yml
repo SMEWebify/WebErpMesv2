@@ -46,17 +46,31 @@ jobs:
       BROADCAST_DRIVER: log
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           extensions: zip, ldap, soap, pdo_mysql, sqlite3, bcmath, gd, intl, pcntl
           coverage: none
 
       - name: Install dependencies
         run: composer install --no-progress --no-interaction --prefer-dist
+
+      - name: Security audit (Composer)
+        run: composer audit --abort-on-high
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Security audit (npm)
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Prepare Laravel env
         run: |
@@ -92,4 +106,4 @@ jobs:
 
       - name: Run PHPUnit
         timeout-minutes: 15
-        run: vendor/bin/phpunit --colors=always
+        run: vendor/bin/phpunit --colors=always --testdox
