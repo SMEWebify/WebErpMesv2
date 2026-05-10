@@ -43,7 +43,7 @@
         "@univerjs/sheets-ui": "^0.21.1",
         "@univerjs/ui": "^0.21.1",
         "admin-lte": "^4.0.0-rc7",
-        "cross-env": "^7.0.3",
+        "cross-env": "^10.1.0",
         "flag-icon-css": "^4.1.7",
         "frappe-gantt": "^1.2.2",
         "react": "^19.2.6",
