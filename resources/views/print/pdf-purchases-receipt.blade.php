@@ -64,7 +64,7 @@
                     </td>
                     <td align="left" style="width: 50%;">
                         @if($Document->type == 1 || empty($Document->type))
-                            <h3>{{ $Document->companie['label'] }} </h3>
+                            <h3>{{ optional($Document->companie)['label'] }} </h3>
                             <pre>
 <br />
 {{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}

@@ -135,10 +135,10 @@
                         <x-adminlte-input name="label" label="Libellé" value="{{ $defaultLabel }}" required />
                         <x-adminlte-input name="customer_reference" label="Référence client" />
 
-                        <x-adminlte-select name="companies_id" label="Client">
+                        <x-adminlte-select name="companies_id" label="Client *" id="companies_id">
                             <option value="">-- Sélectionner --</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->label }}</option>
+                                <option value="{{ $company->id }}" @selected(old('companies_id') == $company->id)>{{ $company->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 

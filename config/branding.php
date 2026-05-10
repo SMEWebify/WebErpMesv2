@@ -26,4 +26,10 @@ return [
         : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
 
     'logo_alt' => $commercial ? 'Nest2Prod ERP' : 'WEM',
+
+    // Publisher / editor name shown in legal pages
+    'publisher_name' => $commercial ? 'Nest2Prod' : 'SMEWebify',
+
+    // Contact email shown in the RGPD policy page
+    'contact_email' => $commercial ? 'contact@nest2prod.com' : 'contact@wem-project.org',
 ];

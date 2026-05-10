@@ -22,11 +22,11 @@
     <p>
         L'ERP <strong>WebErpMesv2</strong> est un logiciel déployé en instance isolée pour chaque entreprise cliente.
         Le <strong>responsable du traitement</strong> des données est l'entreprise qui exploite cette instance,
-        et non l'éditeur du logiciel (SMEWebify).
+        et non l'éditeur du logiciel ({{ config('branding.publisher_name') }}).
     </p>
     <p>
         Pour toute question relative à vos données personnelles, contactez l'administrateur de votre instance
-        ou adressez un email à <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.
+        ou adressez un email à <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
     </p>
 
 </x-adminlte-card>
@@ -196,7 +196,7 @@
         <p>
             <i class="fas fa-envelope mr-1"></i>
             Pour exercer vos droits, contactez l'administrateur de l'instance ou écrivez à
-            <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.
+            <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
             Délai de réponse : <strong>30 jours maximum</strong> (Art. 12 RGPD).
         </p>
     </div>
@@ -277,7 +277,7 @@
 <x-adminlte-card title="[FR] Politique de confidentialité complète" body-class="bg-white"
     theme="warning" theme-mode="full" collapsible="collapsed" removable>
 
-    <p>Les informations recueillies dans les formulaires sont enregistrées dans un fichier informatisé par <a href="//wem-project.org/">SMEWebify</a>, éditeur du logiciel WebErpMesv2. Le responsable du traitement est l'entreprise qui exploite l'instance.</p>
+    <p>Les informations recueillies dans les formulaires sont enregistrées dans un fichier informatisé par <strong>{{ config('branding.publisher_name') }}</strong>, éditeur du logiciel WebErpMesv2. Le responsable du traitement est l'entreprise qui exploite l'instance.</p>
 
     <p>Les données collectées le sont sur la base légale suivante selon leur nature :</p>
     <ul>
@@ -290,7 +290,7 @@
 
     <p>Elles sont conservées selon les durées définies dans la section « Durées de conservation » de cette page.</p>
 
-    <p>Conformément au RGPD (Règlement UE 2016/679), vous disposez des droits d'accès, de rectification, d'effacement, de portabilité et d'opposition. Pour exercer ces droits, contactez <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.</p>
+    <p>Conformément au RGPD (Règlement UE 2016/679), vous disposez des droits d'accès, de rectification, d'effacement, de portabilité et d'opposition. Pour exercer ces droits, contactez <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.</p>
 
     <p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a> (Commission Nationale de l'Informatique et des Libertés).</p>
 
@@ -309,11 +309,11 @@
     <p>
         <strong>WebErpMesv2</strong> is software deployed as an isolated instance for each client company.
         The <strong>data controller</strong> is the company operating this instance, not the software
-        publisher (SMEWebify).
+        publisher ({{ config('branding.publisher_name') }}).
     </p>
     <p>
         For any questions about your personal data, contact your instance administrator or email
-        <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.
+        <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
     </p>
 
 </x-adminlte-card>
@@ -414,7 +414,7 @@
         <p>
             <i class="fas fa-envelope mr-1"></i>
             To exercise your rights, contact your instance administrator or write to
-            <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.
+            <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
             Response time: <strong>maximum 30 days</strong> (Art. 12 GDPR).
         </p>
     </div>
@@ -443,7 +443,7 @@
 <x-adminlte-card title="[EN] Privacy Policy" theme="warning" body-class="bg-white"
     theme-mode="full" collapsible="collapsed" removable>
 
-    <p>Information collected through forms is recorded in a computerised file by <a href="//wem-project.org/">SMEWebify</a>, publisher of the WebErpMesv2 software. The data controller is the company operating the instance.</p>
+    <p>Information collected through forms is recorded in a computerised file by <strong>{{ config('branding.publisher_name') }}</strong>, publisher of the WebErpMesv2 software. The data controller is the company operating the instance.</p>
 
     <p>Data is processed on the following legal bases depending on its nature:</p>
     <ul>
@@ -456,7 +456,7 @@
 
     <p>Data is retained according to the periods defined in the Retention Periods section of this page.</p>
 
-    <p>In accordance with the GDPR (EU Regulation 2016/679), you have the right to access, rectify, erase, port and object to your data. To exercise these rights, contact <a href="mailto:contact@wem-project.org">contact@wem-project.org</a>.</p>
+    <p>In accordance with the GDPR (EU Regulation 2016/679), you have the right to access, rectify, erase, port and object to your data. To exercise these rights, contact <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.</p>
 
     <p>If you believe, after contacting us, that your rights have not been respected, you may lodge a complaint with your national supervisory authority (e.g. <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a> in France).</p>
 
