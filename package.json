@@ -42,7 +42,7 @@
         "@univerjs/sheets-numfmt-ui": "^0.21.1",
         "@univerjs/sheets-ui": "^0.21.1",
         "@univerjs/ui": "^0.21.1",
-        "admin-lte": "^4.0.0-beta2",
+        "admin-lte": "^4.0.0-rc7",
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
         "frappe-gantt": "^1.2.2",
