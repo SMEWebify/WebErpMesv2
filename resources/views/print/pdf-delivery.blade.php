@@ -70,14 +70,14 @@
                     </td>
                     <td align="left" style="width: 50%;">
                         @if($Document->type == 1 || empty($Document->type))
-                            <h3>{{ $Document->companie['label'] }} </h3>
+                            <h3>{{ optional($Document->companie)['label'] }} </h3>
                             <pre>
-{{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
-{{ $Document->adresse['adress'] }}
-{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }} {{ $Document->adresse['province'] ?? '' }}
-{{ $Document->adresse['country'] }}
-{{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
-{{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
+{{ optional($Document->contact)['civility'] }} {{ optional($Document->contact)['first_name'] }} {{ optional($Document->contact)['name'] }}
+{{ optional($Document->adresse)['adress'] }}
+{{ optional($Document->adresse)['zipcode'] }} {{ optional($Document->adresse)['city'] }} {{ optional($Document->adresse)['province'] ?? '' }}
+{{ optional($Document->adresse)['country'] }}
+{{ __('general_content.phone_trans_key') }} : {{ optional($Document->contact)['number'] }}
+{{ __('general_content.email_trans_key') }} : {{ optional($Document->contact)['mail'] }}
 <br />
 {{ __('general_content.identifier_trans_key') }}: {{ $Document->Lines->first()?->OrderLine?->order?->customer_reference ?? '' }}
 {{ __('general_content.order_trans_key') }}: {{ $Document->Lines->first()?->OrderLine?->order?->label ?? '' }}

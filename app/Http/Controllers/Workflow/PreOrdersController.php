@@ -307,7 +307,7 @@ class PreOrdersController extends Controller
             'code' => 'nullable|string|max:255',
             'label' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
-            'companies_id' => 'nullable|exists:companies,id',
+            'companies_id' => 'required_if:type,1|nullable|exists:companies,id',
             'customer_reference' => 'nullable|string|max:255',
             'validity_date' => 'nullable|date',
             'accounting_payment_conditions_id' => 'nullable|exists:accounting_payment_conditions,id',
