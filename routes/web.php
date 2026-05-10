@@ -373,6 +373,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{preOrder}/matching', 'App\Http\Controllers\Workflow\PreOrdersController@matchArticles')->name('pre-orders.matching');
         Route::post('/{preOrder}/lines/{line}/accept-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptMatching')->name('pre-orders.accept-matching');
         Route::post('/{preOrder}/accept-all-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptAllMatching')->name('pre-orders.accept-all-matching');
+        Route::get('/{preOrder}/export-zero-price', 'App\Http\Controllers\Workflow\PreOrdersController@exportZeroPriceCsv')->name('pre-orders.export-zero-price');
         Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
         Route::delete('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@destroy')->name('pre-orders.destroy');
     });
