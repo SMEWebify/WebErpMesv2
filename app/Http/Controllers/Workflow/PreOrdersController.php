@@ -400,6 +400,37 @@ class PreOrdersController extends Controller
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Pré-commande convertie en commande.');
     }
 
+    public function exportZeroPriceCsv(PreOrder $preOrder): StreamedResponse
+    {
+        $preOrder->load('lines.linkedProduct', 'lines.suggestedProduct');
+
+        $lines = $preOrder->lines->filter(
+            fn ($line) => (float) ($line->unit_price ?? 0) == 0
+        );
+
+        $filename = 'articles_0eur_precommande_' . $preOrder->id . '.csv';
+
+        return response()->streamDownload(function () use ($lines) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['nom', 'qté', 'nuance', 'épaisseur'], ';');
+
+            foreach ($lines as $line) {
+                $product = $line->linkedProduct ?? $line->suggestedProduct;
+                fputcsv($handle, [
+                    $line->product ?: $line->reference,
+                    $line->quantity,
+                    $product?->material ?? '',
+                    $product?->thickness ?? '',
+                ], ';');
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
     public function destroy(PreOrder $preOrder)
     {
         if ($preOrder->status !== PreOrder::STATUS_PENDING) {

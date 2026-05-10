@@ -41,12 +41,16 @@
                         </button>
                     </form>
 
-                    <form method="POST" action="{{ route('pre-orders.accept-all-matching', $preOrder) }}">
+                    <form method="POST" action="{{ route('pre-orders.accept-all-matching', $preOrder) }}" class="mr-2">
                         @csrf
                         <button type="submit" class="btn btn-success btn-sm" @disabled(! $hasPendingMatching)>
                             <i class="fas fa-check-double mr-1"></i> Valider toutes les lignes
                         </button>
                     </form>
+
+                    <a href="{{ route('pre-orders.export-zero-price', $preOrder) }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-file-csv mr-1"></i> Exporter articles à 0 €
+                    </a>
                 </div>
 
                 <div class="table-responsive p-0">
