@@ -13,7 +13,7 @@
                                                                                                                                 "laravel/framework": "12.1.1",
                                                                                                                                 "laravel/pulse": "^1.7",
                                                                                                                                 "laravel/sanctum": "^4.3",
-                                                                                                                                "laravel/tinker": "^2.5",
+                                                                                                                                "laravel/tinker": "^3.0",
                                                                                                                                 "laravel/ui": "^v4.5.2",
                                                                                                                                 "laravolt/avatar": "^6.2",
                                                                                                                                 "maatwebsite/excel": "^3.1",
