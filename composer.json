@@ -23,7 +23,7 @@
                                                                                                                                 "phpoffice/phpspreadsheet": "^1.29.1",
                                                                                                                                 "predis/predis": "^2.2",
                                                                                                                                 "protonemedia/laravel-cross-eloquent-search": "^3.2.0",
-                                                                                                                                "psr/simple-cache": "2.0",
+                                                                                                                                "psr/simple-cache": "3.0.0",
                                                                                                                                 "pusher/pusher-php-server": "^7.2",
                                                                                                                                 "setasign/fpdf": "^1.8",
                                                                                                                                 "setasign/fpdi": "^2.3",
