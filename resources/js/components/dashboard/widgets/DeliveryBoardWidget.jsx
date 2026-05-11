@@ -139,7 +139,7 @@ function DeliveryCard({ item, variant, urlOrders, urlCalendar }) {
     return (
         <div style={cardStyle}>
             <a
-                href={urlOrders ? `${urlOrders}/${item.orders_id}` : '#'}
+                href={urlOrders ? `${urlOrders}${item.orders_id}` : '#'}
                 style={S.cardLink}
                 title={code}
             >

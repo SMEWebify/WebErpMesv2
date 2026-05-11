@@ -102,7 +102,7 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
             {/* Code */}
             <td style={{ whiteSpace: 'nowrap' }}>
                 {urlShow ? (
-                    <a href={`${urlShow}/${item.id}`} className="font-weight-bold" style={{ fontSize: '0.85rem' }}>
+                    <a href={`${urlShow}${item.id}`} className="font-weight-bold" style={{ fontSize: '0.85rem' }}>
                         {item.code}
                     </a>
                 ) : (
@@ -118,7 +118,7 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
                     </span>
                 ) : item.companie_label ? (
                     urlCompany ? (
-                        <a href={`${urlCompany}/${item.companies_id}`} style={{ fontSize: '0.82rem' }} title={item.companie_label}>
+                        <a href={`${urlCompany}${item.companies_id}`} style={{ fontSize: '0.82rem' }} title={item.companie_label}>
                             {item.companie_label}
                         </a>
                     ) : (
