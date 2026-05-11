@@ -399,6 +399,7 @@
           'storeDelivery'   => route('orders.lines.json.store-delivery',   ['orderId' => $Order->id]),
           'storeInvoice'    => route('orders.lines.json.store-invoice',    ['orderId' => $Order->id]),
           'createProducts'  => route('orders.lines.json.create-products',  ['orderId' => $Order->id]),
+          'linkProducts'    => route('orders.lines.json.link-products',    ['orderId' => $Order->id]),
         ];
         if (env('RADAN_SYM_IMPORT', false)) {
           $orderLineEndpoints['importSym'] = route('orders.lines.json.import-sym', ['orderId' => $Order->id]);

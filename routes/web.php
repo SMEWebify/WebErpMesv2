@@ -371,6 +371,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
         Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
         Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->name('orders.lines.json.create-products');
+        Route::post('/{orderId}/lines/json/link-products',              'App\Http\Controllers\Workflow\OrderLinesController@linkProductsToLinesJson')->name('orders.lines.json.link-products');
         Route::post('/{orderId}/lines/json/import-sym',                 'App\Http\Controllers\Workflow\OrderLinesController@importSymJson')->name('orders.lines.json.import-sym');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');

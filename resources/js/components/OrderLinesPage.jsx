@@ -1236,6 +1236,55 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         }
     };
 
+    const handleLinkProducts = async () => {
+        const ids = [...selected].filter((id) => {
+            const line = lines.find((l) => l.id === id);
+            return line && !line.product_id && line.code && line.code.trim() !== '';
+        });
+        if (ids.length === 0) {
+            showFlash('warning', 'Aucune ligne sélectionnée n\'a de code externe sans produit lié.');
+            return;
+        }
+        if (!confirm(`Rechercher un produit existant pour ${ids.length} ligne(s) (par code externe) ?`)) return;
+        const updatePrice = confirm('Forcer la mise à jour du prix unitaire des lignes avec le prix de vente du produit ?\n\n(OK = oui, Annuler = conserver le prix actuel des lignes)');
+        try {
+            const res  = await apiFetch(endpoints.linkProducts, {
+                method: 'POST',
+                body: JSON.stringify({ line_ids: ids, update_price: updatePrice }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                const linked   = data.linked    ?? [];
+                const notFound = data.not_found ?? [];
+                setLines((prev) => prev.map((l) => {
+                    const match = linked.find((c) => c.line_id === l.id);
+                    if (!match) return l;
+                    const updated = {
+                        ...l,
+                        product_id:   match.product_id,
+                        product_code: match.product_code,
+                        product_url:  match.product_url,
+                    };
+                    if (match.price_updated) {
+                        updated.selling_price   = match.selling_price;
+                        updated.formatted_price = match.formatted_price;
+                    }
+                    return updated;
+                }));
+                let msg = `${linked.length} ligne(s) liée(s)`;
+                if (updatePrice && linked.length > 0) msg += ' (prix mis à jour)';
+                if (notFound.length > 0) {
+                    msg += ` — ${notFound.length} sans correspondance : ${notFound.map((s) => s.code).join(', ')}`;
+                }
+                showFlash(linked.length > 0 ? 'success' : 'warning', msg);
+            } else {
+                showFlash('danger', data.error ?? 'Erreur lors de la liaison des produits');
+            }
+        } catch {
+            showFlash('danger', 'Erreur réseau');
+        }
+    };
+
     const handleCreateProducts = async () => {
         const ids = [...selected];
         if (ids.length === 0) return;
@@ -1359,6 +1408,20 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 <i className="fas fa-barcode mr-1" />
                                 Créer produits ({selected.size})
                             </button>
+                            {(() => {
+                                const linkableCount = [...selected].filter((id) => {
+                                    const line = lines.find((l) => l.id === id);
+                                    return line && !line.product_id && line.code && line.code.trim() !== '';
+                                }).length;
+                                if (linkableCount === 0) return null;
+                                return (
+                                    <button className="btn btn-info btn-sm" onClick={handleLinkProducts}
+                                        title="Pour chaque ligne avec un code externe mais sans produit lié, chercher un produit existant par code">
+                                        <i className="fas fa-link mr-1" />
+                                        Lier articles existants ({linkableCount})
+                                    </button>
+                                );
+                            })()}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
                                 <i className="fas fa-folder mr-1" />
                                 Nouveau BL ({selected.size})

@@ -925,6 +925,60 @@ class OrderLinesController extends Controller
         return response()->json(['created' => $created, 'skipped' => $skipped]);
     }
 
+    public function linkProductsToLinesJson(int $orderId, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $request->validate([
+            'line_ids'     => 'required|array|min:1',
+            'line_ids.*'   => 'integer',
+            'update_price' => 'boolean',
+        ]);
+
+        $updatePrice = (bool) $request->input('update_price', false);
+
+        $lines = OrderLines::where('orders_id', $orderId)
+            ->whereIn('id', $request->input('line_ids'))
+            ->whereNull('product_id')
+            ->whereNotNull('code')
+            ->where('code', '!=', '')
+            ->get();
+
+        $codes = $lines->pluck('code')->unique()->all();
+        $products = Products::whereIn('code', $codes)->get()->keyBy('code');
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        $locale   = config('app.locale', 'fr');
+
+        $linked    = [];
+        $notFound  = [];
+        foreach ($lines as $line) {
+            $product = $products->get($line->code);
+            if (! $product) {
+                $notFound[] = ['line_id' => $line->id, 'code' => $line->code];
+                continue;
+            }
+            $line->product_id = $product->id;
+            if ($updatePrice) {
+                $line->selling_price = $product->selling_price;
+            }
+            $line->save();
+
+            $linked[] = [
+                'line_id'         => $line->id,
+                'product_id'      => $product->id,
+                'product_code'    => $product->code,
+                'product_url'     => route('products.show', ['id' => $product->id]),
+                'selling_price'   => (float) $line->getRawOriginal('selling_price'),
+                'formatted_price' => Number::currency((float) $line->selling_price, $currency, $locale),
+                'price_updated'   => $updatePrice,
+            ];
+        }
+
+        return response()->json(['linked' => $linked, 'not_found' => $notFound]);
+    }
+
     // -------------------------------------------------------------------------
     // RADAN .sym import
     // -------------------------------------------------------------------------
