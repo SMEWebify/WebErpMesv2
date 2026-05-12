@@ -349,16 +349,26 @@ return [
             'icon'    => 'fas fa-calculator',
             'icon_color' => 'teal',
             'can'  => ['quotes-menu'],
-            'submenu' => [
+            'submenu' => array_merge(
                 [
-                    'text' => 'quotes_list_trans_key',
-                    'url'  => 'quotes',
+                    [
+                        'text' => 'quotes_list_trans_key',
+                        'url'  => 'quotes',
+                    ],
+                    [
+                        'text' => 'quotes_lines_list_trans_key',
+                        'url'  => 'quotes/lines',
+                    ],
                 ],
-                [
-                    'text' => 'quotes_lines_list_trans_key',
-                    'url'  => 'quotes/lines',
-                ],
-            ]
+                env('NEST4QUOTE_ENABLED', false) ? [
+                    [
+                        'text'   => 'Nest4Quote',
+                        'url'    => 'https://nest4quote.com/',
+                        'target' => '_blank',
+                        'icon'   => 'fas fa-external-link-alt',
+                    ],
+                ] : []
+            )
         ],
         [
             'text'    => 'orders_trans_key',
