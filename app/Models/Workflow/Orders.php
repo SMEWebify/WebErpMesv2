@@ -15,6 +15,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\OrderRating;
+use App\Models\Workflow\PreOrder;
 use App\Models\Workflow\OrderSite;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\OrderCalculatorService;
@@ -136,6 +137,11 @@ class Orders extends Model
     public function Quote()
     {
         return $this->belongsTo(Quotes::class, 'quotes_id');
+    }
+
+    public function preOrder()
+    {
+        return $this->hasOne(PreOrder::class, 'converted_order_id');
     }
 
     public function OrderLines()

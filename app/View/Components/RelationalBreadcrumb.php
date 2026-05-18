@@ -7,6 +7,7 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\PreOrder;
 
 class RelationalBreadcrumb extends Component
 {
@@ -92,6 +93,16 @@ class RelationalBreadcrumb extends Component
         ];
     }
 
+    private function preOrderNode($preOrder): array
+    {
+        return [
+            'label' => 'Pré-cmd #' . $preOrder->id,
+            'url'   => route('pre-orders.show', $preOrder),
+            'color' => 'info',
+            'icon'  => 'fas fa-robot',
+        ];
+    }
+
     private function creditNoteNode($creditNote): array
     {
         return [
@@ -163,6 +174,11 @@ class RelationalBreadcrumb extends Component
             'icon'  => 'fas fa-shopping-cart',
         ];
 
+        $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
+        if ($preOrder) {
+            $this->ancestors[] = $this->preOrderNode($preOrder);
+        }
+
         if ($order->quotes_id && $order->Quote) {
             $quote = $order->Quote;
             if ($quote->opportunities_id && $quote->opportunities) {
@@ -202,6 +218,10 @@ class RelationalBreadcrumb extends Component
         // order_id non renseigné → on remonte via DeliveryLines → OrderLine → Order
         $order = $delivery->DeliveryLines->first()?->OrderLine?->order;
         if ($order) {
+            $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
+            if ($preOrder) {
+                $this->ancestors[] = $this->preOrderNode($preOrder);
+            }
             if ($order->quotes_id && $order->Quote) {
                 $quote = $order->Quote;
                 if ($quote->opportunities_id && $quote->opportunities) {
@@ -228,6 +248,10 @@ class RelationalBreadcrumb extends Component
         // order_id non renseigné → on remonte via InvoiceLines → orderLine → order
         $order = $invoice->invoiceLines->first()?->orderLine?->order;
         if ($order) {
+            $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
+            if ($preOrder) {
+                $this->ancestors[] = $this->preOrderNode($preOrder);
+            }
             if ($order->quotes_id && $order->Quote) {
                 $quote = $order->Quote;
                 if ($quote->opportunities_id && $quote->opportunities) {
@@ -255,6 +279,10 @@ class RelationalBreadcrumb extends Component
             $invoice = $creditNote->invoice;
             $order = $invoice->invoiceLines->first()?->orderLine?->order;
             if ($order) {
+                $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
+                if ($preOrder) {
+                    $this->ancestors[] = $this->preOrderNode($preOrder);
+                }
                 if ($order->quotes_id && $order->Quote) {
                     $quote = $order->Quote;
                     if ($quote->opportunities_id && $quote->opportunities) {
