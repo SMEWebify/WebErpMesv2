@@ -49,6 +49,7 @@ class KpiController extends Controller
             ->map(fn ($o) => [
                 'id'                   => $o->id,
                 'code'                 => $o->code,
+                'label'                => $o->label,
                 'statu'                => $o->statu,
                 'type'                 => $o->type,
                 'companies_id'         => $o->companies_id,
@@ -201,6 +202,7 @@ class KpiController extends Controller
                 ->map(fn ($i) => [
                     'id'                    => $i->id,
                     'code'                  => $i->code,
+                    'label'                 => $i->label,
                     'statu'                 => $i->statu,
                     'companies_id'          => $i->companies_id,
                     'companie_label'        => $i->companie?->label,
@@ -225,6 +227,7 @@ class KpiController extends Controller
                 ->map(fn ($d) => [
                     'id'                    => $d->id,
                     'code'                  => $d->code,
+                    'label'                 => $d->label,
                     'statu'                 => $d->statu,
                     'companies_id'          => $d->companies_id,
                     'companie_label'        => $d->companie?->label,

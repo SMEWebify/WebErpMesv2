@@ -90,12 +90,15 @@ function getStatusConfig(mode) {
     }
 }
 
+const MODES_WITH_LABEL = ['orders', 'invoices', 'deliveries'];
+
 function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
     const statusConfig = getStatusConfig(mode);
     const dateValue    = (mode === 'quotes' || mode === 'invoices' || mode === 'purchases')
         ? item.created_at_human
         : formatDate(item.validity_date);
     const isInternal   = mode === 'orders' && item.type !== 1;
+    const showLabel    = MODES_WITH_LABEL.includes(mode);
 
     return (
         <tr>
@@ -128,6 +131,13 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
                     <span className="text-muted">—</span>
                 )}
             </td>
+
+            {/* Label */}
+            {showLabel && (
+                <td style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#495057' }} title={item.label || ''}>
+                    {item.label || <span className="text-muted">—</span>}
+                </td>
+            )}
 
             {/* Statut */}
             <td>

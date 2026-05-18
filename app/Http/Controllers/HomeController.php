@@ -230,6 +230,7 @@ class HomeController extends Controller
             'recentOrders' => $LastOrders->map(fn ($o) => [
                 'id'                    => $o->id,
                 'code'                  => $o->code,
+                'label'                 => $o->label,
                 'statu'                 => $o->statu,
                 'type'                  => $o->type,
                 'companies_id'          => $o->companies_id,
