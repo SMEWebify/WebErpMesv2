@@ -446,6 +446,21 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 
+    Route::group(['prefix' => 'proformas', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/',                    'App\Http\Controllers\Workflow\ProformaController@index')->name('proformas');
+        Route::get('/json/list',           'App\Http\Controllers\Workflow\ProformaController@listJson')->name('proformas.json.list');
+        Route::get('/request',             'App\Http\Controllers\Workflow\ProformaController@request')->name('proformas.request');
+        Route::get('/request/lines',            'App\Http\Controllers\Workflow\ProformaController@requestLines')->name('proformas.request.lines');
+        Route::get('/request/quotes',           'App\Http\Controllers\Workflow\ProformaController@requestQuotes')->name('proformas.request.quotes');
+        Route::post('/request/store',           'App\Http\Controllers\Workflow\ProformaController@storeFromOrder')->name('proformas.request.store');
+        Route::post('/request/store-from-quote','App\Http\Controllers\Workflow\ProformaController@storeFromQuote')->name('proformas.request.store.quote');
+        Route::post('/edit/{id}',               'App\Http\Controllers\Workflow\ProformaController@update')->name('proformas.update');
+        Route::post('/{id}/json/statu',         'App\Http\Controllers\Workflow\ProformaController@changeStatusJson')->name('proformas.json.statu');
+        Route::post('/{id}/convert',            'App\Http\Controllers\Workflow\ProformaController@convertToInvoice')->name('proformas.convert');
+        Route::post('/{id}/activate-order',     'App\Http\Controllers\Workflow\ProformaController@activateOrder')->name('proformas.activate.order');
+        Route::get('/{id}',                     'App\Http\Controllers\Workflow\ProformaController@show')->name('proformas.show');
+    });
+
     Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
         Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice');
@@ -538,7 +553,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
         Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
         Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@getDeliveryPdf')->name('pdf.delivery');
-        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');;
+        Route::get('/invoice/{Document}',  'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');
+        Route::get('/proforma/{Document}', 'App\Http\Controllers\PrintController@getProformaPdf')->name('pdf.proforma');
         Route::get('/credit-note/{Document}', 'App\Http\Controllers\PrintController@getCreditNotePdf')->name('pdf.credit.note');
         Route::get('/facture-x/{Document}', 'App\Http\Controllers\PrintController@getInvoiceFactureX')->name('pdf.facturex');
         Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@getPurchaseQuotationPdf')->name('pdf.purchase.quotation');

@@ -474,6 +474,11 @@ return [
                     'icon_color' => 'warning',
                 ],
                 [
+                    'text' => 'proformas_trans_key',
+                    'url'  => 'proformas',
+                    'icon_color' => 'info',
+                ],
+                [
                     'text' => 'credit_notes_trans_key',
                     'url'  => 'credit-notes',
                     'icon_color' => 'primary',

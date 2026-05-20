@@ -97,6 +97,13 @@ class PrintController extends Controller
      * @param Invoices $Document
      * @return \Illuminate\Contracts\View\View
      */
+    public function getProformaPdf(Invoices $Document)
+    {
+        abort_unless($Document->invoice_type === 3, 404);
+        $calculatorService = new InvoiceCalculatorService($Document);
+        return $this->generatePdf($Document, 'FACTURE PROFORMA', $calculatorService, 'print/pdf-invoice');
+    }
+
     public function getInvoiceFactureX(Invoices $Document)
     {
         $factory = app('Factory'); 

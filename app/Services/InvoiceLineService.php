@@ -52,13 +52,11 @@ class InvoiceLineService
             'statu'                    => 1,
         ]);
 
-        if($allocationId != null){
-            // Créer une entrée comptable pour cette ligne de facture
+        if ($allocationId != null && $invoiceCreated->invoice_type === 1) {
             $this->accountingEntryService->createSaleEntry($invoiceLines);
         }
         
-        // Mettre à jour les tâches liées si facture direct
-        if($deliveryId == null){
+        if ($deliveryId == null && $invoiceCreated->invoice_type === 1) {
             $this->taskService->closeTasks($key);
         }
 

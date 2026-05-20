@@ -43,6 +43,7 @@
   $reactTrans = [
     'dashboard'                      => __('general_content.dashboard_trans_key'),
     'orders_list'                    => __('general_content.orders_list_trans_key'),
+    'awaiting_payment'               => __('general_content.awaiting_payment_trans_key'),
     'open'                           => __('general_content.open_trans_key'),
     'in_progress'                    => __('general_content.in_progress_trans_key'),
     'delivered'                      => __('general_content.delivered_trans_key'),

@@ -31,6 +31,7 @@ return [
     'deliverys_notes_request_trans_key'        => 'Lignes en attente(s)',
     'deliverys_notes_list_trans_key'           => 'Bons de livraison',
     'invoices_trans_key'                       => 'Factures',
+    'proformas_trans_key'                        => 'Proformas',
     'credit_notes_trans_key'                   => 'Avoirs',
     'invoices_request_trans_key'               => 'Lignes en attente(s)',
     'invoices_list_trans_key'                  => 'Factures',

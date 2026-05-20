@@ -5,6 +5,7 @@ return [
     /* GRENERAL TRANS KEY */
 
     //STATUTS
+    'awaiting_payment_trans_key'               => 'En attente de paiement',
     'open_trans_key'                           => 'Ouvert',
     'send_trans_key'                           => 'Envoyé',
     'win_trans_key'                            => 'Gagné',

@@ -30,6 +30,7 @@ return [
     'deliverys_notes_request_trans_key'        => 'Request lines',
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',
     'invoices_trans_key'                       => 'Invoices',
+    'proformas_trans_key'                        => 'Proformas',
     'credit_notes_trans_key'                   => 'Credit notes',
     'invoices_request_trans_key'               => 'Request lines',
     'invoices_list_trans_key'                  => 'Invoices  list',

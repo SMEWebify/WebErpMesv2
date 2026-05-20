@@ -30,6 +30,7 @@ return [
     'deliverys_notes_request_trans_key'        => '待处理行',
     'deliverys_notes_list_trans_key'           => '送货单列表',
     'invoices_trans_key'                       => '发票',
+    'proformas_trans_key'                        => '形式发票',
     'credit_notes_trans_key'                   => '贷项单',
     'invoices_request_trans_key'               => '待处理行',
     'invoices_list_trans_key'                  => '发票列表',

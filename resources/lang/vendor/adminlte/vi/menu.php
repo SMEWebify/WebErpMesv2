@@ -28,6 +28,7 @@ return [
     'deliverys_notes_request_trans_key'        => 'Yêu cầu ghi chú giao hàng',
     'deliverys_notes_list_trans_key'           => 'Danh sách ghi chú giao hàng',
     'invoices_trans_key'                       => 'Hóa đơn',
+    'proformas_trans_key'                        => 'Hóa đơn chiếu lệ',
     'invoices_request_trans_key'               => 'Yêu cầu hóa đơn',
     'invoices_list_trans_key'                  => 'Danh sách hóa đơn',
     'export_invoices_lines_list_trans_key'     => 'Xuất đường hóa đơn',

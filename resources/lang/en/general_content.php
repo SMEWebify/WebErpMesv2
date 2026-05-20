@@ -5,6 +5,7 @@ return [
     /* GENERAL TRANS KEY */
 
     //STATUS
+    'awaiting_payment_trans_key'               => 'Awaiting payment',
     'open_trans_key'                           => 'Open',
     'send_trans_key'                           => 'Send',
     'win_trans_key'                            => 'Win',

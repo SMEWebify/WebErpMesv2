@@ -196,6 +196,7 @@ class KpiController extends Controller
 
         return response()->json(
             Invoices::with('companie:id,label')
+                ->where('invoice_type', 1)
                 ->orderByDesc('id')
                 ->take($limit)
                 ->get()

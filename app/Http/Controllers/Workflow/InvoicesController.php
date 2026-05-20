@@ -143,6 +143,7 @@ class InvoicesController extends Controller
         $query = Invoices::withCount('invoiceLines')
             ->selectRaw("invoices.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
+            ->where('invoice_type', 1)
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
             ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));

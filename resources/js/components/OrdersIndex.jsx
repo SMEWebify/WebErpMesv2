@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'; // useR
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
+    0: { badge: 'badge-secondary', label: 'awaiting_payment' },
     1: { badge: 'badge-info',      label: 'open' },
     2: { badge: 'badge-warning',   label: 'in_progress' },
     3: { badge: 'badge-success',   label: 'delivered' },

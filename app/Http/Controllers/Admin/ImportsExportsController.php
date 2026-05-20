@@ -105,7 +105,10 @@ class ImportsExportsController extends Controller
             'orderLine.order',
             'orderLine.Unit',
             'orderLine.VAT',
-        ])->where('exported', false)->get();
+        ])
+        ->whereHas('invoice', fn ($q) => $q->where('invoice_type', 1))
+        ->where('exported', false)
+        ->get();
 
         return response()->json($lines->map(fn($l) => [
             'id'              => $l->id,

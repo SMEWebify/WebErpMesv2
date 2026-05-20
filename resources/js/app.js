@@ -373,6 +373,38 @@ async function mountDeliverysIndex() {
     );
 }
 
+async function mountProformasIndex() {
+    const element = document.getElementById('proformas-index-app');
+    if (!element) return;
+
+    const { default: ProformasIndex } = await import('./components/ProformasIndex.jsx');
+    const parse = (attr) => { try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; } };
+
+    createRoot(element).render(
+        React.createElement(ProformasIndex, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+async function mountProformasRequest() {
+    const element = document.getElementById('proformas-request-app');
+    if (!element) return;
+
+    const { default: ProformasRequest } = await import('./components/ProformasRequest.jsx');
+    const parse = (attr) => { try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; } };
+
+    createRoot(element).render(
+        React.createElement(ProformasRequest, {
+            initialCode:  element.dataset.code   ?? '',
+            userId:       element.dataset.userId ? parseInt(element.dataset.userId, 10) : null,
+            users:        parse('users')         ?? [],
+            companies:    parse('companies')     ?? [],
+            endpoints:    parse('endpoints')     ?? {},
+        })
+    );
+}
+
 async function mountCreditNotesIndex() {
     const element = document.getElementById('credit-notes-index-app');
     if (!element) return;
@@ -1299,6 +1331,8 @@ mountProductHistory();
 mountOrderPurchaseHistory();
 mountProductPriceHistory();
 mountStockDetailPage();
+mountProformasIndex();
+mountProformasRequest();
 
 async function mountKanbanSetting() {
     const el = document.getElementById('kanban-setting-app');
