@@ -93,6 +93,24 @@
              data-endpoint="{{ route('orders.json.statu', $Order->id) }}"
              data-redirect="{{ route('orders.show', $Order->id) }}"></div>
         <x-relational-breadcrumb :entity="$Order" />
+
+        @if($Order->statu === 0)
+          @php $linkedProforma = $Order->invoices()->where('invoice_type', 3)->first(); @endphp
+          <div class="alert alert-warning alert-dismissible mb-3">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h5><i class="fas fa-hourglass-half mr-2"></i>Commande en attente de paiement</h5>
+            Cette commande est en statut <strong>brouillon</strong> — elle ne sera activée qu'après confirmation du paiement client.
+            Elle n'apparaît pas dans la production ni dans les KPI.
+            @if($linkedProforma)
+              <div class="mt-2">
+                <a href="{{ route('proformas.show', $linkedProforma->id) }}" class="btn btn-sm btn-light">
+                  <i class="fas fa-file-invoice mr-1"></i> Voir la proforma {{ $linkedProforma->code }}
+                </a>
+              </div>
+            @endif
+          </div>
+        @endif
+
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
