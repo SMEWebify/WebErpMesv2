@@ -22,5 +22,22 @@ export default defineConfig({
                 silenceDeprecations: ['import', 'global-builtin', 'color-functions']
             }
         }
-    }
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
+                        return 'vendor-react';
+                    }
+                    if (id.includes('node_modules/chart.js') || id.includes('node_modules/react-chartjs-2')) {
+                        return 'vendor-charts';
+                    }
+                    if (id.includes('node_modules/@dnd-kit') || id.includes('node_modules/react-beautiful-dnd')) {
+                        return 'vendor-dnd';
+                    }
+                },
+            },
+        },
+    },
 });

@@ -13,19 +13,22 @@ class QuoteKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getQuotesDataRate($year, $companyId = null)
+    public function getQuotesDataRate(int $year, ?int $companyId = null)
     {
-        $query = DB::table('quotes')
-                    ->select('statu', DB::raw('count(*) as QuoteCountRate'))
-                    ->whereYear('created_at', $year)
-                    ->groupBy('statu');
+        $cacheKey = 'quote_data_rate_' . $year . '_company_' . ($companyId ?? 'all');
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $companyId) {
+            $query = DB::table('quotes')
+                        ->select('statu', DB::raw('count(*) as QuoteCountRate'))
+                        ->whereYear('created_at', $year)
+                        ->whereNull('deleted_at')
+                        ->groupBy('statu');
 
-            // If a company ID is provided, add the filter
             if ($companyId) {
                 $query->where('companies_id', $companyId);
             }
 
             return $query->get();
+        });
     }
 
 
@@ -36,7 +39,7 @@ class QuoteKPIService
      * @param int|null $companyId
      * @return \Illuminate\Support\Collection
      */
-    public function getQuoteMonthlyRecap($year, $companyId = null)
+    public function getQuoteMonthlyRecap(int $year, ?int $companyId = null)
     {
         $cacheKey = 'quote_monthly_recap_' . $year . '_company_' . ($companyId ?? 'all');
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $companyId) {
@@ -65,7 +68,7 @@ class QuoteKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getQuoteMonthlyRecapPreviousYear($year)
+    public function getQuoteMonthlyRecapPreviousYear(int $year)
     {
         $lastyear = $year-1;
         $cacheKey = 'quote_monthly_recap_lastyear_' . $lastyear;
@@ -89,13 +92,17 @@ class QuoteKPIService
     */
     public function getTopCustomersByQuoteVolume($limit = 5)
     {
-        return Quotes::select('companies_id', DB::raw('COUNT(*) as quote_count'))
-                        ->whereYear('created_at', now()->year)
-                        ->groupBy('companies_id')
-                        ->orderBy('quote_count', 'desc')
-                        ->take($limit)
-                        ->with('companie') // Assuming a relationship with companie model
-                        ->get();
+        $cacheKey = 'quote_top_customers_' . now()->year . '_limit_' . $limit;
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($limit) {
+            return Quotes::select('companies_id', DB::raw('COUNT(*) as quote_count'))
+                            ->whereYear('created_at', now()->year)
+                            ->whereNull('deleted_at')
+                            ->groupBy('companies_id')
+                            ->orderBy('quote_count', 'desc')
+                            ->take($limit)
+                            ->with('companie:id,label,code')
+                            ->get();
+        });
     }
 
     /**
@@ -105,12 +112,15 @@ class QuoteKPIService
      */
     public function getQuotesCountByUser()
     {
-        return Quotes::select('user_id', 'statu', \DB::raw('count(*) as total'))
-                ->with('UserManagement:id,name') // Load the UserManagement relationship with the id and name fields
-                ->whereIn('statu', [1, 2, 3, 4, 5, 6]) // Statuses ranging from 1 to 6
-                ->groupBy('user_id', 'statu')
-                ->get()
-                ->groupBy('user_id');
+        return Cache::remember('quote_count_by_user', now()->addHours(1), function () {
+            return Quotes::select('user_id', 'statu', DB::raw('count(*) as total'))
+                    ->with('UserManagement:id,name')
+                    ->whereIn('statu', [1, 2, 3, 4, 5, 6])
+                    ->whereNull('deleted_at')
+                    ->groupBy('user_id', 'statu')
+                    ->get()
+                    ->groupBy('user_id');
+        });
     }
 
     /**
@@ -123,16 +133,20 @@ class QuoteKPIService
      */
     public function getAverageQuoteAmount()
     {
-        $totalQuotes = Quotes::count();
-        if ($totalQuotes == 0) {
-            return 0; // Avoid division by zero
-        }
+        return Cache::remember('quote_average_amount', now()->addHours(1), function () {
+            $result = DB::table('quotes')
+                ->leftJoin('quote_lines', 'quote_lines.quotes_id', '=', 'quotes.id')
+                ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'quote_lines.accounting_vats_id')
+                ->whereNull('quotes.deleted_at')
+                ->selectRaw('quotes.id, COALESCE(SUM(
+                    quote_lines.selling_price * quote_lines.qty * (1 - quote_lines.discount / 100) *
+                    (1 + COALESCE(accounting_vats.rate, 0) / 100)
+                ), 0) as quote_total')
+                ->groupBy('quotes.id')
+                ->pluck('quote_total');
 
-        $totalAmount = Quotes::all()->sum(function ($quote) {
-            return $quote->total_price;
+            return $result->isEmpty() ? 0 : $result->avg();
         });
-
-        return $totalAmount / $totalQuotes;
     }
 
     /**
@@ -144,13 +158,14 @@ class QuoteKPIService
      */
     public function getQuoteConversionRate()
     {
-        $totalQuotes = Quotes::count();
-        if ($totalQuotes == 0) {
-            return 0;
-        }
-
-        $convertedQuotes = Quotes::whereHas('Orders')->count(); // Devis qui ont été convertis en commandes
-        return round(($convertedQuotes / $totalQuotes) * 100,2);
+        return Cache::remember('quote_conversion_rate', now()->addHours(1), function () {
+            $totalQuotes = Quotes::whereNull('deleted_at')->count();
+            if ($totalQuotes == 0) {
+                return 0;
+            }
+            $convertedQuotes = Quotes::whereNull('deleted_at')->whereHas('Orders')->count();
+            return round(($convertedQuotes / $totalQuotes) * 100, 2);
+        });
     }
 
     /**
@@ -195,21 +210,18 @@ class QuoteKPIService
      */
     public function getQuoteResponseRate()
     {
-        
-        $totalQuotes = Quotes::count();
+        return Cache::remember('quote_response_rate', now()->addHours(1), function () {
+            $counts = DB::table('quotes')
+                ->whereNull('deleted_at')
+                ->selectRaw('COUNT(*) as total, SUM(CASE WHEN statu IN (3, 4, 5, 6) THEN 1 ELSE 0 END) as responded')
+                ->first();
 
-        if ($totalQuotes == 0) {
-            return 0; // Avoid division by zero
-        }
+            if (!$counts || $counts->total == 0) {
+                return 0;
+            }
 
-        // Retrieve the number of quotes with a response (statuses like accepted, rejected, etc.)
-        // For example, if statuses '5' and '6' represent quotes with a response
-        $respondedQuotes = Quotes::whereIn('statu', [3, 4, 5, 6])->count();
-
-    
-        $responseRate = ($respondedQuotes / $totalQuotes) * 100;
-
-        return round($responseRate, 2); // Retourne le taux en pourcentage avec 2 décimales
+            return round(($counts->responded / $counts->total) * 100, 2);
+        });
     }
 
 }

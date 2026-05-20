@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Quotes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\OpportunitiesActivitiesLogs;
 
@@ -117,18 +118,30 @@ class OpportunitiesKPIService
      */
     public function getQuotesSummary()
     {
-        $factory = app('Factory');
-        $currency = $factory->curency ?? 'EUR';
-        $quotesWon = Quotes::where('statu', 3)->whereNotNull('opportunities_id')->get();
-        $totalQuotesWon = Number::currency($quotesWon->sum(function ($quote) {
-            return $quote->getTotalPriceAttribute();
-        }), $currency, config('app.locale'));
+        return Cache::remember('opportunities_quotes_summary_' . now()->year, now()->addHours(1), function () {
+            $factory = app('Factory');
+            $currency = $factory->curency ?? 'EUR';
 
-        $quotesLost = Quotes::where('statu', 4)->whereNotNull('opportunities_id')->get();
-        $totalQuotesLost = Number::currency($quotesLost->sum(function ($quote) {
-            return $quote->getTotalPriceAttribute();
-        }), $currency, config('app.locale')); 
+            $totals = DB::table('quotes')
+                ->leftJoin('quote_lines', 'quote_lines.quotes_id', '=', 'quotes.id')
+                ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'quote_lines.accounting_vats_id')
+                ->whereNotNull('quotes.opportunities_id')
+                ->whereNull('quotes.deleted_at')
+                ->whereIn('quotes.statu', [3, 4])
+                ->selectRaw('
+                    quotes.statu,
+                    COALESCE(SUM(
+                        quote_lines.selling_price * quote_lines.qty * (1 - quote_lines.discount / 100) *
+                        (1 + COALESCE(accounting_vats.rate, 0) / 100)
+                    ), 0) as total
+                ')
+                ->groupBy('quotes.statu')
+                ->pluck('total', 'statu');
 
-        return compact('totalQuotesWon', 'totalQuotesLost');
+            $totalQuotesWon  = Number::currency((float) ($totals[3] ?? 0), $currency, config('app.locale'));
+            $totalQuotesLost = Number::currency((float) ($totals[4] ?? 0), $currency, config('app.locale'));
+
+            return compact('totalQuotesWon', 'totalQuotesLost');
+        });
     }
 }

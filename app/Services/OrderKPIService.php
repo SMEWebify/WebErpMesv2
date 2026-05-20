@@ -25,17 +25,20 @@ class OrderKPIService
     {
         $cacheKey = 'delivered_orders_percentage_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
-            
+            $totalOrders = OrderLines::whereYear('created_at', now()->year)
+                ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
+                ->count();
+
             if ($totalOrders === 0) {
                 return 0;
             }
 
             $deliveredOrders = OrderLines::whereYear('created_at', now()->year)
-                                            ->where('delivery_status', '=', 3)
-                                            ->count();
+                ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
+                ->where('delivery_status', '=', 3)
+                ->count();
 
-            return round(($deliveredOrders / $totalOrders) * 100,2);
+            return round(($deliveredOrders / $totalOrders) * 100, 2);
         });
     }
 
@@ -51,15 +54,18 @@ class OrderKPIService
     {
         $cacheKey = 'invoiced_orders_percentage_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
-            
+            $totalOrders = OrderLines::whereYear('created_at', now()->year)
+                ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
+                ->count();
+
             if ($totalOrders === 0) {
                 return 0;
             }
 
             $invoicedOrders = OrderLines::whereYear('created_at', now()->year)
-                                    ->where('invoice_status', 3)
-                                    ->count();
+                ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
+                ->where('invoice_status', 3)
+                ->count();
 
             return round(($invoicedOrders / $totalOrders) * 100,2);
         });
@@ -78,10 +84,10 @@ class OrderKPIService
         $cacheKey = 'late_orders_count_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
             return Orders::whereYear('created_at', now()->year)
-                ->where('statu', '!=', 6)
-                ->whereHas('orderLines', function($query) {
-                    $query->where('delivery_status', 1) // delivered quantity < ordered quantity
-                        ->where('delivery_date', '<', now());     // expected delivery date has passed 
+                ->whereNotIn('statu', [0, 6])
+                ->whereHas('orderLines', function ($query) {
+                    $query->where('delivery_status', 1)
+                          ->where('delivery_date', '<', now());
                 })->count();
         });
     }
@@ -95,7 +101,9 @@ class OrderKPIService
     */
     public function getPendingDeliveries()
     {
-        return Orders::where('statu', '!=', '3')->count();
+        return Cache::remember('pending_deliveries_' . now()->year, now()->addMinutes(10), function () {
+            return Orders::whereNotIn('statu', [0, 3])->count();
+        });
     }
 
     /**
@@ -117,10 +125,10 @@ class OrderKPIService
                     MONTH(delivery_date) AS month,
                     SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
                 ')
-                ->leftJoin('orders', function ($join) {
+                ->join('orders', function ($join) {
                     $join->on('order_lines.orders_id', '=', 'orders.id')
                         ->where('orders.type', '=', 1)
-                        ->where('orders.statu', '!=', 6);
+                        ->whereNotIn('orders.statu', [0, 6]);
                 });
 
             if ($start && $end) {
@@ -157,10 +165,10 @@ class OrderKPIService
                             MONTH(delivery_date) AS month,
                             SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
                         ')
-                        ->leftJoin('orders', function ($join) {
+                        ->join('orders', function ($join) {
                             $join->on('order_lines.orders_id', '=', 'orders.id')
                                 ->where('orders.type', '=', 1)
-                                ->where('orders.statu', '!=', 6);
+                                ->whereNotIn('orders.statu', [0, 6]);
                         });
 
             if ($start && $end) {
@@ -215,21 +223,22 @@ class OrderKPIService
                         ')
                         ->join('orders', 'order_lines.orders_id', '=', 'orders.id');
 
-                        $query->where(function ($subQuery) {
-                            $subQuery->where('order_lines.invoice_status', 1)
-                                        ->orWhere('order_lines.invoice_status', 2);
-                        });
-            
+                        $query->where('orders.statu', '!=', 0)
+                              ->where(function ($subQuery) {
+                                  $subQuery->where('order_lines.invoice_status', 1)
+                                           ->orWhere('order_lines.invoice_status', 2);
+                              });
+
                         if ($companyId) {
                             $query->where('orders.companies_id', $companyId);
                         }
-            
+
                         $result = $query->first();
-            
+
                         if (!$result || $result->orderSum === null) {
                             return (object) ['orderSum' => 0];
                         }
-            
+
                         return $result;
         });
     }
@@ -250,12 +259,13 @@ class OrderKPIService
                         ')
                         ->join('orders', 'order_lines.orders_id', '=', 'orders.id');
 
-                        $query->where(function ($subQuery) {
-                            $subQuery->where('order_lines.invoice_status', 1)
-                                        ->orWhere('order_lines.invoice_status', 2);
-                        })
-                        ->whereYear('order_lines.delivery_date', $year)
-                        ->whereMonth('order_lines.delivery_date', $month);
+                        $query->where('orders.statu', '!=', 0)
+                              ->where(function ($subQuery) {
+                                  $subQuery->where('order_lines.invoice_status', 1)
+                                           ->orWhere('order_lines.invoice_status', 2);
+                              })
+                              ->whereYear('order_lines.delivery_date', $year)
+                              ->whereMonth('order_lines.delivery_date', $month);
 
                         if ($companyId) {
                             $query->where('orders.companies_id', $companyId);
@@ -287,10 +297,10 @@ class OrderKPIService
                         ->selectRaw('
                             ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderSum
                         ')
-                        ->leftJoin('orders', function($join) {
+                        ->join('orders', function ($join) {
                             $join->on('order_lines.orders_id', '=', 'orders.id')
                                 ->where('orders.type', '=', 1)
-                                ->where('orders.statu', '!=', 6);
+                                ->whereNotIn('orders.statu', [0, 6]);
                         })
                         ->whereIn('delivery_status', [1, 2])
                         ->whereBetween('order_lines.delivery_date', [
@@ -339,10 +349,13 @@ class OrderKPIService
      */
     public function getOrdersDataRate()
     {
-        return DB::table('orders')
-            ->select('statu', DB::raw('count(*) as OrderCountRate'))
-            ->groupBy('statu')
-            ->get();
+        return Cache::remember('orders_data_rate_' . now()->year, now()->addHours(1), function () {
+            return DB::table('orders')
+                ->select('statu', DB::raw('count(*) as OrderCountRate'))
+                ->whereNull('deleted_at')
+                ->groupBy('statu')
+                ->get();
+        });
     }
 
     /**
@@ -408,13 +421,17 @@ class OrderKPIService
     */
     public function getTopCustomersByOrderVolume($limit = 5)
     {
-        return Orders::select('companies_id', DB::raw('COUNT(*) as order_count'))
-                        ->whereYear('created_at', now()->year)
-                        ->groupBy('companies_id')
-                        ->orderBy('order_count', 'desc')
-                        ->take($limit)
-                        ->with('companie') // Assuming a relationship with companie model
-                        ->get();
+        $cacheKey = 'order_top_customers_' . now()->year . '_limit_' . $limit;
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($limit) {
+            return Orders::select('companies_id', DB::raw('COUNT(*) as order_count'))
+                            ->whereYear('created_at', now()->year)
+                            ->whereNull('deleted_at')
+                            ->groupBy('companies_id')
+                            ->orderBy('order_count', 'desc')
+                            ->take($limit)
+                            ->with('companie:id,label,code')
+                            ->get();
+        });
     }
 
     /**
@@ -548,28 +565,27 @@ class OrderKPIService
      */
     public function getAverageOrderPriceAttribute($companyId = null)
     {
-        // If a company ID is provided, filter orders by company
-        $ordersQuery = Orders::where('statu', '!=', 5);
+        $cacheKey = 'order_average_price_company_' . ($companyId ?? 'all');
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($companyId) {
+            $query = DB::table('orders')
+                ->leftJoin('order_lines', 'order_lines.orders_id', '=', 'orders.id')
+                ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'order_lines.accounting_vats_id')
+                ->whereNull('orders.deleted_at')
+                ->where('orders.statu', '!=', 5)
+                ->selectRaw('orders.id, COALESCE(SUM(
+                    order_lines.selling_price * order_lines.qty * (1 - order_lines.discount / 100) *
+                    (1 + COALESCE(accounting_vats.rate, 0) / 100)
+                ), 0) as order_total')
+                ->groupBy('orders.id');
 
-        if ($companyId) {
-            $ordersQuery->where('companies_id', $companyId);
-        }
+            if ($companyId) {
+                $query->where('orders.companies_id', $companyId);
+            }
 
-        $orders = $ordersQuery->get();
+            $result = $query->pluck('order_total');
 
-        // If no command is found, return 0
-        if ($orders->count() === 0) {
-            return 0;
-        }
-
-        // Use the service to calculate the total for each order
-        $totalPrice = $orders->sum(function ($order) {
-            $OrderCalculatorService = new OrderCalculatorService($order);
-            return $OrderCalculatorService->getTotalPrice();
+            return $result->isEmpty() ? 0 : $result->avg();
         });
-
-        // Calculate and return the average
-        return $totalPrice / $orders->count();
     }
 
     /**
