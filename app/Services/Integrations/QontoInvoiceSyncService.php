@@ -5,6 +5,7 @@ namespace App\Services\Integrations;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoInvoiceMapping;
 use App\Models\Workflow\Invoices;
+use App\Events\InvoiceStatusChanged;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -147,6 +148,7 @@ class QontoInvoiceSyncService
             if ($invoice && $invoice->statu !== $wemStatus) {
                 $invoice->update(['statu' => $wemStatus]);
                 $invoice->invoiceLines()->update(['invoice_status' => $wemStatus]);
+                event(new InvoiceStatusChanged($invoice, $wemStatus));
 
                 Log::info('QontoInvoice: WEM status updated', [
                     'invoice_id'       => $invoice->id,

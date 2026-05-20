@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\DeliveryKPIService;
 use App\Events\OrderLineUpdated;
+use App\Events\DeliveryStatusChanged;
 use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Support\Facades\Auth;
@@ -350,6 +351,7 @@ class DeliverysController extends Controller
         $delivery = Deliverys::findOrFail($id);
         $delivery->statu = (int) $request->input('statu');
         $delivery->save();
+        event(new DeliveryStatusChanged($delivery, $delivery->statu));
 
         return response()->json(['ok' => true]);
     }

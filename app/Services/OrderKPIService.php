@@ -353,6 +353,7 @@ class OrderKPIService
             return DB::table('orders')
                 ->select('statu', DB::raw('count(*) as OrderCountRate'))
                 ->whereNull('deleted_at')
+                ->whereNotIn('statu', [0, 6])
                 ->groupBy('statu')
                 ->get();
         });
@@ -426,6 +427,7 @@ class OrderKPIService
             return Orders::select('companies_id', DB::raw('COUNT(*) as order_count'))
                             ->whereYear('created_at', now()->year)
                             ->whereNull('deleted_at')
+                            ->whereNotIn('statu', [0, 6])
                             ->groupBy('companies_id')
                             ->orderBy('order_count', 'desc')
                             ->take($limit)
@@ -443,7 +445,7 @@ class OrderKPIService
     */
     public function getPendingOrdersCount()
     {
-        return Orders::whereYear('created_at', now()->year)->where('statu', '!=', 3)->count();
+        return Orders::whereYear('created_at', now()->year)->whereNotIn('statu', [0, 3, 6])->count();
     }
 
     /**
@@ -571,7 +573,7 @@ class OrderKPIService
                 ->leftJoin('order_lines', 'order_lines.orders_id', '=', 'orders.id')
                 ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'order_lines.accounting_vats_id')
                 ->whereNull('orders.deleted_at')
-                ->where('orders.statu', '!=', 5)
+                ->whereNotIn('orders.statu', [0, 6])
                 ->selectRaw('orders.id, COALESCE(SUM(
                     order_lines.selling_price * order_lines.qty * (1 - order_lines.discount / 100) *
                     (1 + COALESCE(accounting_vats.rate, 0) / 100)

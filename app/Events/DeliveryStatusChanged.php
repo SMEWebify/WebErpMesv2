@@ -2,22 +2,20 @@
 
 namespace App\Events;
 
-use App\Models\Workflow\Quotes;
+use App\Models\Workflow\Deliverys;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class QuoteStatusChanged
+class DeliveryStatusChanged
 {
     use Dispatchable, SerializesModels;
 
-    public $quote;
-    public $quoteId;
+    public $delivery;
     public $newStatus;
 
-    public function __construct(Quotes $quote, int $newStatus)
+    public function __construct(Deliverys $delivery, int $newStatus)
     {
-        $this->quote     = $quote;
-        $this->quoteId   = $quote->id;
+        $this->delivery  = $delivery;
         $this->newStatus = $newStatus;
     }
 }

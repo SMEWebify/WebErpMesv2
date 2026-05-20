@@ -29,6 +29,7 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
+use App\Events\OrderStatusChanged;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Activity;
 
@@ -528,6 +529,7 @@ class OrdersController extends Controller
             $order = Orders::findOrFail($id);
             $order->statu = $statu;
             $order->save();
+            event(new OrderStatusChanged($order, $statu));
 
             $tasks = Task::whereHas('OrderLines', fn($q) => $q->where('orders_id', $id))->get();
             $statusStarted    = Status::where('title', 'Started')->first();

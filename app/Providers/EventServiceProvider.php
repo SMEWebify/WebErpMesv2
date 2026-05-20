@@ -9,6 +9,9 @@ use App\Events\TaskChangeStatu;
 use App\Events\OrderLineUpdated;
 use App\Events\QuoteStatusChanged;
 use App\Events\DeliveryLineUpdated;
+use App\Events\OrderStatusChanged;
+use App\Events\InvoiceStatusChanged;
+use App\Events\DeliveryStatusChanged;
 use App\Listeners\NotifyAdminOnLockout;
 use App\Listeners\SendWelcomeEmail;
 use App\Events\PurchaseReceiptCreated;
@@ -64,6 +67,9 @@ class EventServiceProvider extends ServiceProvider
         PurchaseReceiptCreated::class => [
             UpdatePurchaseStatus::class,
         ],
+        OrderStatusChanged::class    => [],
+        InvoiceStatusChanged::class  => [],
+        DeliveryStatusChanged::class => [],
     ];
 
     /**

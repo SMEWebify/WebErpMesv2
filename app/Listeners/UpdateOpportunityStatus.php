@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Models\Workflow\Quotes;
 use App\Events\QuoteStatusChanged;
 use App\Models\Workflow\Opportunities;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,7 +22,7 @@ class UpdateOpportunityStatus implements ShouldQueue
      */
     public function handle(QuoteStatusChanged $event)
     {
-        $quote = Quotes::find($event->quoteId);
+        $quote = $event->quote;
 
         if ($quote && $quote->opportunities_id) {
             $opportunity = Opportunities::find($quote->opportunities_id);

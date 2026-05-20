@@ -15,6 +15,7 @@ use App\Services\AccountingEntryService;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use App\Events\DeliveryLineUpdated;
+use App\Events\InvoiceStatusChanged;
 use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
@@ -581,6 +582,7 @@ class InvoicesController extends Controller
 
         $invoice->statu = $statu;
         $invoice->save();
+        event(new InvoiceStatusChanged($invoice, $statu));
 
         foreach ($invoice->InvoiceLines as $line) {
             $line->invoice_status = $statu;
@@ -671,6 +673,7 @@ class InvoicesController extends Controller
             $invoice->statu = 3; // Partiellement réglée (en attente)
         }
         $invoice->save();
+        event(new InvoiceStatusChanged($invoice, $invoice->statu));
 
         return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
     }
@@ -694,6 +697,7 @@ class InvoicesController extends Controller
             $invoice->statu = 2; // Envoyée — plus de règlement
         }
         $invoice->save();
+        event(new InvoiceStatusChanged($invoice, $invoice->statu));
 
         return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
     }

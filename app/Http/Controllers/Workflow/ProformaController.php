@@ -15,6 +15,8 @@ use App\Models\Workflow\Quotes;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Companies\Companies;
 use App\Events\OrderCreated;
+use App\Events\OrderStatusChanged;
+use App\Events\InvoiceStatusChanged;
 use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
 use App\Services\OrderService;
@@ -363,6 +365,7 @@ class ProformaController extends Controller
 
         $order->statu = 1;
         $order->save();
+        event(new OrderStatusChanged($order, 1));
 
         return response()->json(['ok' => true]);
     }
@@ -424,6 +427,7 @@ class ProformaController extends Controller
 
         $proforma->statu = $statu;
         $proforma->save();
+        event(new InvoiceStatusChanged($proforma, $statu));
 
         foreach ($proforma->invoiceLines as $line) {
             $line->invoice_status = $statu;

@@ -6,8 +6,9 @@ use App\Models\Purchases\Purchases;
 use App\Events\PurchaseReceiptCreated;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdatePurchaseStatus
+class UpdatePurchaseStatus implements ShouldQueue
 {
     /**
      * Create the event listener.

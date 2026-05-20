@@ -646,7 +646,8 @@ class QuotesController extends Controller
             QuoteLines::where('quotes_id', $id)
                 ->where('statu', '<', $statu)
                 ->update(['statu' => $statu]);
-            event(new QuoteStatusChanged($id, $statu));
+            $quote = Quotes::findOrFail($id);
+            event(new QuoteStatusChanged($quote, $statu));
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed'], 500);

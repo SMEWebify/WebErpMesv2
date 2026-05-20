@@ -112,7 +112,7 @@ class InvoiceKPIService
     {
         $cacheKey = 'invoice_unpaid_count_company_' . ($companyId ?? 'all');
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($companyId) {
-            $query = Invoices::where('invoice_type', 1)->where('statu', '!=', 4)->whereNull('deleted_at');
+            $query = Invoices::where('invoice_type', 1)->where('statu', '!=', 5)->whereNull('deleted_at');
             if ($companyId) {
                 $query->where('companies_id', $companyId);
             }
