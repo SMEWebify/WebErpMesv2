@@ -17,6 +17,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\PreOrder;
 use App\Models\Workflow\PreOrderLine;
+use App\Models\Workflow\PreOrderPdfUpload;
 use App\Services\DocumentCodeGenerator;
 use App\Services\InvoiceReportInterpreter;
 use App\Models\User;
@@ -77,18 +78,45 @@ class PreOrdersController extends Controller
     
         $disk = config('filesystems.default');
         $inputPath = $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input'));
-    
+
+        $storedCount = 0;
+        $duplicateNames = [];
+
         foreach ($data['pdfs'] as $pdfFile) {
+            $tmpPath = $pdfFile->getRealPath() ?: $pdfFile->getPathname();
+
+            // Empreinte du contenu binaire du PDF (avant renommage) : détecte un
+            // document déjà importé même s'il est renvoyé sous un autre nom de fichier.
+            $checksum = hash_file('sha256', $tmpPath);
+
+            if ($checksum !== false && PreOrderPdfUpload::where('checksum', $checksum)->exists()) {
+                $duplicateNames[] = $pdfFile->getClientOriginalName();
+                continue;
+            }
+
             $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeBaseName = Str::slug($originalName, '_') ?: 'pre_order';
             $fileName = $safeBaseName . '_' . now()->format('Ymd_His_u') . '.pdf';
-            $tmpPath = $pdfFile->getRealPath() ?: $pdfFile->getPathname();
             Storage::disk($disk)->put($inputPath . '/' . $fileName, fopen($tmpPath, 'r'));
+
+            PreOrderPdfUpload::create([
+                'original_name' => $pdfFile->getClientOriginalName(),
+                'stored_name' => $fileName,
+                'checksum' => $checksum,
+                'uploaded_at' => now(),
+            ]);
+
+            $storedCount++;
         }
-    
+
+        // Tous les fichiers étaient déjà importés : rien à traiter, on prévient.
+        if ($storedCount === 0) {
+            return redirect()->route('pre-orders.index')->with('warning', __('general_content.preorders_pdf_all_duplicates_trans_key') . ' ' . implode(', ', $duplicateNames));
+        }
+
         $pythonPath = config('pre_orders.python_executable');
         $scriptPath = config('pre_orders.python_script');
-    
+
         if ($pythonPath && $scriptPath) {
     
             $systemRoot = getenv('SystemRoot') ?: getenv('SYSTEMROOT') ?: 'C:\Windows';
@@ -139,10 +167,23 @@ class PreOrdersController extends Controller
                 );
             }
 
-            return redirect()->route('pre-orders.index')->with('success', __('general_content.preorders_pdf_processed_success_trans_key'));
+            return redirect()->route('pre-orders.index')
+                ->with('success', __('general_content.preorders_pdf_processed_success_trans_key'))
+                ->with('warning', $this->duplicateUploadWarning($duplicateNames));
         }
-    
-        return redirect()->route('pre-orders.index')->with('success', __('general_content.preorders_pdf_uploaded_success_trans_key'));
+
+        return redirect()->route('pre-orders.index')
+            ->with('success', __('general_content.preorders_pdf_uploaded_success_trans_key'))
+            ->with('warning', $this->duplicateUploadWarning($duplicateNames));
+    }
+
+    private function duplicateUploadWarning(array $duplicateNames): ?string
+    {
+        if (empty($duplicateNames)) {
+            return null;
+        }
+
+        return __('general_content.preorders_pdf_some_duplicates_trans_key') . ' ' . implode(', ', $duplicateNames);
     }
     
 
@@ -322,6 +363,45 @@ class PreOrdersController extends Controller
         ]);
 
         $data['code'] = $data['code'] ?? $this->generateOrderCodeByType((int) $data['type']);
+
+        // Garde-fou doublon : si une commande existe déjà avec le même libellé ou la même
+        // référence client, on renvoie l'utilisateur sur l'écran pour confirmer ou annuler.
+        // Le libellé par défaut ("Pré-commande du …") n'est pas comparé pour éviter les faux
+        // positifs entre plusieurs pré-commandes converties le même jour.
+        if (! $request->boolean('confirm_duplicate')) {
+            $defaultLabel = 'Pré-commande du ' . $preOrder->created_at->format('d/m/Y');
+            $customerReference = trim((string) ($data['customer_reference'] ?? ''));
+            $label = trim((string) $data['label']);
+
+            $duplicate = Orders::query()
+                ->where(function ($query) use ($label, $defaultLabel, $customerReference) {
+                    if ($label !== '' && $label !== $defaultLabel) {
+                        $query->orWhere('label', $label);
+                    }
+                    if ($customerReference !== '') {
+                        $query->orWhere('customer_reference', $customerReference);
+                    }
+                })
+                ->when($label === $defaultLabel || $label === '', function ($query) use ($customerReference) {
+                    // Si seul le libellé par défaut est présent (et pas de réf. client),
+                    // il n'y a aucun critère métier fiable → on ne déclenche pas d'alerte.
+                    if ($customerReference === '') {
+                        $query->whereRaw('1 = 0');
+                    }
+                })
+                ->first();
+
+            if ($duplicate) {
+                return redirect()->route('pre-orders.show', $preOrder)
+                    ->withInput()
+                    ->with('duplicate_warning', [
+                        'id' => $duplicate->id,
+                        'code' => $duplicate->code,
+                        'label' => $duplicate->label,
+                        'customer_reference' => $duplicate->customer_reference,
+                    ]);
+            }
+        }
 
         $preOrder->load('lines', 'importBatch');
 

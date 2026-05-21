@@ -1432,6 +1432,8 @@ return [
     'absence_request_updated_success_trans_key' => 'Demande d\'absence mise à jour avec succès.',
     'preorders_pdf_processed_success_trans_key' => 'PDF(s) envoyé(s), traitement Python terminé et import CSV exécuté avec succès.',
     'preorders_pdf_uploaded_success_trans_key' => 'PDF(s) envoyé(s) dans le stockage avec succès.',
+    'preorders_pdf_all_duplicates_trans_key' => 'Aucun nouveau PDF traité : ce(s) fichier(s) ont déjà été importés :',
+    'preorders_pdf_some_duplicates_trans_key' => 'Certains fichiers ont été ignorés car déjà importés :',
     'preorders_matching_done_success_trans_key' => 'Matching des articles terminé.',
     'email_template_created_success_trans_key' => 'Modèle de mail créé avec succès !',
     'email_template_updated_success_trans_key' => 'Modèle de mail mis à jour !',

@@ -133,11 +133,27 @@
                         <a href="{{ route('orders.show', ['id' => $preOrder->converted_order_id]) }}">#{{ $preOrder->converted_order_id }}</a>
                     </p>
                 @else
+                    @php($duplicateWarning = session('duplicate_warning'))
+
+                    @if($duplicateWarning)
+                        <div class="alert alert-warning">
+                            <h6 class="font-weight-bold mb-1"><i class="fas fa-exclamation-triangle mr-1"></i> Doublon possible</h6>
+                            <p class="mb-1">
+                                Une commande existe déjà :
+                                <a href="{{ route('orders.show', ['id' => $duplicateWarning['id']]) }}" target="_blank" rel="noopener">#{{ $duplicateWarning['code'] }}</a>
+                                — libellé « {{ $duplicateWarning['label'] }} »@if($duplicateWarning['customer_reference']), réf. client « {{ $duplicateWarning['customer_reference'] }} »@endif.
+                            </p>
+                            <p class="mb-0">Ce PDF a peut-être déjà été traité. Confirmer la création quand même ?</p>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('pre-orders.convert', $preOrder) }}">
                         @csrf
+                        <input type="hidden" name="confirm_duplicate" value="{{ $duplicateWarning ? '1' : '0' }}">
+
                         <x-adminlte-input name="code" label="Code commande" value="{{ old('code', $generatedOrderCode) }}" required />
-                        <x-adminlte-input name="label" label="Libellé" value="{{ $defaultLabel }}" required />
-                        <x-adminlte-input name="customer_reference" label="Référence client" />
+                        <x-adminlte-input name="label" label="Libellé" value="{{ old('label', $defaultLabel) }}" required />
+                        <x-adminlte-input name="customer_reference" label="Référence client" value="{{ old('customer_reference') }}" />
 
                         <x-adminlte-select name="companies_id" label="Client *" id="companies_id">
                             <option value="">-- Sélectionner --</option>
@@ -148,56 +164,61 @@
 
                         <x-adminlte-select name="user_id" label="Responsable" required>
                             @foreach($users as $user)
-                                <option value="{{ $user->id }}" @selected(auth()->id() === $user->id)>{{ $user->name }}</option>
+                                <option value="{{ $user->id }}" @selected(old('user_id', auth()->id()) == $user->id)>{{ $user->name }}</option>
                             @endforeach
                         </x-adminlte-select>
 
-                        <x-adminlte-input name="validity_date" type="date" label="Date de livraison" />
+                        <x-adminlte-input name="validity_date" type="date" label="Date de livraison" value="{{ old('validity_date') }}" />
 
                         <x-adminlte-select name="accounting_payment_conditions_id" label="Condition de paiement">
                             <option value="">--</option>
                             @foreach($paymentConditions as $item)
-                                <option value="{{ $item->id }}" @selected(optional($defaultPaymentCondition)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(old('accounting_payment_conditions_id', optional($defaultPaymentCondition)->id) == $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="accounting_payment_methods_id" label="Mode de paiement">
                             <option value="">--</option>
                             @foreach($paymentMethods as $item)
-                                <option value="{{ $item->id }}" @selected(optional($defaultPaymentMethod)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(old('accounting_payment_methods_id', optional($defaultPaymentMethod)->id) == $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="accounting_deliveries_id" label="Mode de livraison">
                             <option value="">--</option>
                             @foreach($deliveries as $item)
-                                <option value="{{ $item->id }}" @selected(optional($defaultDelivery)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(old('accounting_deliveries_id', optional($defaultDelivery)->id) == $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="methods_units_id" label="Unité ligne" required>
                             @foreach($units as $item)
-                                <option value="{{ $item->id }}" @selected(optional($defaultUnit)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(old('methods_units_id', optional($defaultUnit)->id) == $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="accounting_vats_id" label="TVA ligne" required>
                             @foreach($vats as $item)
-                                <option value="{{ $item->id }}" @selected(optional($defaultVat)->id === $item->id)>{{ $item->code }} - {{ $item->rate }}</option>
+                                <option value="{{ $item->id }}" @selected(old('accounting_vats_id', optional($defaultVat)->id) == $item->id)>{{ $item->code }} - {{ $item->rate }}</option>
                             @endforeach
                         </x-adminlte-select>
 
-                        <x-adminlte-input name="delivery_date" type="date" label="Date livraison des lignes" />
-                        <x-adminlte-input name="discount" type="number" step="0.001" min="0" label="Remise (%)" value="0" />
+                        <x-adminlte-input name="delivery_date" type="date" label="Date livraison des lignes" value="{{ old('delivery_date') }}" />
+                        <x-adminlte-input name="discount" type="number" step="0.001" min="0" label="Remise (%)" value="{{ old('discount', 0) }}" />
 
                         <x-adminlte-select name="type" label="Type commande" required>
-                            <option value="1">Client</option>
-                            <option value="2">Interne</option>
+                            <option value="1" @selected(old('type') == 1)>Client</option>
+                            <option value="2" @selected(old('type') == 2)>Interne</option>
                         </x-adminlte-select>
 
-                        <x-adminlte-textarea name="comment" label="Commentaire" rows=3 />
+                        <x-adminlte-textarea name="comment" label="Commentaire" rows=3>{{ old('comment') }}</x-adminlte-textarea>
 
-                        <button type="submit" class="btn btn-success btn-block">Créer la commande</button>
+                        @if($duplicateWarning)
+                            <button type="submit" class="btn btn-warning btn-block">Créer quand même la commande</button>
+                            <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-default btn-block">Annuler</a>
+                        @else
+                            <button type="submit" class="btn btn-success btn-block">Créer la commande</button>
+                        @endif
                     </form>
                 @endif
             </x-adminlte-card>

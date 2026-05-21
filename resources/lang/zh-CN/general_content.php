@@ -1336,6 +1336,8 @@ return [
     'absence_request_updated_success_trans_key' => 'Successfully updated absence request.',
     'preorders_pdf_processed_success_trans_key' => 'PDF(s) sent, Python processing finished, and CSV import completed successfully.',
     'preorders_pdf_uploaded_success_trans_key' => 'PDF(s) successfully uploaded to storage.',
+    'preorders_pdf_all_duplicates_trans_key' => 'No new PDF processed: the following file(s) were already imported:',
+    'preorders_pdf_some_duplicates_trans_key' => 'Some files were skipped because they were already imported:',
     'preorders_matching_done_success_trans_key' => 'Article matching completed.',
     'email_template_created_success_trans_key' => 'Email template created successfully!',
     'email_template_updated_success_trans_key' => 'Email template updated!',
