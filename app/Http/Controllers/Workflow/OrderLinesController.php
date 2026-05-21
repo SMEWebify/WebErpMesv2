@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Auth;
 use App\Events\OrderLineUpdated;
+use App\Events\DeliveryLineUpdated;
 use App\Services\ImportCsvService;
 use App\Services\DeliveryService;
 use App\Services\DeliveryLineService;
@@ -769,13 +770,22 @@ class OrderLinesController extends Controller
         $removeFromStock   = (bool) $request->input('remove_from_stock', false);
         $createSerialNumber= (bool) $request->input('create_serial_number', false);
 
+        $generator = app(DocumentCodeGenerator::class);
+
+        // Facture
         $lastInvoice = Invoices::orderBy('id', 'desc')->first();
         $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
-        $generator   = app(DocumentCodeGenerator::class);
         $invoiceCode = $generator->generateDocumentCode('invoice', $invoiceId);
+
+        // BL généré automatiquement (règle métier : facturer depuis la commande = livrer)
+        $lastDelivery = Deliverys::orderBy('id', 'desc')->first();
+        $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
+        $deliveryCode = $generator->generateDocumentCode('delivery', $deliveryId);
 
         $invoiceService     = app(InvoiceService::class);
         $invoiceLineService = app(InvoiceLineService::class);
+        $deliveryService    = app(DeliveryService::class);
+        $deliveryLineService= app(DeliveryLineService::class);
         $serialService      = app(SerialNumberService::class);
 
         $invoice = $invoiceService->createInvoice(
@@ -792,28 +802,59 @@ class OrderLinesController extends Controller
             return response()->json(['error' => 'Erreur lors de la création de la facture'], 500);
         }
 
-        $ordre          = 10;
-        $linesProcessed = 0;
+        $delivery = $deliveryService->createDelivery(
+            $deliveryCode,
+            $order->label,
+            $order->companies_id,
+            $order->companies_addresses_id,
+            $order->companies_contacts_id,
+            Auth::id(),
+            $order->customer_reference
+        );
+
+        if (! $delivery) {
+            $invoice->delete();
+            return response()->json(['error' => 'Erreur lors de la création du BL'], 500);
+        }
+
+        $ordre                = 10;
+        $linesProcessed       = 0;
+        $deliveryLinesCreated = 0;
         foreach ($lineIds as $lineId) {
             $line = OrderLines::find($lineId);
             if (! $line || $line->orders_id !== $orderId) continue;
             if ($line->invoiced_remaining_qty <= 0) continue;
 
-            $invoiceLineService->createInvoiceLine($invoice, $lineId, null, $ordre, $line->invoiced_remaining_qty, $line->accounting_vats_id);
+            // Génère la ligne de BL pour la quantité restant à livrer (le cas échéant)
+            $deliveryLineId = null;
+            if ($line->delivered_remaining_qty > 0) {
+                $deliveryLine   = $deliveryLineService->createDeliveryLine($delivery, $lineId, $ordre, $line->delivered_remaining_qty);
+                $deliveryLineId = $deliveryLine->id;
 
-            if ($createSerialNumber) {
-                for ($i = 0; $i < $line->invoiced_remaining_qty; $i++) {
-                    $serialService->createSerialNumber($line->product_id, $line->id, 2);
+                // La ligne de BL est facturée immédiatement : on la marque comme telle
+                // (sinon elle réapparaîtrait dans les lignes « à facturer »).
+                $deliveryLine->invoice_status = 4;
+                $deliveryLine->save();
+                event(new DeliveryLineUpdated($deliveryLine));
+
+                if ($createSerialNumber) {
+                    for ($i = 0; $i < $line->delivered_remaining_qty; $i++) {
+                        $serialService->createSerialNumber($line->product_id, $line->id, 2);
+                    }
                 }
+
+                $line->delivered_qty          += $line->delivered_remaining_qty;
+                $line->delivered_remaining_qty = 0;
+                $line->delivery_status         = 3;
+                $deliveryLinesCreated++;
             }
 
-            $line->delivered_qty             += $line->delivered_remaining_qty;
-            $line->delivered_remaining_qty    = 0;
-            $line->delivery_status            = 3;
+            // Ligne de facture, rattachée à la ligne de BL générée
+            $invoiceLineService->createInvoiceLine($invoice, $lineId, $deliveryLineId, $ordre, $line->invoiced_remaining_qty, $line->accounting_vats_id);
 
-            $line->invoiced_qty              += $line->invoiced_remaining_qty;
-            $line->invoiced_remaining_qty     = 0;
-            $line->invoice_status             = 3;
+            $line->invoiced_qty          += $line->invoiced_remaining_qty;
+            $line->invoiced_remaining_qty = 0;
+            $line->invoice_status         = 3;
             $line->save();
             event(new OrderLineUpdated($line));
 
@@ -823,7 +864,13 @@ class OrderLinesController extends Controller
 
         if ($linesProcessed === 0) {
             $invoice->delete();
+            $delivery->delete();
             return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement facturées.'], 422);
+        }
+
+        // Toutes les lignes étaient déjà livrées : aucun BL à conserver
+        if ($deliveryLinesCreated === 0) {
+            $delivery->delete();
         }
 
         return response()->json([
