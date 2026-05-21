@@ -244,6 +244,7 @@ return [
     'mark_not_chargeable_trans_key'            => 'Marquer non facturable',
     'confirm_not_chargeable_trans_key'         => 'Marquer cette ligne comme non facturable ? Elle ne sera plus due à facturer.',
     'line_already_invoiced_trans_key'          => 'Cette ligne est déjà facturée.',
+    'order_invoiced_no_cancel_trans_key'       => 'Cette commande est facturée : elle ne peut pas être annulée. Émettez un avoir.',
     'delivered_qty_trans_key'                  => 'Qt livrée',
     'remaining_qty_trans_key'                  => 'Qt restante',
     'addressing_trans_key'                     => 'Adresage',

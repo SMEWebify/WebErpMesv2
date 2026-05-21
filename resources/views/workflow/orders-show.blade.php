@@ -80,10 +80,14 @@
             $orderSteps[] = ['value' => 4, 'label' => __('general_content.partly_stored_trans_key')];
             $orderSteps[] = ['value' => 3, 'label' => __('general_content.stock_trans_key')];
         }
-        if ($Order->statu != 3) {
-            $orderSteps[] = ['value' => 5, 'label' => __('general_content.stopped_trans_key')];
-        }
-        if ($Order->statu != 3 && $Order->statu != 4) {
+        // Arrêté (5) reste toujours accessible.
+        $orderSteps[] = ['value' => 5, 'label' => __('general_content.stopped_trans_key')];
+
+        // Annulé (6) accessible même livré/partiellement livré (BL existant) :
+        // l'annulation bascule les lignes de BL non facturées en "non facturable".
+        // MAIS interdit dès qu'une ligne a été facturée (passer par un avoir).
+        $orderHasInvoicedLines = $Order->OrderLines()->where('invoiced_qty', '>', 0)->exists();
+        if (!$orderHasInvoicedLines) {
             $orderSteps[] = ['value' => 6, 'label' => __('general_content.canceled_trans_key')];
         }
         @endphp

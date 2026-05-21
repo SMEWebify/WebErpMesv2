@@ -527,6 +527,15 @@ class OrdersController extends Controller
         try {
             $statu = (int) $request->input('statu');
             $order = Orders::findOrFail($id);
+
+            // Règle métier : une commande dont au moins une ligne a été facturée
+            // ne peut plus être annulée — il faut passer par un avoir.
+            if ($statu === 6 && $order->OrderLines()->where('invoiced_qty', '>', 0)->exists()) {
+                return response()->json([
+                    'error' => __('general_content.order_invoiced_no_cancel_trans_key'),
+                ], 422);
+            }
+
             $order->statu = $statu;
             $order->save();
             event(new OrderStatusChanged($order, $statu));

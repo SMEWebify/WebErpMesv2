@@ -96,7 +96,8 @@ function injectStyles() {
 }
 
 export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl }) {
-    const [busy, setBusy] = useState(false);
+    const [busy, setBusy]   = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => { injectStyles(); }, []);
 
@@ -105,6 +106,7 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
     const go = async (value) => {
         if (busy || value === currentStatu) return;
         setBusy(true);
+        setError('');
         try {
             const res = await fetch(endpoint, {
                 method: 'POST',
@@ -119,12 +121,21 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
                 window.location.href = redirectUrl;
                 return;
             }
-        } catch {}
+            const data = await res.json().catch(() => ({}));
+            setError(data.error ?? data.message ?? 'Erreur lors du changement de statut.');
+        } catch {
+            setError('Erreur lors du changement de statut.');
+        }
         setBusy(false);
     };
 
     return (
         <div className="as-track">
+            {error && (
+                <div className="alert alert-danger py-2 mb-2" role="alert">
+                    <i className="fas fa-exclamation-triangle mr-1" />{error}
+                </div>
+            )}
             <div className="as-row">
                 {steps.map((s, i) => {
                     const isCurrent = s.value === currentStatu;

@@ -244,6 +244,7 @@ return [
     'mark_not_chargeable_trans_key'            => 'Mark as not chargeable',
     'confirm_not_chargeable_trans_key'         => 'Mark this line as not chargeable? It will no longer be due to invoice.',
     'line_already_invoiced_trans_key'          => 'This line is already invoiced.',
+    'order_invoiced_no_cancel_trans_key'       => 'This order is invoiced and cannot be cancelled. Issue a credit note instead.',
     'delivered_qty_trans_key'                  => 'Delivered qty',
     'remaining_qty_trans_key'                  => 'Remaining qty',
     'addressing_trans_key'                     => 'Addressing',
