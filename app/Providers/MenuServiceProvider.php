@@ -31,10 +31,8 @@ class MenuServiceProvider extends ServiceProvider
             });
 
             $invoicesRequestsCount = Cache::remember('menu_invoices_requests', 60, function () {
-                return DeliveryLines::where(function ($query) {
-                    $query->where('invoice_status', '=', '1')
-                          ->orWhere('invoice_status', '=', '2');
-                })->count();
+                // Facturable (1) + Partiellement (3). Exclut non facturable (2) et facturé (4).
+                return DeliveryLines::whereIn('invoice_status', ['1', '3'])->count();
             });
 
             $purchasesWaitingReceiptCount = Cache::remember('menu_purchases_receipt', 60, function () {

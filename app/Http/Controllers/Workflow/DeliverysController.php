@@ -323,8 +323,10 @@ class DeliverysController extends Controller
 
         $PruchasesSelect = $this->SelectDataService->getPurchases();
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('delivery', $id->id);
+        // "Plus rien à facturer" : toutes les lignes sont facturées (4) ou non
+        // facturables (2). Masque le bouton "Nouvelle facture" dans ce cas.
         $allDelivered = $id->DeliveryLines->every(function($line) {
-            return $line->invoice_status == 4;
+            return in_array((int) $line->invoice_status, [2, 4], true);
         });
 
         $companies = $this->SelectDataService->getCompanies();
@@ -354,6 +356,41 @@ class DeliverysController extends Controller
         event(new DeliveryStatusChanged($delivery, $delivery->statu));
 
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Mark a single delivery line as "non facturable" (invoice_status = 2).
+     *
+     * Used to close out a BL that is voluntarily not invoiced so it stops
+     * appearing in the "à facturer" lists. Already invoiced lines (4) are
+     * rejected. The delivery header status is recomputed afterwards.
+     *
+     * @param int $id     Delivery id
+     * @param int $lineId Delivery line id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function markLineNotChargeable($id, $lineId)
+    {
+        $delivery = Deliverys::findOrFail($id);
+        $line = DeliveryLines::where('deliverys_id', $delivery->id)->findOrFail($lineId);
+
+        if ((int) $line->invoice_status === 4) {
+            return response()->json([
+                'error' => __('general_content.line_already_invoiced_trans_key'),
+            ], 422);
+        }
+
+        $line->invoice_status = 2; // Non facturable
+        $line->save();
+
+        $this->deliveryService->recomputeInvoiceStatus($delivery->id);
+
+        return response()->json([
+            'ok'                      => true,
+            'line_id'                 => $line->id,
+            'invoice_status'          => 2,
+            'delivery_invoice_status' => $delivery->fresh()->invoice_status,
+        ]);
     }
 
     public function update(UpdateDeliveryRequest $request)

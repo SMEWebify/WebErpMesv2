@@ -14,7 +14,8 @@ class InvoiceDataService
      */
     public function getUniqueCompanyIdsWithOpenInvoiceLines(): Collection
     {
-        return DeliveryLines::whereIn('delivery_lines.invoice_status', ['1', '2'])
+        // 1 = Facturable, 3 = Partiellement. Exclut 2 (non facturable) et 4 (facturé).
+        return DeliveryLines::whereIn('delivery_lines.invoice_status', ['1', '3'])
                                         ->leftJoin('deliverys', 'delivery_lines.deliverys_id', '=', 'deliverys.id')
                                         ->pluck('deliverys.companies_id')
                                         ->filter()
@@ -42,7 +43,7 @@ class InvoiceDataService
     ): Collection
     {
         return DeliveryLines::orderBy($sortField, $sortAsc ? 'asc' : 'desc')
-            ->whereIn('invoice_status', ['1', '2'])
+            ->whereIn('invoice_status', ['1', '3']) // facturable + partiel (exclut non facturable / facturé)
             ->whereHas('delivery', function ($q) use ($companyId, $dateStart, $dateEnd) {
                 if (!empty($companyId)) {
                     $q->where('companies_id', '=', (int)$companyId);

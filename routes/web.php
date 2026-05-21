@@ -407,6 +407,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
         Route::get('/company-ac', 'App\Http\Controllers\Workflow\DeliverysController@companyAc')->name('deliverys.company-ac');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\DeliverysController@changeStatusJson')->name('deliverys.json.statu');
+        Route::post('/{id}/json/line/{lineId}/not-chargeable', 'App\Http\Controllers\Workflow\DeliverysController@markLineNotChargeable')->name('deliverys.line.not-chargeable');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::get('/json/{id}/lines', 'App\Http\Controllers\Workflow\DeliverysController@linesJson')->name('deliverys.json.lines');

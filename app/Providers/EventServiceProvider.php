@@ -19,6 +19,7 @@ use App\Listeners\UpdateCompanyStatus;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\UpdateDeliveryStatus;
+use App\Listeners\MarkDeliveryLinesNotChargeableOnOrderCancel;
 use App\Listeners\UpdatePurchaseStatus;
 use App\Listeners\UpdateOpportunityStatus;
 use App\Listeners\CheckOrderLineTaskStatus;
@@ -67,7 +68,9 @@ class EventServiceProvider extends ServiceProvider
         PurchaseReceiptCreated::class => [
             UpdatePurchaseStatus::class,
         ],
-        OrderStatusChanged::class    => [],
+        OrderStatusChanged::class    => [
+            MarkDeliveryLinesNotChargeableOnOrderCancel::class,
+        ],
         InvoiceStatusChanged::class  => [],
         DeliveryStatusChanged::class => [],
     ];

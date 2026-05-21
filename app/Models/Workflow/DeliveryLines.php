@@ -55,7 +55,7 @@ class DeliveryLines extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['deliverys_id', 'statu']);
+        return LogOptions::defaults()->logOnly(['deliverys_id', 'statu', 'invoice_status']);
         // Chain fluent methods for configuration options
     }
 }
