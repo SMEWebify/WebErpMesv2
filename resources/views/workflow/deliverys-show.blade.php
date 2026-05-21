@@ -187,7 +187,10 @@
           foreach ($nonConformities as $nc) {
               $dlNonConformities[] = ['id' => $nc->id, 'code' => $nc->code];
           }
-          $dlEndpoints = ['store' => route('returns.json.store')];
+          $dlEndpoints = [
+              'store'             => route('returns.json.store'),
+              'markNotChargeable' => route('deliverys.line.not-chargeable', ['id' => $Delivery->id, 'lineId' => '__LINE__']),
+          ];
           $dlTrans = [
               'order'          => __('general_content.order_trans_key'),
               'code'           => __('general_content.external_id_trans_key'),
@@ -197,6 +200,8 @@
               'delivered_qty'  => __('general_content.delivered_qty_trans_key'),
               'remaining_qty'  => __('general_content.remaining_qty_trans_key'),
               'invoice_status' => __('general_content.invoice_status_trans_key'),
+              'mark_not_chargeable'    => __('general_content.mark_not_chargeable_trans_key'),
+              'confirm_not_chargeable' => __('general_content.confirm_not_chargeable_trans_key'),
               'return'         => __('returns.fields.add_return'),
               'add_return'     => __('returns.fields.add_return'),
               'delivery_line'  => __('returns.fields.delivery_line'),

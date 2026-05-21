@@ -220,10 +220,13 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, endpoints, trans }) {
+export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonConformities, endpoints, trans }) {
+    const [lines, setLines]           = useState(initialLines ?? []);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [activeLine, setActiveLine] = useState(null);
     const [flash, setFlash]           = useState('');
+    const [error, setError]           = useState('');
+    const [busyId, setBusyId]         = useState(null);
 
     function openDrawer(line) {
         setActiveLine(line);
@@ -235,6 +238,36 @@ export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, e
         setTimeout(() => setFlash(''), 4000);
     }
 
+    async function markNotChargeable(line) {
+        if (!endpoints.markNotChargeable) return;
+        if (!window.confirm(trans.confirm_not_chargeable ?? 'Marquer cette ligne comme non facturable ?')) return;
+
+        setBusyId(line.id);
+        setError('');
+        try {
+            const url = endpoints.markNotChargeable.replace('__LINE__', line.id);
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken(),
+                },
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error ?? data.message ?? 'Erreur');
+            } else {
+                setLines(prev => prev.map(l => l.id === line.id ? { ...l, invoice_status: 2 } : l));
+                handleSuccess(trans.mark_not_chargeable ?? 'Ligne marquée non facturable');
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setBusyId(null);
+        }
+    }
+
     return (
         <div>
             {/* Flash success */}
@@ -242,6 +275,16 @@ export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, e
                 <div className="alert alert-success alert-dismissible py-2 mb-2" role="alert">
                     <i className="fas fa-check-circle mr-1" />{flash}
                     <button type="button" className="close py-1" onClick={() => setFlash('')}>
+                        <span>&times;</span>
+                    </button>
+                </div>
+            )}
+
+            {/* Flash error */}
+            {error && (
+                <div className="alert alert-danger alert-dismissible py-2 mb-2" role="alert">
+                    <i className="fas fa-exclamation-triangle mr-1" />{error}
+                    <button type="button" className="close py-1" onClick={() => setError('')}>
                         <span>&times;</span>
                     </button>
                 </div>
@@ -259,7 +302,7 @@ export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, e
                             <th>{trans.delivered_qty ?? 'Livré'}</th>
                             <th>{trans.remaining_qty ?? 'Restant'}</th>
                             <th>{trans.invoice_status ?? 'Facturation'}</th>
-                            <th style={{ width: 60 }}>{trans.return ?? 'Retour'}</th>
+                            <th style={{ width: 110 }} className="text-right">{trans.return ?? 'Retour'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -289,7 +332,18 @@ export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, e
                                             <span className={`badge ${inv.badge}`}>{inv.label}</span>
                                         )}
                                     </td>
-                                    <td>
+                                    <td className="text-right text-nowrap">
+                                        {(line.invoice_status === 1 || line.invoice_status === 3) && (
+                                            <button
+                                                type="button"
+                                                className="btn btn-xs btn-outline-danger mr-1"
+                                                title={trans.mark_not_chargeable ?? 'Marquer non facturable'}
+                                                disabled={busyId === line.id}
+                                                onClick={() => markNotChargeable(line)}
+                                            >
+                                                <i className={busyId === line.id ? 'fas fa-spinner fa-spin' : 'fas fa-ban'} />
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             className="btn btn-xs btn-outline-warning"

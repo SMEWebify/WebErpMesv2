@@ -482,7 +482,9 @@ class InvoicesController extends Controller
 
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
-            if ($DeliveryLine->invoice_status != 4) {
+            // 1 = Facturable, 3 = Partiellement : seules ces lignes sont facturées.
+            // 2 = Non facturable, 4 = Facturé : ignorées.
+            if (in_array((int) $DeliveryLine->invoice_status, [1, 3], true)) {
                 // Create invoice line
                 $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty, $DeliveryLine->OrderLine->accounting_vats_id);
 
