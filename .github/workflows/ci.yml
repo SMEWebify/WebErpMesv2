@@ -67,7 +67,7 @@ jobs:
           node-version: '20'
 
       - name: Install npm dependencies
-        run: npm install
+        run: rm -f package-lock.json && npm install
 
       - name: Security audit (npm)
         run: npm audit --omit=dev --audit-level=high
