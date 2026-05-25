@@ -73,7 +73,7 @@ class RessourcesControllerTest extends TestCase
 
         // Assurer la redirection avec un message de succès
         $response->assertRedirect(route('methods.ressource'));
-        $response->assertSessionHas('success', 'Successfully created ressource.');
+        $response->assertSessionHas('success', 'Successfully created resource.');
     }
 
     /**
@@ -131,7 +131,7 @@ class RessourcesControllerTest extends TestCase
 
         // Assurer la redirection avec un message de succès
         $response->assertRedirect(route('methods.ressource'));
-        $response->assertSessionHas('success', 'Successfully updated ressource.');
+        $response->assertSessionHas('success', 'Successfully updated resource.');
     }
 
     /**
@@ -164,6 +164,6 @@ class RessourcesControllerTest extends TestCase
 
         // Assurer la redirection avec un message de succès
         $response->assertRedirect(route('methods.ressource'));
-        $response->assertSessionHas('success', 'Successfully updated ressource.');
+        $response->assertSessionHas('success', 'Successfully updated resource.');
     }
 }

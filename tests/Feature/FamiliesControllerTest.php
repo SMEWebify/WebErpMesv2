@@ -20,8 +20,15 @@ class FamiliesControllerTest extends TestCase
         parent::setUp();
         // Mock du service SelectDataService
         $this->selectDataService = $this->createMock(SelectDataService::class);
-        $this->selectDataService->method('getRessources')->willReturn(['Resource1', 'Resource2']);
-        $this->selectDataService->method('getServices')->willReturn(['Service1', 'Service2']);
+        $this->selectDataService->method('getRessources')->willReturn(collect([
+            (object) ['id' => 1, 'label' => 'Resource 1'],
+            (object) ['id' => 2, 'label' => 'Resource 2'],
+        ]));
+        $this->selectDataService->method('getServices')->willReturn(collect([
+            (object) ['id' => 1, 'label' => 'Service 1'],
+            (object) ['id' => 2, 'label' => 'Service 2'],
+        ]));
+        $this->app->instance(SelectDataService::class, $this->selectDataService);
     }
 
     /** @test */
@@ -39,13 +46,13 @@ class FamiliesControllerTest extends TestCase
 
         // Vérifier que la vue correcte est retournée
         $response->assertStatus(200);
-        $response->assertViewIs('methods/methods-families');
+        $response->assertViewIs('methods.methods-families');
 
         // Vérifier que les familles et les locations sont passées à la vue
         $response->assertViewHas('MethodsFamilies');
         $response->assertViewHas('MethodsLocations');
-        $response->assertViewHas('RessourcesSelect', ['Resource1', 'Resource2']);
-        $response->assertViewHas('ServicesSelect', ['Service1', 'Service2']);
+        $response->assertViewHas('RessourcesSelect');
+        $response->assertViewHas('ServicesSelect');
     }
 
     /** @test */

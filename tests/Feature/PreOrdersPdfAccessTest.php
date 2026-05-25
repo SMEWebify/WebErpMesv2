@@ -16,7 +16,11 @@ class PreOrdersPdfAccessTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutMiddleware();
+        $this->withoutMiddleware([
+            \App\Http\Middleware\CheckUserRole::class,
+            \App\Http\Middleware\CheckFactory::class,
+            \App\Http\Middleware\CheckTaskStatus::class,
+        ]);
 
         Config::set('filesystems.default', 'local');
         Config::set('pre_orders.input_path', 'pre-orders/input');

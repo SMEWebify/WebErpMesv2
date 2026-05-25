@@ -18,12 +18,25 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
 class Companies extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $company) {
+            if (empty($company->uuid)) {
+                $company->uuid = Str::uuid()->toString();
+            }
+            if (empty($company->code)) {
+                $company->code = strtoupper(Str::random(5));
+            }
+        });
+    }
 
     /**
      * The attributes that are mass assignable.

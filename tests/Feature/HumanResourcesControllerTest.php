@@ -37,8 +37,8 @@ class HumanResourcesControllerTest extends TestCase
         $response = $this->get(route('human.resources.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin/human-resources-index');
-        $response->assertViewHas('Users');
+        $response->assertViewIs('admin.human-resources-index');
+        $response->assertViewHas('UserExpenseCategories');
         $response->assertViewHas('ExpenseReports');
     }
 
@@ -49,7 +49,7 @@ class HumanResourcesControllerTest extends TestCase
         $response = $this->get(route('human.resources.show.user', ['id' => $user->id]));
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin/users-show');
+        $response->assertViewIs('admin.users-show');
         $response->assertViewHas('User');
     }
 
@@ -62,7 +62,9 @@ class HumanResourcesControllerTest extends TestCase
         $response = $this->put(route('human.resources.update.user', $user->id), [
             'job_title' => 'Developer',
             'pay_grade' => 'Level 1',
-            'role' => $role->name
+            'role' => $role->name,
+            'employment_status' => 1,
+            'statu' => 1,
         ]);
 
         $response->assertRedirect(route('human.resources.show.user', ['id' => $user->id]));
@@ -113,6 +115,7 @@ class HumanResourcesControllerTest extends TestCase
         $contract = UserEmploymentContracts::factory()->create();
 
         $response = $this->put(route('human.resources.update.user.contract', $contract->id), [
+            'id' => $contract->id,
             'statu' => 'Inactive',
         ]);
 

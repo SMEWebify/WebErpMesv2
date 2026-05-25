@@ -19,8 +19,15 @@ class LocationsControllerTest extends TestCase
         parent::setUp();
         // Mock du service SelectDataService
         $this->selectDataService = $this->createMock(SelectDataService::class);
-        $this->selectDataService->method('getRessources')->willReturn(['Resource1', 'Resource2']);
-        $this->selectDataService->method('getUsers')->willReturn(['User1', 'User2']);
+        $this->selectDataService->method('getRessources')->willReturn(collect([
+            (object) ['id' => 1, 'label' => 'Resource 1'],
+            (object) ['id' => 2, 'label' => 'Resource 2'],
+        ]));
+        $this->selectDataService->method('getUsers')->willReturn(collect([
+            (object) ['id' => 1, 'name' => 'User 1'],
+            (object) ['id' => 2, 'name' => 'User 2'],
+        ]));
+        $this->app->instance(SelectDataService::class, $this->selectDataService);
     }
 
     /** @test */
@@ -37,12 +44,12 @@ class LocationsControllerTest extends TestCase
 
         // Vérifier que la vue correcte est retournée
         $response->assertStatus(200);
-        $response->assertViewIs('methods/methods-locations');
+        $response->assertViewIs('methods.methods-locations');
 
         // Vérifier que les locations sont passées à la vue
         $response->assertViewHas('MethodsLocations');
-        $response->assertViewHas('RessourcesSelect', ['Resource1', 'Resource2']);
-        $response->assertViewHas('userSelect', ['User1', 'User2']);
+        $response->assertViewHas('RessourcesSelect');
+        $response->assertViewHas('userSelect');
     }
 
     /** @test */

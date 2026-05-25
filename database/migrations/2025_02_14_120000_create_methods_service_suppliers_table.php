@@ -20,10 +20,16 @@ return new class extends Migration
             $table->unique(['methods_service_id', 'companies_id']);
         });
 
+        $driver = DB::connection()->getDriverName();
+        $numericCheck = match (true) {
+            in_array($driver, ['mysql', 'mariadb']) => 'methods_services.companies_id REGEXP "^[0-9]+$"',
+            default => "methods_services.companies_id GLOB '[0-9]*'",
+        };
+
         $services = DB::table('methods_services')
             ->select('methods_services.id', 'methods_services.companies_id')
             ->whereNotNull('methods_services.companies_id')
-            ->whereRaw('methods_services.companies_id REGEXP "^[0-9]+$"')
+            ->whereRaw($numericCheck)
             ->join('companies', 'companies.id', '=', DB::raw('methods_services.companies_id'))
             ->get();
 

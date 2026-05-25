@@ -6,6 +6,9 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthenticationTest extends TestCase
@@ -48,6 +51,8 @@ class AuthenticationTest extends TestCase
 
     public function test_ip_is_temporarily_blocked_after_repeated_failed_logins()
     {
+        Event::fake([Lockout::class]);
+
         $user = User::factory()->create();
 
         for ($attempt = 0; $attempt < 10; $attempt++) {
@@ -64,6 +69,6 @@ class AuthenticationTest extends TestCase
 
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors('email');
-        $this->assertTrue(RateLimiter::tooManyAttempts('ip|127.0.0.1', 10));
+        $this->assertTrue(RateLimiter::tooManyAttempts(Str::lower($user->email).'|127.0.0.1', 5));
     }
 }

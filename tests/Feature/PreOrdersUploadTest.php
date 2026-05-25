@@ -41,7 +41,7 @@ class PreOrdersUploadTest extends TestCase
 
         $response
             ->assertRedirect(route('pre-orders.index'))
-            ->assertSessionHas('success', 'PDF(s) envoyé(s) et traitement Python exécuté avec succès.');
+            ->assertSessionHas('success', 'PDF(s) sent, Python processing finished, and CSV import completed successfully.');
 
         $this->assertCount(1, Storage::disk('local')->files('pre-orders/input'));
     }
@@ -65,7 +65,7 @@ class PreOrdersUploadTest extends TestCase
 
         $response
             ->assertRedirect(route('pre-orders.index'))
-            ->assertSessionHas('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
+            ->assertSessionHas('success', 'PDF(s) successfully uploaded to storage.');
 
         $this->assertCount(1, Storage::disk('local')->files('pre-orders/input'));
     }
@@ -88,7 +88,7 @@ class PreOrdersUploadTest extends TestCase
 
         $response
             ->assertRedirect(route('pre-orders.index'))
-            ->assertSessionHas('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
+            ->assertSessionHas('success', 'PDF(s) successfully uploaded to storage.');
 
         Process::assertNothingRan();
     }

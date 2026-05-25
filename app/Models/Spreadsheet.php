@@ -17,6 +17,10 @@ class Spreadsheet extends Model
         'created_by',
     ];
 
+    protected $casts = [
+        'created_by' => 'integer',
+    ];
+
     public function sheets()
     {
         return $this->hasMany(SpreadsheetSheet::class)->orderBy('order');

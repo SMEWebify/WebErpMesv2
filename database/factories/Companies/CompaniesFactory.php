@@ -3,6 +3,7 @@
 namespace Database\Factories\Companies;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use App\Models\Companies\Companies;
 use App\Models\User;
 
@@ -23,6 +24,7 @@ class CompaniesFactory extends Factory
     public function definition()
     {
         return [
+            'uuid' => Str::uuid()->toString(),
             'code' => $this->faker->regexify('[A-Z]{5}[0-4]{3}'),
 			'label' => $this->faker->unique()->name(),
 			'website'=>  $this->faker->domainName(),

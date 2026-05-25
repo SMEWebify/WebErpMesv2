@@ -23,63 +23,73 @@ class TaskDateCalculatorTest extends TestCase
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite.database', ':memory:');
 
-        Schema::create('methods_services', function (Blueprint $table) {
-            $table->id();
-            $table->string('code')->nullable();
-            $table->integer('ordre')->default(1);
-            $table->string('label');
-            $table->integer('type')->default(1);
-            $table->double('hourly_rate')->default(0);
-            $table->double('margin')->default(0);
-            $table->string('color')->nullable();
-            $table->string('picture')->nullable();
-            $table->integer('companies_id')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('methods_services')) {
+            Schema::create('methods_services', function (Blueprint $table) {
+                $table->id();
+                $table->string('code')->nullable();
+                $table->integer('ordre')->default(1);
+                $table->string('label');
+                $table->integer('type')->default(1);
+                $table->double('hourly_rate')->default(0);
+                $table->double('margin')->default(0);
+                $table->string('color')->nullable();
+                $table->string('picture')->nullable();
+                $table->integer('companies_id')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('methods_units', function (Blueprint $table) {
-            $table->id();
-            $table->string('code');
-            $table->string('label');
-            $table->string('type')->nullable();
-            $table->boolean('default')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('methods_units')) {
+            Schema::create('methods_units', function (Blueprint $table) {
+                $table->id();
+                $table->string('code');
+                $table->string('label');
+                $table->string('type')->nullable();
+                $table->boolean('default')->default(true);
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
-            $table->string('label');
-            $table->integer('ordre')->default(1);
-            $table->foreignId('methods_services_id')->nullable();
-            $table->foreignId('methods_units_id')->nullable();
-            $table->float('seting_time')->default(0);
-            $table->float('unit_time')->default(0);
-            $table->integer('qty')->default(1);
-            $table->integer('qty_init')->default(1);
-            $table->integer('type')->default(1);
-            $table->integer('status_id')->default(1);
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('end_date')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tasks')) {
+            Schema::create('tasks', function (Blueprint $table) {
+                $table->id();
+                $table->string('label');
+                $table->integer('ordre')->default(1);
+                $table->foreignId('methods_services_id')->nullable();
+                $table->foreignId('methods_units_id')->nullable();
+                $table->float('seting_time')->default(0);
+                $table->float('unit_time')->default(0);
+                $table->integer('qty')->default(1);
+                $table->integer('qty_init')->default(1);
+                $table->integer('type')->default(1);
+                $table->integer('status_id')->default(1);
+                $table->timestamp('start_date')->nullable();
+                $table->timestamp('end_date')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('methods_ressources', function (Blueprint $table) {
-            $table->id();
-            $table->integer('ordre')->default(1);
-            $table->string('code')->nullable();
-            $table->string('label');
-            $table->integer('capacity')->default(1);
-            $table->foreignId('methods_services_id')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('methods_ressources')) {
+            Schema::create('methods_ressources', function (Blueprint $table) {
+                $table->id();
+                $table->integer('ordre')->default(1);
+                $table->string('code')->nullable();
+                $table->string('label');
+                $table->integer('capacity')->default(1);
+                $table->foreignId('methods_services_id')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('times_banck_holidays', function (Blueprint $table) {
-            $table->id();
-            $table->boolean('fixed')->default(true);
-            $table->date('date');
-            $table->string('label');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('times_banck_holidays')) {
+            Schema::create('times_banck_holidays', function (Blueprint $table) {
+                $table->id();
+                $table->boolean('fixed')->default(true);
+                $table->date('date');
+                $table->string('label');
+                $table->timestamps();
+            });
+        }
     }
 
     public function test_adjustment_of_weekends_and_holidays(): void
@@ -219,6 +229,8 @@ class MethodsRessourcesFactory extends Factory
             'label' => 'Resource',
             'capacity' => 1,
             'methods_services_id' => null,
+            'section_id' => 1,
+            'color' => '#000000',
         ];
     }
 }

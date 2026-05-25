@@ -50,9 +50,9 @@ class SpreadsheetTest extends TestCase
 
     public function test_user_can_save_spreadsheet_data(): void
     {
-        $this->withoutMiddleware();
-
         $user = User::factory()->create();
+        Permission::create(['name' => 'spreadsheet-menu']);
+        $user->givePermissionTo('spreadsheet-menu');
         $spreadsheet = Spreadsheet::create([
             'name' => 'KPI',
             'created_by' => $user->id,
@@ -79,9 +79,9 @@ class SpreadsheetTest extends TestCase
 
     public function test_edit_page_displays_formula_help_modal(): void
     {
-        $this->withoutMiddleware();
-
         $user = User::factory()->create();
+        Permission::create(['name' => 'spreadsheet-menu']);
+        $user->givePermissionTo('spreadsheet-menu');
         $spreadsheet = Spreadsheet::create([
             'name' => 'Aide formules',
             'created_by' => $user->id,
@@ -192,7 +192,6 @@ class SpreadsheetTest extends TestCase
     {
         $response = $this->get(route('spreadsheet.index'));
 
-        $response->assertStatus(302);
-        $this->assertStringContainsString('/login', $response->headers->get('Location'));
+        $response->assertForbidden();
     }
 }

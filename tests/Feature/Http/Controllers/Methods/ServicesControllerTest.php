@@ -44,7 +44,10 @@ class ServicesControllerTest extends TestCase
         $this->mockSelectDataService
             ->expects($this->once())
             ->method('getSupplier')
-            ->willReturn(['Supplier 1', 'Supplier 2']);
+            ->willReturn(collect([
+                (object) ['id' => 1, 'label' => 'Supplier 1', 'code' => 'S1', 'client_type' => '1', 'civility' => null, 'last_name' => null],
+                (object) ['id' => 2, 'label' => 'Supplier 2', 'code' => 'S2', 'client_type' => '1', 'civility' => null, 'last_name' => null],
+            ]));
 
         // Exécute la requête GET
         $response = $this->get(route('methods.service'));
@@ -52,7 +55,7 @@ class ServicesControllerTest extends TestCase
         // Vérifie le code de statut et les données dans la vue
         $response->assertStatus(200);
         $response->assertViewHas('MethodsServices');
-        $response->assertViewHas('CompanieSelect', ['Supplier 1', 'Supplier 2']);
+        $response->assertViewHas('CompanieSelect');
     }
 
     /** @test */

@@ -4,11 +4,10 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RegistrationTest extends TestCase
 {
-    use DatabaseTransactions;
+
 
     public function test_registration_screen_can_be_rendered()
     {

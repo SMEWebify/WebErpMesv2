@@ -46,7 +46,7 @@ class PreOrderNotificationTest extends TestCase
             'non_conformity_notification' => 1,
         ]);
 
-        $response->assertRedirect(route('user.profile', ['id' => $user->id]));
+        $response->assertRedirect(route('user.profile', ['id' => $user->id]) . '#History');
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'pre_order_notification' => 0,

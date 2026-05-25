@@ -104,6 +104,7 @@ class QontoIntegrationApiTest extends TestCase
             'companies_id' => $company->id,
             'name' => 'Acme Contact',
             'mail' => 'contact@acme.test',
+            'is_customer_portal_user' => true,
         ]);
 
         QontoConnection::create([
@@ -114,13 +115,17 @@ class QontoIntegrationApiTest extends TestCase
         ]);
 
         Http::fake([
-            'https://thirdparty.qonto.com/v2/clients' => Http::response([
-                'clients' => [
-                    ['id' => 'q1', 'name' => 'Acme Test', 'postal_code' => '75001', 'city' => 'Paris'],
-                    ['id' => 'q2', 'name' => 'Acme Test', 'postal_code' => '75001', 'city' => 'Paris'],
-                ],
-            ], 200),
-            'https://thirdparty.qonto.com/v2/clients*' => Http::response(['client' => ['id' => 'created-1']], 201),
+            'https://thirdparty.qonto.com/v2/clients*' => function ($request) {
+                if ($request->method() === 'GET') {
+                    return Http::response([
+                        'clients' => [
+                            ['id' => 'q1', 'name' => 'Acme Test', 'postal_code' => '75001', 'city' => 'Paris'],
+                            ['id' => 'q2', 'name' => 'Acme Test', 'postal_code' => '75001', 'city' => 'Paris'],
+                        ],
+                    ], 200);
+                }
+                return Http::response(['client' => ['id' => 'created-1']], 201);
+            },
         ]);
 
         $response = $this->postJson('/api/integrations/qonto/clients/sync');

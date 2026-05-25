@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\Purchases\Purchases;
 use App\Models\Companies\Companies;
 use App\Models\Companies\SupplierRating;
@@ -11,6 +12,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class SupplierRatingControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->create());
+    }
 
     /**
      * Test the store method of SupplierRatingController.
@@ -31,7 +38,7 @@ class SupplierRatingControllerTest extends TestCase
         ];
 
         // Fais une requête POST pour créer l'évaluation
-        $response = $this->post(route('supplier-ratings.store'), $data);
+        $response = $this->post(route('companies.ratings.store'), $data);
 
         // Vérifie que l'évaluation du fournisseur est bien créée dans la base de données
         $this->assertDatabaseHas('supplier_ratings', [
@@ -58,7 +65,7 @@ class SupplierRatingControllerTest extends TestCase
         ];
 
         // Fais une requête POST avec les données manquantes
-        $response = $this->post(route('supplier-ratings.store'), $data);
+        $response = $this->post(route('companies.ratings.store'), $data);
 
         // Vérifie que la validation échoue et que la redirection retourne les erreurs
         $response->assertSessionHasErrors(['purchases_id', 'companies_id']);

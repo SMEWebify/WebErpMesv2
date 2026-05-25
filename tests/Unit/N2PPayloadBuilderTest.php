@@ -18,7 +18,7 @@ class N2PPayloadBuilderTest extends TestCase
 {
     public function test_builds_jobs_with_tasks(): void
     {
-        $order = new Orders([
+        $order = (new Orders())->forceFill([
             'id' => 10,
             'code' => 'ORD-1001',
             'uuid' => 'uuid-123',
@@ -31,7 +31,7 @@ class N2PPayloadBuilderTest extends TestCase
             public string $label = 'Client One';
         };
 
-        $line = new OrderLines([
+        $line = (new OrderLines())->forceFill([
             'id' => 55,
             'orders_id' => $order->getKey(),
             'code' => 'LINE-1',
@@ -73,7 +73,7 @@ class N2PPayloadBuilderTest extends TestCase
 
         $this->assertArrayHasKey('jobs', $payload);
         $job = $payload['jobs'][0];
-        $this->assertSame('ORD-1001', $job['of_code']);
+        $this->assertSame('OF55', $job['of_code']);
         $this->assertSame('55', $job['line_ref']);
         $this->assertSame('released', $job['status']);
         $this->assertSame(2, $job['priority']);

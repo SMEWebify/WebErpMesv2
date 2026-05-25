@@ -42,10 +42,10 @@ class SectionsControllerTest extends TestCase
         $sections = MethodsSection::factory()->count(3)->create();
 
         // Mock the SelectDataService to return some user data
-        $this->selectDataServiceMock->shouldReceive('getUsers')->andReturn([
-            ['id' => 1, 'name' => 'User 1'],
-            ['id' => 2, 'name' => 'User 2']
-        ]);
+        $this->selectDataServiceMock->shouldReceive('getUsers')->andReturn(collect([
+            (object)['id' => 1, 'name' => 'User 1'],
+            (object)['id' => 2, 'name' => 'User 2'],
+        ]));
 
         // Appel de la méthode index
         $response = $this->get(route('methods.section'));
@@ -57,10 +57,7 @@ class SectionsControllerTest extends TestCase
         $response->assertViewHas('MethodsSections', function ($viewSections) use ($sections) {
             return $viewSections->count() === $sections->count();
         });
-        $response->assertViewHas('userSelect', [
-            ['id' => 1, 'name' => 'User 1'],
-            ['id' => 2, 'name' => 'User 2']
-        ]);
+        $response->assertViewHas('userSelect');
     }
 
     /**

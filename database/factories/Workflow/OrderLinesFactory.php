@@ -83,6 +83,8 @@ class OrderLinesFactory extends Factory
 			'accounting_vats_id' => AccountingVat::query()->inRandomOrder()->value('id')
                 ?? AccountingVat::factory()->create()->id,
             
+            'delivered_qty' => 0,
+            'invoiced_qty' => 0,
             'delivery_status' => $statu,
             'internal_delay' => $order->validity_date,
             'delivery_date' => $order->validity_date,

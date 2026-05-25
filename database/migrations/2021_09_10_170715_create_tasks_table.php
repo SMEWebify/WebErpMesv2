@@ -16,18 +16,18 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('label');
-			$table->integer('ordre');
+			$table->integer('ordre')->default(1);
 			$table->integer('quote_lines_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
 			$table->integer('products_id')->nullable();
 			$table->integer('sub_assembly_id')->nullable();
-			$table->integer('methods_services_id');
+			$table->integer('methods_services_id')->nullable();
 			$table->integer('component_id')->nullable(); // use for BOM link with product id
 			$table->decimal('seting_time', 10, 3)->nullable();
 			$table->decimal('unit_time', 10, 3)->nullable();
 			$table->decimal('remaining_time', 10, 3)->nullable();
 			$table->integer('status_id')->default(1);
-			$table->integer('type');
+			$table->integer('type')->default(1);
             # 1 = Productive
             # 2 = Raw material
             # 3 = Raw material (Sheet)

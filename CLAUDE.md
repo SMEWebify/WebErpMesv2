@@ -35,6 +35,80 @@
 5. ✅ Migrer OrderLine vers React
 6. ✅ Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 
+## Commandes Artisan
+
+### Commandes métier custom
+
+| Commande | Description |
+|---|---|
+| `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (PHP, extensions, APP_KEY, Redis, DB, Pusher) |
+| `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat) |
+| `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
+| `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
+| `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
+| `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables pour les appareils de contrôle qualité à étalonner |
+| `php artisan ldap:import-users` | Importe les utilisateurs depuis l'Active Directory LDAP |
+| `php artisan rgpd:erase-contact` | Anonymise les données personnelles d'un contact |
+| `php artisan rgpd:export-contact` | Exporte les données personnelles d'un contact (droit d'accès RGPD) |
+| `php artisan rgpd:purge` | Purge tokens expirés, email_logs > 1 an, soft-deleted > 90j |
+
+### Tâches planifiées (`routes/console.php`)
+
+| Fréquence | Commande | Rôle |
+|---|---|---|
+| Quotidien à 01h00 | `backup:clean` | Supprime les anciennes sauvegardes (rétention `config/backup.php`) |
+| Quotidien à 02h00 | `backup:run` | Sauvegarde complète DB + `storage/app` |
+| Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
+| Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
+| Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
+
+> Pour que le scheduler fonctionne, ajouter au crontab du serveur :
+> ```
+> * * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1
+> ```
+
+### Queue worker (Supervisor requis en prod)
+
+```bash
+# Démarrer le worker (développement)
+php artisan queue:work --sleep=3 --tries=3
+
+# Vérifier les jobs en échec
+php artisan queue:failed
+
+# Relancer les jobs en échec
+php artisan queue:retry all
+
+# Vider la file (⚠️ irréversible)
+php artisan queue:flush
+```
+
+Config Supervisor recommandée (`/etc/supervisor/conf.d/wem-worker.conf`) :
+```ini
+[program:wem-worker]
+command=php /var/www/html/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+numprocs=2
+```
+
+### Commandes utiles (maintenance)
+
+```bash
+# Cache
+php artisan cache:clear          # Vider tout le cache (⚠️ si renommage statuts)
+php artisan config:cache         # Régénérer le cache de config
+php artisan route:cache          # Régénérer le cache des routes
+
+# Base de données
+php artisan migrate              # Appliquer les migrations
+php artisan migrate:status       # État des migrations
+
+# Backup manuel (spatie/laravel-backup)
+php artisan backup:run           # Déclencher un backup immédiat
+php artisan backup:list          # Lister les sauvegardes disponibles
+```
+
 ## Architecture de déploiement
 
 ### Phase 1 — Manuel (0 à 5 clients)

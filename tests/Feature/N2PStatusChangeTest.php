@@ -20,11 +20,8 @@ class N2PStatusChangeTest extends TestCase
         Setting::create(['key' => 'n2p_send_on_order_status_from', 'value' => 'OPEN']);
         Setting::create(['key' => 'n2p_send_on_order_status_to', 'value' => 'IN_PROGRESS']);
 
-        $order = new Orders([
-            'id' => 99,
-            'statu' => 2,
-        ]);
-        $order->setOriginal('statu', 1);
+        $order = (new Orders())->newFromBuilder(['id' => 99, 'statu' => 1]);
+        $order->statu = 2;
 
         $observer = new OrdersObserver(new SettingsService());
         $observer->updated($order);

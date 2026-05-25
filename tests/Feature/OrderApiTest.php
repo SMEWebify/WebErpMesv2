@@ -22,7 +22,7 @@ class OrderApiTest extends TestCase
 
         // Fais une requête GET pour afficher cette commande spécifique
         $this->authenticateApiUser();
-        $response = $this->getJson("/api/orders/{$order->id}");
+        $response = $this->getJson("/api/order/{$order->id}");
 
         // Vérifie que la réponse a le statut 200 (succès)
         $response->assertStatus(200);

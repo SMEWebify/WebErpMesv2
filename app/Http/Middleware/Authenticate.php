@@ -17,7 +17,7 @@ class Authenticate extends Middleware
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        if (app()->environment('testing')) {
+        if (app()->environment('testing') && !$request->expectsJson()) {
             return $next($request);
         }
 

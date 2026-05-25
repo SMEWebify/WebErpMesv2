@@ -18,33 +18,39 @@ class SerialNumberComponentTest extends TestCase
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite.database', ':memory:');
 
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
-            $table->string('label')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tasks')) {
+            Schema::create('tasks', function (Blueprint $table) {
+                $table->id();
+                $table->string('label')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('serial_numbers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('products_id')->nullable();
-            $table->foreignId('companies_id')->nullable();
-            $table->foreignId('order_line_id')->nullable();
-            $table->foreignId('task_id')->nullable();
-            $table->foreignId('purchase_receipt_line_id')->nullable();
-            $table->string('serial_number')->unique();
-            $table->integer('status')->default(1);
-            $table->text('additional_information')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('serial_numbers')) {
+            Schema::create('serial_numbers', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('products_id')->nullable();
+                $table->foreignId('companies_id')->nullable();
+                $table->foreignId('order_line_id')->nullable();
+                $table->foreignId('task_id')->nullable();
+                $table->foreignId('purchase_receipt_line_id')->nullable();
+                $table->string('serial_number')->unique();
+                $table->integer('status')->default(1);
+                $table->text('additional_information')->nullable();
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('serial_number_components', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('parent_serial_id')->constrained('serial_numbers');
-            $table->foreignId('component_serial_id')->constrained('serial_numbers');
-            $table->foreignId('task_id')->constrained('tasks');
-            $table->timestamps();
-            $table->unique('component_serial_id');
-        });
+        if (!Schema::hasTable('serial_number_components')) {
+            Schema::create('serial_number_components', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('parent_serial_id')->constrained('serial_numbers');
+                $table->foreignId('component_serial_id')->constrained('serial_numbers');
+                $table->foreignId('task_id')->nullable();
+                $table->timestamps();
+                $table->unique('component_serial_id');
+            });
+        }
     }
 
     public function test_component_serial_cannot_be_reused_without_movement(): void

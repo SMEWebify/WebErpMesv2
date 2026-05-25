@@ -17,7 +17,7 @@ class CreateMethodsToolsTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label')->nullable();
-			$table->integer('ETAT');
+			$table->integer('ETAT')->default(1);
             #1 - Used
             #2 - unused
             $table->decimal('cost', 11, 3)->nullable();

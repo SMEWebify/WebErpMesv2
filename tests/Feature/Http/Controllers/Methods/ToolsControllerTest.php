@@ -90,7 +90,9 @@ class ToolsControllerTest extends TestCase
      */
     public function test_it_fails_to_store_without_image()
     {
-        $toolData = MethodsTools::factory()->make()->toArray();
+        $toolData = collect(MethodsTools::factory()->make()->toArray())
+            ->map(fn ($v) => $v instanceof \DateTimeInterface ? $v->format('Y-m-d') : $v)
+            ->toArray();
 
         $response = $this->post(route('methods.tool.create'), array_merge($toolData, ['ETAT' => 1]));
 

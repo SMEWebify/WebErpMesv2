@@ -23,7 +23,7 @@ class QuoteApiTest extends TestCase
 
         // Fais une requête GET pour afficher ce devis spécifique
         $this->authenticateApiUser();
-        $response = $this->getJson("/api/quotes/{$quote->id}");
+        $response = $this->getJson("/api/quote/{$quote->id}");
 
         // Vérifie que la réponse a le statut 200 (succès)
         $response->assertStatus(200);

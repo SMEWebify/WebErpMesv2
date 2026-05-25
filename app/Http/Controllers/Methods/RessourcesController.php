@@ -43,11 +43,10 @@ class RessourcesController extends Controller
     public function store(StoreRessourceRequest $request)
     {
         
-        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label', 'capacity','section_id', 'color', 'methods_services_id'));
-        
-        if($request->mask_time) $Ressource->mask_time=1;
-        else $Ressource->mask_time = 2;
-        $Ressource->save();
+        $Ressource = MethodsRessources::create(array_merge(
+            $request->only('ordre', 'code', 'label', 'capacity', 'section_id', 'color', 'methods_services_id'),
+            ['mask_time' => $request->mask_time ? 1 : 2]
+        ));
 
         if($request->hasFile('picture')){
             $Ressource = MethodsRessources::findOrFail($Ressource->id);

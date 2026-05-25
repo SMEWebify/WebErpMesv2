@@ -4,11 +4,10 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class PasswordConfirmationTest extends TestCase
 {
-    use DatabaseTransactions;
+
 
     public function test_confirm_password_screen_can_be_rendered()
     {
