@@ -52,9 +52,11 @@ class EnergyConsumptionTest extends TestCase
         $response = $this->getJson('/api/energy-consumptions');
 
         $response->assertOk()
-                 ->assertJsonFragment([
-                     'id' => $consumption->id,
-                     'total_cost' => $consumption->total_cost,
-                 ]);
+                 ->assertJsonFragment(['id' => $consumption->id]);
+
+        // total_cost precision varies between PHP float and JSON serialization
+        $data = collect($response->json())->firstWhere('id', $consumption->id);
+        $this->assertNotNull($data);
+        $this->assertEqualsWithDelta($consumption->total_cost, $data['total_cost'], 0.001);
     }
 }

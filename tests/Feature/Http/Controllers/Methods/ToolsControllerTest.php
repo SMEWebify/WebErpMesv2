@@ -59,7 +59,9 @@ class ToolsControllerTest extends TestCase
      */
     public function test_it_stores_a_new_tool()
     {
-        $toolData = MethodsTools::factory()->make()->toArray();
+        $toolData = collect(MethodsTools::factory()->make()->toArray())
+            ->map(fn ($v) => $v instanceof \DateTimeInterface ? $v->format('Y-m-d') : $v)
+            ->toArray();
 
         Storage::fake('public');
 
