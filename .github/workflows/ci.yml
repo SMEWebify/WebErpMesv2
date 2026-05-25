@@ -104,6 +104,9 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
+      - name: Run frontend tests (Vitest)
+        run: npm test
+
       - name: Run PHPUnit
         timeout-minutes: 15
         run: vendor/bin/phpunit --colors=always --testdox

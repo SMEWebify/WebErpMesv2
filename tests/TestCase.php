@@ -21,6 +21,10 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Prevent Vite from throwing ViteManifestNotFoundException when
+        // public/build/manifest.json doesn't exist (e.g. CI without npm build).
+        $this->withoutVite();
+
         $this->withoutMiddleware([
             \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
             \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
