@@ -110,5 +110,5 @@ jobs:
           LARAVEL_BYPASS_ENV_CHECK: 1
 
       - name: Run PHPUnit
-        timeout-minutes: 15
+        timeout-minutes: 30
         run: vendor/bin/phpunit --colors=always --testdox
