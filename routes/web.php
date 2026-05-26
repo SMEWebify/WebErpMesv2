@@ -949,6 +949,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/update/expense/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateExpenseUser')->name('human.resources.update.expense.line');
              // Valide Expense  User
             Route::post('/valide/report', 'App\Http\Controllers\Admin\HumanResourcesController@valideExpenseUser')->name('human.resources.valide.expense.report');
+            // Serve Expense scan file (stored outside web root)
+            Route::get('/file/{filename}', 'App\Http\Controllers\Admin\HumanResourcesController@serveExpenseFile')->name('human.resources.expense.file')->where('filename', '[a-f0-9\-]+\.(jpeg|jpg|png|gif|pdf)');
         });
     });
 

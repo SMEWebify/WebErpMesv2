@@ -49,7 +49,7 @@
                     <td>
                         @if($Expense->scan_file)
                         <div class="btn-group btn-group-sm">
-                            <x-button-text-view :route="asset('/file/Expense/'. $Expense->scan_file)" :downloadFile="$Expense->scan_file" />
+                            <x-button-text-view :route="route('human.resources.expense.file', ['filename' => $Expense->scan_file])" :downloadFile="$Expense->scan_file" />
                         </div>
                         @endif
                     </td>

@@ -22,14 +22,20 @@ class StoreUserExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'category_id'  =>'required',
-            'expense_date'  =>'required',
-            'location'  =>'required',
-            'description'  =>'required',
-            'amount'  =>'required',
-            'payer_id'  =>'required|numeric|gt:0',
-            'tax'  =>'required|numeric|gt:0',
+            'category_id'  => 'required',
+            'expense_date'  => 'required',
+            'location'  => 'required',
+            'description'  => 'required',
+            'amount'  => 'required',
+            'payer_id'  => 'required|numeric|gt:0',
+            'tax'  => 'required|numeric|gt:0',
+            'scan_file' => [
+                'nullable',
+                'file',
+                'mimes:jpeg,jpg,png,gif,pdf',
+                'mimetypes:image/jpeg,image/png,image/gif,application/pdf',
+                'max:10240',
+            ],
         ];
     }
 }

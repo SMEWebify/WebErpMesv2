@@ -13,6 +13,8 @@ use App\Models\UserExpenseCategory;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Models\Attendance;
 use App\Models\Admin\UserEmploymentContracts;
@@ -313,16 +315,26 @@ class HumanResourcesController extends Controller
                                                 'order_id'=>$request->order_id, 
                                             ]);
 
-         // Handle file upload if present
-        if($request->hasFile('scan_file')){
-            $file =  $request->file('scan_file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->scan_file->move(public_path('file/Expense'), $filename);
+        if ($request->hasFile('scan_file')) {
+            $file = $request->file('scan_file');
+            $extension = $file->guessExtension() ?? 'bin';
+            $filename = Str::uuid() . '.' . $extension;
+            Storage::disk('local')->putFileAs('expenses', $file, $filename);
             $UserExpense->update(['scan_file' => $filename]);
-            $UserExpense->save();
         }
 
         return redirect()->route('human.resources.show.expense', ['id' => $report_id])->with('success', 'Successfully add expense report');
+    }
+
+    public function serveExpenseFile(string $filename)
+    {
+        $path = 'expenses/' . basename($filename);
+
+        if (!Storage::disk('local')->exists($path)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->response($path);
     }
 
     /**
