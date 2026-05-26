@@ -26,12 +26,13 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
                 ->name('login.store');
 
-    // Route to display the registration form
-    Route::get('/register', [RegisteredUserController::class, 'create'])
-        ->name('register');
+    // Self-registration (disabled by default — set REGISTRATION_ENABLED=true in .env to enable)
+    if (config('branding.registration_enabled')) {
+        Route::get('/register', [RegisteredUserController::class, 'create'])
+            ->name('register');
 
-    // Route to handle registration form submission
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+        Route::post('/register', [RegisteredUserController::class, 'store']);
+    }
 
     // Route to display the forgot password form
     Route::get('/forgot/password', [PasswordResetLinkController::class, 'create'])

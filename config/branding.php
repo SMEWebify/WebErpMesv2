@@ -15,6 +15,10 @@ return [
 
     'commercial' => $commercial,
 
+    // Self-registration: set REGISTRATION_ENABLED=true in .env to allow public sign-up.
+    // Default is false — users must be created by an admin.
+    'registration_enabled' => (bool) env('REGISTRATION_ENABLED', false),
+
     // Display names
     'app_name'      => $commercial ? 'Nest2Prod ERP' : 'WEM',
     'app_name_full' => $commercial ? 'Nest2Prod ERP' : 'WEB ERP MES',
