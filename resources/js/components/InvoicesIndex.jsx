@@ -5,11 +5,11 @@ import React, { useState, useEffect, useRef } from 'react';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',      label: 'in_progress' },
-    2: { badge: 'badge-primary',   label: 'send' },
-    3: { badge: 'badge-warning',   label: 'pending' },
-    4: { badge: 'badge-danger',    label: 'unpaid' },
-    5: { badge: 'badge-success',   label: 'paid' },
+    1: { badge: 'badge-secondary',  label: 'draft' },
+    2: { badge: 'badge-primary',    label: 'send' },
+    3: { badge: 'badge-warning',    label: 'pending' },
+    4: { badge: 'badge-danger',     label: 'unpaid' },
+    5: { badge: 'badge-success',    label: 'paid' },
 };
 
 const STATUS_COLORS = {
@@ -145,7 +145,7 @@ function PieChart({ chartData, trans }) {
     const [hovered, setHovered] = useState(null);
 
     const statusTrans = {
-        1: trans.in_progress,
+        1: trans.draft ?? 'Brouillon',
         2: trans.send,
         3: trans.pending,
         4: trans.unpaid,

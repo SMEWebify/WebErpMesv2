@@ -1535,3 +1535,21 @@ mountChatLive();
 mountStockValuationApp();
 mountAccountingPeriodsApp();
 mountInvoicePaymentsTab();
+mountInvoiceLinesDraft();
+
+async function mountInvoiceLinesDraft() {
+    const el = document.getElementById('invoice-lines-draft-app');
+    if (!el) return;
+    const { default: InvoiceLinesDraft } = await import('./components/InvoiceLinesDraft.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(InvoiceLinesDraft, {
+            invoiceId: Number(el.dataset.invoiceId),
+            statu:     Number(el.dataset.statu),
+            lines:     parse('lines')     ?? [],
+            endpoints: parse('endpoints') ?? {},
+            currency:  el.dataset.currency ?? 'EUR',
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}

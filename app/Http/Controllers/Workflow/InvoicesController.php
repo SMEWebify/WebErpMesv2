@@ -16,6 +16,7 @@ use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use App\Events\DeliveryLineUpdated;
 use App\Events\InvoiceStatusChanged;
+use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
@@ -592,6 +593,51 @@ class InvoicesController extends Controller
         }
 
         return response()->json(['ok' => true]);
+    }
+
+    public function updateLine(Request $request, int $id, int $lineId): \Illuminate\Http\JsonResponse
+    {
+        $invoice = Invoices::findOrFail($id);
+        abort_unless(auth()->check(), 403);
+        abort_if($invoice->statu !== 1, 403, 'La facture n\'est plus en brouillon.');
+
+        $data = $request->validate([
+            'qty'        => 'sometimes|numeric|min:0',
+            'unit_price' => 'sometimes|numeric|min:0',
+            'discount'   => 'sometimes|numeric|min:0|max:100',
+        ]);
+
+        $line = InvoiceLines::where('id', $lineId)->where('invoices_id', $id)->firstOrFail();
+        $line->update($data);
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return response()->json([
+            'ok'         => true,
+            'unit_price' => $line->unit_price,
+            'discount'   => $line->discount,
+            'qty'        => $line->qty,
+            'line_total' => round($line->qty * $line->unit_price * (1 - $line->discount / 100), 2),
+            'formatted'  => Number::currency($line->unit_price, $currency, config('app.locale')),
+        ]);
+    }
+
+    public function emit(Request $request, int $id): \Illuminate\Http\JsonResponse
+    {
+        abort_unless(auth()->check(), 403);
+        $invoice = Invoices::findOrFail($id);
+        abort_if($invoice->statu !== 1, 422, 'La facture n\'est pas en brouillon.');
+
+        $invoice->statu = 2;
+        $invoice->save();
+        event(new InvoiceStatusChanged($invoice, 2));
+
+        foreach ($invoice->InvoiceLines as $line) {
+            $line->invoice_status = 2;
+            $line->save();
+        }
+
+        return response()->json(['ok' => true, 'statu' => 2]);
     }
 
     /**

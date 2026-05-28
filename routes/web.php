@@ -436,6 +436,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/request/generate-all', 'App\Http\Controllers\Workflow\InvoicesController@generateInvoicesForCompanyApi')->name('invoices-request.generate-all');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
+        Route::patch('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@updateLine')->name('invoices.lines.update');
+        Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         // JSON endpoint for company address/contact selects on invoice show page

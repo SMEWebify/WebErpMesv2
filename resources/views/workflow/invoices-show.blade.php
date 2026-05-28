@@ -142,7 +142,13 @@
                 <table class="table table-hover">
                     <tr>
                         <td style="width:50%">{{ __('general_content.invoices_trans_key') }}</td>
-                        <td><x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" /></td>
+                        <td>
+                            @if($Invoice->statu === 1)
+                                <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} — PDF indisponible</span>
+                            @else
+                                <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
+                            @endif
+                        </td>
                     </tr>
                     @if(config('mail.default') && config('mail.from.address'))
                     <tr>
@@ -164,89 +170,79 @@
         </div>
       </div>       
       <div class="tab-pane " id="InvoiceLines">
-        <!-- Table row -->
-        <div class="row">
-          <div class="col-12 table-responsive">
-            <form action="{{ route('credit-notes.store.from.invoice') }}" method="POST">
-              @csrf
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>{{ __('general_content.order_trans_key') }}</th>
-                    <th>{{ __('general_content.delivery_notes_trans_key') }}</th>
-                    <th>{{ __('general_content.external_id_trans_key') }}</th>
-                    <th>{{ __('general_content.description_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_trans_key') }}</th>
-                    <th>{{ __('general_content.unit_trans_key') }}</th>
-                    <th>{{ __('general_content.price_trans_key') }}</th>
-                    <th>{{ __('general_content.discount_trans_key') }}</th>
-                    <th>{{ __('general_content.vat_trans_key') }}</th>
-                    <th>{{ __('general_content.invoice_status_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                    @forelse($Invoice->InvoiceLines as $InvoiceLine)
-                    <tr>
-                      <td>
-                        <x-OrderButton id="{{ $InvoiceLine->orderLine->order['id'] }}" code="{{ $InvoiceLine->orderLine->order['code'] }}"  />
-                      </td>
-                      <td>
-                        @if($InvoiceLine->delivery_line_id)
-                        <x-DeliveryButton id="{{ $InvoiceLine->deliveryLine->delivery['id'] }}" code="{{ $InvoiceLine->deliveryLine->delivery['code'] }}"  />
-                        @else
-                        {{ __('general_content.delivered_without_dn_trans_key') }}
-                        @endif
-                        </td>
-                      <td>{{ $InvoiceLine->orderLine['code'] }}</td>
-                      <td>{{ $InvoiceLine->orderLine['label'] }}</td>
-                      <td>{{ format_qty($InvoiceLine->qty) }}</td>
-                      <td>{{ $InvoiceLine->OrderLine->Unit['label'] }}</td>
-                      <td>{{ $InvoiceLine->formatted_selling_price }}</td>
-                      <td>{{ $InvoiceLine->OrderLine['discount'] }} %</td>
-                      <td>{{ $InvoiceLine->OrderLine->VAT['rate'] }} %</td>
-                      <td>
-                        @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif 
-                        @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-primary">{{ __('general_content.send_trans_key') }}</span>@endif
-                        @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.pending_trans_key') }}</span>@endif
-                        @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">{{ __('general_content.unpaid_trans_key') }}</span>@endif
-                        @if(5 == $InvoiceLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.paid_trans_key') }}</span>@endif
-                      </td>
-                      <td>
-                          <input type="checkbox" name="selected_invoice_lines[]" value="{{ $InvoiceLine->id }}">
-                      </td>
-                    </tr>
-                    @empty
-                      <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
-                    @endforelse
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <th>{{ __('general_content.order_trans_key') }}</th>
-                      <th>{{ __('general_content.delivery_notes_trans_key') }}</th>
-                      <th>{{ __('general_content.external_id_trans_key') }}</th>
-                      <th>{{ __('general_content.description_trans_key') }}</th>
-                      <th>{{ __('general_content.qty_trans_key') }}</th>
-                      <th>{{ __('general_content.unit_trans_key') }}</th>
-                      <th>{{ __('general_content.price_trans_key') }}</th>
-                      <th>{{ __('general_content.discount_trans_key') }}</th>
-                      <th>{{ __('general_content.vat_trans_key') }}</th>
-                      <th>{{ __('general_content.invoice_status_trans_key') }}</th>
-                      <th></th>
-                    </tr>
-                    <tr>
-                        <th colspan="9"></th>
-                        <th colspan="2">
-                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_credit_note_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                        </th>
-                    </tr>
-                  </tfoot>
-              </table>
-            </form>
-          </div>
-          <!-- /.col -->
+        @php
+          $invoiceLinesData = $Invoice->InvoiceLines->map(function ($l) {
+              return [
+                  'id'              => $l->id,
+                  'qty'             => (float) $l->qty,
+                  'unit_price'      => (float) ($l->unit_price ?? $l->orderLine->selling_price),
+                  'discount'        => (float) ($l->discount ?? 0),
+                  'vat_rate'        => (float) ($l->vat_rate ?? 0),
+                  'invoice_status'  => $l->invoice_status,
+                  'order_line_code' => $l->orderLine['code'],
+                  'order_line_label'=> $l->orderLine['label'],
+                  'unit_label'      => $l->orderLine->Unit['label'] ?? '',
+                  'order_code'      => $l->orderLine->order['code'],
+                  'order_url'       => route('orders.show', $l->orderLine->order['id']),
+                  'delivery_code'   => $l->delivery_line_id ? $l->deliveryLine->delivery['code'] : null,
+                  'delivery_url'    => $l->delivery_line_id ? route('deliverys.show', ['id' => $l->deliveryLine->delivery['id']]) : null,
+              ];
+          });
+          $linesEndpoints = [
+              'updateLine' => route('invoices.lines.update', [$Invoice->id, '{lineId}']),
+              'emit'       => route('invoices.emit', $Invoice->id),
+          ];
+          $linesTrans = [
+              'order'       => __('general_content.order_trans_key'),
+              'delivery'    => __('general_content.delivery_notes_trans_key'),
+              'ref'         => __('general_content.external_id_trans_key'),
+              'description' => __('general_content.description_trans_key'),
+              'qty'         => __('general_content.qty_trans_key'),
+              'unit'        => __('general_content.unit_trans_key'),
+              'price'       => __('general_content.price_trans_key'),
+              'discount'    => __('general_content.discount_trans_key'),
+              'vat'         => __('general_content.vat_trans_key'),
+              'total'       => 'Montant HT',
+              'status'      => __('general_content.invoice_status_trans_key'),
+              'in_progress' => __('general_content.in_progress_trans_key'),
+              'send'        => __('general_content.send_trans_key'),
+              'pending'     => __('general_content.pending_trans_key'),
+              'unpaid'      => __('general_content.unpaid_trans_key'),
+              'paid'        => __('general_content.paid_trans_key'),
+          ];
+        @endphp
+        <div
+          id="invoice-lines-draft-app"
+          data-invoice-id="{{ $Invoice->id }}"
+          data-statu="{{ $Invoice->statu }}"
+          data-lines="{{ json_encode($invoiceLinesData) }}"
+          data-endpoints="{{ json_encode($linesEndpoints) }}"
+          data-currency="{{ app('Factory')->curency ?? 'EUR' }}"
+          data-trans="{{ json_encode($linesTrans) }}"
+        ></div>
+
+        @if($Invoice->statu >= 2)
+        <div class="mt-3">
+          <form action="{{ route('credit-notes.store.from.invoice') }}" method="POST">
+            @csrf
+            @foreach($Invoice->InvoiceLines as $line)
+              <input type="hidden" name="all_invoice_lines[]" value="{{ $line->id }}">
+            @endforeach
+            <div class="d-flex align-items-center">
+              <label class="mr-2 mb-0 text-muted small">Sélectionner les lignes pour avoir :</label>
+              @foreach($Invoice->InvoiceLines as $line)
+                <label class="mr-3 mb-0 small">
+                  <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="mr-1">
+                  {{ $line->orderLine['code'] }}
+                </label>
+              @endforeach
+              <button type="submit" class="btn btn-info btn-sm ml-auto">
+                <i class="fas fa-save mr-1"></i>{{ __('general_content.new_credit_note_trans_key') }}
+              </button>
+            </div>
+          </form>
         </div>
-        <!-- /.row -->
+        @endif
       </div>
       <div class="tab-pane" id="Payments">
         <div

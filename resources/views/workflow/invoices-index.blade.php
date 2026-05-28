@@ -10,6 +10,7 @@
   $reactTrans = [
     'dashboard'          => __('general_content.dashboard_trans_key'),
     'invoices_list'      => __('general_content.invoices_list_trans_key'),
+    'draft'              => 'Brouillon',
     'in_progress'        => __('general_content.in_progress_trans_key'),
     'send'               => __('general_content.send_trans_key'),
     'pending'            => __('general_content.pending_trans_key'),
