@@ -89,8 +89,8 @@ class PurchaseCalculatorService
         $SubTotal = 0;
         $purchaseLines = $this->purchase->purchaseLines;
         foreach ($purchaseLines as $purchaseLine) {
-            $SubTotal += ($purchaseLine->qty * $purchaseLine->selling_price)-($purchaseLine->qty * $purchaseLine->selling_price)*($purchaseLine->discount/100);
+            $SubTotal += round($purchaseLine->qty * $purchaseLine->selling_price * (1 - $purchaseLine->discount / 100), 2);
         }
         return $SubTotal;
-    } 
+    }
 }

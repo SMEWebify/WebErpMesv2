@@ -80,7 +80,10 @@ class OrderCalculatorService
         $SubTotal = 0;
         $orderLines = $this->order->orderLines;
         foreach ($orderLines as $orderLine) {
-            $SubTotal += ($orderLine->qty * $orderLine->selling_price)-($orderLine->qty * $orderLine->selling_price)*($orderLine->discount/100);
+            $SubTotal += round(
+                ($orderLine->qty * $orderLine->selling_price) * (1 - $orderLine->discount / 100),
+                2
+            );
         }
         return $SubTotal;
     } 

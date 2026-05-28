@@ -85,7 +85,7 @@ class QuoteCalculatorService
         $SubTotal = 0;
         $quoteLines = $this->quote->quoteLines;
         foreach ($quoteLines as $quoteLine) {
-            $SubTotal += ($quoteLine->qty * $quoteLine->selling_price)-($quoteLine->qty * $quoteLine->selling_price)*($quoteLine->discount/100);
+            $SubTotal += round($quoteLine->qty * $quoteLine->selling_price * (1 - $quoteLine->discount / 100), 2);
         }
         return $SubTotal;
     }

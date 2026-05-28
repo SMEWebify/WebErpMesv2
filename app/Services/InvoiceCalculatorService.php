@@ -76,7 +76,7 @@ class InvoiceCalculatorService
         foreach ($invoicesLines as $invoicesLine) {
             [$unitPrice, $discount] = $this->lineSnapshot($invoicesLine);
 
-            $SubTotal += $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
+            $SubTotal += round($invoicesLine->qty * $unitPrice * (1 - $discount / 100), 2);
         }
 
         return $SubTotal;

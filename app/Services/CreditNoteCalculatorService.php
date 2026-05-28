@@ -85,7 +85,10 @@ class CreditNoteCalculatorService
         $SubTotal = 0;
         $creditNotesLines = $this->creditNotes->creditNotelines;
         foreach ($creditNotesLines as $creditNotesLine) {
-            $SubTotal += ($creditNotesLine->qty * $creditNotesLine->orderLine->selling_price)-($creditNotesLine->qty * $creditNotesLine->orderLine->selling_price)*($creditNotesLine->orderLine->discount/100);
+            $SubTotal += round(
+                $creditNotesLine->qty * $creditNotesLine->orderLine->selling_price * (1 - $creditNotesLine->orderLine->discount / 100),
+                2
+            );
         }
         return $SubTotal;
     }
