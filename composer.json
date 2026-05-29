@@ -2,7 +2,7 @@
                                                                                                                                 "php": "^8.2",
                                                                                                                                 "ext-zip": "*",
                                                                                                                                 "barryvdh/laravel-dompdf": "^v3.0.0",
-                                                                                                                                "directorytree/ldaprecord-laravel": "^v3.3.5",
+                                                                                                                                "directorytree/ldaprecord-laravel": "^v4.0.2",
                                                                                                                                 "doctrine/dbal": "^3.10",
                                                                                                                                 "dragonbe/vies": "^2.3",
                                                                                                                                 "fruitcake/php-cors": "^1.2",
