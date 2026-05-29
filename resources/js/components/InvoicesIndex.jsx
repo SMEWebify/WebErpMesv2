@@ -503,7 +503,7 @@ function colDefs(trans, qontoEnabled) {
             label: 'Qonto',
             sortField: null,
             align: 'center',
-            render: inv => <QontoStatusBadge status={inv.qonto_status} />,
+            render: inv => <QontoStatusBadge status={inv.pdp_status} />,
         };
     }
 
@@ -817,8 +817,8 @@ function ListTab({ endpoints, trans, companieId = null }) {
             .then(res => {
                 setInvoices(res.data);
                 setMeta(res.meta);
-                if (typeof res.qonto_enabled !== 'undefined') {
-                    setQontoEnabled(res.qonto_enabled);
+                if (typeof res.pdp_enabled !== 'undefined') {
+                    setQontoEnabled(res.pdp_enabled);
                 }
             })
             .finally(() => setLoading(false));

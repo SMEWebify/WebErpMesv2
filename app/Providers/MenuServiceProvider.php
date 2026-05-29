@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Integrations\PdpIncomingInvoice;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\OrderLines;
@@ -43,6 +44,13 @@ class MenuServiceProvider extends ServiceProvider
                 return PurchaseLines::whereColumn('invoiced_qty', '<=', 'qty')->count();
             });
 
+            $incomingInvoicesCount = Cache::remember('menu_incoming_invoices', 60, function () {
+                return PdpIncomingInvoice::whereIn('status', [
+                    PdpIncomingInvoice::STATUS_RECEIVED,
+                    PdpIncomingInvoice::STATUS_SUPPLIER_UNMATCHED,
+                ])->count();
+            });
+
             $event->menu->addBefore('orders_lines_list', [
                 'text'        => 'orders_list_trans_key',
                 'url'         => 'orders',
@@ -76,6 +84,13 @@ class MenuServiceProvider extends ServiceProvider
                 'url'         => 'purchases/waiting/invoice',
                 'label'       => $purchasesWaitingInvoiceCount,
                 'label_color' => 'warning',
+            ]);
+
+            $event->menu->addAfter('invoice_supplier', [
+                'text'        => 'incoming_invoices_trans_key',
+                'url'         => 'purchases/incoming-invoices',
+                'label'       => $incomingInvoicesCount,
+                'label_color' => 'info',
             ]);
         });
     }

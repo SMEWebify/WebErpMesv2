@@ -54,14 +54,18 @@ offline_access  client.read  client.write
 | `app/Http/Controllers/Integrations/QontoWebhookController.php` | Réception des webhooks Qonto |
 | `app/Services/Integrations/QontoConnectionService.php` | Gestion centralisée du token OAuth |
 | `app/Services/Integrations/QontoClientSyncService.php` | Logique de réconciliation clients |
-| `app/Services/Integrations/QontoInvoiceSyncService.php` | Dépôt factures + application des cycles de vie |
+| `app/Services/Integrations/Pdp/Contracts/PdpGateway.php` | Contrat PDP (driver) — agnostique fournisseur |
+| `app/Services/Integrations/Pdp/Drivers/QontoGateway.php` | Driver Qonto : I/O HTTP, Factur-X, webhooks |
+| `app/Services/Integrations/Pdp/PdpInvoiceService.php` | Orchestration agnostique (persistance + cycle de vie) |
+| `app/Services/Integrations/Pdp/PdpManager.php` | Registre/résolveur des drivers PDP |
+| `app/Services/Integrations/Pdp/Enums/PdpLifecycle.php` | Statuts canoniques + mapping WEM |
 | `app/Models/Integrations/QontoConnection.php` | Connexion OAuth par tenant |
 | `app/Models/Integrations/QontoClientMapping.php` | Correspondances WEM ↔ Qonto (clients) |
 | `app/Models/Integrations/QontoSyncReview.php` | Matchs ambigus en attente de révision |
-| `app/Models/Integrations/QontoInvoiceMapping.php` | Suivi lifecycle des factures soumises |
+| `app/Models/Integrations/PdpInvoiceSubmission.php` | Suivi du cycle de vie des factures déposées (toute PDP) |
 | `resources/views/integrations/qonto-settings.blade.php` | Page de surveillance clients |
 | `resources/views/integrations/partials/qonto-invoice-card.blade.php` | Bloc Factur-X sur fiche facture |
-| `config/services.php` | Clé `qonto` |
+| `config/services.php` | Clés `qonto` + `pdp.default` |
 
 ### Base de données
 
@@ -250,13 +254,14 @@ Auth : `auth:api` (token bearer)
 
 ## Facturation électronique
 
-### Table `qonto_invoice_mappings`
+### Table `pdp_invoice_submissions`
 
 | Colonne | Type | Description |
 |---|---|---|
 | `tenant_id` | integer | ID tenant |
 | `invoice_id` | integer | `invoices.id` |
-| `qonto_invoice_id` | string | ID de la facture côté Qonto après dépôt |
+| `provider` | string | Driver PDP (ex: `qonto`) |
+| `external_id` | string | ID de la facture côté PDP après dépôt |
 | `lifecycle_status` | string | Statut du cycle de vie (voir ci-dessous) |
 | `rejection_reason` | string | Motif si rejeté ou refusé |
 | `submitted_at` | datetime | Date de dépôt vers Qonto |
@@ -301,7 +306,7 @@ Il affiche le statut lifecycle courant, la date de dépôt, le motif de rejet é
 
 ### Liste des factures
 
-La colonne **"Qonto"** apparaît dans la liste des factures uniquement si l'intégration est activée (réponse `qonto_enabled: true` de l'API). Elle affiche le badge lifecycle de chaque facture.
+La colonne **"Qonto"** apparaît dans la liste des factures uniquement si l'intégration est activée (réponse `pdp_enabled: true` de l'API, statut par facture dans `pdp_status`). Elle affiche le badge lifecycle de chaque facture.
 
 ---
 

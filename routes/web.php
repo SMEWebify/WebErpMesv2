@@ -514,6 +514,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice');
         Route::get('/invoice/json/list', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@listJson')->name('purchases.invoice.json.list');
 
+        // Réception des factures fournisseurs électroniques (Factur-X)
+        Route::get('/incoming-invoices', 'App\Http\Controllers\Purchases\IncomingInvoiceController@index')->name('purchases.incoming.index');
+        Route::get('/incoming-invoices/json/list', 'App\Http\Controllers\Purchases\IncomingInvoiceController@listJson')->name('purchases.incoming.json.list');
+        Route::post('/incoming-invoices/upload', 'App\Http\Controllers\Purchases\IncomingInvoiceController@upload')->name('purchases.incoming.upload');
+        Route::post('/incoming-invoices/{incoming}/convert', 'App\Http\Controllers\Purchases\IncomingInvoiceController@convert')->name('purchases.incoming.convert');
+        Route::post('/incoming-invoices/{incoming}/reject', 'App\Http\Controllers\Purchases\IncomingInvoiceController@reject')->name('purchases.incoming.reject');
+
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrderFromRFQ')->middleware(['auth'])->name('purchases.orders.store');
         

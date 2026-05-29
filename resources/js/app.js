@@ -444,6 +444,24 @@ async function mountInvoicesIndex() {
     );
 }
 
+async function mountIncomingInvoicesIndex() {
+    const element = document.getElementById('incoming-invoices-index-app');
+    if (!element) return;
+
+    const { default: IncomingInvoicesIndex } = await import('./components/IncomingInvoicesIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(IncomingInvoicesIndex, {
+            endpoints: parse('endpoints') ?? {},
+            locale:    element.dataset.locale   ?? 'fr-FR',
+            currency:  element.dataset.currency ?? 'EUR',
+        })
+    );
+}
+
 async function mountProductsIndex() {
     const element = document.getElementById('products-index-app');
     if (!element) return;
@@ -1296,6 +1314,7 @@ mountPurchasesQuotationIndex();
 mountPurchasesQuotationShow();
 mountPurchasesRequest();
 mountInvoicesIndex();
+mountIncomingInvoicesIndex();
 mountProductsIndex();
 mountQualityIndex();
 mountQuoteLinesPage();

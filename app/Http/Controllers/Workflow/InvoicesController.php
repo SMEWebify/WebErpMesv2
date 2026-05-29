@@ -19,9 +19,9 @@ use App\Events\InvoiceStatusChanged;
 use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
-use App\Models\Integrations\QontoInvoiceMapping;
+use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Services\CustomFieldService;
-use App\Services\Integrations\QontoConnectionService;
+use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\InvoiceLineService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -159,19 +159,19 @@ class InvoicesController extends Controller
 
         $invoices = $query->paginate(15);
 
-        $qontoEnabled = QontoConnectionService::isEnabled();
+        $pdpEnabled = app(PdpManager::class)->isEnabled();
 
-        // Charger les mappings Qonto en une seule requête si intégration active
-        $qontoMappings = [];
-        if ($qontoEnabled) {
+        // Charger les statuts PDP en une seule requête si intégration active
+        $pdpStatuses = [];
+        if ($pdpEnabled) {
             $ids = $invoices->pluck('id');
-            $qontoMappings = QontoInvoiceMapping::whereIn('invoice_id', $ids)
+            $pdpStatuses = PdpInvoiceSubmission::whereIn('invoice_id', $ids)
                 ->pluck('lifecycle_status', 'invoice_id')
                 ->all();
         }
 
         return response()->json([
-            'qonto_enabled' => $qontoEnabled,
+            'pdp_enabled' => $pdpEnabled,
             'data' => $invoices->map(fn ($inv) => [
                 'id'                  => $inv->id,
                 'code'                => $inv->code,
@@ -186,7 +186,7 @@ class InvoicesController extends Controller
                 'url'                 => route('invoices.show', ['id' => $inv->id]),
                 'url_pdf'             => route('pdf.invoice', ['Document' => $inv->id]),
                 'url_facturex'        => route('pdf.facturex', ['Document' => $inv->id]),
-                'qonto_status'        => $qontoEnabled ? ($qontoMappings[$inv->id] ?? null) : null,
+                'pdp_status'          => $pdpEnabled ? ($pdpStatuses[$inv->id] ?? null) : null,
             ]),
             'meta' => [
                 'total'        => $invoices->total(),
@@ -521,9 +521,9 @@ class InvoicesController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('invoice', $id->id);
 
-        $qontoEnabled = QontoConnectionService::isEnabled();
-        $qontoMapping = $qontoEnabled
-            ? QontoInvoiceMapping::where('invoice_id', $id->id)->first()
+        $pdpEnabled = app(PdpManager::class)->isEnabled();
+        $pdpSubmission = $pdpEnabled
+            ? PdpInvoiceSubmission::where('invoice_id', $id->id)->first()
             : null;
 
         $companies = Companies::where('active', 1)->orderBy('code')->get(['id', 'code', 'label']);
@@ -538,8 +538,8 @@ class InvoicesController extends Controller
             'previousUrl'  => $previousUrl,
             'nextUrl'      => $nextUrl,
             'CustomFields' => $CustomFields,
-            'qontoEnabled'     => $qontoEnabled,
-            'qontoMapping'     => $qontoMapping,
+            'pdpEnabled'       => $pdpEnabled,
+            'pdpSubmission'    => $pdpSubmission,
             'companies'        => $companies,
             'addresses'        => $addresses,
             'contacts'         => $contacts,

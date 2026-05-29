@@ -1124,6 +1124,7 @@ return [
     'inspection_update_success_trans_key'      => 'Inspection data updated successfully.',
 
     'waiting_to_invoice_trans_key'             => 'Waiting to invoice',
+    'incoming_invoices_trans_key'              => 'Received invoices',
 
     //PURCHASE INVOICE
     'invoice_supplier_trans_key'               => 'Invoice supplier',

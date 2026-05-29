@@ -1124,6 +1124,7 @@ return [
     'inspection_update_success_trans_key'      => "Les données d'inspection ont été mises à jour avec succès.",
 
     'waiting_to_invoice_trans_key'             => 'Attente de facturation',
+    'incoming_invoices_trans_key'              => 'Factures reçues',
 
     //PURCHASE INVOICE
     'invoice_supplier_trans_key'               => 'Facture fournisseur',

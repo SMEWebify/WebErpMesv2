@@ -9,6 +9,8 @@ use App\Models\Workflow\Orders;
 use App\Observers\OrdersObserver;
 use App\Observers\ProductsObserver;
 use App\Services\SelectDataService;
+use App\Services\Integrations\Pdp\PdpManager;
+use App\Services\Integrations\Pdp\Drivers\QontoGateway;
 use Illuminate\Console\Command;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -22,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SelectDataService::class, function () {
             return new SelectDataService();
+        });
+
+        // Registre des drivers PDP (facturation électronique). Pour brancher
+        // une nouvelle plateforme, enregistrer son driver ici.
+        $this->app->singleton(PdpManager::class, function ($app) {
+            $manager = new PdpManager();
+            $manager->extend('qonto', $app->make(QontoGateway::class));
+            return $manager;
         });
 
         $this->app->resolving(Command::class, function (Command $command, $app) {
