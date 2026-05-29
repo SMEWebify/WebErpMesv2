@@ -6,6 +6,7 @@ use App\Services\InvoiceReportInterpreter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use ReflectionMethod;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -83,6 +84,20 @@ class InvoiceReportInterpreterTest extends TestCase
         $this->assertSame('invoice_1.pdf', $invoiceOneRows[0]['filename']);
         $this->assertTrue($service->hasFailures('invoice_1.pdf'));
         $this->assertFalse($service->hasFailures('invoice_2.pdf'));
+    }
+
+    public function test_absolute_posix_output_path_is_not_doubled(): void
+    {
+        // A leading "/" must be treated as an absolute path, not re-prefixed with
+        // base_path() (regression: the path got doubled, breaking the suite on Linux).
+        Config::set('pre_orders.output_path', '/var/data/wem/output');
+
+        $method = new ReflectionMethod(InvoiceReportInterpreter::class, 'getReportPath');
+        $method->setAccessible(true);
+        $resolved = $method->invoke(new InvoiceReportInterpreter());
+
+        $this->assertStringStartsWith('/var/data/wem/output', $resolved);
+        $this->assertStringNotContainsString(base_path(), $resolved);
     }
 
     public function test_it_throws_exception_when_report_is_missing(): void

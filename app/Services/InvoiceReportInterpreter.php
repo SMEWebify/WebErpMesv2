@@ -29,7 +29,10 @@ class InvoiceReportInterpreter
 
     private function getReportPath(): string
     {
-        $configuredOutputPath = trim((string) config('pre_orders.output_path', ''), " \t\n\r\0\x0B/");
+        // Only strip surrounding whitespace and trailing separators — never the
+        // leading "/" of an absolute POSIX path, otherwise toAbsolutePath() would
+        // misread it as relative and prepend base_path() (doubling the path).
+        $configuredOutputPath = rtrim(trim((string) config('pre_orders.output_path', '')), "/\\");
 
         if ($configuredOutputPath === '') {
             return storage_path('app/python/output/' . self::REPORT_FILENAME);
