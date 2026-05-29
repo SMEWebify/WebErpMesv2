@@ -110,5 +110,11 @@ jobs:
           LARAVEL_BYPASS_ENV_CHECK: 1
 
       - name: Run PHPUnit
-        timeout-minutes: 30
+        timeout-minutes: 10
+        # Tests run on SQLite in-memory (see phpunit.xml / .env.testing): fast
+        # and deterministic. The job-level DB_CONNECTION=mysql only drives the
+        # "Run migrations" step above, which validates migrations on MySQL.
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
         run: vendor/bin/phpunit --colors=always --testdox
