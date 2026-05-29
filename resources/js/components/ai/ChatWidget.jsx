@@ -23,12 +23,23 @@ async function sendMessage(message, history) {
 
 // ─── Markdown basique ──────────────────────────────────────────────────────────
 // Transforme **gras**, *italique*, [texte](url), listes en HTML simple.
+// Sécurité: on échappe d'abord le HTML pour neutraliser tout <script>/<img onerror>
+// d'une réponse IA (prompt injection), puis on applique les patterns markdown.
+function escapeHtml(s) {
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function renderMarkdown(text) {
     if (!text) return '';
-    return text
-        // URLs brutes → liens cliquables
+    return escapeHtml(text)
+        // URLs brutes → liens cliquables (http/https uniquement, pas de javascript:)
         .replace(/\bhttps?:\/\/[^\s)\]]+/g, url => `<a href="${url}" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">${url}</a>`)
-        // [texte](url)
+        // [texte](url) — url limitée à http/https par le pattern
         .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">$1</a>')
         // **gras**
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
