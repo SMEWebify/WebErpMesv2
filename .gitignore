@@ -24,6 +24,8 @@
 !*/vendor/jeroennoten
 .env
 .env.backup
+.env.loadtest-backup
+/loadtest/k6/ids.json
 .phpunit.result.cache
 .claude/settings.local.json
 docker-compose.override.yml

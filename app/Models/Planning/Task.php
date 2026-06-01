@@ -85,6 +85,14 @@ class Task extends Model
         'priority' => 'integer',
     ];
 
+    /**
+     * Memoization per-instance (request-scoped) pour éviter les rappels DB
+     * répétés dans les boucles de calcul (BusinessBalance, calculators, Gantt).
+     */
+    private ?float $cachedOrderQtyLine = null;
+    private ?int $cachedLogStartTime = null;
+    private ?int $cachedLogEndTime = null;
+
     public static function priorityLabels(): array
     {
         return [
@@ -304,19 +312,34 @@ class Task extends Model
      */
     public function GetOrderQtyLine()
     {
+        if ($this->cachedOrderQtyLine !== null) {
+            return $this->cachedOrderQtyLine;
+        }
+
         if (!empty($this->order_lines_id)) {
+            // Privilégie la relation déjà chargée (eager-load) — évite un SELECT par tâche
+            // dans les boucles d'agrégation (load-planning, business balance, gantt).
+            if ($this->relationLoaded('OrderLines') && $this->OrderLines) {
+                return $this->cachedOrderQtyLine = (float) ($this->OrderLines->qty ?? 0);
+            }
             $OrderLine = OrderLines::find($this->order_lines_id);
-            return $OrderLine->qty ?? 0;
+            return $this->cachedOrderQtyLine = (float) ($OrderLine->qty ?? 0);
         }
 
         if (!empty($this->quote_lines_id)) {
-            $QuoteLine = QuoteLines::find($this->quote_lines_id);
-            if (!empty($QuoteLine->qty)) {
-                return $QuoteLine->qty;
+            if ($this->relationLoaded('QuoteLines') && $this->QuoteLines) {
+                if (!empty($this->QuoteLines->qty)) {
+                    return $this->cachedOrderQtyLine = (float) $this->QuoteLines->qty;
+                }
+            } else {
+                $QuoteLine = QuoteLines::find($this->quote_lines_id);
+                if (!empty($QuoteLine->qty)) {
+                    return $this->cachedOrderQtyLine = (float) $QuoteLine->qty;
+                }
             }
         }
 
-        return $this->qty ?? 0;
+        return $this->cachedOrderQtyLine = (float) ($this->qty ?? 0);
     }
 
     /**
@@ -467,8 +490,11 @@ class Task extends Model
      */
     public function getTotalLogStartTime()
     {
+        if ($this->cachedLogStartTime !== null) {
+            return $this->cachedLogStartTime;
+        }
         $current_date_time = Carbon::now()->toDateTimeString();
-        return   TaskActivities::where('task_id', $this->id)
+        return $this->cachedLogStartTime = (int) TaskActivities::where('task_id', $this->id)
                                 ->where('type', 1)
                                 ->sum(DB::raw("TIMESTAMPDIFF(SECOND, timestamp, '". $current_date_time ."')"));
     }
@@ -483,8 +509,11 @@ class Task extends Model
      */
     public function getTotalLogEndTime()
     {
+        if ($this->cachedLogEndTime !== null) {
+            return $this->cachedLogEndTime;
+        }
         $current_date_time = Carbon::now()->toDateTimeString();
-        return   TaskActivities::where('task_id', $this->id)
+        return $this->cachedLogEndTime = (int) TaskActivities::where('task_id', $this->id)
                                 ->where(function (Builder $query) {
                                     return $query->where('type', 2)
                                                 ->orWhere('type', 3);
