@@ -49,7 +49,7 @@
         "@univerjs/sheets-numfmt-ui": "^0.24.0",
         "@univerjs/sheets-ui": "^0.24.0",
         "@univerjs/ui": "^0.24.0",
-        "admin-lte": "^4.0.0-rc7",
+        "admin-lte": "^4.0.0",
         "flag-icon-css": "^4.1.7",
         "frappe-gantt": "^1.2.2",
         "react": "^19.2.6",
