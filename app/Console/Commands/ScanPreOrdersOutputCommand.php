@@ -30,16 +30,24 @@ class ScanPreOrdersOutputCommand extends Command
 
         $files = glob($path . '/' . ltrim($patternOption, '/')) ?: [];
         $importedCount = 0;
+        $skippedCount = 0;
 
         foreach ($files as $file) {
             if ($importService->importCsvFile($file)) {
                 $this->moveToDoneFolder($file, $donePathOption);
                 $importedCount++;
                 $this->info('Imported: ' . basename($file));
+            } else {
+                $skippedCount++;
+                $this->warn('Skipped (duplicate or invalid): ' . basename($file));
             }
         }
 
-        $this->info("Done. Imported {$importedCount} file(s) from {$pathOption} (pattern: {$patternOption}).");
+        $this->info("Done. Imported {$importedCount} file(s), skipped {$skippedCount} from {$pathOption} (pattern: {$patternOption}).");
+
+        if (count($files) > 0 && $importedCount === 0) {
+            return self::FAILURE;
+        }
 
         return self::SUCCESS;
     }

@@ -163,7 +163,9 @@ class PreOrdersController extends Controller
 
             if ($scanExitCode !== 0) {
                 return redirect()->route('pre-orders.index')->withErrors(
-                    "PDF(s) traité(s), mais l'import des CSV a échoué. Vérifiez les logs de la commande preorders:scan-output."
+                    "PDF(s) traité(s) mais aucune pré-commande importée. " .
+                    "Les CSV générés sont peut-être déjà connus (doublon de contenu) ou invalides. " .
+                    "Vérifiez les logs via preorders:scan-output."
                 );
             }
 
