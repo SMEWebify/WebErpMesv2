@@ -139,7 +139,7 @@ class PlanningController extends Controller
 
     private function getTasks($startDate, $endDate)
     {
-        return Task::with('service')
+        return Task::with(['service', 'OrderLines'])
                     ->whereBetween('end_date', [$startDate, $endDate])
                     ->whereNotNull('order_lines_id')
                     ->where(function (Builder $query) {

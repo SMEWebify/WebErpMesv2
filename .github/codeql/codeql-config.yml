@@ -1,0 +1,12 @@
+name: "WEM CodeQL Config"
+
+# Exclut les fichiers tiers/bundles qu'on ne maintient pas : ces alertes
+# noyaient les vraies findings (~79 sur 85 venaient de là).
+paths-ignore:
+  - 'public/vendor/**'
+  - 'public/js/**'
+  - 'public/build/**'
+  - 'vendor/**'
+  - 'node_modules/**'
+  - 'storage/**'
+  - 'bootstrap/cache/**'

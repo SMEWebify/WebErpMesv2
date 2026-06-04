@@ -9,11 +9,11 @@ use App\Models\Customer\Customer;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
-use App\Models\Integrations\QontoInvoiceMapping;
+use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Workflow\Invoices;
 use App\Services\Integrations\QontoClientSyncService;
 use App\Services\Integrations\QontoConnectionService;
-use App\Services\Integrations\QontoInvoiceSyncService;
+use App\Services\Integrations\Pdp\PdpInvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +27,7 @@ class QontoIntegrationController extends Controller
     public function __construct(
         private QontoClientSyncService  $syncService,
         private QontoConnectionService  $connectionService,
-        private QontoInvoiceSyncService $invoiceSyncService,
+        private PdpInvoiceService       $pdpInvoiceService,
     ) {}
 
 
@@ -271,7 +271,7 @@ class QontoIntegrationController extends Controller
             'Seules les factures (type 1) peuvent être soumises à Qonto.'
         );
 
-        $mapping = $this->invoiceSyncService->submit($invoice);
+        $mapping = $this->pdpInvoiceService->submit($invoice);
 
         return response()->json(['mapping' => $mapping]);
     }
@@ -279,11 +279,11 @@ class QontoIntegrationController extends Controller
     public function pollInvoice(Request $request, int $invoiceId): JsonResponse
     {
         $tenantId = auth('api')->id();
-        $mapping  = QontoInvoiceMapping::where('tenant_id', $tenantId)
+        $mapping  = PdpInvoiceSubmission::where('tenant_id', $tenantId)
             ->where('invoice_id', $invoiceId)
             ->firstOrFail();
 
-        $mapping = $this->invoiceSyncService->poll($mapping);
+        $mapping = $this->pdpInvoiceService->poll($mapping);
 
         return response()->json(['mapping' => $mapping]);
     }

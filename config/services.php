@@ -39,4 +39,10 @@ return [
         'webhook_secret' => env('QONTO_WEBHOOK_SECRET', ''),
     ],
 
+    // Plateforme de Dématérialisation Partenaire (PDP) active pour l'émission
+    // des factures électroniques. Les drivers sont enregistrés dans AppServiceProvider.
+    'pdp' => [
+        'default' => env('PDP_DRIVER', 'qonto'),
+    ],
+
 ];

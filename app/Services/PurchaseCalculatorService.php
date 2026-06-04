@@ -30,10 +30,7 @@ class PurchaseCalculatorService
         $tableauTVA = array();
         $purchaseLines = $this->purchase->purchaseLines;
         foreach ($purchaseLines as $purchaseLine) {
-            $VAT =  0;
-            if($purchaseLine->accounting_vats_id){
-                $VAT =  $purchaseLine->VAT['rate'];
-            }
+            $VAT = optional($purchaseLine->VAT)['rate'] ?? 0;
             $TotalCurentLine = ($purchaseLine->qty*$purchaseLine->selling_price)-($purchaseLine->qty*$purchaseLine->selling_price)*($purchaseLine->discount/100);
 			$TotalVATCurentLine =  $TotalCurentLine*($VAT/100) ;
             if(array_key_exists($purchaseLine->accounting_vats_id, $tableauTVA)){
@@ -64,10 +61,7 @@ class PurchaseCalculatorService
 
         foreach ($purchaseLines as $purchaseLine) {
             
-            $VAT =  0;
-            if($purchaseLine->accounting_vats_id){
-                $VAT =  $purchaseLine->VAT['rate'];
-            }
+            $VAT = optional($purchaseLine->VAT)['rate'] ?? 0;
             $TotalPriceLine = ($purchaseLine->qty * $purchaseLine->selling_price)-($purchaseLine->qty * $purchaseLine->selling_price)*($purchaseLine->discount/100);
             $TotalVATPrice = $TotalPriceLine*($VAT/100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;

@@ -38,7 +38,7 @@ const INVOICE_ROW = {
 const LIST_RESPONSE = {
     data: [INVOICE_ROW],
     meta: { total: 1, current_page: 1, last_page: 1 },
-    qonto_enabled: false,
+    pdp_enabled: false,
 };
 
 // ---------------------------------------------------------------------------

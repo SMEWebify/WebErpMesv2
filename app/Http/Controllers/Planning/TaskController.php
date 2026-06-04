@@ -59,7 +59,13 @@ class TaskController extends Controller
                   ->whereNull('products_id')
                   ->whereNull('sub_assembly_id');
             });
-        })->get();
+        })
+        // Borne défensive : la table tasks peut grossir indéfiniment ; sans pagination
+        // serveur côté React, on plafonne au 2000 plus récentes pour éviter un timeout
+        // à fort volume. À retirer une fois une vraie pagination implémentée côté front.
+        ->orderBy('id', 'desc')
+        ->limit(2000)
+        ->get();
 
         $tasksData = $tasks->map(function ($task) {
             return [

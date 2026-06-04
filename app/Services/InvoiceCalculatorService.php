@@ -81,4 +81,66 @@ class InvoiceCalculatorService
 
         return $SubTotal;
     }
+
+    /**
+     * Ventilation de la TVA par taux, à partir du snapshot des lignes.
+     *
+     * Contrairement à getVatTotal() (regroupé par identifiant de TVA), cette
+     * méthode renvoie pour chaque taux la base imposable ET le montant de TVA,
+     * ce qui est requis par la norme EN 16931 (BG-23 : VAT breakdown).
+     *
+     * @return array<string,array{rate:float,base:float,vat:float}>
+     */
+    public function getVatBreakdown(): array
+    {
+        $breakdown = [];
+
+        foreach ($this->invoices->invoiceLines as $invoicesLine) {
+            [$unitPrice, $discount, $vatRate] = $this->lineSnapshot($invoicesLine);
+
+            $base = $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
+            $vat  = $base * ($vatRate / 100);
+            $key  = number_format((float) $vatRate, 3, '.', '');
+
+            if (!isset($breakdown[$key])) {
+                $breakdown[$key] = ['rate' => (float) $vatRate, 'base' => 0.0, 'vat' => 0.0];
+            }
+
+            $breakdown[$key]['base'] += $base;
+            $breakdown[$key]['vat']  += $vat;
+        }
+
+        return $breakdown;
+    }
+
+    /**
+     * Lignes normalisées avec prix figés (snapshot), prix net après remise
+     * et total de ligne. Sert de source unique pour le PDF et le Factur-X.
+     *
+     * @return array<int,array{label:string,code:string,qty:float,unit_price:float,discount:float,vat_rate:float,net_unit_price:float,line_total:float,unit_code:?string}>
+     */
+    public function getNormalizedLines(): array
+    {
+        $lines = [];
+
+        foreach ($this->invoices->invoiceLines as $invoicesLine) {
+            [$unitPrice, $discount, $vatRate] = $this->lineSnapshot($invoicesLine);
+
+            $netUnitPrice = $unitPrice * (1 - $discount / 100);
+
+            $lines[] = [
+                'label'          => $invoicesLine->orderLine->label ?? '',
+                'code'           => $invoicesLine->orderLine->code ?? '',
+                'qty'            => (float) $invoicesLine->qty,
+                'unit_price'     => (float) $unitPrice,
+                'discount'       => (float) $discount,
+                'vat_rate'       => (float) $vatRate,
+                'net_unit_price' => $netUnitPrice,
+                'line_total'     => $invoicesLine->qty * $netUnitPrice,
+                'unit_code'      => $invoicesLine->orderLine->Unit->code ?? null,
+            ];
+        }
+
+        return $lines;
+    }
 }

@@ -1,21 +1,21 @@
 @php
-use App\Services\Integrations\QontoInvoiceSyncService;
+use App\Services\Integrations\Pdp\Enums\PdpLifecycle;
 
 $lifecycleLabels = [
-    QontoInvoiceSyncService::LIFECYCLE_PENDING      => ['label' => 'Non soumise',  'badge' => 'secondary'],
-    QontoInvoiceSyncService::LIFECYCLE_SUBMITTED    => ['label' => 'Déposée',      'badge' => 'info'],
-    QontoInvoiceSyncService::LIFECYCLE_ACKNOWLEDGED => ['label' => 'Accusé reçu', 'badge' => 'primary'],
-    QontoInvoiceSyncService::LIFECYCLE_REJECTED     => ['label' => 'Rejetée',      'badge' => 'danger'],
-    QontoInvoiceSyncService::LIFECYCLE_REFUSED      => ['label' => 'Refusée',      'badge' => 'danger'],
-    QontoInvoiceSyncService::LIFECYCLE_ACCEPTED     => ['label' => 'Acceptée',     'badge' => 'success'],
-    QontoInvoiceSyncService::LIFECYCLE_PAID         => ['label' => 'Payée',        'badge' => 'success'],
+    PdpLifecycle::Pending->value      => ['label' => 'Non soumise',  'badge' => 'secondary'],
+    PdpLifecycle::Submitted->value    => ['label' => 'Déposée',      'badge' => 'info'],
+    PdpLifecycle::Acknowledged->value => ['label' => 'Accusé reçu', 'badge' => 'primary'],
+    PdpLifecycle::Rejected->value     => ['label' => 'Rejetée',      'badge' => 'danger'],
+    PdpLifecycle::Refused->value      => ['label' => 'Refusée',      'badge' => 'danger'],
+    PdpLifecycle::Accepted->value     => ['label' => 'Acceptée',     'badge' => 'success'],
+    PdpLifecycle::Paid->value         => ['label' => 'Payée',        'badge' => 'success'],
 ];
 
-$currentStatus = $qontoMapping?->lifecycle_status ?? QontoInvoiceSyncService::LIFECYCLE_PENDING;
+$currentStatus = $submission?->lifecycle_status ?? PdpLifecycle::Pending->value;
 $statusInfo    = $lifecycleLabels[$currentStatus] ?? ['label' => $currentStatus, 'badge' => 'secondary'];
-$canSubmit     = ! $qontoMapping || in_array($currentStatus, [
-    QontoInvoiceSyncService::LIFECYCLE_PENDING,
-    QontoInvoiceSyncService::LIFECYCLE_REJECTED,
+$canSubmit     = ! $submission || in_array($currentStatus, [
+    PdpLifecycle::Pending->value,
+    PdpLifecycle::Rejected->value,
 ]);
 @endphp
 
@@ -24,16 +24,16 @@ $canSubmit     = ! $qontoMapping || in_array($currentStatus, [
         <span class="text-muted small">Statut :</span>
         <span class="badge badge-{{ $statusInfo['badge'] }} ml-1">{{ $statusInfo['label'] }}</span>
 
-        @if($qontoMapping?->qonto_invoice_id)
-            <br><small class="text-muted">ID Qonto : {{ $qontoMapping->qonto_invoice_id }}</small>
+        @if($submission?->external_id)
+            <br><small class="text-muted">ID Qonto : {{ $submission->external_id }}</small>
         @endif
 
-        @if($qontoMapping?->submitted_at)
-            <br><small class="text-muted">Déposée le : {{ $qontoMapping->submitted_at->format('d/m/Y H:i') }}</small>
+        @if($submission?->submitted_at)
+            <br><small class="text-muted">Déposée le : {{ $submission->submitted_at->format('d/m/Y H:i') }}</small>
         @endif
 
-        @if($qontoMapping?->rejection_reason)
-            <br><small class="text-danger">Motif : {{ $qontoMapping->rejection_reason }}</small>
+        @if($submission?->rejection_reason)
+            <br><small class="text-danger">Motif : {{ $submission->rejection_reason }}</small>
         @endif
     </div>
 
@@ -44,11 +44,11 @@ $canSubmit     = ! $qontoMapping || in_array($currentStatus, [
                 data-invoice-id="{{ $Invoice->id }}"
                 data-url="{{ route('api.integrations.qonto.invoices.submit', $Invoice->id) }}">
             <i class="fas fa-paper-plane mr-1"></i>
-            {{ $qontoMapping ? 'Re-soumettre' : 'Soumettre à Qonto' }}
+            {{ $submission ? 'Re-soumettre' : 'Soumettre à Qonto' }}
         </button>
         @endif
 
-        @if($qontoMapping?->qonto_invoice_id)
+        @if($submission?->external_id)
         <button type="button"
                 class="btn btn-sm btn-outline-secondary qonto-poll-btn"
                 data-invoice-id="{{ $Invoice->id }}"

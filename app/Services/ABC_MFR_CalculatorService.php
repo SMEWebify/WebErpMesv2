@@ -62,6 +62,7 @@ class ABC_MFR_CalculatorService
             'product_id',
             DB::raw('COUNT(DISTINCT orders_id) as usage_frequency')
         )
+        ->where('product_id', $productId)
         ->groupBy('product_id')
         ->get();
 
@@ -69,6 +70,7 @@ class ABC_MFR_CalculatorService
             'product_id',
             DB::raw('COUNT(*) as movement')
         )
+        ->where('product_id', $productId)
         ->groupBy('product_id')
         ->get();
 

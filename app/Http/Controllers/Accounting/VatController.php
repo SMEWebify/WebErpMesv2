@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Accounting;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Accounting\AccountingVat;
 use App\Http\Requests\Accounting\StoreVatRequest;
 use App\Http\Requests\Accounting\UpdateVatRequest;
@@ -18,6 +19,7 @@ class VatController extends Controller
     public function store(StoreVatRequest $request)
     {
         $vat = AccountingVat::create($request->validated());
+        Cache::forget('select_data_vat_v2');
         return redirect()->to(route('accounting.vats'))
                         ->with('success', 'Successfully created VAT type.');
     }
@@ -37,6 +39,7 @@ class VatController extends Controller
         if ($request->default) {
             AccountingVat::where('id', '!=', $vat->id)->update(['default' => 0]);
         }
+        Cache::forget('select_data_vat_v2');
         return redirect()->to(route('accounting.vats'))
                         ->with('success', 'Successfully updated VAT type.');
     }
