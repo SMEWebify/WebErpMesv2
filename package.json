@@ -23,7 +23,7 @@
         "laravel-echo": "^2.3.4",
         "laravel-vite-plugin": "^2.1.0",
         "lodash": "^4.18.1",
-        "postcss": "^8.5.15",
+        "postcss": "^8.5.23",
         "postcss-import": "^16.1.0",
         "pusher-js": "^8.5.0",
         "sass": "^1.100.0",
