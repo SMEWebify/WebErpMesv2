@@ -51,6 +51,7 @@
 | `php artisan rgpd:erase-contact` | Anonymise les données personnelles d'un contact |
 | `php artisan rgpd:export-contact` | Exporte les données personnelles d'un contact (droit d'accès RGPD) |
 | `php artisan rgpd:purge` | Purge tokens expirés, email_logs > 1 an, soft-deleted > 90j |
+| `php artisan wem:files:import [--dry-run] [--skip-move]` | **À lancer une fois après déploiement.** Déplace `public/{file,photo,drawing,stl,svg,images/products}` vers `storage/app/private/legacy`, renseigne `disk/path/kind` des lignes `files` existantes, et convertit les colonnes CAO produit en fichiers attachés |
 
 ### Tâches planifiées (`routes/console.php`)
 
@@ -139,6 +140,42 @@ php artisan backup:list          # Lister les sauvegardes disponibles
 - Utilisateurs : 1
 - Modules : CRM, Devis, Commandes, Pré-commandes IA, BL, Facturation, FEC
 - Tarif : 1 mois gratuit → 100€/mois
+
+## Gestion documentaire unifiée (GED)
+
+Toutes les entités qui portent des fichiers (produits, devis, commandes, BL, factures,
+achats, NC, mouvements de stock, sociétés, opportunités) passent par un seul dispositif.
+
+### Modèle
+- `files` : `kind` (mesh / brep / cad2d / vector / doc / image / sheet / archive / other,
+  déduit de l'extension par `App\Services\Files\FileKindResolver`), `extension`, `disk`, `path`
+- `fileables` (pivot polymorphe) : `role` (plan, modele_3d, vectoriel, photo, cam,
+  certificat, controle, autre — `App\Services\Files\FileRole`) et `is_primary`
+- `App\Services\Files\FileableRegistry` : liste blanche alias → modèle, pour que le front
+  n'envoie jamais un nom de classe arbitraire
+
+### Stockage
+Hors racine web, sous `storage/app/private/files/{aaaa}/{mm}`, servi par les routes
+authentifiées `files.raw` (inline) et `files.download`. Les anciens dossiers publics sont
+servis par `LegacyFileController` sur les **mêmes URLs** (`/drawing/x.pdf`...), déclarées en
+fin de `routes/web.php` hors du groupe de locale. Un SVG est renvoyé avec `nosniff` + CSP
+`sandbox` (fichier utilisateur donc potentiellement exécutable).
+
+### Front
+- Montage Blade : `@include('include.file-manager-mount', ['fileableType' => 'product', 'fileableId' => $id])`
+- `resources/js/components/files/` : `FileManager` (dépose + liste + viewer),
+  `FileDropzone`, `FileViewer` (dispatch par `kind`), `viewers/` (Mesh, Brep, Dxf, Image, Pdf)
+- Chaque moteur est en `React.lazy()` : ouvrir un PDF ne télécharge pas three.js
+- **STL/OBJ/PLY/3MF/glTF** : loaders three.js — **STEP/IGES/BREP** : `occt-import-js`
+  (OpenCascade en WASM, 7,4 Mo chargés à la demande, aucun convertisseur serveur requis) —
+  **DXF** : `dxf-parser` (parsing seul, pas de dépendance three) + rendu maison dans
+  `resources/js/lib/dxf/toThree.js`, caméra orthographique
+
+### Compatibilité
+`products.drawing_file / stl_file / svg_file / picture` ne sont plus la source de vérité
+mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLegacyColumns()`
+à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
+`TaskStatuApp` continuent de les lire sans modification.
 
 ## Dette technique
 

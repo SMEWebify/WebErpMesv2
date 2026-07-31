@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\Files\FileKindResolver;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFileRequest extends FormRequest
@@ -24,7 +25,14 @@ class StoreFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|file|mimes:jpg,jpeg,bmp,png,doc,docx,csv,rtf,xlsx,xls,txt,pdf,zip|max:10240',
+            // Validated on the client extension rather than the reported MIME
+            // type: browsers send application/octet-stream for STL, STEP and DXF.
+            'file' => [
+                'required',
+                'file',
+                'extensions:' . implode(',', FileKindResolver::allowedExtensions()),
+                'max:' . config('files.max_size'),
+            ],
             'comment' => 'nullable|string|max:65535',
             'hashtags' => 'nullable|string|max:1024',
         ];

@@ -31,7 +31,7 @@
     <ul class="list-unstyled">
         @forelse ( $filesList as $file)
         <li>
-            <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->getFormattedSizeAttribute() }}</small></a>
+            <a href="{{ $file->download_url }}" class="btn-link text-secondary"><i class="{{ $file->icon }} mr-1"></i>{{ $file->original_file_name }} -  <small>{{ $file->formatted_size }}</small></a>
             @if(!empty($file->comment))
                 <div class="text-muted small">{!! nl2br(e($file->comment)) !!}</div>
             @endif

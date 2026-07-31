@@ -186,7 +186,7 @@ class Orders extends Model
     // Relationship with the files associated with the order
     public function files()
     {
-        return $this->morphToMany(File::class, 'fileable');
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     /**
