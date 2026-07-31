@@ -116,7 +116,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
             )}
 
             <div className="row">
-                <div className="col-lg-4">
+                <div className="col-12 col-xl-5 mb-3 mb-xl-0">
                     {canEdit && (
                         <FileDropzone
                             t={t}
@@ -128,8 +128,8 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                         />
                     )}
 
-                    <div className="d-flex align-items-center justify-content-between mt-3 mb-2">
-                        <h6 className="mb-0 text-muted">
+                    <div className="wem-file-manager__list-header d-flex flex-wrap align-items-center justify-content-between mt-3 mb-2">
+                        <h6 className="mb-0 text-muted mr-2">
                             {t('attached_files')} <span className="badge badge-secondary">{files.length}</span>
                         </h6>
                         <select
@@ -237,7 +237,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                     ))}
                 </div>
 
-                <div className="col-lg-8">
+                <div className="col-12 col-xl-7">
                     <FileViewer file={selected} t={t} />
                 </div>
             </div>

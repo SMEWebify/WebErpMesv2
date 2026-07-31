@@ -10,10 +10,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 130px;
-    padding: 1rem;
+    min-height: 170px;
+    padding: 1.25rem 1rem;
     border: 2px dashed #adb5bd;
-    border-radius: .35rem;
+    border-radius: .5rem;
+    background-color: #fafbfc;
     color: #6c757d;
     text-align: center;
     cursor: pointer;
@@ -38,19 +39,57 @@
     }
 }
 
+.wem-dropzone-form {
+    label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: .15rem;
+    }
+}
+
 .wem-file-manager {
     .list-group-item {
         cursor: pointer;
+        border-radius: .25rem;
+        margin-bottom: .25rem;
+        border: 1px solid transparent;
+        background-color: #f8f9fa;
+
+        &:hover {
+            background-color: #eef2f6;
+        }
 
         &.active-file {
             background-color: rgba(0, 123, 255, .08);
+            border-color: rgba(0, 123, 255, .35);
             border-left: 3px solid #007bff;
+        }
+    }
+
+    &__list-header {
+        gap: .5rem;
+
+        h6 {
+            font-size: .8rem;
+            letter-spacing: .02em;
         }
     }
 
     .min-width-0 {
         min-width: 0;
     }
+}
+
+.wem-viewer-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 2rem 1rem;
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    border-radius: .5rem;
 }
 
 .wem-viewer {

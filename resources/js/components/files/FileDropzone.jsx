@@ -75,9 +75,9 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
                 )}
             </div>
 
-            <div className="form-row mt-2">
-                <div className="col-md-4 form-group mb-2">
-                    <label className="small mb-1">{t('role')}</label>
+            <div className="wem-dropzone-form mt-3">
+                <div className="form-group mb-2">
+                    <label className="small text-muted mb-1 d-block">{t('role')}</label>
                     <select
                         className="form-control form-control-sm"
                         value={role}
@@ -90,8 +90,8 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
                     </select>
                 </div>
 
-                <div className="col-md-4 form-group mb-2">
-                    <label className="small mb-1">{t('hashtags')}</label>
+                <div className="form-group mb-2">
+                    <label className="small text-muted mb-1 d-block">{t('hashtags')}</label>
                     <input
                         type="text"
                         className="form-control form-control-sm"
@@ -101,8 +101,8 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
                     />
                 </div>
 
-                <div className="col-md-4 form-group mb-2">
-                    <label className="small mb-1">{t('comment')}</label>
+                <div className="form-group mb-2">
+                    <label className="small text-muted mb-1 d-block">{t('comment')}</label>
                     <input
                         type="text"
                         className="form-control form-control-sm"
@@ -110,19 +110,19 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
                         onChange={(event) => setComment(event.target.value)}
                     />
                 </div>
-            </div>
 
-            <div className="custom-control custom-checkbox">
-                <input
-                    type="checkbox"
-                    className="custom-control-input"
-                    id="wem-dropzone-primary"
-                    checked={isPrimary}
-                    onChange={(event) => setIsPrimary(event.target.checked)}
-                />
-                <label className="custom-control-label small" htmlFor="wem-dropzone-primary">
-                    {t('set_as_primary')}
-                </label>
+                <div className="custom-control custom-checkbox">
+                    <input
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="wem-dropzone-primary"
+                        checked={isPrimary}
+                        onChange={(event) => setIsPrimary(event.target.checked)}
+                    />
+                    <label className="custom-control-label small" htmlFor="wem-dropzone-primary">
+                        {t('set_as_primary')}
+                    </label>
+                </div>
             </div>
         </div>
     );
