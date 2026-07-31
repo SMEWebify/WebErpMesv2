@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Quotes;
@@ -71,6 +72,12 @@ class QuoteLines extends Model
     public function QuoteLineDetails()
     {
         return $this->hasOne(QuoteLineDetails::class, 'quote_lines_id');
+    }
+
+    // GED — plans DXF, images, SVG, PDF... attachés à la ligne via le pivot polymorphe.
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     public function getAllTaskCountAttribute()

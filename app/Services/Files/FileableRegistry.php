@@ -12,7 +12,9 @@ use App\Models\Workflow\CreditNotes;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Opportunities;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,7 +33,9 @@ class FileableRegistry
         'company' => Companies::class,
         'opportunity' => Opportunities::class,
         'quote' => Quotes::class,
+        'quote-line' => QuoteLines::class,
         'order' => Orders::class,
+        'order-line' => OrderLines::class,
         'delivery' => Deliverys::class,
         'invoice' => Invoices::class,
         'credit-note' => CreditNotes::class,
