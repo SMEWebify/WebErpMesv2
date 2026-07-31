@@ -1,0 +1,88 @@
+//
+// Unified document manager (resources/js/components/files)
+//
+// Kept deliberately small: everything that Bootstrap/AdminLTE already provides
+// is reused, and only the drop area and the viewer panes need custom rules.
+//
+
+.wem-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 130px;
+    padding: 1rem;
+    border: 2px dashed #adb5bd;
+    border-radius: .35rem;
+    color: #6c757d;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
+
+    &:hover,
+    &:focus {
+        border-color: #007bff;
+        background-color: rgba(0, 123, 255, .04);
+        outline: none;
+    }
+
+    &.is-over {
+        border-color: #28a745;
+        background-color: rgba(40, 167, 69, .08);
+        color: #28a745;
+    }
+
+    &.is-busy {
+        cursor: progress;
+        border-style: solid;
+    }
+}
+
+.wem-file-manager {
+    .list-group-item {
+        cursor: pointer;
+
+        &.active-file {
+            background-color: rgba(0, 123, 255, .08);
+            border-left: 3px solid #007bff;
+        }
+    }
+
+    .min-width-0 {
+        min-width: 0;
+    }
+}
+
+.wem-viewer {
+    canvas {
+        display: block;
+        border-radius: .25rem;
+    }
+}
+
+.wem-viewer-pane {
+    position: relative;
+    overflow: hidden;
+    height: 620px;
+    background-color: #30343c;
+    border-radius: .25rem;
+
+    img {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.wem-viewer-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(48, 52, 60, .85);
+    color: #f8f9fa;
+    text-align: center;
+    padding: 1rem;
+}

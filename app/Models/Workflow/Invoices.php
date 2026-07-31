@@ -150,7 +150,7 @@ class Invoices extends Model
     // Relationship with the files associated with the Invoices
     public function files()
     {
-        return $this->morphToMany(File::class, 'fileable');
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     /**

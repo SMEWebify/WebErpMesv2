@@ -8,6 +8,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
+use App\Services\Files\FileRole;
 use App\Services\SelectDataService;
 use App\Services\CustomFieldService;
 use App\Http\Controllers\Controller;
@@ -284,7 +285,12 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        $Product = Products::findOrFail($id);
+        // files is eager loaded with its pivot so the sidebar can pick the photo
+        // flagged as primary without an extra query.
+        $Product = Products::with('files')->findOrFail($id);
+        $productPicture = $Product->files->first(
+            fn ($file) => $file->pivot->role === FileRole::PHOTO && $file->pivot->is_primary
+        );
         $selectData = $this->fetchSelectData();
         $status_id = Status::select('id')->orderBy('order')->first();
         $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get();
@@ -318,6 +324,7 @@ class ProductsController extends Controller
             'averageSupplyDelay' => $averageSupplyDelay,
             'CustomFields' => $CustomFields,
             'CustomerPriceLists' => $customerPriceLists,
+            'productPicture' => $productPicture,
         ]));
     }
 
@@ -359,71 +366,14 @@ class ProductsController extends Controller
         return redirect()->route('products.show', ['id' =>  $request->id])->with('success', __('general_content.quantity_price_added_success_trans_key'));
     }
 
-    /**
-     * Handle file upload and update product.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param string $fileKey
-     * @param string $filePath
-     * @param string $dbColumn
-     * @param string $fileExtension
-     * @return \Illuminate\Http\RedirectResponse
+    /*
+     * The picture / drawing / STL / SVG upload actions have been removed: every
+     * document now goes through the unified drop area of the Documents tab
+     * (FileApiController), which stores outside the web root and accepts STEP,
+     * IGES and DXF as well. The drawing_file / stl_file / svg_file / picture
+     * columns are kept in sync by FileStorageService for the consumers that
+     * still read them (quote lines, order lines, API resource, TaskStatu).
      */
-    private function handleFileUpload(Request $request, $fileKey, $filePath, $dbColumn, $fileExtension)
-    {
-        if ($request->hasFile($fileKey)) {
-            $Product = Products::findOrFail($request->id);
-            $file = $request->file($fileKey);
-            $fileName = Auth::id() . '_' . time() . '.' . $fileExtension;
-            $file->move(public_path($filePath), $fileName);
-            $Product->update([$dbColumn => $fileName]);
-            $Product->save();
-
-            return redirect()->route('products.show', ['id' => $Product->id])->with('success', "Successfully updated $fileKey");
-        } else {
-            return back()->withInput()->withErrors(['msg' => "Error, no $fileKey selected"]);
-        }
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function StoreImage(Request $request)
-    {
-        $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
-        ]);
-
-        return $this->handleFileUpload($request, 'picture', 'images/products', 'picture', 'jpg');
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function StoreDrawing(Request $request)
-    {
-        return $this->handleFileUpload($request, 'drawing', 'drawing', 'drawing_file', 'pdf');
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function StoreStl(Request $request)
-    {
-        return $this->handleFileUpload($request, 'stl', 'stl', 'stl_file', 'stl');
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function StoreSvg(Request $request)
-    {
-        return $this->handleFileUpload($request, 'svg', 'svg', 'svg_file', 'svg');
-    }
 
     /**
      * @param \Illuminate\Http\Request $request

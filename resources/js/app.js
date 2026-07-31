@@ -1441,6 +1441,27 @@ async function mountLogsViewer() {
     );
 }
 
+// Unified document manager: one drop area and one multi-format viewer, mounted
+// from include/file-manager-mount.blade.php on any entity that owns files.
+async function mountFileManagers() {
+    const els = document.querySelectorAll('[data-react="file-manager"]');
+    if (!els.length) return;
+    const { default: FileManager } = await import('./components/files/FileManager.jsx');
+    els.forEach(el => {
+        const parse = (key) => { try { return JSON.parse(el.dataset[key] ?? 'null'); } catch { return null; } };
+        createRoot(el).render(
+            React.createElement(FileManager, {
+                endpoints: parse('endpoints') ?? {},
+                target:    { type: el.dataset.fileableType, id: Number(el.dataset.fileableId) },
+                roles:     parse('roles')     ?? {},
+                trans:     parse('trans')     ?? {},
+                accept:    el.dataset.accept  ?? '',
+                canEdit:   el.dataset.canEdit !== '0',
+            })
+        );
+    });
+}
+
 async function mountArrowSteps() {
     const els = document.querySelectorAll('[data-react="arrow-steps"]');
     if (!els.length) return;
@@ -1548,6 +1569,7 @@ mountGtdBoard();
 mountReturnShow();
 mountTaskLines();
 mountLogsViewer();
+mountFileManagers();
 mountArrowSteps();
 mountStockCurrentApp();
 mountChatLive();

@@ -130,7 +130,7 @@ class Quotes extends Model
     // Relationship with the files associated with the Quote
     public function files()
     {
-        return $this->morphToMany(File::class, 'fileable');
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     /**

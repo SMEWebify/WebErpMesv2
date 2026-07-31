@@ -2,150 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
-use App\Models\Workflow\Orders;
-use App\Models\Workflow\Quotes;
-use App\Models\Products\Products;
-use App\Models\Workflow\Invoices;
-use App\Models\Products\StockMove;
-use App\Models\Workflow\Deliverys;
-use App\Models\Companies\Companies;
-use App\Models\Purchases\Purchases;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Workflow\Opportunities;
 use App\Http\Requests\StoreFileRequest;
-use App\Models\Purchases\PurchaseReceipt;
-use App\Models\Quality\QualityNonConformity;
+use App\Services\Files\FileableRegistry;
+use App\Services\Files\FileStorageService;
+use App\Services\Files\FileRole;
 
+/**
+ * Blade form entry point kept for the "Documents" cards of the quote, order,
+ * delivery, invoice, purchase and company pages.
+ *
+ * The React FileManager (FileApiController) is the modern path; this one now
+ * delegates to the same storage service so both write to private storage and
+ * populate kind / role identically.
+ */
 class FileUpload extends Controller
 {
-/**
-     * @param \App\Http\Requests\StoreFileRequest $request
+    public function __construct(private readonly FileStorageService $storage)
+    {
+    }
+
+    /**
      * @return \Illuminate\Http\RedirectResponse
      */
     public function fileUpload(StoreFileRequest $request)
     {
-        return $this->handleFileUpload($request, 'file');
+        return $this->handleFileUpload($request);
     }
 
     /**
-     * @param \App\Http\Requests\StoreFileRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function photoUpload(StoreFileRequest $request)
     {
-        return $this->handleFileUpload($request, 'photo', true);
+        return $this->handleFileUpload($request, asPhoto: true);
     }
 
     /**
-     * Handle the file upload logic.
+     * Store the upload and attach it to whichever entity the form declared.
      *
-     * @param \App\Http\Requests\StoreFileRequest $request
-     * @param string $directory
-     * @param bool $asPhoto
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function handleFileUpload(StoreFileRequest $request, string $directory, bool $asPhoto = false)
+    private function handleFileUpload(StoreFileRequest $request, bool $asPhoto = false)
     {
-        $fileName = Auth::id() . '_' . time() . '.' . $request->file->extension();
-        $originalFileName = $request->file->getClientOriginalName();
-        $type = $request->file->getClientMimeType();
-        $size = $request->file->getSize();
-        $comment = $request->input('comment');
-        $hashtags = $this->normalizeHashtags($request->input('hashtags'));
+        $file = $this->storage->store($request->file('file'), [
+            'comment' => $request->input('comment'),
+            'hashtags' => $this->storage->normalizeHashtags($request->input('hashtags')),
+            'as_photo' => $asPhoto,
+        ]);
 
-        $request->file->move(public_path($directory), $fileName);
-
-        $fileData = [
-            'user_id' => Auth::id(),
-            'name' => $fileName,
-            'original_file_name' => $originalFileName,
-            'type' => $type,
-            'size' => $size,
+        // The Blade forms still post the historical {entity}_id hidden inputs.
+        $legacyInputs = [
+            'companies_id' => 'company',
+            'opportunities_id' => 'opportunity',
+            'quotes_id' => 'quote',
+            'orders_id' => 'order',
+            'deliverys_id' => 'delivery',
+            'invoices_id' => 'invoice',
+            'products_id' => 'product',
+            'purchases_id' => 'purchase',
+            'purchase_receipts_id' => 'purchase-receipt',
+            'quality_non_conformities_id' => 'non-conformity',
+            'stock_move_id' => 'stock-move',
         ];
 
-        if ($comment !== null) {
-            $trimmedComment = trim($comment);
-            $fileData['comment'] = $trimmedComment === '' ? null : $trimmedComment;
-        }
-
-        if (!empty($hashtags)) {
-            $fileData['hashtags'] = $hashtags;
-        }
-
-        if ($asPhoto) {
-            $fileData['as_photo'] = 1;
-        }
-
-        $file = File::create($fileData);
-
-        $associations = [
-            'companies_id' => Companies::class,
-            'opportunities_id' => Opportunities::class,
-            'quotes_id' => Quotes::class,
-            'orders_id' => Orders::class,
-            'deliverys_id' => Deliverys::class,
-            'invoices_id' => Invoices::class,
-            'products_id' => Products::class,
-            'purchases_id' => Purchases::class,
-            'purchase_receipts_id' => PurchaseReceipt::class,
-            'quality_non_conformities_id' => QualityNonConformity::class,
-            'stock_move_id' => StockMove::class,
-        ];
-
-        foreach ($associations as $key => $model) {
-            if ($request->filled($key)) {
-                $entity = $model::find($request->$key);
-                if ($entity) {
-                    $entity->files()->save($file);
-                }
-            }
-        }
-
-        return back()->with('success', 'File has been uploaded.')->with('file', $fileName);
-    }
-
-    /**
-     * Normalize a raw hashtags string into an array of unique tags.
-     *
-     * @param string|null $rawHashtags
-     * @return array<int, string>
-     */
-    private function normalizeHashtags(?string $rawHashtags): array
-    {
-        if ($rawHashtags === null) {
-            return [];
-        }
-
-        $parts = preg_split('/[\s,]+/u', $rawHashtags);
-
-        if ($parts === false) {
-            return [];
-        }
-
-        $hashtags = [];
-
-        foreach ($parts as $part) {
-            $tag = trim($part);
-
-            if ($tag === '') {
+        foreach ($legacyInputs as $input => $alias) {
+            if (! $request->filled($input)) {
                 continue;
             }
 
-            $tag = trim(ltrim($tag, "#＃"));
+            $entity = FileableRegistry::find($alias, $request->input($input));
 
-            if ($tag === '') {
-                continue;
-            }
-
-            $tag = mb_substr($tag, 0, 50);
-            $normalizedKey = mb_strtolower($tag);
-
-            if (!array_key_exists($normalizedKey, $hashtags)) {
-                $hashtags[$normalizedKey] = $tag;
+            if ($entity !== null) {
+                $this->storage->attach($file, $entity, $asPhoto ? FileRole::PHOTO : null);
             }
         }
 
-        return array_values($hashtags);
+        return back()
+            ->with('success', __('general_content.file_uploaded_success_trans_key'))
+            ->with('file', $file->name);
     }
 }

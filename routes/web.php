@@ -7,6 +7,8 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\Files\FileApiController;
+use App\Http\Controllers\Files\LegacyFileController;
 use App\Http\Controllers\ProductionTraceController;
 use App\Http\Controllers\SpreadsheetController;
 use App\Http\Controllers\SpreadsheetDataController;
@@ -691,10 +693,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         
         Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
         Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
-        Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->name('products.update.image');
-        Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
-        Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
-        Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
 
         // JSON API endpoints for React ProductsIndex
         Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
@@ -1177,6 +1175,19 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
     Route::post('upload-photo', 'App\Http\Controllers\FileUpload@photoUpload')->middleware(['auth'])->name('photo.store');
 
+    // Unified document storage — JSON API backing the React FileManager.
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::prefix('files/json')->group(function () {
+            Route::get('/list', [FileApiController::class, 'index'])->name('files.json.list');
+            Route::post('/store', [FileApiController::class, 'store'])->name('files.json.store');
+            Route::patch('/{file}', [FileApiController::class, 'update'])->name('files.json.update');
+            Route::delete('/{file}', [FileApiController::class, 'destroy'])->name('files.json.destroy');
+        });
+
+        Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->name('files.raw');
+        Route::get('/files/{file}/download', [FileApiController::class, 'download'])->name('files.download');
+    });
+
     Route::get('/licence', function () {return view('licence');})->middleware(['auth'])->name('licence');
 
     Route::get('/rgpd-policy', function () {return view('rgpd-policy');})->middleware(['auth'])->name('rgpd.policy');
@@ -1283,3 +1294,29 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/customers', [SpreadsheetDataController::class, 'customers'])->name('customers');
         Route::get('/products', [SpreadsheetDataController::class, 'products'])->name('products');
     });
+
+/*
+|--------------------------------------------------------------------------
+| Legacy document URLs
+|--------------------------------------------------------------------------
+|
+| public/file, public/photo, public/drawing, public/stl and public/svg used to
+| be served as static assets, without any authentication. wem:files:import
+| moves their content under storage/app/private/legacy and these routes take
+| over the very same URLs — deliberately registered outside the locale group,
+| because the links already in the database and in the React components carry
+| no locale prefix.
+|
+| They are declared last so they can never shadow a real route.
+|
+*/
+Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+    Route::get('/images/products/{filename}', fn (string $filename) => app(LegacyFileController::class)->serve('images/products', $filename))
+        ->where('filename', '[A-Za-z0-9._-]+')
+        ->name('files.legacy.product-picture');
+
+    Route::get('/{folder}/{filename}', [LegacyFileController::class, 'serve'])
+        ->where('folder', implode('|', array_filter(config('files.legacy_folders'), fn ($folder) => ! str_contains($folder, '/'))))
+        ->where('filename', '[A-Za-z0-9._-]+')
+        ->name('files.legacy');
+});
