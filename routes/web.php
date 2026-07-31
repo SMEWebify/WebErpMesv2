@@ -1316,7 +1316,7 @@ Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(func
         ->name('files.legacy.product-picture');
 
     Route::get('/{folder}/{filename}', [LegacyFileController::class, 'serve'])
-        ->where('folder', implode('|', array_filter(config('files.legacy_folders'), fn ($folder) => ! str_contains($folder, '/'))))
+        ->where('folder', implode('|', array_filter((array) config('files.legacy_folders', []), fn ($folder) => ! str_contains($folder, '/'))))
         ->where('filename', '[A-Za-z0-9._-]+')
         ->name('files.legacy');
 });
