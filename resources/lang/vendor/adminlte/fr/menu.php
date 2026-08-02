@@ -27,6 +27,7 @@ return [
     'tasks_calendar_trans_key'                 => 'Calendrier des tâches',
     'workflow_trans_key'                       => 'Flux de travail',
     'gantt_trans_key'                          => 'Gantt',
+    'nesting_trans_key'                        => 'Nesting',
     'delivery_notes_trans_key'                 => 'Bons de livraison',
     'deliverys_notes_request_trans_key'        => 'Lignes en attente(s)',
     'deliverys_notes_list_trans_key'           => 'Bons de livraison',

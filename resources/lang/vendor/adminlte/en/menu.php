@@ -26,6 +26,7 @@ return [
     'tasks_calendar_trans_key'                 => 'Task calendar',
     'workflow_trans_key'                       => 'Workflow',
     'gantt_trans_key'                          => 'Gantt',
+    'nesting_trans_key'                        => 'Nesting',
     'delivery_notes_trans_key'                 => 'Delivery notes',
     'deliverys_notes_request_trans_key'        => 'Request lines',
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',

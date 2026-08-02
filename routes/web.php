@@ -835,6 +835,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Planning\NestingController@index')->name('nesting.index');
         Route::get('/document', 'App\Http\Controllers\Planning\NestingController@document')->name('nesting.document');
         Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
+        Route::get('/services', 'App\Http\Controllers\Planning\NestingController@services')->name('nesting.services');
+        Route::get('/sheet-stock', 'App\Http\Controllers\Planning\NestingController@sheetStock')->name('nesting.sheet-stock');
+        Route::post('/compute', 'App\Http\Controllers\Planning\NestingController@compute')->name('nesting.compute');
     });
 
     Route::group(['prefix' => 'admin'], function () {

@@ -401,46 +401,54 @@ return [
             'icon' => 'fas fa-calendar-alt',
             'icon_color' => 'info',
             'can'  => ['scheduling-menu'],
-            'submenu' => [
+            'submenu' => array_merge(
                 [
-                    'text' => 'load_planning_trans_key',
-                    'url'  => 'production/load-planning',
-                    'icon_color' => 'warning',
+                    [
+                        'text' => 'load_planning_trans_key',
+                        'url'  => 'production/load-planning',
+                        'icon_color' => 'warning',
+                    ],
+                    [
+                        'text' => 'tasks_list_trans_key',
+                        'url'  => 'production/Task',
+                        'icon_color' => 'info',
+                    ],
+                    [
+                        'text' => 'methods_overview_trans_key',
+                        'url'  => 'methods/overview',
+                        'icon_color' => 'success',
+                    ],
+                    [
+                        'text' => 'tasks_calendar_trans_key',
+                        'url'  => 'production/calendar/tasks',
+                        'icon_color' => 'primary',
+                    ],
+                    [
+                        'text' => 'tasks_statu_trans_key',
+                        'url'  => 'production/Task/Statu',
+                        'icon_color' => 'danger',
+                    ],
+                    [
+                        'text' => 'workflow_trans_key',
+                        'url'  => 'production/kanban',
+                        'icon_color' => 'teal',
+                    ],
+                    [
+                        'text' => 'gantt_trans_key',
+                        'url'  => 'production/gantt',
+                        'icon_color' => 'orange',
+                        'label'       => 'Beta',
+                        'label_color' => 'danger',
+                    ],
                 ],
-                [
-                    'text' => 'tasks_list_trans_key',
-                    'url'  => 'production/Task',
-                    'icon_color' => 'info',
-                ],
-                [
-                    'text' => 'methods_overview_trans_key',
-                    'url'  => 'methods/overview',
-                    'icon_color' => 'success',
-                ],
-                [
-                    'text' => 'tasks_calendar_trans_key',
-                    'url'  => 'production/calendar/tasks',
-                    'icon_color' => 'primary',
-                ],
-                [
-                    'text' => 'tasks_statu_trans_key',
-                    'url'  => 'production/Task/Statu',
-                    'icon_color' => 'danger',
-                ],
-                [
-                    'text' => 'workflow_trans_key',
-                    'url'  => 'production/kanban',
-                    'icon_color' => 'teal',
-                ],
-                [
-                    'text' => 'gantt_trans_key',
-                    'url'  => 'production/gantt',
-                    'icon_color' => 'orange',
-                    'label'       => 'Beta',
-                    'label_color' => 'danger',
-                ],
-                
-            ]
+                env('NESTING_ENABLED', false) ? [
+                    [
+                        'text' => 'nesting_trans_key',
+                        'url'  => 'nesting',
+                        'icon_color' => 'purple',
+                    ],
+                ] : []
+            ),
         ],
         [
             'key'  => 'delivery_notes',

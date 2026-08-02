@@ -26,6 +26,7 @@ return [
     'tasks_calendar_trans_key'                 => '任务日历',
     'workflow_trans_key'                       => '工作流程',
     'gantt_trans_key'                          => '甘特图',
+    'nesting_trans_key'                        => '排料',
     'delivery_notes_trans_key'                 => '送货单',
     'deliverys_notes_request_trans_key'        => '待处理行',
     'deliverys_notes_list_trans_key'           => '送货单列表',
