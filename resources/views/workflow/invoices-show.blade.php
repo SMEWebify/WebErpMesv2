@@ -102,7 +102,7 @@
                             </div>
                         </x-slot>
                         @foreach($addresses as $address)
-                            <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}</option>
+                            <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' - ' . $address->adress : '' }}</option>
                         @endforeach
                     </x-adminlte-select2>
                   </div>
@@ -144,7 +144,7 @@
                         <td style="width:50%">{{ __('general_content.invoices_trans_key') }}</td>
                         <td>
                             @if($Invoice->statu === 1)
-                                <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} — PDF indisponible</span>
+                                <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} - PDF indisponible</span>
                             @else
                                 <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
                             @endif

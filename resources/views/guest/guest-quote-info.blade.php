@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('general_content.quote_trans_key') }} #{{ $Quote->code }} — {{ $Factory->name ?? config('app.name') }}</title>
+    <title>{{ __('general_content.quote_trans_key') }} #{{ $Quote->code }} - {{ $Factory->name ?? config('app.name') }}</title>
 
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
     @vite('resources/sass/app.scss')

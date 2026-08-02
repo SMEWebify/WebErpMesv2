@@ -247,7 +247,7 @@
                                         @elseif($customField->type === 'select')
                                             <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
                                             <select class="form-control" id="{{ $fieldInputId }}" name="product_custom_fields[{{ $customField->id }}]">
-                                                <option value="">—</option>
+                                                <option value="">-</option>
                                                 @foreach($fieldOptions as $option)
                                                     <option value="{{ $option }}" {{ $fieldValue === $option ? 'selected' : '' }}>{{ $option }}</option>
                                                 @endforeach

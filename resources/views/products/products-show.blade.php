@@ -926,7 +926,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="priceHistoryModalLabel">
-                    <i class="fas fa-chart-line mr-2"></i>Historique des prix — {{ $Product->label }}
+                    <i class="fas fa-chart-line mr-2"></i>Historique des prix - {{ $Product->label }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

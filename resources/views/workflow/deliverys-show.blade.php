@@ -76,7 +76,7 @@
                             </div>
                         </x-slot>
                         @foreach($addresses as $address)
-                            <option value="{{ $address->id }}" {{ $address->id == $Delivery->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}</option>
+                            <option value="{{ $address->id }}" {{ $address->id == $Delivery->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' - ' . $address->adress : '' }}</option>
                         @endforeach
                     </x-adminlte-select2>
                   </div>
@@ -568,7 +568,7 @@
                     @if($ret->qualityNonConformity)
                       <span class="badge badge-light border">{{ $ret->qualityNonConformity->code }}</span>
                     @else
-                      <span class="text-muted">—</span>
+                      <span class="text-muted">-</span>
                     @endif
                   </td>
                   <td><small>{{ $ret->created_at?->format('d/m/Y') }}</small></td>
@@ -612,7 +612,7 @@
                   <td>
                     @php
                       $ncBadge = match($nc->statu) { 1 => 'badge-danger', 3 => 'badge-success', default => 'badge-secondary' };
-                      $ncLabel = match($nc->statu) { 1 => __('general_content.in_progress_trans_key'), 3 => __('general_content.finished_task_trans_key'), default => '—' };
+                      $ncLabel = match($nc->statu) { 1 => __('general_content.in_progress_trans_key'), 3 => __('general_content.finished_task_trans_key'), default => '-' };
                     @endphp
                     <span class="badge {{ $ncBadge }}">{{ $ncLabel }}</span>
                   </td>
@@ -649,7 +649,7 @@
 
 @section('js')
   <script>
-  // Tab switching — vanilla JS fallback (Bootstrap 4/5 coexistence)
+  // Tab switching - vanilla JS fallback (Bootstrap 4/5 coexistence)
   document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.nav-pills a[data-toggle="tab"]').forEach(function (link) {
           link.addEventListener('click', function (e) {

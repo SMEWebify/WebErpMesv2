@@ -19,7 +19,7 @@ $canSubmit     = ! $submission || in_array($currentStatus, [
 ]);
 @endphp
 
-<x-adminlte-card title="Facturation électronique — Qonto" theme="info" theme-mode="outline" collapsible>
+<x-adminlte-card title="Facturation électronique - Qonto" theme="info" theme-mode="outline" collapsible>
     <div class="mb-2">
         <span class="text-muted small">Statut :</span>
         <span class="badge badge-{{ $statusInfo['badge'] }} ml-1">{{ $statusInfo['label'] }}</span>

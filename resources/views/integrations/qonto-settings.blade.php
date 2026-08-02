@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Qonto — Intégration')
+@section('title', 'Qonto - Intégration')
 
 @section('content_header')
     <h1>Qonto <small class="text-muted">Synchronisation clients</small></h1>
@@ -123,7 +123,7 @@
                                name="import_bidirectionnel" value="1"
                                {{ $connection->import_bidirectionnel ? 'checked' : '' }}>
                         <label class="custom-control-label" for="import_bidirectionnel">
-                            Import bidirectionnel — créer dans WEM les clients Qonto non trouvés
+                            Import bidirectionnel - créer dans WEM les clients Qonto non trouvés
                         </label>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                             @foreach($pendingReviews as $review)
                                 @php
                                     $wemName = $wemClientNames[$review->wem_client_id] ?? "Client #{{ $review->wem_client_id }}";
-                                    $qontoName = $review->candidate_payload['best_candidate']['name'] ?? $review->qonto_client_id ?? '—';
+                                    $qontoName = $review->candidate_payload['best_candidate']['name'] ?? $review->qonto_client_id ?? '-';
                                 @endphp
                                 <tr>
                                     <td>{{ $wemName }}</td>

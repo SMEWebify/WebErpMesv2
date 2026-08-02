@@ -141,7 +141,7 @@
                             <p class="mb-1">
                                 Une commande existe déjà :
                                 <a href="{{ route('orders.show', ['id' => $duplicateWarning['id']]) }}" target="_blank" rel="noopener">#{{ $duplicateWarning['code'] }}</a>
-                                — libellé « {{ $duplicateWarning['label'] }} »@if($duplicateWarning['customer_reference']), réf. client « {{ $duplicateWarning['customer_reference'] }} »@endif.
+                                - libellé « {{ $duplicateWarning['label'] }} »@if($duplicateWarning['customer_reference']), réf. client « {{ $duplicateWarning['customer_reference'] }} »@endif.
                             </p>
                             <p class="mb-0">Ce PDF a peut-être déjà été traité. Confirmer la création quand même ?</p>
                         </div>

@@ -1,7 +1,8 @@
 @extends('adminlte::page')
 
 @section('css')
-  @vite(['resources/sass/app.scss'])
+  @viteReactRefresh
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('title', __('general_content.update_detail_information_for_trans_key', ['label' => $line->label]))
@@ -243,7 +244,7 @@
         </div>
     </form>
 
-    {{-- Image upload --}}
+    {{-- GED - dropzone + files viewer attached to this order line --}}
     <div class="card card-outline card-success mt-4">
         <div class="card-header py-2">
             <h6 class="card-title mb-0">
@@ -252,21 +253,10 @@
             </h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('orders.update.detail.picture', ['idOrder' => $idOrder, 'id' => $line->OrderLineDetails->id]) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <label for="picture">{{ __('general_content.picture_file_trans_key') }} (jpeg,png,jpg,gif,svg | max: 10240 Ko)</label>
-                <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text"><i class="far fa-image"></i></span></div>
-                    <div class="custom-file">
-                        <input type="hidden" name="id" value="{{ $line->id }}">
-                        <input type="file" class="custom-file-input" name="picture" id="picture">
-                        <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
-                    </div>
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
-                    </div>
-                </div>
-            </form>
+            @include('include.file-manager-mount', [
+                'fileableType' => 'order-line',
+                'fileableId'   => $line->id,
+            ])
         </div>
     </div>
 </div>
