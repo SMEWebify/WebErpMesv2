@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Models\Admin\Factory;
 use App\Models\User;
+use App\Models\Planning\Task;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
 use App\Models\Workflow\Orders;
 use App\Observers\OrdersObserver;
 use App\Observers\ProductsObserver;
+use App\Observers\StockMoveObserver;
+use App\Observers\TaskObserver;
 use App\Services\SelectDataService;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Integrations\Pdp\Drivers\QontoGateway;
@@ -45,6 +49,8 @@ class AppServiceProvider extends ServiceProvider
 
         Orders::observe(OrdersObserver::class);
         Products::observe(ProductsObserver::class);
+        Task::observe(TaskObserver::class);
+        StockMove::observe(StockMoveObserver::class);
 
         if (config('branding.commercial')) {
             Config::set('mail.from.name', config('branding.app_name'));
