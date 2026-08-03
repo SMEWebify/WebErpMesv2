@@ -110,14 +110,30 @@ class StockService
      */
     public function transfer(int $sourceId, int $destinationLocationId, float $qty, ?string $tracability, int $userId): StockLocationProducts
     {
-        $source = StockLocationProducts::findOrFail($sourceId);
+        return DB::transaction(function () use ($sourceId, $destinationLocationId, $qty, $tracability, $userId) {
+            // Verrou pessimiste sur la ligne source : bloque toute autre
+            // consommation/transfert concurrents sur cet emplacement.
+            $source = StockLocationProducts::whereKey($sourceId)->lockForUpdate()->firstOrFail();
 
-        $stockAvailable = $source->getCurrentStockMove($tracability ?: null);
-        if ($stockAvailable < $qty) {
-            throw new \Exception(__('general_content.transfer_insufficient_stock_trans_key'));
-        }
+            // Disponible calculé en un SUM agrégé sous le verrou (évite TOCTOU
+            // entre le check et l'écriture des mouvements).
+            $availableQuery = StockMove::where('stock_location_products_id', $source->id)
+                ->selectRaw("
+                    COALESCE(SUM(CASE
+                        WHEN typ_move IN (1,3,5,12,14) THEN qty
+                        WHEN typ_move IN (2,4,6,9)     THEN -qty
+                        ELSE 0
+                    END), 0) AS available
+                ");
+            if ($tracability) {
+                $availableQuery->where('tracability', $tracability);
+            }
+            $stockAvailable = (float) $availableQuery->value('available');
 
-        return DB::transaction(function () use ($source, $destinationLocationId, $qty, $tracability, $userId) {
+            if ($stockAvailable < $qty) {
+                throw new \Exception(__('general_content.transfer_insufficient_stock_trans_key'));
+            }
+
             // Outgoing move on source
             $this->createStockMove([
                 'user_id'                    => $userId,
