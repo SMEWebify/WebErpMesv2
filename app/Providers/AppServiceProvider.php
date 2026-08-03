@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
+use App\Observers\OrderLinesObserver;
 use App\Observers\OrdersObserver;
 use App\Observers\ProductsObserver;
 use App\Observers\StockMoveObserver;
@@ -51,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         Products::observe(ProductsObserver::class);
         Task::observe(TaskObserver::class);
         StockMove::observe(StockMoveObserver::class);
+        OrderLines::observe(OrderLinesObserver::class);
 
         if (config('branding.commercial')) {
             Config::set('mail.from.name', config('branding.app_name'));

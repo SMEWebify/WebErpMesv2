@@ -46,12 +46,17 @@ class StockReservationService
             $physicalStock = $this->physicalStockOf($productId);
             $finishedId    = $this->finishedStatusId();
 
+            // Les tâches sans ligne de commande (tâches de devis, tâches
+            // internes) ne consomment pas encore de besoin ferme : on ne
+            // pose pas de réservation dessus.
             $tasks = Task::where('component_id', $productId)
+                ->whereNotNull('order_lines_id')
                 ->when($finishedId, fn ($q) => $q->where('status_id', '!=', $finishedId))
+                ->with('OrderLines:id,qty')
                 ->orderByRaw('CASE WHEN end_date IS NULL THEN 1 ELSE 0 END')
                 ->orderBy('end_date', 'asc')
                 ->orderBy('id', 'asc')
-                ->get(['id', 'qty', 'end_date']);
+                ->get(['id', 'qty', 'end_date', 'order_lines_id']);
 
             $remaining      = $physicalStock;
             $keptTaskIds    = [];
@@ -61,7 +66,11 @@ class StockReservationService
                     ->whereIn('typ_move', self::SORTING_TYPES)
                     ->sum('qty');
 
-                $qtyNeeded = max(0.0, (float) $task->qty - $alreadyConsumed);
+                // Besoin = (qty par unité produite) × (qty commandée) − déjà consommé.
+                // task.qty représente la quantité de composant par unité de la ligne
+                // de commande, orderline.qty la quantité initiale commandée.
+                $orderLineQty  = (float) ($task->OrderLines?->qty ?? 0);
+                $qtyNeeded     = max(0.0, ((float) $task->qty * $orderLineQty) - $alreadyConsumed);
 
                 if ($qtyNeeded <= 0) {
                     // Rien à réserver pour cette tâche — on nettoie une éventuelle ligne existante.
