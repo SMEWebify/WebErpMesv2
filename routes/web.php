@@ -732,6 +732,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');
             Route::post('/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
+
+            // Manques (composants achetés en rupture de couverture par les tâches).
+            // Doit être déclaré AVANT le /{id} qui matcherait "shortages" comme un ID.
+            Route::get('/shortages', 'App\Http\Controllers\Products\StockShortagesController@index')->name('products.stock.shortages');
+            Route::get('/shortages/json', 'App\Http\Controllers\Products\StockShortagesController@json')->name('products.stock.shortages.json');
+
             Route::get('/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
 
             // Stock current (React)

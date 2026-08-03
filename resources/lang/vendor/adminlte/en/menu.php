@@ -42,6 +42,7 @@ return [
     'product_list_trans_key'                   => 'Product list',
     'batches_trans_key'                        => 'Batches',
     'stock_trans_key'                          => 'Stock',
+    'stock_shortages_trans_key'                => 'Stock status',
     'inventory_trans_key'                      => 'Inventory',
     'purchase_trans_key'                       => 'Purchase',
     'purchase_request_trans_key'               => 'Purchase request',

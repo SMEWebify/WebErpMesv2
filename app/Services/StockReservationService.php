@@ -97,6 +97,28 @@ class StockReservationService
     }
 
     /**
+     * Synthèse pour l'affichage : physique / réservé / disponible / manque total.
+     * Retourne des floats prêts à afficher.
+     */
+    public function summaryForProduct(int $productId): array
+    {
+        $physical = $this->physicalStockOf($productId);
+        $reserved = (float) StockReservation::where('products_id', $productId)
+            ->where('status', StockReservation::STATUS_ACTIVE)
+            ->sum('qty_reserved');
+        $missing  = (float) StockReservation::where('products_id', $productId)
+            ->where('status', StockReservation::STATUS_ACTIVE)
+            ->sum('qty_missing');
+
+        return [
+            'physical'      => round($physical, 3),
+            'reserved'      => round($reserved, 3),
+            'available'     => round($physical - $reserved, 3),
+            'missing_total' => round($missing, 3),
+        ];
+    }
+
+    /**
      * Somme du stock physique du produit à travers tous ses emplacements.
      */
     private function physicalStockOf(int $productId): float

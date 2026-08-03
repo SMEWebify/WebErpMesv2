@@ -1522,6 +1522,18 @@ async function mountStockValuationApp() {
     );
 }
 
+async function mountStockShortagesApp() {
+    const el = document.getElementById('stock-shortages-app');
+    if (!el) return;
+    const { default: StockShortagesApp } = await import('./components/StockShortagesApp.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(StockShortagesApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
 async function mountAccountingPeriodsApp() {
     const el = document.getElementById('accounting-periods-app');
     if (!el) return;
@@ -1574,6 +1586,7 @@ mountArrowSteps();
 mountStockCurrentApp();
 mountChatLive();
 mountStockValuationApp();
+mountStockShortagesApp();
 mountAccountingPeriodsApp();
 mountInvoicePaymentsTab();
 mountInvoiceLinesDraft();

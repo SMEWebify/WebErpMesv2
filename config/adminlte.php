@@ -522,6 +522,12 @@ return [
                     'icon_color' => 'primary',
                     'can'  => ['stock-lot-serial-management'],
                 ],
+                [
+                    'text' => 'stock_shortages_trans_key',
+                    'url'  => 'products/Stock/shortages',
+                    'icon_color' => 'danger',
+                    'can'  => ['stock-lot-serial-management'],
+                ],
                 /*[
                     'text' => 'inventory_trans_key',
                     'url'  => '#',

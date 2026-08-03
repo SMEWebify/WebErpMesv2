@@ -43,6 +43,7 @@ return [
     'product_list_trans_key'                   => 'Liste de articles',
     'batches_trans_key'                        => 'Lots',
     'stock_trans_key'                          => 'Stock',
+    'stock_shortages_trans_key'                => 'Statut du stock',
     'inventory_trans_key'                      => 'Inventaire',
     'purchase_trans_key'                       => 'Acheter',
     'purchase_request_trans_key'               => 'Demande d\'achat',

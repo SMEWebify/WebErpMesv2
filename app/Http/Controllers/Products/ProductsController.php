@@ -19,6 +19,7 @@ use App\Models\Purchases\PurchaseLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\OrderLines;
 use App\Services\StockCalculationService;
+use App\Services\StockReservationService;
 use App\Services\ABC_MFR_CalculatorService;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
@@ -299,8 +300,10 @@ class ProductsController extends Controller
         $lastPurchasePrice = $this->calculateLastPurchasePrice($id);
         $averageCost = $this->calculateAverageCost($id);
         $averageSupplyDelay = null;
+        $reservationSummary = null;
         if ($Product->purchased == 1) {
             $averageSupplyDelay = $this->calculateAverageSupplyDelay($id);
+            $reservationSummary = app(StockReservationService::class)->summaryForProduct($id);
         }
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('product', $Product->id);
 
@@ -322,6 +325,7 @@ class ProductsController extends Controller
             'lastPurchasePrice' => $lastPurchasePrice,
             'averageCost' => $averageCost,
             'averageSupplyDelay' => $averageSupplyDelay,
+            'reservationSummary' => $reservationSummary,
             'CustomFields' => $CustomFields,
             'CustomerPriceLists' => $customerPriceLists,
             'productPicture' => $productPicture,

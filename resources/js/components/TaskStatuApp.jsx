@@ -371,9 +371,20 @@ function StockWithdrawalForm({ task, apiBase, onReload, trans }) {
         }
     }
 
+    const r = task.reservation;
+
     return (
         <div className="card card-outline card-lime mb-2">
             <div className="card-body py-2">
+                {r && (
+                    <div className="mb-2 d-flex flex-wrap" style={{ gap: '0.25rem' }}>
+                        <span className="badge badge-secondary">Demandé : {r.requested}</span>
+                        <span className="badge badge-primary">Réservé : {r.reserved}</span>
+                        {r.missing > 0 && (
+                            <span className="badge badge-danger">Manque : {r.missing}</span>
+                        )}
+                    </div>
+                )}
                 <form onSubmit={handleSubmit}>
                     <label className="mb-1">{t('remove_from_stock_trans_key')} :</label>
                     <div className="input-group input-group-sm">

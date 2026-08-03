@@ -9,6 +9,7 @@ use App\Services\TaskService;
 use App\Models\Planning\TaskActivities;
 use App\Models\Products\StockMove;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Products\StockReservation;
 use App\Models\Products\SerialNumbers;
 use App\Services\QualityNonConformityService;
 use App\Http\Controllers\Controller;
@@ -76,6 +77,20 @@ class TaskStatuController extends Controller
                 ->map(fn ($s) => ['id' => $s->id, 'current_stock' => $s->getCurrentStockMove()])
                 ->values()
             : [];
+
+        $reservation = null;
+        if ($task->component_id) {
+            $r = StockReservation::where('task_id', $task->id)
+                ->where('products_id', $task->component_id)
+                ->first(['qty_requested', 'qty_reserved', 'qty_missing']);
+            if ($r) {
+                $reservation = [
+                    'requested' => (float) $r->qty_requested,
+                    'reserved'  => (float) $r->qty_reserved,
+                    'missing'   => (float) $r->qty_missing,
+                ];
+            }
+        }
 
         $timeline = $this->buildTimeline($task);
 
@@ -157,6 +172,7 @@ class TaskStatuController extends Controller
             'userforced_resource' => $userforcedResource,
             // stock
             'stock_locations'     => $stockLocations,
+            'reservation'         => $reservation,
             // timeline
             'timeline'            => $timeline,
         ]);

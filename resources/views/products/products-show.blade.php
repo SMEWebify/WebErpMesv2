@@ -556,6 +556,37 @@
         </div>
         @can('stock-lot-serial-management')
         <div class="tab-pane " id="Stock">
+          @isset($reservationSummary)
+            @php
+              $availableClass = $reservationSummary['available'] < 0 ? 'bg-danger' : ($reservationSummary['available'] == 0 ? 'bg-warning' : 'bg-success');
+            @endphp
+            <div class="row mb-2">
+              <div class="col-md-3">
+                <div class="small-box bg-info">
+                  <div class="inner"><h4>{{ $reservationSummary['physical'] }}</h4><p>Stock physique</p></div>
+                  <div class="icon"><i class="fas fa-boxes"></i></div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="small-box bg-primary">
+                  <div class="inner"><h4>{{ $reservationSummary['reserved'] }}</h4><p>Réservé (tâches)</p></div>
+                  <div class="icon"><i class="fas fa-lock"></i></div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="small-box {{ $availableClass }}">
+                  <div class="inner"><h4>{{ $reservationSummary['available'] }}</h4><p>Disponible</p></div>
+                  <div class="icon"><i class="fas fa-check-circle"></i></div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="small-box {{ $reservationSummary['missing_total'] > 0 ? 'bg-danger' : 'bg-secondary' }}">
+                  <div class="inner"><h4>{{ $reservationSummary['missing_total'] }}</h4><p>Manque total</p></div>
+                  <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                </div>
+              </div>
+            </div>
+          @endisset
           <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
             @include('include.table-stock-locations-products')
           </x-adminlte-card>
