@@ -98,8 +98,12 @@ numprocs=2
 ```bash
 # Cache
 php artisan cache:clear          # Vider tout le cache (⚠️ si renommage statuts)
-php artisan config:cache         # Régénérer le cache de config
-php artisan route:cache          # Régénérer le cache des routes
+php artisan optimize:clear       # Vide tout : config, routes, views, cache (à faire avant de recacher)
+php artisan config:cache         # ✅ Régénérer le cache de config
+php artisan view:cache           # ✅ Précompiler les vues Blade
+# ❌ PAS de php artisan route:cache — casse la localisation mcamara
+# (setLocale() gelé au moment du cache CLI → routes figées sur une seule locale,
+#  /fr/xxx et /en/xxx retournent 404. Cf. routes/web.php:29)
 
 # Base de données
 php artisan migrate              # Appliquer les migrations
@@ -189,6 +193,20 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
 - Try/catch sans logging
 - Tests métier manquants
+
+#### Stock — suite de la refonte
+- **Stock projeté** (courbe temporelle physique + PO en attente − réservations) : algo `projectionForProduct(daysHorizon)`, colonne "Rupture prévue à J+X" sur écran Statut du stock, courbe chart.js sur fiche produit
+- **Bug 3 — CUMP dirty read** : `StockCalculationService::recalculateAndPersist()` fait `lockForUpdate` sur SLP puis appelle `getCurrentStockMove()` en 2 sous-requêtes hors lock → réécrire en un SQL agrégé unique dans le lock
+- **Bug — sorting TOCTOU** : `StockLocationProductsController::sorting()` fait `canDispatch()` sans lock ni transaction, même schéma que le transfert avant fix (voir commit f29bad10)
+- **Bug — transfer.destination race** : `StockService::transfer()` fait un `firstOrCreate` sur la destination sans lock → race possible si deux transferts créent la même paire (stock_locations_id, products_id) simultanément
+- **Inventaire physique** : table `inventory_details` créée en 2021, jamais reliée à un contrôleur ni à une UI, `typ_move=1 "Inventories"` jamais émis. À activer complètement (comptage, écarts, régularisation)
+- **Champ `stock_location_products.reserve_qty` mort** : jamais écrit, lu par un paramètre `includeReserve` trompeur de `getCurrentStockMove`. À supprimer (source de vérité = `stock_reservations`) ou à câbler comme cache dénormalisé
+- **Allocation BOM automatique** à la clôture de tâche : aujourd'hui `good-qty-stock` doit être appelé manuellement, pas de décrément auto des composants du BOM
+- **FIFO/FEFO automatique** sur consommation tâche : `expiration_date` du batch est stockée mais l'allocation dans `TaskStatuController@goodQtyStock` boucle sans tri
+- **Quarantaine réception** : `storeFromPurchaseOrder` met directement en stock, pas d'étape "zone d'attente / contrôle qualité" avant validation
+- **Alerte réappro auto** : `mini_qty` sert uniquement au coloriage UI, aucun event / notification / mail déclenché quand stock < mini_qty
+- **Validation qty négative sur autres flux stock** : `StoreStockMoveRequest` durci (commit f29bad10) mais `UpdateStockMoveRequest` reste à vérifier
+- **Retirer StockCurrentApp** (composant + mount app.js + endpoint `stockCurrentJson`) une fois l'écran Statut du stock validé en usage réel
 
 ### ⚠️ À vérifier
 - password exclu des logs d'activité User
