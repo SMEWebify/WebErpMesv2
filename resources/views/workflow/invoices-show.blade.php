@@ -189,7 +189,7 @@
               ];
           });
           $linesEndpoints = [
-              'updateLine' => route('invoices.lines.update', [$Invoice->id, '{lineId}']),
+              'updateLine' => route('invoices.lines.update', [$Invoice->id, '__LINE_ID__']),
               'emit'       => route('invoices.emit', $Invoice->id),
           ];
           $linesTrans = [

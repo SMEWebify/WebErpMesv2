@@ -353,6 +353,7 @@ return [
 
     'invoice_info_trans_key'                   => 'Invoice info',
     'invoice_lines_trans_key'                  => 'Invoice lines',
+    'invoice_draft_trans_key'                  => 'Draft',
 
     'purchase_quotation_trans_key'             => 'Purchase quotation',
     'purchase_quotation_info_trans_key'        => 'Purchase quotation info',

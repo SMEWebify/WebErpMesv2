@@ -294,6 +294,7 @@ return [
 
     'invoice_info_trans_key'                   => 'معلومات الفاتورة',
     'invoice_lines_trans_key'                  => 'أسطر الفاتورة',
+    'invoice_draft_trans_key'                  => 'مسودة',
 
     'purchase_quotation_trans_key'             => 'عرض الشراء',
     'purchase_quotation_info_trans_key'        => 'معلومات عرض الشراء',

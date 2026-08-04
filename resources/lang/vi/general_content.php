@@ -97,6 +97,7 @@ return [
     'invoices_trans_key'                       => 'Hóa đơn',
     'invoices_request_trans_key'               => 'Yêu cầu hóa đơn',
     'invoices_list_trans_key'                  => 'Danh sách hóa đơn',
+    'invoice_draft_trans_key'                  => 'Bản nháp',
     'others_trans_key'                         => 'Khác',
     'generate_pending_invoices_trans_key'      => 'Tạo hóa đơn đang chờ',
 

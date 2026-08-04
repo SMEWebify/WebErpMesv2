@@ -45,7 +45,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
         setSaving(prev => ({ ...prev, [lineId]: true }));
         setError(null);
 
-        const url = endpoints.updateLine.replace('{lineId}', lineId);
+        const url = endpoints.updateLine.replace('__LINE_ID__', lineId);
         try {
             await apiFetch(url, 'PATCH', { [field]: value });
         } catch (e) {

@@ -291,6 +291,7 @@ return [
 
     'invoice_info_trans_key'                   => 'Información de factura',
     'invoice_lines_trans_key'                  => 'Líneas de factura',
+    'invoice_draft_trans_key'                  => 'Borrador',
 
     'purchase_quotation_trans_key'             => 'Cotización de compra',
     'purchase_quotation_info_trans_key'        => 'Información de cotización de compra',

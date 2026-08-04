@@ -353,6 +353,7 @@ return [
 
     'invoice_info_trans_key'                   => 'Facture info',
     'invoice_lines_trans_key'                  => 'Lignes de facture',
+    'invoice_draft_trans_key'                  => 'Brouillon',
 
     'purchase_quotation_trans_key'             => 'Demande d\'achat',
     'purchase_quotation_info_trans_key'        => 'Info Devis d\'achat',

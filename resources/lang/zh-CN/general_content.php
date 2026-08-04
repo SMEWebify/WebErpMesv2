@@ -337,6 +337,7 @@ return [
 
     'invoice_info_trans_key'                   => '发票信息',
     'invoice_lines_trans_key'                  => '发票行',
+    'invoice_draft_trans_key'                  => '草稿',
 
     'purchase_quotation_trans_key'             => '采购询价',
     'purchase_quotation_info_trans_key'        => '采购报价信息',
