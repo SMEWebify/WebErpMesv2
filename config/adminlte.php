@@ -20,6 +20,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google Fonts
+    |--------------------------------------------------------------------------
+    |
+    | Désactivé : évite une requête bloquante vers fonts.googleapis.com sur
+    | chaque page, et le transfert de l'IP des utilisateurs à Google (RGPD).
+    |
+    */
+
+    'google_fonts' => [
+        'allowed' => false,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Favicon
     |--------------------------------------------------------------------------
     |
@@ -1011,8 +1025,11 @@ return [
             ],
         ],
     ],
+        // Désactivé : aucun usage du global `Chart` dans les vues (les graphiques
+        // passent par les composants React et le chart.js du bundle Vite).
+        // Cette entrée chargeait Chart.js 2.7.0 depuis un CDN tiers, en doublon.
         'Chartjs' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',
@@ -1066,8 +1083,10 @@ return [
                 ],
             ],
         ],
+        // Désactivé : aucune classe `flag-icon-*` ni `fi-*` utilisée dans
+        // resources/views, resources/js ou resources/sass.
         'FlagIconCss' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'css',
