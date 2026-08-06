@@ -36,6 +36,7 @@ class TaskManageApiController extends Controller
             'products_id'          => Products::findOrFail($idPage),
             'sub_assembly_id'      => SubAssembly::findOrFail($idLine),
             'nomenclature_lines_id'=> MethodsStandardNomenclature::findOrFail($idPage),
+            'generic'              => (object) ['id' => null, 'label' => '', 'qty' => 1],
             default                => abort(404),
         };
     }
@@ -191,10 +192,29 @@ class TaskManageApiController extends Controller
     {
         abort_unless(auth()->check(), 403);
 
-        $line    = $this->resolveLine($idType, $idPage, $idLine);
-        $lineQty = $this->resolveLineQty($idType, $line);
         $factory = app('Factory');
         $currency = $factory->curency ?? 'EUR';
+
+        // Generic mode: no parent document, empty lists. The card is only used
+        // as an entry point to create standalone tasks.
+        if ($idType === 'generic') {
+            return response()->json([
+                'line' => [
+                    'id'                  => null,
+                    'label'               => '',
+                    'qty'                 => 1,
+                    'custom_requirements' => [],
+                ],
+                'tasks' => [
+                    'technical_cut' => [],
+                    'bom'           => [],
+                ],
+                'sub_assemblies' => [],
+            ]);
+        }
+
+        $line    = $this->resolveLine($idType, $idPage, $idLine);
+        $lineQty = $this->resolveLineQty($idType, $line);
 
         // Custom requirements
         $detail = null;
@@ -340,18 +360,21 @@ class TaskManageApiController extends Controller
 
         $service = MethodsServices::find($validated['methods_services_id']);
 
-        $fkField = $idType;
         $taskData = array_merge($validated, [
             'code'      => $service?->code,
-            $fkField    => $idLine,
             'status_id' => Status::orderBy('order')->value('id'),
             'qty_init'  => $validated['qty'] ?? null,
             'origin'    => '0',
         ]);
 
+        // Generic tasks have no parent (no FK). All other types attach via $idType => $idLine.
+        if ($idType !== 'generic') {
+            $taskData[$idType] = $idLine;
+        }
+
         if ($idType === 'nomenclature_lines_id') {
             $taskData['methods_nomenclature_standard_id'] = $idLine;
-            unset($taskData[$fkField]);
+            unset($taskData[$idType]);
             \App\Models\Methods\MethodsStandardTask::create($taskData);
             return response()->json(['message' => 'Task created'], 201);
         }
@@ -465,8 +488,8 @@ class TaskManageApiController extends Controller
             'unit_price' => 'required|numeric|min:0',
         ]);
 
-        $fkField = $idType;
-        $sa = SubAssembly::create(array_merge($validated, [$fkField => $idLine]));
+        $saData = $idType === 'generic' ? $validated : array_merge($validated, [$idType => $idLine]);
+        $sa = SubAssembly::create($saData);
         $sa->load('Child');
 
         return response()->json(['sub_assembly' => $this->formatSubAssembly($sa)], 201);

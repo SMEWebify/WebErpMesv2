@@ -16,6 +16,21 @@ class StoreFilesRequest extends FormRequest
     }
 
     /**
+     * Multipart form-data sérialise les booléens en chaînes littérales
+     * ("true"/"false"), que la règle boolean de Laravel refuse. On normalise en
+     * amont pour accepter aussi bien les clients internes (React) que les
+     * clients externes (Nest4Quote, cURL...).
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('is_primary')) {
+            $this->merge([
+                'is_primary' => filter_var($this->input('is_primary'), FILTER_VALIDATE_BOOLEAN),
+            ]);
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array

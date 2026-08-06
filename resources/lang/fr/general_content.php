@@ -344,6 +344,8 @@ return [
 
     'order_info_trans_key'                     => 'Information de commande',
     'order_line_trans_key'                     => 'nb lignes',
+    'quote_lines_related_trans_key'            => 'Lignes de devis',
+    'order_lines_related_trans_key'            => 'Lignes de commande',
     'business_Review_trans_key'                => 'Bilan d\'affaire',
 
     'delivery_info_trans_key'                  => 'Bon de livraison info',
@@ -926,6 +928,9 @@ return [
     'load_planning_trans_key'                  => 'Planning de charge',
     'load_planning_info_1_trans_key'           => 'Actuellement, la charge journalière est bloquée à 16 heures.',
     'display_hours_diff_trans_key'             => 'Différence de temps',
+
+    //NESTING
+    'nesting_trans_key'                        => 'Nesting',
 
     //WORKFLOW
     'workflow_trans_key'                       => 'Workflow',

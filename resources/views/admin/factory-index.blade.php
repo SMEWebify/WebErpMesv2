@@ -799,7 +799,7 @@
                                                         {{ \Carbon\Carbon::create()->month($template->yearly_reset_month ?? 1)->translatedFormat('F') }}
                                                         {{ $template->yearly_reset_day ?? 1 }}
                                                     @else
-                                                        —
+                                                        -
                                                     @endif
                                                 </td>
                                                 <td class=" py-0 align-middle">
@@ -819,7 +819,7 @@
                                                                         <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" value="{{ $template->template }}" required>
                                                                     </div>
                                                                     <small class="text-muted">
-                                                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> —
+                                                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> -
                                                                         ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
                                                                     </small>
                                                                 </div>
@@ -912,7 +912,7 @@
                                         <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" required>
                                     </div>
                                     <small class="text-muted">
-                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> —
+                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> -
                                         ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
                                     </small>
                                 </div>

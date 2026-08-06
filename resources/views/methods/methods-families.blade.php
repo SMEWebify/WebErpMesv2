@@ -38,7 +38,7 @@
                   @elseif($MethodsFamilie->nest_type == 'bar')
                     <span class="badge badge-warning">Barre 1D</span>
                   @else
-                    <span class="text-muted">—</span>
+                    <span class="text-muted">-</span>
                   @endif
                 </td>
                 <td class=" py-0 align-middle">
@@ -80,7 +80,7 @@
                               <span class="input-group-text"><i class="fas fa-th"></i></span>
                             </div>
                             <select class="form-control" name="nest_type" id="nest_type_{{ $MethodsFamilie->id }}">
-                              <option value="">— Aucun —</option>
+                              <option value="">- Aucun -</option>
                               <option value="sheet" @if($MethodsFamilie->nest_type == 'sheet') selected @endif>Tôle (2D)</option>
                               <option value="bar" @if($MethodsFamilie->nest_type == 'bar') selected @endif>Barre (1D)</option>
                             </select>
@@ -144,7 +144,7 @@
                 <span class="input-group-text"><i class="fas fa-th"></i></span>
               </div>
               <select class="form-control" name="nest_type" id="nest_type">
-                <option value="">— Aucun —</option>
+                <option value="">- Aucun -</option>
                 <option value="sheet">Tôle (2D)</option>
                 <option value="bar">Barre (1D)</option>
               </select>

@@ -9,10 +9,12 @@ use App\Services\TaskService;
 use App\Models\Planning\TaskActivities;
 use App\Models\Products\StockMove;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Products\StockReservation;
 use App\Models\Products\SerialNumbers;
 use App\Services\QualityNonConformityService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskStatuController extends Controller
 {
@@ -75,6 +77,20 @@ class TaskStatuController extends Controller
                 ->map(fn ($s) => ['id' => $s->id, 'current_stock' => $s->getCurrentStockMove()])
                 ->values()
             : [];
+
+        $reservation = null;
+        if ($task->component_id) {
+            $r = StockReservation::where('task_id', $task->id)
+                ->where('products_id', $task->component_id)
+                ->first(['qty_requested', 'qty_reserved', 'qty_missing']);
+            if ($r) {
+                $reservation = [
+                    'requested' => (float) $r->qty_requested,
+                    'reserved'  => (float) $r->qty_reserved,
+                    'missing'   => (float) $r->qty_missing,
+                ];
+            }
+        }
 
         $timeline = $this->buildTimeline($task);
 
@@ -156,6 +172,7 @@ class TaskStatuController extends Controller
             'userforced_resource' => $userforcedResource,
             // stock
             'stock_locations'     => $stockLocations,
+            'reservation'         => $reservation,
             // timeline
             'timeline'            => $timeline,
         ]);
@@ -226,28 +243,55 @@ class TaskStatuController extends Controller
             'component_id' => 'required|integer',
         ]);
 
-        $qty              = (float) $request->qty;
-        $componentId      = $request->component_id;
-        $remaining        = $qty;
+        $qty         = (float) $request->qty;
+        $componentId = (int) $request->component_id;
+        $userId      = Auth::id();
 
-        foreach (StockLocationProducts::where('products_id', $componentId)->get() as $stock) {
-            $toWithdraw = min($stock->getCurrentStockMove(), $remaining);
-            if ($toWithdraw > 0) {
+        // Sérialise les consommations concurrentes sur ce composant :
+        // verrou pessimiste sur les StockLocationProducts + calcul du
+        // disponible en un unique SUM agrégé sous ce verrou.
+        $negativeStock = DB::transaction(function () use ($id, $qty, $componentId, $userId) {
+            $remaining = $qty;
+
+            $stocks = StockLocationProducts::where('products_id', $componentId)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get(['id']);
+
+            foreach ($stocks as $stock) {
+                $available = (float) StockMove::where('stock_location_products_id', $stock->id)
+                    ->selectRaw("
+                        COALESCE(SUM(CASE
+                            WHEN typ_move IN (1,3,5,12,14) THEN qty
+                            WHEN typ_move IN (2,4,6,9)     THEN -qty
+                            ELSE 0
+                        END), 0) AS available
+                    ")
+                    ->value('available');
+
+                $toWithdraw = min($available, $remaining);
+                if ($toWithdraw <= 0) {
+                    continue;
+                }
+
                 StockMove::create([
-                    'user_id'                    => Auth::id(),
+                    'user_id'                    => $userId,
                     'qty'                        => $toWithdraw,
                     'stock_location_products_id' => $stock->id,
                     'task_id'                    => $id,
                     'typ_move'                   => 2,
                 ]);
+
+                $remaining -= $toWithdraw;
+                if ($remaining <= 0) break;
             }
-            $remaining -= $toWithdraw;
-            if ($remaining <= 0) break;
-        }
+
+            return $remaining > 0;
+        });
 
         $this->taskService->recordTaskActivity($id, TaskActivities::TYPE_DECLARE_GOOD, $qty, 0);
 
-        return response()->json(['success' => true, 'negative_stock' => $remaining > 0]);
+        return response()->json(['success' => true, 'negative_stock' => $negativeStock]);
     }
 
     // -------------------------------------------------------------------------

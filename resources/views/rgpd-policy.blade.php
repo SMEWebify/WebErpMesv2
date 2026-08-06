@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'RGPD — Politique de confidentialité')
+@section('title', 'RGPD - Politique de confidentialité')
 
 @section('content_header')
     <h1>RGPD <small class="text-muted">Politique de confidentialité</small></h1>
@@ -112,7 +112,7 @@
             <tr>
                 <td>Contacts prospects (sans commande)</td>
                 <td><strong>3 ans</strong> après dernier contact</td>
-                <td>Recommandation CNIL — prospection B2B</td>
+                <td>Recommandation CNIL - prospection B2B</td>
             </tr>
             <tr>
                 <td>Journaux d'activité (audit trail)</td>
@@ -208,13 +208,13 @@
 
     <h5>Mesures techniques mises en place</h5>
     <ul>
-        <li><strong>Chiffrement au repos</strong> — les données sensibles des employés (NSS, adresses, téléphones, date de naissance) sont chiffrées en base de données (AES-256 via Laravel Crypt).</li>
-        <li><strong>Mots de passe hashés</strong> — tous les mots de passe sont hashés avec bcrypt (facteur de coût 10+), jamais stockés en clair.</li>
-        <li><strong>Isolation par instance</strong> — chaque entreprise cliente dispose de sa propre base de données et de son propre environnement Docker. Il n'y a aucun partage de données entre instances.</li>
-        <li><strong>Contrôle d'accès par rôle</strong> — chaque utilisateur accède uniquement aux données nécessaires à sa fonction (RBAC via Spatie Permission).</li>
-        <li><strong>Audit trail</strong> — les modifications sur les données sensibles (contacts, utilisateurs, entreprises) sont tracées avec horodatage et identification de l'auteur.</li>
-        <li><strong>HTTPS</strong> — les communications sont chiffrées en transit (TLS).</li>
-        <li><strong>Tokens temporaires</strong> — les tokens de réinitialisation de mot de passe expirent après 1 heure.</li>
+        <li><strong>Chiffrement au repos</strong> - les données sensibles des employés (NSS, adresses, téléphones, date de naissance) sont chiffrées en base de données (AES-256 via Laravel Crypt).</li>
+        <li><strong>Mots de passe hashés</strong> - tous les mots de passe sont hashés avec bcrypt (facteur de coût 10+), jamais stockés en clair.</li>
+        <li><strong>Isolation par instance</strong> - chaque entreprise cliente dispose de sa propre base de données et de son propre environnement Docker. Il n'y a aucun partage de données entre instances.</li>
+        <li><strong>Contrôle d'accès par rôle</strong> - chaque utilisateur accède uniquement aux données nécessaires à sa fonction (RBAC via Spatie Permission).</li>
+        <li><strong>Audit trail</strong> - les modifications sur les données sensibles (contacts, utilisateurs, entreprises) sont tracées avec horodatage et identification de l'auteur.</li>
+        <li><strong>HTTPS</strong> - les communications sont chiffrées en transit (TLS).</li>
+        <li><strong>Tokens temporaires</strong> - les tokens de réinitialisation de mot de passe expirent après 1 heure.</li>
     </ul>
 
 </x-adminlte-card>
@@ -281,9 +281,9 @@
 
     <p>Les données collectées le sont sur la base légale suivante selon leur nature :</p>
     <ul>
-        <li><strong>Exécution du contrat</strong> — données nécessaires à la gestion commerciale (contacts, commandes, factures)</li>
-        <li><strong>Obligation légale</strong> — données comptables conservées 10 ans (Code de commerce)</li>
-        <li><strong>Intérêt légitime</strong> — données RH des salariés de l'entreprise exploitante</li>
+        <li><strong>Exécution du contrat</strong> - données nécessaires à la gestion commerciale (contacts, commandes, factures)</li>
+        <li><strong>Obligation légale</strong> - données comptables conservées 10 ans (Code de commerce)</li>
+        <li><strong>Intérêt légitime</strong> - données RH des salariés de l'entreprise exploitante</li>
     </ul>
 
     <p>Les données ne sont jamais revendues ni transmises à des tiers non listés dans les sous-traitants techniques ci-dessus.</p>
@@ -374,7 +374,7 @@
             <tr><td>Accounting documents (invoices, orders)</td><td><strong>10 years</strong></td><td>French Commercial Code, art. L.123-22</td></tr>
             <tr><td>HR data (contracts, salaries, absences)</td><td><strong>5 years</strong> after end of contract</td><td>French Labour Code</td></tr>
             <tr><td>Active client contacts</td><td>Duration of commercial relationship</td><td>Contract performance</td></tr>
-            <tr><td>Prospect contacts (no orders)</td><td><strong>3 years</strong> after last contact</td><td>CNIL recommendation — B2B prospecting</td></tr>
+            <tr><td>Prospect contacts (no orders)</td><td><strong>3 years</strong> after last contact</td><td>CNIL recommendation - B2B prospecting</td></tr>
             <tr><td>Activity logs (audit trail)</td><td><strong>12 months</strong></td><td>ANSSI recommendation</td></tr>
             <tr><td>Outbound email logs</td><td><strong>12 months</strong></td><td>Proportionality</td></tr>
             <tr><td>Password reset tokens</td><td><strong>1 hour</strong></td><td>Security</td></tr>
@@ -447,9 +447,9 @@
 
     <p>Data is processed on the following legal bases depending on its nature:</p>
     <ul>
-        <li><strong>Contract performance</strong> — data required for commercial management (contacts, orders, invoices)</li>
-        <li><strong>Legal obligation</strong> — accounting data retained for 10 years (French Commercial Code)</li>
-        <li><strong>Legitimate interest</strong> — HR data of the operating company's employees</li>
+        <li><strong>Contract performance</strong> - data required for commercial management (contacts, orders, invoices)</li>
+        <li><strong>Legal obligation</strong> - accounting data retained for 10 years (French Commercial Code)</li>
+        <li><strong>Legitimate interest</strong> - HR data of the operating company's employees</li>
     </ul>
 
     <p>Data is never sold or shared with third parties not listed in the technical sub-processors section above.</p>

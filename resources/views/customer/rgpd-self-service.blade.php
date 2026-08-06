@@ -13,7 +13,7 @@
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="card-title">{{ __('Article 15 / 20 — Droit d\'accès et portabilité') }}</h5>
+                <h5 class="card-title">{{ __('Article 15 / 20 - Droit d\'accès et portabilité') }}</h5>
                 <p class="text-muted">{{ __('Téléchargez l\'ensemble des données que nous détenons sur vous (identité, commandes, factures, livraisons), au format JSON.') }}</p>
                 <a href="{{ route('customer.rgpd.export') }}" class="btn btn-primary">
                     {{ __('Télécharger mes données') }}
@@ -23,9 +23,9 @@
 
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title">{{ __('Article 17 — Droit à l\'effacement') }}</h5>
+                <h5 class="card-title">{{ __('Article 17 - Droit à l\'effacement') }}</h5>
                 <p class="text-muted">
-                    {{ __('Votre demande sera transmise à un administrateur. L\'effacement peut nécessiter une anonymisation si des pièces comptables (factures, commandes) sont liées à votre compte — la loi française impose une conservation de 10 ans pour ces documents.') }}
+                    {{ __('Votre demande sera transmise à un administrateur. L\'effacement peut nécessiter une anonymisation si des pièces comptables (factures, commandes) sont liées à votre compte - la loi française impose une conservation de 10 ans pour ces documents.') }}
                 </p>
                 <form method="POST" action="{{ route('customer.rgpd.erase') }}" onsubmit="return confirm('{{ __('Confirmer la demande d\'effacement ?') }}')">
                     @csrf

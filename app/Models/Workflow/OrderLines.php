@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
@@ -90,6 +91,12 @@ class OrderLines extends Model
     public function OrderLineDetails()
     {
         return $this->hasOne(OrderLineDetails::class, 'order_lines_id');
+    }
+
+    // GED — plans DXF, images, SVG, PDF... attachés à la ligne via le pivot polymorphe.
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     public function DeliveryLines()

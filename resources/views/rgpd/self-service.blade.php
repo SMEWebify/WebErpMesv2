@@ -15,7 +15,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ __('Article 15 / 20 — Droit d\'accès et portabilité') }}</h3>
+                <h3 class="card-title">{{ __('Article 15 / 20 - Droit d\'accès et portabilité') }}</h3>
             </div>
             <div class="card-body">
                 <p>{{ __('Téléchargez l\'ensemble des données personnelles que nous détenons sur vous, au format JSON.') }}</p>
@@ -27,11 +27,11 @@
 
         <div class="card mt-4">
             <div class="card-header">
-                <h3 class="card-title">{{ __('Article 17 — Droit à l\'effacement') }}</h3>
+                <h3 class="card-title">{{ __('Article 17 - Droit à l\'effacement') }}</h3>
             </div>
             <div class="card-body">
                 <p class="text-muted">
-                    {{ __('Votre demande sera transmise à un administrateur. L\'effacement effectif peut nécessiter une anonymisation si des pièces comptables (factures, commandes) sont liées à votre compte — la loi française impose une conservation de 10 ans pour ces documents.') }}
+                    {{ __('Votre demande sera transmise à un administrateur. L\'effacement effectif peut nécessiter une anonymisation si des pièces comptables (factures, commandes) sont liées à votre compte - la loi française impose une conservation de 10 ans pour ces documents.') }}
                 </p>
                 <form method="POST" action="{{ route('me.rgpd.erase') }}" onsubmit="return confirm('{{ __('Confirmer la demande d\'effacement ?') }}')">
                     @csrf

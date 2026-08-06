@@ -344,6 +344,8 @@ return [
 
     'order_info_trans_key'                     => 'Order info',
     'order_line_trans_key'                     => 'Order lines',
+    'quote_lines_related_trans_key'            => 'Quote lines',
+    'order_lines_related_trans_key'            => 'Order lines',
     'business_Review_trans_key'                => 'Business Review',
 
     'delivery_info_trans_key'                  => 'Delivery info',
@@ -926,6 +928,9 @@ return [
     'load_planning_trans_key'                  => 'Load planning',
     'load_planning_info_1_trans_key'           => 'Currently the charge per day is stuck at 16 hours',
     'display_hours_diff_trans_key'             => 'Time difference',
+
+    //NESTING
+    'nesting_trans_key'                        => 'Nesting',
     
     //WORKFLOW
     'workflow_trans_key'                       => 'Workflow',

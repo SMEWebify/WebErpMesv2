@@ -97,8 +97,8 @@
                 <tr>
                     <td style="background-color:#f8fafc;padding:24px 48px;border-radius:0 0 16px 16px;border-top:1px solid #e2e8f0;text-align:center;">
                         <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.8;">
-                            Cet email est envoyé automatiquement — merci de ne pas y répondre.<br>
-                            &copy; {{ date('Y') }} {{ config('branding.app_name') }} — Tous droits réservés.
+                            Cet email est envoyé automatiquement - merci de ne pas y répondre.<br>
+                            &copy; {{ date('Y') }} {{ config('branding.app_name') }} - Tous droits réservés.
                         </p>
                     </td>
                 </tr>

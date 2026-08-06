@@ -103,7 +103,7 @@
           <div class="alert alert-warning alert-dismissible mb-3">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <h5><i class="fas fa-hourglass-half mr-2"></i>Commande en attente de paiement</h5>
-            Cette commande est en statut <strong>brouillon</strong> — elle ne sera activée qu'après confirmation du paiement client.
+            Cette commande est en statut <strong>brouillon</strong> - elle ne sera activée qu'après confirmation du paiement client.
             Elle n'apparaît pas dans la production ni dans les KPI.
             @if($linkedProforma)
               <div class="mt-2">
@@ -556,7 +556,7 @@
                   <td>{{ $row['display_unit'] }}</td>
                   <td>{{ $row['display_total'] }}</td>
                   <td>{{ $row['tracability'] }}</td>
-                  <td>{{ $row['date'] ? \Carbon\Carbon::parse($row['date'])->format('d/m/Y H:i') : '—' }}</td>
+                  <td>{{ $row['date'] ? \Carbon\Carbon::parse($row['date'])->format('d/m/Y H:i') : '-' }}</td>
                 </tr>
                 @endforeach
               </tbody>

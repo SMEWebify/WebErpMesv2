@@ -253,28 +253,9 @@
     </div>
   </x-adminlte-card>
 
-  <x-adminlte-card title="{{ __('general_content.current_stock_trans_key') }}" theme="warning"  collapsible="collapsed" removable maximizable>
-      <div id="stock-current-app"
-          data-endpoints="{{ json_encode([
-              'current'     => route('products.stock.json.current'),
-              'store_order' => route('products.stock.json.store-order'),
-          ]) }}"
-          data-trans="{{ json_encode([
-              'note'       => __('general_content.current_stock_note_trans_key'),
-              'note2'      => __('general_content.current_stock_note_2_trans_key'),
-              'view_stock' => __('general_content.view_stock_list_trans_key'),
-              'product'    => __('general_content.product_trans_key'),
-              'qty'        => __('general_content.qty_trans_key'),
-              'requested'  => __('general_content.requested_trans_key'),
-              'order_line' => __('general_content.order_line_trans_key'),
-              'task'       => __('general_content.task_trans_key'),
-              'new_order'  => __('general_content.new_order_trans_key'),
-              'total_stock'=> __('general_content.total_stock_trans_key'),
-              'no_data'    => __('general_content.no_data_trans_key'),
-              'loading'    => __('general_content.loading_trans_key') ?? 'Chargement...',
-          ]) }}"
-      ></div>
-  </x-adminlte-card>
+  {{-- Ex-carte "Stock courant" retirée : sa vue est désormais fusionnée
+       dans /products/Stock/shortages (Statut du stock) avec la ventilation
+       par tâche des composants achetés. --}}
 
   @can('stock-lot-serial-management')
   <x-adminlte-card title="Valorisation du stock (CUMP)" theme="info" collapsible="collapsed" removable maximizable>

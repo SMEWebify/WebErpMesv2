@@ -24,6 +24,7 @@ return [
     'tasks_statu_trans_key'                    => 'Quản lý tác vụ',
     'workflow_trans_key'                       => 'Quy trình',
     'gantt_trans_key'                          => 'Gantt',
+    'nesting_trans_key'                        => 'Nesting',
     'delivery_notes_trans_key'                 => 'Ghi chú giao hàng',
     'deliverys_notes_request_trans_key'        => 'Yêu cầu ghi chú giao hàng',
     'deliverys_notes_list_trans_key'           => 'Danh sách ghi chú giao hàng',

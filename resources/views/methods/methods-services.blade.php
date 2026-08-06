@@ -58,7 +58,7 @@
                   @if($MethodsService->is_nesting)
                     <span class="badge badge-primary"><i class="fas fa-th"></i></span>
                   @else
-                    <span class="text-muted">—</span>
+                    <span class="text-muted">-</span>
                   @endif
                 </td>
                 <td class="py-0 align-middle">

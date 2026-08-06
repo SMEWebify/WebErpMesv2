@@ -24,11 +24,10 @@ class StoreStockMoveRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'user_id' =>'required',
-            'qty'=>'required|numeric',
-            'typ_move'=>'required',
-            'batch_id'=>'nullable|numeric|exists:batches,id',
+            'user_id'  => 'required|integer|exists:users,id',
+            'qty'      => 'required|numeric|min:0.001',
+            'typ_move' => 'required|integer|between:1,14',
+            'batch_id' => 'nullable|numeric|exists:batches,id',
         ];
     }
 }

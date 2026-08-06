@@ -732,6 +732,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');
             Route::post('/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
+
+            // Manques (composants achetés en rupture de couverture par les tâches).
+            // Doit être déclaré AVANT le /{id} qui matcherait "shortages" comme un ID.
+            Route::get('/shortages', 'App\Http\Controllers\Products\StockShortagesController@index')->name('products.stock.shortages');
+            Route::get('/shortages/json', 'App\Http\Controllers\Products\StockShortagesController@json')->name('products.stock.shortages.json');
+
             Route::get('/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
 
             // Stock current (React)
@@ -835,6 +841,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Planning\NestingController@index')->name('nesting.index');
         Route::get('/document', 'App\Http\Controllers\Planning\NestingController@document')->name('nesting.document');
         Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
+        Route::get('/services', 'App\Http\Controllers\Planning\NestingController@services')->name('nesting.services');
+        Route::get('/sheet-stock', 'App\Http\Controllers\Planning\NestingController@sheetStock')->name('nesting.sheet-stock');
+        Route::post('/compute', 'App\Http\Controllers\Planning\NestingController@compute')->name('nesting.compute');
     });
 
     Route::group(['prefix' => 'admin'], function () {
@@ -1316,7 +1325,7 @@ Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(func
         ->name('files.legacy.product-picture');
 
     Route::get('/{folder}/{filename}', [LegacyFileController::class, 'serve'])
-        ->where('folder', implode('|', array_filter(config('files.legacy_folders'), fn ($folder) => ! str_contains($folder, '/'))))
+        ->where('folder', implode('|', array_filter((array) config('files.legacy_folders', []), fn ($folder) => ! str_contains($folder, '/'))))
         ->where('filename', '[A-Za-z0-9._-]+')
         ->name('files.legacy');
 });

@@ -33,10 +33,10 @@
 								<i class="fas fa-list"></i>
 							</div>
 						</x-slot>
-						<option value="">— {{ __('general_content.order_trans_key') }} —</option>
+						<option value="">- {{ __('general_content.order_trans_key') }} -</option>
 						@foreach ($orderList as $order)
 							<option value="{{ $order->id }}" @selected($order->id == $orderId)>
-								{{ $order->code }}{{ $order->label ? ' — ' . $order->label : '' }}
+								{{ $order->code }}{{ $order->label ? ' - ' . $order->label : '' }}
 							</option>
 						@endforeach
 					</x-adminlte-select2>

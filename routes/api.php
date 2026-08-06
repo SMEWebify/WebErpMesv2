@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
+use App\Http\Controllers\Files\FileApiController;
 use App\Http\Controllers\Integrations\QontoWebhookController;
 
 /*
@@ -40,6 +41,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');
     Route::post('product',           [ProductController::class, 'store'])->name('api.product.store');
     Route::put('product/{product}',  [ProductController::class, 'update'])->name('api.product.update');
+
+    // GED — attache un fichier (DXF, SVG, PDF, STL...) à n'importe quelle entité déclarée
+    // dans FileableRegistry, y compris quote-line et order-line. Multipart, pas de base64.
+    // Le fichier reçu suit exactement le même flux que l'upload React (FileStorageService).
+    Route::prefix('files/json')->group(function () {
+        Route::get('/list',      [FileApiController::class, 'index'])->name('api.files.list');
+        Route::post('/store',    [FileApiController::class, 'store'])->name('api.files.store');
+        Route::patch('/{file}',  [FileApiController::class, 'update'])->name('api.files.update');
+        Route::delete('/{file}', [FileApiController::class, 'destroy'])->name('api.files.destroy');
+    });
 });
 
 Route::middleware('auth:api')->group(function () {

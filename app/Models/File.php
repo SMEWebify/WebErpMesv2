@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Models\User;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
 use App\Models\Products\StockMove;
@@ -139,6 +141,14 @@ class File extends Model
     }
 
     /**
+     * Polymorphic many-to-many with QuoteLines (per-line attachments).
+     */
+    public function quoteLines()
+    {
+        return $this->morphedByMany(QuoteLines::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
+
+    /**
      * Define a polymorphic many-to-many relationship with the Orders model.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
@@ -146,6 +156,14 @@ class File extends Model
     public function orders()
     {
         return $this->morphedByMany(Orders::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
+
+    /**
+     * Polymorphic many-to-many with OrderLines (per-line attachments).
+     */
+    public function orderLines()
+    {
+        return $this->morphedByMany(OrderLines::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     /**

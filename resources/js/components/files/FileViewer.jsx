@@ -23,7 +23,7 @@ const VIEWERS = {
 
 function Fallback({ t }) {
     return (
-        <div className="text-center text-muted py-5">
+        <div className="wem-viewer-placeholder text-center text-muted">
             <i className="fas fa-spinner fa-spin fa-2x mb-2" />
             <div>{t('loading')}</div>
         </div>
@@ -33,7 +33,7 @@ function Fallback({ t }) {
 export default function FileViewer({ file, t }) {
     if (!file) {
         return (
-            <div className="text-center text-muted py-5">
+            <div className="wem-viewer-placeholder text-center text-muted">
                 <i className="far fa-hand-point-left fa-2x mb-2" />
                 <div>{t('select_a_file')}</div>
             </div>
@@ -44,7 +44,7 @@ export default function FileViewer({ file, t }) {
 
     if (!Viewer) {
         return (
-            <div className="text-center text-muted py-5">
+            <div className="wem-viewer-placeholder text-center text-muted">
                 <i className={`${file.icon} fa-3x mb-3`} />
                 <div className="mb-3">{t('no_inline_preview')}</div>
                 <a className="btn btn-primary" href={file.download_url}>

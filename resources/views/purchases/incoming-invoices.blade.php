@@ -3,7 +3,7 @@
 @section('title', __('general_content.incoming_invoices_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.incoming_invoices_trans_key') }} — Factur-X</h1>
+    <h1>{{ __('general_content.incoming_invoices_trans_key') }} - Factur-X</h1>
 @stop
 
 @section('content')

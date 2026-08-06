@@ -17,7 +17,9 @@ class DocumentController extends Controller
             'companies:id,label',
             'opportunities:id,label',
             'quotes:id,code',
+            'quoteLines:id,quotes_id,code,label',
             'orders:id,code',
+            'orderLines:id,orders_id,code,label',
             'deliverys:id,code',
             'invoices:id,code',
             'products:id,label',
@@ -91,11 +93,15 @@ class DocumentController extends Controller
      */
     private function formatLinkedEntities(File $file): array
     {
+        $lineLabel = fn ($line) => trim(($line->code ?? '') . ' ' . ($line->label ?? '')) ?: '#' . $line->id;
+
         $mapped = [
             __('general_content.companies_trans_key') => $file->companies->pluck('label')->filter()->all(),
             __('general_content.opportunities_trans_key') => $file->opportunities->pluck('label')->filter()->all(),
             __('general_content.quote_trans_key') => $file->quotes->pluck('code')->filter()->all(),
+            __('general_content.quote_lines_related_trans_key') => $file->quoteLines->map($lineLabel)->filter()->all(),
             __('general_content.orders_trans_key') => $file->orders->pluck('code')->filter()->all(),
+            __('general_content.order_lines_related_trans_key') => $file->orderLines->map($lineLabel)->filter()->all(),
             __('general_content.delivery_notes_trans_key') => $file->deliverys->pluck('code')->filter()->all(),
             __('general_content.invoice_trans_key') => $file->invoices->pluck('code')->filter()->all(),
             __('general_content.product_trans_key') => $file->products->pluck('label')->filter()->all(),
