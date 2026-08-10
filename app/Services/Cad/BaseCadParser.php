@@ -149,6 +149,7 @@ abstract class BaseCadParser implements CadParser
             'y_size' => $data['y_size'] ?? null,
             'weight' => $data['weight'] ?? null,
             'picture' => $data['picture'] ?? null,
+            'derived_svg' => $data['derived_svg'] ?? null,
             'extra' => $data['extra'] ?? null,
         ];
     }

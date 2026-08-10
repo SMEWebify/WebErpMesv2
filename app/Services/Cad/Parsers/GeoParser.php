@@ -52,6 +52,7 @@ class GeoParser extends BaseCadParser
         $code = $meta['ident'] !== '' ? $meta['ident'] : $this->baseName($file);
 
         [$xSize, $ySize] = $this->dimensions($scan['bbox']);
+        $svg = $this->svg($scan['shapes'], $scan['bbox']);
 
         $dimensions = $xSize !== null && $ySize !== null
             ? $this->number($xSize) . 'x' . $this->number($ySize) . 'mm'
@@ -68,6 +69,9 @@ class GeoParser extends BaseCadParser
             'thickness' => $meta['thickness'],
             'x_size' => $xSize,
             'y_size' => $ySize,
+            // The contour, redrawn as SVG: the nesting page only reads cad2d
+            // and vector files, and no viewer renders a .geo.
+            'derived_svg' => $svg,
             'extra' => $this->requirements([
                 $this->requirement('Plan', $meta['drawing']),
                 $this->requirement('Client', $meta['customer']),
@@ -85,7 +89,8 @@ class GeoParser extends BaseCadParser
      * Walk the file once, collecting the metadata blocks and the geometry.
      *
      * @return array{signature: bool, meta: array<string, mixed>, bbox: ?array<int, float>,
-     *               cut_length: float, entity_count: int, profile_count: int, inner_count: int}
+     *               shapes: array<int, array<string, mixed>>, cut_length: float,
+     *               entity_count: int, profile_count: int, inner_count: int}
      */
     private function scan(UploadedFile $file): array
     {
@@ -103,6 +108,7 @@ class GeoParser extends BaseCadParser
         $profileOpen = false;
 
         $bbox = null;
+        $shapes = [];
         $cutLength = 0.0;
         $entityCount = 0;
         $profileCount = 0;
@@ -218,6 +224,7 @@ class GeoParser extends BaseCadParser
                                 $entityCount++;
                                 $cutLength += $segment['length'];
                                 $bbox = $this->extend($bbox, $segment['bbox']);
+                                $shapes[] = $segment['shape'];
                             }
 
                             $entity = null;
@@ -238,6 +245,7 @@ class GeoParser extends BaseCadParser
             'signature' => $signature,
             'meta' => $this->meta($partFields, $attributes),
             'bbox' => $bbox,
+            'shapes' => $shapes,
             'cut_length' => round($cutLength, 3),
             'entity_count' => $entityCount,
             'profile_count' => $profileCount,
@@ -292,15 +300,15 @@ class GeoParser extends BaseCadParser
     }
 
     /**
-     * Length and bounding box of one entity, or null when it references a point
-     * the table does not hold.
+     * Length, bounding box and drawable shape of one entity, or null when it
+     * references a point the table does not hold.
      *
      * The useful fields are read from the end: the prefix ("1 0", layer and
      * type) varies with the RADAN version and the export macro.
      *
      * @param  array{type: string, fields: array<int, string>}  $entity
      * @param  array<int, array<int, float>>  $points
-     * @return array{length: float, bbox: array<int, float>}|null
+     * @return array{length: float, bbox: array<int, float>, shape: array<string, mixed>}|null
      */
     private function segment(array $entity, array $points): ?array
     {
@@ -325,6 +333,7 @@ class GeoParser extends BaseCadParser
             return [
                 'length' => hypot($end[0] - $start[0], $end[1] - $start[1]),
                 'bbox' => $this->bounds([$start, $end]),
+                'shape' => ['type' => 'line', 'from' => $start, 'to' => $end],
             ];
         }
 
@@ -339,6 +348,7 @@ class GeoParser extends BaseCadParser
             return [
                 'length' => 2 * M_PI * $radius,
                 'bbox' => [$center[0] - $radius, $center[1] - $radius, $center[0] + $radius, $center[1] + $radius],
+                'shape' => ['type' => 'circle', 'center' => $center, 'radius' => $radius],
             ];
         }
 
@@ -359,12 +369,12 @@ class GeoParser extends BaseCadParser
     }
 
     /**
-     * Length and exact bounding box of an arc.
+     * Length, exact bounding box and drawable shape of an arc.
      *
      * @param  array<int, float>  $center
      * @param  array<int, float>  $start
      * @param  array<int, float>  $end
-     * @return array{length: float, bbox: array<int, float>}
+     * @return array{length: float, bbox: array<int, float>, shape: array<string, mixed>}
      */
     private function arc(array $center, array $start, array $end, bool $counterClockwise): array
     {
@@ -398,7 +408,90 @@ class GeoParser extends BaseCadParser
         return [
             'length' => $radius * abs($to - $from),
             'bbox' => $this->bounds($extremes),
+            'shape' => [
+                'type' => 'arc',
+                'from' => $start,
+                'to' => $end,
+                'radius' => $radius,
+                'ccw' => $counterClockwise,
+                'large' => abs($to - $from) > M_PI,
+            ],
         ];
+    }
+
+    /**
+     * Redraw the contour as an SVG, in millimetres and normalised to the origin.
+     *
+     * @param  array<int, array<string, mixed>>  $shapes
+     * @param  array<int, float>|null  $bbox
+     */
+    private function svg(array $shapes, ?array $bbox): ?string
+    {
+        if ($shapes === [] || $bbox === null) {
+            return null;
+        }
+
+        $width = $bbox[2] - $bbox[0];
+        $height = $bbox[3] - $bbox[1];
+
+        if ($width <= 0 || $height <= 0) {
+            return null;
+        }
+
+        // CAD draws Y upwards and SVG downwards: mirroring keeps the part the
+        // right way up instead of flipping it against its drawing.
+        $x = fn (float $value): string => $this->number($value - $bbox[0], 3);
+        $y = fn (float $value): string => $this->number($bbox[3] - $value, 3);
+        $length = fn (float $value): string => $this->number($value, 3);
+
+        $elements = [];
+
+        foreach ($shapes as $shape) {
+            $elements[] = match ($shape['type']) {
+                'line' => sprintf(
+                    '<line x1="%s" y1="%s" x2="%s" y2="%s"/>',
+                    $x($shape['from'][0]), $y($shape['from'][1]),
+                    $x($shape['to'][0]), $y($shape['to'][1]),
+                ),
+                'circle' => sprintf(
+                    '<circle cx="%s" cy="%s" r="%s"/>',
+                    $x($shape['center'][0]), $y($shape['center'][1]), $length($shape['radius']),
+                ),
+                // Mirroring reverses the orientation, so the sweep flag flips.
+                'arc' => sprintf(
+                    '<path d="M %s %s A %s %s 0 %d %d %s %s"/>',
+                    $x($shape['from'][0]), $y($shape['from'][1]),
+                    $length($shape['radius']), $length($shape['radius']),
+                    $shape['large'] ? 1 : 0,
+                    $shape['ccw'] ? 0 : 1,
+                    $x($shape['to'][0]), $y($shape['to'][1]),
+                ),
+                default => '',
+            };
+        }
+
+        $elements = array_filter($elements);
+
+        if ($elements === []) {
+            return null;
+        }
+
+        // A stroke sized off the part stays visible on a small bracket without
+        // swallowing the contour of a large panel.
+        $stroke = $this->number(max(0.2, min(1.0, max($width, $height) / 400)), 2);
+
+        return sprintf(
+            '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %1$s %2$s" width="%1$smm" height="%2$smm">' . "\n"
+            . '    <g fill="none" stroke="#000" stroke-width="%3$s">' . "\n"
+            . '        %4$s' . "\n"
+            . '    </g>' . "\n"
+            . '</svg>' . "\n",
+            $this->number($width, 3),
+            $this->number($height, 3),
+            $stroke,
+            implode("\n        ", $elements),
+        );
     }
 
     /**

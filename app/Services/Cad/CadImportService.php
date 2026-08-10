@@ -2,6 +2,7 @@
 
 namespace App\Services\Cad;
 
+use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
@@ -46,19 +47,55 @@ class CadImportService
     }
 
     /**
-     * Store the source file and attach it to the line it just created.
+     * File the source document on the line, plus the contour the parser had to
+     * redraw when the format is readable by nothing else.
      *
-     * Called after parsing, because storing moves the upload out of its
-     * temporary path.
+     * @param  array<string, mixed>  $data  output of parse()
      */
-    public function attachToGed(UploadedFile $file, Model $line, ?string $role): void
+    public function attachToGed(UploadedFile $file, Model $line, array $data): void
     {
-        if ($role === null) {
+        if (($data['ged_role'] ?? null) !== null) {
+            $stored = $this->files->store($file, ['hashtags' => ['import-cao']]);
+
+            $this->files->attach($stored, $line, $data['ged_role'], isPrimary: true);
+        }
+
+        if (($data['derived_svg'] ?? null) !== null) {
+            $this->attachDerivedSvg($data['derived_svg'], $file, $line);
+        }
+    }
+
+    /**
+     * Store a generated SVG as a document of its own.
+     *
+     * The nesting page only looks at cad2d and vector files, so this is what
+     * makes a format it cannot read imbricable all the same.
+     */
+    private function attachDerivedSvg(string $svg, UploadedFile $source, Model $line): void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'cadsvg');
+
+        if ($path === false) {
             return;
         }
 
-        $stored = $this->files->store($file, ['hashtags' => ['import-cao']]);
+        try {
+            file_put_contents($path, $svg);
 
-        $this->files->attach($stored, $line, $role, isPrimary: true);
+            $name = pathinfo($source->getClientOriginalName(), PATHINFO_FILENAME) . '.svg';
+            $upload = new UploadedFile($path, $name, 'image/svg+xml', null, true);
+
+            $stored = $this->files->store($upload, [
+                'hashtags' => ['import-cao', 'imbrication'],
+                'comment' => 'Contour généré depuis ' . $source->getClientOriginalName(),
+            ]);
+
+            $this->files->attach($stored, $line, FileRole::VECTOR, isPrimary: true);
+        } finally {
+            // store() copies the upload through a stream rather than moving it.
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
     }
 }

@@ -116,6 +116,39 @@ class CadParsersTest extends TestCase
         $this->assertContains(['label' => 'Client', 'value' => 'ACME'], $result['extra']);
     }
 
+    public function test_geo_redraws_the_contour_as_an_svg_for_the_nesting_page(): void
+    {
+        $svg = (new GeoParser())->parse($this->upload('P-1234.geo', $this->geo()))['derived_svg'];
+
+        $this->assertStringContainsString('viewBox="0 0 200 100"', $svg);
+        $this->assertStringContainsString('width="200mm" height="100mm"', $svg);
+        $this->assertStringContainsString('<circle cx="100" cy="50" r="10"/>', $svg);
+
+        // CAD draws Y upwards, SVG downwards: the bottom edge lands on y=100.
+        $this->assertStringContainsString('<line x1="0" y1="100" x2="200" y2="100"/>', $svg);
+        $this->assertNotFalse(simplexml_load_string($svg));
+
+        // What we write has to be readable by what reads SVG on the way back.
+        $roundTrip = (new SvgParser())->parse($this->upload('P-1234.svg', $svg));
+        $this->assertSame(200.0, $roundTrip['x_size']);
+        $this->assertSame(100.0, $roundTrip['y_size']);
+    }
+
+    public function test_geo_arc_keeps_its_curvature_through_the_mirroring(): void
+    {
+        $result = (new GeoParser())->parse($this->upload('arc.geo', $this->arcGeo()));
+
+        $this->assertSame(10.0, $result['x_size']);
+        $this->assertSame(10.0, $result['y_size']);
+
+        // Quarter of a circle of radius 10: pi * 10 / 2.
+        $this->assertContains(['label' => 'Longueur de coupe', 'value' => '15.708 mm'], $result['extra']);
+
+        // Mirroring reverses the orientation, hence a sweep flag of 0 for an
+        // arc drawn counter-clockwise in the GEO.
+        $this->assertStringContainsString('<path d="M 10 10 A 10 10 0 0 0 0 0"/>', $result['derived_svg']);
+    }
+
     public function test_geo_attributes_block_overrides_the_positional_fields(): void
     {
         $geo = str_replace("#~31\n", "#~30\nIDENT@P-9999\nMAT@INOX 304\n#~TTINFO_END\n#~31\n", $this->geo());
@@ -285,6 +318,44 @@ CIR
 1 0
 5
 10.0
+|~
+##~~
+#~KONT_END
+
+GEO;
+    }
+
+    /**
+     * A single quarter arc of radius 10, drawn counter-clockwise.
+     */
+    private function arcGeo(): string
+    {
+        return <<<'GEO'
+#~1
+1.03
+##~~
+#~31
+P
+1
+0.0 0.0 0.0
+|~
+P
+2
+10.0 0.0 0.0
+|~
+P
+3
+0.0 10.0 0.0
+|~
+##~~
+#~33
+1 24 0
+##~~
+#~331
+ARC
+1 0
+1 2 3
+1
 |~
 ##~~
 #~KONT_END

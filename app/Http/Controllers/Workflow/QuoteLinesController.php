@@ -1035,7 +1035,7 @@ class QuoteLinesController extends Controller
                     ]);
 
                     // Keep the source drawing on the line, in the GED.
-                    $cad->attachToGed($file, $line, $data['ged_role']);
+                    $cad->attachToGed($file, $line, $data);
 
                     return $line;
                 });

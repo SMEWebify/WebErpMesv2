@@ -124,6 +124,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                         </div>
                         <div className="text-muted mt-1" style={{ fontSize: '0.75rem' }}>
                             Le plan déposé est rattaché à la ligne dans la GED (hors .sym, entièrement lu à l'import).
+                            Un .geo produit en plus un SVG exploitable par l'imbrication.
                         </div>
                     </>
                 )}
