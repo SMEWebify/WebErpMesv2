@@ -423,8 +423,8 @@
           'createProducts'  => route('orders.lines.json.create-products',  ['orderId' => $Order->id]),
           'linkProducts'    => route('orders.lines.json.link-products',    ['orderId' => $Order->id]),
         ];
-        if (env('RADAN_SYM_IMPORT', false)) {
-          $orderLineEndpoints['importSym'] = route('orders.lines.json.import-sym', ['orderId' => $Order->id]);
+        if (config('cad.line_import')) {
+          $orderLineEndpoints['importCad'] = route('orders.lines.json.import-cad', ['orderId' => $Order->id]);
         }
       @endphp
       <div class="tab-pane " id="Lines">

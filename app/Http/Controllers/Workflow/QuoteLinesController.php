@@ -7,6 +7,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Events\OrderCreated;
+use App\Services\Cad\CadImportService;
 use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
@@ -969,15 +970,15 @@ class QuoteLinesController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // RADAN .sym import
+    // CAD import — .sym, .geo, .dxf, .step and .svg dropped on the lines table
     // -------------------------------------------------------------------------
 
-    public function importSymJson(Request $request, int $quoteId)
+    public function importCadJson(Request $request, int $quoteId, CadImportService $cad)
     {
         abort_unless(auth()->check(), 403);
 
-        if (! env('RADAN_SYM_IMPORT', false)) {
-            return response()->json(['error' => 'Import RADAN désactivé'], 403);
+        if (! $cad->isEnabled()) {
+            return response()->json(['error' => 'Import CAO désactivé'], 403);
         }
 
         $quote = Quotes::findOrFail($quoteId);
@@ -986,7 +987,7 @@ class QuoteLinesController extends Controller
 
         $request->validate([
             'files'   => 'required|array|min:1',
-            'files.*' => 'required|file|max:10240',
+            'files.*' => ['required', 'file', 'max:' . (int) config('files.max_size')],
         ]);
 
         $defaultVat  = AccountingVat::getDefault();
@@ -1006,37 +1007,44 @@ class QuoteLinesController extends Controller
 
         foreach ($request->file('files') as $file) {
             try {
-                $data = $this->parseSymFile($file);
+                $data = $cad->parse($file);
 
-                $line = QuoteLines::create([
-                    'quotes_id'          => $quoteId,
-                    'ordre'              => $nextOrdre++,
-                    'code'               => $data['code'],
-                    'label'              => $data['label'],
-                    'qty'                => 1,
-                    'methods_units_id'   => $defaultUnit->id,
-                    'selling_price'      => 0,
-                    'discount'           => 0,
-                    'accounting_vats_id' => $defaultVat->id,
-                ]);
+                $line = DB::transaction(function () use ($quoteId, &$nextOrdre, $data, $defaultUnit, $defaultVat, $file, $cad) {
+                    $line = QuoteLines::create([
+                        'quotes_id'          => $quoteId,
+                        'ordre'              => $nextOrdre++,
+                        'code'               => $data['code'],
+                        'label'              => $data['label'],
+                        'qty'                => 1,
+                        'methods_units_id'   => $defaultUnit->id,
+                        'selling_price'      => 0,
+                        'discount'           => 0,
+                        'accounting_vats_id' => $defaultVat->id,
+                    ]);
 
-                QuoteLineDetails::create([
-                    'quote_lines_id'      => $line->id,
-                    'material'            => $data['material'],
-                    'thickness'           => $data['thickness'],
-                    'x_size'              => $data['x_size'],
-                    'y_size'              => $data['y_size'],
-                    'weight'              => $data['weight'],
-                    'cad_file'            => $data['code'],
-                    'picture'             => $data['picture'],
-                    'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
-                ]);
+                    QuoteLineDetails::create([
+                        'quote_lines_id'      => $line->id,
+                        'material'            => $data['material'],
+                        'thickness'           => $data['thickness'],
+                        'x_size'              => $data['x_size'],
+                        'y_size'              => $data['y_size'],
+                        'weight'              => $data['weight'],
+                        'cad_file'            => $file->getClientOriginalName(),
+                        'picture'             => $data['picture'],
+                        'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
+                    ]);
+
+                    // Keep the source drawing on the line, in the GED.
+                    $cad->attachToGed($file, $line, $data['ged_role']);
+
+                    return $line;
+                });
 
                 $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
                 $line->loadCount(['Task', 'SubAssembly']);
 
                 $createdLines[] = $this->formatLineJson($line, $currency, $locale);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = $file->getClientOriginalName() . ' : ' . $e->getMessage();
             }
         }
@@ -1044,117 +1052,4 @@ class QuoteLinesController extends Controller
         return response()->json(['lines' => $createdLines, 'errors' => $errors], 201);
     }
 
-    private function parseSymFile(\Illuminate\Http\UploadedFile $file): array
-    {
-        $content = $file->get();
-
-        // Strip namespace so SimpleXML can find elements without prefix
-        $content = preg_replace('/\sxmlns="[^"]+"/', '', $content);
-
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($content);
-        if ($xml === false) {
-            throw new \RuntimeException('Fichier XML invalide');
-        }
-
-        // Index all Attr elements by their num attribute
-        $attrs = [];
-        foreach ($xml->RadanAttributes->Group ?? [] as $group) {
-            foreach ($group->Attr ?? [] as $attr) {
-                $num = (int) $attr['num'];
-                $attrs[$num] = isset($attr['value']) ? (string) $attr['value'] : null;
-            }
-        }
-
-        $get = fn (int $num) => $attrs[$num] ?? null;
-
-        $filename  = $get(110) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $material  = $get(119);
-        $thickness = $get(120) !== null ? (float) $get(120) : null;
-        $thickUnit = $get(121) ?? 'mm';
-        $xSize     = $get(165) !== null ? (float) $get(165) : null;
-        $ySize     = $get(166) !== null ? (float) $get(166) : null;
-        $weight    = $get(164) !== null ? round((float) $get(164), 3) : null;
-        $perimExt  = $get(167) !== null ? (float) $get(167) : null;
-        $perimTot  = $get(168) !== null ? (float) $get(168) : null;
-        $surface   = $get(162) !== null ? (float) $get(162) : null;
-        $surfExt   = $get(163) !== null ? (float) $get(163) : null;
-        $geoUnit   = $get(169) ?? 'mm';
-        $laserCut  = $get(510) !== null ? (float) $get(510) : null;
-        $laserPiercing = $get(512) !== null ? (int) $get(512) : null;
-        $bendCount = $get(500) !== null ? (int) $get(500) : null;
-
-        // Build label: "CODE - MATERIAU Xmm (XxYmm)"
-        $labelParts = [$filename];
-        if ($material) {
-            $thickStr     = $thickness !== null ? " {$thickness}{$thickUnit}" : '';
-            $labelParts[] = $material . $thickStr;
-        }
-        if ($xSize !== null && $ySize !== null) {
-            $labelParts[] = "{$xSize}x{$ySize}{$geoUnit}";
-        }
-
-        // Extract thumbnail
-        $picture = null;
-        if (isset($xml->Thumbnail)) {
-            $b64 = trim((string) $xml->Thumbnail);
-            if ($b64 !== '') {
-                $picture = $this->saveThumbnailFromSym($b64);
-            }
-        }
-
-        // Extra RADAN metadata stored in custom_requirements JSON
-        $extra = array_filter([
-            'perimetre_ext'    => $perimExt,
-            'perimetre_total'  => $perimTot,
-            'surface'          => $surface,
-            'surface_ext'      => $surfExt,
-            'geo_unit'         => $geoUnit,
-            'laser_cut_length' => $laserCut,
-            'laser_piercings'  => $laserPiercing,
-            'bend_count'       => $bendCount,
-            'radan_source'     => true,
-        ], fn ($v) => $v !== null && $v !== false);
-
-        return [
-            'code'      => $filename,
-            'label'     => implode(' - ', $labelParts),
-            'material'  => $material,
-            'thickness' => $thickness,
-            'x_size'    => $xSize,
-            'y_size'    => $ySize,
-            'weight'    => $weight,
-            'picture'   => $picture,
-            'extra'     => $extra ?: null,
-        ];
-    }
-
-    private function saveThumbnailFromSym(string $base64): ?string
-    {
-        $binary = base64_decode(preg_replace('/\s+/', '', $base64));
-        if ($binary === false || strlen($binary) < 10) {
-            return null;
-        }
-
-        $dir = public_path('images/quote-lines');
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        // Convert BMP → PNG via GD (PHP 8.x GD supports BMP)
-        if (function_exists('imagecreatefromstring')) {
-            $image = @imagecreatefromstring($binary);
-            if ($image !== false) {
-                $filename = time() . '_' . uniqid() . '.png';
-                imagepng($image, $dir . '/' . $filename);
-                imagedestroy($image);
-                return $filename;
-            }
-        }
-
-        // Fallback: save raw BMP
-        $filename = time() . '_' . uniqid() . '.bmp';
-        file_put_contents($dir . '/' . $filename, $binary);
-        return $filename;
-    }
 }

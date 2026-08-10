@@ -324,5 +324,21 @@
             </form>
         </div>
     </div>
+
+    {{-- GED - dropzone + files viewer attached to this quote line --}}
+    <div class="card card-outline card-primary mt-4">
+        <div class="card-header py-2">
+            <h6 class="card-title mb-0">
+                <i class="fas fa-folder-open text-primary mr-2"></i>
+                {{ __('general_content.documents_trans_key') }}
+            </h6>
+        </div>
+        <div class="card-body">
+            @include('include.file-manager-mount', [
+                'fileableType' => 'quote-line',
+                'fileableId'   => $line->id,
+            ])
+        </div>
+    </div>
 </div>
 @endsection
