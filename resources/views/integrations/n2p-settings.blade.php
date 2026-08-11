@@ -61,17 +61,9 @@
     </x-adminlte-card>
 @stop
 
-@section('plugins.BootstrapSwitch', true)
-
 @section('css')
 @stop
 
-@section('js')
-<script>
-    $(function () {
-        $("input[data-bootstrap-switch]").each(function () {
-            $(this).bootstrapSwitch('state', $(this).prop('checked'));
-        });
-    });
-</script>
-@stop
+{{-- L'ancien script jQuery de contournement de l'état initial est devenu
+     inutile : le composant interrupteur honore désormais directement
+     l'attribut natif checked posé par :checked="...". --}}
