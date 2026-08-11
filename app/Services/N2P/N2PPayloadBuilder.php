@@ -4,15 +4,19 @@ namespace App\Services\N2P;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\OrderLines;
-use Illuminate\Support\Facades\Log;
 
 class N2PPayloadBuilder
 {
+    /**
+     * Prefix used to build a deterministic operation_code when task.code is empty.
+     * The return channel (Task::resolveByExternalRef) recognises it to reverse-lookup.
+     */
+    public const OPERATION_CODE_FALLBACK_PREFIX = 'op-';
+
     public function build(Orders $order, array $settings): array
     {
         $jobs = [];
@@ -51,13 +55,6 @@ class N2PPayloadBuilder
         $product = $orderLine->Product;
         $details = $orderLine->OrderLineDetails;
         $company = $order->companie;
-
-        Log::info('N2P dates debug', [
-            'dueDate_raw' => $dueDate,
-            'plannedStart_raw' => $plannedStartAt,
-            'plannedEnd_raw' => $plannedEndAt,
-            'task_first_start' => optional($tasks->first())->start_date,
-        ]);
 
         $job = [
             'of_code' => "OF" . $orderLine->id,
@@ -113,10 +110,7 @@ class N2PPayloadBuilder
     private function mapTasks(OrderLines $orderLine, $tasks): array
     {
         return $tasks->map(function (Task $task) use ($orderLine) {
-            $operationCode = $task->code ?: ($task->service->code ?: ($task->label ?? null));
-            if (!$operationCode) {
-                $operationCode = Str::slug($task->service->code ?? 'task-' . $task->getKey());
-            }
+            $operationCode = $task->code ?: self::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey();
 
             $plannedTimeMinutes = null;
             if ($task->seting_time !== null || $task->unit_time !== null) {
@@ -125,16 +119,16 @@ class N2PPayloadBuilder
             }
 
             $workcenterCode = $task->MethodsTools?->code ?? $task->service?->code;
+            $requiredQty = $this->nullableNumber($task->qty ?? $task->qty_init ?? $orderLine->qty);
 
             return array_filter([
                 'operation_code' => $operationCode,
                 'workcenter_code' => $workcenterCode,
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),
-                'status' => "planned",
+                'status' => 'planned',
                 'planned_time_min' => $plannedTimeMinutes,
-                'required_qty' => (float) $orderLine->qty,
-                'notes' => $task->comment ?? null,
+                'required_qty' => $requiredQty,
             ], fn ($value) => !is_null($value) && $value !== '');
         })->values()->all();
     }

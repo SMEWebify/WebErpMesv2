@@ -9,7 +9,9 @@ use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
+use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
+use App\Http\Controllers\Api\N2P\SheetLotStockController;
 use App\Http\Controllers\Files\FileApiController;
 use App\Http\Controllers\Integrations\QontoWebhookController;
 
@@ -34,8 +36,24 @@ Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->withoutMid
     Route::post('/webhook/invoice', [QontoWebhookController::class, 'handle'])->name('webhook.invoice');
 });
 
+// Endpoint générique entrant : auth par HMAC/bearer via middleware integration.inbound.
+// Résout l'endpoint par system_code (ex: n2p, xxx-erp, autre partenaire futur).
+// throttle:120,1 = plafond bruteforce/HMAC-burn : sans auth passable, un attaquant
+// pourrait forcer le calcul hash_hmac en boucle.
+Route::prefix('integrations')->name('api.integrations.inbound.')->withoutMiddleware('auth:api')->group(function () {
+    Route::post('/{system_code}/inbound', [IntegrationInboundController::class, 'handle'])
+        ->where('system_code', '[a-z0-9_-]+')
+        ->middleware(['integration.inbound', 'throttle:120,1'])
+        ->name('handle');
+});
+
 // Routes externes — authentification par token Bearer (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
+    // Nest2Prod — lecture stock ERP d'un lot tôle (rattrapage désync du mirror N2P).
+    Route::get('n2p/sheet-lots/{ref}/stock', [SheetLotStockController::class, 'show'])
+        ->where('ref', '[A-Za-z0-9_-]+')
+        ->name('api.n2p.sheet-lots.stock');
+
     Route::get('clients',            [CompanyController::class, 'clients'])->name('api.clients.index');
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');

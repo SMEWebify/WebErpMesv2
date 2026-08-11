@@ -49,15 +49,19 @@ class TaskService
     /**
      * Records a task activity and broadcasts an event.
      *
-     * @param int $taskId The ID of the task.
-     * @param string $type The type of activity.
-     * @param int $goodQty The quantity of good items.
-     * @param int $addBadQt The quantity of bad items.
-     * @return void
+     * $userIdOverride et $timestampOverride sont utilisés par les events entrants
+     * de l'intégration (pas d'utilisateur Auth, horodatage source à préserver).
      */
-    public function recordTaskActivity($taskId, $type, $goodQty = 0, $addBadQt = 0, string $comment = '')
-    {
-        $userId = Auth::id();
+    public function recordTaskActivity(
+        $taskId,
+        $type,
+        $goodQty = 0,
+        $addBadQt = 0,
+        string $comment = '',
+        ?int $userIdOverride = null,
+        ?Carbon $timestampOverride = null,
+    ) {
+        $userId = $userIdOverride ?? Auth::id();
 
         if (!$userId) {
             $userId = Task::find($taskId)?->user_id;
@@ -71,11 +75,18 @@ class TaskService
             return;
         }
 
+        // Un timestamp source dans le futur (skew d'horloge N2P ou replay
+        // malicieux) fausserait les fenêtres OEE. On borne à now().
+        $now = Carbon::now();
+        $timestamp = $timestampOverride && $timestampOverride->lessThan($now)
+            ? $timestampOverride
+            : $now;
+
         $taskActivity = TaskActivities::create([
             'task_id' => $taskId,
             'user_id'=> $userId,
             'type' => $type,
-            'timestamp' => Carbon::now(),
+            'timestamp' => $timestamp,
             'good_qt'=> $goodQty,
             'bad_qt'=> $addBadQt,
             'comment' => $comment,
