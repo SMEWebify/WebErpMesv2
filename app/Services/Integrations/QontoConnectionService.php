@@ -53,6 +53,47 @@ class QontoConnectionService
     }
 
     /**
+     * IBAN du compte Qonto à faire figurer sur les factures émises
+     * (`payment_methods.iban`, obligatoire à la création d'une client_invoice).
+     *
+     * Résolu une fois puis mis en cache sur la connexion. Nécessite le scope
+     * `organization.read`.
+     *
+     * @throws \RuntimeException si aucun compte bancaire n'est exposé par Qonto
+     */
+    public function getInvoicingIban(int $tenantId): string
+    {
+        $connection = $this->getValidConnection($tenantId);
+
+        if ($connection->iban) {
+            return $connection->iban;
+        }
+
+        $organization = Http::withToken(Crypt::decryptString($connection->access_token))
+            ->get(rtrim(config('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2'), '/').'/organization')
+            ->throw()
+            ->json('organization', []);
+
+        $accounts = $organization['bank_accounts'] ?? [];
+        $main     = collect($accounts)->firstWhere('main', true) ?? ($accounts[0] ?? null);
+        $iban     = $main['iban'] ?? null;
+
+        if (! $iban) {
+            throw new \RuntimeException(
+                'Aucun IBAN Qonto disponible : vérifiez que le scope organization.read est accordé.'
+            );
+        }
+
+        // iban et organization_slug sont castés (encrypted / string) : on assigne en clair.
+        $connection->forceFill([
+            'iban'              => $iban,
+            'organization_slug' => $organization['slug'] ?? $connection->organization_slug,
+        ])->save();
+
+        return $iban;
+    }
+
+    /**
      * Vérifie si l'intégration Qonto est activée (credentials présents).
      */
     public static function isEnabled(): bool

@@ -14,6 +14,7 @@ use App\Models\Workflow\Invoices;
 use App\Services\Integrations\QontoClientSyncService;
 use App\Services\Integrations\QontoConnectionService;
 use App\Services\Integrations\Pdp\PdpInvoiceService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -24,6 +25,15 @@ use Illuminate\Support\Str;
 
 class QontoIntegrationController extends Controller
 {
+    /**
+     * Scopes Qonto requis par l'intégration :
+     * - organization.read  → IBAN du compte, porté par payment_methods.iban
+     * - client.*           → synchronisation des tiers
+     * - client_invoices.read / client_invoice.write → dépôt et suivi des factures
+     *   (le pluriel sur la lecture n'est pas une faute : c'est le nom du scope Qonto)
+     */
+    public const OAUTH_SCOPES = 'offline_access organization.read client.read client.write client_invoices.read client_invoice.write';
+
     public function __construct(
         private QontoClientSyncService  $syncService,
         private QontoConnectionService  $connectionService,
@@ -42,7 +52,7 @@ class QontoIntegrationController extends Controller
             'client_id' => config('services.qonto.client_id'),
             'redirect_uri' => route('api.integrations.qonto.callback', absolute: true),
             'response_type' => 'code',
-            'scope' => 'offline_access client.read client.write',
+            'scope' => self::OAUTH_SCOPES,
             'state' => $state,
         ]);
 
@@ -271,7 +281,16 @@ class QontoIntegrationController extends Controller
             'Seules les factures (type 1) peuvent être soumises à Qonto.'
         );
 
-        $mapping = $this->pdpInvoiceService->submit($invoice);
+        try {
+            $mapping = $this->pdpInvoiceService->submit($invoice);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Aucune connexion Qonto active : connectez le compte avant de déposer une facture.',
+            ], 422);
+        } catch (\RuntimeException $e) {
+            // Données manquantes ou refus Qonto : le message est destiné à l'utilisateur.
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         return response()->json(['mapping' => $mapping]);
     }

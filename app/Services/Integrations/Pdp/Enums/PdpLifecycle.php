@@ -9,13 +9,14 @@ namespace App\Services\Integrations\Pdp\Enums;
  */
 enum PdpLifecycle: string
 {
-    case Pending      = 'pending';      // non encore soumise
-    case Submitted    = 'submitted';    // déposée chez la PDP
+    case Pending      = 'pending';      // non encore soumise (ou brouillon côté plateforme)
+    case Submitted    = 'submitted';    // déposée / émise chez la plateforme
     case Acknowledged = 'acknowledged'; // accusé de réception PDP
     case Rejected     = 'rejected';     // rejetée (format / données invalides)
     case Refused      = 'refused';      // refusée par le destinataire
     case Accepted     = 'accepted';     // acceptée par le destinataire
     case Paid         = 'paid';         // encaissée
+    case Canceled     = 'canceled';     // annulée côté plateforme
 
     /**
      * Correspondance vers le statut interne WEM (colonne invoices.statu).
@@ -30,6 +31,7 @@ enum PdpLifecycle: string
             self::Refused                   => 4,     // Impayée
             self::Accepted                  => 3,     // En attente de paiement
             self::Paid                      => 5,     // Payée
+            self::Canceled                  => 1,     // Retour en cours (à retraiter)
         };
     }
 }

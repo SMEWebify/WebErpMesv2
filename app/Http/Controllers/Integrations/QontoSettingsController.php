@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Integrations;
 
+use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 use App\Http\Controllers\Controller;
 use App\Models\Customer\Customer;
 use App\Services\Integrations\QontoConnectionService;
@@ -69,7 +70,7 @@ class QontoSettingsController extends Controller
             'client_id'     => config('services.qonto.client_id'),
             'redirect_uri'  => route('admin.integrations.qonto.callback', absolute: true),
             'response_type' => 'code',
-            'scope'         => 'offline_access client.read client.write',
+            'scope'         => QontoIntegrationController::OAUTH_SCOPES,
             'state'         => $state,
         ]);
 
