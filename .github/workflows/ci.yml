@@ -66,6 +66,18 @@ jobs:
         with:
           node-version: '20'
 
+      # NE PAS remplacer par "npm ci" : package-lock.json est genere sous
+      # Windows et ne contient que les binaires natifs win32 de rollup
+      # (@rollup/rollup-win32-x64-gnu et -msvc), jamais la variante Linux du
+      # runner. npm ci est strict et echoue dessus ; "npm install" en gardant
+      # le lock echoue aussi, npm n'ajoutant pas l'optional dep manquante a un
+      # lock existant. Regenerer le lock depuis Windows ne suffit pas non plus,
+      # meme avec --os=linux --cpu=x64 : npm continue de n'ecrire que win32.
+      #
+      # Conséquence assumee : le CI valide le code, pas l'arbre de dependances
+      # reellement deploye. Pour lever la contrainte il faut produire le lock
+      # sur Linux (conteneur node identique a la prod) et le committer ; le CI
+      # pourra alors passer a "npm ci".
       - name: Install npm dependencies
         run: rm -f package-lock.json && npm install
 
