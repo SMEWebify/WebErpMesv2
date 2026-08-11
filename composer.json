@@ -10,7 +10,7 @@
                                                                                                                                 "horstoeko/zugferd": "^1",
                                                                                                                                 "jenssegers/agent": "^2.6",
                                                                                                                                 "jeroennoten/laravel-adminlte": "^3.9.2",
-                                                                                                                                "laravel/framework": "12.1.1",
+                                                                                                                                "laravel/framework": "^12.61",
                                                                                                                                 "laravel/pulse": "^1.7",
                                                                                                                                 "laravel/sanctum": "^4.3",
                                                                                                                                 "laravel/tinker": "^3.0",
