@@ -4,15 +4,39 @@
 
 L'intégration Qonto couvre deux périmètres :
 1. **Synchronisation des clients** — mise en correspondance des tiers WEM ↔ Qonto
-2. **Facturation électronique** — dépôt des factures au format Factur-X/EN16931 et suivi du cycle de vie, en conformité avec la réforme de facturation électronique obligatoire (sept. 2026 grandes entreprises / 2027 PME)
+2. **Facturation commerciale** — dépôt des factures WEM dans Qonto (`/v2/client_invoices`) et suivi de leur statut
+
+> **Périmètre — à lire avant toute évolution.**
+> Cette intégration s'appuie sur la **Business API** de Qonto, c'est-à-dire son outil de
+> facturation commerciale. Ce n'est **pas** le canal Plateforme Agréée (ex-PDP) : elle ne
+> réalise donc pas, en l'état, l'émission conforme au sens de la réforme (réception
+> obligatoire au 1er sept. 2026, émission PME 2027).
+>
+> Qonto est bien immatriculé Plateforme Agréée, mais son API de dépôt PDP n'est pas
+> documentée publiquement. Le champ `einvoicing_status` renvoyé par `/client_invoices`
+> est le point de raccordement naturel le jour où ce canal sera ouvert aux éditeurs :
+> il est conservé dans la réponse brute et journalisé, mais volontairement **non
+> interprété** par le driver.
 
 **Sens de la synchronisation clients :**
 - **WEM → Qonto** : les clients WEM sont créés/liés dans Qonto (toujours actif)
 - **Qonto → WEM** : les tiers Qonto non trouvés dans WEM créent des entreprises/contacts (optionnel, toggle)
 
 **Sens de la synchronisation factures :**
-- **WEM → Qonto** : dépôt du PDF Factur-X via l'API (manuel depuis la fiche facture)
-- **Qonto → WEM** : mise à jour automatique du statut WEM via webhook
+- **WEM → Qonto** : dépôt des **données structurées** de la facture (manuel depuis la fiche facture)
+- **Qonto → WEM** : mise à jour du statut WEM par polling (« Actualiser le statut »)
+
+### Qui produit quoi
+
+WEM reste la source de vérité : numérotation, prix, remises, TVA, écritures comptables et
+export FEC. On envoie à Qonto le **JSON structuré** de la facture, et c'est Qonto qui génère
+le document. Notre PDF Factur-X (`PrintController::getInvoiceFactureX`) reste utilisé pour
+l'archivage et l'envoi direct au client, mais n'est **pas** transmis à Qonto : envoyer un PDF
+ferait reposer la conformité du document sur nous plutôt que sur la plateforme.
+
+Corollaire : un bon de livraison n'est jamais envoyé à Qonto. Une facture WEM agrège des
+lignes issues de plusieurs BL (`invoice_lines.delivery_line_id`), et couvre aussi les cas
+sans BL (acomptes, prestations, avoirs).
 
 ---
 
@@ -33,13 +57,27 @@ Les variables `QONTO_CLIENT_ID` et `QONTO_CLIENT_SECRET` sont obligatoires pour 
 - Le bloc Qonto n'apparaît pas sur la fiche facture
 - La colonne statut Qonto n'apparaît pas dans la liste des factures
 
-`QONTO_WEBHOOK_SECRET` est optionnel en dev/test mais **obligatoire en production** pour valider la signature des webhooks entrants.
+`QONTO_WEBHOOK_SECRET` est le secret que **nous** choisissons et transmettons à Qonto lors de
+l'abonnement (`POST /data_api/webhooks`). Voir la section Webhook pour la limite actuelle.
 
 ### Scopes OAuth requis
 
 ```
-offline_access  client.read  client.write
+offline_access  organization.read  client.read  client.write  client_invoices.read  client_invoice.write
 ```
+
+Définis une seule fois dans `QontoIntegrationController::OAUTH_SCOPES`, réutilisés par le
+contrôleur web. Le pluriel de `client_invoices.read` face au singulier de
+`client_invoice.write` n'est pas une coquille : ce sont les noms exacts des scopes Qonto.
+
+`organization.read` sert à découvrir l'IBAN du compte (`GET /v2/organization`), obligatoire
+dans `payment_methods.iban` à la création d'une facture. Il est résolu une fois puis mis en
+cache chiffré dans `qonto_connections.iban`.
+
+> ⚠️ **Les connexions établies avant cette liste de scopes doivent être refaites.** Un token
+> obtenu avec les anciens scopes (`offline_access client.read client.write`) sera refusé en
+> 403 sur `/client_invoices` et `/organization` : le refresh ne réélargit pas les droits.
+> Déconnecter puis reconnecter le compte depuis `/admin/integrations/qonto`.
 
 ---
 
@@ -55,7 +93,7 @@ offline_access  client.read  client.write
 | `app/Services/Integrations/QontoConnectionService.php` | Gestion centralisée du token OAuth |
 | `app/Services/Integrations/QontoClientSyncService.php` | Logique de réconciliation clients |
 | `app/Services/Integrations/Pdp/Contracts/PdpGateway.php` | Contrat PDP (driver) — agnostique fournisseur |
-| `app/Services/Integrations/Pdp/Drivers/QontoGateway.php` | Driver Qonto : I/O HTTP, Factur-X, webhooks |
+| `app/Services/Integrations/Pdp/Drivers/QontoGateway.php` | Driver Qonto : I/O HTTP `/client_invoices`, mapping de statuts, webhooks |
 | `app/Services/Integrations/Pdp/PdpInvoiceService.php` | Orchestration agnostique (persistance + cycle de vie) |
 | `app/Services/Integrations/Pdp/PdpManager.php` | Registre/résolveur des drivers PDP |
 | `app/Services/Integrations/Pdp/Enums/PdpLifecycle.php` | Statuts canoniques + mapping WEM |
@@ -252,7 +290,51 @@ Auth : `auth:api` (token bearer)
 
 ---
 
-## Facturation électronique
+## Facturation
+
+### Dépôt d'une facture
+
+`POST /v2/client_invoices`, corps **JSON** (jamais de PDF en multipart).
+
+| Champ Qonto | Source WEM |
+|---|---|
+| `client_id` | `qonto_client_mappings.qonto_client_id` (obligatoire — dépôt refusé sans mapping) |
+| `number` | `invoices.code`, tronqué à 40 caractères |
+| `issue_date` | `invoices.created_at` |
+| `due_date` | `invoices.due_date` (obligatoire — jamais inventée, erreur explicite si absente) |
+| `currency` | `Factory.curency`, défaut `EUR` |
+| `status` | `unpaid` — la facture est déjà validée dans WEM, inutile de passer par `draft` puis `POST /finalize` |
+| `payment_methods.iban` | `qonto_connections.iban` (découvert via `GET /v2/organization`) |
+| `purchase_order` | `invoices.customer_reference` si renseignée |
+| `items[]` | `InvoiceCalculatorService::getNormalizedLines()` |
+
+Les lignes viennent du **snapshot de prix figé sur `invoice_lines`** — même source que le PDF
+et le Factur-X internes, donc pas de divergence possible entre les deux documents.
+
+| Champ item | Construction |
+|---|---|
+| `title` | `label` de la ligne (repli sur `code`), tronqué à 40 |
+| `description` | `code — label` si différent du titre |
+| `quantity` | décimal, 4 chiffres |
+| `unit` | code unité (`methods_units`), tronqué à 20 |
+| `unit_price.value` | **2 décimales** — Qonto stocke au cent (`unit_price_cents`) |
+| `vat_rate` | **ratio** (`0.2000`), alors que WEM stocke un pourcentage (`20`) |
+| `discount` | `{type: percentage, value}` — transmise séparément plutôt que fondue dans le prix net, pour que le document Qonto affiche la même chose que le nôtre |
+
+> **Limite connue** : un prix unitaire à plus de 2 décimales (petites pièces facturées au
+> millième d'euro) est arrondi au cent lors du dépôt. Le total Qonto peut alors différer de
+> quelques centimes du total WEM sur de grandes quantités.
+
+Erreurs traduites en message utilisateur (HTTP 422 sur `/submit`) :
+
+| Situation | Message |
+|---|---|
+| Pas de connexion Qonto | « Aucune connexion Qonto active… » |
+| Entreprise non mappée | « Aucun client Qonto associé à l'entreprise #X… » |
+| `due_date` absente | « …n'a pas de date d'échéance… » |
+| Facture sans ligne | « …n'a aucune ligne… » |
+| 409 Qonto (numéro déjà pris) | « …utilisez Actualiser le statut plutôt qu'un nouveau dépôt » |
+| 400/422 Qonto | détail des `errors[].detail` renvoyés par l'API |
 
 ### Table `pdp_invoice_submissions`
 
@@ -269,40 +351,53 @@ Auth : `auth:api` (token bearer)
 
 ### Cycle de vie et mapping vers WEM
 
-| Lifecycle Qonto | Signification | → `invoices.statu` WEM |
+`PdpLifecycle` est le vocabulaire **canonique**, indépendant de la plateforme. Le driver Qonto
+n'alimente aujourd'hui que les quatre premières lignes ; les statuts `acknowledged`, `rejected`,
+`refused` et `accepted` sont réservés à un futur canal Plateforme Agréée.
+
+| Statut Qonto | PdpLifecycle | → `invoices.statu` WEM |
 |---|---|---|
-| `pending` | Non encore soumise | aucun changement |
-| `submitted` | Déposée chez Qonto | 2 (Envoyée) |
-| `acknowledged` | Accusé réception Qonto | 2 (Envoyée) |
-| `rejected` | Rejetée (format / données) | 1 (En cours) |
-| `refused` | Refusée par le destinataire | 4 (Impayée) |
-| `accepted` | Acceptée par le destinataire | 3 (En attente) |
-| `paid` | Payée côté Qonto | 5 (Payée) |
+| `draft` | `pending` | aucun changement |
+| `unpaid` | `submitted` | 2 (Envoyée) |
+| `paid` | `paid` | 5 (Payée) |
+| `canceled` | `canceled` | 1 (En cours) |
+| — | `acknowledged` | 2 (Envoyée) |
+| — | `rejected` | 1 (En cours) |
+| — | `refused` | 4 (Impayée) |
+| — | `accepted` | 3 (En attente) |
+
+Un statut Qonto inconnu est journalisé (`warning`) et retombe sur `submitted` sans écraser
+la facture WEM de façon silencieuse.
 
 ### Webhook
 
 **URL** : `POST /api/integrations/qonto/webhook/invoice`  
-**Auth** : Aucune — signature HMAC-SHA256 vérifiée via `X-Qonto-Signature-256`  
-**Secret** : `QONTO_WEBHOOK_SECRET` dans `.env`  
+**Auth** : Aucune — HMAC-SHA256 **hexadécimal** du corps brut, en-tête `Qonto-SHA256-Signature` (sans préfixe)  
+**Secret** : `QONTO_WEBHOOK_SECRET`, à transmettre à Qonto via `POST /data_api/webhooks` (`callback_url` + `secret`)
 
-Événements traités : `invoice.submitted`, `invoice.acknowledged`, `invoice.rejected`, `invoice.refused`, `invoice.accepted`, `invoice.paid`
+> **Endpoint inerte à ce jour.** Qonto ne documente des webhooks que pour l'Onboarding API
+> (`registrations.*`) ; aucun événement `client_invoice.*` n'est publié. La signature est
+> vérifiée correctement et la correspondance d'événements est prête, mais **le mécanisme de
+> suivi réellement supporté est le polling**. Aucun abonnement n'est créé automatiquement.
 
-> Si `QONTO_WEBHOOK_SECRET` est absent, la signature n'est pas vérifiée (log warning). À configurer impérativement en production.
+> Si `QONTO_WEBHOOK_SECRET` est absent, la signature n'est pas vérifiée hors production (log
+> warning) ; en production le webhook est rejeté.
 
 ### API REST — factures
 
 | Endpoint | Méthode | Description |
 |---|---|---|
-| `/api/integrations/qonto/invoices/{id}/submit` | POST | Soumet la facture (PDF Factur-X) à Qonto |
+| `/api/integrations/qonto/invoices/{id}/submit` | POST | Crée la facture chez Qonto à partir des données structurées |
 | `/api/integrations/qonto/invoices/{id}/poll` | POST | Interroge Qonto pour mettre à jour le statut |
 
 ### Interface facture
 
-Le bloc **"Facturation électronique — Qonto"** apparaît sur la fiche facture uniquement si :
+Le bloc **"Facturation Qonto"** apparaît sur la fiche facture uniquement si :
 - `QONTO_CLIENT_ID` et `QONTO_CLIENT_SECRET` sont configurés
 - La facture est de type 1 (Facture, pas avoir / proforma)
 
-Il affiche le statut lifecycle courant, la date de dépôt, le motif de rejet éventuel, et les boutons Soumettre / Actualiser.
+Il affiche le statut courant, la date de dépôt, le motif d'erreur éventuel, et les boutons
+Déposer / Actualiser.
 
 ### Liste des factures
 
@@ -321,6 +416,15 @@ L'API Qonto Partner v2 utilise `registration_number` pour le SIREN. Le champ `si
 ### Données existantes
 Si des mappings ont été créés avant la correction (`wem_client_id` = `customer->id`), une migration manuelle est nécessaire pour les convertir en `company->id`.
 
+### Chiffrement de `qonto_connections`
+`iban` et `organization_slug` sont écrits **en clair** dans le modèle : le cast `encrypted`
+fait le chiffrement. Ne pas ajouter de `Crypt::encryptString()` par-dessus.
+
+À l'inverse, `access_token` et `refresh_token` sont écrits déjà chiffrés **en plus** du cast
+(double chiffrement, symétrique donc fonctionnel) — c'est incohérent mais volontairement
+laissé en l'état pour ne pas casser les connexions existantes. Toute uniformisation impose
+une migration de ré-encodage des lignes existantes.
+
 ---
 
 ## Tests
@@ -335,3 +439,10 @@ Fichier : `tests/Feature/QontoIntegrationApiTest.php`
 | `test_sync_creates_review_when_matching_is_ambiguous` | Match ambigu → `review_required` en base |
 | `test_settings_persist_bidirectional_import_flag` | Toggle bidirectionnel persisté |
 | `test_resolve_links_review_to_mapping` | Action `link` crée le mapping |
+| `test_submit_invoice_posts_structured_payload_to_client_invoices` | URL `/client_invoices`, JSON, IBAN, quantité/prix/TVA/remise au format Qonto |
+| `test_submit_invoice_fails_cleanly_when_client_is_not_mapped` | 422 explicite, aucun appel HTTP, aucune ligne de suivi créée |
+| `test_poll_maps_paid_status_to_wem_paid_status` | `paid` Qonto → `invoices.statu = 5` |
+
+> Les appels Qonto sont mockés (`Http::fake`) : ces tests valident le **format** du payload
+> face à la documentation, pas le comportement du service distant. Une validation en sandbox
+> (`https://thirdparty-sandbox.staging.qonto.co/v2`) reste nécessaire avant mise en production.

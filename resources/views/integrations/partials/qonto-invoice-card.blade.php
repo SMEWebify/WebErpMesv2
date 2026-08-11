@@ -2,13 +2,14 @@
 use App\Services\Integrations\Pdp\Enums\PdpLifecycle;
 
 $lifecycleLabels = [
-    PdpLifecycle::Pending->value      => ['label' => 'Non soumise',  'badge' => 'secondary'],
-    PdpLifecycle::Submitted->value    => ['label' => 'Déposée',      'badge' => 'info'],
-    PdpLifecycle::Acknowledged->value => ['label' => 'Accusé reçu', 'badge' => 'primary'],
-    PdpLifecycle::Rejected->value     => ['label' => 'Rejetée',      'badge' => 'danger'],
-    PdpLifecycle::Refused->value      => ['label' => 'Refusée',      'badge' => 'danger'],
-    PdpLifecycle::Accepted->value     => ['label' => 'Acceptée',     'badge' => 'success'],
-    PdpLifecycle::Paid->value         => ['label' => 'Payée',        'badge' => 'success'],
+    PdpLifecycle::Pending->value      => ['label' => 'Non déposée',       'badge' => 'secondary'],
+    PdpLifecycle::Submitted->value    => ['label' => 'Émise (à payer)',   'badge' => 'info'],
+    PdpLifecycle::Acknowledged->value => ['label' => 'Accusé reçu',       'badge' => 'primary'],
+    PdpLifecycle::Rejected->value     => ['label' => 'Rejetée',           'badge' => 'danger'],
+    PdpLifecycle::Refused->value      => ['label' => 'Refusée',           'badge' => 'danger'],
+    PdpLifecycle::Accepted->value     => ['label' => 'Acceptée',          'badge' => 'success'],
+    PdpLifecycle::Paid->value         => ['label' => 'Payée',             'badge' => 'success'],
+    PdpLifecycle::Canceled->value     => ['label' => 'Annulée chez Qonto', 'badge' => 'warning'],
 ];
 
 $currentStatus = $submission?->lifecycle_status ?? PdpLifecycle::Pending->value;
@@ -19,7 +20,7 @@ $canSubmit     = ! $submission || in_array($currentStatus, [
 ]);
 @endphp
 
-<x-adminlte-card title="Facturation électronique - Qonto" theme="info" theme-mode="outline" collapsible>
+<x-adminlte-card title="Facturation Qonto" theme="info" theme-mode="outline" collapsible>
     <div class="mb-2">
         <span class="text-muted small">Statut :</span>
         <span class="badge badge-{{ $statusInfo['badge'] }} ml-1">{{ $statusInfo['label'] }}</span>
@@ -30,6 +31,12 @@ $canSubmit     = ! $submission || in_array($currentStatus, [
 
         @if($submission?->submitted_at)
             <br><small class="text-muted">Déposée le : {{ $submission->submitted_at->format('d/m/Y H:i') }}</small>
+        @endif
+
+        @if(! $submission)
+            <br><small class="text-muted">
+                Le document est généré par Qonto à partir des lignes de cette facture.
+            </small>
         @endif
 
         @if($submission?->rejection_reason)
@@ -44,7 +51,7 @@ $canSubmit     = ! $submission || in_array($currentStatus, [
                 data-invoice-id="{{ $Invoice->id }}"
                 data-url="{{ route('api.integrations.qonto.invoices.submit', $Invoice->id) }}">
             <i class="fas fa-paper-plane mr-1"></i>
-            {{ $submission ? 'Re-soumettre' : 'Soumettre à Qonto' }}
+            {{ $submission ? 'Redéposer' : 'Déposer dans Qonto' }}
         </button>
         @endif
 
