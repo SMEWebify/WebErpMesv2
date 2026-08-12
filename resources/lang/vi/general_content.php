@@ -98,6 +98,9 @@ return [
     'invoices_request_trans_key'               => 'Yêu cầu hóa đơn',
     'invoices_list_trans_key'                  => 'Danh sách hóa đơn',
     'invoice_draft_trans_key'                  => 'Bản nháp',
+    'invoice_draft_no_pdf_trans_key'           => 'Hóa đơn nháp không thể xuất ra PDF.',
+    'invoice_draft_no_facturx_trans_key'       => 'Hóa đơn nháp không thể tạo Factur-X: hóa đơn chưa được phát hành.',
+    'invoice_proforma_no_facturx_trans_key'    => 'Hóa đơn chiếu lệ không phải là hóa đơn: không thể tạo Factur-X.',
     'others_trans_key'                         => 'Khác',
     'generate_pending_invoices_trans_key'      => 'Tạo hóa đơn đang chờ',
 

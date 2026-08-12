@@ -440,6 +440,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
         Route::patch('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@updateLine')->name('invoices.lines.update');
         Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
+
+        // Facturation électronique. Routes web et non API : la carte est rendue
+        // dans une page Blade authentifiée par session, sans jeton porteur.
+        Route::post('/{id}/pdp/submit', 'App\Http\Controllers\Workflow\InvoicesController@pdpSubmit')->name('invoices.pdp.submit');
+        Route::post('/{id}/pdp/poll', 'App\Http\Controllers\Workflow\InvoicesController@pdpPoll')->name('invoices.pdp.poll');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         // JSON endpoint for company address/contact selects on invoice show page

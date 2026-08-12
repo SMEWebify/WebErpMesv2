@@ -295,6 +295,9 @@ return [
     'invoice_info_trans_key'                   => 'معلومات الفاتورة',
     'invoice_lines_trans_key'                  => 'أسطر الفاتورة',
     'invoice_draft_trans_key'                  => 'مسودة',
+    'invoice_draft_no_pdf_trans_key'           => 'لا يمكن تصدير فاتورة مسودة بصيغة PDF.',
+    'invoice_draft_no_facturx_trans_key'       => 'لا يمكن إنشاء Factur-X من فاتورة مسودة: لم يتم إصدارها بعد.',
+    'invoice_proforma_no_facturx_trans_key'    => 'الفاتورة المبدئية ليست فاتورة: لا يمكن إنشاء Factur-X منها.',
 
     'purchase_quotation_trans_key'             => 'عرض الشراء',
     'purchase_quotation_info_trans_key'        => 'معلومات عرض الشراء',

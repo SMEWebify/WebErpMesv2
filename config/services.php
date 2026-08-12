@@ -39,6 +39,26 @@ return [
         'webhook_secret' => env('QONTO_WEBHOOK_SECRET', ''),
     ],
 
+    // SUPER PDP — Plateforme Agréée (PA/PDP) immatriculée, API REST + OAuth 2.1.
+    //
+    // Le mode bac à sable / production est porté par les *identifiants*, pas par
+    // l'URL : le même hôte sert les deux, il n'y a donc pas de base_url de test à
+    // basculer. Une clé bac à sable ne peut pas atteindre les données de production.
+    'superpdp' => [
+        'client_id'     => env('SUPERPDP_CLIENT_ID'),
+        'client_secret' => env('SUPERPDP_CLIENT_SECRET'),
+        'base_url'      => env('SUPERPDP_BASE_URL', 'https://api.superpdp.tech'),
+
+        // Règle de traitement AFNOR appliquée à nos factures sortantes.
+        // B2B = France domestique entre assujettis (cas de WEM).
+        'processing_rule' => env('SUPERPDP_PROCESSING_RULE', 'B2B'),
+
+        // Pré-validation schematron (POST /validation_reports) avant dépôt : un
+        // appel de plus, mais un refus est renvoyé à l'utilisateur tout de suite
+        // au lieu de revenir en `api:invalid` de façon asynchrone.
+        'pre_validate'  => env('SUPERPDP_PRE_VALIDATE', true),
+    ],
+
     // Plateforme de Dématérialisation Partenaire (PDP) active pour l'émission
     // des factures électroniques. Les drivers sont enregistrés dans AppServiceProvider.
     'pdp' => [

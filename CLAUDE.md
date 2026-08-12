@@ -43,6 +43,8 @@
 |---|---|
 | `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (PHP, extensions, APP_KEY, Redis, DB, Pusher) |
 | `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat) |
+| `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
+| `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
@@ -60,6 +62,7 @@
 | Quotidien à 01h00 | `backup:clean` | Supprime les anciennes sauvegardes (rétention `config/backup.php`) |
 | Quotidien à 02h00 | `backup:run` | Sauvegarde complète DB + `storage/app` |
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
+| Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
 
@@ -181,11 +184,50 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Facturation électronique (PDP)
+
+Réforme française : réception obligatoire pour toutes les entreprises au **1er septembre 2026**.
+
+### Architecture
+Un contrat, plusieurs plateformes. `App\Services\Integrations\Pdp` :
+- `Contracts\PdpGateway` — émission et suivi (obligatoire)
+- `Contracts\PdpInboundGateway` — réception des factures fournisseurs (optionnel)
+- `Contracts\PdpCursorSyncGateway` — plateformes sans webhooks, synchro par curseur (optionnel)
+- `PdpManager` — registre des drivers, résolu par `config('services.pdp.default')`
+- `PdpInvoiceService` / `PdpIncomingInvoiceService` — orchestration agnostique
+
+Les drivers sont enregistrés dans `AppServiceProvider::register()`.
+
+### Drivers
+| Driver | Émission | Réception | Suivi |
+|---|---|---|---|
+| `qonto` | données structurées, Qonto produit le document | non | polling manuel |
+| `superpdp` | **notre** Factur-X déposé tel quel | oui | curseurs + `wem:pdp:sync` |
+
+### SUPER PDP
+API REST `https://api.superpdp.tech/v1.beta/`, OAuth 2.1 `client_credentials`
+(access_token 30 min). **Aucun webhook** : la spec OpenAPI n'en déclare pas, la
+synchronisation officielle passe par `starting_after_id` sur `/invoices` et
+`/invoice_events`, d'où la table `pdp_sync_cursors` et la tâche planifiée.
+Le mode bac à sable / production est porté par les identifiants, pas par l'URL.
+
+### Document
+`App\Services\Invoicing\FacturXBuilder` est la source unique du Factur-X
+(profil EN 16931, via `horstoeko/zugferd`) : le PDF téléchargé par le client et
+celui déposé sur la plateforme sont le même fichier. Il n'écrit rien sur disque.
+
 ## Dette technique
 
 ### 🔴 Bloquant avant prod
 - Queue worker → Supervisor sur VPS Linux
 - spatie/laravel-backup → backup base + fichiers
+
+### 🔴 Facturation électronique — avant le 1er sept. 2026
+- **Ligne d'annuaire** : aucune UI pour `POST /directory_entries`. Sans elle, aucune facture fournisseur n'arrive — c'est le prérequis de l'obligation de réception
+- **`companies.siren` non obligatoire** : à rendre requis avant émission (le pre-check SUPER PDP vérifie l'adresse dans l'annuaire Peppol)
+- **Champs `electronic_address` sans UI** : les colonnes existent sur `companies` et `factory` et alimentent BT-34/BT-49, mais ne sont éditables qu'en base
+- Recherche d'adresse de facturation client via `GET /french_directory/companies` (non branchée)
+- Émission de statuts sortants (`POST /invoice_events` : fr:204 prise en charge, fr:210 refus, fr:212 encaissement) sur les factures **fournisseurs** reçues — obligation côté acheteur, non implémentée
 
 ### 📋 Roadmap post-prod
 - Supprimer Livewire résiduel (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)

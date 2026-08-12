@@ -9,9 +9,10 @@ const STATUS_CONFIG = {
     supplier_unmatched: { badge: 'badge-warning',   label: 'Fournisseur inconnu' },
     converted:          { badge: 'badge-success',   label: 'Convertie' },
     rejected:           { badge: 'badge-secondary', label: 'Refusée' },
+    unreadable:         { badge: 'badge-danger',    label: 'Illisible' },
 };
 
-const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected'];
+const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected', 'unreadable'];
 
 // ---------------------------------------------------------------------------
 // Utilities

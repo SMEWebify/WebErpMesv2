@@ -354,6 +354,9 @@ return [
     'invoice_info_trans_key'                   => 'Facture info',
     'invoice_lines_trans_key'                  => 'Lignes de facture',
     'invoice_draft_trans_key'                  => 'Brouillon',
+    'invoice_draft_no_pdf_trans_key'           => 'Une facture en brouillon ne peut pas être éditée en PDF.',
+    'invoice_draft_no_facturx_trans_key'       => 'Une facture en brouillon ne peut pas produire de Factur-X : elle n\'est pas encore émise.',
+    'invoice_proforma_no_facturx_trans_key'    => 'Une proforma n\'est pas une facture : elle ne peut pas produire de Factur-X.',
 
     'purchase_quotation_trans_key'             => 'Demande d\'achat',
     'purchase_quotation_info_trans_key'        => 'Info Devis d\'achat',

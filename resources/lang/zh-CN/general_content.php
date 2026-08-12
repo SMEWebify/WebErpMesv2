@@ -338,6 +338,9 @@ return [
     'invoice_info_trans_key'                   => '发票信息',
     'invoice_lines_trans_key'                  => '发票行',
     'invoice_draft_trans_key'                  => '草稿',
+    'invoice_draft_no_pdf_trans_key'           => '草稿发票无法导出为 PDF。',
+    'invoice_draft_no_facturx_trans_key'       => '草稿发票无法生成 Factur-X：尚未开具。',
+    'invoice_proforma_no_facturx_trans_key'    => '形式发票不是发票，无法生成 Factur-X。',
 
     'purchase_quotation_trans_key'             => '采购询价',
     'purchase_quotation_info_trans_key'        => '采购报价信息',

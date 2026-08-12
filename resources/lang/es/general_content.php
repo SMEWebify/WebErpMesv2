@@ -292,6 +292,9 @@ return [
     'invoice_info_trans_key'                   => 'Información de factura',
     'invoice_lines_trans_key'                  => 'Líneas de factura',
     'invoice_draft_trans_key'                  => 'Borrador',
+    'invoice_draft_no_pdf_trans_key'           => 'Una factura en borrador no se puede exportar en PDF.',
+    'invoice_draft_no_facturx_trans_key'       => 'Una factura en borrador no puede generar un Factur-X: aún no ha sido emitida.',
+    'invoice_proforma_no_facturx_trans_key'    => 'Una proforma no es una factura: no puede generar un Factur-X.',
 
     'purchase_quotation_trans_key'             => 'Cotización de compra',
     'purchase_quotation_info_trans_key'        => 'Información de cotización de compra',

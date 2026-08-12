@@ -45,3 +45,18 @@ Schedule::command('backup:clean')->dailyAt('01:00');
 
 // Vérification de santé des sauvegardes (alerte mail si backup > 2 jours)
 Schedule::command('backup:monitor')->dailyAt('09:00');
+
+/*
+|--------------------------------------------------------------------------
+| Facturation électronique (PDP)
+|--------------------------------------------------------------------------
+*/
+
+// Les plateformes sans webhooks (SUPER PDP) se synchronisent par interrogation :
+// cycle de vie des factures émises + réception des factures fournisseurs.
+// withoutOverlapping : une synchronisation lente ne doit pas en déclencher une
+// seconde qui relirait le même curseur en parallèle.
+Schedule::command('wem:pdp:sync')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

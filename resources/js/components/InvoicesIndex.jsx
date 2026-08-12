@@ -706,12 +706,19 @@ function InvoicesTable({ invoices, loading, sortField, sortAsc, onSort, trans, q
                                     <a href={inv.url} className="btn btn-xs btn-info mr-1" title={trans.view}>
                                         <i className="fas fa-eye" />
                                     </a>
-                                    <a href={inv.url_pdf} className="btn btn-xs btn-secondary mr-1" title="PDF" target="_blank" rel="noreferrer">
-                                        <i className="fas fa-file-pdf" />
-                                    </a>
-                                    <a href={inv.url_facturex} className="btn btn-xs btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
-                                        <i className="fas fa-file-invoice" />
-                                    </a>
+                                    {/* Un brouillon n'est pas émis : ni PDF légal ni Factur-X.
+                                        Les routes le refusent (403), on n'affiche donc pas
+                                        des boutons qui mènent à une page d'erreur. */}
+                                    {Number(inv.statu) !== 1 && (
+                                        <>
+                                            <a href={inv.url_pdf} className="btn btn-xs btn-secondary mr-1" title="PDF" target="_blank" rel="noreferrer">
+                                                <i className="fas fa-file-pdf" />
+                                            </a>
+                                            <a href={inv.url_facturex} className="btn btn-xs btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
+                                                <i className="fas fa-file-invoice" />
+                                            </a>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         ))}
