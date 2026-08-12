@@ -52,6 +52,7 @@ return [
     'po_receipt_trans_key'                     => 'PO receipt',
     'waiting_to_invoice_trans_key'             => 'Waiting to invoice',
     'invoice_supplier_trans_key'               => 'Invoice supplier',
+    'incoming_invoices_trans_key'              => 'Received invoices',
     'quality_trans_key'                        => 'Quality',
     'action_trans_key'                         => 'Actions',
     'derogations_trans_key'                    => 'Derogations',

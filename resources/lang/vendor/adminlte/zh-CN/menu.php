@@ -51,6 +51,7 @@ return [
     'po_receipt_trans_key'                     => '收货单',
     'waiting_to_invoice_trans_key'             => '等待开票',
     'invoice_supplier_trans_key'               => '供应商发票',
+    'incoming_invoices_trans_key'              => '收到的发票',
     'quality_trans_key'                        => '质量',
     'action_trans_key'                         => '措施',
     'derogations_trans_key'                    => '特批',

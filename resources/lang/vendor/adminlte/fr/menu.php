@@ -53,6 +53,7 @@ return [
     'po_receipt_trans_key'                     => 'Bon de réception',
     'waiting_to_invoice_trans_key'             => 'En attente de facturation',
     'invoice_supplier_trans_key'               => 'Facturation fournisseur',
+    'incoming_invoices_trans_key'              => 'Factures reçues',
     'quality_trans_key'                        => 'Qualité',
     'action_trans_key'                         => 'Actions',
     'derogations_trans_key'                    => 'Dérogations',

@@ -144,6 +144,31 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
+    {{-- Sidebar : suit le widget dark mode de la navbar, qui ne bascule que --}}
+    {{-- la classe "dark-mode" du body et laisse la sidebar sur sa variante figée --}}
+    <script>
+        (function () {
+            const sidebar = document.querySelector('aside.main-sidebar');
+
+            if (! sidebar) {
+                return;
+            }
+
+            const syncSidebarVariant = () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                sidebar.classList.toggle('sidebar-dark-primary', isDark);
+                sidebar.classList.toggle('sidebar-light-primary', ! isDark);
+            };
+
+            syncSidebarVariant();
+
+            new MutationObserver(syncSidebarVariant).observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class'],
+            });
+        })();
+    </script>
+
 </body>
 
 </html>

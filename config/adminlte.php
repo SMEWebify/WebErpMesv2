@@ -141,7 +141,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => ' elevation-4',
+    'classes_sidebar' => 'sidebar-light-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -887,7 +887,7 @@ return [
                     'icon_color' => 'primary',
                 ],
                 [
-                    'text'       => 'Intégrations (endpoints)',
+                    'text'       => 'Intégrations',
                     'url'        => 'admin/integrations/endpoints',
                     'icon'       => 'fas fa-exchange-alt',
                     'icon_color' => 'info',

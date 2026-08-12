@@ -46,6 +46,7 @@ return [
     'po_receipt_trans_key'                     => 'Biên nhận mua',
     'waiting_to_invoice_trans_key'             => 'Đợi hóa đơn',
     'invoice_supplier_trans_key'               => 'Hóa đơn nhà cung cấp',
+    'incoming_invoices_trans_key'              => 'Hóa đơn nhận được',
     'quality_trans_key'                        => 'Chất lượng',
     'settings_trans_key'                       => 'Thiết lập',
     'methods_trans_key'                        => 'Phương thức',
