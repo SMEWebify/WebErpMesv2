@@ -32,7 +32,7 @@
               <tr>
                 <td> 
                   @if($MethodsTool->picture )
-                  <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/images/methods/'. $MethodsTool->picture) }}">
+                  <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/images/tools/'. $MethodsTool->picture) }}">
                   @endif
                 </td>
                 <td>{{ $MethodsTool->code }}</td>
