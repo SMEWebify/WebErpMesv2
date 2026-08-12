@@ -59,6 +59,7 @@ class Orders extends Model
                             'n2p_last_push_at',
                             'n2p_last_push_status',
                             'n2p_last_push_error',
+                            'n2p_last_status_event_at',
                         ];
     // NOTE: 'id' removed from fillable (was present before) — mass-assigning PK is always wrong.
 
@@ -66,6 +67,7 @@ class Orders extends Model
         'reviewed_at' => 'datetime',
         'change_approved_at' => 'datetime',
         'n2p_last_push_at' => 'datetime',
+        'n2p_last_status_event_at' => 'datetime',
     ];
 
     public function setOriginal($key, $value = null): self

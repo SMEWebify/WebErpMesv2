@@ -860,8 +860,21 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/permissions/store', 'App\Http\Controllers\Admin\PermissionController@store')->middleware(['auth'])->name('admin.factory.permissions.store');
         Route::get('/factory/permissions/delete/{permission}', 'App\Http\Controllers\Admin\PermissionController@destroy')->middleware(['auth'])->name('admin.factory.permissions.destroy');
         Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
-        Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth'])->name('admin.integrations.n2p');
-        Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth'])->name('admin.integrations.n2p.update');
+        Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth', 'verified', 'has.role'])->name('admin.integrations.n2p');
+        Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth', 'verified', 'has.role'])->name('admin.integrations.n2p.update');
+
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/endpoints')->name('admin.integrations.endpoints.')->group(function () {
+            Route::get('/',                       [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'index'])->name('index');
+            Route::get('/create',                 [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'create'])->name('create');
+            Route::post('/',                      [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'store'])->name('store');
+            Route::get('/{endpoint}/edit',        [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'edit'])->name('edit');
+            Route::put('/{endpoint}',             [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'update'])->name('update');
+            Route::delete('/{endpoint}',          [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'destroy'])->name('destroy');
+            Route::post('/{endpoint}/regenerate', [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'regenerate'])->name('regenerate');
+            Route::post('/{endpoint}/test',       [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'testConnection'])->name('test');
+            Route::post('/{endpoint}/resync-sheets', [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'resyncSheets'])->name('resync-sheets');
+            Route::get('/{endpoint}/deliveries',  [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'deliveries'])->name('deliveries');
+        });
 
         Route::middleware(['auth'])->prefix('integrations/qonto')->name('admin.integrations.qonto.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'index'])->name('index');

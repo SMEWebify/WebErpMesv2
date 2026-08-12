@@ -628,11 +628,23 @@ class QuoteLinesController extends Controller
                 null
             );
 
-            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'SubAssembly'])
+            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'SubAssembly', 'files'])
                 ->whereIn('id', $lineIds)
                 ->where('quotes_id', $quote->id)
                 ->get()
                 ->keyBy('id');
+
+            $quote->loadMissing('files');
+            $quotePivots = $quote->files->mapWithKeys(fn ($file) => [
+                $file->id => [
+                    'role' => $file->pivot->role,
+                    'is_primary' => (bool) $file->pivot->is_primary,
+                ],
+            ])->all();
+
+            if (!empty($quotePivots)) {
+                $newOrder->files()->attach($quotePivots);
+            }
 
             foreach ($lineIds as $lineId) {
                 $quoteLine = $quoteLineMap->get($lineId);
@@ -707,6 +719,17 @@ class QuoteLinesController extends Controller
                     $newSub->order_lines_id = $newOrderLine->id;
                     $newSub->quote_lines_id = null;
                     $newSub->save();
+                }
+
+                $linePivots = $quoteLine->files->mapWithKeys(fn ($file) => [
+                    $file->id => [
+                        'role' => $file->pivot->role,
+                        'is_primary' => (bool) $file->pivot->is_primary,
+                    ],
+                ])->all();
+
+                if (!empty($linePivots)) {
+                    $newOrderLine->files()->attach($linePivots);
                 }
 
                 QuoteLines::where('id', $lineId)->update(['statu' => 3]);

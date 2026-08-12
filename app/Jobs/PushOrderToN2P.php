@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Workflow\Orders;
 use App\Services\N2P\N2PClient;
 use App\Services\N2P\N2PPayloadBuilder;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Throwable;
 
 class PushOrderToN2P implements ShouldQueue
@@ -28,6 +30,16 @@ class PushOrderToN2P implements ShouldQueue
 
     public function handle(SettingsService $settings, N2PPayloadBuilder $payloadBuilder): void
     {
+        $endpoint = IntegrationEndpoint::query()
+            ->forSystem('n2p')
+            ->outbound()
+            ->active()
+            ->first();
+
+        if (! $endpoint) {
+            throw new RuntimeException('N2P outbound endpoint not configured or disabled');
+        }
+
         $order = Orders::with([
                 'OrderLines.OrderLineDetails',
                 'OrderLines.Product',
@@ -38,24 +50,15 @@ class PushOrderToN2P implements ShouldQueue
             ])
             ->findOrFail($this->orderId);
 
-        $config = $settings->getMany([
-            'n2p_base_url',
-            'n2p_api_token',
+        $businessConfig = $settings->getMany([
             'n2p_job_status_on_send',
             'n2p_priority_default',
             'n2p_send_tasks',
-            'n2p_verify_ssl',
-        ], [
-            'n2p_verify_ssl' => true,
         ]);
 
-        $client = new N2PClient(
-            $config['n2p_base_url'],
-            $config['n2p_api_token'] ?? null,
-            $config['n2p_verify_ssl'] ?? true
-        );
-        $payload = $payloadBuilder->build($order, $config);
+        $payload = $payloadBuilder->build($order, $businessConfig);
 
+        $client = new N2PClient($endpoint);
         $response = $client->pushJobs($payload);
 
         $order->update([
@@ -66,6 +69,7 @@ class PushOrderToN2P implements ShouldQueue
 
         Log::channel('n2p')->info('N2P push success', [
             'order_id' => $order->getKey(),
+            'endpoint_id' => $endpoint->id,
             'response' => $response,
         ]);
     }

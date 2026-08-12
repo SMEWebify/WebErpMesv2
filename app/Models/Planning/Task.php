@@ -699,4 +699,51 @@ class Task extends Model
         return LogOptions::defaults()->logOnly(['code', 'quote_lines_id', 'order_lines_id', 'products_id']);
         // Chain fluent methods for configuration options
     }
+
+    /**
+     * Reverse-lookup pour les events entrants d'intégration (Nest2Prod, etc.).
+     *
+     * Clé métier stable (voir ligne directrice) :
+     *  - $ofCode       : "OF" + orderLine.id (format produit par N2PPayloadBuilder)
+     *  - $lineRef      : orderLine.id (string), redondant avec ofCode mais transporté
+     *  - $operationCode: task.code si défini, sinon "op-<task.id>" (voir
+     *                    N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX)
+     */
+    public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode): ?self
+    {
+        $orderLineId = null;
+        if (str_starts_with($ofCode, 'OF')) {
+            $orderLineId = (int) substr($ofCode, 2);
+        } elseif (ctype_digit($lineRef)) {
+            $orderLineId = (int) $lineRef;
+        }
+
+        if ($orderLineId === null || $orderLineId <= 0 || $operationCode === '') {
+            return null;
+        }
+
+        $query = static::query()->where('order_lines_id', $orderLineId);
+
+        $fallbackPrefix = \App\Services\N2P\N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX;
+        if (str_starts_with($operationCode, $fallbackPrefix)) {
+            $taskId = (int) substr($operationCode, strlen($fallbackPrefix));
+            return $query->whereKey($taskId)->first();
+        }
+
+        // tasks.code n'est pas unique par order_line — deux ops "PLIAGE" sur
+        // la même ligne existent. On trie par ordre puis id pour cibler la
+        // 1re occurrence (celle qui doit démarrer/finir en premier) et on
+        // logue une ambiguïté détectée pour audit.
+        $matches = $query->where('code', $operationCode)->orderBy('ordre')->orderBy('id')->get();
+        if ($matches->count() > 1) {
+            \Illuminate\Support\Facades\Log::channel('n2p')->warning('Ambiguous task code on order line', [
+                'order_line_id' => $orderLineId,
+                'operation_code' => $operationCode,
+                'candidate_ids' => $matches->pluck('id')->all(),
+                'chosen_id' => $matches->first()->id,
+            ]);
+        }
+
+        return $matches->first();
+    }
 }

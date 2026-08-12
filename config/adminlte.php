@@ -886,6 +886,12 @@ return [
                     'icon'       => 'fas fa-key',
                     'icon_color' => 'primary',
                 ],
+                [
+                    'text'       => 'Intégrations (endpoints)',
+                    'url'        => 'admin/integrations/endpoints',
+                    'icon'       => 'fas fa-exchange-alt',
+                    'icon_color' => 'info',
+                ],
             ],
         ],
         ['header' => env('APP_COMMERCIAL', false) ? 'NEST2PROD' : 'W.E.M.'],
