@@ -154,7 +154,7 @@ class TaskManageApiController extends Controller
             'id'                   => $task->id,
             'ordre'                => $task->ordre,
             'label'                => $task->label,
-            'code'                 => $task->code ?? null,
+            'code'                 => $task->service?->code,
             'type'                 => $task->type,
             'methods_services_id'  => $task->methods_services_id,
             'service'              => $task->service
@@ -629,7 +629,9 @@ class TaskManageApiController extends Controller
     {
         abort_unless(auth()->check(), 403);
 
-        $standardTasks = MethodsStandardTask::where('methods_nomenclature_standard_id', $nomenclatureId)->get();
+        $standardTasks = MethodsStandardTask::with('service:id,code')
+            ->where('methods_nomenclature_standard_id', $nomenclatureId)
+            ->get();
 
         foreach ($standardTasks as $std) {
             $taskData = $std->only([
@@ -641,6 +643,7 @@ class TaskManageApiController extends Controller
                 'diameter', 'diameter_oversize', 'to_schedule',
                 'material', 'thickness', 'weight', 'methods_tools_id',
             ]);
+            $taskData['code']      = $std->service?->code;
             $taskData['status_id'] = Status::orderBy('order')->value('id');
             $taskData['origin']    = '1';
             $taskData[$idType]     = $idLine;
