@@ -19,6 +19,25 @@ class IntegrationEndpoint extends Model
 
     public const DEFAULT_RETRY_BACKOFF = [60, 300, 900, 1800, 3600];
 
+    /**
+     * Clés reconnues dans le champ `metadata` (JSON).
+     * Centralisées ici pour éviter les strings magiques disséminées côté
+     * controller / observer / job. Les défauts sont appliqués par meta().
+     */
+    public const META_STATUS_TRANSITION_FROM = 'status_transition_from';
+    public const META_STATUS_TRANSITION_TO   = 'status_transition_to';
+    public const META_SEND_TASKS             = 'send_tasks';
+    public const META_JOB_STATUS_ON_SEND     = 'job_status_on_send';
+    public const META_DEFAULT_PRIORITY       = 'default_priority';
+
+    public const META_DEFAULTS = [
+        self::META_STATUS_TRANSITION_FROM => 'OPEN',
+        self::META_STATUS_TRANSITION_TO   => 'IN_PROGRESS',
+        self::META_SEND_TASKS             => true,
+        self::META_JOB_STATUS_ON_SEND     => 'released',
+        self::META_DEFAULT_PRIORITY       => 3,
+    ];
+
     protected $fillable = [
         'name',
         'system_code',
@@ -32,6 +51,7 @@ class IntegrationEndpoint extends Model
         'timestamp_tolerance_s',
         'verify_ssl',
         'events',
+        'metadata',
         'is_active',
         'retry_max',
         'retry_backoff',
@@ -44,6 +64,7 @@ class IntegrationEndpoint extends Model
         'bearer_token' => 'encrypted',
         'hmac_secret' => 'encrypted',
         'events' => 'array',
+        'metadata' => 'array',
         'retry_backoff' => 'array',
         'is_active' => 'boolean',
         'verify_ssl' => 'boolean',
@@ -103,6 +124,23 @@ class IntegrationEndpoint extends Model
     {
         $events = $this->events ?? [];
         return $events === [] || in_array($eventType, $events, true);
+    }
+
+    /**
+     * Lit une clé de metadata avec fallback sur le tableau des défauts.
+     * meta('send_tasks') retourne true si non défini, jamais null — un handler
+     * appelant peut faire `if ($endpoint->meta(...))` sans se soucier du seed.
+     */
+    public function meta(string $key, mixed $default = null): mixed
+    {
+        $metadata = $this->metadata ?? [];
+        if (array_key_exists($key, $metadata)) {
+            return $metadata[$key];
+        }
+        if ($default !== null) {
+            return $default;
+        }
+        return self::META_DEFAULTS[$key] ?? null;
     }
 
     public function regenerateSecrets(): void

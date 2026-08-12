@@ -16,7 +16,6 @@ class IntegrationEndpointRequest extends FormRequest
     public function rules(): array
     {
         $existing = $this->route('endpoint');
-        $existingId = $existing instanceof IntegrationEndpoint ? $existing->id : null;
 
         // system_code + direction identifient un endpoint côté dispatch
         // (IntegrationDispatcher::forSystem). Doivent être uniques ensemble
@@ -62,6 +61,16 @@ class IntegrationEndpointRequest extends FormRequest
             'retry_max'             => ['nullable', 'integer', 'between:0,20'],
             'retry_backoff'         => ['nullable', 'array'],
             'retry_backoff.*'       => ['integer', 'min:1'],
+
+            // Metadata — règles métier par endpoint. Toutes optionnelles :
+            // meta() applique les défauts (IntegrationEndpoint::META_DEFAULTS)
+            // si absentes du payload.
+            'metadata'                                    => ['nullable', 'array'],
+            'metadata.status_transition_from'             => ['nullable', 'string', Rule::in(['OPEN','IN_PROGRESS','DELIVERED','PARTLY_DELIVERED','STOPPED','CANCELED'])],
+            'metadata.status_transition_to'               => ['nullable', 'string', Rule::in(['OPEN','IN_PROGRESS','DELIVERED','PARTLY_DELIVERED','STOPPED','CANCELED'])],
+            'metadata.send_tasks'                         => ['nullable', 'boolean'],
+            'metadata.job_status_on_send'                 => ['nullable', 'string', 'max:50'],
+            'metadata.default_priority'                   => ['nullable', 'integer', 'between:1,5'],
         ];
     }
 
@@ -82,7 +91,40 @@ class IntegrationEndpointRequest extends FormRequest
             'is_active'  => filter_var($this->input('is_active'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
             'verify_ssl' => filter_var($this->input('verify_ssl'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true,
             'events'     => $this->normalizeList($this->input('events')),
+            'metadata'   => $this->normalizeMetadata($this->input('metadata')),
         ]);
+    }
+
+    /**
+     * Normalise le tableau metadata : cast booleans/ints depuis strings
+     * (les switches/inputs HTML envoient tout en string), drop les clés vides
+     * pour laisser meta() appliquer les défauts plutôt que persister "".
+     */
+    private function normalizeMetadata(mixed $value): array
+    {
+        if (! is_array($value)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        if (isset($value['status_transition_from']) && $value['status_transition_from'] !== '') {
+            $normalized['status_transition_from'] = (string) $value['status_transition_from'];
+        }
+        if (isset($value['status_transition_to']) && $value['status_transition_to'] !== '') {
+            $normalized['status_transition_to'] = (string) $value['status_transition_to'];
+        }
+        if (array_key_exists('send_tasks', $value)) {
+            $normalized['send_tasks'] = filter_var($value['send_tasks'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+        }
+        if (isset($value['job_status_on_send']) && $value['job_status_on_send'] !== '') {
+            $normalized['job_status_on_send'] = (string) $value['job_status_on_send'];
+        }
+        if (isset($value['default_priority']) && $value['default_priority'] !== '') {
+            $normalized['default_priority'] = (int) $value['default_priority'];
+        }
+
+        return $normalized;
     }
 
     private function normalizeList(mixed $value): array

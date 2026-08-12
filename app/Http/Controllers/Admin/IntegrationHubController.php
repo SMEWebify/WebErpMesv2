@@ -9,7 +9,6 @@ use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
 use App\Services\Integrations\Pdp\PdpManager;
-use App\Services\Settings\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -18,24 +17,24 @@ use Illuminate\View\View;
  * vers son écran de configuration dédié.
  *
  * Volontairement en lecture seule : rien ne se configure ici. Les connecteurs
- * n'ont pas le même modèle (OAuth par utilisateur pour Qonto, réglages usine
- * pour N2P, secrets statiques pour les endpoints webhook) — les unifier dans un
- * seul formulaire reviendrait à empiler des `@if` par système. Le hub unifie la
+ * n'ont pas le même modèle (OAuth utilisateur pour Qonto, secrets statiques
+ * pour les endpoints webhook, config env pour PDP) — les unifier dans un seul
+ * formulaire reviendrait à empiler des `@if` par système. Le hub unifie la
  * *découverte* et l'*état de santé*, pas le stockage.
  */
 class IntegrationHubController extends Controller
 {
     public function __construct(
-        private SettingsService $settings,
         private PdpManager $pdp,
     ) {
     }
 
     public function index(Request $request): View
     {
+        // La carte dédiée N2P a été retirée du hub (refactor 2026-08-12) :
+        // N2P vit dans la carte générique "Endpoints webhook" désormais.
         return view('integrations.index', [
             'qonto'     => $this->qontoCard((int) $request->user()->id),
-            'n2p'       => $this->n2pCard(),
             'pdp'       => $this->pdpCard(),
             'endpoints' => $this->endpointsCard(),
         ]);
@@ -69,25 +68,6 @@ class IntegrationHubController extends Controller
             'pending_reviews' => $connection
                 ? QontoSyncReview::where('tenant_id', $tenantId)->where('status', 'pending')->count()
                 : 0,
-        ];
-    }
-
-    private function n2pCard(): array
-    {
-        $settings = $this->settings->getMany(
-            ['n2p_enabled', 'n2p_base_url', 'n2p_send_tasks'],
-            ['n2p_enabled' => false, 'n2p_base_url' => '', 'n2p_send_tasks' => true],
-        );
-
-        $endpoints = IntegrationEndpoint::forSystem('n2p')->get();
-
-        return [
-            'enabled'    => (bool) $settings['n2p_enabled'],
-            'base_url'   => (string) $settings['n2p_base_url'],
-            'send_tasks' => (bool) $settings['n2p_send_tasks'],
-            'endpoints'  => $endpoints->count(),
-            'active'     => $endpoints->where('is_active', true)->count(),
-            'last_at'    => $endpoints->pluck('last_success_at')->filter()->max(),
         ];
     }
 

@@ -6,7 +6,6 @@ use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Workflow\Orders;
 use App\Services\N2P\N2PClient;
 use App\Services\N2P\N2PPayloadBuilder;
-use App\Services\Settings\SettingsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,7 +27,7 @@ class PushOrderToN2P implements ShouldQueue
     {
     }
 
-    public function handle(SettingsService $settings, N2PPayloadBuilder $payloadBuilder): void
+    public function handle(N2PPayloadBuilder $payloadBuilder): void
     {
         $endpoint = IntegrationEndpoint::query()
             ->forSystem('n2p')
@@ -50,11 +49,15 @@ class PushOrderToN2P implements ShouldQueue
             ])
             ->findOrFail($this->orderId);
 
-        $businessConfig = $settings->getMany([
-            'n2p_job_status_on_send',
-            'n2p_priority_default',
-            'n2p_send_tasks',
-        ]);
+        // Options de payload lues sur l'endpoint (metadata JSON), plus sur
+        // la table settings — mono-source-of-truth par endpoint.
+        // N2PPayloadBuilder attend encore les clés préfixées n2p_* (contrat
+        // non touché ici pour ne pas casser les tests unit du builder).
+        $businessConfig = [
+            'n2p_job_status_on_send' => $endpoint->meta(IntegrationEndpoint::META_JOB_STATUS_ON_SEND),
+            'n2p_priority_default'   => $endpoint->meta(IntegrationEndpoint::META_DEFAULT_PRIORITY),
+            'n2p_send_tasks'         => $endpoint->meta(IntegrationEndpoint::META_SEND_TASKS),
+        ];
 
         $payload = $payloadBuilder->build($order, $businessConfig);
 

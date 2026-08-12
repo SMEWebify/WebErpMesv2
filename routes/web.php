@@ -861,8 +861,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/factory/permissions/delete/{permission}', 'App\Http\Controllers\Admin\PermissionController@destroy')->middleware(['auth'])->name('admin.factory.permissions.destroy');
         Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
         Route::get('/integrations', [\App\Http\Controllers\Admin\IntegrationHubController::class, 'index'])->middleware(['auth', 'verified', 'has.role'])->name('admin.integrations.index');
-        Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth', 'verified', 'has.role'])->name('admin.integrations.n2p');
-        Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth', 'verified', 'has.role'])->name('admin.integrations.n2p.update');
+        // admin/integrations/n2p (ancien écran settings) SUPPRIMÉ — refactor du
+        // 2026-08-12 : la config N2P (transitions, options payload, priorité)
+        // est portée par `integration_endpoints.metadata`, éditée depuis la
+        // carte "Règles métier N2P" sur admin/integrations/endpoints/{id}/edit.
 
         Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/endpoints')->name('admin.integrations.endpoints.')->group(function () {
             Route::get('/',                       [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'index'])->name('index');

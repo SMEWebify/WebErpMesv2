@@ -13,10 +13,12 @@ class SettingsService
 
     /**
      * Clés dont la valeur est chiffrée en base (tokens d'intégration, secrets).
+     * Vide depuis le refactor 2026-08-12 (n2p_api_token retiré — les secrets
+     * N2P vivent maintenant sur integration_endpoints.bearer_token /
+     * hmac_secret avec le cast 'encrypted' du model). Conservé pour un futur
+     * usage — la mécanique isSecret() reste fonctionnelle.
      */
-    private const SECRET_KEYS = [
-        'n2p_api_token',
-    ];
+    private const SECRET_KEYS = [];
 
     public function get(string $key, mixed $default = null): mixed
     {

@@ -175,29 +175,10 @@
                 </div>
             </div>
 
-            @if(! $isNew)
-                <div class="mt-3 d-flex gap-2 align-items-center">
-                    <form method="POST" action="{{ route('admin.integrations.endpoints.regenerate', $endpoint) }}"
-                          class="d-inline mr-2"
-                          onsubmit="return confirm('Régénérer les secrets ? Le partenaire devra être reconfiguré.');">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-warning btn-sm">
-                            <i class="fas fa-sync-alt"></i> Régénérer les secrets
-                        </button>
-                    </form>
-
-                    @if($endpoint->direction === 'outbound' && ! empty($endpoint->url))
-                        <form method="POST" action="{{ route('admin.integrations.endpoints.test', $endpoint) }}"
-                              class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-satellite-dish"></i> Tester la connexion
-                            </button>
-                        </form>
-                        <small class="text-muted ml-2">POST signé sur <code>{{ rtrim($endpoint->url, '/') }}/api/plugin/ping</code></small>
-                    @endif
-                </div>
-            @endif
+            {{-- Régénération secrets + test de connexion : boutons sortis DU form
+                 principal, un cran plus bas, parce que HTML interdit les <form>
+                 imbriqués — sinon le clic soumettait l'update sans jamais atteindre
+                 le contrôleur regenerate/test. Voir bloc "Actions rapides". --}}
         </x-adminlte-card>
 
         @if(! $isNew && $endpoint->direction === 'inbound')
@@ -224,6 +205,70 @@ BASH;
                     Résultat attendu : <code>200 {"status":"ignored", "reason":"event_type_not_subscribed"}</code>
                     (le tunnel HMAC est validé, mais <code>ping</code> n'a pas de handler - normal).
                 </small>
+            </x-adminlte-card>
+        @endif
+
+        @if($endpoint->system_code === 'n2p' && old('direction', $endpoint->direction) === 'outbound')
+            @php
+                $meta = is_array($endpoint->metadata) ? $endpoint->metadata : [];
+                $statusOptions = [
+                    'OPEN'              => 'Ouvert (1)',
+                    'IN_PROGRESS'       => 'En cours (2)',
+                    'DELIVERED'         => 'Livré (3)',
+                    'PARTLY_DELIVERED'  => 'Partiellement livré (4)',
+                    'STOPPED'           => 'Suspendu (5)',
+                    'CANCELED'          => 'Annulé (6)',
+                ];
+                $metaStatusFrom = old('metadata.status_transition_from', $meta['status_transition_from'] ?? 'OPEN');
+                $metaStatusTo   = old('metadata.status_transition_to',   $meta['status_transition_to'] ?? 'IN_PROGRESS');
+                $metaSendTasks  = old('metadata.send_tasks',        $meta['send_tasks'] ?? true);
+                $metaJobStatus  = old('metadata.job_status_on_send', $meta['job_status_on_send'] ?? 'released');
+                $metaPriority   = old('metadata.default_priority',  $meta['default_priority'] ?? 3);
+            @endphp
+            <x-adminlte-card title="Règles métier N2P (push OF)" theme="warning" theme-mode="outline">
+                <p class="text-muted small mb-3">
+                    Détermine <strong>quand</strong> et <strong>avec quel niveau de détail</strong> une commande est
+                    poussée vers Nest2Prod. Le push se déclenche à la transition
+                    <em>{{ $statusOptions[$metaStatusFrom] ?? $metaStatusFrom }} → {{ $statusOptions[$metaStatusTo] ?? $metaStatusTo }}</em>.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Transition — statut de départ</label>
+                        <select name="metadata[status_transition_from]" class="form-control">
+                            @foreach($statusOptions as $val => $lbl)
+                                <option value="{{ $val }}" @selected($metaStatusFrom === $val)>{{ $lbl }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Transition — statut d'arrivée</label>
+                        <select name="metadata[status_transition_to]" class="form-control">
+                            @foreach($statusOptions as $val => $lbl)
+                                <option value="{{ $val }}" @selected($metaStatusTo === $val)>{{ $lbl }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <x-adminlte-input-switch name="metadata[send_tasks]" label="Inclure les tâches dans le payload"
+                                                 data-on-text="Oui" data-off-text="Non"
+                                                 :checked="$metaSendTasks"/>
+                    </div>
+                    <div class="col-md-4">
+                        <x-adminlte-input name="metadata[job_status_on_send]" label="Statut job à l'envoi"
+                                          :value="$metaJobStatus"
+                                          placeholder="released"/>
+                        <small class="text-muted">Statut initial du job côté Nest2Prod (ex : <code>released</code>, <code>scheduled</code>).</small>
+                    </div>
+                    <div class="col-md-4">
+                        <x-adminlte-input name="metadata[default_priority]" label="Priorité par défaut (1..5)" type="number"
+                                          min="1" max="5"
+                                          :value="$metaPriority"/>
+                    </div>
+                </div>
             </x-adminlte-card>
         @endif
 
@@ -322,6 +367,35 @@ BASH;
             </button>
         </div>
     </form>
+
+    @if(! $isNew)
+        <x-adminlte-card title="Actions rapides" theme="secondary" theme-mode="outline" class="mt-4">
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <form method="POST" action="{{ route('admin.integrations.endpoints.regenerate', $endpoint) }}"
+                      class="d-inline mr-2"
+                      onsubmit="return confirm('Régénérer les secrets ? Le partenaire devra être reconfiguré.');">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-sync-alt"></i> Régénérer les secrets
+                    </button>
+                </form>
+
+                @if($endpoint->direction === 'outbound' && ! empty($endpoint->url))
+                    <form method="POST" action="{{ route('admin.integrations.endpoints.test', $endpoint) }}"
+                          class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-satellite-dish"></i> Tester la connexion
+                        </button>
+                    </form>
+                    <small class="text-muted ml-2">POST signé sur <code>{{ rtrim($endpoint->url, '/') }}/api/plugin/ping</code></small>
+                @endif
+            </div>
+            <small class="text-muted d-block mt-2">
+                Après régénération, le secret HMAC apparaît en clair une seule fois en haut de la page — copie-le dans Nest2Prod avant de naviguer ailleurs.
+            </small>
+        </x-adminlte-card>
+    @endif
 
     @if(! $isNew && $endpoint->system_code === 'n2p' && $endpoint->direction === 'outbound')
         <x-adminlte-card title="Catalogue tôles" theme="warning" theme-mode="outline" class="mt-4">

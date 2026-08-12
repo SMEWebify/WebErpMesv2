@@ -85,56 +85,11 @@
             </div>
         </div>
 
-        {{-- ────────────────────────── Nest2Prod ────────────────────────── --}}
-        <div class="col-md-6">
-            <div class="card card-outline {{ $n2p['enabled'] ? 'card-success' : 'card-secondary' }}">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-industry mr-1"></i> Nest2Prod
-                    </h3>
-                    <div class="card-tools">
-                        <span class="badge badge-{{ $n2p['enabled'] ? 'success' : 'secondary' }}">
-                            {{ $n2p['enabled'] ? 'Actif' : 'Inactif' }}
-                        </span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted mb-2">
-                        Exécution atelier - envoi des commandes, retour des tâches.
-                    </p>
-                    <dl class="row mb-0">
-                        <dt class="col-6">URL</dt>
-                        <dd class="col-6">
-                            @if($n2p['base_url'])
-                                <code class="text-break">{{ $n2p['base_url'] }}</code>
-                            @else
-                                <span class="text-muted">non renseignée</span>
-                            @endif
-                        </dd>
-
-                        <dt class="col-6">Envoi des tâches</dt>
-                        <dd class="col-6">{{ $n2p['send_tasks'] ? 'Oui' : 'Non' }}</dd>
-
-                        <dt class="col-6">Endpoints</dt>
-                        <dd class="col-6">{{ $n2p['active'] }} actif(s) / {{ $n2p['endpoints'] }}</dd>
-
-                        <dt class="col-6">Dernier succès</dt>
-                        <dd class="col-6">
-                            @if($n2p['last_at'])
-                                <span class="text-success" title="{{ $n2p['last_at'] }}">{{ $n2p['last_at']->diffForHumans() }}</span>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </dd>
-                    </dl>
-                </div>
-                <div class="card-footer text-right">
-                    <a href="{{ route('admin.integrations.n2p') }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-cog"></i> Configurer
-                    </a>
-                </div>
-            </div>
-        </div>
+        {{-- Carte dédiée Nest2Prod SUPPRIMÉE (refactor 2026-08-12) :
+             N2P se gère désormais comme n'importe quel endpoint webhook,
+             visible dans la carte générique "Endpoints webhook" ci-dessous.
+             Contrairement à Qonto (OAuth utilisateur) ou PDP (env config),
+             il n'a plus rien de spécifique qui justifie une carte dédiée. --}}
 
         {{-- ─────────────────── Endpoints webhook génériques ─────────────────── --}}
         <div class="col-md-6">
