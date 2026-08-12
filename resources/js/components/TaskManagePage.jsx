@@ -712,6 +712,18 @@ function ProgressBar({ value }) {
     );
 }
 
+// Titre libre côté admin (table statuses) → mapping heuristique vers un badge Bootstrap.
+function statusBadge(status) {
+    if (!status) return <span className="text-muted" style={{ fontSize: 11 }}>—</span>;
+    const low = (status.title || '').toLowerCase();
+    let cls = 'badge-secondary';
+    if (/(finish|done|terminé|supplied|fourni)/.test(low))            cls = 'badge-success';
+    else if (/(progress|started|cours|outsourced|sous.?traité)/.test(low)) cls = 'badge-warning';
+    else if (/(suspend|cancel|rejet)/.test(low))                       cls = 'badge-danger';
+    else if (/(rfq)/.test(low))                                        cls = 'badge-info';
+    return <span className={`badge ${cls}`} style={{ fontSize: 10 }} title={status.title}>{status.title}</span>;
+}
+
 function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM, showDates }) {
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -738,6 +750,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.tool ? task.tool.code : '—'}</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.seting_time}h</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.unit_time}h</td>
+                    <td>{statusBadge(task.status)}</td>
                     <td>
                         <ProgressBar value={task.progress} />
                     </td>
@@ -886,7 +899,8 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly }) {
                 <td />
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalSeting.toFixed(3)}h</td>
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalUnit.toFixed(3)}h</td>
-                <td />
+                <td />{/* Statut */}
+                <td />{/* Avance */}
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
                 <td style={{ textAlign: 'right', fontSize: 12, color: margin >= 0 ? '#28a745' : '#dc3545' }}>{margin}%</td>
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalPrice.toFixed(2)} {currency}</td>
@@ -1228,6 +1242,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                     <th style={{ width: 70, textAlign: 'right' }}>Outil</th>
                                     <th style={{ width: 60, textAlign: 'right' }}>Régl.</th>
                                     <th style={{ width: 60, textAlign: 'right' }}>Unit.</th>
+                                    <th style={{ width: 90 }}>Statut</th>
                                     <th style={{ width: 80 }}>Avance</th>
                                     <th style={{ width: 80, textAlign: 'right' }}>Coût</th>
                                     <th style={{ width: 60, textAlign: 'right' }}>Marge</th>

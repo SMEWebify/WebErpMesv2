@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Planning;
 
 use App\Http\Controllers\Controller;
+use App\Listeners\CheckOrderLineTaskStatus;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsStandardNomenclature;
 use App\Models\Methods\MethodsStandardTask;
@@ -128,6 +129,9 @@ class TaskManageApiController extends Controller
             'start_date'           => $task->start_date,
             'end_date'             => $task->end_date,
             'status_id'            => $task->status_id,
+            'status'               => $task->status
+                ? ['id' => $task->status->id, 'title' => $task->status->title]
+                : null,
             'progress'             => (float) $task->progress(),
             'total_time'           => (float) $task->TotalTime(),
             'currency'             => $currency,
@@ -230,7 +234,7 @@ class TaskManageApiController extends Controller
         // Tasks
         if ($idType === 'nomenclature_lines_id') {
             // Standard tasks from MethodsStandardTask
-            $stdTasks = \App\Models\Methods\MethodsStandardTask::with(['service', 'Component', 'MethodsTools'])
+            $stdTasks = \App\Models\Methods\MethodsStandardTask::with(['service', 'Component', 'MethodsTools', 'status'])
                 ->where('methods_nomenclature_standard_id', $idLine)
                 ->orderBy('ordre')
                 ->get();
@@ -241,12 +245,12 @@ class TaskManageApiController extends Controller
             $subAssembliesData = collect();
         } else {
             $fk = $idType; // e.g. 'quote_lines_id'
-            $techCut = Task::with(['service', 'Component', 'MethodsTools'])
+            $techCut = Task::with(['service', 'Component', 'MethodsTools', 'status'])
                 ->where($fk, $idLine)
                 ->whereIn('type', [1, 7])
                 ->orderBy('ordre')
                 ->get();
-            $bom = Task::with(['service', 'Component', 'MethodsTools'])
+            $bom = Task::with(['service', 'Component', 'MethodsTools', 'status'])
                 ->where($fk, $idLine)
                 ->whereIn('type', [2, 3, 4, 5, 6, 8])
                 ->orderBy('ordre')
@@ -385,7 +389,7 @@ class TaskManageApiController extends Controller
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        $task->load(['service', 'component', 'MethodsTools']);
+        $task->load(['service', 'component', 'MethodsTools', 'status']);
 
         return response()->json(['task' => $this->formatTask($task, $currency)], 201);
     }
@@ -430,7 +434,7 @@ class TaskManageApiController extends Controller
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        $task->load(['service', 'component', 'MethodsTools']);
+        $task->load(['service', 'component', 'MethodsTools', 'status']);
 
         return response()->json(['task' => $this->formatTask($task, $currency)]);
     }
@@ -443,7 +447,13 @@ class TaskManageApiController extends Controller
     {
         abort_unless(auth()->check(), 403);
 
-        Task::findOrFail($id)->delete();
+        $task = Task::findOrFail($id);
+        $orderLineId = $task->order_lines_id;
+        $task->delete();
+
+        if ($orderLineId) {
+            CheckOrderLineTaskStatus::syncOrderLine((int) $orderLineId);
+        }
 
         return response()->json(['message' => 'Deleted']);
     }
@@ -469,7 +479,7 @@ class TaskManageApiController extends Controller
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        $new->load(['service', 'component', 'MethodsTools']);
+        $new->load(['service', 'component', 'MethodsTools', 'status']);
 
         return response()->json(['task' => $this->formatTask($new, $currency)], 201);
     }
@@ -612,7 +622,7 @@ class TaskManageApiController extends Controller
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
-        $bomTasks = Task::with(['service', 'Component', 'MethodsTools'])
+        $bomTasks = Task::with(['service', 'Component', 'MethodsTools', 'status'])
             ->where($fk, $idLine)
             ->whereIn('type', [2, 3, 4, 5, 6, 8])
             ->orderBy('ordre')
@@ -664,10 +674,10 @@ class TaskManageApiController extends Controller
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
 
-        $techCut = Task::with(['service', 'Component', 'MethodsTools'])
+        $techCut = Task::with(['service', 'Component', 'MethodsTools', 'status'])
             ->where($fk, $idLine)->whereIn('type', [1, 7])->orderBy('ordre')->get()
             ->map(fn($t) => $this->formatTask($t, $currency))->values();
-        $bom = Task::with(['service', 'Component', 'MethodsTools'])
+        $bom = Task::with(['service', 'Component', 'MethodsTools', 'status'])
             ->where($fk, $idLine)->whereIn('type', [2, 3, 4, 5, 6, 8])->orderBy('ordre')->get()
             ->map(fn($t) => $this->formatTask($t, $currency))->values();
 
@@ -681,17 +691,13 @@ class TaskManageApiController extends Controller
     // Private: abort if parent document is not open (statu != 1)
     // -------------------------------------------------------------------------
 
-    // Ne promeut que 1 (No task) → 2 (Created) pour ne jamais rétrograder
-    // une ligne déjà "In progress" (3) ou "Finished" (4).
     private function promoteOrderLineTaskStatus(string $idType, string $idLine): void
     {
         if ($idType !== 'order_lines_id') {
             return;
         }
 
-        OrderLines::where('id', $idLine)
-            ->where('tasks_status', 1)
-            ->update(['tasks_status' => 2]);
+        CheckOrderLineTaskStatus::syncOrderLine((int) $idLine);
     }
 
     private function abortIfDocumentLocked(string $idType, string $idPage): void

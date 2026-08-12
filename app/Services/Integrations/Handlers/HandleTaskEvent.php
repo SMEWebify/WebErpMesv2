@@ -2,6 +2,7 @@
 
 namespace App\Services\Integrations\Handlers;
 
+use App\Events\TaskChangeStatu;
 use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Planning\Status;
 use App\Models\Planning\Task;
@@ -110,6 +111,11 @@ class HandleTaskEvent implements IntegrationEventHandler
 
         $task->status_id = $statusId;
         $task->save();
+
+        // Doit propager pour que CheckOrderLineTaskStatus recalcule
+        // order_lines.tasks_status (sinon la ligne reste bloquée à "Créé"
+        // même quand toutes les tâches passent Finished par événement N2P).
+        event(new TaskChangeStatu($task->getKey()));
     }
 
     private function resolveUserId(array $data): ?int
