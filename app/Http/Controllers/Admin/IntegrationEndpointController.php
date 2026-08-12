@@ -45,8 +45,9 @@ class IntegrationEndpointController extends Controller
         ]);
 
         return view('integrations.endpoints.edit', [
-            'endpoint' => $endpoint,
-            'isNew'    => true,
+            'endpoint'       => $endpoint,
+            'isNew'          => true,
+            'eventCatalog'   => (array) config('integrations.event_catalog', []),
         ]);
     }
 
@@ -67,8 +68,9 @@ class IntegrationEndpointController extends Controller
     public function edit(IntegrationEndpoint $endpoint): View
     {
         return view('integrations.endpoints.edit', [
-            'endpoint' => $endpoint,
-            'isNew'    => false,
+            'endpoint'     => $endpoint,
+            'isNew'        => false,
+            'eventCatalog' => (array) config('integrations.event_catalog', []),
         ]);
     }
 

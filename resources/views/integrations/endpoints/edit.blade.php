@@ -228,14 +228,72 @@ BASH;
         @endif
 
         <x-adminlte-card title="Souscriptions & fiabilité" theme="primary" theme-mode="outline">
-            <div class="row">
-                <div class="col-md-12">
-                    <label>Events (un par ligne, ou séparés par virgule)</label>
-                    <textarea name="events" class="form-control" rows="4"
-                              placeholder="task.started&#10;task.finished&#10;stock.consumed">{{ old('events', is_array($endpoint->events) ? implode("\n", $endpoint->events) : '') }}</textarea>
-                    <small class="text-muted">Vide = souscrit à tout.</small>
+            @php
+                $direction = old('direction', $endpoint->direction);
+                $selectedEvents = collect(old('events', is_array($endpoint->events) ? $endpoint->events : []))
+                    ->map(fn ($e) => (string) $e)->all();
+            @endphp
+
+            @if($direction === 'inbound')
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="d-block">Events souscrits (entrants)</label>
+                        <small class="text-muted d-block mb-2">
+                            Aucune case cochée = souscrit à <strong>tout</strong> (comportement par défaut).
+                            Cocher au moins un event = filtre strict (les autres sont renvoyés <code>202 ignored</code>).
+                        </small>
+
+                        @foreach($eventCatalog as $groupLabel => $events)
+                            <div class="border rounded p-2 mb-2">
+                                <div class="font-weight-bold small text-muted mb-1">{{ $groupLabel }}</div>
+                                <div class="row">
+                                    @foreach($events as $eventType => $eventLabel)
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="events[]"
+                                                       value="{{ $eventType }}"
+                                                       id="ev-{{ Str::slug($eventType, '_') }}"
+                                                       @checked(in_array($eventType, $selectedEvents, true))>
+                                                <label class="form-check-label" for="ev-{{ Str::slug($eventType, '_') }}">
+                                                    {{ $eventLabel }}
+                                                    <br><code class="small text-muted">{{ $eventType }}</code>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+
+                        {{-- Events legacy custom (non catalogués) : préservés en hidden pour ne pas
+                             les perdre au save d'un endpoint qui souscrit à un event non standard. --}}
+                        @php
+                            $catalogKeys = collect($eventCatalog)->flatMap(fn ($g) => array_keys($g))->all();
+                            $extras = array_values(array_diff($selectedEvents, $catalogKeys));
+                        @endphp
+                        @if(count($extras) > 0)
+                            <div class="alert alert-info py-2 small">
+                                <strong>Events custom conservés :</strong>
+                                @foreach($extras as $extra)
+                                    <code class="mr-1">{{ $extra }}</code>
+                                    <input type="hidden" name="events[]" value="{{ $extra }}">
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="alert alert-secondary py-2 small mb-0">
+                    <i class="fas fa-info-circle"></i>
+                    Le champ "events souscrits" ne s'applique qu'aux endpoints <strong>entrants</strong>.
+                    Les events sortants (<code>job.pushed</code>, <code>sheet_lot.pushed</code>) sont câblés côté code.
+                </div>
+                {{-- On garde la valeur existante pour ne pas l'écraser via le save. --}}
+                @foreach($selectedEvents as $extra)
+                    <input type="hidden" name="events[]" value="{{ $extra }}">
+                @endforeach
+            @endif
 
             <div class="row mt-3">
                 <div class="col-md-4">

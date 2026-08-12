@@ -34,6 +34,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Event catalog (UI)
+    |--------------------------------------------------------------------------
+    |
+    | Métadonnées d'affichage pour la page d'édition d'un endpoint entrant.
+    | Regroupe les events par domaine et donne un libellé humain. Doit rester
+    | synchronisé avec le tableau 'handlers' ci-dessus (le dispatcher n'utilise
+    | QUE 'handlers' — cette section est purement descriptive).
+    |
+    */
+
+    'event_catalog' => [
+        'Tasks (retour exécution atelier)' => [
+            'task.started'       => 'Tâche démarrée',
+            'task.paused'        => 'Tâche mise en pause',
+            'task.resumed'       => 'Tâche reprise',
+            'task.finished'      => 'Tâche terminée',
+            'task.declared_good' => 'Déclaration qté bonne',
+            'task.declared_bad'  => 'Déclaration qté rebut',
+            'task.commented'     => 'Commentaire tâche',
+        ],
+        'Stock (consommation matière)' => [
+            'stock.consumed' => 'Composant consommé sur un lot',
+        ],
+        'Jobs (statuts de commande)' => [
+            'job.status_changed' => "Changement de statut d'un OF",
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Retention
     |--------------------------------------------------------------------------
     |
