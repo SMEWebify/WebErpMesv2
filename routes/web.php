@@ -1197,11 +1197,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/files/{file}/download', [FileApiController::class, 'download'])->name('files.download');
     });
 
-    Route::get('/licence', function () {return view('licence');})->middleware(['auth'])->name('licence');
+    // Route::view() plutot qu'une closure : une closure n'est pas serialisable,
+    // donc elle bloque route:trans:cache pour l'ensemble des 760 routes.
+    Route::view('/licence', 'licence')->middleware(['auth'])->name('licence');
 
-    Route::get('/rgpd-policy', function () {return view('rgpd-policy');})->middleware(['auth'])->name('rgpd.policy');
+    Route::view('/rgpd-policy', 'rgpd-policy')->middleware(['auth'])->name('rgpd.policy');
 
-    Route::get('/iframe-mode', function () {return view('iframe-mode');})->middleware(['auth'])->name('iframe.mode');
+    Route::view('/iframe-mode', 'iframe-mode')->middleware(['auth'])->name('iframe.mode');
 
     // Self-service RGPD utilisateur interne (Art. 15 / 17 / 20)
     Route::middleware(['auth'])->prefix('me/rgpd')->name('me.rgpd.')->group(function () {

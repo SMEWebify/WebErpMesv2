@@ -18,9 +18,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
+    // Equivalent strict de redirect()->route('login') : ce nom resout vers /login
+    // non localise (auth.php est enregistre une seconde fois hors groupe de locale
+    // par RouteServiceProvider, et le dernier enregistrement gagne sur le nom).
+    // Ecrit en Route::redirect car une closure n'est pas serialisable et bloquerait
+    // route:trans:cache pour les 760 routes.
+    Route::redirect('/', '/login');
 
     // Route to handle login form submission
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])

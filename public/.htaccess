@@ -19,3 +19,56 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ---------------------------------------------------------------------------
+# Compression
+#
+# Requiert mod_deflate ET mod_filter charges dans httpd.conf, sinon ce bloc est
+# ignore en silence. Sans lui, adminlte.min.css part en 1,36 Mo bruts (~120 Ko
+# une fois compresse).
+#
+# Volontairement absents : png/jpg/woff2/zip, deja compresses -- les repasser
+# dans deflate coute du CPU pour ~0 octet gagne.
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+        AddOutputFilterByType DEFLATE text/javascript application/javascript
+        AddOutputFilterByType DEFLATE application/json application/xml
+        AddOutputFilterByType DEFLATE image/svg+xml application/rss+xml
+    </IfModule>
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Cache navigateur
+#
+# Requiert mod_expires. Sans lui, chaque navigation revalide chaque asset
+# (aller-retour reseau par fichier) au lieu de le lire dans le cache local.
+#
+# Les pages HTML ne sont PAS concernees : Laravel pose deja
+# "Cache-Control: no-cache, private" dessus pour proteger les sessions.
+# ---------------------------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css                  "access plus 1 month"
+    ExpiresByType text/javascript           "access plus 1 month"
+    ExpiresByType application/javascript    "access plus 1 month"
+    ExpiresByType image/png                 "access plus 1 year"
+    ExpiresByType image/jpeg                "access plus 1 year"
+    ExpiresByType image/gif                 "access plus 1 year"
+    ExpiresByType image/svg+xml             "access plus 1 year"
+    ExpiresByType image/x-icon              "access plus 1 year"
+    ExpiresByType font/woff2                "access plus 1 year"
+    ExpiresByType application/font-woff2    "access plus 1 year"
+</IfModule>
+
+# Assets Vite : le nom porte un hash de contenu (app-_Rg763Vb.js), donc un
+# changement produit un nouveau nom. "immutable" est sur ici, et seulement ici
+# -- public/vendor/ n'est pas hashe et garde le mois ci-dessus, pour qu'une
+# mise a jour d'AdminLTE soit bien reprise par les navigateurs.
+<IfModule mod_headers.c>
+    <FilesMatch "-[A-Za-z0-9_-]{8}\.(js|css)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
