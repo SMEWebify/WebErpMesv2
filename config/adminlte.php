@@ -1083,16 +1083,11 @@ return [
                 ],
             ],
         ],
-        'BootstrapSwitch' => [
-            'active' => true,
-            'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
-                ],
-            ],
-        ],
+        // Retiré : le plugin jQuery d'interrupteur (v3.3.4, 2016, dépôt archivé
+        // en amont) appelait $.isArray(), supprimé de jQuery 4.0. Le composant
+        // <x-adminlte-input-switch> est désormais rendu en CSS pur par la
+        // surcharge resources/views/vendor/adminlte/components/form/input-switch.blade.php,
+        // sans jQuery ni dépendance à Bootstrap 4 ou 5.
         'BsCustomFileInput' => [
             'active' => true,
             'files' => [

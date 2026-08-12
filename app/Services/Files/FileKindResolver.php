@@ -51,7 +51,9 @@ class FileKindResolver
         self::KIND_IMAGE => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
         self::KIND_SHEET => ['csv', 'xls', 'xlsx', 'ods'],
         self::KIND_ARCHIVE => ['zip', '7z', 'rar', 'gz'],
-        self::KIND_OTHER => ['doc', 'docx', 'odt', 'rtf', 'txt', 'nc', 'tap', 'gcode', 'json', 'xml'],
+        // sym and geo are RADAN sources: the import reads them but no viewer
+        // renders them, so they stay download only.
+        self::KIND_OTHER => ['doc', 'docx', 'odt', 'rtf', 'txt', 'nc', 'tap', 'gcode', 'json', 'xml', 'sym', 'geo'],
     ];
 
     /**

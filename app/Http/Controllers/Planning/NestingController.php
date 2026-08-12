@@ -15,6 +15,10 @@ use Illuminate\Http\Request;
 
 class NestingController extends Controller
 {
+    /** Stock move types counted as entries / exits (cf. StockReservationService). */
+    private const STOCK_ENTRY_TYPES   = [1, 3, 5, 12, 14];
+    private const STOCK_SORTING_TYPES = [2, 4, 6, 9];
+
     public function index()
     {
         return view('planning.nesting-index');
@@ -76,13 +80,36 @@ class NestingController extends Controller
 
         $productIds = $products->pluck('id');
 
+        if ($productIds->isEmpty()) {
+            return response()->json([]);
+        }
+
         // Purchase lines still awaiting receipt: sum of (qty - receipt_qty) per product
-        $incoming = $productIds->isEmpty() ? collect() : \DB::table('purchase_lines')
-            ->whereIn('products_id', $productIds)
+        $incoming = \DB::table('purchase_lines')
+            ->whereIn('product_id', $productIds->map(fn ($id) => (string) $id))
             ->whereColumn('receipt_qty', '<', 'qty')
-            ->groupBy('products_id')
-            ->selectRaw('products_id, SUM(qty - receipt_qty) as pending_qty')
-            ->pluck('pending_qty', 'products_id');
+            ->groupBy('product_id')
+            ->selectRaw('product_id, SUM(qty - receipt_qty) as pending_qty')
+            ->pluck('pending_qty', 'product_id');
+
+        // On-hand stock per product, in a single aggregate instead of
+        // Products::getTotalStockMove() (1 query per location + 2 per move bucket).
+        $entryList   = implode(',', self::STOCK_ENTRY_TYPES);
+        $sortingList = implode(',', self::STOCK_SORTING_TYPES);
+
+        $onHand = \DB::table('stock_moves')
+            ->join('stock_location_products', 'stock_moves.stock_location_products_id', '=', 'stock_location_products.id')
+            ->whereIn('stock_location_products.products_id', $productIds)
+            ->groupBy('stock_location_products.products_id')
+            ->selectRaw("
+                stock_location_products.products_id,
+                COALESCE(SUM(CASE
+                    WHEN stock_moves.typ_move IN ($entryList)   THEN stock_moves.qty
+                    WHEN stock_moves.typ_move IN ($sortingList) THEN -stock_moves.qty
+                    ELSE 0
+                END), 0) AS stock_qty
+            ")
+            ->pluck('stock_qty', 'products_id');
 
         return response()->json(
             $products->map(fn ($p) => [
@@ -93,7 +120,7 @@ class NestingController extends Controller
                 'thickness'    => (float) $p->thickness,
                 'x_size'       => (float) $p->x_size,
                 'y_size'       => (float) $p->y_size,
-                'stock_qty'    => (float) Products::find($p->id)->getTotalStockMove(),
+                'stock_qty'    => (float) ($onHand[$p->id] ?? 0),
                 'incoming_qty' => (float) ($incoming[$p->id] ?? 0),
             ])
         );

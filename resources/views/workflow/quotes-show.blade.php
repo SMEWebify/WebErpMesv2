@@ -345,8 +345,8 @@
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
             'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
           ];
-          if (env('RADAN_SYM_IMPORT', false)) {
-            $quoteLineEndpoints['importSym'] = route('quotes.lines.json.import-sym', ['quoteId' => $Quote->id]);
+          if (config('cad.line_import')) {
+            $quoteLineEndpoints['importCad'] = route('quotes.lines.json.import-cad', ['quoteId' => $Quote->id]);
           }
         @endphp
         <div class="card">

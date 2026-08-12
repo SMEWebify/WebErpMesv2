@@ -1,123 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
-
-// ---------------------------------------------------------------------------
-// SymDropzone — RADAN .sym drag-and-drop import
-// ---------------------------------------------------------------------------
-
-function SymDropzone({ endpoint, quoteStatu, onImported }) {
-    const [dragging, setDragging] = useState(false);
-    const [status,   setStatus]   = useState(null); // null | 'uploading' | 'done' | 'error'
-    const [results,  setResults]  = useState([]);
-    const inputRef = useRef(null);
-
-    if (!endpoint || quoteStatu !== 1) return null;
-
-    const upload = async (files) => {
-        const symFiles = Array.from(files).filter((f) => f.name.toLowerCase().endsWith('.sym'));
-        if (symFiles.length === 0) {
-            setStatus('error');
-            setResults([{ ok: false, name: '—', msg: 'Aucun fichier .sym détecté.' }]);
-            return;
-        }
-
-        setStatus('uploading');
-        setResults([]);
-
-        const fd = new FormData();
-        symFiles.forEach((f) => fd.append('files[]', f));
-
-        try {
-            const res  = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                    Accept: 'application/json',
-                },
-                body: fd,
-            });
-
-            const data = await res.json();
-
-            const ok  = (data.lines  ?? []).map((l) => ({ ok: true,  name: l.code ?? l.label, msg: l.label }));
-            const err = (data.errors ?? []).map((e) => ({ ok: false, name: e, msg: e }));
-
-            setStatus(err.length > 0 && ok.length === 0 ? 'error' : 'done');
-            setResults([...ok, ...err]);
-
-            if (ok.length > 0) {
-                onImported(data.lines);
-            }
-        } catch {
-            setStatus('error');
-            setResults([{ ok: false, name: '—', msg: 'Erreur réseau lors de l\'envoi.' }]);
-        }
-    };
-
-    const onDrop = (e) => {
-        e.preventDefault();
-        setDragging(false);
-        upload(e.dataTransfer.files);
-    };
-
-    const borderColor = dragging  ? '#007bff'
-        : status === 'done'       ? '#28a745'
-        : status === 'error'      ? '#dc3545'
-        : '#adb5bd';
-
-    return (
-        <div className="mt-3">
-            <div
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={onDrop}
-                onClick={() => inputRef.current?.click()}
-                style={{
-                    border: `2px dashed ${borderColor}`,
-                    borderRadius: 6,
-                    padding: '1.25rem',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    background: dragging ? '#e8f0fe' : '#f8f9fa',
-                    transition: 'border-color .2s, background .2s',
-                    userSelect: 'none',
-                }}
-            >
-                <input
-                    ref={inputRef}
-                    type="file"
-                    accept=".sym"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={(e) => upload(e.target.files)}
-                />
-                {status === 'uploading' ? (
-                    <span className="text-muted">
-                        <i className="fas fa-spinner fa-spin mr-2" />
-                        Import en cours…
-                    </span>
-                ) : (
-                    <span className="text-muted small">
-                        <i className="fas fa-file-import mr-2 text-primary" />
-                        Déposer des fichiers <strong>.sym</strong> RADAN ici pour créer les lignes automatiquement
-                        &nbsp;—&nbsp;ou cliquer pour sélectionner
-                    </span>
-                )}
-            </div>
-
-            {results.length > 0 && (
-                <ul className="list-group list-group-flush mt-2" style={{ fontSize: '0.85rem' }}>
-                    {results.map((r, i) => (
-                        <li key={i} className={`list-group-item py-1 px-2 ${r.ok ? 'list-group-item-success' : 'list-group-item-danger'}`}>
-                            <i className={`fas ${r.ok ? 'fa-check' : 'fa-times'} mr-2`} />
-                            {r.msg}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
-}
+import CadDropzone from './CadDropzone.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1185,13 +1068,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         }
     };
 
-    const handleSymImported = (newLines) => {
+    const handleCadImported = (newLines) => {
         setLines((prev) => {
             const updated = [...prev, ...newLines];
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis RADAN`);
+        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis un fichier CAO`);
     };
 
     const handlePriceIncrease = async () => {
@@ -1360,11 +1243,11 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 </table>
             </div>
 
-            {/* RADAN .sym import dropzone */}
-            <SymDropzone
-                endpoint={endpoints.importSym}
-                quoteStatu={quoteStatu}
-                onImported={handleSymImported}
+            {/* CAD import dropzone */}
+            <CadDropzone
+                endpoint={endpoints.importCad}
+                disabled={quoteStatu !== 1}
+                onImported={handleCadImported}
             />
 
             {/* Drawer */}

@@ -2,15 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\Events\InvoiceStatusChanged;
 use App\Models\Companies\Companies;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Customer\Customer;
+use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
+use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\Invoices;
+use App\Models\Workflow\OrderLines;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -191,5 +198,146 @@ class QontoIntegrationApiTest extends TestCase
             'qonto_client_id' => 'qonto-123',
             'sync_status' => 'linked',
         ]);
+    }
+
+    public function test_submit_invoice_posts_structured_payload_to_client_invoices(): void
+    {
+        config()->set('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2');
+
+        $user    = $this->authenticateApiUser();
+        $invoice = $this->makeInvoiceWithSingleLine($user->id);
+
+        $this->connectQonto($user->id);
+        QontoClientMapping::create([
+            'tenant_id'       => $user->id,
+            'wem_client_id'   => $invoice->companies_id,
+            'qonto_client_id' => 'qonto-client-1',
+            'sync_status'     => 'linked',
+            'matching_score'  => 100,
+        ]);
+
+        Http::fake([
+            'https://thirdparty.qonto.com/v2/client_invoices' => Http::response([
+                'client_invoice' => ['id' => 'qi-1', 'status' => 'unpaid'],
+            ], 201),
+        ]);
+
+        $this->postJson("/api/integrations/qonto/invoices/{$invoice->id}/submit")->assertOk();
+
+        Http::assertSent(function (ClientRequest $request) {
+            $body = $request->data();
+
+            return $request->method() === 'POST'
+                && $request->url() === 'https://thirdparty.qonto.com/v2/client_invoices'
+                && $body['client_id'] === 'qonto-client-1'
+                && $body['number'] === 'FA-2026-001'
+                && $body['due_date'] === '2026-09-30'
+                && $body['status'] === 'unpaid'
+                && $body['payment_methods']['iban'] === 'FR7616798000010000123456789'
+                // Prix bruts + remise séparée, TVA en ratio : format attendu par Qonto.
+                && $body['items'][0]['quantity'] === '4.0000'
+                && $body['items'][0]['unit_price'] === ['value' => '125.50', 'currency' => 'EUR']
+                && $body['items'][0]['vat_rate'] === '0.2000'
+                && $body['items'][0]['discount'] === ['type' => 'percentage', 'value' => '10.00'];
+        });
+
+        $this->assertDatabaseHas('pdp_invoice_submissions', [
+            'invoice_id'       => $invoice->id,
+            'provider'         => 'qonto',
+            'external_id'      => 'qi-1',
+            'lifecycle_status' => 'submitted',
+        ]);
+    }
+
+    public function test_submit_invoice_fails_cleanly_when_client_is_not_mapped(): void
+    {
+        config()->set('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2');
+
+        $user    = $this->authenticateApiUser();
+        $invoice = $this->makeInvoiceWithSingleLine($user->id);
+
+        $this->connectQonto($user->id);
+        Http::fake();
+
+        $this->postJson("/api/integrations/qonto/invoices/{$invoice->id}/submit")
+            ->assertStatus(422)
+            ->assertJsonPath('message', fn ($message) => str_contains($message, 'Aucun client Qonto'));
+
+        Http::assertNothingSent();
+        $this->assertDatabaseCount('pdp_invoice_submissions', 0);
+    }
+
+    public function test_poll_maps_paid_status_to_wem_paid_status(): void
+    {
+        config()->set('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2');
+        Event::fake([InvoiceStatusChanged::class]);
+
+        $user    = $this->authenticateApiUser();
+        $invoice = $this->makeInvoiceWithSingleLine($user->id);
+
+        $this->connectQonto($user->id);
+        PdpInvoiceSubmission::create([
+            'tenant_id'        => $user->id,
+            'invoice_id'       => $invoice->id,
+            'provider'         => 'qonto',
+            'external_id'      => 'qi-1',
+            'lifecycle_status' => 'submitted',
+            'submitted_at'     => now(),
+        ]);
+
+        Http::fake([
+            'https://thirdparty.qonto.com/v2/client_invoices/qi-1' => Http::response([
+                'client_invoice' => ['id' => 'qi-1', 'status' => 'paid'],
+            ], 200),
+        ]);
+
+        $this->postJson("/api/integrations/qonto/invoices/{$invoice->id}/poll")->assertOk();
+
+        $this->assertDatabaseHas('pdp_invoice_submissions', [
+            'invoice_id'       => $invoice->id,
+            'lifecycle_status' => 'paid',
+        ]);
+        $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'statu' => 5]);
+    }
+
+    private function connectQonto(int $tenantId): QontoConnection
+    {
+        return QontoConnection::create([
+            'tenant_id'               => $tenantId,
+            'access_token'            => Crypt::encryptString('token'),
+            'refresh_token'           => Crypt::encryptString('refresh'),
+            'access_token_expires_at' => now()->addHour(),
+            // Renseigné ici pour éviter l'appel de découverte GET /organization.
+            'iban'                    => 'FR7616798000010000123456789',
+        ]);
+    }
+
+    private function makeInvoiceWithSingleLine(int $tenantId): Invoices
+    {
+        $invoice = Invoices::factory()->create([
+            'user_id'      => $tenantId,
+            'code'         => 'FA-2026-001',
+            'invoice_type' => 1,
+            'statu'        => 1,
+            'due_date'     => '2026-09-30',
+        ]);
+
+        $orderLine = OrderLines::factory()->create([
+            'code'  => 'PART-1',
+            'label' => 'Tôle pliée 3mm',
+        ]);
+
+        InvoiceLines::create([
+            'invoices_id'    => $invoice->id,
+            'order_line_id'  => $orderLine->id,
+            'ordre'          => 10,
+            'qty'            => 4,
+            'unit_price'     => 125.50,
+            'discount'       => 10,
+            'vat_rate'       => 20,
+            'invoice_status' => 1,
+        ]);
+
+        return $invoice->fresh();
     }
 }

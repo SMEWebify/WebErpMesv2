@@ -467,19 +467,20 @@ function SortIcon({ field, sortField, sortAsc }) {
 }
 
 const QONTO_LIFECYCLE_CONFIG = {
-    pending:      { badge: 'badge-secondary', label: 'Non soumise' },
-    submitted:    { badge: 'badge-info',      label: 'Déposée' },
+    pending:      { badge: 'badge-secondary', label: 'Non déposée' },
+    submitted:    { badge: 'badge-info',      label: 'Émise (à payer)' },
     acknowledged: { badge: 'badge-primary',   label: 'Accusé reçu' },
     rejected:     { badge: 'badge-danger',    label: 'Rejetée' },
     refused:      { badge: 'badge-danger',    label: 'Refusée' },
     accepted:     { badge: 'badge-success',   label: 'Acceptée' },
     paid:         { badge: 'badge-success',   label: 'Payée' },
+    canceled:     { badge: 'badge-warning',   label: 'Annulée chez Qonto' },
 };
 
 function QontoStatusBadge({ status }) {
     if (!status) return <span className="text-muted small">—</span>;
     const cfg = QONTO_LIFECYCLE_CONFIG[status] ?? { badge: 'badge-secondary', label: status };
-    return <span className={`badge ${cfg.badge}`} title="Statut facturation électronique Qonto">{cfg.label}</span>;
+    return <span className={`badge ${cfg.badge}`} title="Statut de la facture chez Qonto">{cfg.label}</span>;
 }
 
 function colDefs(trans, qontoEnabled) {

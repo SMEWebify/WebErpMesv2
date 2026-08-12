@@ -104,7 +104,6 @@
     </x-adminlte-card>
 @stop
 
-@section('plugins.BootstrapSwitch', true)
 
 @section('css')
 @stop
