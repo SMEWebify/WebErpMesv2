@@ -381,9 +381,7 @@ class TaskManageApiController extends Controller
 
         $task = Task::create($taskData);
 
-        if ($idType === 'order_lines_id') {
-            OrderLines::where('id', $idLine)->update(['tasks_status' => 2]);
-        }
+        $this->promoteOrderLineTaskStatus($idType, $idLine);
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
@@ -464,6 +462,10 @@ class TaskManageApiController extends Controller
         $new->label  = $task->label . ' #copy';
         $new->origin = '5';
         $new->save();
+
+        if ($new->order_lines_id) {
+            $this->promoteOrderLineTaskStatus('order_lines_id', (string) $new->order_lines_id);
+        }
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
@@ -603,6 +605,10 @@ class TaskManageApiController extends Controller
             $successCount++;
         }
 
+        if ($successCount > 0) {
+            $this->promoteOrderLineTaskStatus($idType, $idLine);
+        }
+
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
@@ -650,6 +656,10 @@ class TaskManageApiController extends Controller
             Task::create($taskData);
         }
 
+        if ($standardTasks->isNotEmpty()) {
+            $this->promoteOrderLineTaskStatus($idType, $idLine);
+        }
+
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $fk       = $idType;
@@ -670,6 +680,19 @@ class TaskManageApiController extends Controller
     // -------------------------------------------------------------------------
     // Private: abort if parent document is not open (statu != 1)
     // -------------------------------------------------------------------------
+
+    // Ne promeut que 1 (No task) → 2 (Created) pour ne jamais rétrograder
+    // une ligne déjà "In progress" (3) ou "Finished" (4).
+    private function promoteOrderLineTaskStatus(string $idType, string $idLine): void
+    {
+        if ($idType !== 'order_lines_id') {
+            return;
+        }
+
+        OrderLines::where('id', $idLine)
+            ->where('tasks_status', 1)
+            ->update(['tasks_status' => 2]);
+    }
 
     private function abortIfDocumentLocked(string $idType, string $idPage): void
     {
