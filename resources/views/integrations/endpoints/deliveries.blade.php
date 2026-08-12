@@ -85,16 +85,16 @@
                                             {{ $delivery->http_status }}
                                         </span>
                                     @else
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td>{{ $delivery->duration_ms !== null ? $delivery->duration_ms.' ms' : '—' }}</td>
-                                <td>{{ $delivery->processed_at?->format('H:i:s') ?? '—' }}</td>
+                                <td>{{ $delivery->duration_ms !== null ? $delivery->duration_ms.' ms' : '-' }}</td>
+                                <td>{{ $delivery->processed_at?->format('H:i:s') ?? '-' }}</td>
                                 <td>
                                     @if($delivery->error)
                                         <small class="text-danger">{{ Str::limit($delivery->error, 80) }}</small>
                                     @else
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
                             </tr>

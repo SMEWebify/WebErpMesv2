@@ -146,7 +146,7 @@
                     <input type="password" name="bearer_token" class="form-control"
                            value="{{ old('bearer_token', $endpoint->bearer_token ? '__keep__' : '') }}"
                            autocomplete="off"
-                           placeholder="—">
+                           placeholder="-">
                     <small class="text-muted">Laisser <code>__keep__</code> pour conserver l'actuel.</small>
                 </div>
                 <div class="col-md-4">
@@ -154,7 +154,7 @@
                     <input type="password" name="hmac_secret" class="form-control"
                            value="{{ old('hmac_secret', $endpoint->hmac_secret ? '__keep__' : '') }}"
                            autocomplete="off"
-                           placeholder="—">
+                           placeholder="-">
                     <small class="text-muted">Laisser <code>__keep__</code> pour conserver l'actuel.</small>
                 </div>
             </div>
@@ -222,7 +222,7 @@ BASH;
                 <pre class="bg-light p-3 rounded"><code>{{ $curl }}</code></pre>
                 <small class="text-muted">
                     Résultat attendu : <code>200 {"status":"ignored", "reason":"event_type_not_subscribed"}</code>
-                    (le tunnel HMAC est validé, mais <code>ping</code> n'a pas de handler — normal).
+                    (le tunnel HMAC est validé, mais <code>ping</code> n'a pas de handler - normal).
                 </small>
             </x-adminlte-card>
         @endif

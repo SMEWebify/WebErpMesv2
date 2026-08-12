@@ -3,7 +3,10 @@
 @section('title', 'Intégrations')
 
 @section('content_header')
-    <h1>Intégrations — endpoints</h1>
+    <h1>
+        <a href="{{ route('admin.integrations.index') }}" class="text-muted mr-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
+        Intégrations - endpoints
+    </h1>
 @stop
 
 @section('content')
@@ -66,7 +69,7 @@
                                             <i class="fas fa-check"></i> {{ $endpoint->last_success_at->diffForHumans() }}
                                         </span>
                                     @else
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-right">

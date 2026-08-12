@@ -106,7 +106,7 @@ class IntegrationEndpointController extends Controller
 
         return redirect()
             ->route('admin.integrations.endpoints.edit', $endpoint)
-            ->with('success', 'Secrets régénérés — copie-les MAINTENANT (invisibles ensuite).')
+            ->with('success', 'Secrets régénérés - copie-les MAINTENANT (invisibles ensuite).')
             ->with('revealed_secrets', $revealed);
     }
 
@@ -144,7 +144,7 @@ class IntegrationEndpointController extends Controller
         abort_unless($endpoint->direction === IntegrationEndpoint::DIRECTION_OUTBOUND, 404);
 
         if (empty($endpoint->url)) {
-            return back()->with('error', 'URL cible manquante — configure-la avant de tester.');
+            return back()->with('error', 'URL cible manquante - configure-la avant de tester.');
         }
 
         try {
@@ -152,7 +152,7 @@ class IntegrationEndpointController extends Controller
             $response = (new N2PClient($endpoint))->pushPing();
             $ms = (int) ((microtime(true) - $started) * 1000);
 
-            return back()->with('success', "✅ Ping OK ({$ms} ms) — réponse : " . json_encode($response, JSON_UNESCAPED_UNICODE));
+            return back()->with('success', "✅ Ping OK ({$ms} ms) - réponse : " . json_encode($response, JSON_UNESCAPED_UNICODE));
         } catch (RequestException $e) {
             $status = $e->response?->status();
             $body = mb_strimwidth((string) $e->response?->body(), 0, 300, '…');

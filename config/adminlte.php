@@ -888,7 +888,7 @@ return [
                 ],
                 [
                     'text'       => 'Intégrations',
-                    'url'        => 'admin/integrations/endpoints',
+                    'url'        => 'admin/integrations',
                     'icon'       => 'fas fa-exchange-alt',
                     'icon_color' => 'info',
                 ],

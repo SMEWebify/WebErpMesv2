@@ -3,7 +3,10 @@
 @section('title', 'Qonto - Intégration')
 
 @section('content_header')
-    <h1>Qonto <small class="text-muted">Synchronisation clients</small></h1>
+    <h1>
+        <a href="{{ route('admin.integrations.index') }}" class="text-muted mr-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
+        Qonto <small class="text-muted">Synchronisation clients</small>
+    </h1>
 @stop
 
 @section('content')

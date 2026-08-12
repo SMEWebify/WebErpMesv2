@@ -3,7 +3,10 @@
 @section('title', 'Nest2Prod')
 
 @section('content_header')
-    <h1>Nest2Prod</h1>
+    <h1>
+        <a href="{{ route('admin.integrations.index') }}" class="text-muted mr-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
+        Nest2Prod
+    </h1>
 @stop
 
 @section('content')
