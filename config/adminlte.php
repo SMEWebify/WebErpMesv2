@@ -403,6 +403,12 @@ return [
                     'icon_color' => 'info',
                 ],
                 [
+                    'text' => 'order_confirmations_trans_key',
+                    'url'  => 'order-confirmations',
+                    'icon_color' => 'info',
+                    'can'  => ['order-confirmations-menu'],
+                ],
+                [
                     'text' => 'pre_orders_trans_key',
                     'url'  => 'pre-orders',
                     'icon_color' => 'primary',

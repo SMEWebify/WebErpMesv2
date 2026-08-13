@@ -352,9 +352,28 @@
                       </td>
                     </tr>
                     @endif
+                    {{-- L'ARC n'est plus un PDF de la commande : c'est un document à part.
+                         Le bouton crée le premier indice, reprend le brouillon en cours,
+                         ou ouvre l'indice suivant si le précédent a été envoyé. --}}
+                    @php $currentArc = $Order->currentConfirmation; @endphp
                     <tr>
-                      <td style="width:50%">{{  __('general_content.order_confirm_trans_key') }}</td>
-                      <td><x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" /></td>
+                      <td style="width:50%">
+                        {{ __('general_content.order_confirm_trans_key') }}
+                        @if($currentArc)
+                          <br>
+                          <a href="{{ route('order.confirmations.show', ['id' => $currentArc->id]) }}" class="small">
+                            {{ $currentArc->code }} ({{ $currentArc->revision }})
+                          </a>
+                        @endif
+                      </td>
+                      <td>
+                        <form method="POST" action="{{ route('order.confirmations.store.from.order', ['order' => $Order->id]) }}">
+                          @csrf
+                          <button class="btn btn-info btn-sm" type="submit">
+                            <i class="fas fa-file-signature"></i> {{ __('general_content.arc_issue_trans_key') }}
+                          </button>
+                        </form>
+                      </td>
                     </tr>
                     @endif
                     <tr>

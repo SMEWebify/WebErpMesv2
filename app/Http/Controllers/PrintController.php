@@ -13,6 +13,8 @@ use App\Models\Workflow\CreditNotes;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use App\Services\OrderCalculatorService;
 use App\Services\QuoteCalculatorService;
+use App\Models\Workflow\OrderConfirmations;
+use App\Services\OrderConfirmationCalculatorService;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
 use App\Services\PurchaseCalculatorService;
@@ -47,13 +49,20 @@ class PrintController extends Controller
     }
 
     /**
-     * @param Orders $Document
+     * ARC — rendu depuis les lignes figées du document, jamais depuis la commande.
+     *
+     * Un ARC en cours n'est pas imprimable : tant qu'il n'est pas envoyé il
+     * n'engage rien, comme une facture au brouillon.
+     *
+     * @param OrderConfirmations $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getOrderConfirmPdf(Orders $Document)
+    public function getOrderConfirmPdf(OrderConfirmations $Document)
     {
-        $typeDocumentName = __('general_content.order_confirm_trans_key');
-        $calculatorService = new OrderCalculatorService($Document);
+        abort_if((int) $Document->statu === OrderConfirmations::STATUS_IN_PROGRESS, 403, __('general_content.arc_draft_no_pdf_trans_key'));
+
+        $typeDocumentName = __('general_content.order_confirm_trans_key') . ' ' . $Document->revision;
+        $calculatorService = new OrderConfirmationCalculatorService($Document);
         return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-sales');
     }
 
@@ -255,6 +264,8 @@ class PrintController extends Controller
                 return 'OrderLines';
             case Invoices::class:
                 return 'invoiceLines';
+            case OrderConfirmations::class:
+                return 'OrderConfirmationLines';
             case Deliverys::class:
                 return 'DeliveryLines';
             case CreditNotes::class:

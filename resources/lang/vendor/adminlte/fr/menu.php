@@ -17,6 +17,7 @@ return [
     'orders_trans_key'                         => 'Commandes',
     'orders_list_trans_key'                    => 'Commandes',
     'orders_lines_list_trans_key'              => 'Ligne de commandes',
+    'order_confirmations_trans_key'            => 'Confirmations de commande',
     'scheduling_trans_key'                     => 'Planification',
     'order_calendar_trans_key'                 => 'Calendrier',
     'pre_orders_trans_key'                     => 'Pré-commandes',

@@ -12,6 +12,7 @@ class DocumentCodeTemplateSeeder extends Seeder
         $templates = [
             ['document_type' => 'quote',               'template' => 'QT-{yyyy}-{mm}-{dd}-{id}'],
             ['document_type' => 'order',               'template' => '{dd}-OR-{id}'],
+            ['document_type' => 'order-confirmation',  'template' => 'ARC-{yyyy}-{id}'],
             ['document_type' => 'internal-order',      'template' => 'INT-{dd}'],
             ['document_type' => 'invoice',             'template' => '{dd}{mm}{yy}{id(2)}'],
             ['document_type' => 'credit-note',         'template' => 'AV-{yyyy}-{id}'],
