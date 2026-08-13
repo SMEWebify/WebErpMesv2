@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.opportunity_trans_key')  . ' - ' . $CreditNotes->label)
+@section('title', __('general_content.opportunity_trans_key')  . ' - ' . $Opportunity->label)
 
 @section('content_header')
     <x-Content-header-previous-button  h1="{{ __('general_content.opportunity_trans_key') }} : {{  $Opportunity->label }}" previous="{{ $previousUrl }}" list="{{ route('opportunities') }}" next="{{ $nextUrl }}"/>
