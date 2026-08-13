@@ -12,7 +12,7 @@ class SheetLotPayloadBuilder
      * L'unité doit être "pièce" — sinon la qté n'a pas de sens (m², kg...).
      * Conversion m²/kg → pièces = chantier V2.
      */
-    private const SHEET_UNIT_CODES = ['PC', 'UN', 'U', 'PIECE', 'PIÈCE', 'PCE'];
+    private const SHEET_UNIT_CODES = ['PC', 'UN', 'U', 'UNIT', 'PIECE', 'PIÈCE', 'PCE'];
 
     public const EXTERNAL_REF_PREFIX = 'MV-';
 
@@ -26,7 +26,7 @@ class SheetLotPayloadBuilder
         $move->loadMissing([
             'StockLocationProducts.product.Unit',
             'StockLocationProducts.StockLocation',
-            'purchaseReceiptLines.purchaseLines',
+            'purchaseReceiptLines.purchaseLines.purchase.companie',
         ]);
 
         $slp = $move->StockLocationProducts;
@@ -52,6 +52,31 @@ class SheetLotPayloadBuilder
         $receiptLine = $move->purchaseReceiptLines;
         $purchaseLine = $receiptLine?->purchaseLines ?? null;
 
+        // Fournisseur : porté par la commande d'achat parente (purchase.companie),
+        // pas par la ligne d'achat (purchase_lines.supplier_ref est un champ de
+        // référence texte libre, souvent vide). On préfère le label métier ; à
+        // défaut, le code interne.
+        $supplierName = null;
+        $supplier = $purchaseLine?->purchase?->companie;
+        if ($supplier) {
+            $supplierName = $this->stringOrNull($supplier->label) ?? $this->stringOrNull($supplier->code);
+        }
+
+        // Emplacement : StockLocation n'a pas de colonne `name` — c'est `label`
+        // (nom humain "Rack pièces") ou `code` (identifiant "RACK2"). On envoie
+        // "label (code)" pour que N2P affiche un nom compréhensible ET la ref.
+        $locationName = null;
+        $loc = $slp?->StockLocation;
+        if ($loc) {
+            $label = $this->stringOrNull($loc->label);
+            $code  = $this->stringOrNull($loc->code);
+            if ($label && $code && $label !== $code) {
+                $locationName = "{$label} ({$code})";
+            } else {
+                $locationName = $label ?? $code;
+            }
+        }
+
         // Dimensions PAR LOT : stock_moves.x/y/z_size portent la vraie taille de
         // la tôle reçue (voir migration 2024_05_23_193135). On tombe sur la
         // fiche produit uniquement si le move n'a pas la dim (import legacy).
@@ -71,13 +96,14 @@ class SheetLotPayloadBuilder
             'lots' => [array_filter([
                 'external_ref'  => self::EXTERNAL_REF_PREFIX . $move->id,
                 'material'      => $this->stringOrNull($product->material),
+                'finish'        => $this->stringOrNull($product->finishing),
                 'thickness'     => $this->floatOrNull($product->thickness),
                 'sheet_x'       => $sheetX,
                 'sheet_y'       => $sheetY,
                 'sheet_z'       => $sheetZ,
-                'supplier'      => $this->stringOrNull($purchaseLine?->supplier_ref),
+                'supplier'      => $supplierName,
                 'received_at'   => optional($move->created_at)->toDateString(),
-                'location'      => $this->stringOrNull($slp?->StockLocation?->name),
+                'location'      => $locationName,
                 'unit_weight'   => $this->floatOrNull($product->weight),
                 'unit_cost'     => $unitCost,
                 'initial_qty'   => (int) round((float) $move->qty),

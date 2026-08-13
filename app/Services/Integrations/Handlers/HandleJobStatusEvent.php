@@ -9,7 +9,6 @@ use App\Services\Integrations\IntegrationEventHandler;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
-use RuntimeException;
 
 class HandleJobStatusEvent implements IntegrationEventHandler
 {
@@ -55,7 +54,16 @@ class HandleJobStatusEvent implements IntegrationEventHandler
 
         $order = $this->resolveOrder($ofCode, (string) ($data['line_ref'] ?? ''));
         if (! $order) {
-            throw new RuntimeException("Order not found for of_code={$ofCode}");
+            // Order absente côté ERP — peut arriver après restauration d'un
+            // vieux backup, purge RGPD, ou décalage de tenants. On loge et on
+            // sort en silence : throw ferait retenter N2P en boucle pour rien
+            // (la ligne n'existera jamais). Delivery marquée processed → 200.
+            Log::channel('n2p')->warning('Skipping job.status_changed for unknown order', [
+                'of_code' => $ofCode,
+                'line_ref' => (string) ($data['line_ref'] ?? ''),
+                'new_status' => $newStatus,
+            ]);
+            return;
         }
 
         $occurredAt = $meta['occurred_at'] instanceof Carbon
