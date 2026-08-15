@@ -31,6 +31,9 @@ return [
 
     'logo_alt' => $commercial ? 'Nest2Prod ERP' : 'WEM',
 
+    // Sigle court (preloader, pastilles, favicons texte)
+    'logo_short' => $commercial ? 'N2P' : 'WEM',
+
     // Publisher / editor name shown in legal pages
     'publisher_name' => $commercial ? 'Nest2Prod' : 'SMEWebify',
 
