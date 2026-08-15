@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -8,16 +8,64 @@ function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
 
-function isWeekend(dateStr) {
-    const d = new Date(dateStr + 'T00:00:00');
-    const day = d.getDay();
-    return day === 0 || day === 6;
+/** Replace :placeholders in a translated string. */
+function fmt(template, params = {}) {
+    return Object.entries(params).reduce(
+        (acc, [key, value]) => acc.split(`:${key}`).join(value),
+        String(template ?? '')
+    );
 }
 
-function isBankHoliday(dateStr, bankHolidays) {
-    const mmdd = dateStr.slice(5);
-    return Object.prototype.hasOwnProperty.call(bankHolidays, mmdd) ||
-           Object.prototype.hasOwnProperty.call(bankHolidays, dateStr);
+function currentLocale() {
+    if (typeof document !== 'undefined' && document.documentElement.lang) {
+        return document.documentElement.lang;
+    }
+    if (typeof navigator !== 'undefined' && navigator.language) {
+        return navigator.language;
+    }
+    return 'en';
+}
+
+/** Local (not UTC) Y-m-d key, so "today" matches the server dates. */
+function toDateKey(date) {
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+}
+
+/**
+ * Turn the flat Y-m-d list into decorated day columns:
+ * weekday label, short date, today / weekend / bank holiday flags.
+ */
+function buildDays(possibleDates, bankHolidays, locale) {
+    const todayKey = toDateKey(new Date());
+
+    return (possibleDates ?? []).map((date) => {
+        const parsed = new Date(`${date}T00:00:00`);
+        const weekDay = parsed.getDay();
+        const holidayLabel = bankHolidays?.[date] ?? bankHolidays?.[date.slice(5)] ?? null;
+        const isWeekend = weekDay === 0 || weekDay === 6;
+
+        return {
+            date,
+            weekday: parsed
+                .toLocaleDateString(locale, { weekday: 'short' })
+                .replace(/\.$/, '')
+                .toLocaleUpperCase(locale),
+            label: parsed.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }),
+            fullLabel: parsed.toLocaleDateString(locale, {
+                weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
+            }),
+            isToday: date === todayKey,
+            isWeekend,
+            isHoliday: Boolean(holidayLabel),
+            holidayLabel,
+            isOff: isWeekend || Boolean(holidayLabel),
+            isWeekStart: weekDay === 1,
+        };
+    });
 }
 
 /**
@@ -31,33 +79,44 @@ function effectiveCapacity(service, customCapacities) {
 }
 
 /**
- * Compute load rate and cell styling.
+ * Compute the load tone + label of a single cell.
  * Uses raw hours worked + effective capacity — no hardcoded value.
+ * Thresholds are unchanged from the previous table version.
  */
-function getCellInfo(hoursWorked, displayHoursDiff, holiday, weekend, capacity) {
-    if (holiday) return { bgClass: 'bg-dark text-white', label: 'OFF' };
-    if (weekend)  return { bgClass: 'bg-info-subtle text-dark', label: 'Weekend' };
-
+function computeCell(hoursWorked, capacity, displayHoursDiff) {
     if (hoursWorked === null || hoursWorked === undefined) {
-        return { bgClass: 'bg-light text-muted', label: '—' };
+        return { tone: 'none', label: null, pct: null, hours: null };
     }
 
-    const loadPct   = (hoursWorked / capacity) * 100;
-    const hoursDiff = Math.round((capacity - hoursWorked) * 100) / 100;
+    const pct = capacity > 0 ? (hoursWorked / capacity) * 100 : 0;
+    const diff = Math.round((capacity - hoursWorked) * 100) / 100;
 
+    let tone;
     if (displayHoursDiff) {
-        if (hoursDiff <= 0)  return { bgClass: 'bg-danger text-white',      label: `+${Math.abs(hoursDiff)} h` };
-        if (hoursDiff <= 2)  return { bgClass: 'bg-warning text-dark',      label: `−${hoursDiff} h` };
-        if (hoursDiff <= 4)  return { bgClass: 'bg-orange text-white',      label: `−${hoursDiff} h` };
-        return                      { bgClass: 'bg-success text-white',     label: `−${hoursDiff} h` };
+        if (diff <= 0)      tone = 'over';
+        else if (diff <= 2) tone = 'high';
+        else if (diff <= 4) tone = 'medium';
+        else                tone = 'low';
+    } else {
+        if (pct >= 100)     tone = 'over';
+        else if (pct >= 80) tone = 'high';
+        else if (pct >= 50) tone = 'medium';
+        else if (pct >= 20) tone = 'low';
+        else                tone = 'free';
     }
 
-    const pct = Math.round(loadPct);
-    if (loadPct >= 100) return { bgClass: 'bg-danger text-white',   label: `${pct}%` };
-    if (loadPct >= 80)  return { bgClass: 'bg-orange text-white',   label: `${pct}%` };
-    if (loadPct >= 50)  return { bgClass: 'bg-warning text-dark',   label: `${pct}%` };
-    if (loadPct >= 20)  return { bgClass: 'bg-success text-white',  label: `${pct}%` };
-    return                    { bgClass: 'bg-light text-muted',     label: `${pct}%` };
+    const label = displayHoursDiff
+        ? (diff <= 0 ? `+${Math.abs(diff)} h` : `−${diff} h`)
+        : `${Math.round(pct)} %`;
+
+    return { tone, label, pct, diff, hours: hoursWorked };
+}
+
+const TONE_ORDER = ['free', 'low', 'medium', 'high', 'over'];
+
+function toneRank(tone) {
+    const index = TONE_ORDER.indexOf(tone);
+    return index === -1 ? -1 : index;
 }
 
 // ---------------------------------------------------------------------------
@@ -74,12 +133,18 @@ function useInterval(callback, delay) {
     }, [delay]);
 }
 
-// localStorage key for persisted custom capacities
+// localStorage keys for persisted preferences
 const STORAGE_KEY = 'lp_custom_capacities';
+const VIEW_KEY    = 'lp_compact_view';
 
 function loadStoredCapacities() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'); }
     catch { return {}; }
+}
+
+function loadStoredCompact() {
+    try { return localStorage.getItem(VIEW_KEY) === '1'; }
+    catch { return false; }
 }
 
 // ---------------------------------------------------------------------------
@@ -135,9 +200,19 @@ function CalcModal({ id, title, status, trans, onCalculate }) {
                             <>
                                 <ProgressBar value={progress} />
                                 <p className="text-muted mb-3">
-                                    {count} tâche(s) traitée(s)
-                                    {isRunning && <span className="ml-2 badge badge-warning"><i className="fas fa-spinner fa-spin mr-1"></i>En cours…</span>}
-                                    {isDone    && <span className="ml-2 badge badge-success"><i className="fas fa-check mr-1"></i>Terminé</span>}
+                                    {fmt(trans.tasks_processed ?? ':count tâche(s) traitée(s)', { count })}
+                                    {isRunning && (
+                                        <span className="ml-2 badge badge-warning">
+                                            <i className="fas fa-spinner fa-spin mr-1"></i>
+                                            {trans.running ?? 'En cours…'}
+                                        </span>
+                                    )}
+                                    {isDone && (
+                                        <span className="ml-2 badge badge-success">
+                                            <i className="fas fa-check mr-1"></i>
+                                            {trans.finished ?? 'Terminé'}
+                                        </span>
+                                    )}
                                 </p>
                                 {isDone && (
                                     <button className="btn btn-primary btn-block mb-3" onClick={() => window.location.reload()}>
@@ -288,13 +363,13 @@ function FilterForm({ startDate, endDate, displayHoursDiff, loading, trans, onSt
 // Capacity column badge
 // ---------------------------------------------------------------------------
 
-function CapacityBadge({ service, customCapacities }) {
+function CapacityBadge({ service, customCapacities, trans }) {
     const cap = effectiveCapacity(service, customCapacities);
 
     if (service.capacity > 0) {
         // Real capacity from configured resources
         return (
-            <span className="badge badge-primary" title="Capacité issue des ressources configurées">
+            <span className="badge badge-primary" title={trans.capacity_from_resources ?? 'Capacité issue des ressources configurées'}>
                 {cap}h/j
             </span>
         );
@@ -303,7 +378,7 @@ function CapacityBadge({ service, customCapacities }) {
     if (customCapacities[service.id] > 0) {
         // User-defined custom capacity
         return (
-            <span className="badge badge-warning" title="Capacité définie manuellement (aucune ressource configurée)">
+            <span className="badge badge-warning" title={trans.capacity_custom ?? 'Capacité définie manuellement (aucune ressource configurée)'}>
                 {cap}h/j
             </span>
         );
@@ -311,7 +386,7 @@ function CapacityBadge({ service, customCapacities }) {
 
     // No capacity at all — fallback used, shown as warning
     return (
-        <span className="badge badge-secondary" title="Aucune ressource configurée — fallback 8h/j">
+        <span className="badge badge-secondary" title={trans.capacity_fallback ?? 'Aucune ressource configurée — fallback 8h/j'}>
             8h/j*
         </span>
     );
@@ -321,7 +396,7 @@ function CapacityBadge({ service, customCapacities }) {
 // Custom capacity footer (services without resources)
 // ---------------------------------------------------------------------------
 
-function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChange }) {
+function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChange, trans }) {
     const unconfigured = services.filter(s => s.capacity === 0);
 
     if (unconfigured.length === 0) return null;
@@ -330,9 +405,9 @@ function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChan
         <div className="card-footer bg-light">
             <p className="mb-2 font-weight-bold text-secondary">
                 <i className="fas fa-sliders-h mr-1"></i>
-                Capacité journalière par défaut
+                {trans.default_capacity ?? 'Capacité journalière par défaut'}
                 <small className="ml-2 text-muted font-weight-normal">
-                    (services sans ressources configurées — valeurs utilisées pour le calcul du taux de charge)
+                    ({trans.default_capacity_hint ?? 'services sans ressources configurées — valeurs utilisées pour le calcul du taux de charge'})
                 </small>
             </p>
             <div className="row">
@@ -375,90 +450,303 @@ function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChan
 }
 
 // ---------------------------------------------------------------------------
-// Load table
+// Legend
 // ---------------------------------------------------------------------------
 
-function LoadTable({ data, displayHoursDiff, customCapacities, onCustomCapacityChange, trans }) {
-    const { services, possibleDates, hoursPerServiceDay, tasksPerServiceDay, bankHolidays } = data;
+function Legend({ displayHoursDiff, trans }) {
+    const entries = displayHoursDiff
+        ? [
+            { tone: 'low',    label: trans.level_low    ?? 'Faible',    hint: '> 4 h' },
+            { tone: 'medium', label: trans.level_medium ?? 'Équilibré', hint: '≤ 4 h' },
+            { tone: 'high',   label: trans.level_high   ?? 'Tendu',     hint: '≤ 2 h' },
+            { tone: 'over',   label: trans.level_over   ?? 'Surcharge', hint: '≤ 0 h' },
+        ]
+        : [
+            { tone: 'free',   label: trans.level_free   ?? 'Libre',     hint: '< 20 %' },
+            { tone: 'low',    label: trans.level_low    ?? 'Faible',    hint: '20 – 50 %' },
+            { tone: 'medium', label: trans.level_medium ?? 'Équilibré', hint: '50 – 80 %' },
+            { tone: 'high',   label: trans.level_high   ?? 'Tendu',     hint: '80 – 100 %' },
+            { tone: 'over',   label: trans.level_over   ?? 'Surcharge', hint: '≥ 100 %' },
+        ];
+
+    return (
+        <div className="lp-legend">
+            <span className="lp-legend__title">{trans.legend ?? 'Niveau de charge'}</span>
+            {entries.map(entry => (
+                <span key={entry.tone} className={`lp-legend__item lp-tone-${entry.tone}`}>
+                    <span className="lp-legend__dot"></span>
+                    {entry.label}
+                    <small className="lp-legend__hint">{entry.hint}</small>
+                </span>
+            ))}
+            <span className="lp-legend__item lp-tone-weekend">
+                <span className="lp-legend__dot"></span>
+                {trans.weekend ?? 'Week-end'}
+            </span>
+            <span className="lp-legend__item lp-tone-off">
+                <span className="lp-legend__dot"></span>
+                {trans.day_off ?? 'Jour férié'}
+            </span>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Timeline (services × days)
+// ---------------------------------------------------------------------------
+
+function DayHeader({ day, trans }) {
+    const classes = ['lp-day'];
+    if (day.isHoliday)      classes.push('lp-tone-off');
+    else if (day.isWeekend) classes.push('lp-tone-weekend');
+    if (day.isToday)        classes.push('lp-col-today');
+    if (day.isWeekStart)    classes.push('lp-week-start');
+
+    return (
+        <th
+            scope="col"
+            className={classes.join(' ')}
+            title={day.holidayLabel ? `${day.fullLabel} — ${day.holidayLabel}` : day.fullLabel}
+        >
+            <span className="lp-day__weekday">{day.weekday}</span>
+            <span className="lp-day__date">{day.label}</span>
+            {day.isToday && (
+                <span className="lp-day__today">{trans.today ?? "Aujourd'hui"}</span>
+            )}
+        </th>
+    );
+}
+
+function ServiceCell({ service, stats, compact, customCapacities, trans }) {
+    if (compact) {
+        return (
+            <th scope="row" className="lp-col-service">
+                <div className="lp-service lp-service--compact">
+                    <span className={`lp-service__dot lp-tone-${stats.peakTone}`}></span>
+                    <span className="lp-service__name">{service.label}</span>
+                    <span className="lp-service__cap text-muted">{stats.capacity}h/j</span>
+                </div>
+            </th>
+        );
+    }
+
+    return (
+        <th scope="row" className="lp-col-service">
+            <div className="lp-service">
+                {service.picture ? (
+                    <img
+                        alt={service.label}
+                        className="lp-service__avatar"
+                        src={`/storage/images/methods/${service.picture}`}
+                        width="38" height="38"
+                    />
+                ) : (
+                    <span className="lp-service__avatar lp-service__avatar--empty">
+                        <i className="fas fa-industry"></i>
+                    </span>
+                )}
+                <div className="lp-service__body">
+                    <span className="lp-service__name">{service.label}</span>
+                    <div className="lp-service__badges">
+                        <CapacityBadge service={service} customCapacities={customCapacities} trans={trans} />
+                        {stats.totalHours > 0 && (
+                            <span className="badge badge-light border">
+                                {fmt(trans.period_total ?? 'Total :hours h', {
+                                    hours: Math.round(stats.totalHours * 10) / 10,
+                                })}
+                            </span>
+                        )}
+                        {stats.taskCount > 0 && (
+                            <span className="badge badge-light border">
+                                {fmt(trans.tasks_count ?? ':count tâche(s)', { count: stats.taskCount })}
+                            </span>
+                        )}
+                        {stats.overloadedDays > 0 && (
+                            <span className="badge badge-danger">
+                                {fmt(trans.overloaded_days ?? ':count jour(s) en surcharge', {
+                                    count: stats.overloadedDays,
+                                })}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </th>
+    );
+}
+
+function LoadCell({ day, cell, capacity, taskCount, compact, trans }) {
+    const classes = ['lp-cell'];
+    if (day.isHoliday)      classes.push('lp-tone-off');
+    else if (day.isWeekend) classes.push('lp-tone-weekend');
+    else                    classes.push(`lp-tone-${cell.tone}`);
+    if (day.isToday)        classes.push('lp-col-today');
+    if (day.isWeekStart)    classes.push('lp-week-start');
+
+    const hasLoad = cell.hours !== null;
+
+    // A day off with booked hours must still be readable: keep the "off" tone
+    // for the column but show the load, flagged with a warning icon.
+    const offWithLoad = day.isOff && hasLoad;
+
+    const tooltipParts = [day.fullLabel];
+    if (day.holidayLabel) tooltipParts.push(day.holidayLabel);
+    if (hasLoad) {
+        tooltipParts.push(`${Math.round(cell.hours * 10) / 10} h / ${capacity} h — ${Math.round(cell.pct)} %`);
+        if (taskCount > 0) {
+            tooltipParts.push(fmt(trans.tasks_count ?? ':count tâche(s)', { count: taskCount }));
+        }
+    }
+
+    return (
+        <td className={classes.join(' ')} title={tooltipParts.join(' — ')}>
+            {hasLoad ? (
+                <div className="lp-cell__inner">
+                    <span className="lp-pill">
+                        {offWithLoad && <i className="fas fa-exclamation-triangle lp-pill__warn"></i>}
+                        {cell.label}
+                    </span>
+                    {!compact && (
+                        <span className="lp-gauge">
+                            <span
+                                className="lp-gauge__fill"
+                                style={{ width: `${Math.min(Math.max(cell.pct, 0), 100)}%` }}
+                            ></span>
+                        </span>
+                    )}
+                </div>
+            ) : (
+                <span className="lp-cell__empty">
+                    {day.isHoliday ? 'OFF' : day.isWeekend ? '·' : '—'}
+                </span>
+            )}
+        </td>
+    );
+}
+
+function LoadTimeline({
+    data, days, displayHoursDiff, compact, customCapacities,
+    onToggleCompact, onCustomCapacityChange, trans,
+}) {
+    const { services, hoursPerServiceDay, tasksPerServiceDay } = data;
+
+    // Per-service aggregates over the displayed period (badges + row highlight).
+    const rows = useMemo(() => services.map((service) => {
+        const capacity = effectiveCapacity(service, customCapacities);
+        const svcId    = String(service.id);
+        const hoursMap = hoursPerServiceDay?.[svcId] ?? {};
+        const tasksMap = tasksPerServiceDay?.[svcId] ?? {};
+
+        let totalHours = 0;
+        let taskCount = 0;
+        let overloadedDays = 0;
+        let workingDays = 0;
+        let peakTone = 'free';
+
+        const cells = days.map((day) => {
+            const hours = hoursMap[day.date] ?? null;
+            const tasks = tasksMap[day.date] ?? [];
+            const cell  = computeCell(hours, capacity, displayHoursDiff);
+
+            if (!day.isOff) workingDays += 1;
+            if (hours !== null) {
+                totalHours += hours;
+                taskCount  += tasks.length;
+                if (!day.isOff) {
+                    if (cell.pct >= 100) overloadedDays += 1;
+                    if (toneRank(cell.tone) > toneRank(peakTone)) peakTone = cell.tone;
+                }
+            }
+
+            return { day, cell, taskCount: tasks.length };
+        });
+
+        return {
+            service,
+            capacity,
+            cells,
+            totalHours,
+            taskCount,
+            overloadedDays,
+            peakTone,
+            avgPct: workingDays > 0 && capacity > 0
+                ? (totalHours / (workingDays * capacity)) * 100
+                : 0,
+        };
+    }), [services, days, hoursPerServiceDay, tasksPerServiceDay, customCapacities, displayHoursDiff]);
 
     return (
         <div className="card card-outline card-lime">
+            <div className="card-header d-flex align-items-center flex-wrap">
+                <h3 className="card-title mb-0">
+                    <i className="fas fa-chart-bar mr-1"></i>
+                    {trans.service}
+                </h3>
+                <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary ml-auto"
+                    onClick={onToggleCompact}
+                >
+                    <i className={`fas ${compact ? 'fa-expand-alt' : 'fa-compress-alt'} mr-1`}></i>
+                    {compact
+                        ? (trans.detailed_view ?? 'Vue détaillée')
+                        : (trans.compact_view ?? 'Vue compacte')}
+                </button>
+            </div>
+
             <div className="card-body p-0">
-                <div className="table-responsive">
-                    <table className="table table-hover table-bordered align-middle shadow-sm rounded w-100 mb-0">
-                        <thead className="text-center">
+                <div className={`lp-timeline ${compact ? 'lp-timeline--compact' : ''}`}>
+                    <table className="lp-table">
+                        <thead>
                             <tr>
-                                <th className="bg-primary text-white" style={{ minWidth: 44 }}></th>
-                                <th className="bg-primary text-white text-left">{trans.service}</th>
-                                <th className="bg-primary text-white" style={{ minWidth: 70 }}>Cap.</th>
-                                {possibleDates.map(date => {
-                                    const weekend = isWeekend(date);
-                                    const holiday = isBankHoliday(date, bankHolidays);
-                                    const thClass = holiday ? 'bg-dark text-white'
-                                        : weekend ? 'bg-secondary text-white'
-                                        : 'bg-light text-dark';
-                                    return (
-                                        <th key={date} className={`fw-normal ${thClass}`} style={{ minWidth: 80 }}>
-                                            {date.slice(5)} {/* show MM-DD only */}
-                                        </th>
-                                    );
-                                })}
+                                <th scope="col" className="lp-col-service lp-col-service--head">
+                                    {trans.service}
+                                </th>
+                                {days.map(day => (
+                                    <DayHeader key={day.date} day={day} trans={trans} />
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {services.map(service => {
-                                const cap   = effectiveCapacity(service, customCapacities);
-                                const svcId = String(service.id);
-
-                                return (
-                                    <tr key={service.id} className="align-middle">
-                                        <td className="text-center p-1">
-                                            {service.picture && (
-                                                <img
-                                                    alt={service.label}
-                                                    className="rounded-circle border shadow-sm"
-                                                    src={`/storage/images/methods/${service.picture}`}
-                                                    width="36" height="36"
-                                                />
-                                            )}
-                                        </td>
-                                        <td className="fw-semibold">{service.label}</td>
-                                        <td className="text-center">
-                                            <CapacityBadge service={service} customCapacities={customCapacities} />
-                                        </td>
-                                        {possibleDates.map(date => {
-                                            const hours   = hoursPerServiceDay[svcId]?.[date] ?? null;
-                                            const tasks   = tasksPerServiceDay[svcId]?.[date] ?? [];
-                                            const holiday = isBankHoliday(date, bankHolidays);
-                                            const weekend = isWeekend(date);
-                                            const { bgClass, label } = getCellInfo(hours, displayHoursDiff, holiday, weekend, cap);
-                                            const tooltip = tasks.length
-                                                ? `${tasks.length} tâche(s) — ${hours?.toFixed(1) ?? 0}h`
-                                                : undefined;
-
-                                            return (
-                                                <td
-                                                    key={date}
-                                                    className={`text-center fw-bold ${bgClass} p-1`}
-                                                    title={tooltip}
-                                                    style={{ fontSize: '0.8rem' }}
-                                                >
-                                                    {label}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
+                            {rows.map(row => (
+                                <tr
+                                    key={row.service.id}
+                                    className={row.overloadedDays > 0 ? 'lp-row lp-row--overloaded' : 'lp-row'}
+                                >
+                                    <ServiceCell
+                                        service={row.service}
+                                        stats={row}
+                                        compact={compact}
+                                        customCapacities={customCapacities}
+                                        trans={trans}
+                                    />
+                                    {row.cells.map(({ day, cell, taskCount }) => (
+                                        <LoadCell
+                                            key={day.date}
+                                            day={day}
+                                            cell={cell}
+                                            capacity={row.capacity}
+                                            taskCount={taskCount}
+                                            compact={compact}
+                                            trans={trans}
+                                        />
+                                    ))}
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <div className="card-body py-2">
+                <Legend displayHoursDiff={displayHoursDiff} trans={trans} />
             </div>
 
             <CustomCapacityFooter
                 services={services}
                 customCapacities={customCapacities}
                 onCustomCapacityChange={onCustomCapacityChange}
+                trans={trans}
             />
 
             <div className="card-footer">
@@ -482,6 +770,7 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
     const [data,             setData]             = useState(initial       ?? null);
     const [loading,          setLoading]          = useState(false);
     const [error,            setError]            = useState(null);
+    const [compact,          setCompact]          = useState(loadStoredCompact);
 
     // Custom capacities persisted in localStorage (keyed by service id)
     const [customCapacities, setCustomCapacities] = useState(loadStoredCapacities);
@@ -490,6 +779,14 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
         setCustomCapacities(prev => {
             const next = { ...prev, [serviceId]: value };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (_) {}
+            return next;
+        });
+    }, []);
+
+    const handleToggleCompact = useCallback(() => {
+        setCompact(prev => {
+            const next = !prev;
+            try { localStorage.setItem(VIEW_KEY, next ? '1' : '0'); } catch (_) {}
             return next;
         });
     }, []);
@@ -518,6 +815,11 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
         e.preventDefault();
         fetchData(startDate, endDate);
     };
+
+    const days = useMemo(
+        () => buildDays(data?.possibleDates, data?.bankHolidays ?? {}, currentLocale()),
+        [data?.possibleDates, data?.bankHolidays]
+    );
 
     const initialCounts = {
         date:     initial?.countTaskNullDate      ?? 0,
@@ -549,10 +851,13 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
             {error && <div className="alert alert-danger">{error}</div>}
 
             {data && (
-                <LoadTable
+                <LoadTimeline
                     data={data}
+                    days={days}
                     displayHoursDiff={displayHoursDiff}
+                    compact={compact}
                     customCapacities={customCapacities}
+                    onToggleCompact={handleToggleCompact}
                     onCustomCapacityChange={handleCustomCapacityChange}
                     trans={trans}
                 />
