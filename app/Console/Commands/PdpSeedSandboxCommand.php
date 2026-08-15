@@ -42,7 +42,12 @@ class PdpSeedSandboxCommand extends Command
         'mail'               => 'contact@burger-queen.test',
     ];
 
-    /** Acheteur : une société cliente dans WEM. */
+    /**
+     * Acheteur : une société cliente dans WEM — et fournisseur, car c'est elle
+     * qui nous enverra une facture lors du test de réception. Les deux statuts
+     * sont indépendants et cumulables, comme pour un client réel qui nous
+     * facture aussi ses prestations.
+     */
     private const BUYER = [
         'label'               => 'Tricatel',
         'siren'               => '000000001',
@@ -108,6 +113,7 @@ class PdpSeedSandboxCommand extends Command
             'electronic_address_scheme' => '0225',
             'code'                      => $buyer->code ?: 'TRICATEL',
             'statu_customer'            => 2,
+            'statu_supplier'            => 2,
             'active'                    => 1,
         ])->save();
 

@@ -27,6 +27,12 @@ $canSubmit = ! $submission || in_array($currentStatus, [
     PdpLifecycle::Pending->value,
     PdpLifecycle::Rejected->value,
 ]);
+
+// Exception : la plateforme mémorise le numéro de facture dès le premier dépôt,
+// même rejeté. Un nouvel envoi sous le même numéro est refusé en doublon, quelle
+// qu'ait été la correction. Proposer « Redéposer » serait promettre un échec.
+$numberAlreadyRegistered = str_contains(mb_strtoupper((string) $submission?->rejection_reason), 'DOUBLON');
+$canSubmit = $canSubmit && ! $numberAlreadyRegistered;
 @endphp
 
 <x-adminlte-card title="Facturation électronique — {{ $providerName }}" theme="info" theme-mode="outline" collapsible>
@@ -44,6 +50,13 @@ $canSubmit = ! $submission || in_array($currentStatus, [
 
         @if($submission?->rejection_reason)
             <br><small class="text-danger">Motif : {{ $submission->rejection_reason }}</small>
+        @endif
+
+        @if($numberAlreadyRegistered)
+            <br><small class="text-muted">
+                Le numéro {{ $Invoice->code }} est déjà enregistré sur la plateforme :
+                un nouvel envoi sous ce numéro sera refusé. Émettez une nouvelle facture.
+            </small>
         @endif
     </div>
 

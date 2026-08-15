@@ -37,6 +37,15 @@ class FacturXBuilder
         // Le PDF lisible doit être rendu après la construction des données : le
         // rendu de la vue déplace les lignes sur $invoice->Lines (cf. renderReadablePdf).
         $pdfBuilder = new ZugferdDocumentPdfBuilder($document, $this->renderReadablePdf($invoice));
+
+        // La spécification Factur-X impose que le XML embarqué soit déclaré
+        // /AFRelationship /Alternative : il est une représentation *alternative*
+        // du PDF, pas une donnée annexe. La bibliothèque écrit /Data par défaut,
+        // et une plateforme conforme cherchant l'attachement sur ce critère
+        // reçoit alors un PDF dont elle n'extrait aucune facture — sans erreur,
+        // puisque le fichier est par ailleurs valide.
+        $pdfBuilder->setAttachmentRelationshipTypeToAlternative();
+
         $pdfBuilder->generateDocument();
 
         return $pdfBuilder->downloadString();
@@ -86,6 +95,13 @@ class FacturXBuilder
         $zugferddatas = ZugferdDocumentBuilder::CreateNew(ZugferdProfiles::PROFILE_EN16931);
         $zugferddatas
         ->setDocumentInformation($invoice->code, $this->documentTypeCode($invoice), $issueDate, $currency)
+
+        // Mode de facturation (BT-23, règle française BR-FR-08). M1 = facture
+        // unitaire sans commande ni décompte, le cas courant en facturation
+        // commerciale ; c'est aussi la valeur des factures de référence des
+        // plateformes. Absent, le document part en avertissement.
+        ->setDocumentBusinessProcess(config('invoicing.business_process', 'M1'))
+
         ->addDocumentNote('Facture ' . $invoice->code . ' du ' . $issueDate->format('d/m/Y'))
 
         // Référence acheteur (BT-10) : référence commande/marché côté client.
@@ -111,8 +127,15 @@ class FacturXBuilder
             $factory->mail
         )
 
-        // Ajout des informations du client
-        ->setDocumentBuyer($client->label, $client->code)
+        // Ajout des informations du client.
+        //
+        // Le code client interne de WEM n'est volontairement pas émis comme
+        // identifiant acheteur (BT-46) : la règle française BR-FR-CO-10 impose
+        // un schéma d'identification (BT-46-1) dès que cet identifiant est
+        // présent, et un code propre à l'ERP n'appartient à aucun référentiel
+        // ISO 6523. L'acheteur reste identifié par son SIREN (schéma 0002), sa
+        // TVA et son adresse électronique de facturation.
+        ->setDocumentBuyer($client->label)
         ->setDocumentBuyerAddress(
             $clientAddress->adress ?? 'N/A',
             null,
@@ -127,6 +150,36 @@ class FacturXBuilder
         }
         if ($client->intra_community_vat) {
             $zugferddatas->addDocumentBuyerTaxRegistration('VA', $client->intra_community_vat);
+        }
+
+        // Lieu de livraison (BG-13). Ce bloc doit être renseigné : la
+        // bibliothèque émet toujours le conteneur ApplicableHeaderTradeDelivery,
+        // et un conteneur vide viole PEPPOL-EN16931-R008. La règle porte le
+        // libellé « still status warning », mais la plateforme rejette le
+        // document dessus (fr:213, motif REJ_SEMAN) — un avertissement à la
+        // lecture, un refus dans les faits.
+        //
+        // On n'invente pas de date de livraison : seule l'adresse de la facture
+        // est reprise, ce qui est factuel et suffit à rendre le bloc valide.
+        //
+        // L'ordre compte : setDocumentShipToAddress() n'écrit rien tant que la
+        // partie destinataire n'existe pas, et celle-ci n'est créée que si au
+        // moins un de ses champs est fourni.
+        $zugferddatas->setDocumentShipTo($client->label);
+        $zugferddatas->setDocumentShipToAddress(
+            $clientAddress->adress ?? null,
+            null,
+            null,
+            $clientAddress->zipcode ?? null,
+            $clientAddress->city ?? null,
+            $this->countryCode($clientAddress->country ?? null)
+        );
+
+        // Mentions légales françaises obligatoires (BT-22, règle BR-FR-05) :
+        // pénalités de retard, indemnité de recouvrement et escompte doivent
+        // figurer dans les notes, chacune sous son code sujet.
+        foreach ($this->legalNotices() as $subjectCode => $content) {
+            $zugferddatas->addDocumentNote($content, null, $subjectCode);
         }
 
         // Adresses électroniques de facturation (BT-34 vendeur, BT-49 acheteur).
@@ -272,6 +325,8 @@ class FacturXBuilder
         // Vendeur — paramètres de la société (Administration → Société).
         if (blank($factory->siren)) {
             $problems[] = 'Votre société n\'a pas de SIREN (BT-30).';
+        } elseif (! $this->looksLikeSiren($factory->siren)) {
+            $problems[] = "Le SIREN de votre société («\u{00A0}{$factory->siren}\u{00A0}») doit comporter 9 chiffres (BT-30).";
         }
         if (blank($factory->vat_num)) {
             $problems[] = 'Votre société n\'a pas de numéro de TVA intracommunautaire (BT-31).';
@@ -294,6 +349,9 @@ class FacturXBuilder
             if (filled($client->intra_community_vat) && ! $this->looksLikeVatNumber($client->intra_community_vat)) {
                 $problems[] = "Le numéro de TVA du client «\u{00A0}{$name}\u{00A0}» («\u{00A0}{$client->intra_community_vat}\u{00A0}») doit commencer par le code pays, par exemple FR12345678901 (BT-48).";
             }
+            if (filled($client->siren) && ! $this->looksLikeSiren($client->siren)) {
+                $problems[] = "Le SIREN du client «\u{00A0}{$name}\u{00A0}» («\u{00A0}{$client->siren}\u{00A0}») doit comporter 9 chiffres (BT-47).";
+            }
             if (! $this->electronicAddress($client)) {
                 $problems[] = "Le client «\u{00A0}{$name}\u{00A0}» n'a ni adresse électronique de facturation ni SIREN : la plateforme ne saurait pas à qui remettre la facture (BT-49).";
             }
@@ -305,6 +363,39 @@ class FacturXBuilder
                 . '— ' . implode("\n— ", $problems)
             );
         }
+    }
+
+    /**
+     * Mentions légales obligatoires sur toute facture entre professionnels en
+     * France (art. L441-9 et L441-10 du Code de commerce), portées par BT-22
+     * sous les codes sujet attendus par le schematron français :
+     *   PMD — pénalités de retard
+     *   PMT — indemnité forfaitaire pour frais de recouvrement
+     *   AAB — escompte pour paiement anticipé, ou son absence
+     *
+     * Les textes par défaut reprennent le régime légal supplétif. Une société
+     * dont les CGV prévoient un taux ou un escompte différent doit les
+     * surcharger via config/invoicing.php, sous peine de contradiction entre
+     * ses conditions de vente et ses factures.
+     *
+     * @return array<string, string> code sujet => texte
+     */
+    private function legalNotices(): array
+    {
+        return array_filter(config('invoicing.legal_notices', [
+            'PMD' => 'En cas de retard de paiement, des pénalités sont exigibles au taux de trois fois le taux d\'intérêt légal, sans qu\'un rappel soit nécessaire.',
+            'PMT' => 'Tout retard de paiement donne lieu à une indemnité forfaitaire pour frais de recouvrement de 40 euros (art. L441-10 du Code de commerce).',
+            'AAB' => 'Aucun escompte n\'est accordé pour paiement anticipé.',
+        ]));
+    }
+
+    /**
+     * Le SIREN est émis avec le schéma 0002 (SIRENE) : 9 chiffres exactement.
+     * Un SIRET (14 chiffres) relèverait du schéma 0009 et serait mal interprété.
+     */
+    private function looksLikeSiren(?string $value): bool
+    {
+        return (bool) preg_match('/^\d{9}$/', preg_replace('/\s+/', '', (string) $value));
     }
 
     /**

@@ -5,11 +5,14 @@ namespace App\Services\Integrations\Pdp\Drivers;
 use App\Models\Integrations\PdpSyncCursor;
 use App\Models\Workflow\Invoices;
 use App\Services\Integrations\Pdp\Contracts\PdpCursorSyncGateway;
+use App\Services\Integrations\Pdp\Contracts\PdpDirectoryGateway;
 use App\Services\Integrations\Pdp\Contracts\PdpGateway;
 use App\Services\Integrations\Pdp\Contracts\PdpInboundGateway;
+use App\Services\Integrations\Pdp\Contracts\PdpStatusReportingGateway;
 use App\Services\Integrations\Pdp\Data\PdpInvoiceResult;
 use App\Services\Integrations\Pdp\Data\PdpWebhookEvent;
 use App\Services\Integrations\Pdp\Enums\PdpLifecycle;
+use App\Services\Integrations\Pdp\Enums\PdpOutgoingStatus;
 use App\Services\Integrations\SuperPdpConnectionService;
 use App\Services\Invoicing\FacturXBuilder;
 use Illuminate\Http\Client\Response;
@@ -34,13 +37,16 @@ use Illuminate\Support\Str;
  *
  * @see https://www.superpdp.tech/openapi (spec « SUPER PDP », v1.33.0.beta)
  */
-class SuperPdpGateway implements PdpGateway, PdpInboundGateway, PdpCursorSyncGateway
+class SuperPdpGateway implements PdpGateway, PdpInboundGateway, PdpCursorSyncGateway, PdpDirectoryGateway, PdpStatusReportingGateway
 {
     /** Taille de page demandée lors des synchronisations. */
     private const PAGE_SIZE = 100;
 
     /** Garde-fou : nombre de pages maximum lues en une exécution. */
     private const MAX_PAGES = 50;
+
+    /** Société du jeton courant (cf. company()), résolue au plus une fois. */
+    private ?array $company = null;
 
     public function __construct(
         private SuperPdpConnectionService $connection,
@@ -208,6 +214,191 @@ class SuperPdpGateway implements PdpGateway, PdpInboundGateway, PdpCursorSyncGat
             ->body();
     }
 
+    /* ------------------------------------------------- Statuts émis (acheteur) */
+
+    public function reportStatus(
+        string $externalId,
+        PdpOutgoingStatus $status,
+        ?string $reason = null,
+        ?string $note = null,
+    ): void {
+        $detail = array_filter([
+            'reason' => $reason,
+            'notes'  => $note ? [[
+                'content_code' => $status->value,
+                'contents'     => [['content' => Str::limit($note, 900)]],
+            ]] : null,
+        ]);
+
+        $payload = array_filter([
+            'invoice_id'  => (int) $externalId,
+            'status_code' => $status->value,
+            // `details` n'est envoyé que s'il porte quelque chose : un tableau
+            // vide serait refusé par la plateforme.
+            'details'     => $detail !== [] ? [$detail] : null,
+        ]);
+
+        $response = $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->asJson()
+            ->post($this->url('/invoice_events'), $payload));
+
+        if (! $response->successful()) {
+            $body = $response->json() ?? [];
+
+            throw new \RuntimeException(
+                "Déclaration du statut « {$status->label()} » refusée par la plateforme : "
+                . Str::limit((string) ($body['message'] ?? $response->body()), 500)
+            );
+        }
+
+        Log::info('SuperPdpGateway: status reported', [
+            'external_id' => $externalId,
+            'status_code' => $status->value,
+            'reason'      => $reason,
+        ]);
+    }
+
+    /* --------------------------------------------------------------- Annuaire */
+
+    public function listEntries(): array
+    {
+        $response = $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->get($this->url('/directory_entries')))
+            ->throw();
+
+        return array_map(fn (array $entry) => [
+            'id'             => (string) ($entry['id'] ?? ''),
+            'identifier'     => (string) ($entry['identifier'] ?? ''),
+            'directory'      => (string) ($entry['directory'] ?? ''),
+            'is_replyto'     => (bool) ($entry['is_replyto'] ?? false),
+            'effective_date' => isset($entry['effective_date']) ? substr((string) $entry['effective_date'], 0, 10) : null,
+        ], $response->json('data', []));
+    }
+
+    public function openEntry(string $identifier, ?string $effectiveDate = null): array
+    {
+        $directory = $this->directoryForEnvironment();
+
+        $payload = array_filter([
+            'directory'      => $directory,
+            'identifier'     => $this->normalizeIdentifier($identifier, $directory),
+            // Date de prise d'effet : propre à l'annuaire français.
+            'effective_date' => $directory === 'ppf' ? $effectiveDate : null,
+        ]);
+
+        $response = $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->asJson()
+            ->post($this->url('/directory_entries'), $payload));
+
+        if (! $response->successful()) {
+            $body = $response->json() ?? [];
+            throw new \RuntimeException(
+                "Ouverture de la ligne d'annuaire refusée : "
+                . Str::limit((string) ($body['message'] ?? $response->body()), 500)
+            );
+        }
+
+        $entry = $response->json() ?? [];
+
+        Log::info('SuperPdpGateway: directory entry opened', [
+            'identifier' => $payload['identifier'],
+            'directory'  => $directory,
+        ]);
+
+        return [
+            'id'         => (string) ($entry['id'] ?? ''),
+            'identifier' => (string) ($entry['identifier'] ?? $payload['identifier']),
+            'directory'  => (string) ($entry['directory'] ?? $directory),
+        ];
+    }
+
+    public function closeEntry(string $id): void
+    {
+        $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->delete($this->url("/directory_entries/{$id}")))
+            ->throw();
+
+        Log::info('SuperPdpGateway: directory entry closed', ['id' => $id]);
+    }
+
+    public function lookupEntries(string $siren): array
+    {
+        $response = $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->get($this->url('/french_directory/entries'), ['number' => $this->digits($siren)]))
+            ->throw();
+
+        return array_map(fn (array $entry) => [
+            'identifier' => (string) ($entry['identifier'] ?? ''),
+            'is_active'  => (bool) ($entry['is_active'] ?? false),
+            'name'       => $entry['company']['formal_name'] ?? null,
+            'city'       => $entry['company']['city'] ?? null,
+        ], $response->json('data', []));
+    }
+
+    public function searchCompanies(array $criteria): array
+    {
+        $query = array_filter([
+            'number'                 => isset($criteria['number']) ? $this->digits($criteria['number']) : null,
+            'formal_name_starts_with' => $criteria['name'] ?? null,
+            'post_code_starts_with'  => $criteria['post_code'] ?? null,
+            'limit'                  => $criteria['limit'] ?? 20,
+        ]);
+
+        $response = $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->get($this->url('/french_directory/companies'), $query))
+            ->throw();
+
+        return array_map(fn (array $company) => [
+            'number'      => (string) ($company['number'] ?? ''),
+            'formal_name' => (string) ($company['formal_name'] ?? ''),
+            'address'     => $company['address'] ?? null,
+            'postcode'    => $company['postcode'] ?? null,
+            'city'        => $company['city'] ?? null,
+        ], $response->json('data', []));
+    }
+
+    /**
+     * Annuaire dans lequel ouvrir une ligne, imposé par l'environnement :
+     * en bac à sable seul `peppol` est ouvrable, en production les identifiants
+     * français passent par `ppf` — la plateforme se chargeant elle-même de
+     * créer l'entrée Peppol correspondante. Choisir à la place de l'utilisateur
+     * évite un refus incompréhensible au moment de l'ouverture.
+     */
+    private function directoryForEnvironment(): string
+    {
+        return $this->company()['env'] === 'sandbox' ? 'peppol' : 'ppf';
+    }
+
+    /**
+     * Met l'identifiant au format attendu par l'annuaire visé : préfixé du
+     * scheme ID pour Peppol (`0225:853322915`), nu pour l'annuaire français
+     * (`853322915`, `853322915_SERVICEACHATS`).
+     */
+    private function normalizeIdentifier(string $identifier, string $directory): string
+    {
+        $identifier = trim($identifier);
+
+        if ($directory === 'ppf') {
+            return Str::contains($identifier, ':') ? Str::after($identifier, ':') : $identifier;
+        }
+
+        return Str::contains($identifier, ':') ? $identifier : '0225:' . $identifier;
+    }
+
+    /** Société rattachée au jeton courant, mise en cache le temps de la requête. */
+    private function company(): array
+    {
+        return $this->company ??= $this->withAuth(fn (string $token) => Http::withToken($token)
+            ->get($this->url('/companies/me')))
+            ->throw()
+            ->json() ?? [];
+    }
+
+    private function digits(string $value): string
+    {
+        return preg_replace('/\D+/', '', $value);
+    }
+
     /* ------------------------------------------------------------- Mécanique HTTP */
 
     /**
@@ -305,30 +496,61 @@ class SuperPdpGateway implements PdpGateway, PdpInboundGateway, PdpCursorSyncGat
                 continue;
             }
 
+            // Tout ce qui rend `is_valid` faux est bloquant, y compris les
+            // assertions marquées `flag="warning"` : la plateforme rejette
+            // ensuite le document en fr:213 / REJ_SEMAN, en citant précisément
+            // ces règles-là. Le libellé « warning » décrit la sévérité dans le
+            // schematron, pas le sort réservé à la facture.
+            //
+            // Les deux tableaux sont donc réunis : `failures` porte les échecs
+            // fatals, `messages` les avertissements — et les deux font rejeter.
+            $problems = array_merge(
+                $this->collect($report, 'failures'),
+                $this->collect($report, 'messages'),
+            );
+
             throw new \RuntimeException(
-                "La facture {$invoice->code} n'est pas conforme : " . $this->formatFailures($report)
+                "La facture {$invoice->code} n'est pas conforme : " . $this->format($problems, $report)
             );
         }
     }
 
-    /** Extrait les messages d'échec d'un rapport de validation. */
-    private function formatFailures(array $report): string
+    /**
+     * Aplatit les entrées d'un rapport de validation.
+     *
+     * @return array<int, string>
+     */
+    private function collect(array $report, string $key): array
     {
         $messages = [];
 
         foreach ($report['subreports'] ?? [] as $subreport) {
-            foreach ($subreport['failures'] ?? [] as $failure) {
-                $messages[] = trim((string) ($failure['message'] ?? $failure['raw'] ?? ''));
+            foreach ($subreport[$key] ?? [] as $entry) {
+                $rule    = trim((string) ($entry['rule'] ?? ''));
+                $message = trim((string) ($entry['message'] ?? $entry['raw'] ?? ''));
+
+                if ($message === '') {
+                    continue;
+                }
+
+                // Le libellé cite souvent déjà la règle : ne pas la répéter.
+                $messages[] = ($rule !== '' && ! str_contains($message, $rule))
+                    ? "[{$rule}] {$message}"
+                    : $message;
             }
         }
 
-        $messages = array_filter(array_unique($messages));
+        return array_values(array_unique($messages));
+    }
 
+    /** @param array<int, string> $messages */
+    private function format(array $messages, array $report): string
+    {
         if ($messages === []) {
             return (string) ($report['error'] ?? 'motif non précisé par le validateur');
         }
 
-        return Str::limit(implode(' ; ', array_slice($messages, 0, 5)), 900);
+        return Str::limit(implode("\n", array_slice($messages, 0, 5)), 1500);
     }
 
     /** Transforme un refus d'API en message exploitable dans l'interface. */
@@ -440,14 +662,38 @@ class SuperPdpGateway implements PdpGateway, PdpInboundGateway, PdpCursorSyncGat
 
         $parts = [trim((string) ($event['status_text'] ?? ''))];
 
+        // `data.reason` porte le texte complet du refus, avec la règle violée.
+        // C'est la seule information réellement actionnable : sans elle, un
+        // rejet se résume à un code (« REJ_SEMAN ») qui ne dit pas quoi corriger.
+        if (! empty($event['data']['reason'])) {
+            $parts[] = trim((string) $event['data']['reason']);
+        }
+
         foreach ($event['details'] ?? [] as $detail) {
             foreach ($detail['notes'] ?? [] as $note) {
-                $parts[] = trim((string) ($note['content'] ?? ''));
+                // notes[].contents[].content : le contenu est imbriqué d'un
+                // niveau de plus que ne le laisse penser le nom du champ.
+                foreach ($note['contents'] ?? [] as $content) {
+                    $parts[] = trim((string) ($content['content'] ?? ''));
+                }
+                // Le code de règle n'est ajouté que s'il ne figure pas déjà
+                // dans le texte, où il est presque toujours cité en tête.
+                $code = trim((string) ($note['content_code'] ?? ''));
+                if ($code !== '' && ! Str::contains(implode(' ', $parts), $code)) {
+                    $parts[] = $code;
+                }
             }
             if (! empty($detail['reason'])) {
                 $parts[] = 'code ' . $detail['reason'];
             }
         }
+
+        // Les chemins XPath des schematrons occupent des centaines de caractères
+        // sans rien apprendre à l'utilisateur : le message s'arrête avant.
+        $parts = array_map(
+            fn (string $part) => trim((string) preg_split('/\s+at\s+\/\*:/', $part, 2)[0]),
+            $parts
+        );
 
         $reason = implode(' — ', array_filter(array_unique($parts)));
 

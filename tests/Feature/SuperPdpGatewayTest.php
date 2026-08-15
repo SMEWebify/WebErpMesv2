@@ -124,6 +124,62 @@ class SuperPdpGatewayTest extends TestCase
         }
     }
 
+    public function test_a_warning_alone_blocks_the_deposit(): void
+    {
+        // Une assertion « flag=warning » suffit à faire tomber `is_valid`, et la
+        // plateforme rejette ensuite le document en fr:213 / REJ_SEMAN en citant
+        // cette règle. Constaté en conditions réelles : PEPPOL-EN16931-R008,
+        // libellée « still status warning », a fait rejeter quatre factures.
+        // Le mot « warning » qualifie la sévérité dans le schematron, pas le
+        // sort de la facture — laisser passer reviendrait à promettre un envoi
+        // qui échouera silencieusement des heures plus tard.
+        $this->fakeHttp([
+            'https://api.superpdp.tech/v1.beta/validation_reports' => Http::response([
+                'data' => [[
+                    'is_valid'   => false,
+                    'subreports' => [[
+                        'validator' => 'FACTUR-X_EN16931.xslt',
+                        'messages'  => [['message' => 'Document MUST not contain empty elements. (still status warning)', 'raw' => '', 'rule' => 'PEPPOL-EN16931-R008']],
+                        'failures'  => [],
+                    ]],
+                ]],
+            ]),
+            'https://api.superpdp.tech/v1.beta/invoices?*' => Http::response(['id' => 91, 'events' => []]),
+        ]);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/PEPPOL-EN16931-R008/');
+
+        try {
+            $this->gateway()->submit($this->makeInvoiceWithSingleLine());
+        } finally {
+            Http::assertNotSent(fn (ClientRequest $r) => str_contains($r->url(), '/v1.beta/invoices?'));
+        }
+    }
+
+    public function test_the_refusal_message_names_the_rule_that_failed(): void
+    {
+        // Un rapport sans motif exploitable laisserait l'utilisateur devant
+        // « motif non précisé » : le code de règle doit toujours ressortir.
+        $this->fakeHttp([
+            'https://api.superpdp.tech/v1.beta/validation_reports' => Http::response([
+                'data' => [[
+                    'is_valid'   => false,
+                    'subreports' => [[
+                        'validator' => 'EN16931-CII.xsl',
+                        'messages'  => [],
+                        'failures'  => [['message' => 'Somme des lignes incohérente', 'raw' => '', 'rule' => 'BR-CO-10']],
+                    ]],
+                ]],
+            ]),
+        ]);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/\[BR-CO-10\] Somme des lignes incohérente/');
+
+        $this->gateway()->submit($this->makeInvoiceWithSingleLine());
+    }
+
     public function test_an_expired_token_is_refreshed_once_and_the_call_replayed(): void
     {
         Http::fake([

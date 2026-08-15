@@ -212,6 +212,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
         Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
+        // Annuaire : adresse electronique de facturation du client, par SIREN
+        Route::get('/{id}/pdp/lookup', 'App\Http\Controllers\Companies\CompaniesController@pdpLookup')->name('companies.pdp.lookup');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
         Route::get('/{id}/json/timeline', 'App\Http\Controllers\Companies\CompaniesController@timelineJson')->name('companies.json.timeline');
 
@@ -539,6 +541,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/incoming-invoices/upload', 'App\Http\Controllers\Purchases\IncomingInvoiceController@upload')->name('purchases.incoming.upload');
         Route::post('/incoming-invoices/{incoming}/convert', 'App\Http\Controllers\Purchases\IncomingInvoiceController@convert')->name('purchases.incoming.convert');
         Route::post('/incoming-invoices/{incoming}/reject', 'App\Http\Controllers\Purchases\IncomingInvoiceController@reject')->name('purchases.incoming.reject');
+        // Statuts déclarés au fournisseur (obligation de l'acheteur : fr:204 à fr:211)
+        Route::post('/incoming-invoices/{incoming}/status', 'App\Http\Controllers\Purchases\IncomingInvoiceController@reportStatus')->name('purchases.incoming.status');
 
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrderFromRFQ')->middleware(['auth'])->name('purchases.orders.store');

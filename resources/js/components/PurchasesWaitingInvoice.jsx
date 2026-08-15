@@ -123,6 +123,81 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
 // Root Component
 // ---------------------------------------------------------------------------
 
+
+/**
+ * Facture électronique reçue, affichée en regard des réceptions à cocher.
+ *
+ * Ses lignes ne sont pas recopiables : une ligne de facture d'achat référence
+ * une commande et une réception, seule garantie qu'on ne paie que ce qui a été
+ * commandé et reçu. Le rôle de ce panneau est donc la confrontation — et
+ * l'écart de total est ce qu'on ne voit pas à l'œil sur trente lignes.
+ */
+function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
+    const gap = Number((selectedTotal - incoming.total_ht).toFixed(2));
+    const matched = Math.abs(gap) < 0.01;
+
+    return (
+        <div className="card bg-light mx-3 mt-3 mb-0">
+            <div className="card-header py-2">
+                <h3 className="card-title">
+                    <i className="fas fa-file-invoice mr-2 text-muted" />
+                    Document reçu — {incoming.seller_name}
+                    {incoming.invoice_number && <span className="ml-2 text-muted">n° {incoming.invoice_number}</span>}
+                </h3>
+                {incoming.issue_date && (
+                    <span className="float-right text-muted small">
+                        Émise le {incoming.issue_date}
+                        {incoming.due_date && ` — échéance ${incoming.due_date}`}
+                    </span>
+                )}
+            </div>
+            <div className="card-body py-2">
+                <div className="table-responsive">
+                    <table className="table table-sm mb-2">
+                        <thead>
+                            <tr>
+                                <th>Ce que le fournisseur facture</th>
+                                <th className="text-right" style={{ width: 140 }}>Quantité</th>
+                                <th className="text-right" style={{ width: 140 }}>Total HT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {incoming.lines.length === 0 && (
+                                <tr><td colSpan={3} className="text-muted">Aucune ligne dans le document.</td></tr>
+                            )}
+                            {incoming.lines.map((line, i) => (
+                                <tr key={i}>
+                                    <td>{line.name}</td>
+                                    <td className="text-right">{line.quantity} {line.unit_code}</td>
+                                    <td className="text-right">{money(line.line_total)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colSpan={2} className="text-right">Total facturé HT</th>
+                                <th className="text-right">{money(incoming.total_ht)}</th>
+                            </tr>
+                            <tr className="text-muted">
+                                <td colSpan={2} className="text-right">TVA / TTC</td>
+                                <td className="text-right">{money(incoming.total_vat)} / {money(incoming.total_ttc)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div className={`alert py-2 mb-0 ${matched ? 'alert-success' : 'alert-warning'}`}>
+                    <i className={`fas ${matched ? 'fa-check' : 'fa-balance-scale-right'} mr-2`} />
+                    Réceptions sélectionnées : <strong>{money(selectedTotal)}</strong>
+                    {matched
+                        ? ' — le total correspond au document reçu.'
+                        : <> — écart de <strong>{money(gap)}</strong> avec le document reçu.</>}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode }) {
     const [companies, setCompanies]         = useState([]);
     const [users, setUsers]                 = useState([]);
@@ -133,20 +208,37 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
     const [errors, setErrors]               = useState({});
     const [flashError, setFlashError]       = useState(null);
 
+    // Contexte de rapprochement : la boîte de réception ouvre cet écran avec la
+    // facture électronique reçue et son fournisseur déjà désignés.
+    const query       = new URLSearchParams(window.location.search);
+    const incomingId  = query.get('incoming_id');
+
     // Form state
-    const [companiesId, setCompaniesId] = useState('');
+    const [incoming, setIncoming]                   = useState(null);
+    const [supplierReference, setSupplierReference] = useState('');
+    const [companiesId, setCompaniesId] = useState(query.get('companies_id') ?? '');
     const [code, setCode]               = useState(initialCode ?? '');
     const [userId, setUserId]           = useState('');
     const [selectedIds, setSelectedIds] = useState([]);
 
     // Initial load
     useEffect(() => {
-        apiFetch(endpoints.init)
+        const params = new URLSearchParams();
+        if (companiesId) params.set('companies_id', companiesId);
+        if (incomingId)  params.set('incoming_id', incomingId);
+
+        apiFetch(`${endpoints.init}?${params}`)
             .then(data => {
                 setCompanies(data.companies ?? []);
                 setUsers(data.users ?? []);
                 setLines(data.lines ?? []);
                 if (!code) setCode(data.initial_code ?? '');
+                if (data.incoming) {
+                    setIncoming(data.incoming);
+                    // La référence fournisseur est le numéro de SA facture :
+                    // c'est elle qui permettra de retrouver le document reçu.
+                    setSupplierReference(data.incoming.invoice_number ?? '');
+                }
             })
             .catch(() => setFlashError(trans.error ?? 'Erreur de chargement'))
             .finally(() => setLoading(false));
@@ -189,6 +281,8 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                     companies_id: companiesId || undefined,
                     user_id:      userId      || undefined,
                     line_ids:     selectedIds,
+                    supplier_reference: supplierReference || undefined,
+                    incoming_id:        incomingId || undefined,
                 }),
             });
             window.location.href = data.redirect;
@@ -207,6 +301,15 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
         );
     }
 
+    const money = (value) => new Intl.NumberFormat('fr-FR', {
+        style: 'currency', currency: 'EUR',
+    }).format(Number(value ?? 0));
+
+    // Ce que représentent les réceptions cochées, au prix de la commande d'achat.
+    const selectedTotal = lines
+        .filter(l => selectedIds.includes(l.id))
+        .reduce((sum, l) => sum + Number(l.line_total ?? 0), 0);
+
     return (
         <div className="card">
             {flashError && (
@@ -216,6 +319,10 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                         <span>&times;</span>
                     </button>
                 </div>
+            )}
+
+            {incoming && (
+                <IncomingDocumentPanel incoming={incoming} selectedTotal={selectedTotal} money={money} />
             )}
 
             {/* Form */}
@@ -265,6 +372,27 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                             </div>
                             {errors.code && (
                                 <span className="text-danger">{errors.code[0]}</span>
+                            )}
+                        </div>
+
+                        {/* Numéro de la facture du fournisseur : unique par tiers,
+                            c'est lui qui rattache notre écriture à son document. */}
+                        <div className="form-group col-md-3">
+                            <label>Référence fournisseur</label>
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text"><i className="fas fa-hashtag" /></span>
+                                </div>
+                                <input
+                                    type="text"
+                                    className={`form-control ${errors.supplier_reference ? 'is-invalid' : ''}`}
+                                    value={supplierReference}
+                                    onChange={e => setSupplierReference(e.target.value)}
+                                    placeholder="N° de facture du fournisseur"
+                                />
+                            </div>
+                            {errors.supplier_reference && (
+                                <span className="text-danger">{errors.supplier_reference[0]}</span>
                             )}
                         </div>
 

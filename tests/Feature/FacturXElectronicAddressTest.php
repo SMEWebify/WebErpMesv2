@@ -71,6 +71,32 @@ class FacturXElectronicAddressTest extends TestCase
         $this->buildXml($invoice);
     }
 
+    public function test_the_internal_client_code_is_not_emitted_as_a_buyer_identifier(): void
+    {
+        // BR-FR-CO-10 : dès que l'identifiant acheteur (BT-46) est présent, son
+        // schéma (BT-46-1) devient obligatoire. Le code client de WEM n'appartient
+        // à aucun référentiel ISO 6523 : l'émettre rendait tout le document
+        // irrecevable — la plateforme l'acceptait puis n'en extrayait rien.
+        $this->makeFactory(['siren' => '853322915']);
+
+        $client  = Companies::where('label', 'Tricatel')->first();
+        $invoice = $this->makeInvoice(['siren' => '552081317']);
+
+        $xml = $this->buildXml($invoice);
+
+        preg_match('#<ram:BuyerTradeParty>.*?</ram:BuyerTradeParty>#s', $xml, $matches);
+        $buyer = $matches[0] ?? '';
+
+        $this->assertStringNotContainsString(
+            '<ram:ID>' . $invoice->companie->code . '</ram:ID>',
+            $buyer,
+            'Le code client interne ne doit pas être émis comme BT-46.'
+        );
+
+        // L'acheteur reste identifié par son SIREN, avec son schéma.
+        $this->assertStringContainsString('<ram:ID schemeID="0002">552081317</ram:ID>', $buyer);
+    }
+
     /* ------------------------------------------------------------- Utilitaires */
 
     private function buildXml(Invoices $invoice): string

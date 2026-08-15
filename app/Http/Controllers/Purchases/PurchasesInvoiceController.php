@@ -13,7 +13,9 @@ use App\Services\PurchaseKPIService;
 use App\Services\PurchaseOrderService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\AccountingEntryService;
+use App\Services\Integrations\Pdp\PdpIncomingInvoiceService;
 use App\Services\PurchaseInvoiceService;
+use App\Models\Integrations\PdpIncomingInvoice;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Purchases\PurchaseLines;
@@ -111,9 +113,16 @@ class PurchasesInvoiceController extends Controller
             $orderLine    = $task?->OrderLines;
             $order        = $orderLine?->order;
 
+            // Montants : le prix vient de la ligne de commande d'achat, la
+            // quantité de la réception. C'est ce qui permet de confronter le
+            // total réellement dû au total facturé par le fournisseur.
+            $unitPrice = (float) ($purchaseLine?->unit_price_after_discount ?? 0);
+
             return [
                 'id'              => $line->id,
                 'receipt_qty'     => $line->receipt_qty,
+                'unit_price'      => $unitPrice,
+                'line_total'      => round($unitPrice * (float) $line->receipt_qty, 2),
                 // order
                 'order_id'        => $order?->id,
                 'order_code'      => $order?->code,
@@ -144,7 +153,48 @@ class PurchasesInvoiceController extends Controller
             'users'        => $users->map(fn($u) => ['id' => $u->id, 'name' => $u->name]),
             'initial_code' => $initialCode,
             'lines'        => $mappedLines,
+            'incoming'     => $this->incomingDocument($request->get('incoming_id')),
         ]);
+    }
+
+    /**
+     * Facture électronique reçue servant de base au rapprochement.
+     *
+     * Ses lignes ne deviennent jamais des lignes de facture d'achat : celles-ci
+     * référencent une commande et une réception, seule garantie qu'on ne paie
+     * que ce qui a été commandé et reçu. Le document du fournisseur est donc
+     * affiché **en regard** de la sélection, comme pièce à confronter.
+     */
+    private function incomingDocument($incomingId): ?array
+    {
+        if (! $incomingId) {
+            return null;
+        }
+
+        $incoming = PdpIncomingInvoice::find($incomingId);
+
+        if (! $incoming) {
+            return null;
+        }
+
+        return [
+            'id'             => $incoming->id,
+            'seller_name'    => $incoming->seller_name,
+            'invoice_number' => $incoming->invoice_number,
+            'issue_date'     => optional($incoming->issue_date)->format('d/m/Y'),
+            'due_date'       => optional($incoming->due_date)->format('d/m/Y'),
+            'currency'       => $incoming->currency,
+            'total_ht'       => (float) $incoming->total_ht,
+            'total_vat'      => (float) $incoming->total_vat,
+            'total_ttc'      => (float) $incoming->total_ttc,
+            'companies_id'   => $incoming->supplier_company_id,
+            'lines'          => array_map(fn (array $l) => [
+                'name'       => $l['name'] ?? '',
+                'quantity'   => (float) ($l['quantity'] ?? 0),
+                'unit_code'  => $l['unit_code'] ?? null,
+                'line_total' => (float) ($l['line_total'] ?? 0),
+            ], $incoming->payload['lines'] ?? []),
+        ];
     }
 
     /**
@@ -158,6 +208,7 @@ class PurchasesInvoiceController extends Controller
             'user_id'            => 'required|exists:users,id',
             'line_ids'           => 'required|array|min:1',
             'line_ids.*'         => 'integer|exists:purchase_receipt_lines,id',
+            'incoming_id'        => 'nullable|integer|exists:pdp_incoming_invoices,id',
             'supplier_reference' => [
                 'nullable', 'string', 'max:100',
                 Rule::unique('purchase_invoices')->where(
@@ -202,6 +253,16 @@ class PurchasesInvoiceController extends Controller
 
             PurchaseLines::where('id', $receiptLine->purchase_line_id)
                 ->increment('invoiced_qty', $receiptLine->receipt_qty);
+        }
+
+        // Rattache la facture électronique reçue : elle passe en « convertie »
+        // et cesse d'apparaître comme à traiter dans la boîte de réception.
+        if (! empty($validated['incoming_id'])) {
+            $incoming = PdpIncomingInvoice::find($validated['incoming_id']);
+
+            if ($incoming) {
+                app(PdpIncomingInvoiceService::class)->attachPurchaseInvoice($incoming, $invoice);
+            }
         }
 
         return response()->json(['redirect' => route('purchase.invoices.show', ['id' => $invoice->id])]);

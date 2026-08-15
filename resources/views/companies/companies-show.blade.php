@@ -549,9 +549,102 @@
                         <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                         @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    
+
+                </div>
+
+                {{-- Adresse électronique de facturation (EN 16931, BT-49).
+                     C'est elle qui indique à la plateforme où remettre la facture.
+                     Laissée vide, le SIREN sert de valeur par défaut : c'est le
+                     choix de la majorité des entreprises françaises. --}}
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label for="electronic_address_scheme" class="small text-muted mb-1">Annuaire</label>
+                        <select class="form-control" name="electronic_address_scheme" id="electronic_address_scheme" @if($Companie->client_type == 2) disabled @endif>
+                            <option value="0225" @if(($Companie->electronic_address_scheme ?? '0225') == '0225') selected @endif>0225 — France</option>
+                            <option value="0208" @if(($Companie->electronic_address_scheme ?? '') == '0208') selected @endif>0208 — Belgique</option>
+                            <option value="0009" @if(($Companie->electronic_address_scheme ?? '') == '0009') selected @endif>0009 — SIRET</option>
+                        </select>
+                        @error('electronic_address_scheme') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="electronic_address" class="small text-muted mb-1">Adresse électronique de facturation</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="electronic_address" id="electronic_address"
+                                   value="{{ $Companie->electronic_address }}"
+                                   placeholder="{{ $Companie->siren ?: 'SIREN' }}"
+                                   @if($Companie->client_type == 2) disabled @endif>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="pdp-lookup-btn"
+                                        data-url="{{ route('companies.pdp.lookup', $Companie->id) }}"
+                                        title="Chercher dans l'annuaire officiel à partir du SIREN">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted" id="pdp-lookup-result">
+                            Vide = le SIREN fait office d'adresse.
+                        </small>
+                        @error('electronic_address') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
                 </div>
               </x-adminlte-card>
+
+              @push('js')
+              <script>
+              (function () {
+                  const btn = document.getElementById('pdp-lookup-btn');
+                  if (!btn) return;
+
+                  const field  = document.getElementById('electronic_address');
+                  const result = document.getElementById('pdp-lookup-result');
+
+                  btn.addEventListener('click', function () {
+                      const siren = document.getElementById('siren')?.value?.trim();
+                      if (!siren) {
+                          result.className = 'form-text text-danger';
+                          result.textContent = 'Renseignez d\'abord le SIREN.';
+                          return;
+                      }
+
+                      btn.disabled = true;
+                      result.className = 'form-text text-muted';
+                      result.textContent = 'Consultation de l\'annuaire…';
+
+                      fetch(btn.dataset.url + '?siren=' + encodeURIComponent(siren), {
+                          headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                          credentials: 'same-origin',
+                      })
+                      .then(r => r.json().then(data => ({ ok: r.ok, data })))
+                      .then(({ ok, data }) => {
+                          btn.disabled = false;
+                          if (!ok) {
+                              result.className = 'form-text text-danger';
+                              result.textContent = data.message ?? 'Consultation impossible.';
+                              return;
+                          }
+                          const active = (data.entries ?? []).filter(e => e.is_active);
+                          if (!active.length) {
+                              result.className = 'form-text text-warning';
+                              result.textContent = 'Ce client n\'est pas encore inscrit à l\'annuaire : demandez-lui son adresse.';
+                              return;
+                          }
+                          // L'adresse est stockée sans son préfixe d'annuaire,
+                          // porté à part par le champ « Annuaire ».
+                          field.value = active[0].identifier.replace(/^\d{4}:/, '');
+                          result.className = 'form-text text-success';
+                          result.textContent = active.length > 1
+                              ? `${active.length} adresses trouvées, la première est reprise (${active[0].name ?? ''}).`
+                              : `Adresse trouvée${active[0].name ? ' — ' + active[0].name : ''}.`;
+                      })
+                      .catch(() => {
+                          btn.disabled = false;
+                          result.className = 'form-text text-danger';
+                          result.textContent = 'Erreur réseau.';
+                      });
+                  });
+              })();
+              </script>
+              @endpush
 
               <x-adminlte-card theme="lime" theme-mode="outline">
                 <div class="row">

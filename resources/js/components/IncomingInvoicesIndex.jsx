@@ -14,6 +14,29 @@ const STATUS_CONFIG = {
 
 const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected', 'unreadable'];
 
+// Provenance du document. Rendue en texte et non en badge : `badge-light` du
+// thème AdminLTE s'affiche en blanc sur blanc dans ce tableau.
+const PROVIDER_LABELS = {
+    superpdp: 'SUPER PDP',
+    qonto:    'Qonto',
+    manual:   'Dépôt manuel',
+};
+
+function providerLabel(provider) {
+    return PROVIDER_LABELS[provider] ?? provider;
+}
+
+// Statuts que l'acheteur doit déclarer au fournisseur (AFNOR XP Z12-012).
+// Un motif est exigé sur les statuts défavorables : sans lui, le fournisseur
+// n'a aucun moyen de corriger sa facture.
+const OUTGOING_STATUSES = [
+    { code: 'fr:204', label: 'Prise en charge',   icon: 'fa-inbox' },
+    { code: 'fr:205', label: 'Approuvée',         icon: 'fa-check' },
+    { code: 'fr:207', label: 'En litige',         icon: 'fa-exclamation-triangle', reason: true },
+    { code: 'fr:210', label: 'Refusée',           icon: 'fa-times',                reason: true },
+    { code: 'fr:211', label: 'Paiement transmis', icon: 'fa-money-check' },
+];
+
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
@@ -91,46 +114,119 @@ function Pagination({ meta, onPage }) {
 // Upload card
 // ---------------------------------------------------------------------------
 
+function fileSize(bytes) {
+    if (bytes < 1024) return `${bytes} o`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
+}
+
+/**
+ * Dépôt manuel d'une facture reçue hors plateforme (courriel, portail client).
+ *
+ * Reprend la zone de dépôt du gestionnaire de fichiers (`wem-dropzone`) plutôt
+ * qu'un champ « Choisir un fichier » : c'est le geste attendu pour un document
+ * qui arrive en pièce jointe, et l'apparence reste celle du reste de l'ERP.
+ */
 function UploadCard({ uploadUrl, onUploaded }) {
-    const [busy, setBusy]   = useState(false);
-    const [msg, setMsg]     = useState(null);
-    const [err, setErr]     = useState(null);
+    const [busy, setBusy] = useState(false);
+    const [msg, setMsg]   = useState(null);
+    const [err, setErr]   = useState(null);
+    const [file, setFile] = useState(null);
+    const [over, setOver] = useState(false);
     const fileRef = useRef(null);
 
-    const submit = (e) => {
-        e.preventDefault();
-        const file = fileRef.current?.files?.[0];
-        if (!file) return;
+    const choose = (files) => {
+        const picked = Array.from(files ?? [])[0];
+        if (!picked) return;
+        setFile(picked);
+        setMsg(null);
+        setErr(null);
+    };
+
+    const reset = () => {
+        setFile(null);
+        if (fileRef.current) fileRef.current.value = '';
+    };
+
+    const submit = () => {
+        if (!file || busy) return;
 
         const form = new FormData();
         form.append('document', file);
 
         setBusy(true); setMsg(null); setErr(null);
         apiFetch(uploadUrl, { method: 'POST', body: form })
-            .then(res => {
-                setMsg(res.message);
-                if (fileRef.current) fileRef.current.value = '';
-                onUploaded();
-            })
+            .then(res => { setMsg(res.message); reset(); onUploaded(); })
             .catch(e => setErr(e.message))
             .finally(() => setBusy(false));
     };
 
     return (
         <div className="card">
-            <div className="card-header"><h3 className="card-title">Déposer une facture électronique reçue</h3></div>
+            <div className="card-header">
+                <h3 className="card-title">
+                    <i className="fas fa-inbox mr-2 text-muted" />
+                    Déposer une facture électronique reçue
+                </h3>
+            </div>
             <div className="card-body">
-                <form onSubmit={submit} className="form-inline">
-                    <input ref={fileRef} type="file" name="document" accept=".pdf,.xml" className="form-control-file mr-2" required />
-                    <button type="submit" className="btn btn-primary" disabled={busy}>
-                        <i className={`fas ${busy ? 'fa-spinner fa-spin' : 'fa-upload'} mr-1`} />
-                        Importer (PDF Factur-X ou XML)
-                    </button>
-                </form>
-                {msg && <div className="alert alert-success mt-2 mb-0 py-2">{msg}</div>}
-                {err && <div className="alert alert-danger mt-2 mb-0 py-2">{err}</div>}
-                <small className="text-muted d-block mt-2">
-                    Le vendeur est rapproché automatiquement par n° de TVA intracom ou SIREN.
+                <div
+                    className={`wem-dropzone ${over ? 'is-over' : ''} ${busy ? 'is-busy' : ''}`}
+                    onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+                    onDragLeave={() => setOver(false)}
+                    onDrop={(e) => { e.preventDefault(); setOver(false); if (!busy) choose(e.dataTransfer.files); }}
+                    onClick={() => !busy && fileRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileRef.current?.click(); }}
+                >
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        name="document"
+                        accept=".pdf,.xml"
+                        className="d-none"
+                        onChange={(e) => choose(e.target.files)}
+                    />
+
+                    {busy ? (
+                        <>
+                            <i className="fas fa-spinner fa-spin fa-2x mb-2" />
+                            <div>Lecture du document…</div>
+                        </>
+                    ) : file ? (
+                        <>
+                            <i className="fas fa-file-invoice fa-2x mb-2 text-primary" />
+                            <div className="font-weight-bold">{file.name}</div>
+                            <div className="small text-muted mt-1">{fileSize(file.size)}</div>
+                        </>
+                    ) : (
+                        <>
+                            <i className="fas fa-cloud-upload-alt fa-2x mb-2" />
+                            <div>Glissez le document ici, ou cliquez pour le choisir</div>
+                            <div className="small text-muted mt-1">PDF Factur-X ou XML (CII, UBL) — 10 Mo maximum</div>
+                        </>
+                    )}
+                </div>
+
+                {file && ! busy && (
+                    <div className="d-flex align-items-center mt-3" style={{ gap: '.5rem' }}>
+                        <button type="button" className="btn btn-primary" onClick={submit}>
+                            <i className="fas fa-upload mr-1" />Importer
+                        </button>
+                        <button type="button" className="btn btn-link text-muted" onClick={reset}>
+                            Choisir un autre fichier
+                        </button>
+                    </div>
+                )}
+
+                {msg && <div className="alert alert-success mt-3 mb-0 py-2">{msg}</div>}
+                {err && <div className="alert alert-danger mt-3 mb-0 py-2">{err}</div>}
+
+                <small className="text-muted d-block mt-3">
+                    <i className="fas fa-info-circle mr-1" />
+                    Le vendeur est rapproché automatiquement par n° de TVA intracommunautaire ou SIREN.
+                    Les factures transmises par la plateforme arrivent seules, sans dépôt manuel.
                 </small>
             </div>
         </div>
@@ -149,6 +245,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
     const [status,  setStatus]  = useState('');
     const [page,    setPage]    = useState(1);
     const [acting,  setActing]  = useState(null);
+    const [directory, setDirectory] = useState(null);
 
     const fetchData = (opts = {}) => {
         const params = new URLSearchParams();
@@ -158,7 +255,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
 
         setLoading(true); setError(null);
         apiFetch(`${endpoints.list}?${params}`)
-            .then(res => { setRows(res.data); setMeta(res.meta); })
+            .then(res => { setRows(res.data); setMeta(res.meta); setDirectory(res.directory ?? null); })
             .catch(e => setError(e.message))
             .finally(() => setLoading(false));
     };
@@ -167,6 +264,33 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
 
     const handleStatus = (st) => { setStatus(st); setPage(1); fetchData({ status: st, page: 1 }); };
     const handlePage   = (p)  => { setPage(p); fetchData({ page: p }); };
+
+    /**
+     * Déclare un statut au fournisseur. Le motif est demandé — et exigé — sur
+     * les statuts défavorables : la plateforme le transmet tel quel au vendeur.
+     */
+    const declareStatus = (row, status) => {
+        let note = null;
+
+        if (status.reason) {
+            note = window.prompt(`Motif — « ${status.label} » pour ${row.seller_name}\n\nCe texte est transmis au fournisseur.`);
+            if (note === null) return;
+            if (!note.trim()) {
+                setError('Un motif est obligatoire pour ce statut.');
+                return;
+            }
+        }
+
+        setActing(row.id);
+        setError(null);
+        apiFetch(row.status_url, {
+            method: 'POST',
+            body: JSON.stringify({ status: status.code, note: note?.trim() || undefined }),
+        })
+            .then(() => fetchData())
+            .catch(e => setError(e.message))
+            .finally(() => setActing(null));
+    };
 
     const doAction = (row, url, confirmMsg) => {
         if (confirmMsg && !window.confirm(confirmMsg)) return;
@@ -181,6 +305,19 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
 
     return (
         <div>
+            {/* Sans ligne d'annuaire, la boîte reste vide exactement comme si
+                personne n'avait encore facturé : l'ambiguïté est le vrai danger. */}
+            {directory && !directory.reachable && (
+                <div className="alert alert-warning">
+                    <h5><i className="icon fas fa-exclamation-triangle" /> Vous n'êtes pas joignable</h5>
+                    Aucune ligne d'annuaire n'est ouverte : vos fournisseurs ne peuvent pas
+                    vous adresser de facture électronique, et cet écran restera vide.
+                    <br />
+                    Ouvrez-la depuis votre compte sur la plateforme — c'est votre inscription
+                    à l'annuaire officiel, en général sous votre numéro SIREN.
+                </div>
+            )}
+
             <UploadCard uploadUrl={endpoints.upload} onUploaded={() => fetchData({ page: 1 })} />
 
             <div className="card">
@@ -223,7 +360,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                         <tr><td colSpan={8} className="text-center text-muted py-4">Aucune facture reçue.</td></tr>
                                     ) : rows.map(row => (
                                         <tr key={row.id}>
-                                            <td><span className="badge badge-light">{row.provider}</span></td>
+                                            <td><span className="text-muted">{providerLabel(row.provider)}</span></td>
                                             <td>{row.seller_name}<br /><small className="text-muted">{row.seller_vat}</small></td>
                                             <td>{row.invoice_number}</td>
                                             <td>{row.issue_date ?? '—'}</td>
@@ -236,11 +373,37 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                                         Facture d'achat
                                                     </a>
                                                 )}
+                                                {row.reconcile_url && (
+                                                    <a className="btn btn-sm btn-success" href={row.reconcile_url}
+                                                       title="Sélectionner les réceptions couvertes par cette facture">
+                                                        <i className="fas fa-link mr-1" />Rapprocher
+                                                    </a>
+                                                )}
                                                 {row.convert_url && (
-                                                    <button className="btn btn-sm btn-success" disabled={acting === row.id}
-                                                        onClick={() => doAction(row, row.convert_url)}>
-                                                        Convertir
+                                                    <button className="btn btn-sm btn-outline-success ml-1" disabled={acting === row.id}
+                                                        onClick={() => doAction(row, row.convert_url, 'Créer une facture d\'achat sans rapprochement ? À réserver aux factures sans commande ni réception (frais, abonnements).')}>
+                                                        Sans rapprochement
                                                     </button>
+                                                )}
+                                                {row.status_url && (
+                                                    <div className="btn-group ml-1">
+                                                        <button type="button"
+                                                                className="btn btn-sm btn-outline-primary dropdown-toggle"
+                                                                data-toggle="dropdown"
+                                                                disabled={acting === row.id}>
+                                                            Déclarer
+                                                        </button>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <h6 className="dropdown-header">Statut renvoyé au fournisseur</h6>
+                                                            {OUTGOING_STATUSES.map(s => (
+                                                                <button key={s.code} type="button" className="dropdown-item"
+                                                                        onClick={() => declareStatus(row, s)}>
+                                                                    <i className={`fas ${s.icon} fa-fw mr-2 text-muted`} />
+                                                                    {s.label}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                 )}
                                                 {row.reject_url && (
                                                     <button className="btn btn-sm btn-outline-secondary ml-1" disabled={acting === row.id}
