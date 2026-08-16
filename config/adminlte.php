@@ -68,6 +68,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Preloader
+    |--------------------------------------------------------------------------
+    |
+    | Ecran de chargement affiche avant le rendu de la page. Sans cette clé, la
+    | config par defaut du package s'applique (mergeConfigFrom) et affiche le
+    | logo "A" d'AdminLTE. Le contenu est surcharge par la vue
+    | resources/views/vendor/adminlte/partials/common/preloader.blade.php qui
+    | rend le sigle de config('branding.logo_short') : WEM ou N2P.
+    |
+    */
+
+    'preloader' => [
+        'enabled' => true,
+        'mode' => 'fullscreen',
+        'img' => [
+            'effect' => 'animation__shake',
+            'width' => 60,
+            'height' => 60,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | User Menu
     |--------------------------------------------------------------------------
     |

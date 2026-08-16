@@ -1,0 +1,377 @@
+//
+// Load planning timeline (resources/js/components/LoadPlanningIndex.jsx)
+//
+// Services × days heat grid, inspired by the job planning timeline:
+// sticky service column, sticky two-line day header, today marker,
+// week separators and pill-shaped load cells.
+//
+
+$lp-border:      #e9ecef;
+$lp-service-col: 260px;
+
+.lp-timeline {
+    position: relative;
+    overflow: auto;
+    max-height: 74vh;
+    background-color: #fff;
+
+    // Cross-browser thin scrollbars — the grid is scrolled in both directions.
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #ced4da;
+        border-radius: 5px;
+    }
+}
+
+.lp-table {
+    // max-content, so the day columns keep their min-width and the wrapper
+    // scrolls horizontally instead of squeezing a whole month into the card
+    width: max-content;
+    min-width: 100%;
+    margin-bottom: 0;
+    // separate + box-shadow borders, otherwise sticky cells lose their borders
+    border-collapse: separate;
+    border-spacing: 0;
+
+    th,
+    td {
+        padding: 0;
+        vertical-align: middle;
+        box-shadow: inset 0 -1px 0 $lp-border;
+    }
+}
+
+// --- Service column ---------------------------------------------------------
+
+.lp-col-service {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: $lp-service-col;
+    min-width: $lp-service-col;
+    max-width: $lp-service-col;
+    padding: .5rem .75rem !important;
+    background-color: #fff;
+    font-weight: 400;
+    text-align: left;
+    box-shadow: inset 0 -1px 0 $lp-border, 6px 0 6px -6px rgba(0, 0, 0, .12);
+}
+
+.lp-col-service--head {
+    z-index: 4;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6c757d;
+}
+
+.lp-service {
+    display: flex;
+    align-items: center;
+
+    &--compact {
+        gap: .5rem;
+    }
+}
+
+.lp-service__avatar {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    margin-right: .6rem;
+    border: 1px solid $lp-border;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    object-fit: cover;
+
+    &--empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #adb5bd;
+    }
+}
+
+.lp-service__dot {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+.lp-service__body {
+    min-width: 0;
+}
+
+.lp-service__name {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 600;
+    color: #343a40;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lp-service__cap {
+    margin-left: auto;
+    font-size: .72rem;
+    white-space: nowrap;
+}
+
+.lp-service__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin-top: .2rem;
+
+    .badge {
+        font-weight: 600;
+        font-size: .66rem;
+    }
+}
+
+// --- Day header -------------------------------------------------------------
+
+.lp-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #fff;
+}
+
+.lp-day {
+    width: 76px;
+    min-width: 76px;
+    padding: .35rem .15rem !important;
+    text-align: center;
+    line-height: 1.15;
+    box-shadow: inset 0 -1px 0 $lp-border;
+}
+
+.lp-day__weekday {
+    display: block;
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    opacity: .75;
+}
+
+.lp-day__date {
+    display: block;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.lp-day__today {
+    display: inline-block;
+    margin-top: .15rem;
+    padding: 0 .35rem;
+    border-radius: 10px;
+    background-color: #f6993f;
+    color: #fff;
+    font-size: .56rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+// Today column marker — the equivalent of the timeline "today" rule.
+.lp-col-today {
+    box-shadow:
+        inset 0 -1px 0 $lp-border,
+        inset 2px 0 0 #f6993f,
+        inset -2px 0 0 #f6993f;
+}
+
+// Subtle week separator on Mondays, to keep long ranges readable.
+.lp-week-start:not(.lp-col-today) {
+    border-left: 1px solid #dee2e6;
+}
+
+// --- Load cells -------------------------------------------------------------
+
+.lp-cell {
+    padding: .3rem .25rem !important;
+    text-align: center;
+}
+
+.lp-cell__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .2rem;
+}
+
+.lp-cell__empty {
+    display: block;
+    color: #ced4da;
+    font-size: .75rem;
+}
+
+.lp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    min-width: 46px;
+    padding: .12rem .4rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, .55);
+    font-size: .72rem;
+    font-weight: 700;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.lp-pill__warn {
+    font-size: .62rem;
+    opacity: .8;
+}
+
+.lp-gauge {
+    display: block;
+    width: 80%;
+    height: 3px;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, .1);
+    overflow: hidden;
+}
+
+.lp-gauge__fill {
+    display: block;
+    height: 100%;
+    background-color: currentColor;
+    opacity: .75;
+}
+
+.lp-row:hover .lp-col-service,
+.lp-row:hover .lp-cell {
+    filter: brightness(.97);
+}
+
+// Service overloaded at least one day within the range.
+.lp-row--overloaded .lp-col-service {
+    background-color: #fdf3f3;
+    box-shadow: inset 0 -1px 0 $lp-border, inset 3px 0 0 #e3342f, 6px 0 6px -6px rgba(0, 0, 0, .12);
+}
+
+// --- Tones ------------------------------------------------------------------
+//
+// Each tone sets `color`, so the pill border and the gauge fill (currentColor)
+// follow the background automatically.
+
+.lp-tone-free {
+    background-color: #f8f9fa;
+    color: #868e96;
+}
+
+.lp-tone-low {
+    background-color: #e6f6ed;
+    color: #1e7e46;
+}
+
+.lp-tone-medium {
+    background-color: #fff6e0;
+    color: #9a6700;
+}
+
+.lp-tone-high {
+    background-color: #ffeada;
+    color: #b5560d;
+}
+
+.lp-tone-over {
+    background-color: #fdeaea;
+    color: #b02a25;
+}
+
+.lp-tone-weekend {
+    background-color: #f1f3f5;
+    color: #868e96;
+}
+
+.lp-tone-off {
+    background-color: #dee2e6;
+    color: #495057;
+}
+
+.lp-tone-none {
+    background-color: #fff;
+    color: #adb5bd;
+}
+
+// --- Compact mode -----------------------------------------------------------
+
+.lp-timeline--compact {
+    .lp-col-service {
+        padding: .2rem .6rem !important;
+    }
+
+    .lp-cell {
+        padding: .12rem .15rem !important;
+    }
+
+    .lp-day {
+        width: 56px;
+        min-width: 56px;
+    }
+
+    .lp-pill {
+        min-width: 40px;
+        padding: 0 .3rem;
+        font-size: .68rem;
+    }
+}
+
+// --- Legend -----------------------------------------------------------------
+
+.lp-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .4rem;
+    font-size: .74rem;
+}
+
+.lp-legend__title {
+    margin-right: .25rem;
+    color: #6c757d;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: .68rem;
+}
+
+.lp-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .12rem .55rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.lp-legend__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: .7;
+}
+
+.lp-legend__hint {
+    opacity: .7;
+    font-weight: 400;
+}
