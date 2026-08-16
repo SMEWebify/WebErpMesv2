@@ -9,11 +9,13 @@ use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
+use App\Models\Times\TimesAbsence;
 use App\Observers\OrderLinesObserver;
 use App\Observers\OrdersObserver;
 use App\Observers\ProductsObserver;
 use App\Observers\StockMoveObserver;
 use App\Observers\TaskObserver;
+use App\Observers\TimesAbsenceObserver;
 use App\Services\SelectDataService;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Integrations\Pdp\Drivers\QontoGateway;
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         Task::observe(TaskObserver::class);
         StockMove::observe(StockMoveObserver::class);
         OrderLines::observe(OrderLinesObserver::class);
+        TimesAbsence::observe(TimesAbsenceObserver::class);
 
         if (config('branding.commercial')) {
             Config::set('mail.from.name', config('branding.app_name'));

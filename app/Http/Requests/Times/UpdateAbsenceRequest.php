@@ -13,7 +13,7 @@ class UpdateAbsenceRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return $this->user() !== null;
     }
 
     /**
@@ -24,9 +24,14 @@ class UpdateAbsenceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'start_date'=>'required',
-            'end_date'=>'required',
+            'leave_type_id' => 'nullable|exists:leave_types,id',
+            'absence_type' => 'required|integer|between:1,4',
+            'absence_type_day' => 'required|integer|between:1,3',
+            'hours_count' => 'nullable|numeric|min:0|max:24|required_if:absence_type,4',
+            'comment' => 'nullable|string|max:255',
+            'statu' => 'nullable|integer|between:1,3',
+            'start_date'=>'required|date',
+            'end_date'=>'required|date|after_or_equal:start_date',
         ];
     }
 }

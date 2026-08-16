@@ -15,10 +15,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use App\Models\Attendance;
 use App\Models\Admin\UserEmploymentContracts;
-use App\Models\Planning\TaskActivities;
+use App\Models\HumanResources\LeaveType;
+use App\Services\HumanResources\AttendanceAggregator;
+use App\Services\HumanResources\LeaveBalanceService;
 use App\Http\Requests\Admin\StoreUserExpenseRequest;
 use App\Http\Requests\Admin\UpdateUserExpenseRequest;
 use App\Http\Requests\Admin\StoreUserExpenseReportRequest;
@@ -48,10 +48,12 @@ class HumanResourcesController extends Controller
                                             ->orWhere('status', 5)
                                             ->get();
         $UserExpenseCategories = UserExpenseCategory::All();
+        $LeaveTypes = LeaveType::orderBy('ordre')->orderBy('label')->get();
 
         return view('admin/human-resources-index', [
             'UserExpenseCategories' =>  $UserExpenseCategories,
             'ExpenseReports' =>  $ExpenseReports,
+            'LeaveTypes' =>  $LeaveTypes,
         ]);
     }
 
@@ -83,6 +85,8 @@ class HumanResourcesController extends Controller
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
         $UserExpenseReports = UserExpenseReport::where('user_id', $id)->get();
         $Roles = Role::all();
+        $LeaveSummary = app(LeaveBalanceService::class)->summaryFor($User);
+        $LeaveTypes = LeaveType::active()->orderBy('ordre')->orderBy('label')->get();
 
         return view('admin/users-show', [
             'User' => $User,
@@ -91,6 +95,8 @@ class HumanResourcesController extends Controller
             'SectionsSelect' =>  $SectionsSelect,
             'UserEmploymentContracts' =>  $UserEmploymentContracts,
             'UserExpenseReports' =>  $UserExpenseReports,
+            'LeaveSummary' =>  $LeaveSummary,
+            'LeaveTypes' =>  $LeaveTypes,
         ]);
     }
 
@@ -105,6 +111,7 @@ class HumanResourcesController extends Controller
     {
         $UserUpdate = User::findOrFail($id);
         $UserUpdate->job_title = $request->job_title;
+        $UserUpdate->payroll_number = $request->payroll_number;
         $UserUpdate->pay_grade = $request->pay_grade;
         $UserUpdate->work_station_id = $request->work_station_id; 
         $UserUpdate->joined_date = $request->joined_date;
@@ -389,153 +396,15 @@ class HumanResourcesController extends Controller
         $endDate = $request->input('end_date');
         $userSelect = $this->SelectDataService->getUsers();
 
-        $activities = TaskActivities::with('user')
-            ->when($filterUserId, function ($query, $filterUserId) {
-                return $query->where('user_id', $filterUserId);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                return $query->whereDate('timestamp', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                return $query->whereDate('timestamp', '<=', $endDate);
-            })
-            ->orderBy('user_id')
-            ->orderBy('timestamp')
-            ->get();
+        $aggregator = app(AttendanceAggregator::class);
 
-        $report = [];
-        $dayBuckets = [];
-        $openSessions = [];
+        $report = $aggregator->fromTaskActivities($filterUserId, $startDate, $endDate);
+        $attendanceReport = $aggregator->fromPunches($filterUserId, $startDate, $endDate);
 
-        foreach ($activities as $activity) {
-            $userId = $activity->user_id;
-            if (!isset($report[$userId])) {
-                $report[$userId] = [
-                    'user' => $activity->user,
-                    'total_seconds' => 0,
-                    'anomalies' => 0,
-                ];
-            }
-
-            $timestamp = Carbon::parse($activity->timestamp);
-            $dayBuckets[$userId][$timestamp->toDateString()] = true;
-
-            $taskId = $activity->task_id;
-            if ($activity->type === TaskActivities::TYPE_START) {
-                if (isset($openSessions[$userId][$taskId])) {
-                    $report[$userId]['anomalies']++;
-                }
-                $openSessions[$userId][$taskId] = $timestamp;
-                continue;
-            }
-
-            if (in_array($activity->type, [TaskActivities::TYPE_END, TaskActivities::TYPE_FINISH], true)) {
-                if (isset($openSessions[$userId][$taskId])) {
-                    $startTime = $openSessions[$userId][$taskId];
-                    if ($timestamp->greaterThan($startTime)) {
-                        $report[$userId]['total_seconds'] += $timestamp->diffInSeconds($startTime);
-                    } else {
-                        $report[$userId]['anomalies']++;
-                    }
-                    unset($openSessions[$userId][$taskId]);
-                } else {
-                    $report[$userId]['anomalies']++;
-                }
-            }
-        }
-
-        foreach ($openSessions as $userId => $tasks) {
-            foreach ($tasks as $taskId => $startTime) {
-                if (isset($report[$userId])) {
-                    $report[$userId]['anomalies']++;
-                }
-            }
-        }
-
-        foreach ($report as $userId => $data) {
-            $report[$userId]['days'] = isset($dayBuckets[$userId]) ? count($dayBuckets[$userId]) : 0;
-        }
-
-        if ($filterUserId && !isset($report[$filterUserId])) {
-            $report[$filterUserId] = [
-                'user' => User::find($filterUserId),
-                'total_seconds' => 0,
-                'anomalies' => 0,
-                'days' => 0,
-            ];
-        }
-
-        $attendances = Attendance::with('user')
-            ->when($filterUserId, function ($query, $filterUserId) {
-                return $query->where('user_id', $filterUserId);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                return $query->whereDate('punched_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                return $query->whereDate('punched_at', '<=', $endDate);
-            })
-            ->orderBy('user_id')
-            ->orderBy('punched_at')
-            ->get();
-
-        $attendanceReport = [];
-        $attendanceDayBuckets = [];
-        $openPunches = [];
-
-        foreach ($attendances as $attendance) {
-            $userId = $attendance->user_id;
-            if (!isset($attendanceReport[$userId])) {
-                $attendanceReport[$userId] = [
-                    'user' => $attendance->user,
-                    'total_seconds' => 0,
-                    'anomalies' => 0,
-                ];
-            }
-
-            $timestamp = Carbon::parse($attendance->punched_at);
-            $attendanceDayBuckets[$userId][$timestamp->toDateString()] = true;
-
-            if ($attendance->direction === 'in') {
-                if (isset($openPunches[$userId])) {
-                    $attendanceReport[$userId]['anomalies']++;
-                }
-                $openPunches[$userId] = $timestamp;
-                continue;
-            }
-
-            if ($attendance->direction === 'out') {
-                if (isset($openPunches[$userId])) {
-                    $startTime = $openPunches[$userId];
-                    if ($timestamp->greaterThan($startTime)) {
-                        $attendanceReport[$userId]['total_seconds'] += $timestamp->diffInSeconds($startTime);
-                    } else {
-                        $attendanceReport[$userId]['anomalies']++;
-                    }
-                    unset($openPunches[$userId]);
-                } else {
-                    $attendanceReport[$userId]['anomalies']++;
-                }
-            }
-        }
-
-        foreach ($openPunches as $userId => $startTime) {
-            if (isset($attendanceReport[$userId])) {
-                $attendanceReport[$userId]['anomalies']++;
-            }
-        }
-
-        foreach ($attendanceReport as $userId => $data) {
-            $attendanceReport[$userId]['days'] = isset($attendanceDayBuckets[$userId]) ? count($attendanceDayBuckets[$userId]) : 0;
-        }
-
-        if ($filterUserId && !isset($attendanceReport[$filterUserId])) {
-            $attendanceReport[$filterUserId] = [
-                'user' => User::find($filterUserId),
-                'total_seconds' => 0,
-                'anomalies' => 0,
-                'days' => 0,
-            ];
+        // Filtering on somebody with no event at all must still show a row.
+        if ($filterUserId) {
+            $report = $this->withEmptyRowFor($report, (int) $filterUserId);
+            $attendanceReport = $this->withEmptyRowFor($attendanceReport, (int) $filterUserId);
         }
 
         return view('admin/human-resources-attendance', [
@@ -548,5 +417,25 @@ class HumanResourcesController extends Controller
                 'end_date' => $endDate,
             ],
         ]);
+    }
+
+    /**
+     * Guarantee a row for the filtered employee, even with nothing recorded.
+     *
+     * @param  array<int, array<string, mixed>>  $report
+     * @return array<int, array<string, mixed>>
+     */
+    private function withEmptyRowFor(array $report, int $userId): array
+    {
+        if (!isset($report[$userId])) {
+            $report[$userId] = [
+                'user' => User::find($userId),
+                'total_seconds' => 0,
+                'anomalies' => 0,
+                'days' => 0,
+            ];
+        }
+
+        return $report;
     }
 }

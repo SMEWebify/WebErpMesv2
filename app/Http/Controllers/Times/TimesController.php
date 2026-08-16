@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Times;
 
 use App\Models\Times\TimesAbsence;
+use App\Models\HumanResources\LeaveType;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,8 @@ class TimesController extends Controller
      */
     public function index()
     {
-        $TimesAbsences = TimesAbsence::All();
+        $TimesAbsences = TimesAbsence::with(['User', 'leaveType'])->orderByDesc('start_date')->get();
+        $LeaveTypes = LeaveType::active()->orderBy('ordre')->orderBy('label')->get();
         $TimesBanckHolidays = TimesBanckHoliday::All();
         $TimesImproductTimes = TimesImproductTime::All();
         $TimesMachineEvents = TimesMachineEvent::All();
@@ -33,6 +35,7 @@ class TimesController extends Controller
         
         return view('times/times-index',[
             'TimesAbsences' => $TimesAbsences,
+            'LeaveTypes' => $LeaveTypes,
             'TimesBanckHolidays' => $TimesBanckHolidays,
             'TimesImproductTimes' => $TimesImproductTimes,
             'TimesMachineEvents' => $TimesMachineEvents,

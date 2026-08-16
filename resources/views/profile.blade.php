@@ -16,6 +16,7 @@
             <li class="nav-item"><a class="nav-link" href="#History" data-toggle="tab">{{ __('general_content.notification_history_trans_key') }}</a></li> 
             <li class="nav-item"><a class="nav-link" href="#LeaveRequest" data-toggle="tab">{{ __('general_content.leave_request_trans_key') }}</a></li> 
             <li class="nav-item"><a class="nav-link" href="#ExpenseReport" data-toggle="tab">{{ __('general_content.expense_report_trans_key') }}</a></li> 
+            <li class="nav-item"><a class="nav-link" href="#MyDocuments" data-toggle="tab">{{ __('general_content.documents_trans_key') }}</a></li> 
         </ul>
     </div>
     <!-- /.card-header -->
@@ -217,6 +218,15 @@
             </div>
             <div class="tab-pane" id="LeaveRequest">
                 <div class="row">
+                    <div class="col-md-12">
+                        <x-adminlte-card title="{{ __('general_content.leave_balances_trans_key') }} — {{ $LeaveSummary['period_label'] }}" theme="info" maximizable collapsible>
+                            @include('include.leave-balance-table', [
+                                'summary' => $LeaveSummary,
+                                'balanceUserId' => $UserProfil->id,
+                                'balanceEditable' => false,
+                            ])
+                        </x-adminlte-card>
+                    </div>
                     <div class="col-md-6">
                         <x-adminlte-card title="{{ __('general_content.leave_request_trans_key') }}" theme="primary" maximizable>
                             <div class="table-responsive p-0">
@@ -224,11 +234,13 @@
                                     <thead>
                                     <tr>
                                         <th>{{ __('general_content.user_trans_key') }}</th>
+                                        <th>{{ __('general_content.leave_type_trans_key') }}</th>
                                         <th>{{ __('general_content.type_trans_key') }}</th>
                                         <th>{{ __('general_content.type_of_day_trans_key') }}</th>
                                         <th>{{__('general_content.status_trans_key') }}</th>
                                         <th>{{ __('general_content.start_date_trans_key') }}</th>
                                         <th>{{ __('general_content.end_date_trans_key') }}</th>
+                                        <th class="text-right">{{ __('general_content.leave_days_trans_key') }}</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -236,6 +248,14 @@
                                     @forelse ($TimesAbsences as $TimesAbsence)
                                     <tr>
                                         <td>{{ $TimesAbsence->User['name'] }}</td>
+                                        <td>
+                                            @if($TimesAbsence->leaveType)
+                                                <span class="badge" style="background-color: {{ $TimesAbsence->leaveType->color ?? '#6c757d' }}">&nbsp;</span>
+                                                {{ $TimesAbsence->leaveType->label }}
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($TimesAbsence->absence_type  == 1){{ __('general_content.full_day_absence_trans_key') }} @endif
                                             @if($TimesAbsence->absence_type  == 2){{ __('general_content.1_half_day_absence_trans_key') }} @endif
@@ -254,6 +274,7 @@
                                         </td>
                                         <td>{{ $TimesAbsence->start_date }}</td>
                                         <td>{{ $TimesAbsence->end_date }}</td>
+                                        <td class="text-right">{{ number_format((float) $TimesAbsence->days_count, 2, ',', ' ') }}</td>
                                         <td class=" py-0 align-middle">
                                         @if($TimesAbsence->statu  == 1)
                                         <!-- Button Modal -->
@@ -264,6 +285,15 @@
                                                 @csrf
                                                 <div class="card-body">
                                                     <input type="hidden" name="user_id" id="user_id" value="{{ Auth::id() }}">
+                                                    <div class="form-group">
+                                                        <label>{{ __('general_content.leave_type_trans_key') }}</label>
+                                                        <select class="form-control" name="leave_type_id">
+                                                            <option value="">--</option>
+                                                            @foreach($LeaveTypes as $LeaveType)
+                                                                <option value="{{ $LeaveType->id }}" @if($TimesAbsence->leave_type_id == $LeaveType->id) Selected @endif>{{ $LeaveType->label }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                     <div class="form-group">
                                                         <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
                                                         <select class="form-control" name="absence_type" id="absence_type">
@@ -289,6 +319,14 @@
                                                         <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                                                         <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $TimesAbsence->end_date }}">
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label>{{ __('general_content.absence_in_hours_trans_key') }}</label>
+                                                        <input type="number" step="0.25" min="0" max="24" class="form-control" name="hours_count" value="{{ $TimesAbsence->hours_count }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>{{ __('general_content.comment_trans_key') }}</label>
+                                                        <input type="text" class="form-control" name="comment" value="{{ $TimesAbsence->comment }}">
+                                                    </div>
                                                 </div>
                                                 <div class="card-footer">
                                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -299,17 +337,19 @@
                                         </td>
                                     </tr>
                                     @empty
-                                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                                     @endforelse
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>{{ __('general_content.user_trans_key') }}</th>
+                                            <th>{{ __('general_content.leave_type_trans_key') }}</th>
                                             <th>{{ __('general_content.type_trans_key') }}</th>
                                             <th>{{ __('general_content.type_of_day_trans_key') }}</th>
                                             <th>{{__('general_content.status_trans_key') }}</th>
                                             <th>{{ __('general_content.start_date_trans_key') }}</th>
                                             <th>{{ __('general_content.end_date_trans_key') }}</th>
+                                            <th class="text-right">{{ __('general_content.leave_days_trans_key') }}</th>
                                             <th></th>
                                         </tr>
                                     </tfoot>
@@ -321,6 +361,15 @@
                         <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
                             <x-adminlte-card title="{{ __('general_content.new_absence_request_trans_key') }}" theme="secondary" maximizable>
                                 @csrf
+                                <div class="form-group">
+                                    <label for="leave_type_id">{{ __('general_content.leave_type_trans_key') }}</label>
+                                    <select class="form-control" name="leave_type_id" id="leave_type_id">
+                                        <option value="">--</option>
+                                        @foreach($LeaveTypes as $LeaveType)
+                                            <option value="{{ $LeaveType->id }}">{{ $LeaveType->label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
                                     <select class="form-control" name="absence_type" id="absence_type">
@@ -346,6 +395,14 @@
                                 <div class="form-group">
                                     <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                                     <input type="date" class="form-control" name="end_date"  id="end_date" >
+                                </div>
+                                <div class="form-group">
+                                    <label for="hours_count">{{ __('general_content.absence_in_hours_trans_key') }}</label>
+                                    <input type="number" step="0.25" min="0" max="24" class="form-control" name="hours_count" id="hours_count">
+                                </div>
+                                <div class="form-group">
+                                    <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
+                                    <input type="text" class="form-control" name="comment" id="comment">
                                 </div>
                                 <x-slot name="footerSlot">
                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
@@ -479,6 +536,18 @@
                     </div>
                 </div>
                 <!-- /.row -->
+            </div>
+            <div class="tab-pane" id="MyDocuments">
+                <x-adminlte-card title="{{ __('general_content.documents_trans_key') }}" theme="primary" maximizable>
+                    <p class="text-muted">
+                        <i class="fas fa-lock"></i> {{ __('general_content.hr_documents_self_hint_trans_key') }}
+                    </p>
+                    @include('include.file-manager-mount', [
+                        'fileableType' => 'user',
+                        'fileableId' => $UserProfil->id,
+                        'fileRoles' => \App\Services\Files\FileRole::forHumanResources(),
+                    ])
+                </x-adminlte-card>
             </div>
         </div>
     </div>

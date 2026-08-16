@@ -17,6 +17,7 @@ use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\MethodsFamiliesSeeder;
 use Database\Seeders\OrderLinesTableSeeder;
 use Database\Seeders\PermissionTableSeeder;
+use Database\Seeders\LeaveTypeSeeder;
 use Database\Seeders\AssetRolePermissionSeeder;
 use Database\Seeders\QuoteLinesTableSeeder;
 use Database\Seeders\EstimatedBudgetsSeeder;
@@ -57,6 +58,7 @@ class DatabaseSeeder extends Seeder
             AssetRolePermissionSeeder::class,
             CreateAdminUserSeeder::class,
             AllocationSeeder::class,
+            LeaveTypeSeeder::class,
         ]);
 
         //factory

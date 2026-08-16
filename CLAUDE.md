@@ -51,6 +51,7 @@
 | `php artisan rgpd:erase-contact` | Anonymise les données personnelles d'un contact |
 | `php artisan rgpd:export-contact` | Exporte les données personnelles d'un contact (droit d'accès RGPD) |
 | `php artisan rgpd:purge` | Purge tokens expirés, email_logs > 1 an, soft-deleted > 90j |
+| `php artisan hr:recompute-absence-days [--dry-run]` | Recalcule le coût en jours de toutes les demandes d'absence (à lancer une fois après migration des soldes de congés, et après tout changement du calendrier des jours fériés) |
 | `php artisan wem:files:import [--dry-run] [--skip-move]` | **À lancer une fois après déploiement.** Déplace `public/{file,photo,drawing,stl,svg,images/products}` vers `storage/app/private/legacy`, renseigne `disk/path/kind` des lignes `files` existantes, et convertit les colonnes CAO produit en fichiers attachés |
 
 ### Tâches planifiées (`routes/console.php`)
@@ -158,6 +159,17 @@ achats, NC, mouvements de stock, sociétés, opportunités) passent par un seul 
 - `App\Services\Files\FileableRegistry` : liste blanche alias → modèle, pour que le front
   n'envoie jamais un nom de classe arbitraire
 
+### Dossier salarié (confidentiel)
+Les alias `user` et `employment-contract` portent des données personnelles. Contrairement au
+reste de la GED, ils **ne sont pas lisibles par toute l'usine** :
+`App\Services\Files\FileConfidentiality` restreint la lecture, l'écriture et la suppression
+au salarié concerné et aux porteurs de `human-resources-menu` (plus le rôle Admin).
+Le contrôle est posé à deux endroits — `FilePolicy::view/update/delete` pour l'accès par id
+de fichier (`files.raw`, `files.download`), et `FileApiController::resolveEntity()` pour
+l'accès par entité (liste, dépôt) — pour qu'aucune des deux portes ne reste ouverte.
+Rôles de fichier dédiés : `contrat`, `bulletin_paie`, `arret_travail`, `diplome`, `identite`
+(`FileRole::forHumanResources()`).
+
 ### Stockage
 Hors racine web, sous `storage/app/private/files/{aaaa}/{mm}`, servi par les routes
 authentifiées `files.raw` (inline) et `files.download`. Les anciens dossiers publics sont
@@ -181,6 +193,83 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Ressources humaines
+
+### Soldes de congés
+- `leave_types` : nature du congé (CP, RTT, récupération, maladie, événement familial,
+  formation, sans solde). `counts_against_balance` distingue ce qui consomme un droit de ce
+  qui est seulement tracé (un arrêt maladie est une absence, pas un congé décompté).
+- `leave_balances` : **uniquement le crédit** — droit acquis, report N-1, régularisation —
+  par (salarié, nature, période de référence). Le débit n'est jamais stocké là : il est
+  recalculé depuis `times_absences` par `LeaveBalanceService`, donc les deux ne peuvent pas
+  diverger.
+- `times_absences.days_count` : coût résolu de la demande, écrit à l'enregistrement par
+  `TimesAbsenceObserver` (week-ends et jours fériés déjà retirés selon `absence_type_day` :
+  calendaire / ouvrable = lun-sam / ouvré = lun-ven). Évite de dérouler chaque plage de
+  dates à la lecture d'un solde.
+- Période de référence configurable dans `config/hr.php` (défaut français : 1er juin →
+  31 mai ; mettre le mois à 1 pour une année civile). Une absence à cheval sur deux périodes
+  est **répartie** entre elles, jamais comptée deux fois.
+- Le solde restant déduit les demandes validées **et** les demandes en attente, pour qu'un
+  salarié ne puisse pas poser deux fois le même reliquat.
+- Écrans : onglet « Soldes de congés » sur la fiche salarié (saisie des droits, RH),
+  tableau usine sur `human-resources/leave/balances`, lecture seule sur le profil du salarié.
+
+### Absences — validation
+Le circuit existe : `times_absences.statu` vaut 1 = à valider, 2 = validé, 3 = refusé.
+**Vue salarié** = onglet « Demande d'absence » du profil (saisie, puis amendement tant que
+la demande est en attente — le bouton disparaît une fois traitée). **Vue valideur** = onglet
+Absence de l'écran Temps, qui porte le select `statu`.
+
+`AbsenceController` limite la saisie pour autrui et le changement de `statu` aux porteurs de
+`human-resources-menu` ; un salarié ne peut amender que sa propre demande tant qu'elle est
+en attente. Avant ça la distinction des deux vues était visuelle et non appliquée :
+n'importe qui pouvait POSTer `statu=2` sur sa demande, et le solde n'aurait rien voulu dire.
+
+Ce qui manque encore : aucune notification (pas d'`AbsenceNotification`, le valideur doit
+aller voir l'écran), et `users.supervisor_id` est saisi sur la fiche salarié mais ne route
+aucune validation — c'est « les RH valident », pas « mon manager valide ».
+
+### Export paie
+Il n'existe **pas** de format d'export standard : la DSN est produite par le logiciel de
+paie, pas par l'ERP, et chaque éditeur (Silae, Sage, Cegid, Quadra…) importe sa propre
+mise en page. `PayrollExportService` produit donc le plus petit dénominateur commun, une
+ligne par salarié et par rubrique : matricule, période, code rubrique, quantité, unité.
+S'adapter à un éditeur = mapper la colonne `code`, pas réécrire l'export.
+- Rubriques émises : une par nature de congé (code = `leave_types.code`, en jours, absences
+  **validées uniquement**), `HTRAV` (heures badgées) et `HPROD` (heures sur tâches).
+- Une absence à cheval sur deux mois est répartie entre les deux bulletins.
+- `users.payroll_number` porte le matricule connu du logiciel de paie ; à défaut l'export
+  retombe sur `users.id` et le signale.
+- L'écran liste les anomalies à traiter avant transmission (badgeage non refermé, matricule
+  absent) et propose CSV ou XLSX via `maatwebsite/excel`, sur le patron de l'export FEC.
+
+### Matrice de polyvalence (QSE)
+`osh_formations` tenait déjà un registre de formations par salarié avec date de péremption,
+mais `type_of_training` était du texte libre — « CACES 3 » et « Caces 3 » ne se regroupaient
+pas. `training_types` fournit le référentiel, `training_type_resource` relie une
+habilitation aux ressources sur lesquelles elle est attendue, et `HabilitationService`
+calcule l'état par salarié : valide / bientôt échue / périmée / non obtenue / non formé
+(fenêtre d'alerte dans `config/hr.php`, 60 jours par défaut). Un renouvellement prime sur la
+session périmée ; sans date de fin l'habilitation est à vie.
+
+**L'écran est informatif et ne bloque rien.** `HabilitationService` n'est appelé par aucun
+chemin d'affectation, de lancement de tâche ni d'ordonnancement : `taskAlerts()` est calculé
+à la demande pour l'écran et se contente de lister les tâches dont l'opérateur n'est pas
+couvert. Une habilitation périmée ne doit jamais arrêter une machine — c'est couvert par un
+test dédié (`SkillsMatrixTest::a_missing_authorisation_does_not_prevent_assigning_the_task`).
+
+### Temps travaillé — agrégation partagée
+`AttendanceAggregator` apparie les événements bruts en temps travaillé, pour les pointages
+badgeuse (`attendances`, in/out) comme pour l'activité de production (`task_activities`,
+start/end par tâche). L'écran présence et l'export paie s'appuient dessus, donc ils ne
+peuvent pas diverger. Un badgeage non refermé, une ouverture en double ou une fermeture
+orpheline sont comptés en anomalies plutôt qu'ignorés.
+
+> ⚠️ Corrigé au passage : Carbon 3 renvoie un écart **signé**, et le code d'origine appelait
+> `$fin->diffInSeconds($debut)` — l'écran présence cumulait donc des secondes négatives.
+> Régression couverte par `AttendanceReportTest`.
+
 ## Dette technique
 
 ### 🔴 Bloquant avant prod
@@ -188,6 +277,27 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 - spatie/laravel-backup → backup base + fichiers
 
 ### 📋 Roadmap post-prod
+
+#### RH — reste à faire
+- **Notification d'absence** : le workflow de validation existe (voir plus haut), mais aucune
+  notification n'est émise et `users.supervisor_id` ne route pas la validation
+- **Absences absentes de la capacité planning** : `PlanningController` ne tient compte que des
+  jours fériés, pas des congés validés
+- **Alerte de péremption des habilitations** : `expiration_date` est affichée sur la matrice
+  mais aucune notification n'est déclenchée, alors que le patron existe juste à côté
+  (`quality:dispatch-calibration-alerts`)
+- **Mapping des codes rubrique paie** par éditeur (Silae, Sage, Cegid…) : l'export sort un
+  format neutre, la correspondance des codes reste à faire côté client
+- **Doublons de classes `Attendance`** : `App\Models\Attendance` (câblé aux routes) et
+  `App\Models\HumanResources\Attendance` (inutilisé) pointent sur la même table, idem pour
+  les deux `AttendanceController`. À dédoublonner
+- **Périmètre de droits du module RH** : le groupe `human-resources` n'exige que `has.role`
+  (n'importe quel rôle), la permission `human-resources-menu` ne masque que le menu. Les
+  routes de congés ajoutées la portent, les routes historiques (fiches salarié, contrats,
+  notes de frais) restent à durcir — voir aussi `HumanResourcesController@UpdateUser` qui
+  attribue un rôle sans contrôle
+- **`/pointage` public** : hors groupe `auth`, sans throttle, avec la liste de tous les
+  salariés dans un select
 - Supprimer Livewire résiduel (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 - Sélects dynamiques précommande (client/adresse/contact)
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)

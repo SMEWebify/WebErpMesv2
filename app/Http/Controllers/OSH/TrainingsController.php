@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OSH;
 
 use Illuminate\Http\Request;
 use App\Models\OSH\OSHFormation;
+use App\Models\HumanResources\TrainingType;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OSH\StoreTrainingRequest;
@@ -27,11 +28,12 @@ class TrainingsController extends Controller
     public function index()
     {
         // Récupération de toutes les formations
-        $trainings = OSHFormation::all();
+        $trainings = OSHFormation::with(['UserManagement', 'trainingType'])->orderByDesc('training_date')->get();
         $userSelect = $this->SelectDataService->getUsers();
+        $trainingTypes = TrainingType::active()->orderBy('ordre')->orderBy('label')->get();
         
         // Retourner la vue avec les formations
-        return view('osh/osh-trainings', compact('trainings', 'userSelect'));
+        return view('osh/osh-trainings', compact('trainings', 'userSelect', 'trainingTypes'));
     }
 
     public function store(StoreTrainingRequest $request)

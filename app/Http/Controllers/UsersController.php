@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\UserAutoEmailReport;
 use App\Models\UserExpenseReport;
 use App\Models\Times\TimesAbsence;
+use App\Models\HumanResources\LeaveType;
+use App\Services\HumanResources\LeaveBalanceService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UpdateSettingNotificationRequest;
 
@@ -31,7 +33,9 @@ class UsersController extends Controller
     {
         $userId    = Auth::user()->id;
         $UserProfil = User::find($userId);
-        $TimesAbsences = TimesAbsence::where('user_id', $userId)->get();
+        $TimesAbsences = TimesAbsence::with('leaveType')->where('user_id', $userId)->orderByDesc('start_date')->get();
+        $LeaveSummary = app(LeaveBalanceService::class)->summaryFor($userId);
+        $LeaveTypes = LeaveType::active()->orderBy('ordre')->orderBy('label')->get();
         $ExpenseReports = UserExpenseReport::where('user_id', $userId)->get();
         $agent = new Agent();
         $data = [
@@ -119,6 +123,8 @@ class UsersController extends Controller
         return view('profile', [
             'UserProfil'             => $UserProfil,
             'TimesAbsences'          => $TimesAbsences,
+            'LeaveSummary'           => $LeaveSummary,
+            'LeaveTypes'             => $LeaveTypes,
             'ExpenseReports'         => $ExpenseReports,
             'data'                   => $data,
             'profileInitial'         => $profileInitial,

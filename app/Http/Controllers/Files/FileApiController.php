@@ -8,6 +8,7 @@ use App\Http\Requests\Files\UpdateFileRequest;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Services\Files\FileableRegistry;
+use App\Services\Files\FileConfidentiality;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +34,7 @@ class FileApiController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $entity = $this->resolveEntity($request->query('fileable_type'), $request->query('fileable_id'));
+        $entity = $this->resolveEntity($request->query('fileable_type'), $request->query('fileable_id'), $request);
 
         $files = $entity->files()
             ->with('UserManagement:id,name')
@@ -51,7 +52,7 @@ class FileApiController extends Controller
      */
     public function store(StoreFilesRequest $request): JsonResponse
     {
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'));
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
 
         $hashtags = $this->storage->normalizeHashtags($request->input('hashtags'));
         $role = $request->input('role');
@@ -95,7 +96,7 @@ class FileApiController extends Controller
     {
         $this->authorize('update', $file);
 
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'));
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
 
         // Route model binding gives us a File without pivot, so read the current
         // attachment from the entity side.
@@ -147,7 +148,7 @@ class FileApiController extends Controller
     {
         $this->authorize('delete', $file);
 
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'));
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
 
         abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
 
@@ -179,13 +180,19 @@ class FileApiController extends Controller
     /**
      * Resolve the whitelisted entity a request targets.
      */
-    private function resolveEntity(?string $alias, int|string|null $id): Model
+    private function resolveEntity(?string $alias, int|string|null $id, ?Request $request = null): Model
     {
+        $request ??= request();
+
         abort_if($alias === null || $id === null, 404);
 
         $entity = FileableRegistry::find($alias, $id);
 
         abort_if($entity === null, 404);
+
+        // An employee folder is not browsable by the whole factory: listing or
+        // attaching there is reserved to the employee and to HR.
+        abort_unless(FileConfidentiality::allows($request->user(), $entity), 403);
 
         return $entity;
     }
