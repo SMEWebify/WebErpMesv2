@@ -1213,7 +1213,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
     const [activeTab, setActiveTab] = useState('dashboard');
 
     return (
-        <div className="card">
+        <div className="card card-outline card-teal">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

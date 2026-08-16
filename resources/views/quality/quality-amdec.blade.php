@@ -11,7 +11,7 @@
 @section('content')
 
     @include('include.alert-result')
-    <x-adminlte-card theme="primary" theme-mode="outline">
+    <x-adminlte-card theme="info" theme-mode="outline">
         <div class="table-responsive p-0">
             <table class="table table-striped table-hover">
                 <thead>

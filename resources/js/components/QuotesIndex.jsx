@@ -1444,7 +1444,7 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
     const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
 
     return (
-        <div className="card">
+        <div className="card card-outline card-teal">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

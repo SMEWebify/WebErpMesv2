@@ -19,7 +19,7 @@
         </x-adminlte-card>
     </div>
     <div class="col-md-4">
-        <x-adminlte-card title="{{ __('general_content.total_profit_trans_key') }}" theme="primary" icon="fas fa-chart-line" >
+        <x-adminlte-card title="{{ __('general_content.total_profit_trans_key') }}" theme="purple" theme-mode="outline" icon="fas fa-chart-line" >
             {{ \Illuminate\Support\Number::currency($profit, app('Factory')->curency, config('app.locale')) }}
         </x-adminlte-card>
     </div>

@@ -38,7 +38,7 @@
           <x-adminlte-info-box title=" {{__('general_content.current_stock_trans_key') }}" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
         </div>
       </div>
-        <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
+        <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
           <div class="table-responsive p-0">
             <table class="table table-hover">
               <thead>

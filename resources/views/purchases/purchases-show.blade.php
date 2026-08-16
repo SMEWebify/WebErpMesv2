@@ -44,7 +44,7 @@
           <div class="col-md-9">
             @include('include.alert-result')
             <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
-              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="orange" theme-mode="outline" maximizable>
                 @csrf 
                 <div class="row">
                   <div class="form-group col-md-6">

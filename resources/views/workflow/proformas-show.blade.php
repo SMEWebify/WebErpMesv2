@@ -48,7 +48,7 @@
           <div class="col-md-9">
             @include('include.alert-result')
             <form method="POST" action="{{ route('proformas.update', ['id' => $Proforma->id]) }}" enctype="multipart/form-data">
-              <x-adminlte-card title="Informations" theme="primary" maximizable>
+              <x-adminlte-card title="Informations" theme="info" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
                   <div class="form-group col-md-6">

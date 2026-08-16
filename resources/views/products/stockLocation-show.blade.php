@@ -20,7 +20,7 @@
   @include('include.alert-result')
   <div class="row">
     <div class="col-md-8">
-      <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
+      <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
         @include('include.table-stock-locations-products')
       </x-adminlte-card>
     <!-- /.col-md-8 card-secondary-->

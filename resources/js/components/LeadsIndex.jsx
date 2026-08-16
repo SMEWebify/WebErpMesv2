@@ -1110,7 +1110,7 @@ export default function LeadsIndex({ kpi, chart, byCompany, byPriority, byUser, 
     const locale = trans.locale ?? 'fr-FR';
 
     return (
-        <div className="card">
+        <div className="card card-outline card-primary">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

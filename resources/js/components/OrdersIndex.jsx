@@ -1440,7 +1440,7 @@ export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, t
     const locale   = trans.locale   ?? 'fr-FR';
 
     return (
-        <div className="card">
+        <div className="card card-outline card-warning">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

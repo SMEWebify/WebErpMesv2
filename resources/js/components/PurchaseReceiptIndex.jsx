@@ -741,7 +741,7 @@ export default function PurchaseReceiptIndex({ kpi, chartData, endpoints, trans 
     const [activeTab, setActiveTab] = useState('dashboard');
 
     return (
-        <div className="card">
+        <div className="card card-outline card-orange">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

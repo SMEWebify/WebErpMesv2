@@ -213,7 +213,7 @@ export default function DeliverysRequest({
     // ---------------------------------------------------------------------------
 
     return (
-        <div className="card">
+        <div className="card card-outline card-primary">
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
                     {errors.general && (

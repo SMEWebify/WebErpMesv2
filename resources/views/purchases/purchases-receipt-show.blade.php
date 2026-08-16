@@ -34,7 +34,7 @@
             </x-adminlte-alert>
             @endif
             <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
-              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="orange" theme-mode="outline" maximizable>
                 @csrf
                     <div class="row">
                       <div class="form-group col-md-6">

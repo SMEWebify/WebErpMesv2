@@ -1095,7 +1095,7 @@ export default function OpportunitiesIndex({ kpi, chart, activities, byCompany, 
     const locale   = trans.locale   ?? 'fr-FR';
 
     return (
-        <div className="card">
+        <div className="card card-outline card-danger">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

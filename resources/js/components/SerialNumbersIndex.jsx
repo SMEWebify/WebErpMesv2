@@ -436,7 +436,7 @@ export default function SerialNumbersIndex({ kpi, endpoints, trans, productId = 
     }
 
     return (
-        <div className="card">
+        <div className="card card-outline card-info">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

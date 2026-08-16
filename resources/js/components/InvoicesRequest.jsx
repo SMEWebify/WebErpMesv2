@@ -206,7 +206,7 @@ export default function InvoicesRequest({
     // ---------------------------------------------------------------------------
 
     return (
-        <div className="card">
+        <div className="card card-outline card-danger">
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
                     {errors.general && (

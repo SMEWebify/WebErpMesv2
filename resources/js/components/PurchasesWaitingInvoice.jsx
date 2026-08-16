@@ -208,7 +208,7 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
     }
 
     return (
-        <div className="card">
+        <div className="card card-outline card-orange">
             {flashError && (
                 <div className="alert alert-danger alert-dismissible mx-3 mt-3 mb-0">
                     {flashError}

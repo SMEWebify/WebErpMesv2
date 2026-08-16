@@ -13,7 +13,7 @@
 
 <div class="row">
   <div class="col-md-8">
-    <x-adminlte-card title="{{ __('general_content.product_info_trans_key') }}" theme="primary" maximizable>
+    <x-adminlte-card title="{{ __('general_content.product_info_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
         <ul class="nav nav-tabs" id="productTab" role="tablist">
           <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab"><i class="fas fa-info-circle"></i> {{ __('general_content.product_info_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab"><i class="fas fa-cogs"></i> {{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>

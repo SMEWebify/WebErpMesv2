@@ -28,7 +28,7 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <x-adminlte-card title="Lignes importées" theme="primary" maximizable>
+            <x-adminlte-card title="Lignes importées" theme="warning" theme-mode="outline" maximizable>
                 @php
                     $hasPendingMatching = $preOrder->lines->contains(fn ($line) => $line->suggested_product_id && ! $line->linked_product_id);
                 @endphp

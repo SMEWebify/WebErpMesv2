@@ -1026,7 +1026,7 @@ export default function QualityIndex({
     ];
 
     return (
-        <div className="card">
+        <div className="card card-outline card-info">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     {tabs.map(t => (

@@ -48,7 +48,7 @@
         </form>
     </x-adminlte-card>
 
-    <x-adminlte-card title="Pré-commandes" theme="primary" maximizable>
+    <x-adminlte-card title="Pré-commandes" theme="warning" theme-mode="outline" maximizable>
         <div class="card-body table-responsive p-0">
             <table class="table table-hover">
                 <thead>

@@ -47,7 +47,7 @@
             @include('include.alert-result')
             <form method="POST" action="{{ route('opportunities.update', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
               @csrf 
-              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="danger" theme-mode="outline" maximizable>
                 <div class="row">
                   <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])

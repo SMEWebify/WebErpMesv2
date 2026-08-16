@@ -492,7 +492,7 @@ export default function OrderLinesIndex({ endpoints, trans }) {
     });
 
     return (
-        <div className="card">
+        <div className="card card-outline card-warning">
             <div className="card-body">
                 {/* Search + delivery status filters */}
                 <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
