@@ -2,13 +2,6 @@
 
 @section('title', __('general_content.lead_trans_key'))
 
-@section('content_header')
-    <x-Content-header-previous-button  h1="{{ __('general_content.lead_trans_key') }} : {{  $Lead->id }}" previous="{{ $previousUrl }}" list="{{ route('leads') }}" next="{{ $nextUrl }}"/>
-@stop
-
-@section('right-sidebar')
-
-@section('content')
 @php
 $leadSteps = json_encode([
     ['value' => 1, 'label' => __('general_content.new_trans_key')],
@@ -18,11 +11,19 @@ $leadSteps = json_encode([
     ['value' => 5, 'label' => __('general_content.lost_trans_key')],
 ]);
 @endphp
-<div data-react="arrow-steps"
-     data-steps="{{ $leadSteps }}"
-     data-statu="{{ $Lead->statu }}"
-     data-endpoint="{{ route('leads.json.statu', $Lead->id) }}"
-     data-redirect="{{ route('leads.show', $Lead->id) }}"></div>
+
+@section('content_header')
+    <x-document-header h1="{{ __('general_content.lead_trans_key') }} : {{  $Lead->id }}"
+                       previous="{{ $previousUrl }}" list="{{ route('leads') }}" next="{{ $nextUrl }}"
+                       :steps="$leadSteps" statu="{{ $Lead->statu }}"
+                       endpoint="{{ route('leads.json.statu', $Lead->id) }}"
+                       redirect="{{ route('leads.show', $Lead->id) }}"/>
+@stop
+
+@section('right-sidebar')
+
+@section('content')
+{{-- Le workflow de statut est remonté dans le header (x-document-header) ; seule la priorité reste ici. --}}
 <div data-react="arrow-steps"
      data-steps="{{ json_encode([['value' => 1, 'label' => __('general_content.burning_trans_key')], ['value' => 2, 'label' => __('general_content.hot_trans_key')], ['value' => 3, 'label' => __('general_content.lukewarm_trans_key')], ['value' => 4, 'label' => __('general_content.cold_trans_key')]]) }}"
      data-statu="{{ $Lead->priority }}"

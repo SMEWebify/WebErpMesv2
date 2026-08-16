@@ -2,8 +2,19 @@
 
 @section('title', __('general_content.delivery_notes_trans_key')  . ' - ' . $Delivery->code)
 
+@php
+$deliverySteps = [
+    ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
+    ['value' => 2, 'label' => __('general_content.send_trans_key')],
+];
+@endphp
+
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ __('general_content.delivery_notes_trans_key') }} : {{  $Delivery->code }}" previous="{{ $previousUrl }}" list="{{ route('deliverys') }}" next="{{ $nextUrl }}"/>
+  <x-document-header h1="{{ __('general_content.delivery_notes_trans_key') }} : {{  $Delivery->code }}"
+                     previous="{{ $previousUrl }}" list="{{ route('deliverys') }}" next="{{ $nextUrl }}"
+                     :steps="$deliverySteps" statu="{{ $Delivery->statu }}"
+                     endpoint="{{ route('deliverys.json.statu', $Delivery->id) }}"
+                     redirect="{{ route('deliverys.show', $Delivery->id) }}"/>
 @stop
 
 @section('right-sidebar')
@@ -31,11 +42,6 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Delivery">
-        <div data-react="arrow-steps"
-             data-steps="{{ json_encode([['value' => 1, 'label' => __('general_content.in_progress_trans_key')], ['value' => 2, 'label' => __('general_content.send_trans_key')]]) }}"
-             data-statu="{{ $Delivery->statu }}"
-             data-endpoint="{{ route('deliverys.json.statu', $Delivery->id) }}"
-             data-redirect="{{ route('deliverys.show', $Delivery->id) }}"></div>
         <x-relational-breadcrumb :entity="$Delivery" />
         <div class="row">
           <div class="col-md-9">
