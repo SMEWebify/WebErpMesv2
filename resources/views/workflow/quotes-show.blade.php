@@ -2,9 +2,24 @@
 
 @section('title', __('general_content.quote_trans_key')  . ' - ' . $Quote->code)
 
+@php
+$arrowSteps = json_encode([
+    ['value' => 1, 'label' => __('general_content.open_trans_key')],
+    ['value' => 2, 'label' => __('general_content.send_trans_key')],
+    ['value' => 3, 'label' => __('general_content.win_trans_key')],
+    ['value' => 4, 'label' => __('general_content.lost_trans_key')],
+    ['value' => 5, 'label' => __('general_content.closed_trans_key')],
+    ['value' => 6, 'label' => __('general_content.obsolete_trans_key')],
+]);
+@endphp
+
 @section('content_header')
     <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
-    <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
+    <x-document-header h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}"
+                       previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"
+                       :steps="$arrowSteps" statu="{{ $Quote->statu }}"
+                       endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
+                       redirect="{{ route('quotes.show', $Quote->id) }}"/>
 @stop
 
 @section('right-sidebar')
@@ -34,21 +49,6 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane " id="Quote">
-        @php
-        $arrowSteps = json_encode([
-            ['value' => 1, 'label' => __('general_content.open_trans_key')],
-            ['value' => 2, 'label' => __('general_content.send_trans_key')],
-            ['value' => 3, 'label' => __('general_content.win_trans_key')],
-            ['value' => 4, 'label' => __('general_content.lost_trans_key')],
-            ['value' => 5, 'label' => __('general_content.closed_trans_key')],
-            ['value' => 6, 'label' => __('general_content.obsolete_trans_key')],
-        ]);
-        @endphp
-        <div data-react="arrow-steps"
-             data-steps="{{ $arrowSteps }}"
-             data-statu="{{ $Quote->statu }}"
-             data-endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
-             data-redirect="{{ route('quotes.show', $Quote->id) }}"></div>
         <x-relational-breadcrumb :entity="$Quote" />
         <div class="row">
           <div class="col-md-9">
