@@ -35,6 +35,8 @@ $endpoints = [
     'subassembly_duplicate' => route('task.manage.json.subassembly.duplicate', [$id_type, $id_page, '__ID__']),
     'import_csv'            => route('task.manage.json.import-csv',            [$id_type, $id_page, $id_line]),
     'apply_nomenclature'    => route('task.manage.json.apply-nomenclature',    [$id_type, $id_page, $id_line, '__TPL_ID__']),
+    // Écran de suivi opérateur : n'a de sens que pour les tâches de commande.
+    'task_statu'            => route('production.task.statu.id', ['id' => '__ID__']),
 ];
 @endphp
 

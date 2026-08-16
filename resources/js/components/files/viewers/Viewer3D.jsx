@@ -4,6 +4,16 @@ import { createStage } from './scene.js';
 const VIEWS = ['iso', 'front', 'back', 'top', 'bottom', 'left', 'right'];
 
 /**
+ * Le fond du canevas suit la surface qui l'accueille : chaque écran pose
+ * `--wem-viewer-bg` en CSS, ce qui permet à la scène de se fondre dans la carte
+ * qui la contient, en thème clair comme en thème sombre.
+ */
+function backgroundOf(container) {
+    const value = getComputedStyle(container).getPropertyValue('--wem-viewer-bg').trim();
+    return value || '#f7f8fa';
+}
+
+/**
  * Common shell for every three.js based viewer.
  *
  * The format specific part is injected through `load`, which receives the stage
@@ -24,7 +34,7 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
         if (!container) return undefined;
 
         const controller = new AbortController();
-        const stage = createStage(container, { orthographic });
+        const stage = createStage(container, { orthographic, background: backgroundOf(container) });
         stageRef.current = stage;
 
         setStatus('loading');

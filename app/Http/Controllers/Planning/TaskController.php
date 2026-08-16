@@ -500,6 +500,10 @@ class TaskController extends Controller
             'select_ressource_trans_key'         => __('general_content.select_ressource_trans_key'),
             'user_choise_trans_key'              => __('general_content.user_choise_trans_key'),
             'new_non_conformitie_trans_key'      => __('general_content.new_non_conformitie_trans_key'),
+            'drawing_trans_key'                  => __('general_content.drawing_trans_key'),
+            'scheduling_trans_key'               => __('general_content.scheduling_trans_key'),
+            'quality_trans_key'                  => __('general_content.quality_trans_key'),
+            'no_data_trans_key'                  => __('general_content.no_data_trans_key'),
         ];
 
         return view('workflow/task-statu', compact('kpi', 'userProductivity', 'resourceHours', 'trans'), [

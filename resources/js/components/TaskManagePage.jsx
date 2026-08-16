@@ -724,7 +724,7 @@ function statusBadge(status) {
     return <span className={`badge ${cls}`} style={{ fontSize: 10 }} title={status.title}>{status.title}</span>;
 }
 
-function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM, showDates }) {
+function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM, showDates, statuUrl }) {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const totalCost  = isBOM ? task.unit_cost * task.qty : task.unit_cost;
@@ -736,9 +736,18 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
             <td style={{ color: '#6c757d', fontSize: 12 }}>{task.ordre}</td>
             <td><ServiceBadge service={task.service} /></td>
             <td style={{ maxWidth: 150 }}>
-                <span title={task.label} style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {task.label}
-                </span>
+                {statuUrl ? (
+                    <a href={statuUrl}
+                       title={`${task.label} — écran de suivi`}
+                       style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {task.label}
+                        <i className="fas fa-external-link-alt ml-1" style={{ fontSize: 10, opacity: 0.6 }} />
+                    </a>
+                ) : (
+                    <span title={task.label} style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {task.label}
+                    </span>
+                )}
             </td>
             {isBOM ? (
                 <>
@@ -1074,6 +1083,14 @@ export default function TaskManagePage({ context, endpoints }) {
 
     const canEdit = context.statu === 1 || context.idType === 'nomenclature_lines_id';
 
+    // L'écran de suivi opérateur n'existe que pour les tâches rattachées à une
+    // ligne de commande : un devis n'a ni pointage ni déclaration de quantité.
+    const statuUrlFor = (taskId) => (
+        context.idType === 'order_lines_id' && endpoints.task_statu
+            ? endpoints.task_statu.replace('__ID__', taskId)
+            : null
+    );
+
     // ── Initial data fetch ──────────────────────────────────────────────────
 
     useEffect(() => {
@@ -1257,6 +1274,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                     <TaskRow key={task.id} task={task} canEdit={canEdit} currency={currency}
                                              isBOM={false}
                                              showDates={context.idType !== 'quote_lines_id'}
+                                             statuUrl={statuUrlFor(task.id)}
                                              onEdit={t => openEdit(DRAWER.TECHCUT, t)}
                                              onDelete={handleTaskDelete}
                                              onDuplicate={handleTaskDuplicate} />
@@ -1305,6 +1323,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                 {bomTasks.map(task => (
                                     <TaskRow key={task.id} task={task} canEdit={canEdit} currency={currency}
                                              isBOM={true}
+                                             statuUrl={statuUrlFor(task.id)}
                                              onEdit={t => openEdit(DRAWER.BOM, t)}
                                              onDelete={handleTaskDelete}
                                              onDuplicate={handleTaskDuplicate} />
