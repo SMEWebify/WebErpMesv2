@@ -30,9 +30,26 @@ class IntegrationEndpointController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        $endpoint = new IntegrationEndpoint([
+        $endpoint = new IntegrationEndpoint($this->defaultsForPreset($request->query('preset')));
+
+        return view('integrations.endpoints.edit', [
+            'endpoint'       => $endpoint,
+            'isNew'          => true,
+            'eventCatalog'   => (array) config('integrations.event_catalog', []),
+        ]);
+    }
+
+    /**
+     * Défauts de création d'endpoint. Un preset ('n8n', ...) permet à la carte
+     * du hub de router l'utilisateur vers un formulaire préconfiguré, plutôt
+     * que de dupliquer un contrôleur/route par connecteur alors que le stockage
+     * reste le même IntegrationEndpoint.
+     */
+    private function defaultsForPreset(?string $preset): array
+    {
+        $base = [
             'auth_method'           => IntegrationEndpoint::AUTH_HMAC,
             'hmac_header'           => 'X-Signature-256',
             'timestamp_header'      => 'X-Timestamp',
@@ -42,13 +59,22 @@ class IntegrationEndpointController extends Controller
             'retry_max'             => 5,
             'retry_backoff'         => IntegrationEndpoint::DEFAULT_RETRY_BACKOFF,
             'events'                => [],
-        ]);
+        ];
 
-        return view('integrations.endpoints.edit', [
-            'endpoint'       => $endpoint,
-            'isNew'          => true,
-            'eventCatalog'   => (array) config('integrations.event_catalog', []),
-        ]);
+        if ($preset === 'n8n') {
+            // n8n : le cas d'usage dominant est "l'ERP notifie n8n" (sortant).
+            // Le node Webhook de n8n accepte bearer + HMAC (Header Auth + custom
+            // header) : on active les deux par défaut pour éviter qu'un endpoint
+            // n8n mal configuré ne fuite d'événements en clair sur internet.
+            return array_merge($base, [
+                'name'        => 'n8n webhook',
+                'system_code' => 'n8n',
+                'direction'   => IntegrationEndpoint::DIRECTION_OUTBOUND,
+                'auth_method' => IntegrationEndpoint::AUTH_BEARER_HMAC,
+            ]);
+        }
+
+        return $base;
     }
 
     public function store(IntegrationEndpointRequest $request): RedirectResponse

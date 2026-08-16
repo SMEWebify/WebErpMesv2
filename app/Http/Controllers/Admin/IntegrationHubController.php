@@ -33,10 +33,14 @@ class IntegrationHubController extends Controller
     {
         // La carte dédiée N2P a été retirée du hub (refactor 2026-08-12) :
         // N2P vit dans la carte générique "Endpoints webhook" désormais.
+        // n8n reste une carte dédiée : contrairement à N2P (partenaire technique
+        // unique), n8n est un outil grand public que l'utilisateur final peut
+        // découvrir depuis le hub — la carte sert de porte d'entrée + doc courte.
         return view('integrations.index', [
             'qonto'     => $this->qontoCard((int) $request->user()->id),
             'pdp'       => $this->pdpCard(),
             'endpoints' => $this->endpointsCard(),
+            'n8n'       => $this->n8nCard(),
         ]);
     }
 
@@ -110,6 +114,38 @@ class IntegrationHubController extends Controller
             'outbound' => $endpoints->where('direction', IntegrationEndpoint::DIRECTION_OUTBOUND)->count(),
             'failing'  => $failing->count(),
             'systems'  => $endpoints->pluck('system_code')->unique()->sort()->values()->all(),
+        ];
+    }
+
+    /**
+     * n8n = automation open source (workflows sur événements). Se branche via
+     * la même mécanique d'endpoints webhook que N2P, mais on lui dédie une
+     * carte car l'utilisateur final connaît "n8n" en tant qu'outil, pas en
+     * tant que system_code. La carte propose un raccourci de création préconfiguré
+     * (bearer+HMAC, sortant) et affiche santé et volumétrie des endpoints n8n.
+     */
+    private function n8nCard(): array
+    {
+        $endpoints = IntegrationEndpoint::forSystem('n8n')->get();
+
+        $failing = $endpoints->filter(
+            fn (IntegrationEndpoint $e) => $e->last_error_at
+                && (! $e->last_success_at || $e->last_error_at->gt($e->last_success_at)),
+        );
+
+        $lastSuccessAt = $endpoints
+            ->pluck('last_success_at')
+            ->filter()
+            ->sortDesc()
+            ->first();
+
+        return [
+            'total'           => $endpoints->count(),
+            'active'          => $endpoints->where('is_active', true)->count(),
+            'inbound'         => $endpoints->where('direction', IntegrationEndpoint::DIRECTION_INBOUND)->count(),
+            'outbound'        => $endpoints->where('direction', IntegrationEndpoint::DIRECTION_OUTBOUND)->count(),
+            'failing'         => $failing->count(),
+            'last_success_at' => $lastSuccessAt,
         ];
     }
 }

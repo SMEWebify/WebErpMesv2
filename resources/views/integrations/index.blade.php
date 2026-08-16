@@ -135,6 +135,70 @@
             </div>
         </div>
 
+        {{-- ─────────────────────────── n8n ─────────────────────────── --}}
+        <div class="col-md-6">
+            <div class="card card-outline {{ $n8n['failing'] > 0 ? 'card-danger' : ($n8n['active'] > 0 ? 'card-success' : 'card-secondary') }}">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-project-diagram mr-1"></i> n8n
+                    </h3>
+                    <div class="card-tools">
+                        @if($n8n['failing'] > 0)
+                            <span class="badge badge-danger">{{ $n8n['failing'] }} en erreur</span>
+                        @elseif($n8n['active'] > 0)
+                            <span class="badge badge-success">{{ $n8n['active'] }} actif(s)</span>
+                        @elseif($n8n['total'] > 0)
+                            <span class="badge badge-secondary">Inactif</span>
+                        @else
+                            <span class="badge badge-light">Non branché</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Automation open source — un webhook n8n reçoit les événements
+                        ERP (devis, commandes, tâches...) ou déclenche des actions dans
+                        l'ERP (créer une commande, attacher un fichier...).
+                    </p>
+                    @if($n8n['total'] === 0)
+                        <p class="mb-0">
+                            <small class="text-muted">
+                                Sens sortant : l'ERP appelle l'URL webhook n8n signée en HMAC.
+                                Sens entrant : n8n POST vers <code>/api/integrations/n8n/inbound</code>.
+                            </small>
+                        </p>
+                    @else
+                        <dl class="row mb-0">
+                            <dt class="col-6">Endpoints</dt>
+                            <dd class="col-6">{{ $n8n['total'] }}</dd>
+
+                            <dt class="col-6">Sens</dt>
+                            <dd class="col-6">{{ $n8n['inbound'] }} entrant(s) / {{ $n8n['outbound'] }} sortant(s)</dd>
+
+                            <dt class="col-6">Dernier succès</dt>
+                            <dd class="col-6">
+                                @if($n8n['last_success_at'])
+                                    <span title="{{ $n8n['last_success_at'] }}">{{ $n8n['last_success_at']->diffForHumans() }}</span>
+                                @else
+                                    <span class="text-muted">jamais</span>
+                                @endif
+                            </dd>
+                        </dl>
+                    @endif
+                </div>
+                <div class="card-footer text-right">
+                    @if($n8n['total'] > 0)
+                        <a href="{{ route('admin.integrations.endpoints.index') }}" class="btn btn-sm btn-default">
+                            <i class="fas fa-list"></i> Voir les endpoints
+                        </a>
+                    @endif
+                    <a href="{{ route('admin.integrations.endpoints.create', ['preset' => 'n8n']) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter un endpoint n8n
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }}">
