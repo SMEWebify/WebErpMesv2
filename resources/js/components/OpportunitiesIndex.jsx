@@ -248,7 +248,7 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
                                         <td style={{ fontSize: '0.78rem' }}>{a.label}</td>
                                         <td style={{ fontSize: '0.72rem' }} className="text-muted">{a.created_pretty}</td>
                                         <td>
-                                            <a href={a.url} className="btn btn-xs btn-outline-secondary" style={{ fontSize: '0.7rem', padding: '1px 5px' }}>
+                                            <a href={a.url} className="btn btn-xs btn-info">
                                                 <i className="fas fa-eye" />
                                             </a>
                                         </td>
@@ -581,7 +581,7 @@ function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc,
                                     return <td key={colId} className={alignCls}>{renderCell(colId, o)}</td>;
                                 })}
                                 <td>
-                                    <a href={o.url} className="btn btn-xs btn-outline-secondary" style={{ fontSize: '0.72rem', padding: '1px 6px' }}>
+                                    <a href={o.url} className="btn btn-xs btn-info">
                                         <i className="fas fa-eye" />
                                     </a>
                                 </td>

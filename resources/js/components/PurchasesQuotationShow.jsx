@@ -146,7 +146,7 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="card card-primary">
+            <div className="card card-outline card-primary">
                 <div className="card-header">
                     <h3 className="card-title">{trans.informations}</h3>
                     <div className="card-tools">
@@ -294,7 +294,7 @@ function OptionsSidebar({ quotation, trans }) {
 
     return (
         <>
-            <div className="card card-warning">
+            <div className="card card-outline card-secondary">
                 <div className="card-header">
                     <h3 className="card-title">{trans.options}</h3>
                     <div className="card-tools">
@@ -353,7 +353,7 @@ function OptionsSidebar({ quotation, trans }) {
 
             {/* Email logs */}
             {quotation.email_logs && quotation.email_logs.length > 0 && (
-                <div className="card card-secondary">
+                <div className="card card-outline card-secondary">
                     <div className="card-header">
                         <h3 className="card-title">{trans.email_history}</h3>
                     </div>
@@ -699,12 +699,12 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
                                         </td>
                                         <td>
                                             {line.component_url && (
-                                                <a href={line.component_url} className="btn btn-sm btn-outline-secondary mr-1">
+                                                <a href={line.component_url} className="btn btn-xs btn-info mr-1">
                                                     <i className="fas fa-eye" />
                                                 </a>
                                             )}
                                             {!line.component_url && line.product_url && (
-                                                <a href={line.product_url} className="btn btn-sm btn-outline-secondary">
+                                                <a href={line.product_url} className="btn btn-xs btn-info">
                                                     <i className="fas fa-eye" />
                                                 </a>
                                             )}

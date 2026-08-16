@@ -108,7 +108,7 @@ function colDefs(t) {
             align:     'center',
             render:    (task) =>
                 task.component_id
-                    ? <a href={`/products/${task.component_id}`} className="btn btn-xs btn-default"><i className="fas fa-eye" /></a>
+                    ? <a href={`/products/${task.component_id}`} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a>
                     : null,
             cellClass: (task) => task.component_id ? `bg-${task.component?.stock_color} color-palette` : '',
         },

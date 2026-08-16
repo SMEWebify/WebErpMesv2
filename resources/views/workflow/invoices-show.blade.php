@@ -132,13 +132,13 @@ $invoiceSteps = [
           </div>
 
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" maximizable>
               <div class="card-body">
                 @include('include.sub-total-price')
               </div>
             </x-adminlte-card>
 
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>

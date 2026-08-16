@@ -120,7 +120,7 @@ if (!$orderHasInvoicedLines) {
           <div class="col-md-9">
             @include('include.alert-result')
             <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
-              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="warning" theme-mode="outline" maximizable>
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -304,7 +304,7 @@ if (!$orderHasInvoicedLines) {
           </div>
           <div class="col-md-3">
             
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" maximizable>
               @include('include.sub-total-price')
               @if($Order->Rating->isNotEmpty())
                 @php
@@ -334,7 +334,7 @@ if (!$orderHasInvoicedLines) {
             </x-adminlte-card>
 
             
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     @php

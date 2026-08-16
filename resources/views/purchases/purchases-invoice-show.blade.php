@@ -69,7 +69,7 @@
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" maximizable>
               <div class="card-body">
                 {{ __('general_content.created_at_trans_key') }} :  {{ $PurchaseInvoice->GetPrettyCreatedAttribute() }}
               </div>

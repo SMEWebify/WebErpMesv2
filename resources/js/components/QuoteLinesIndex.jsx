@@ -142,7 +142,7 @@ function QuoteLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
                 return <code>{line.code}</code>;
             case 'product':
                 return line.product_url
-                    ? <a href={line.product_url} className="btn btn-xs btn-outline-secondary"><i className="fas fa-eye" /></a>
+                    ? <a href={line.product_url} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a>
                     : '—';
             case 'label':
                 return line.label;
@@ -182,7 +182,7 @@ function QuoteLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
             case 'actions':
                 return (
                     <div className="btn-group btn-group-sm">
-                        <a href={line.quote_url} className="btn btn-info btn-xs" title={trans.view_quote}>
+                        <a href={line.quote_url} className="btn btn-xs btn-info" title={trans.view_quote}>
                             <i className="fas fa-eye" />
                         </a>
                         <a href={line.task_url} className="btn btn-success btn-xs" title={trans.tasks}>

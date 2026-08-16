@@ -126,7 +126,7 @@
             </x-adminlte-card>
         </div>
         <div class="col-lg-4">
-            <x-adminlte-card title="Transformation en commande" theme="lightblue">
+            <x-adminlte-card title="Transformation en commande" theme="lightblue" theme-mode="outline">
                 @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_CONVERTED)
                     <p class="mb-2"><span class="badge badge-success">Déjà convertie</span></p>
                     <p>Commande créée :

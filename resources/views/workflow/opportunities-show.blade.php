@@ -140,7 +140,7 @@ $oppSteps = json_encode([
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible="collapsed" maximizable>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
                   <i class="fas fa-folder"></i>

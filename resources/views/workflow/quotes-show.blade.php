@@ -211,12 +211,12 @@ $arrowSteps = json_encode([
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               @include('include.sub-total-price')
             </x-adminlte-card>
 
             @can('scheduling-menu')
-            <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" theme-mode="outline" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
                 <div class="form-group">
@@ -284,7 +284,7 @@ $arrowSteps = json_encode([
             @endcan
 
 
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <table class="table table-hover">
                 <tr>
                   <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>

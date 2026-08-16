@@ -113,7 +113,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             {/* Product */}
             <td>
                 {line.product_url && (
-                    <a href={line.product_url} className="btn btn-xs btn-default">
+                    <a href={line.product_url} className="btn btn-xs btn-info">
                         <i className="fas fa-eye" />
                     </a>
                 )}

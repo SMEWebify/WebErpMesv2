@@ -48,7 +48,7 @@ $deliverySteps = [
           <div class="col-md-9">
             @include('include.alert-result')
             <form method="POST" action="{{ route('deliverys.update', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
-              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -131,7 +131,7 @@ $deliverySteps = [
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>

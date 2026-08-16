@@ -393,7 +393,7 @@ export default function PurchasesRequest({
                                     </td>
                                     <td>
                                         {task.component_url && (
-                                            <a href={task.component_url} className="btn btn-sm btn-outline-secondary">
+                                            <a href={task.component_url} className="btn btn-xs btn-info">
                                                 <i className="fas fa-eye" />
                                             </a>
                                         )}

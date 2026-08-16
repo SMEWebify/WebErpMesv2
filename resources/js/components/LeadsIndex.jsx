@@ -591,7 +591,7 @@ function LeadsTable({ items, loading, trans, onSort, sortField, sortAsc, locale 
                                     return <td key={colId} className={alignCls}>{renderCell(colId, l)}</td>;
                                 })}
                                 <td>
-                                    <a href={l.url} className="btn btn-xs btn-outline-secondary" style={{ fontSize: '0.72rem', padding: '1px 6px' }}>
+                                    <a href={l.url} className="btn btn-xs btn-info">
                                         <i className="fas fa-eye" />
                                     </a>
                                 </td>

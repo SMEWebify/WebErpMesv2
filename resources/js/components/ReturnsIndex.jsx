@@ -554,7 +554,7 @@ const [rows, setRows]         = useState([]);
                                                     >
                                                         <i className="fas fa-check" />
                                                     </button>
-                                                    <a href={row.url} className="btn btn-xs btn-outline-primary" title={trans.view}>
+                                                    <a href={row.url} className="btn btn-xs btn-info" title={trans.view}>
                                                         <i className="fas fa-eye" />
                                                     </a>
                                                 </div>

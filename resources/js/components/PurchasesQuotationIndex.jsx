@@ -319,7 +319,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                                                         </td>
                                                         <td>{q.created_at_human}</td>
                                                         <td>
-                                                            <a href={q.show_url} className="btn btn-outline-secondary btn-sm mr-1">
+                                                            <a href={q.show_url} className="btn btn-xs btn-info mr-1">
                                                                 <i className="fas fa-eye" />
                                                             </a>
                                                             {q.pdf_url && (

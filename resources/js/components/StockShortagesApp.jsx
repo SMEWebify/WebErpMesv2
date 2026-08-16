@@ -152,7 +152,7 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                         )}
                 </td>
                 <td className="align-middle text-center">
-                    <a href={product.product_url} className="btn btn-xs btn-default mr-1" title="Voir le produit">
+                    <a href={product.product_url} className="btn btn-xs btn-info mr-1" title="Voir le produit">
                         <i className="fas fa-eye" />
                     </a>
                     {product.qty_need > 0 && (
