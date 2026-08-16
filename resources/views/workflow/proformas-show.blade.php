@@ -29,6 +29,7 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Info" data-toggle="tab">Informations</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Lignes ({{ count($Proforma->invoiceLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Proforma->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -148,7 +149,6 @@
               </div>
             </x-adminlte-card>
 
-            @include('include.file-store', ['inputName' => 'invoices_id', 'inputValue' => $Proforma->id, 'filesList' => $Proforma->files])
             @include('include.email-list', ['mailsList' => $Proforma->emailLogs])
           </div>
         </div>
@@ -197,6 +197,12 @@
       </div>
 
       {{-- Onglet logs --}}
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'invoice',
+          'fileableId'   => $Proforma->id,
+        ])
+      </div>
       <div class="tab-pane" id="Logs">
         @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Invoices', 'logsSubjectId' => $Proforma->id])
       </div>

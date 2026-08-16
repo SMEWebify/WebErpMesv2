@@ -89,6 +89,7 @@ if (!$orderHasInvoicedLines) {
       @if($Order->type == 1)
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
       @endif
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Order->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -398,7 +399,6 @@ if (!$orderHasInvoicedLines) {
                 </table>
               </div>
             </x-adminlte-card>
-            @include('include.file-store', ['inputName' => "orders_id",'inputValue' => $Order->id,'filesList' => $Order->files,])
             @include('include.email-list', ['mailsList'=> $Order->emailLogs,])
           </div>
         </div>
@@ -734,6 +734,12 @@ if (!$orderHasInvoicedLines) {
         @endif
       </div>
 
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'order',
+          'fileableId'   => $Order->id,
+        ])
+      </div>
       <div class="tab-pane " id="Logs">
         <x-adminlte-card title="{{ __('general_content.review_timeline_trans_key') }}" theme="info" icon="fas fa-history" class="mb-4">
           @php

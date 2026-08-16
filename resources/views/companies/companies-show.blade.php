@@ -378,6 +378,7 @@
       @if($Companie->statu_supplier == 2 )
       <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
       @endif
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Companie->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -708,8 +709,6 @@
           </div>
 
           <div class="col-md-3">
-            @include('include.file-store', ['inputName' => "companies_id",'inputValue' => $Companie->id,'filesList' => $Companie->files,])
-          
             @if($Companie->barcode_value)
             <x-adminlte-card title="{{ __('BARECODE') }}" theme="orange" maximizable>
               @php echo DNS2D::getBarcodeHTML($Companie->barcode_value, 'QRCODE'); @endphp
@@ -1406,6 +1405,12 @@
             </div>
           @endif
         </x-adminlte-card>
+      </div>
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'company',
+          'fileableId'   => $Companie->id,
+        ])
       </div>
     </div>
   </div>

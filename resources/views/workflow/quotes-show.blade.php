@@ -42,6 +42,7 @@ $arrowSteps = json_encode([
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Quote->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">{{ __('general_content.logs_trans_key') }}</a></li>
     </ul>
   </div>
@@ -320,7 +321,6 @@ $arrowSteps = json_encode([
                 @endforelse
               </table>
             </x-adminlte-card>
-            @include('include.file-store', ['inputName' => "quotes_id",'inputValue' => $Quote->id,'filesList' => $Quote->files,])
             @include('include.email-list', ['mailsList'=> $Quote->emailLogs,])
           </div>
         </div>
@@ -493,6 +493,12 @@ $arrowSteps = json_encode([
             {{ __('general_content.info_statu_trans_key') }}
         </x-adminlte-alert>
         @endif
+      </div>
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'quote',
+          'fileableId'   => $Quote->id,
+        ])
       </div>
       <div class="tab-pane " id="Logs">
         <x-adminlte-card title="{{ __('general_content.review_timeline_trans_key') }}" theme="info" icon="fas fa-history" class="mb-4">

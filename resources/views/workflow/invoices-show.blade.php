@@ -45,6 +45,7 @@ $invoiceSteps = [
           @endif
         </a>
       </li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Invoice->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -164,7 +165,6 @@ $invoiceSteps = [
             @include('integrations.partials.qonto-invoice-card', ['Invoice' => $Invoice, 'submission' => $pdpSubmission])
             @endif
 
-            @include('include.file-store', ['inputName' => "invoices_id",'inputValue' => $Invoice->id,'filesList' => $Invoice->files,])
             @include('include.email-list', ['mailsList'=> $Invoice->emailLogs,])
           </div>
         </div>
@@ -260,6 +260,12 @@ $invoiceSteps = [
         @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Invoices', 'logsSubjectId' => $Invoice->id])
       </div>
       @endif
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'invoice',
+          'fileableId'   => $Invoice->id,
+        ])
+      </div>
   </div>
   <!-- /.card-body -->
 </div>

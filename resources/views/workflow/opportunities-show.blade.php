@@ -34,6 +34,7 @@ $oppSteps = json_encode([
       <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab">TimeLine</a></li>
       <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Opportunity->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -154,7 +155,6 @@ $oppSteps = json_encode([
               {{ __('general_content.no_data_trans_key') }}
               @endforelse
             </x-adminlte-card>
-            @include('include.file-store', ['inputName' => "opportunities_id",'inputValue' => $Opportunity->id,'filesList' => $Opportunity->files,])
           </div>
         </div>
       </div>   
@@ -521,6 +521,12 @@ $oppSteps = json_encode([
             </form>
           </div>
         </div>
+      </div>
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'opportunity',
+          'fileableId'   => $Opportunity->id,
+        ])
       </div>
       <div class="tab-pane " id="Logs">
         @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Opportunities', 'logsSubjectId' => $Opportunity->id])

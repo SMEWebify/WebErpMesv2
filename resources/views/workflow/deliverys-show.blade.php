@@ -35,6 +35,7 @@ $deliverySteps = [
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Delivery->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -166,7 +167,6 @@ $deliverySteps = [
               </div>
             </x-adminlte-card>
             
-            @include('include.file-store', ['inputName' => "deliverys_id",'inputValue' => $Delivery->id,'filesList' => $Delivery->files,])
             @include('include.email-list', ['mailsList'=> $Delivery->emailLogs,])
           </div>
         </div>
@@ -638,6 +638,12 @@ $deliverySteps = [
         @include('include.custom-fields-form', ['id' => $Delivery->id, 'type' => 'delivery'])
       </div>
       @endif
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'delivery',
+          'fileableId'   => $Delivery->id,
+        ])
+      </div>
       <div class="tab-pane " id="Logs">
         @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Deliverys', 'logsSubjectId' => $Delivery->id])
       </div>

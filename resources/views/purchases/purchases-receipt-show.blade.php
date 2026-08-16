@@ -15,6 +15,7 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{ __('general_content.purchase_receipt_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{ __('general_content.purchase_receipt_lines_trans_key') }} ({{ count($PurchaseReceipt->PurchaseReceiptLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($PurchaseReceipt->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -110,7 +111,6 @@
               </div>
             </x-adminlte-card>
 
-            @include('include.file-store', ['inputName' => "purchase_receipts_id",'inputValue' => $PurchaseReceipt->id,'filesList' => $PurchaseReceipt->files,])
           </div>
         </div>
       </div>
@@ -123,6 +123,12 @@
           data-user-id="{{ Auth::id() }}"
           data-endpoints="{{ json_encode($reactEndpoints) }}"
         ></div>
+      </div>
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'purchase-receipt',
+          'fileableId'   => $PurchaseReceipt->id,
+        ])
       </div>
     </div>
   </div>

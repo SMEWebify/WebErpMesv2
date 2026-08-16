@@ -33,6 +33,7 @@ $purchaseSteps = json_encode([
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Purchase->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -155,7 +156,6 @@ $purchaseSteps = json_encode([
               </div>
             </x-adminlte-card>
 
-            @include('include.file-store', ['inputName' => "purchases_id",'inputValue' => $Purchase->id,'filesList' => $Purchase->files,])
             @include('include.email-list', ['mailsList'=> $Purchase->emailLogs,])
           </div>
         </div>
@@ -182,6 +182,12 @@ $purchaseSteps = json_encode([
         @include('include.custom-fields-form', ['id' => $Purchase->id, 'type' => 'purchase'])
       </div>
       @endif
+      <div class="tab-pane" id="Documents">
+        @include('include.file-manager-mount', [
+          'fileableType' => 'purchase',
+          'fileableId'   => $Purchase->id,
+        ])
+      </div>
   </div>
   <!-- /.card-body -->
 </div>
