@@ -1,6 +1,6 @@
 import React from 'react';
 import Viewer3D from './Viewer3D.jsx';
-import { THREE } from './scene.js';
+import { THREE, partMaterial } from './scene.js';
 
 /**
  * Viewer for CAD kernel formats: STEP, IGES and BREP.
@@ -62,15 +62,7 @@ function toMesh(descriptor) {
         geometry.computeVertexNormals();
     }
 
-    // OCCT reports colours as 0..1 triplets when the file carries them.
-    const color = descriptor.color
-        ? new THREE.Color(descriptor.color[0], descriptor.color[1], descriptor.color[2])
-        : new THREE.Color(0xdce3ea);
-
-    const mesh = new THREE.Mesh(
-        geometry,
-        new THREE.MeshPhongMaterial({ color, specular: 0x222222, shininess: 30, flatShading: false }),
-    );
+    const mesh = new THREE.Mesh(geometry, partMaterial());
     mesh.name = descriptor.name ?? '';
 
     return mesh;

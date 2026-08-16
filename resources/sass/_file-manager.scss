@@ -93,6 +93,10 @@
 }
 
 .wem-viewer {
+    // Couleur de fond du canevas 3D, relue par Viewer3D. Chaque écran peut la
+    // redéfinir pour que la scène se fonde dans la carte qui l'accueille.
+    --wem-viewer-bg: #f7f8fa;
+
     canvas {
         display: block;
         border-radius: .25rem;
@@ -103,7 +107,7 @@
     position: relative;
     overflow: hidden;
     height: 620px;
-    background-color: #30343c;
+    background-color: var(--wem-viewer-bg, #f7f8fa);
     border-radius: .25rem;
 
     img {
@@ -120,8 +124,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(48, 52, 60, .85);
-    color: #f8f9fa;
+    background-color: rgba(248, 249, 250, .88);
+    color: #46525f;
     text-align: center;
     padding: 1rem;
 }

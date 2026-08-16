@@ -12,6 +12,7 @@ use App\Models\Products\StockLocationProducts;
 use App\Models\Products\StockReservation;
 use App\Models\Products\SerialNumbers;
 use App\Services\QualityNonConformityService;
+use App\Services\Files\FileKindResolver;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,10 @@ class TaskStatuController extends Controller
             'OrderLines.order',
             'OrderLines.OrderLineDetails',
             'OrderLines.Product',
+            'OrderLines.files',
+            'OrderLines.Product.files',
             'Component',
+            'Component.files',
             'purchaseLines.purchase',
             'purchaseLines.purchaseReceiptLines',
             'StockMove',
@@ -175,7 +179,155 @@ class TaskStatuController extends Controller
             'reservation'         => $reservation,
             // timeline
             'timeline'            => $timeline,
+            // documents (plan, 3D, DXF...) shown by the operator viewer
+            'documents'           => $this->buildDocuments($task),
         ]);
+    }
+
+    /**
+     * Rank of a document in the operator viewer, lowest wins.
+     *
+     * The order was set by production: a 3D model first, then the drawing, then
+     * the flat pattern. `geo` (RADAN source) has no inline viewer and sits last
+     * of the requested formats, images being only a fallback after that.
+     */
+    private function documentRank(string $kind, ?string $extension): int
+    {
+        if ($extension === 'geo') {
+            return 5;
+        }
+
+        return match ($kind) {
+            FileKindResolver::KIND_BREP   => 0,  // step, stp, iges, igs, brep
+            FileKindResolver::KIND_DOC    => 1,  // pdf
+            FileKindResolver::KIND_CAD2D  => 2,  // dxf
+            FileKindResolver::KIND_VECTOR => 3,  // svg
+            FileKindResolver::KIND_MESH   => 4,  // stl, obj, 3mf...
+            FileKindResolver::KIND_IMAGE  => 6,
+            default                       => 7,
+        };
+    }
+
+    /**
+     * Documents an operator may need on the task screen, most relevant first.
+     *
+     * Sources are walked from the most specific to the most generic: files
+     * attached to this very order line override the ones carried by the product,
+     * and the consumed component comes last. The legacy `products.drawing_file`
+     * column is only used when the product carries nothing in the GED, so a
+     * migrated product does not show its drawing twice.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildDocuments(Task $task): array
+    {
+        $documents = [];
+        $seen      = [];
+
+        $push = function ($file, string $source) use (&$documents, &$seen) {
+            if ($file === null || isset($seen[$file->id])) {
+                return;
+            }
+
+            $seen[$file->id] = true;
+            $kind            = $file->kind ?? FileKindResolver::KIND_OTHER;
+            $extension       = $file->extension ? mb_strtolower($file->extension) : null;
+
+            $documents[] = [
+                'id'           => $file->id,
+                'name'         => $file->original_file_name ?: $file->name,
+                'extension'    => $extension,
+                'kind'         => $kind,
+                'icon'         => $file->icon,
+                'is_viewable'  => $file->is_viewable,
+                'view_url'     => $file->view_url,
+                'download_url' => $file->download_url,
+                'source'       => $source,
+                'rank'         => $this->documentRank($kind, $extension),
+            ];
+        };
+
+        $orderLine = $task->OrderLines;
+        $product   = $orderLine?->Product;
+
+        if ($orderLine) {
+            foreach ($orderLine->files as $file) {
+                $push($file, 'order_line');
+            }
+        }
+
+        if ($product) {
+            foreach ($product->files as $file) {
+                $push($file, 'product');
+            }
+
+            // Pre-GED products only carry the legacy path columns.
+            if ($product->files->isEmpty()) {
+                foreach ($this->legacyDocuments($product, 'product') as $legacy) {
+                    $documents[] = $legacy;
+                }
+            }
+        }
+
+        if ($task->Component) {
+            foreach ($task->Component->files as $file) {
+                $push($file, 'component');
+            }
+
+            if ($task->Component->files->isEmpty()) {
+                foreach ($this->legacyDocuments($task->Component, 'component') as $legacy) {
+                    $documents[] = $legacy;
+                }
+            }
+        }
+
+        usort($documents, fn ($a, $b) => $a['rank'] <=> $b['rank']);
+
+        return $documents;
+    }
+
+    /**
+     * Documents rebuilt from the legacy `products.*_file` columns, served by
+     * LegacyFileController on their historical public URLs.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function legacyDocuments($product, string $source): array
+    {
+        $columns = [
+            'drawing_file' => '/drawing/',
+            'stl_file'     => '/stl/',
+            'svg_file'     => '/svg/',
+        ];
+
+        $documents = [];
+
+        foreach ($columns as $column => $prefix) {
+            $name = $product->{$column} ?? null;
+
+            if (empty($name)) {
+                continue;
+            }
+
+            $extension = FileKindResolver::extensionOf($name);
+            $kind      = FileKindResolver::fromExtension($extension);
+            $url       = $prefix . rawurlencode($name);
+
+            $documents[] = [
+                'id'           => 'legacy-' . $source . '-' . $column,
+                'name'         => $name,
+                'extension'    => $extension,
+                'kind'         => $kind,
+                'icon'         => FileKindResolver::icon($kind),
+                'is_viewable'  => FileKindResolver::isViewable($kind),
+                'view_url'     => $url,
+                'download_url' => $url,
+                'source'       => $source,
+                'rank'         => $this->documentRank($kind, $extension),
+            ];
+        }
+
+        return $documents;
     }
 
     // -------------------------------------------------------------------------

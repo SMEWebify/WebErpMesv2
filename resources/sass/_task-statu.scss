@@ -1,0 +1,1078 @@
+// ---------------------------------------------------------------------------
+// Écran « Statut de tâche » (production/Task/Statu) — design sobre type
+// Fulcrum Pro / Paperless Parts : surfaces neutres, une seule couleur d'accent,
+// hiérarchie portée par la typographie plutôt que par des aplats de couleur.
+// Tout est scopé sous #task-statu-app pour ne pas déborder sur AdminLTE.
+// ---------------------------------------------------------------------------
+
+#task-statu-app {
+    --ts-surface: #ffffff;
+    --ts-surface-alt: #f8f9fc;
+    --ts-border: #e4e7ef;
+    --ts-border-strong: #cbd1de;
+    --ts-ink: #131a2b;
+    --ts-ink-2: #48526b;
+    --ts-muted: #7a8399;
+    --ts-accent: #3450e3;
+    --ts-accent-soft: #eceffe;
+    --ts-ok: #0d8060;
+    --ts-ok-soft: #e6f6f1;
+    --ts-warn: #b05a06;
+    --ts-warn-soft: #fdf2e4;
+    --ts-danger: #cf342c;
+    --ts-danger-soft: #fdecea;
+    --ts-radius: 12px;
+    --ts-shadow: 0 1px 2px rgba(19, 26, 43, 0.04), 0 2px 6px rgba(19, 26, 43, 0.05);
+
+    color: var(--ts-ink);
+    font-size: 14px;
+    line-height: 1.45;
+
+    // Le `content_header` d'AdminLTE a été retiré pour gagner de la hauteur :
+    // on rétablit ici une respiration minimale autour du contenu.
+    padding: 10px 10px 4px;
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+}
+
+body.dark-mode #task-statu-app {
+    --ts-surface: #1f2637;
+    --ts-surface-alt: #232b3d;
+    --ts-border: #333c52;
+    --ts-border-strong: #454f68;
+    --ts-ink: #eef1f7;
+    --ts-ink-2: #c3cad9;
+    --ts-muted: #8e98ad;
+    --ts-accent: #8298ff;
+    --ts-accent-soft: #262f4d;
+    --ts-ok: #4ec39a;
+    --ts-ok-soft: #1f3b34;
+    --ts-warn: #e0a24a;
+    --ts-warn-soft: #3b3222;
+    --ts-danger: #f08279;
+    --ts-danger-soft: #3b2626;
+    --ts-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+// --- Primitives -------------------------------------------------------------
+
+.ts-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    color: var(--ts-muted);
+    margin: 0 0 2px;
+}
+
+.ts-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ts-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.ts-muted {
+    color: var(--ts-muted);
+}
+
+.ts-card {
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    border-radius: var(--ts-radius);
+    box-shadow: var(--ts-shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.ts-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--ts-border);
+    background: var(--ts-surface-alt);
+}
+
+.ts-card__title {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ts-ink-2);
+}
+
+.ts-card__body {
+    padding: 16px;
+}
+
+.ts-card__body--tight {
+    padding: 12px 16px;
+}
+
+// --- Pastilles de statut ----------------------------------------------------
+
+.ts-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.ts-pill--neutral {
+    background: var(--ts-surface-alt);
+    border-color: var(--ts-border);
+    color: var(--ts-ink-2);
+}
+.ts-pill--accent {
+    background: var(--ts-accent-soft);
+    border-color: transparent;
+    color: var(--ts-accent);
+}
+.ts-pill--ok {
+    background: var(--ts-ok-soft);
+    color: var(--ts-ok);
+}
+.ts-pill--warn {
+    background: var(--ts-warn-soft);
+    color: var(--ts-warn);
+}
+.ts-pill--danger {
+    background: var(--ts-danger-soft);
+    color: var(--ts-danger);
+}
+
+.ts-pill__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+// --- En-tête de tâche -------------------------------------------------------
+
+.ts-header {
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    border-radius: var(--ts-radius);
+    box-shadow: var(--ts-shadow);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+}
+
+.ts-header__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ts-crumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ts-muted);
+    margin-bottom: 6px;
+}
+
+.ts-crumb a {
+    color: var(--ts-muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ts-border-strong);
+}
+.ts-crumb a:hover {
+    color: var(--ts-accent);
+}
+
+.ts-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ts-ink);
+}
+
+.ts-title__id {
+    color: var(--ts-muted);
+    font-weight: 600;
+}
+
+.ts-header__nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ts-header__progress {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ts-progress {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ts-border);
+    overflow: hidden;
+}
+
+.ts-progress__bar {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--ts-accent);
+    transition: width 0.3s ease;
+}
+
+.ts-progress__meta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ts-ink-2);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+// --- Boutons ----------------------------------------------------------------
+
+.ts-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--ts-border-strong);
+    background: var(--ts-surface);
+    color: var(--ts-ink-2);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.ts-btn:hover:not(:disabled) {
+    background: var(--ts-surface-alt);
+    border-color: var(--ts-muted);
+    color: var(--ts-ink);
+    text-decoration: none;
+}
+
+.ts-btn:disabled,
+.ts-btn.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.ts-btn--primary {
+    background: var(--ts-accent);
+    border-color: var(--ts-accent);
+    color: #fff;
+}
+.ts-btn--primary:hover:not(:disabled) {
+    background: #1d4fd8;
+    border-color: #1d4fd8;
+    color: #fff;
+}
+
+.ts-btn--sm {
+    padding: 4px 9px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+.ts-btn--icon {
+    padding: 5px 8px;
+}
+
+.ts-btn--link {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--ts-accent);
+    font-weight: 600;
+}
+.ts-btn--link:hover:not(:disabled) {
+    background: none;
+    text-decoration: underline;
+    color: var(--ts-accent);
+}
+
+// --- Commandes de production (Play / Pause / Fin) ---------------------------
+
+.ts-run {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.ts-run--duo {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+// Variante rail étroit : les commandes s'empilent verticalement.
+.ts-run--stack,
+.ts-run--stack.ts-run--duo {
+    grid-template-columns: 1fr;
+}
+
+.ts-run--stack .ts-run__btn {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    min-height: 56px;
+    padding: 10px 14px;
+
+    i {
+        font-size: 17px;
+        width: 20px;
+        text-align: center;
+    }
+}
+
+.ts-run__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 76px;
+    padding: 12px 8px;
+    border-radius: var(--ts-radius);
+    border: 1px solid var(--ts-border-strong);
+    background: var(--ts-surface);
+    color: var(--ts-ink-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.12s ease;
+
+    i {
+        font-size: 20px;
+    }
+}
+
+.ts-run__btn:hover:not(.is-disabled) {
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.ts-run__btn.is-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.ts-run__btn--start {
+    border-color: var(--ts-ok);
+    color: var(--ts-ok);
+}
+.ts-run__btn--start:hover:not(.is-disabled) {
+    background: var(--ts-ok-soft);
+}
+
+.ts-run__btn--pause {
+    border-color: var(--ts-warn);
+    color: var(--ts-warn);
+}
+.ts-run__btn--pause:hover:not(.is-disabled) {
+    background: var(--ts-warn-soft);
+}
+
+.ts-run__btn--stop {
+    border-color: var(--ts-danger);
+    color: var(--ts-danger);
+}
+.ts-run__btn--stop:hover:not(.is-disabled) {
+    background: var(--ts-danger-soft);
+}
+
+.ts-run__btn--is-active {
+    background: var(--ts-ok);
+    border-color: var(--ts-ok);
+    color: #fff;
+}
+.ts-run__btn--is-active:hover:not(.is-disabled) {
+    background: var(--ts-ok);
+    color: #fff;
+}
+
+// --- Écran opérateur : rail actions | plan | rail contexte ------------------
+
+#task-statu-app {
+    // Hauteur du plan : plein écran moins l'en-tête AdminLTE, le header de tâche
+    // et le bandeau de métriques.
+    --ts-stage-h: clamp(440px, calc(100vh - 265px), 960px);
+}
+
+.ts-shop {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr) 360px;
+    gap: 14px;
+    align-items: start;
+}
+
+@media (max-width: 1399.98px) {
+    .ts-shop {
+        grid-template-columns: 200px minmax(0, 1fr);
+
+        .ts-shop__rail--info {
+            grid-column: 1 / -1;
+        }
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ts-shop {
+        grid-template-columns: 1fr;
+
+        .ts-shop__rail--info {
+            grid-column: auto;
+        }
+    }
+}
+
+// Le rail d'actions suit le scroll : Play/Pause reste toujours sous la main.
+.ts-shop__rail--actions {
+    position: sticky;
+    top: 12px;
+}
+
+.ts-shop__rail .ts-card {
+    margin-bottom: 12px;
+}
+
+// --- Scène : le plan en grand -----------------------------------------------
+
+.ts-stage {
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    border-radius: var(--ts-radius);
+    box-shadow: var(--ts-shadow);
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.ts-stage__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--ts-border);
+    background: var(--ts-surface-alt);
+}
+
+.ts-stage__tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    min-width: 0;
+}
+
+.ts-doctab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 230px;
+    padding: 5px 11px;
+    border-radius: 7px;
+    border: 1px solid var(--ts-border-strong);
+    background: var(--ts-surface);
+    color: var(--ts-ink-2);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.ts-doctab:hover {
+    border-color: var(--ts-muted);
+    color: var(--ts-ink);
+}
+
+.ts-doctab.is-active {
+    background: var(--ts-accent-soft);
+    border-color: var(--ts-accent);
+    color: var(--ts-accent);
+}
+
+.ts-doctab__ext {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.ts-doctab__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    color: var(--ts-muted);
+}
+
+.ts-doctab.is-active .ts-doctab__name {
+    color: inherit;
+}
+
+.ts-stage__canvas {
+    padding: 10px;
+
+    // La scène 3D se fond dans la carte plutôt que d'y découper un rectangle.
+    .wem-viewer {
+        --wem-viewer-bg: var(--ts-surface);
+    }
+
+    // Barre d'outils interne des viewers partagés (vues normalisées, télécharger)
+    // masquée ici : l'écran opérateur veut le plan, pas la tuyauterie.
+    .wem-viewer > .btn-toolbar {
+        display: none;
+    }
+
+    // Les viewers partagés (FileManager) posent une hauteur fixe, en classe pour
+    // l'image et en style inline pour la 3D : ici la scène doit occuper la place
+    // disponible, d'où les surcharges ciblées.
+    .wem-viewer-pane {
+        height: var(--ts-stage-h);
+        border-radius: 8px;
+    }
+
+    .wem-viewer > .position-relative {
+        height: var(--ts-stage-h) !important;
+    }
+
+    .wem-viewer object {
+        height: var(--ts-stage-h) !important;
+        border-radius: 8px;
+    }
+
+    .wem-viewer-placeholder {
+        min-height: var(--ts-stage-h);
+        border-radius: 8px;
+    }
+
+    // Barre d'outils du viewer alignée sur le vocabulaire de l'écran.
+    .wem-viewer .btn-outline-secondary {
+        border-color: var(--ts-border-strong);
+        color: var(--ts-ink-2);
+    }
+
+    .wem-viewer .btn-outline-secondary:hover {
+        background: var(--ts-surface-alt);
+        border-color: var(--ts-muted);
+        color: var(--ts-ink);
+    }
+}
+
+body.dark-mode #task-statu-app .ts-stage__canvas .wem-viewer-overlay {
+    background-color: rgba(31, 38, 55, 0.88);
+    color: var(--ts-ink-2);
+}
+
+.ts-stage__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--ts-stage-h);
+    padding: 24px;
+    border: 1px dashed var(--ts-border-strong);
+    border-radius: 8px;
+    background: var(--ts-surface-alt);
+    color: var(--ts-ink-2);
+    text-align: center;
+
+    i {
+        font-size: 34px;
+        color: var(--ts-muted);
+    }
+
+    p {
+        margin: 0;
+        font-weight: 600;
+    }
+}
+
+// --- Bandeau de métriques ---------------------------------------------------
+
+.ts-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.ts-metric {
+    position: relative;
+    background: var(--ts-surface);
+    border: 1px solid var(--ts-border);
+    border-radius: var(--ts-radius);
+    box-shadow: var(--ts-shadow);
+    padding: 12px 14px 12px 16px;
+    overflow: hidden;
+}
+
+.ts-metric::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--ts-border-strong);
+}
+
+.ts-metric--ok::before {
+    background: var(--ts-ok);
+}
+.ts-metric--danger::before {
+    background: var(--ts-danger);
+}
+.ts-metric--accent::before {
+    background: var(--ts-accent);
+}
+.ts-metric--warn::before {
+    background: var(--ts-warn);
+}
+
+.ts-metric__value {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ts-ink);
+}
+
+.ts-metric__unit {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ts-muted);
+    margin-left: 3px;
+}
+
+.ts-metric__label {
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ts-muted);
+}
+
+// --- Déclaration de quantités ----------------------------------------------
+
+.ts-declare {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.ts-declare__col + .ts-declare__col {
+    padding-left: 16px;
+    border-left: 1px solid var(--ts-border);
+}
+
+// Variante rail étroit : bonnes puis rebutées l'une sous l'autre.
+.ts-declare--stack {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .ts-declare__col + .ts-declare__col {
+        padding-left: 0;
+        border-left: 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--ts-border);
+    }
+
+    .ts-quick {
+        gap: 6px;
+    }
+
+    .ts-quick__btn {
+        padding: 9px 2px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ts-declare__col + .ts-declare__col {
+        padding-left: 0;
+        border-left: 0;
+        border-top: 1px solid var(--ts-border);
+        padding-top: 16px;
+    }
+}
+
+.ts-quick {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ts-quick__btn {
+    padding: 10px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--ts-border-strong);
+    background: var(--ts-surface);
+    color: var(--ts-ink-2);
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+
+.ts-quick__btn:hover:not(:disabled) {
+    border-color: currentColor;
+}
+
+.ts-quick__btn--ok {
+    color: var(--ts-ok);
+}
+.ts-quick__btn--ok:hover:not(:disabled) {
+    background: var(--ts-ok-soft);
+}
+.ts-quick__btn--danger {
+    color: var(--ts-danger);
+}
+.ts-quick__btn--danger:hover:not(:disabled) {
+    background: var(--ts-danger-soft);
+}
+.ts-quick__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.ts-field {
+    display: flex;
+    gap: 8px;
+}
+
+.ts-input,
+.ts-select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--ts-border-strong);
+    background: var(--ts-surface);
+    color: var(--ts-ink);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ts-input:focus,
+.ts-select:focus {
+    outline: none;
+    border-color: var(--ts-accent);
+    box-shadow: 0 0 0 3px var(--ts-accent-soft);
+}
+
+.ts-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--ts-ink-2);
+    cursor: pointer;
+    margin: 0;
+    font-weight: 500;
+}
+
+// --- Fiche pièce ------------------------------------------------------------
+
+.ts-part {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.ts-part__thumb {
+    flex-shrink: 0;
+    width: 76px;
+    height: 76px;
+    border-radius: 8px;
+    border: 1px solid var(--ts-border);
+    background: var(--ts-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--ts-muted);
+    font-size: 24px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.ts-part__body {
+    min-width: 0;
+    flex: 1;
+}
+
+.ts-part__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ts-ink);
+    margin: 0 0 2px;
+    word-break: break-word;
+}
+
+.ts-part__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+// --- Grille de spécifications ----------------------------------------------
+
+.ts-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 2px 0;
+}
+
+.ts-specs__item {
+    padding: 8px 12px 8px 0;
+    border-bottom: 1px solid var(--ts-border);
+}
+
+.ts-specs__item:last-child,
+.ts-specs__item--flush {
+    border-bottom: 0;
+}
+
+// --- Onglets ----------------------------------------------------------------
+
+.ts-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.ts-tab {
+    border: 0;
+    background: none;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ts-muted);
+    cursor: pointer;
+}
+
+.ts-tab:hover {
+    color: var(--ts-ink);
+}
+
+.ts-tab.is-active {
+    background: var(--ts-accent-soft);
+    color: var(--ts-accent);
+}
+
+// --- Fil d'activité ---------------------------------------------------------
+
+.ts-feed {
+    position: relative;
+    padding-left: 22px;
+}
+
+.ts-feed::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--ts-border);
+}
+
+.ts-feed__day {
+    position: relative;
+    margin: 14px 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ts-muted);
+}
+
+.ts-feed__day:first-child {
+    margin-top: 0;
+}
+
+.ts-feed__item {
+    position: relative;
+    padding: 6px 0 10px;
+}
+
+.ts-feed__item::before {
+    content: '';
+    position: absolute;
+    left: -21px;
+    top: 12px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ts-surface);
+    border: 2px solid var(--ts-border-strong);
+}
+
+.ts-feed__item--ok::before {
+    border-color: var(--ts-ok);
+}
+.ts-feed__item--warn::before {
+    border-color: var(--ts-warn);
+}
+.ts-feed__item--danger::before {
+    border-color: var(--ts-danger);
+}
+.ts-feed__item--accent::before {
+    border-color: var(--ts-accent);
+}
+
+.ts-feed__text {
+    font-size: 14px;
+    color: var(--ts-ink);
+    font-weight: 500;
+}
+
+.ts-feed__meta {
+    font-size: 12px;
+    color: var(--ts-muted);
+    margin-top: 1px;
+}
+
+.ts-empty {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--ts-muted);
+    font-size: 13px;
+}
+
+// --- Divers -----------------------------------------------------------------
+
+.ts-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.ts-topbar .ts-title {
+    font-size: 18px;
+}
+
+.ts-search {
+    display: flex;
+    gap: 8px;
+    max-width: 380px;
+    margin-bottom: 16px;
+}
+
+// Variante compacte : logée dans l'en-tête de tâche, à côté de la navigation.
+.ts-search--inline {
+    margin-bottom: 0;
+    width: 170px;
+
+    .ts-input {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+}
+
+.ts-alert {
+    padding: 12px 16px;
+    border-radius: var(--ts-radius);
+    border: 1px solid var(--ts-border);
+    background: var(--ts-surface-alt);
+    color: var(--ts-ink-2);
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.ts-alert--warn {
+    border-color: var(--ts-warn);
+    background: var(--ts-warn-soft);
+    color: var(--ts-warn);
+}
+
+.ts-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.ts-stack > * + * {
+    margin-top: 12px;
+}
+
+.ts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.ts-table th {
+    text-align: left;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ts-muted);
+    border-bottom: 1px solid var(--ts-border);
+}
+
+.ts-table td {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--ts-border);
+    color: var(--ts-ink);
+}
+
+.ts-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.ts-spinner {
+    padding: 48px;
+    text-align: center;
+    color: var(--ts-muted);
+}

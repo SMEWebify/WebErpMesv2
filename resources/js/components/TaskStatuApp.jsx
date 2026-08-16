@@ -1,4 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+
+// Le viewer embarque three.js / OCCT-WASM : chargé à la demande uniquement,
+// pour ne pas alourdir l'écran quand la tâche n'a aucun plan lié.
+const FileViewer = lazy(() => import('./files/FileViewer.jsx'));
 
 // ---------------------------------------------------------------------------
 // API helpers
@@ -23,107 +27,151 @@ function apiFetch(url, method = 'GET', body = null) {
     });
 }
 
+// Activity types mirrored from App\Models\TaskActivities
+const ACT_START = 1;
+const ACT_END = 2;
+const ACT_FINISH = 3;
+
 // ---------------------------------------------------------------------------
-// SmallBox
+// Primitives
 // ---------------------------------------------------------------------------
-function SmallBox({ title, text, icon, theme }) {
+function Card({ title, action, children, tight }) {
     return (
-        <div className={`small-box bg-${theme}`}>
-            <div className="inner">
-                <h3>{title}</h3>
-                <p>{text}</p>
-            </div>
-            <div className="icon">
-                <i className={icon} />
-            </div>
+        <section className="ts-card">
+            {(title || action) && (
+                <header className="ts-card__head">
+                    <h2 className="ts-card__title">{title}</h2>
+                    {action}
+                </header>
+            )}
+            <div className={`ts-card__body${tight ? ' ts-card__body--tight' : ''}`}>{children}</div>
+        </section>
+    );
+}
+
+function Spec({ label, value, unit }) {
+    return (
+        <div className="ts-specs__item">
+            <span className="ts-label">{label}</span>
+            <span className="ts-value">
+                {value ?? '—'}
+                {unit && value !== null && value !== undefined && <span className="ts-metric__unit">{unit}</span>}
+            </span>
         </div>
     );
 }
 
-// ---------------------------------------------------------------------------
-// ProgressBar
-// ---------------------------------------------------------------------------
-function ProgressBar({ value }) {
-    const pct = Math.min(Math.max(value ?? 0, 0), 100);
+function Metric({ label, value, unit, tone }) {
     return (
-        <div className="progress progress-sm">
-            <div
-                className="progress-bar bg-teal progress-bar-striped progress-bar-animated"
-                role="progressbar"
-                style={{ width: `${pct}%` }}
-            >
-                <span>{pct}%</span>
+        <div className={`ts-metric${tone ? ` ts-metric--${tone}` : ''}`}>
+            <div className="ts-metric__value">
+                {value ?? 0}
+                {unit && <span className="ts-metric__unit">{unit}</span>}
             </div>
+            <div className="ts-metric__label">{label}</div>
         </div>
     );
 }
 
+function Pill({ tone = 'neutral', dot, children }) {
+    return (
+        <span className={`ts-pill ts-pill--${tone}`}>
+            {dot && <span className="ts-pill__dot" />}
+            {children}
+        </span>
+    );
+}
+
+// Maps the AdminLTE `bg-*` class the API sends with each timeline entry
+// onto the local tone palette, and isolates the FontAwesome part.
+function splitIconClass(iconClass) {
+    const parts = (iconClass ?? '').split(/\s+/).filter(Boolean);
+    const bg = parts.find((c) => c.startsWith('bg-'));
+    const icon = parts.filter((c) => !c.startsWith('bg-')).join(' ');
+    const tone = {
+        'bg-success': 'ok',
+        'bg-primary': 'accent',
+        'bg-info': 'accent',
+        'bg-warning': 'warn',
+        'bg-danger': 'danger',
+    }[bg];
+    return { icon, tone };
+}
+
 // ---------------------------------------------------------------------------
-// KpiDashboard
+// KpiDashboard — landing state (no task selected)
 // ---------------------------------------------------------------------------
 function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
     const t = (key) => trans?.[key] ?? key;
-    const avgHours = kpi.averageProcessingTime
-        ? (kpi.averageProcessingTime / 3600).toFixed(2)
-        : '0.00';
+    const avgHours = kpi.averageProcessingTime ? (kpi.averageProcessingTime / 3600).toFixed(2) : '0.00';
 
     return (
         <>
+            <div className="ts-metrics">
+                <Metric tone="accent" value={kpi.tasksInProgress} label={t('current_count_task_trans_key')} />
+                <Metric tone="ok" value={kpi.totalProducedHours} unit="h" label={t('total_hours_per_month_trans_key')} />
+                <Metric tone="warn" value={avgHours} unit="h" label={t('average_time_task_trans_key')} />
+                <Metric value={parseFloat(kpi.averageTRS ?? 0).toFixed(2)} unit="%" label={t('trs_per_month_trans_key')} />
+            </div>
+
             <div className="row">
-                <div className="col-md-4 mb-4">
-                    <SmallBox title={kpi.tasksInProgress} text={t('current_count_task_trans_key')} icon="fas fa-tasks" theme="primary" />
-                    <SmallBox title={`${kpi.totalProducedHours} h`} text={t('total_hours_per_month_trans_key')} icon="fas fa-clock" theme="success" />
-                </div>
-                <div className="col-md-4 mb-4">
-                    <div className="card card-purple">
-                        <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-flag-checkered mr-2" />{t('goal_task_trans_key')}</h3>
+                <div className="col-lg-4">
+                    <Card title={t('goal_task_trans_key')}>
+                        <div className="ts-specs">
+                            <Spec label={t('open_trans_key')} value={kpi.tasksOpen} />
+                            <Spec label={t('suspended_trans_key')} value={kpi.tasksPending} />
+                            <Spec label={t('supplied_trans_key')} value={kpi.tasksOngoing} />
+                            <Spec label={t('finished_trans_key')} value={kpi.tasksCompleted} />
                         </div>
-                        <div className="card-body">
-                            <p>{t('open_trans_key')} : <strong>{kpi.tasksOpen}</strong></p>
-                            <p>{t('suspended_trans_key')} : <strong>{kpi.tasksPending}</strong></p>
-                            <p>{t('supplied_trans_key')} : <strong>{kpi.tasksOngoing}</strong></p>
-                            <p>{t('finished_trans_key')} : <strong>{kpi.tasksCompleted}</strong></p>
-                        </div>
-                    </div>
+                    </Card>
                 </div>
-                <div className="col-md-4 mb-4">
-                    <SmallBox title={`${avgHours} h`} text={t('average_time_task_trans_key')} icon="fas fa-clock" theme="orange" />
-                    <SmallBox title={`${parseFloat(kpi.averageTRS ?? 0).toFixed(2)} %`} text={t('trs_per_month_trans_key')} icon="fas fa-percentage" theme="info" />
+
+                <div className="col-lg-4">
+                    <section className="ts-card">
+                        <header className="ts-card__head">
+                            <h2 className="ts-card__title">{t('user_productivity_trans_key')}</h2>
+                        </header>
+                        <table className="ts-table">
+                            <thead>
+                                <tr>
+                                    <th>{t('user_trans_key')}</th>
+                                    <th>{t('task_count_trans_key')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {userProductivity.filter((u) => u.tasks_count > 0).map((u, i) => (
+                                    <tr key={i}>
+                                        <td>{u.name}</td>
+                                        <td>{u.tasks_count}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </section>
                 </div>
-            </div>
-            <div className="row mt-4">
-                <div className="col-md-12">
-                    <div className="card card-dark">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-users mr-2" />{t('user_productivity_trans_key')}</h3></div>
-                        <div className="card-body p-0">
-                            <table className="table table-striped mb-0">
-                                <thead><tr><th>{t('user_trans_key')}</th><th>{t('task_count_trans_key')}</th></tr></thead>
-                                <tbody>
-                                    {userProductivity.filter((u) => u.tasks_count > 0).map((u, i) => (
-                                        <tr key={i}><td>{u.name}</td><td>{u.tasks_count}</td></tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="row mt-4">
-                <div className="col-md-12">
-                    <div className="card card-secondary">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-clock mr-2" />{t('total_hours_per_resource_trans_key')}</h3></div>
-                        <div className="card-body p-0">
-                            <table className="table table-striped mb-0">
-                                <thead><tr><th>{t('ressource_trans_key')}</th><th>{t('total_time_trans_key')} h</th></tr></thead>
-                                <tbody>
-                                    {resourceHours.map((r, i) => (
-                                        <tr key={i}><td>{r.name}</td><td>{parseFloat(r.hours ?? 0).toFixed(2)}</td></tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
+                <div className="col-lg-4">
+                    <section className="ts-card">
+                        <header className="ts-card__head">
+                            <h2 className="ts-card__title">{t('total_hours_per_resource_trans_key')}</h2>
+                        </header>
+                        <table className="ts-table">
+                            <thead>
+                                <tr>
+                                    <th>{t('ressource_trans_key')}</th>
+                                    <th>{t('total_time_trans_key')} h</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {resourceHours.map((r, i) => (
+                                    <tr key={i}>
+                                        <td>{r.name}</td>
+                                        <td>{parseFloat(r.hours ?? 0).toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </section>
                 </div>
             </div>
         </>
@@ -131,229 +179,409 @@ function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// ActivityTimeline
+// TaskHeader — identity, status, navigation, progress
 // ---------------------------------------------------------------------------
-function ActivityTimeline({ timeline, trans }) {
+function TaskHeader({ task, onNavigate, trans, searchSlot }) {
     const t = (key) => trans?.[key] ?? key;
-    let prevDate = null;
+    const pct = Math.min(Math.max(task.progress ?? 0, 0), 100);
+    const ol = task.order_lines;
+
+    const runTone = { [ACT_START]: 'ok', [ACT_END]: 'warn', [ACT_FINISH]: 'accent' }[task.last_activity_type] ?? 'neutral';
 
     return (
-        <div>
-            <h4>{t('logs_activity_trans_key')}</h4>
-            <div className="timeline timeline-inverse">
-                {timeline.map((item, i) => {
-                    const showDateLabel = item.date_label !== prevDate;
-                    prevDate = item.date_label;
-                    return (
-                        <React.Fragment key={i}>
-                            {showDateLabel && (
-                                <div className="time-label">
-                                    <span className="bg-info">{item.date_label}</span>
-                                </div>
-                            )}
-                            <div>
-                                <i className={item.icon_class} />
-                                <div className="timeline-item">
-                                    <span className="time"><i className="far fa-clock" /> {item.details}</span>
-                                    <h3 className="timeline-header">{item.content}</h3>
-                                </div>
-                            </div>
-                        </React.Fragment>
-                    );
-                })}
-                <div><i className="far fa-clock bg-gray" /></div>
-            </div>
-        </div>
-    );
-}
+        <div className="ts-header">
+            <div className="ts-header__top">
+                <div>
+                    <div className="ts-crumb">
+                        {ol?.order && <a href={`/orders/${ol.orders_id}`}>{ol.order.code}</a>}
+                        {ol && (
+                            <>
+                                <span>/</span>
+                                <span>
+                                    {t('line_trans_key')} {ol.label}
+                                </span>
+                            </>
+                        )}
+                        {ol?.product && (
+                            <>
+                                <span>/</span>
+                                <span>{ol.product.label}</span>
+                            </>
+                        )}
+                    </div>
 
-// ---------------------------------------------------------------------------
-// TaskInfoPanel (left column)
-// ---------------------------------------------------------------------------
-function TaskInfoPanel({ task, trans }) {
-    const t = (key) => trans?.[key] ?? key;
-    const pct = Math.min(task.progress ?? 0, 100);
+                    <h1 className="ts-title">
+                        <span className="ts-title__id">#{task.id}</span>
+                        {task.service?.label ?? task.label}
+                        {task.status?.title && (
+                            <Pill tone={runTone} dot>
+                                {task.status.title}
+                            </Pill>
+                        )}
+                        {task.resources?.map((r) => (
+                            <Pill key={r.id}>{r.label}</Pill>
+                        ))}
+                    </h1>
+                </div>
 
-    return (
-        <div>
-            <h4>{t('informations_trans_key')}</h4>
-
-            {task.order_lines && (
-                <div className="row mb-2">
-                    <a className="btn btn-xs btn-default mr-1" href={`/orders/${task.order_lines.orders_id}`}>
-                        {task.order_lines.order?.code} #{t('line_trans_key')} {task.order_lines.label}
-                    </a>
-                    {task.order_lines.picture && (
-                        <a className="btn btn-info btn-xs" href={`/images/order-lines/${task.order_lines.picture}`} target="_blank">
-                            <i className="fa fa-eye" />
-                        </a>
+                <div className="ts-header__nav">
+                    {searchSlot}
+                    {task.previous_task && (
+                        <button type="button" className="ts-btn" onClick={() => onNavigate(task.previous_task.id)}>
+                            <i className="fas fa-arrow-left" />
+                            {task.previous_task.ordre} · {task.previous_task.label}
+                        </button>
+                    )}
+                    {task.next_task && (
+                        <button type="button" className="ts-btn" onClick={() => onNavigate(task.next_task.id)}>
+                            {task.next_task.ordre} · {task.next_task.label}
+                            <i className="fas fa-arrow-right" />
+                        </button>
                     )}
                 </div>
-            )}
-
-            {task.order_lines?.product?.drawing_file && (
-                <div className="row mb-2">
-                    <a className="btn btn-info btn-sm" href={`/drawing/${task.order_lines.product.drawing_file}`} target="_blank">
-                        <i className="fas fa-barcode mr-1" />{task.order_lines.product.label}
-                    </a>
-                </div>
-            )}
-
-            {task.service?.picture && (
-                <div className="row mb-2">
-                    <img alt="Service" className="profile-user-img img-fluid img-circle" src={`/storage/images/methods/${task.service.picture}`} />
-                </div>
-            )}
-
-            {task.service?.type === 1 && (
-                <div className="info-box mb-1">
-                    <span className="info-box-icon bg-warning"><i className="fa fa-stopwatch" /></span>
-                    <div className="info-box-content">
-                        <span className="info-box-text">{t('total_time_trans_key')}</span>
-                        <span className="info-box-number">{task.total_log_time} h</span>
-                    </div>
-                </div>
-            )}
-
-            <div className="info-box mb-1">
-                <span className="info-box-icon bg-info"><i className="fa fa-database" /></span>
-                <div className="info-box-content">
-                    <span className="info-box-text">{t('finish_part_qty_trans_key')}</span>
-                    <span className="info-box-number">{task.total_log_good_qt}</span>
-                </div>
-            </div>
-            <div className="info-box mb-1">
-                <span className="info-box-icon bg-danger"><i className="fa fa-arrow-down" /></span>
-                <div className="info-box-content">
-                    <span className="info-box-text">{t('bad_part_qty_trans_key')}</span>
-                    <span className="info-box-number">{task.total_log_bad_qt}</span>
-                </div>
-            </div>
-            <div className="info-box mb-2">
-                <span className="info-box-icon bg-success"><i className="fa fa-check" /></span>
-                <div className="info-box-content">
-                    <span className="info-box-text">{t('net_production_qty_trans_key')}</span>
-                    <span className="info-box-number">{task.total_net_good_qt}</span>
-                </div>
             </div>
 
-            <div className="text-muted">
-                <div className="row">
-                    <div className="col-6">
-                        <p className="small">{t('statu_trans_key')}<b className="d-block">{task.status?.title}</b></p>
-                    </div>
-                    <div className="col-6">
-                        <p className="small">{t('qty_trans_key')}<b className="d-block">{task.order_qty}</b></p>
-                    </div>
+            <div className="ts-header__progress">
+                <span className="ts-progress__meta">
+                    {task.total_net_good_qt ?? 0} / {task.order_qty ?? 0} {t('qty_trans_key')}
+                </span>
+                <div className="ts-progress">
+                    <div className="ts-progress__bar" style={{ width: `${pct}%` }} />
                 </div>
-                <div className="row">
-                    <div className="col-4">
-                        <p className="small">{t('cost_trans_key')}<b className="d-block">{task.formatted_unit_cost}</b></p>
-                    </div>
-                    <div className="col-4">
-                        <p className="small">{t('margin_trans_key')}<b className="d-block">{task.margin ?? '—'} %</b></p>
-                    </div>
-                    <div className="col-4">
-                        <p className="small">{t('price_trans_key')}<b className="d-block">{task.formatted_unit_price}</b></p>
-                    </div>
-                </div>
-                {task.service?.type === 1 && (
-                    <>
-                        <div className="row">
-                            <div className="col-4">
-                                <p className="small">{t('setting_time_trans_key')}<b className="d-block">{task.seting_time} s</b></p>
-                            </div>
-                            <div className="col-4">
-                                <p className="small">{t('unit_time_trans_key')}<b className="d-block">{task.unit_time} s</b></p>
-                            </div>
-                            <div className="col-4">
-                                <p className="small">{t('total_time_trans_key')}<b className="d-block">{task.total_time} h</b></p>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-6">
-                                <p className="small">{t('trs_trans_key')}<b className="d-block">{task.total_log_time}</b></p>
-                            </div>
-                            <div className="col-6">
-                                <p className="small">{t('trs_trans_key')}<b className="d-block">{task.trs} %</b></p>
-                            </div>
-                        </div>
-                    </>
-                )}
-            </div>
-
-            <div>
-                <p className="small">{t('progress_trans_key')}<b className="d-block">{task.progress} %</b></p>
-                <ProgressBar value={pct} />
+                <span className="ts-progress__meta">{pct} %</span>
             </div>
         </div>
     );
 }
 
 // ---------------------------------------------------------------------------
-// ProductionControls
+// RunControls — Play / Pause / Fin (or purchase flow for non-internal services)
 // ---------------------------------------------------------------------------
-function ProductionControls({ task, apiBase, onReload, trans, purchasesRequestUrl }) {
+function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stack }) {
     const t = (key) => trans?.[key] ?? key;
     const last = task.last_activity_type;
+    const [busy, setBusy] = useState(false);
+    const layout = `ts-run${stack ? ' ts-run--stack' : ''}`;
 
     async function action(type) {
-        await apiFetch(`${apiBase}/${task.id}/${type}`, 'POST');
-        onReload();
+        setBusy(true);
+        try {
+            await apiFetch(`${apiBase}/${task.id}/${type}`, 'POST');
+            onReload();
+        } finally {
+            setBusy(false);
+        }
     }
 
     if (task.service?.type !== 1) {
         return (
-            <div className="row">
-                <div className="col-md-6">
-                    <a className="btn btn-app bg-success" href={purchasesRequestUrl}>
-                        <i className="fas fa-cash-register" />{t('new_purchase_document_trans_key')}
-                    </a>
-                </div>
-                <div className="col-md-6">
-                    <button className="btn btn-app bg-danger" onClick={() => action('finish')}>
-                        <i className="fas fa-stop" /> {t('end_trans_key')}
+            <div className={`${layout} ts-run--duo`}>
+                <a className="ts-run__btn ts-run__btn--start" href={purchasesRequestUrl}>
+                    <i className="fas fa-cash-register" />
+                    {t('new_purchase_document_trans_key')}
+                </a>
+                <button
+                    type="button"
+                    className={`ts-run__btn ts-run__btn--stop${busy ? ' is-disabled' : ''}`}
+                    disabled={busy}
+                    onClick={() => action('finish')}
+                >
+                    <i className="fas fa-stop" />
+                    {t('end_trans_key')}
+                </button>
+            </div>
+        );
+    }
+
+    const running = last === ACT_START;
+    const canStart = !last || (last !== ACT_START && last !== ACT_FINISH);
+    const canPause = !last || (last !== ACT_END && last !== ACT_FINISH);
+    const canFinish = last !== ACT_FINISH;
+
+    const btn = (enabled, variant, icon, label, type, extra = '') => (
+        <button
+            type="button"
+            className={`ts-run__btn ts-run__btn--${variant}${extra}${!enabled || busy ? ' is-disabled' : ''}`}
+            disabled={!enabled || busy}
+            onClick={() => enabled && action(type)}
+        >
+            <i className={icon} />
+            {label}
+        </button>
+    );
+
+    return (
+        <div className={layout}>
+            {btn(canStart, 'start', 'fas fa-play', t('play_trans_key'), 'start', running ? ' ts-run__btn--is-active' : '')}
+            {btn(canPause, 'pause', 'fas fa-pause', t('pause_trans_key'), 'pause')}
+            {btn(canFinish, 'stop', 'fas fa-stop', t('end_trans_key'), 'finish')}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// QtyDeclare — one column of the declaration panel (good or rejected)
+// ---------------------------------------------------------------------------
+function QtyDeclare({ label, endpoint, tone, sign, task, apiBase, onReload }) {
+    const [qty, setQty] = useState(0);
+    const [busy, setBusy] = useState(false);
+
+    async function declare(amount) {
+        setBusy(true);
+        try {
+            await apiFetch(`${apiBase}/${task.id}/${endpoint}`, 'POST', { qty: amount });
+            setQty(0);
+            onReload();
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        if (qty > 0) declare(qty);
+    }
+
+    return (
+        <div className="ts-declare__col">
+            <span className="ts-label">{label}</span>
+            <div className="ts-quick">
+                {[1, 10, 100].map((n) => (
+                    <button
+                        key={n}
+                        type="button"
+                        className={`ts-quick__btn ts-quick__btn--${tone}`}
+                        disabled={busy}
+                        onClick={() => declare(n)}
+                    >
+                        {sign}
+                        {n}
                     </button>
+                ))}
+            </div>
+            <form onSubmit={handleSubmit}>
+                <div className="ts-field">
+                    <input
+                        type="number"
+                        className="ts-input"
+                        min="0"
+                        value={qty}
+                        onChange={(e) => setQty(Number(e.target.value))}
+                    />
+                    <button type="submit" className="ts-btn ts-btn--primary" disabled={busy || qty <= 0}>
+                        Set
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// ActivityFeed
+// ---------------------------------------------------------------------------
+function ActivityFeed({ timeline, trans }) {
+    const t = (key) => trans?.[key] ?? key;
+
+    if (!timeline.length) {
+        return <div className="ts-empty">{t('logs_activity_trans_key')} — 0</div>;
+    }
+
+    let prevDate = null;
+
+    return (
+        <div className="ts-feed">
+            {timeline.map((item, i) => {
+                const showDate = item.date_label !== prevDate;
+                prevDate = item.date_label;
+                const { icon, tone } = splitIconClass(item.icon_class);
+
+                return (
+                    <React.Fragment key={i}>
+                        {showDate && <div className="ts-feed__day">{item.date_label}</div>}
+                        <div className={`ts-feed__item${tone ? ` ts-feed__item--${tone}` : ''}`}>
+                            <div className="ts-feed__text">
+                                {icon && <i className={`${icon} ts-muted mr-2`} />}
+                                {item.content}
+                            </div>
+                            <div className="ts-feed__meta">{item.details}</div>
+                        </div>
+                    </React.Fragment>
+                );
+            })}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// DocumentStage — le plan en grand, au centre de l'écran opérateur
+//
+// L'API renvoie déjà `documents` trié par pertinence (STEP > PDF > DXF > SVG >
+// GEO), donc le premier élément est celui qu'on ouvre par défaut.
+// ---------------------------------------------------------------------------
+function DocumentStage({ documents, fileTrans, trans }) {
+    const t = (key) => trans?.[key] ?? key;
+    const ft = (key) => fileTrans?.[key] ?? key;
+
+    const [activeId, setActiveId] = useState(documents[0]?.id ?? null);
+
+    useEffect(() => {
+        setActiveId(documents[0]?.id ?? null);
+    }, [documents]);
+
+    const active = documents.find((d) => d.id === activeId) ?? null;
+
+    if (!documents.length) {
+        return (
+            <div className="ts-stage">
+                <div className="ts-stage__empty">
+                    <i className="fas fa-drafting-compass" />
+                    <p>{t('no_data_trans_key')}</p>
+                    <span className="ts-muted">{ft('select_a_file')}</span>
                 </div>
             </div>
         );
     }
 
-    const canStart  = !last || (last !== 1 && last !== 3);
-    const canPause  = !last || (last !== 2 && last !== 3);
-    const canFinish = last !== 3;
-
     return (
-        <div className="row">
-            <div className="col-md-4">
-                <button className={`btn btn-app bg-success${!canStart ? ' disabled' : ''}`}
-                    onClick={() => canStart && action('start')}>
-                    <i className="fas fa-play" /> {t('play_trans_key')}
-                </button>
-            </div>
-            <div className="col-md-4">
-                <button className={`btn btn-app bg-warning${!canPause ? ' disabled' : ''}`}
-                    onClick={() => canPause && action('pause')}>
-                    <i className="fas fa-pause" /> {t('pause_trans_key')}
-                </button>
-            </div>
-            <div className="col-md-4">
-                <button className={`btn btn-app bg-danger${!canFinish ? ' disabled' : ''}`}
-                    onClick={() => canFinish && action('finish')}>
-                    <i className="fas fa-stop" /> {t('end_trans_key')}
-                </button>
+        <div className="ts-stage">
+            {/* Un seul document : rien à choisir, donc pas de barre du tout. */}
+            {documents.length > 1 && (
+                <div className="ts-stage__bar">
+                    <div className="ts-stage__tabs">
+                        {documents.map((doc) => (
+                            <button
+                                key={doc.id}
+                                type="button"
+                                title={doc.name}
+                                className={`ts-doctab${doc.id === activeId ? ' is-active' : ''}`}
+                                onClick={() => setActiveId(doc.id)}
+                            >
+                                <i className={doc.icon} />
+                                <span className="ts-doctab__ext">{doc.extension?.toUpperCase()}</span>
+                                <span className="ts-doctab__name">{doc.name}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="ts-stage__canvas">
+                <Suspense
+                    fallback={
+                        <div className="ts-stage__empty">
+                            <i className="fas fa-spinner fa-spin" />
+                            <p>{ft('loading')}</p>
+                        </div>
+                    }
+                >
+                    <FileViewer file={active} t={ft} />
+                </Suspense>
             </div>
         </div>
     );
 }
 
 // ---------------------------------------------------------------------------
-// StockWithdrawalForm  (only shown when task.component_id is set)
+// PartCard — part identity, drawing, photo, component
 // ---------------------------------------------------------------------------
-function StockWithdrawalForm({ task, apiBase, onReload, trans }) {
+function PartCard({ task, trans }) {
+    const t = (key) => trans?.[key] ?? key;
+    const ol = task.order_lines;
+    const product = ol?.product;
+
+    const thumb = ol?.picture
+        ? `/images/order-lines/${ol.picture}`
+        : task.service?.picture
+          ? `/storage/images/methods/${task.service.picture}`
+          : null;
+
+    return (
+        <Card title={t('informations_trans_key')}>
+            <div className="ts-part">
+                <div className="ts-part__thumb">
+                    {thumb ? (
+                        <img src={thumb} alt={product?.label ?? t('informations_trans_key')} />
+                    ) : (
+                        <i className="fas fa-cube" />
+                    )}
+                </div>
+                <div className="ts-part__body">
+                    <p className="ts-part__name">{product?.label ?? task.label}</p>
+                    <span className="ts-muted" style={{ fontSize: 12 }}>
+                        {ol?.order?.code} · {t('line_trans_key')} {ol?.label}
+                    </span>
+
+                    <div className="ts-part__actions">
+                        {ol && (
+                            <a className="ts-btn ts-btn--sm" href={`/orders/${ol.orders_id}`}>
+                                <i className="fas fa-file-invoice" />
+                                {ol.order?.code}
+                            </a>
+                        )}
+                        {ol?.picture && (
+                            <a
+                                className="ts-btn ts-btn--sm ts-btn--icon"
+                                href={`/images/order-lines/${ol.picture}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <i className="fa fa-eye" />
+                            </a>
+                        )}
+                        {product?.drawing_file && (
+                            <a
+                                className="ts-btn ts-btn--sm"
+                                href={`/drawing/${product.drawing_file}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <i className="fas fa-drafting-compass" />
+                                {t('drawing_trans_key')}
+                            </a>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {task.component_id && task.component && (
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--ts-border)' }}>
+                    <span className="ts-label">{t('component_trans_key')}</span>
+                    <div className="ts-part__actions" style={{ marginTop: 4 }}>
+                        <span className="ts-value">{task.component.code}</span>
+                        <a
+                            className="ts-btn ts-btn--sm ts-btn--icon"
+                            href={`/products/${task.component_id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <i className="fa fa-eye" />
+                        </a>
+                        {task.component.drawing_file && (
+                            <a
+                                className="ts-btn ts-btn--sm ts-btn--icon"
+                                href={`/drawing/${task.component.drawing_file}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <i className="fa fa-file" />
+                            </a>
+                        )}
+                    </div>
+                </div>
+            )}
+        </Card>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// StockWithdrawalCard — only when the task consumes a component
+// ---------------------------------------------------------------------------
+function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
     const t = (key) => trans?.[key] ?? key;
     const [qty, setQty] = useState(0);
     const [busy, setBusy] = useState(false);
+    const r = task.reservation;
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -371,255 +599,141 @@ function StockWithdrawalForm({ task, apiBase, onReload, trans }) {
         }
     }
 
-    const r = task.reservation;
-
     return (
-        <div className="card card-outline card-lime mb-2">
-            <div className="card-body py-2">
-                {r && (
-                    <div className="mb-2 d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-                        <span className="badge badge-secondary">Demandé : {r.requested}</span>
-                        <span className="badge badge-primary">Réservé : {r.reserved}</span>
-                        {r.missing > 0 && (
-                            <span className="badge badge-danger">Manque : {r.missing}</span>
-                        )}
-                    </div>
-                )}
-                <form onSubmit={handleSubmit}>
-                    <label className="mb-1">{t('remove_from_stock_trans_key')} :</label>
-                    <div className="input-group input-group-sm">
-                        <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-times" /></span></div>
-                        <input type="number" className="form-control" min="0" value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))} />
-                        <span className="input-group-append">
-                            <button type="submit" className="btn btn-info btn-flat" disabled={busy}>Set</button>
-                        </span>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// GoodQtyForm
-// ---------------------------------------------------------------------------
-function GoodQtyForm({ task, apiBase, onReload, trans }) {
-    const t = (key) => trans?.[key] ?? key;
-    const [qty, setQty] = useState(0);
-    const [busy, setBusy] = useState(false);
-
-    async function declare(amount) {
-        setBusy(true);
-        try {
-            await apiFetch(`${apiBase}/${task.id}/good-qty`, 'POST', { qty: amount });
-            setQty(0);
-            onReload();
-        } finally {
-            setBusy(false);
-        }
-    }
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        if (qty <= 0) return;
-        await declare(qty);
-    }
-
-    return (
-        <div className="card card-outline card-warning mb-2">
-            <div className="card-body py-2">
-                <label className="mb-1">{t('good_rejected_trans_key')} :</label>
-                <div className="row mb-2">
-                    {[1, 10, 100].map((n) => (
-                        <div key={n} className="col-md-4">
-                            <button type="button" className="btn btn-app bg-info" disabled={busy}
-                                onClick={() => declare(n)}>
-                                <i className="fas fa-thumbs-up" /> +{n}
-                            </button>
-                        </div>
-                    ))}
+        <Card title={t('remove_from_stock_trans_key')}>
+            {r && (
+                <div className="ts-badges">
+                    <Pill>Demandé {r.requested}</Pill>
+                    <Pill tone="accent">Réservé {r.reserved}</Pill>
+                    {r.missing > 0 && <Pill tone="danger">Manque {r.missing}</Pill>}
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group input-group-sm">
-                        <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-times" /></span></div>
-                        <input type="number" className="form-control" min="0" value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))} />
-                        <span className="input-group-append">
-                            <button type="submit" className="btn btn-info btn-flat" disabled={busy}>Set</button>
-                        </span>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// RejectedQtyForm
-// ---------------------------------------------------------------------------
-function RejectedQtyForm({ task, apiBase, onReload, trans }) {
-    const t = (key) => trans?.[key] ?? key;
-    const [qty, setQty] = useState(0);
-    const [busy, setBusy] = useState(false);
-
-    async function declare(amount) {
-        setBusy(true);
-        try {
-            await apiFetch(`${apiBase}/${task.id}/bad-qty`, 'POST', { qty: amount });
-            setQty(0);
-            onReload();
-        } finally {
-            setBusy(false);
-        }
-    }
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        if (qty <= 0) return;
-        await declare(qty);
-    }
-
-    return (
-        <div className="card card-outline card-lime mb-2">
-            <div className="card-body py-2">
-                <label className="mb-1">{t('quantity_rejected_trans_key')} :</label>
-                <div className="row mb-2">
-                    {[1, 10, 100].map((n) => (
-                        <div key={n} className="col-md-4">
-                            <button type="button" className="btn btn-app bg-orange" disabled={busy}
-                                onClick={() => declare(n)}>
-                                <i className="fas fa-thumbs-down" /> -{n}
-                            </button>
-                        </div>
-                    ))}
+            )}
+            <form onSubmit={handleSubmit}>
+                <div className="ts-field">
+                    <input
+                        type="number"
+                        className="ts-input"
+                        min="0"
+                        value={qty}
+                        onChange={(e) => setQty(Number(e.target.value))}
+                    />
+                    <button type="submit" className="ts-btn ts-btn--primary" disabled={busy || qty <= 0}>
+                        Set
+                    </button>
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group input-group-sm">
-                        <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-times" /></span></div>
-                        <input type="number" className="form-control" min="0" value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))} />
-                        <span className="input-group-append">
-                            <button type="submit" className="btn btn-info btn-flat" disabled={busy}>Set</button>
-                        </span>
-                    </div>
-                </form>
-            </div>
-        </div>
+            </form>
+        </Card>
     );
 }
 
 // ---------------------------------------------------------------------------
-// DateUpdateForm
+// PlanningCard — end date + resource, merged into one panel
 // ---------------------------------------------------------------------------
-function DateUpdateForm({ task, apiBase, onReload, trans }) {
+function PlanningCard({ task, apiBase, onReload, trans }) {
     const t = (key) => trans?.[key] ?? key;
     const [endDate, setEndDate] = useState(task.end_date ?? '');
     const [notRecalculate, setNotRecalculate] = useState(task.not_recalculate ?? false);
-    const [busy, setBusy] = useState(false);
+    const [dateBusy, setDateBusy] = useState(false);
 
-    async function handleSubmit(e) {
+    const [resourceId, setResourceId] = useState(task.selected_resource_id ?? '');
+    const [userforcedResource, setUserforcedResource] = useState(task.userforced_resource ?? false);
+    const [resBusy, setResBusy] = useState(false);
+
+    async function submitDate(e) {
         e.preventDefault();
         if (!endDate) return;
-        setBusy(true);
+        setDateBusy(true);
         try {
-            await apiFetch(`${apiBase}/${task.id}/date`, 'PUT', { end_date: endDate, not_recalculate: notRecalculate });
+            await apiFetch(`${apiBase}/${task.id}/date`, 'PUT', {
+                end_date: endDate,
+                not_recalculate: notRecalculate,
+            });
             onReload();
         } finally {
-            setBusy(false);
+            setDateBusy(false);
         }
     }
 
-    return (
-        <div className="card card-outline card-info mb-2">
-            <div className="card-body py-2">
-                <div className="row align-items-center">
-                    <div className="col-md-3 text-muted">
-                        <p className="small mb-0">{t('end_date_trans_key')}<b className="d-block">{task.formatted_end_date !== 'NULL' ? task.formatted_end_date : '—'}</b></p>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="form-group mb-0">
-                            <label className="small">Not Recalculate</label>
-                            <input type="checkbox" className="ml-2" checked={notRecalculate}
-                                onChange={(e) => setNotRecalculate(e.target.checked)} />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group input-group-sm">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-calendar" /></span></div>
-                                <input type="datetime-local" className="form-control" value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)} />
-                                <span className="input-group-append">
-                                    <button type="submit" className="btn btn-info btn-flat" disabled={busy}>Set</button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// ResourceSelectForm
-// ---------------------------------------------------------------------------
-function ResourceSelectForm({ task, apiBase, onReload, trans }) {
-    const t = (key) => trans?.[key] ?? key;
-    const [resourceId, setResourceId] = useState(task.selected_resource_id ?? '');
-    const [userforcedResource, setUserforcedResource] = useState(task.userforced_resource ?? false);
-    const [busy, setBusy] = useState(false);
-
-    async function handleSubmit(e) {
+    async function submitResource(e) {
         e.preventDefault();
         if (!resourceId) return;
-        setBusy(true);
+        setResBusy(true);
         try {
             await apiFetch(`${apiBase}/${task.id}/resource`, 'PUT', { resource_id: resourceId });
             setUserforcedResource(true);
             onReload();
         } finally {
-            setBusy(false);
+            setResBusy(false);
         }
     }
 
     return (
-        <div className="card card-outline card-info mb-2">
-            <div className="card-body py-2">
-                <div className="row align-items-center">
-                    <div className="col-md-4">
-                        <div className="form-group mb-0">
-                            <label className="small">{t('user_choise_trans_key')}</label>
-                            <input type="checkbox" className="ml-2" checked={userforcedResource} readOnly />
-                        </div>
-                    </div>
-                    <div className="col-md-8">
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group input-group-sm">
-                                <select className="form-control" value={resourceId}
-                                    onChange={(e) => setResourceId(e.target.value)}>
-                                    <option value="">— {t('select_ressource_trans_key')} —</option>
-                                    {task.service_resources?.map((r) => (
-                                        <option key={r.id} value={r.id}>{r.label}</option>
-                                    ))}
-                                </select>
-                                <span className="input-group-append">
-                                    <button type="submit" className="btn btn-info btn-flat" disabled={busy}>Set</button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
+        <Card title={t('scheduling_trans_key')}>
+            <div className="ts-stack">
+                <div>
+                    <span className="ts-label">{t('end_date_trans_key')}</span>
+                    <span className="ts-value">
+                        {task.formatted_end_date !== 'NULL' ? task.formatted_end_date : '—'}
+                    </span>
                 </div>
+
+                <form onSubmit={submitDate}>
+                    <div className="ts-field">
+                        <input
+                            type="datetime-local"
+                            className="ts-input"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                        />
+                        <button type="submit" className="ts-btn" disabled={dateBusy || !endDate}>
+                            Set
+                        </button>
+                    </div>
+                    <label className="ts-check" style={{ marginTop: 8 }}>
+                        <input
+                            type="checkbox"
+                            checked={notRecalculate}
+                            onChange={(e) => setNotRecalculate(e.target.checked)}
+                        />
+                        Ne pas recalculer
+                    </label>
+                </form>
+
+                <form onSubmit={submitResource} style={{ borderTop: '1px solid var(--ts-border)', paddingTop: 12 }}>
+                    <span className="ts-label">{t('ressource_trans_key')}</span>
+                    <div className="ts-field">
+                        <select
+                            className="ts-select"
+                            value={resourceId}
+                            onChange={(e) => setResourceId(e.target.value)}
+                        >
+                            <option value="">— {t('select_ressource_trans_key')} —</option>
+                            {task.service_resources?.map((r) => (
+                                <option key={r.id} value={r.id}>
+                                    {r.label}
+                                </option>
+                            ))}
+                        </select>
+                        <button type="submit" className="ts-btn" disabled={resBusy || !resourceId}>
+                            Set
+                        </button>
+                    </div>
+                    {userforcedResource && (
+                        <span className="ts-muted" style={{ fontSize: 12, display: 'block', marginTop: 6 }}>
+                            <i className="fas fa-user-lock mr-1" />
+                            {t('user_choise_trans_key')}
+                        </span>
+                    )}
+                </form>
             </div>
-        </div>
+        </Card>
     );
 }
 
 // ---------------------------------------------------------------------------
-// NcAndonPanel
+// QualityCard — non conformity + Andon alert
 // ---------------------------------------------------------------------------
-function NcAndonPanel({ task, apiBase, andonStoreUrl, trans }) {
+function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
     const t = (key) => trans?.[key] ?? key;
     const [showAndon, setShowAndon] = useState(false);
     const [andonType, setAndonType] = useState('');
@@ -631,152 +745,195 @@ function NcAndonPanel({ task, apiBase, andonStoreUrl, trans }) {
     }
 
     return (
-        <div className="card card-outline card-danger mb-2">
-            <div className="card-body py-2">
-                <div className="mb-2">
-                    <button type="button" className="btn btn-link text-warning p-0" onClick={handleCreateNc}>
-                        <i className="fa fa-exclamation mr-1" />{t('new_non_conformitie_trans_key')}
-                    </button>
-                </div>
-                <div>
-                    <button type="button" className="btn btn-link text-danger p-0"
-                        onClick={() => setShowAndon(!showAndon)}>
-                        <i className="fa fa-exclamation mr-1" /> Ajouter une alerte Andon
-                    </button>
-                </div>
-
-                {showAndon && (
-                    <div className="mt-2 border border-danger rounded p-2">
-                        <form action={andonStoreUrl} method="POST">
-                            <input type="hidden" name="_token" value={csrfToken()} />
-                            <input type="hidden" name="task_id" value={task.id} />
-                            <input type="hidden" name="resource_id" value={task.selected_resource_id ?? 1} />
-                            <div className="form-group mb-1">
-                                <label className="small">{"Type d'alerte"}</label>
-                                <input type="text" className="form-control form-control-sm" name="type"
-                                    value={andonType} onChange={(e) => setAndonType(e.target.value)} required />
-                            </div>
-                            <div className="form-group mb-1">
-                                <label className="small">Description</label>
-                                <textarea className="form-control form-control-sm" name="message" rows={2}
-                                    value={andonMessage} onChange={(e) => setAndonMessage(e.target.value)} required />
-                            </div>
-                            <button type="submit" className="btn btn-danger btn-sm">{"Ajouter l'alerte"}</button>
-                        </form>
-                    </div>
-                )}
+        <Card title={t('quality_trans_key')}>
+            <div className="ts-part__actions" style={{ marginTop: 0 }}>
+                <button type="button" className="ts-btn ts-btn--sm" onClick={handleCreateNc}>
+                    <i className="fas fa-exclamation-triangle" />
+                    {t('new_non_conformitie_trans_key')}
+                </button>
+                <button type="button" className="ts-btn ts-btn--sm" onClick={() => setShowAndon(!showAndon)}>
+                    <i className="fas fa-bell" />
+                    Alerte Andon
+                </button>
             </div>
-        </div>
+
+            {showAndon && (
+                <form action={andonStoreUrl} method="POST" style={{ marginTop: 12 }}>
+                    <input type="hidden" name="_token" value={csrfToken()} />
+                    <input type="hidden" name="task_id" value={task.id} />
+                    <input type="hidden" name="resource_id" value={task.selected_resource_id ?? 1} />
+                    <div className="ts-stack">
+                        <div>
+                            <span className="ts-label">{"Type d'alerte"}</span>
+                            <input
+                                type="text"
+                                className="ts-input"
+                                name="type"
+                                value={andonType}
+                                onChange={(e) => setAndonType(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <span className="ts-label">Description</span>
+                            <textarea
+                                className="ts-input"
+                                name="message"
+                                rows={2}
+                                value={andonMessage}
+                                onChange={(e) => setAndonMessage(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="ts-btn ts-btn--primary">
+                            {"Ajouter l'alerte"}
+                        </button>
+                    </div>
+                </form>
+            )}
+        </Card>
     );
 }
 
 // ---------------------------------------------------------------------------
-// TaskDetail  (3-column layout)
+// TaskDetail — two-column layout: work area + context rail
 // ---------------------------------------------------------------------------
-function TaskDetail({ task, apiBase, andonStoreUrl, purchasesRequestUrl, onNavigate, trans }) {
+function TaskDetail({
+    task,
+    apiBase,
+    andonStoreUrl,
+    purchasesRequestUrl,
+    onNavigate,
+    trans,
+    fileTrans,
+    searchSlot,
+}) {
     const t = (key) => trans?.[key] ?? key;
+    const [tab, setTab] = useState('activity');
+    const reload = () => onNavigate(task.id);
+    const isInternal = task.service?.type === 1;
 
     if (!task.order_lines_id) {
         return (
-            <div className="alert alert-info mx-3">
-                {t('quote_task_trans_key')}
-            </div>
+            <>
+                <div className="ts-topbar">{searchSlot}</div>
+                <div className="ts-alert">{t('quote_task_trans_key')}</div>
+            </>
         );
     }
 
     return (
         <>
-            {/* Navigation prev / next */}
-            <div className="row mx-1 mb-2">
-                <div className="col-6">
-                    {task.previous_task && (
-                        <button className="btn btn-primary btn-lg btn-block"
-                            onClick={() => onNavigate(task.previous_task.id)}>
-                            <i className="fas fa-arrow-left mr-1" />
-                            {task.previous_task.ordre} - {task.previous_task.label}
-                        </button>
-                    )}
-                </div>
-                <div className="col-6">
-                    {task.next_task && (
-                        <button className="btn btn-primary btn-lg btn-block"
-                            onClick={() => onNavigate(task.next_task.id)}>
-                            {task.next_task.ordre} - {task.next_task.label}
-                            <i className="fas fa-arrow-right ml-1" />
-                        </button>
-                    )}
-                </div>
+            <TaskHeader task={task} onNavigate={onNavigate} trans={trans} searchSlot={searchSlot} />
+
+            <div className="ts-metrics">
+                {isInternal && (
+                    <Metric tone="accent" value={task.total_log_time} unit="h" label={t('total_time_trans_key')} />
+                )}
+                <Metric tone="ok" value={task.total_log_good_qt} label={t('finish_part_qty_trans_key')} />
+                <Metric tone="danger" value={task.total_log_bad_qt} label={t('bad_part_qty_trans_key')} />
+                <Metric value={task.total_net_good_qt} label={t('net_production_qty_trans_key')} />
+                {isInternal && <Metric tone="warn" value={task.trs} unit="%" label={t('trs_trans_key')} />}
             </div>
 
-            {/* Main card */}
-            <div className="card card-teal mx-1">
-                <div className="card-header">
-                    <h3 className="card-title">#{task.id} {t('task_detail_trans_key')} {task.label}</h3>
+            <div className="ts-shop">
+                {/* Rail gauche — actions opérateur, reste visible au scroll */}
+                <aside className="ts-shop__rail ts-shop__rail--actions">
+                    <Card title={t('task_detail_trans_key')} tight>
+                        <RunControls
+                            task={task}
+                            apiBase={apiBase}
+                            onReload={reload}
+                            trans={trans}
+                            purchasesRequestUrl={purchasesRequestUrl}
+                            stack
+                        />
+                    </Card>
+
+                    <Card title={t('qty_trans_key')} tight>
+                        <div className="ts-declare ts-declare--stack">
+                            <QtyDeclare
+                                label={t('good_rejected_trans_key')}
+                                endpoint="good-qty"
+                                tone="ok"
+                                sign="+"
+                                task={task}
+                                apiBase={apiBase}
+                                onReload={reload}
+                            />
+                            <QtyDeclare
+                                label={t('quantity_rejected_trans_key')}
+                                endpoint="bad-qty"
+                                tone="danger"
+                                sign="−"
+                                task={task}
+                                apiBase={apiBase}
+                                onReload={reload}
+                            />
+                        </div>
+                    </Card>
+
+                    <QualityCard task={task} apiBase={apiBase} andonStoreUrl={andonStoreUrl} trans={trans} />
+                </aside>
+
+                {/* Centre — le plan */}
+                <div className="ts-shop__stage">
+                    <DocumentStage documents={task.documents ?? []} fileTrans={fileTrans} trans={trans} />
                 </div>
-                <div className="card-body">
-                    <div className="row">
-                        {/* Left — Info */}
-                        <div className="col-md-2">
-                            <TaskInfoPanel task={task} trans={trans} />
-                        </div>
 
-                        {/* Center — Timeline */}
-                        <div className="col-md-6">
-                            <ActivityTimeline timeline={task.timeline ?? []} trans={trans} />
-                        </div>
+                {/* Rail droit — contexte */}
+                <aside className="ts-shop__rail ts-shop__rail--info">
+                    <PartCard task={task} trans={trans} />
 
-                        {/* Right — Actions */}
-                        <div className="col-md-4">
-                            <h3 className="text-primary">
-                                {t('task_trans_key')} #{task.id} {task.service?.label}
-                            </h3>
+                    {task.component_id && (
+                        <StockWithdrawalCard task={task} apiBase={apiBase} onReload={reload} trans={trans} />
+                    )}
 
-                            {task.component_id && task.component?.drawing_file && (
-                                <h5 className="text-secondary">
-                                    {t('component_trans_key')} : {task.component.code}
-                                    <a className="btn btn-xs btn-info ml-1" href={`/products/${task.component_id}`} target="_blank">
-                                        <i className="fa fa-eye" />
-                                    </a>
-                                    <a className="btn btn-xs btn-info ml-1" href={`/drawing/${task.component.drawing_file}`} target="_blank">
-                                        <i className="fa fa-file" />
-                                    </a>
-                                </h5>
-                            )}
+                    <PlanningCard task={task} apiBase={apiBase} onReload={reload} trans={trans} />
 
-                            <div className="card mb-2">
-                                <div className="card-body py-2">
-                                    <ProductionControls
-                                        task={task}
-                                        apiBase={apiBase}
-                                        onReload={() => onNavigate(task.id)}
-                                        trans={trans}
-                                        purchasesRequestUrl={purchasesRequestUrl}
-                                    />
-                                </div>
+                    <section className="ts-card">
+                        <header className="ts-card__head">
+                            <div className="ts-tabs">
+                                <button
+                                    type="button"
+                                    className={`ts-tab${tab === 'activity' ? ' is-active' : ''}`}
+                                    onClick={() => setTab('activity')}
+                                >
+                                    {t('logs_activity_trans_key')}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`ts-tab${tab === 'specs' ? ' is-active' : ''}`}
+                                    onClick={() => setTab('specs')}
+                                >
+                                    {t('informations_trans_key')}
+                                </button>
                             </div>
-
-                            {task.component_id && (
-                                <StockWithdrawalForm task={task} apiBase={apiBase}
-                                    onReload={() => onNavigate(task.id)} trans={trans} />
+                        </header>
+                        <div className="ts-card__body">
+                            {tab === 'activity' ? (
+                                <ActivityFeed timeline={task.timeline ?? []} trans={trans} />
+                            ) : (
+                                <div className="ts-specs">
+                                    <Spec label={t('statu_trans_key')} value={task.status?.title} />
+                                    <Spec label={t('qty_trans_key')} value={task.order_qty} />
+                                    <Spec label={t('cost_trans_key')} value={task.formatted_unit_cost} />
+                                    <Spec label={t('price_trans_key')} value={task.formatted_unit_price} />
+                                    <Spec label={t('margin_trans_key')} value={task.margin} unit=" %" />
+                                    {isInternal && (
+                                        <>
+                                            <Spec label={t('setting_time_trans_key')} value={task.seting_time} unit=" s" />
+                                            <Spec label={t('unit_time_trans_key')} value={task.unit_time} unit=" s" />
+                                            <Spec label={t('total_time_trans_key')} value={task.total_time} unit=" h" />
+                                            <Spec label={t('trs_trans_key')} value={task.trs} unit=" %" />
+                                        </>
+                                    )}
+                                    <Spec label={t('progress_trans_key')} value={task.progress} unit=" %" />
+                                </div>
                             )}
-
-                            <GoodQtyForm task={task} apiBase={apiBase}
-                                onReload={() => onNavigate(task.id)} trans={trans} />
-
-                            <RejectedQtyForm task={task} apiBase={apiBase}
-                                onReload={() => onNavigate(task.id)} trans={trans} />
-
-                            <DateUpdateForm task={task} apiBase={apiBase}
-                                onReload={() => onNavigate(task.id)} trans={trans} />
-
-                            <ResourceSelectForm task={task} apiBase={apiBase}
-                                onReload={() => onNavigate(task.id)} trans={trans} />
-
-                            <NcAndonPanel task={task} apiBase={apiBase}
-                                andonStoreUrl={andonStoreUrl} trans={trans} />
                         </div>
-                    </div>
-                </div>
+                    </section>
+                </aside>
             </div>
         </>
     );
@@ -790,16 +947,18 @@ export default function TaskStatuApp({
     userProductivity,
     resourceHours,
     initialTaskId,
+    pageTitle,
     baseStatuUrl,
     apiBaseUrl,
     andonStoreUrl,
     purchasesRequestUrl,
     trans,
+    fileTrans,
 }) {
-    const [search, setSearch]   = useState(initialTaskId ? String(initialTaskId) : '');
-    const [task, setTask]       = useState(null);
+    const [search, setSearch] = useState(initialTaskId ? String(initialTaskId) : '');
+    const [task, setTask] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState(null);
+    const [error, setError] = useState(null);
 
     const t = (key) => trans?.[key] ?? key;
 
@@ -808,7 +967,10 @@ export default function TaskStatuApp({
         setLoading(true);
         setError(null);
         apiFetch(`${apiBaseUrl}/${id}`)
-            .then((data) => { setTask(data); setSearch(String(id)); })
+            .then((data) => {
+                setTask(data);
+                setSearch(String(id));
+            })
             .catch(() => setError(`Tâche #${id} introuvable.`))
             .finally(() => setLoading(false));
     }
@@ -821,7 +983,6 @@ export default function TaskStatuApp({
         e.preventDefault();
         const id = parseInt(search.trim(), 10);
         if (!id) return;
-        // Update URL without reload for clean navigation
         window.history.pushState({}, '', `${baseStatuUrl}/${id}`);
         loadTask(id);
     }
@@ -831,42 +992,41 @@ export default function TaskStatuApp({
         loadTask(id);
     }
 
+    // Rendu une seule fois puis placé soit dans l'en-tête de tâche (mode compact),
+    // soit en pleine largeur sur l'écran d'accueil KPI.
+    const searchForm = (inline) => (
+        <form className={`ts-search${inline ? ' ts-search--inline' : ''}`} onSubmit={handleSearch}>
+            <input
+                type="number"
+                className="ts-input"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('search_task_trans_key')}
+            />
+            <button type="submit" className="ts-btn ts-btn--primary" disabled={!search.trim()}>
+                <i className="fas fa-search" />
+            </button>
+        </form>
+    );
+
+    const detailReady = !loading && task && !error;
+
     return (
         <div>
-            {/* Search bar */}
-            <div className="card-body">
-                <form onSubmit={handleSearch}>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-search fa-fw" /></span>
-                        </div>
-                        <input
-                            type="number"
-                            className="form-control"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder={t('search_task_trans_key')}
-                        />
-                        {search.trim() && (
-                            <div className="input-group-append">
-                                <button type="submit" className="btn btn-primary">
-                                    <i className="fas fa-arrow-right" />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </form>
-            </div>
-
-            {loading && (
-                <div className="text-center py-4">
-                    <i className="fas fa-spinner fa-spin fa-2x text-primary" />
+            {!detailReady && (
+                <div className="ts-topbar">
+                    {pageTitle && <h1 className="ts-title">{pageTitle}</h1>}
+                    {searchForm(true)}
                 </div>
             )}
 
-            {error && (
-                <div className="alert alert-warning mx-3">{error}</div>
+            {loading && (
+                <div className="ts-spinner">
+                    <i className="fas fa-spinner fa-spin fa-2x" />
+                </div>
             )}
+
+            {error && <div className="ts-alert ts-alert--warn">{error}</div>}
 
             {!loading && !task && !error && (
                 <KpiDashboard
@@ -877,7 +1037,7 @@ export default function TaskStatuApp({
                 />
             )}
 
-            {!loading && task && (
+            {detailReady && (
                 <TaskDetail
                     task={task}
                     apiBase={apiBaseUrl}
@@ -885,6 +1045,8 @@ export default function TaskStatuApp({
                     purchasesRequestUrl={purchasesRequestUrl}
                     onNavigate={handleNavigate}
                     trans={trans}
+                    fileTrans={fileTrans}
+                    searchSlot={searchForm(true)}
                 />
             )}
         </div>

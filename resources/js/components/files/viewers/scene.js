@@ -8,7 +8,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
  * camera behaviour, the same lighting and the same standard views, instead of
  * the one-off script that used to live inline in products-show.blade.php.
  */
-export function createStage(container, { background = 0x30343c, orthographic = false } = {}) {
+export function createStage(container, { background = '#f7f8fa', orthographic = false } = {}) {
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 600;
 
@@ -20,18 +20,20 @@ export function createStage(container, { background = 0x30343c, orthographic = f
         : new THREE.PerspectiveCamera(45, width / height, 0.1, 100000);
     camera.position.set(0, 0, 100);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+    // Éclairage calibré pour un fond clair : moins d'ambiante que sur fond
+    // sombre, sinon la pièce grise devient plate.
+    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
 
-    const key = new THREE.DirectionalLight(0xffffff, 2.0);
+    const key = new THREE.DirectionalLight(0xffffff, 1.5);
     key.position.set(1, 1, 1);
     scene.add(key);
 
-    const fill = new THREE.DirectionalLight(0xffffff, 0.8);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.55);
     fill.position.set(-1, -0.5, -1);
     scene.add(fill);
 
@@ -149,6 +151,24 @@ export function createStage(container, { background = 0x30343c, orthographic = f
             renderer.domElement.remove();
         },
     };
+}
+
+/**
+ * Matière neutre commune à tous les viewers 3D.
+ *
+ * Les couleurs portées par les fichiers (STEP notamment) sont ignorées : elles
+ * sont rarement significatives en production et rendent l'écran illisible d'une
+ * pièce à l'autre. Un gris unique donne le même rendu à toute la bibliothèque.
+ */
+export const PART_COLOR = 0xb4bcc6;
+
+export function partMaterial() {
+    return new THREE.MeshPhongMaterial({
+        color: PART_COLOR,
+        specular: 0x2a2f36,
+        shininess: 26,
+        flatShading: false,
+    });
 }
 
 export { THREE };

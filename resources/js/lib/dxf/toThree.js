@@ -30,6 +30,15 @@ function colorOf(entity, layers) {
     return ACI[entity.colorIndex] ?? 0xffffff;
 }
 
+/**
+ * AutoCAD draws colour 7 as white on a black background and as black on a white
+ * one. The viewer now renders on a light surface, so the same flip is applied
+ * here — otherwise every default-coloured entity would be invisible.
+ */
+function inkFor(color) {
+    return color === 0xffffff ? 0x1f2937 : color;
+}
+
 const v3 = (point) => new THREE.Vector3(point?.x ?? 0, point?.y ?? 0, point?.z ?? 0);
 
 function arcPoints(rawCenter, radius, startAngle, endAngle, segments = ARC_SEGMENTS) {
@@ -205,10 +214,11 @@ export async function dxfToThree(dxf) {
     // One material per colour, shared by every entity using it.
     const materials = new Map();
     const materialFor = (color) => {
-        if (!materials.has(color)) {
-            materials.set(color, new THREE.LineBasicMaterial({ color }));
+        const ink = inkFor(color);
+        if (!materials.has(ink)) {
+            materials.set(ink, new THREE.LineBasicMaterial({ color: ink }));
         }
-        return materials.get(color);
+        return materials.get(ink);
     };
 
     const skipped = new Set();

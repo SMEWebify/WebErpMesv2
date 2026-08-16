@@ -978,11 +978,13 @@ async function mountTaskStatuApp() {
             userProductivity:     parse('userProductivity') ?? [],
             resourceHours:        parse('resourceHours')    ?? [],
             initialTaskId:        Number.isNaN(taskId) ? null : taskId,
+            pageTitle:            element.dataset.pageTitle            ?? '',
             baseStatuUrl:         element.dataset.baseStatuUrl         ?? '',
             apiBaseUrl:           element.dataset.apiBaseUrl           ?? '',
             andonStoreUrl:        element.dataset.andonStoreUrl        ?? '',
             purchasesRequestUrl:  element.dataset.purchasesRequestUrl  ?? '',
             trans:                parse('trans')            ?? {},
+            fileTrans:            parse('fileTrans')        ?? {},
         })
     );
 }

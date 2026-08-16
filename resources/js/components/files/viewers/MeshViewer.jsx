@@ -1,6 +1,6 @@
 import React from 'react';
 import Viewer3D from './Viewer3D.jsx';
-import { THREE } from './scene.js';
+import { THREE, partMaterial } from './scene.js';
 
 /**
  * Viewer for triangle mesh formats: STL, OBJ, PLY, 3MF, glTF/GLB.
@@ -66,10 +66,7 @@ export default function MeshViewer({ file, t }) {
 
         if (returnsGeometry) {
             parsed.computeVertexNormals();
-            object = new THREE.Mesh(
-                parsed,
-                new THREE.MeshPhongMaterial({ color: 0xfff2cc, specular: 0x333333, shininess: 40 }),
-            );
+            object = new THREE.Mesh(parsed, partMaterial());
         } else {
             object = unwrap ? unwrap(parsed) : parsed;
         }
