@@ -2,8 +2,22 @@
 
 @section('title', __('general_content.invoices_trans_key') . ' - ' . $Invoice->code)
 
+@php
+$invoiceSteps = [
+    ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
+    ['value' => 2, 'label' => __('general_content.send_trans_key')],
+    ['value' => 3, 'label' => __('general_content.pending_trans_key')],
+    ['value' => 4, 'label' => __('general_content.unpaid_trans_key')],
+    ['value' => 5, 'label' => __('general_content.paid_trans_key')],
+];
+@endphp
+
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}" previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"/>
+  <x-document-header h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}"
+                     previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"
+                     :steps="$invoiceSteps" statu="{{ $Invoice->statu }}"
+                     endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
+                     redirect="{{ route('invoices.show', $Invoice->id) }}"/>
 @stop
 
 
@@ -38,20 +52,6 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Invoice">
-        @php
-        $invoiceSteps = [
-            ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
-            ['value' => 2, 'label' => __('general_content.send_trans_key')],
-            ['value' => 3, 'label' => __('general_content.pending_trans_key')],
-            ['value' => 4, 'label' => __('general_content.unpaid_trans_key')],
-            ['value' => 5, 'label' => __('general_content.paid_trans_key')],
-        ];
-        @endphp
-        <div data-react="arrow-steps"
-             data-steps="{{ json_encode($invoiceSteps) }}"
-             data-statu="{{ $Invoice->statu }}"
-             data-endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
-             data-redirect="{{ route('invoices.show', $Invoice->id) }}"></div>
         <x-relational-breadcrumb :entity="$Invoice" />
         <div class="row">
           <div class="col-md-9">

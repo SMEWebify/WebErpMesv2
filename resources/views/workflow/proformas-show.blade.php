@@ -2,11 +2,22 @@
 
 @section('title', 'Proforma - ' . $Proforma->code)
 
+@php
+  $steps = [
+    ['value' => 1, 'label' => 'Brouillon'],
+    ['value' => 2, 'label' => 'Envoyée'],
+    ['value' => 3, 'label' => 'Acceptée'],
+    ['value' => 4, 'label' => 'Refusée'],
+    ['value' => 5, 'label' => 'Convertie'],
+  ];
+@endphp
+
 @section('content_header')
-  <h1>
-    <span class="badge badge-warning mr-2">PROFORMA</span>
-    {{ $Proforma->code }}
-  </h1>
+  <x-document-header h1="{{ $Proforma->code }}" badge="PROFORMA"
+                     list="{{ route('proformas') }}"
+                     :steps="$steps" statu="{{ $Proforma->statu }}"
+                     endpoint="{{ route('proformas.json.statu', $Proforma->id) }}"
+                     redirect="{{ route('proformas.show', $Proforma->id) }}"/>
 @stop
 
 @section('content')
@@ -27,21 +38,6 @@
 
       {{-- Onglet infos --}}
       <div class="tab-pane active" id="Info">
-        @php
-          $steps = [
-            ['value' => 1, 'label' => 'Brouillon'],
-            ['value' => 2, 'label' => 'Envoyée'],
-            ['value' => 3, 'label' => 'Acceptée'],
-            ['value' => 4, 'label' => 'Refusée'],
-            ['value' => 5, 'label' => 'Convertie'],
-          ];
-        @endphp
-        <div data-react="arrow-steps"
-             data-steps="{{ json_encode($steps) }}"
-             data-statu="{{ $Proforma->statu }}"
-             data-endpoint="{{ route('proformas.json.statu', $Proforma->id) }}"
-             data-redirect="{{ route('proformas.show', $Proforma->id) }}"></div>
-
         <x-relational-breadcrumb :entity="$Proforma" />
 
         <div class="row">

@@ -2,8 +2,23 @@
 
 @section('title', __('general_content.opportunity_trans_key')  . ' - ' . $Opportunity->label)
 
+@php
+$oppSteps = json_encode([
+    ['value' => 1, 'label' => __('general_content.new_trans_key')],
+    ['value' => 2, 'label' => __('general_content.quote_made_trans_key')],
+    ['value' => 3, 'label' => __('general_content.negotiation_trans_key')],
+    ['value' => 4, 'label' => __('general_content.closed_won_trans_key')],
+    ['value' => 5, 'label' => __('general_content.closed_lost_trans_key')],
+    ['value' => 6, 'label' => __('general_content.informational_trans_key')],
+]);
+@endphp
+
 @section('content_header')
-    <x-Content-header-previous-button  h1="{{ __('general_content.opportunity_trans_key') }} : {{  $Opportunity->label }}" previous="{{ $previousUrl }}" list="{{ route('opportunities') }}" next="{{ $nextUrl }}"/>
+    <x-document-header h1="{{ __('general_content.opportunity_trans_key') }} : {{  $Opportunity->label }}"
+                       previous="{{ $previousUrl }}" list="{{ route('opportunities') }}" next="{{ $nextUrl }}"
+                       :steps="$oppSteps" statu="{{ $Opportunity->statu }}"
+                       endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"
+                       redirect="{{ route('opportunities.show', $Opportunity->id) }}"/>
 @stop
 
 @section('right-sidebar')
@@ -26,21 +41,6 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Opportunity">
-        @php
-        $oppSteps = json_encode([
-            ['value' => 1, 'label' => __('general_content.new_trans_key')],
-            ['value' => 2, 'label' => __('general_content.quote_made_trans_key')],
-            ['value' => 3, 'label' => __('general_content.negotiation_trans_key')],
-            ['value' => 4, 'label' => __('general_content.closed_won_trans_key')],
-            ['value' => 5, 'label' => __('general_content.closed_lost_trans_key')],
-            ['value' => 6, 'label' => __('general_content.informational_trans_key')],
-        ]);
-        @endphp
-        <div data-react="arrow-steps"
-             data-steps="{{ $oppSteps }}"
-             data-statu="{{ $Opportunity->statu }}"
-             data-endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"
-             data-redirect="{{ route('opportunities.show', $Opportunity->id) }}"></div>
         <x-relational-breadcrumb :entity="$Opportunity" />
         <div class="row">
           <div class="col-md-9">

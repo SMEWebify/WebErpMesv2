@@ -2,8 +2,21 @@
 
 @section('title', __('general_content.purchase_trans_key')   . ' - ' . $Purchase->code)
 
+@php
+$purchaseSteps = json_encode([
+    ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
+    ['value' => 2, 'label' => __('general_content.ordered_trans_key')],
+    ['value' => 3, 'label' => __('general_content.partly_received_trans_key')],
+    ['value' => 4, 'label' => __('general_content.rceived_trans_key')],
+]);
+@endphp
+
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{  __('general_content.purchase_trans_key') }} : {{  $Purchase->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"/>
+  <x-document-header h1="{{  __('general_content.purchase_trans_key') }} : {{  $Purchase->code }}"
+                     previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"
+                     :steps="$purchaseSteps" statu="{{ $Purchase->statu }}"
+                     endpoint="{{ route('purchases.json.statu', $Purchase->id) }}"
+                     redirect="{{ route('purchases.show', $Purchase->id) }}"/>
 @stop
 
 @section('right-sidebar')
@@ -26,20 +39,6 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Purchase">
-        
-        @php
-        $purchaseSteps = json_encode([
-            ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
-            ['value' => 2, 'label' => __('general_content.ordered_trans_key')],
-            ['value' => 3, 'label' => __('general_content.partly_received_trans_key')],
-            ['value' => 4, 'label' => __('general_content.rceived_trans_key')],
-        ]);
-        @endphp
-        <div data-react="arrow-steps"
-             data-steps="{{ $purchaseSteps }}"
-             data-statu="{{ $Purchase->statu }}"
-             data-endpoint="{{ route('purchases.json.statu', $Purchase->id) }}"
-             data-redirect="{{ route('purchases.show', $Purchase->id) }}"></div>
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
