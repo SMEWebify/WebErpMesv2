@@ -1230,6 +1230,21 @@ async function mountStockDetailPage() {
     );
 }
 
+async function mountWorkshopReportsApp() {
+    const el = document.getElementById('workshop-reports-app');
+    if (!el) return;
+
+    const { default: WorkshopReportsApp } = await import('./components/WorkshopReportsApp.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+
+    createRoot(el).render(
+        React.createElement(WorkshopReportsApp, {
+            initial:   parse('initial'),
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
 async function mountChatWidget() {
     // Le widget est global : il crée son propre container sur document.body
     // et s'affiche uniquement si l'utilisateur est authentifié (présence du meta csrf-token)
@@ -1353,6 +1368,7 @@ mountProductHistory();
 mountOrderPurchaseHistory();
 mountProductPriceHistory();
 mountStockDetailPage();
+mountWorkshopReportsApp();
 mountProformasIndex();
 mountProformasRequest();
 
