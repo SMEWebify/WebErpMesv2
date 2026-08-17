@@ -855,6 +855,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
         Route::get('/services', 'App\Http\Controllers\Planning\NestingController@services')->name('nesting.services');
         Route::get('/sheet-stock', 'App\Http\Controllers\Planning\NestingController@sheetStock')->name('nesting.sheet-stock');
+        Route::get('/bar-stock', 'App\Http\Controllers\Planning\NestingController@barStock')->name('nesting.bar-stock');
         Route::post('/compute', 'App\Http\Controllers\Planning\NestingController@compute')->name('nesting.compute');
     });
 

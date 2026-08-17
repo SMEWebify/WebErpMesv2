@@ -63,6 +63,7 @@ class NestingController extends Controller
             ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
             ->join('methods_services', 'methods_services.id', '=', 'methods_families.methods_services_id')
             ->where('methods_services.type', 3)
+            ->where('methods_families.nest_type', 'sheet')
             ->where('products.x_size', '>', 0)
             ->where('products.y_size', '>', 0)
             ->select(
@@ -78,13 +79,67 @@ class NestingController extends Controller
             ->orderBy('products.thickness')
             ->get();
 
+        return response()->json($this->augmentWithStock($products, fn ($p) => [
+            'id'        => $p->id,
+            'code'      => $p->code,
+            'label'     => $p->label,
+            'material'  => trim((string) $p->material),
+            'thickness' => (float) $p->thickness,
+            'x_size'    => (float) $p->x_size,
+            'y_size'    => (float) $p->y_size,
+        ]));
+    }
+
+    /**
+     * Purchasable bar / tube raw material products (methods_families.nest_type = 'bar').
+     * Returns each stock item with its profile (y_size × z_size), standard length
+     * (x_size), and on-hand + incoming quantities.
+     *
+     * GET /nesting/bar-stock
+     */
+    public function barStock()
+    {
+        $products = Products::query()
+            ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+            ->where('methods_families.nest_type', 'bar')
+            ->where('products.x_size', '>', 0)
+            ->select(
+                'products.id',
+                'products.code',
+                'products.label',
+                'products.material',
+                'products.thickness',
+                'products.x_size',
+                'products.y_size',
+                'products.z_size',
+            )
+            ->orderBy('products.material')
+            ->orderBy('products.y_size')
+            ->orderBy('products.z_size')
+            ->get();
+
+        return response()->json($this->augmentWithStock($products, fn ($p) => [
+            'id'        => $p->id,
+            'code'      => $p->code,
+            'label'     => $p->label,
+            'material'  => trim((string) $p->material),
+            'thickness' => (float) $p->thickness,
+            'x_size'    => (float) $p->x_size,   // bar standard length
+            'y_size'    => (float) $p->y_size,   // profile width / diameter
+            'z_size'    => (float) $p->z_size,   // profile height (0 for round)
+        ]));
+    }
+
+    /**
+     * Attach stock_qty + incoming_qty to a Products collection using a single
+     * aggregate query on stock_moves / purchase_lines. Shared by sheetStock()
+     * and barStock() — both need the same "on-hand + pending PO" reconciliation.
+     */
+    private function augmentWithStock($products, callable $mapper)
+    {
         $productIds = $products->pluck('id');
+        if ($productIds->isEmpty()) return [];
 
-        if ($productIds->isEmpty()) {
-            return response()->json([]);
-        }
-
-        // Purchase lines still awaiting receipt: sum of (qty - receipt_qty) per product
         $incoming = \DB::table('purchase_lines')
             ->whereIn('product_id', $productIds->map(fn ($id) => (string) $id))
             ->whereColumn('receipt_qty', '<', 'qty')
@@ -92,8 +147,6 @@ class NestingController extends Controller
             ->selectRaw('product_id, SUM(qty - receipt_qty) as pending_qty')
             ->pluck('pending_qty', 'product_id');
 
-        // On-hand stock per product, in a single aggregate instead of
-        // Products::getTotalStockMove() (1 query per location + 2 per move bucket).
         $entryList   = implode(',', self::STOCK_ENTRY_TYPES);
         $sortingList = implode(',', self::STOCK_SORTING_TYPES);
 
@@ -111,19 +164,10 @@ class NestingController extends Controller
             ")
             ->pluck('stock_qty', 'products_id');
 
-        return response()->json(
-            $products->map(fn ($p) => [
-                'id'           => $p->id,
-                'code'         => $p->code,
-                'label'        => $p->label,
-                'material'     => trim((string) $p->material),
-                'thickness'    => (float) $p->thickness,
-                'x_size'       => (float) $p->x_size,
-                'y_size'       => (float) $p->y_size,
-                'stock_qty'    => (float) ($onHand[$p->id] ?? 0),
-                'incoming_qty' => (float) ($incoming[$p->id] ?? 0),
-            ])
-        );
+        return $products->map(fn ($p) => $mapper($p) + [
+            'stock_qty'    => (float) ($onHand[$p->id] ?? 0),
+            'incoming_qty' => (float) ($incoming[$p->id] ?? 0),
+        ]);
     }
 
     public function compute(Request $request)
@@ -167,17 +211,21 @@ class NestingController extends Controller
             ->groupBy('order_lines_id')
             ->map->first();
 
-        // Material component task (nest_type=sheet) — carries material + thickness
+        // Material component task (nest_type = sheet or bar) — carries material,
+        // thickness, and the profile section (y/z) for bars.
         $materialTasks = Task::query()
             ->whereIn('tasks.order_lines_id', $lineIds)
             ->where('tasks.component_id', '>', 0)
             ->join('products', 'products.id', '=', 'tasks.component_id')
             ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
-            ->where('methods_families.nest_type', 'sheet')
+            ->whereIn('methods_families.nest_type', ['sheet', 'bar'])
             ->select(
                 'tasks.order_lines_id',
+                'methods_families.nest_type as nest_type',
                 'products.material as mat_material',
                 'products.thickness as mat_thickness',
+                'products.y_size as mat_y_size',
+                'products.z_size as mat_z_size',
             )
             ->get()
             ->groupBy('order_lines_id')
@@ -234,39 +282,16 @@ class NestingController extends Controller
                 'service_label' => $nestingTask->service_label,
             ];
 
-            // Material + thickness come from the line details first (what the user
-            // types on the "detail-edit" screen), then fall back to the paired
-            // material task if the details are empty.
-            $details       = $line->OrderLineDetails;
-            $matTask       = $materialTasks[$line->id] ?? null;
-            $matDetails    = trim((string) ($details?->material ?? ''));
-            $thickDetails  = (float) ($details?->thickness ?? 0);
-            $matTaskName   = trim((string) ($matTask?->mat_material ?? ''));
-            $thickTaskVal  = (float) ($matTask?->mat_thickness ?? 0);
+            $details      = $line->OrderLineDetails;
+            $matTask      = $materialTasks[$line->id] ?? null;
+            $nestType     = $matTask?->nest_type ?? 'sheet';
 
-            $material  = $matDetails !== '' ? $matDetails : $matTaskName;
-            $thickness = $thickDetails > 0 ? $thickDetails : $thickTaskVal;
-
-            if ($material === '' || $thickness <= 0) {
-                $missingMaterial[] = $entry;
-                continue;
-            }
-
-            $file    = $lineFiles[$line->id] ?? $productFiles[$line->product_id] ?? null;
-            $details = $line->OrderLineDetails;
-            $xLine   = (float) ($details?->x_size ?? 0);
-            $yLine   = (float) ($details?->y_size ?? 0);
-            $hasLineDims = $xLine > 0 && $yLine > 0;
-
-            // A piece is imbriquable if we can size its bounding box: either the
-            // line carries x/y, or we have a vector file to parse for its extents.
-            if (!$hasLineDims && !$file) {
-                $missingGeometry[] = $entry + [
-                    'material'  => $material,
-                    'thickness' => $thickness,
-                ];
-                continue;
-            }
+            // Line details override the material task (the "detail-edit" screen
+            // is the source of truth for the piece as fabricated).
+            $matDetails   = trim((string) ($details?->material ?? ''));
+            $thickDetails = (float) ($details?->thickness ?? 0);
+            $material     = $matDetails !== '' ? $matDetails : trim((string) ($matTask?->mat_material ?? ''));
+            $thickness    = $thickDetails > 0 ? $thickDetails : (float) ($matTask?->mat_thickness ?? 0);
 
             $sid = $nestingTask->methods_services_id;
             if (!isset($servicesMap[$sid])) {
@@ -278,9 +303,65 @@ class NestingController extends Controller
                 ];
             }
 
-            $gkey = $material . '|' . $thickness;
+            if ($nestType === 'bar') {
+                // Bar / tube — 1D packing. Length to cut = x_size on the details;
+                // profile section (y/z) identifies which raw stock to consume.
+                $length = (float) ($details?->x_size ?? 0);
+                $yProf  = (float) ($details?->y_size ?? $matTask?->mat_y_size ?? 0);
+                $zProf  = (float) ($details?->z_size ?? $matTask?->mat_z_size ?? 0);
+
+                if ($material === '' || $yProf <= 0) {
+                    $missingMaterial[] = $entry;
+                    continue;
+                }
+                if ($length <= 0) {
+                    $missingGeometry[] = $entry + [
+                        'material'  => $material,
+                        'thickness' => $thickness,
+                    ];
+                    continue;
+                }
+
+                $gkey = 'bar|' . $material . '|' . $yProf . '|' . $zProf;
+                if (!isset($servicesMap[$sid]['groups'][$gkey])) {
+                    $servicesMap[$sid]['groups'][$gkey] = [
+                        'nest_type' => 'bar',
+                        'material'  => $material,
+                        'y_size'    => $yProf,
+                        'z_size'    => $zProf,
+                        'thickness' => $thickness,
+                        'pieces'    => [],
+                    ];
+                }
+                $servicesMap[$sid]['groups'][$gkey]['pieces'][] = $entry + [
+                    'length' => $length,
+                ];
+                continue;
+            }
+
+            // Sheet — 2D bin packing, needs a bounding box (line dims or DXF).
+            if ($material === '' || $thickness <= 0) {
+                $missingMaterial[] = $entry;
+                continue;
+            }
+
+            $file  = $lineFiles[$line->id] ?? $productFiles[$line->product_id] ?? null;
+            $xLine = (float) ($details?->x_size ?? 0);
+            $yLine = (float) ($details?->y_size ?? 0);
+            $hasLineDims = $xLine > 0 && $yLine > 0;
+
+            if (!$hasLineDims && !$file) {
+                $missingGeometry[] = $entry + [
+                    'material'  => $material,
+                    'thickness' => $thickness,
+                ];
+                continue;
+            }
+
+            $gkey = 'sheet|' . $material . '|' . $thickness;
             if (!isset($servicesMap[$sid]['groups'][$gkey])) {
                 $servicesMap[$sid]['groups'][$gkey] = [
+                    'nest_type' => 'sheet',
                     'material'  => $material,
                     'thickness' => $thickness,
                     'pieces'    => [],
