@@ -13,6 +13,7 @@ use App\Models\Products\StockMove;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsRessources;
 use App\Services\TaskKPIService;
+use App\Services\WorkshopReportService;
 
 class WorkshopController extends Controller
 {
@@ -264,6 +265,12 @@ class WorkshopController extends Controller
      */
     public function stockDetail(Request $request)
     {
+        // La carte "Stocks" de l'accueil atelier arrive sans id : on affiche
+        // l'écran de scan au lieu de partir en 404 sur findOrFail(null).
+        if (! $request->id) {
+            return $this->stockScanView();
+        }
+
         $stockMove = StockMove::with([
             'UserManagement',
             'StockLocationProducts.product',
@@ -334,5 +341,79 @@ class WorkshopController extends Controller
 
         return view('workshop/workshop-stock-detail', compact('props'));
     }
-    
+
+    /**
+     * Écran de scan : l'opérateur douchette l'étiquette d'un mouvement de stock
+     * (code-barres = id) ou saisit un n° de traçabilité.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    private function stockScanView(?string $error = null)
+    {
+        $recent = StockMove::with('StockLocationProducts.product:id,code,label')
+            ->orderByDesc('id')
+            ->limit(15)
+            ->get(['id', 'stock_location_products_id', 'qty', 'typ_move', 'tracability', 'created_at'])
+            ->map(fn ($move) => [
+                'id'           => $move->id,
+                'qty'          => $move->qty,
+                'tracability'  => $move->tracability,
+                'product_code' => $move->StockLocationProducts->product->code ?? null,
+                'product_label' => $move->StockLocationProducts->product->label ?? null,
+                'date'         => $move->created_at?->format('d/m/Y H:i'),
+                'url'          => route('workshop.stock.detail.id', ['id' => $move->id]),
+            ]);
+
+        return view('workshop/workshop-stock-scan', [
+            'recent'    => $recent,
+            'scanError' => $error,
+        ]);
+    }
+
+    /**
+     * Résout la saisie du scan vers un mouvement de stock, puis redirige.
+     * Un code inconnu revient sur l'écran de scan avec un message plutôt qu'un 404.
+     */
+    public function stockScan(Request $request)
+    {
+        $code = trim((string) $request->input('code', ''));
+
+        if ($code === '') {
+            return redirect()->route('workshop.stock.detail');
+        }
+
+        $stockMove = ctype_digit($code) ? StockMove::find((int) $code) : null;
+        $stockMove ??= StockMove::where('tracability', $code)->orderByDesc('id')->first();
+
+        if (! $stockMove) {
+            return $this->stockScanView('Aucun mouvement de stock trouvé pour « ' . $code . ' ».');
+        }
+
+        return redirect()->route('workshop.stock.detail.id', ['id' => $stockMove->id]);
+    }
+
+    /**
+     * Rapports atelier : réalisé pointé, rebuts, charge machine, andon.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function reports(Request $request, WorkshopReportService $reportService)
+    {
+        return view('workshop/workshop-reports', [
+            'report'    => $reportService->build($request->get('period', 'today')),
+            'endpoints' => [
+                'report' => route('workshop.reports.json'),
+                'task'   => route('workshop.task.statu.id', ['id' => '__ID__']),
+            ],
+        ]);
+    }
+
+    /**
+     * Même rapport en JSON : le changement de période et le rafraîchissement
+     * automatique de l'écran atelier n'ont pas à recharger la page.
+     */
+    public function reportsJson(Request $request, WorkshopReportService $reportService)
+    {
+        return response()->json($reportService->build($request->get('period', 'today')));
+    }
 }

@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboardController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
@@ -179,8 +178,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
         Route::get('/Stock/Detail', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail');
+        Route::get('/Stock/Scan', 'App\Http\Controllers\Workshop\WorkshopController@stockScan')->name('workshop.stock.scan');
 
-        
+        Route::get('/Reports', 'App\Http\Controllers\Workshop\WorkshopController@reports')->name('workshop.reports');
+        Route::get('/Reports/json', 'App\Http\Controllers\Workshop\WorkshopController@reportsJson')->name('workshop.reports.json');
+
+
         Route::get('/andon', 'App\Http\Controllers\Planning\AndonAlertController@taskAlertsDashboard')->name('workshop.andon');
         Route::post('/andon/store', 'App\Http\Controllers\Planning\AndonAlertController@triggerAlert')->name('workshop.andon.store');
         Route::post('/andon/inProgress/{id}', 'App\Http\Controllers\Planning\AndonAlertController@inProgressAlert')->name('workshop.andon.inProgress');
