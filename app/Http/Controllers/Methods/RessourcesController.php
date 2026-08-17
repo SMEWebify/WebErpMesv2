@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Methods;
 use Illuminate\Http\Request;
 use App\Services\SelectDataService;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Times\WorkShiftPattern;
 use App\Http\Requests\Methods\StoreRessourceRequest;
 use App\Http\Requests\Methods\UpdateRessourceRequest;
 
@@ -24,13 +25,17 @@ class RessourcesController extends Controller
      */
     public function index()
     {
-        $MethodsRessources = MethodsRessources::orderBy('ordre')->get();
+        $MethodsRessources = MethodsRessources::with(['services', 'users'])->orderBy('ordre')->get();
         $SectionsSelect = $this->SelectDataService->getSection();
         $ServicesSelect = $this->SelectDataService->getServices();
+        $UsersSelect = $this->SelectDataService->getUsers();
+        $ShiftPatternsSelect = WorkShiftPattern::orderBy('code')->get(['id', 'label']);
         return view('methods/methods-ressources', [
             'MethodsRessources' => $MethodsRessources,
             'SectionsSelect' => $SectionsSelect,
             'ServicesSelect' => $ServicesSelect,
+            'UsersSelect' => $UsersSelect,
+            'ShiftPatternsSelect' => $ShiftPatternsSelect,
         ]);
     }
 
@@ -45,8 +50,16 @@ class RessourcesController extends Controller
         
         $Ressource = MethodsRessources::create(array_merge(
             $request->only('ordre', 'code', 'label', 'capacity', 'section_id', 'color', 'methods_services_id'),
-            ['mask_time' => $request->mask_time ? 1 : 2]
+            [
+                'mask_time'   => $request->mask_time ? 1 : 2,
+                'is_labor'    => (bool) $request->boolean('is_labor'),
+                'labor_ratio' => $request->input('labor_ratio', 0),
+                'work_shift_pattern_id' => $request->input('work_shift_pattern_id') ?: null,
+            ]
         ));
+
+        $Ressource->services()->sync($this->serviceSyncPayload($request));
+        $Ressource->users()->sync($this->userSyncPayload($request));
 
         if($request->hasFile('picture')){
             $Ressource = MethodsRessources::findOrFail($Ressource->id);
@@ -78,11 +91,55 @@ class RessourcesController extends Controller
             'section_id' => $request->section_id,
             'color' => $request->color,
             'methods_services_id' => $request->methods_services_id,
+            'is_labor' => (bool) $request->boolean('is_labor'),
+            'labor_ratio' => $request->input('labor_ratio', 0),
+            'work_shift_pattern_id' => $request->input('work_shift_pattern_id') ?: null,
         ]);
+
+        $ressource->services()->sync($this->serviceSyncPayload($request));
+        $ressource->users()->sync($this->userSyncPayload($request));
 
         return redirect()->route('methods.ressource')->with('success', __('general_content.resource_updated_success_trans_key'));
     }
     
+    /**
+     * Construit le payload de synchronisation des services réalisables.
+     *
+     * Le service principal (methods_services_id, conservé sur la ressource pour
+     * l'affichage et la compatibilité) ouvre la liste et devient donc le premier
+     * choix de l'affectation automatique (preference = 0).
+     *
+     * @return array<int, array<string, int>>
+     */
+    private function serviceSyncPayload(Request $request): array
+    {
+        return collect([$request->input('methods_services_id')])
+            ->merge($request->input('additional_services', []))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->mapWithKeys(fn ($id, $preference) => [$id => ['preference' => $preference]])
+            ->all();
+    }
+
+    /**
+     * Personnes habilitées sur la ressource. Niveau autonome par défaut : la
+     * granularité fine (formation / référent, date de validité) se pilote depuis
+     * le pivot, pas depuis ce formulaire.
+     *
+     * @return array<int, array<string, int>>
+     */
+    private function userSyncPayload(Request $request): array
+    {
+        return collect($request->input('qualified_users', []))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->mapWithKeys(fn ($id) => [$id => ['level' => MethodsRessources::LEVEL_AUTONOMOUS]])
+            ->all();
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
       * @return \Illuminate\Http\RedirectResponse

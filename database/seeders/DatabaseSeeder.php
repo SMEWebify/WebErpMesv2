@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
             MethodsUnitTableSeeder::class,
             MethodsSectionTableSeeder::class,
             MethodsRessourcesSeeder::class,
+            WorkShiftPatternSeeder::class,
             MethodsFamiliesSeeder::class,
             PermissionTableSeeder::class,
             AssetRolePermissionSeeder::class,

@@ -62,6 +62,8 @@ return [
     'internal_audits_trans_key'                => 'Internal Audits',
     'settings_trans_key'                       => '设置',
     'settings_time_trans_key'                  => '时间管理',
+    'times_overview_trans_key'                 => '工时与缺勤',
+    'times_shifts_trans_key'                   => '工作班次',
     'methods_trans_key'                        => '方法',
     'methods_services_trans_key'               => '服务',
     'methods_ressources_trans_key'             => '资源',

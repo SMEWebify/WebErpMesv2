@@ -499,6 +499,7 @@ class TaskController extends Controller
             'end_date_trans_key'                 => __('general_content.end_date_trans_key'),
             'select_ressource_trans_key'         => __('general_content.select_ressource_trans_key'),
             'user_choise_trans_key'              => __('general_content.user_choise_trans_key'),
+            'labor_resource_trans_key'           => __('general_content.labor_resource_trans_key'),
             'new_non_conformitie_trans_key'      => __('general_content.new_non_conformitie_trans_key'),
             'drawing_trans_key'                  => __('general_content.drawing_trans_key'),
             'scheduling_trans_key'               => __('general_content.scheduling_trans_key'),

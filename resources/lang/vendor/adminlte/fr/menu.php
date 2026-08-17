@@ -64,6 +64,8 @@ return [
     'internal_audits_trans_key'                => 'Audits internes',
     'settings_trans_key'                       => 'Paramètres',
     'settings_time_trans_key'                  => 'Temps management',
+    'times_overview_trans_key'                 => 'Temps et absences',
+    'times_shifts_trans_key'                   => 'Horaires de travail',
     'methods_trans_key'                        => 'Méthodes',
     'methods_services_trans_key'               => 'Services',
     'methods_ressources_trans_key'             => 'Ressources',

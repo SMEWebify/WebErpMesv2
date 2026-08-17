@@ -4,6 +4,7 @@ namespace App\Models\Planning;
 
 use App\Models\User;
 use App\Models\Planning\Task;
+use App\Models\Methods\MethodsRessources;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,6 +21,7 @@ class TaskActivities extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['task_id', 
+                            'methods_ressources_id',
                             'user_id',
                             'type',
                             'timestamp',
@@ -31,6 +33,15 @@ class TaskActivities extends Model
     public function Tasks()
     {
         return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    /**
+     * Ressource sur laquelle la déclaration a été faite, figée au moment de la
+     * déclaration : réaffecter la tâche ensuite ne déplace pas le réalisé.
+     */
+    public function resource()
+    {
+        return $this->belongsTo(MethodsRessources::class, 'methods_ressources_id');
     }
 
     public function user()

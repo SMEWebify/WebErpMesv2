@@ -99,10 +99,14 @@ class PlanningController extends Controller
     /**
      * POST — dispatch the resource assignment job.
      */
-    public function calculateResources()
+    public function calculateResources(Request $request)
     {
         Cache::forget(CalculateTaskResources::CACHE_KEY);
-        CalculateTaskResources::dispatchAfterResponse();
+        // `rebalance` reprend en plus les affectations posées automatiquement, pour
+        // les redistribuer après un changement de capacité (nouvelle machine, régime
+        // horaire, arrêt planifié). Les choix humains et les tâches déjà démarrées
+        // ne sont pas touchés.
+        CalculateTaskResources::dispatchAfterResponse($request->boolean('rebalance'));
 
         return response()->json(['dispatched' => true]);
     }
@@ -150,10 +154,13 @@ class PlanningController extends Controller
 
     private function getServices()
     {
-        return MethodsServices::with('Ressources')
+        // withCount('services') sur les ressources : une machine partagée entre
+        // plusieurs services ne doit pas voir sa capacité comptée en entier dans
+        // chacun d'eux (cf. mapServices).
+        return MethodsServices::with(['Ressources' => fn ($query) => $query->withCount('services')])
                     ->where(function (Builder $query) {
-                        return $query->where('type', 1)
-                                    ->orWhere('type', 7);
+                        return $query->where('type', MethodsServices::TYPE_PRODUCTIVE)
+                                    ->orWhere('type', MethodsServices::TYPE_SUB_CONTRACTING);
                     })->get();
     }
 
@@ -161,6 +168,10 @@ class PlanningController extends Controller
      * Map services for the frontend.
      * capacity = sum of resource daily capacities — 0 if no resources configured.
      * React uses this to decide whether to show a custom-capacity input.
+     *
+     * Une ressource pouvant réaliser plusieurs services, sa capacité est répartie
+     * à parts égales entre eux : la somme des capacités par service reste ainsi
+     * égale à la capacité réelle de l'atelier, sans double comptage.
      */
     private function mapServices($services): \Illuminate\Support\Collection
     {
@@ -169,13 +180,22 @@ class PlanningController extends Controller
             'label'    => $s->label,
             'picture'  => $s->picture,
             // capacity is stored weekly — convert to daily (÷5) for load rate display
-            'capacity' => round($s->Ressources->sum('capacity') / \App\Models\Methods\MethodsRessources::WORKING_DAYS_PER_WEEK, 2),
+            'capacity' => round(
+                $s->Ressources->sum(fn ($resource) => $resource->capacity / max(1, (int) $resource->services_count))
+                    / \App\Models\Methods\MethodsRessources::WORKING_DAYS_PER_WEEK,
+                2
+            ),
         ])->values();
     }
 
     private function countTaskNullRessource()
     {
-        return Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->count();
+        // Seules les tâches productives doivent apparaître comme « sans ressource » :
+        // matière, fournitures et sous-traitance n'en consomment aucune.
+        return Task::productive()
+                    ->whereNotNull('order_lines_id')
+                    ->whereDoesntHave('resources')
+                    ->count();
     }
 
     private function countTaskNullDate()

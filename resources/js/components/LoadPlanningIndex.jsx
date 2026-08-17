@@ -171,7 +171,7 @@ function ProgressBar({ value }) {
     );
 }
 
-function CalcModal({ id, title, status, trans, onCalculate }) {
+function CalcModal({ id, title, status, trans, onCalculate, onRebalance }) {
     const { jobStatus, progress, count, messages } = status;
     const isRunning = jobStatus === 'running';
     const isDone    = jobStatus === 'finished';
@@ -191,10 +191,23 @@ function CalcModal({ id, title, status, trans, onCalculate }) {
                     </div>
                     <div className="modal-body">
                         {isIdle && (
-                            <button className="btn btn-success btn-block" onClick={onCalculate}>
-                                <i className="fas fa-play mr-1"></i>
-                                {trans.calculate ?? 'Calculer'}
-                            </button>
+                            <>
+                                <button className="btn btn-success btn-block" onClick={onCalculate}>
+                                    <i className="fas fa-play mr-1"></i>
+                                    {trans.calculate ?? 'Calculer'}
+                                </button>
+                                {onRebalance && (
+                                    <>
+                                        <button className="btn btn-outline-secondary btn-block" onClick={onRebalance}>
+                                            <i className="fas fa-random mr-1"></i>
+                                            {trans.rebalance ?? 'Rééquilibrer les affectations automatiques'}
+                                        </button>
+                                        <small className="text-muted d-block">
+                                            {trans.rebalance_hint ?? 'Les ressources choisies manuellement et les tâches déjà démarrées ne sont pas déplacées.'}
+                                        </small>
+                                    </>
+                                )}
+                            </>
                         )}
                         {(isRunning || isDone) && (
                             <>
@@ -263,11 +276,12 @@ function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
 
     useInterval(fetchStatus, isPolling ? POLL_MS : null);
 
-    const triggerJob = async (endpoint, setStatus) => {
+    const triggerJob = async (endpoint, setStatus, body = null) => {
         try {
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
+                body: body ? JSON.stringify(body) : undefined,
             });
             if (!res.ok) return;
             setStatus({ jobStatus: 'running', progress: 0, count: 0, messages: [] });
@@ -304,6 +318,7 @@ function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
                 status={resourceStatus}
                 trans={trans}
                 onCalculate={() => triggerJob(endpoints.calculateResources, setResourceStatus)}
+                onRebalance={() => triggerJob(endpoints.calculateResources, setResourceStatus, { rebalance: true })}
             />
             <CalcModal
                 id="taskCalculationDate"

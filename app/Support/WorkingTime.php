@@ -5,6 +5,7 @@ namespace App\Support;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Times\TimesBanckHoliday;
+use App\Models\Times\WorkShiftPattern;
 
 class WorkingTime
 {
@@ -32,7 +33,7 @@ class WorkingTime
             $hourStart = $step->copy()->subHour();
             $current = $hourStart;
 
-            if (!self::isWorkingHour($hourStart)) {
+            if (!self::isWorkingInstant($hourStart)) {
                 continue;
             }
 
@@ -48,13 +49,23 @@ class WorkingTime
         return $current;
     }
 
-    private static function isWorkingHour(Carbon $date): bool
+    /** L'instant tombe-t-il dans une plage travaillée ? */
+    public static function isWorkingInstant(Carbon $date): bool
     {
-        if ($date->isWeekend()) {
+        if (TimesBanckHoliday::isBankHoliday($date)) {
             return false;
         }
 
-        if (TimesBanckHoliday::isBankHoliday($date)) {
+        // Régime horaire de l'atelier s'il en existe un : il porte les équipes
+        // (1×8, 2×8, 3×8), donc les nuits et les samedis travaillés.
+        $pattern = WorkShiftPattern::defaultPattern();
+
+        if ($pattern) {
+            return $pattern->coversInstant($date);
+        }
+
+        // Horaires historiques : journée continue, du lundi au vendredi.
+        if ($date->isWeekend()) {
             return false;
         }
 
