@@ -92,6 +92,7 @@ class Task extends Model
     private ?float $cachedOrderQtyLine = null;
     private ?int $cachedLogStartTime = null;
     private ?int $cachedLogEndTime = null;
+    private ?int $cachedLogWorkedSeconds = null;
 
     public static function priorityLabels(): array
     {
@@ -513,12 +514,58 @@ class Task extends Model
     }
 
     /**
-     * Get the total log start time.
-     *
-     * This method calculates the total log start time in seconds by summing the difference
-     * between the current date-time and the timestamp of all task activities of type 1.
-     *
-     * @return int The total log start time in seconds.
+     * Somme (en secondes) des durées réellement travaillées sur la tâche, obtenue
+     * en appariant chaque START (type=1) avec le STOP suivant (type=2 ou 3) dans
+     * l'ordre chronologique. Les STOP orphelins sont ignorés ; un START encore
+     * ouvert est compté jusqu'à maintenant. L'ancienne formule
+     * `Σ(now - start) - Σ(now - stop)` divergeait dès qu'un start ou un stop
+     * manquait (bilan d'affaire commande 536).
+     */
+    private function computeWorkedSeconds(): int
+    {
+        if ($this->cachedLogWorkedSeconds !== null) {
+            return $this->cachedLogWorkedSeconds;
+        }
+
+        $activities = TaskActivities::where('task_id', $this->id)
+            ->whereIn('type', [
+                TaskActivities::TYPE_START,
+                TaskActivities::TYPE_END,
+                TaskActivities::TYPE_FINISH,
+            ])
+            ->orderBy('timestamp')
+            ->orderBy('id')
+            ->get(['type', 'timestamp']);
+
+        $worked  = 0;
+        $openAt  = null;
+
+        foreach ($activities as $activity) {
+            $ts = Carbon::parse($activity->timestamp);
+
+            if ($activity->type === TaskActivities::TYPE_START) {
+                if ($openAt === null) {
+                    $openAt = $ts;
+                }
+                continue;
+            }
+
+            if ($openAt !== null) {
+                $worked += max(0, $ts->diffInSeconds($openAt));
+                $openAt  = null;
+            }
+        }
+
+        if ($openAt !== null) {
+            $worked += max(0, Carbon::now()->diffInSeconds($openAt));
+        }
+
+        return $this->cachedLogWorkedSeconds = $worked;
+    }
+
+    /**
+     * Somme (en secondes) des timestamps de démarrage relatifs à maintenant.
+     * Conservée pour rétro-compatibilité éventuelle — préférer computeWorkedSeconds().
      */
     public function getTotalLogStartTime()
     {
@@ -532,12 +579,8 @@ class Task extends Model
     }
 
     /**
-     * Get the total log end time.
-     *
-     * This method calculates the total log end time in seconds by summing the difference
-     * between the current date-time and the timestamp of all task activities of type 2 or 3.
-     *
-     * @return int The total log end time in seconds.
+     * Somme (en secondes) des timestamps d'arrêt relatifs à maintenant.
+     * Conservée pour rétro-compatibilité éventuelle — préférer computeWorkedSeconds().
      */
     public function getTotalLogEndTime()
     {
@@ -554,16 +597,11 @@ class Task extends Model
     }
 
     /**
-     * Get the total log time.
-     *
-     * This method calculates the total log time in hours by subtracting the total log end time
-     * from the total log start time and dividing by 3600. The result is rounded to 2 decimal places.
-     *
-     * @return float The total log time in hours.
+     * Temps réel passé sur la tâche, en heures, arrondi à 2 décimales.
      */
     public function getTotalLogTime()
     {
-        return   round(($this->getTotalLogStartTime()-$this->getTotalLogEndTime())/3600,2);
+        return round($this->computeWorkedSeconds() / 3600, 2);
     }
 
     /**
