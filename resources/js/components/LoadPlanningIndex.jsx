@@ -335,7 +335,7 @@ function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
 // Filter form
 // ---------------------------------------------------------------------------
 
-function FilterForm({ startDate, endDate, displayHoursDiff, loading, trans, onStartDate, onEndDate, onDisplayHoursDiff, onSubmit }) {
+function FilterForm({ startDate, endDate, displayHoursDiff, granularity, loading, trans, onStartDate, onEndDate, onDisplayHoursDiff, onGranularity, onSubmit }) {
     return (
         <div className="card card-outline card-lime">
             <div className="card-body">
@@ -359,6 +359,27 @@ function FilterForm({ startDate, endDate, displayHoursDiff, loading, trans, onSt
                                 <label className="custom-control-label" htmlFor="lp-hours-diff">
                                     {displayHoursDiff ? trans.yes : trans.no}
                                 </label>
+                            </div>
+                        </div>
+                        <div className="form-group col-3">
+                            <label htmlFor="lp-granularity">{trans.granularity_label ?? 'Charge par'}</label>
+                            <div className="btn-group btn-block" role="group" id="lp-granularity">
+                                <button
+                                    type="button"
+                                    className={`btn btn-flat ${granularity === 'service' ? 'btn-info' : 'btn-outline-info'}`}
+                                    onClick={() => onGranularity('service')}
+                                >
+                                    <i className="fas fa-list mr-1"></i>
+                                    {trans.granularity_service ?? 'Service'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn btn-flat ${granularity === 'resource' ? 'btn-info' : 'btn-outline-info'}`}
+                                    onClick={() => onGranularity('resource')}
+                                >
+                                    <i className="fas fa-industry mr-1"></i>
+                                    {trans.granularity_resource ?? 'Ressource'}
+                                </button>
                             </div>
                         </div>
                         <div className="form-group col-2 d-flex align-items-end">
@@ -532,13 +553,13 @@ function DayHeader({ day, trans }) {
     );
 }
 
-function ServiceCell({ service, stats, compact, customCapacities, trans }) {
+function RowHeaderCell({ row, stats, byResource, compact, customCapacities, trans }) {
     if (compact) {
         return (
             <th scope="row" className="lp-col-service">
                 <div className="lp-service lp-service--compact">
                     <span className={`lp-service__dot lp-tone-${stats.peakTone}`}></span>
-                    <span className="lp-service__name">{service.label}</span>
+                    <span className="lp-service__name">{row.label}</span>
                     <span className="lp-service__cap text-muted">{stats.capacity}h/j</span>
                 </div>
             </th>
@@ -548,22 +569,39 @@ function ServiceCell({ service, stats, compact, customCapacities, trans }) {
     return (
         <th scope="row" className="lp-col-service">
             <div className="lp-service">
-                {service.picture ? (
+                {row.avatar ? (
                     <img
-                        alt={service.label}
+                        alt={row.label}
                         className="lp-service__avatar"
-                        src={`/storage/images/methods/${service.picture}`}
+                        src={row.avatar}
                         width="38" height="38"
                     />
                 ) : (
                     <span className="lp-service__avatar lp-service__avatar--empty">
-                        <i className="fas fa-industry"></i>
+                        <i className={`fas ${row.isLabor ? 'fa-users' : 'fa-industry'}`}></i>
                     </span>
                 )}
                 <div className="lp-service__body">
-                    <span className="lp-service__name">{service.label}</span>
+                    <span className="lp-service__name">{row.label}</span>
                     <div className="lp-service__badges">
-                        <CapacityBadge service={service} customCapacities={customCapacities} trans={trans} />
+                        {byResource ? (
+                            <span className="badge badge-light border">
+                                {fmt(trans.capacity_real ?? 'Capacité :hours h/j', {
+                                    hours: Math.round(stats.capacity * 10) / 10,
+                                })}
+                            </span>
+                        ) : (
+                            <CapacityBadge service={row} customCapacities={customCapacities} trans={trans} />
+                        )}
+                        {byResource && row.isLabor && (
+                            <span className="badge badge-warning">
+                                <i className="fas fa-users mr-1"></i>
+                                {trans.labor ?? "Main-d'œuvre"}
+                            </span>
+                        )}
+                        {byResource && row.section && (
+                            <span className="badge badge-light border">{row.section}</span>
+                        )}
                         {stats.totalHours > 0 && (
                             <span className="badge badge-light border">
                                 {fmt(trans.period_total ?? 'Total :hours h', {
@@ -643,27 +681,37 @@ function LoadTimeline({
     data, days, displayHoursDiff, compact, customCapacities,
     onToggleCompact, onCustomCapacityChange, trans,
 }) {
-    const { services, hoursPerServiceDay, tasksPerServiceDay } = data;
+    const { rows: rowDefs, hoursPerRowDay, tasksPerRowDay, granularity } = data;
+    const byResource = granularity === 'resource';
 
-    // Per-service aggregates over the displayed period (badges + row highlight).
-    const rows = useMemo(() => services.map((service) => {
-        const capacity = effectiveCapacity(service, customCapacities);
-        const svcId    = String(service.id);
-        const hoursMap = hoursPerServiceDay?.[svcId] ?? {};
-        const tasksMap = tasksPerServiceDay?.[svcId] ?? {};
+    // Une ligne par service ou par ressource selon la maille, avec ses agrégats
+    // sur la période (badges + surlignage de ligne).
+    const rows = useMemo(() => (rowDefs ?? []).map((row) => {
+        const rowId = String(row.id);
+        // En maille ressource, la capacité est connue jour par jour (régime horaire,
+        // fériés, arrêts, absences). En maille service, elle est moyennée, et une
+        // saisie manuelle peut la remplacer quand aucune ressource n'est configurée.
+        const rowCapacity = byResource ? (row.capacity ?? 0) : effectiveCapacity(row, customCapacities);
+        const hoursMap = hoursPerRowDay?.[rowId] ?? {};
+        const tasksMap = tasksPerRowDay?.[rowId] ?? {};
 
         let totalHours = 0;
         let taskCount = 0;
         let overloadedDays = 0;
         let workingDays = 0;
+        let capacitySum = 0;
         let peakTone = 'free';
 
         const cells = days.map((day) => {
             const hours = hoursMap[day.date] ?? null;
             const tasks = tasksMap[day.date] ?? [];
-            const cell  = computeCell(hours, capacity, displayHoursDiff);
+            const dayCapacity = row.capacityPerDay?.[day.date] ?? rowCapacity;
+            const cell  = computeCell(hours, dayCapacity, displayHoursDiff);
 
-            if (!day.isOff) workingDays += 1;
+            if (!day.isOff) {
+                workingDays += 1;
+                capacitySum += dayCapacity;
+            }
             if (hours !== null) {
                 totalHours += hours;
                 taskCount  += tasks.length;
@@ -673,29 +721,29 @@ function LoadTimeline({
                 }
             }
 
-            return { day, cell, taskCount: tasks.length };
+            return { day, cell, capacity: dayCapacity, taskCount: tasks.length };
         });
 
         return {
-            service,
-            capacity,
+            row,
+            capacity: rowCapacity,
             cells,
             totalHours,
             taskCount,
             overloadedDays,
             peakTone,
-            avgPct: workingDays > 0 && capacity > 0
-                ? (totalHours / (workingDays * capacity)) * 100
-                : 0,
+            avgPct: capacitySum > 0 ? (totalHours / capacitySum) * 100 : 0,
         };
-    }), [services, days, hoursPerServiceDay, tasksPerServiceDay, customCapacities, displayHoursDiff]);
+    }), [rowDefs, days, hoursPerRowDay, tasksPerRowDay, customCapacities, displayHoursDiff, byResource]);
 
     return (
         <div className="card card-outline card-lime">
             <div className="card-header d-flex align-items-center flex-wrap">
                 <h3 className="card-title mb-0">
                     <i className="fas fa-chart-bar mr-1"></i>
-                    {trans.service}
+                    {byResource
+                        ? (trans.granularity_resource ?? 'Ressource')
+                        : trans.service}
                 </h3>
                 <button
                     type="button"
@@ -715,7 +763,7 @@ function LoadTimeline({
                         <thead>
                             <tr>
                                 <th scope="col" className="lp-col-service lp-col-service--head">
-                                    {trans.service}
+                                    {byResource ? (trans.granularity_resource ?? 'Ressource') : trans.service}
                                 </th>
                                 {days.map(day => (
                                     <DayHeader key={day.date} day={day} trans={trans} />
@@ -725,22 +773,23 @@ function LoadTimeline({
                         <tbody>
                             {rows.map(row => (
                                 <tr
-                                    key={row.service.id}
+                                    key={row.row.id}
                                     className={row.overloadedDays > 0 ? 'lp-row lp-row--overloaded' : 'lp-row'}
                                 >
-                                    <ServiceCell
-                                        service={row.service}
+                                    <RowHeaderCell
+                                        row={row.row}
                                         stats={row}
+                                        byResource={byResource}
                                         compact={compact}
                                         customCapacities={customCapacities}
                                         trans={trans}
                                     />
-                                    {row.cells.map(({ day, cell, taskCount }) => (
+                                    {row.cells.map(({ day, cell, capacity, taskCount }) => (
                                         <LoadCell
                                             key={day.date}
                                             day={day}
                                             cell={cell}
-                                            capacity={row.capacity}
+                                            capacity={capacity}
                                             taskCount={taskCount}
                                             compact={compact}
                                             trans={trans}
@@ -757,12 +806,16 @@ function LoadTimeline({
                 <Legend displayHoursDiff={displayHoursDiff} trans={trans} />
             </div>
 
-            <CustomCapacityFooter
-                services={services}
-                customCapacities={customCapacities}
-                onCustomCapacityChange={onCustomCapacityChange}
-                trans={trans}
-            />
+            {/* Capacité saisie à la main : uniquement en maille service, où une
+                capacité nulle signifie « aucune ressource configurée ». */}
+            {! byResource && (
+                <CustomCapacityFooter
+                    services={rowDefs}
+                    customCapacities={customCapacities}
+                    onCustomCapacityChange={onCustomCapacityChange}
+                    trans={trans}
+                />
+            )}
 
             <div className="card-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => history.back()}>
@@ -778,10 +831,11 @@ function LoadTimeline({
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function LoadPlanningIndex({ initial, startDate: initStart, endDate: initEnd, displayHoursDiff: initHoursDiff, endpoints, trans }) {
+export default function LoadPlanningIndex({ initial, startDate: initStart, endDate: initEnd, displayHoursDiff: initHoursDiff, granularity: initGranularity, endpoints, trans }) {
     const [startDate,        setStartDate]        = useState(initStart     ?? '');
     const [endDate,          setEndDate]          = useState(initEnd       ?? '');
     const [displayHoursDiff, setDisplayHoursDiff] = useState(initHoursDiff ?? false);
+    const [granularity,      setGranularity]      = useState(initGranularity ?? 'service');
     const [data,             setData]             = useState(initial       ?? null);
     const [loading,          setLoading]          = useState(false);
     const [error,            setError]            = useState(null);
@@ -806,11 +860,11 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
         });
     }, []);
 
-    const fetchData = useCallback(async (sd, ed) => {
+    const fetchData = useCallback(async (sd, ed, gr) => {
         setLoading(true);
         setError(null);
         try {
-            const params = new URLSearchParams({ start_date: sd, end_date: ed });
+            const params = new URLSearchParams({ start_date: sd, end_date: ed, granularity: gr });
             const res = await fetch(`${endpoints.data}?${params}`, {
                 headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
             });
@@ -828,8 +882,15 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetchData(startDate, endDate);
+        fetchData(startDate, endDate, granularity);
     };
+
+    // Changer de maille recharge les données : la capacité réelle par ressource
+    // et par jour n'est calculée que lorsqu'elle est demandée.
+    const handleGranularity = useCallback((next) => {
+        setGranularity(next);
+        fetchData(startDate, endDate, next);
+    }, [fetchData, startDate, endDate]);
 
     const days = useMemo(
         () => buildDays(data?.possibleDates, data?.bankHolidays ?? {}, currentLocale()),
@@ -855,11 +916,13 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
                 startDate={startDate}
                 endDate={endDate}
                 displayHoursDiff={displayHoursDiff}
+                granularity={granularity}
                 loading={loading}
                 trans={trans}
                 onStartDate={setStartDate}
                 onEndDate={setEndDate}
                 onDisplayHoursDiff={setDisplayHoursDiff}
+                onGranularity={handleGranularity}
                 onSubmit={handleSubmit}
             />
 

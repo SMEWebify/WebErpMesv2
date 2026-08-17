@@ -1558,4 +1558,9 @@ return [
     'load_planning_capacity_resources_trans_key'    => 'Capacity from the configured resources',
     'load_planning_capacity_custom_trans_key'       => 'Manually defined capacity (no resource configured)',
     'load_planning_capacity_fallback_trans_key'     => 'No resource configured — 8h/day fallback',
+    'load_planning_granularity_trans_key'           => 'Load by',
+    'load_planning_by_service_trans_key'            => 'Service',
+    'load_planning_by_resource_trans_key'           => 'Resource',
+    'load_planning_unassigned_trans_key'            => 'Unassigned tasks',
+    'load_planning_capacity_real_trans_key'         => 'Capacity :hours h/day',
 ];

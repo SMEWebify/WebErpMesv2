@@ -12,20 +12,6 @@
 
 @section('content')
   @php
-    $initialData = [
-      'services'               => $services->map(fn ($s) => [
-                                    'id'       => $s->id,
-                                    'label'    => $s->label,
-                                    'picture'  => $s->picture,
-                                    'capacity' => round($s->Ressources->sum('capacity') / \App\Models\Methods\MethodsRessources::WORKING_DAYS_PER_WEEK, 2),
-                                  ])->values()->toArray(),
-      'possibleDates'          => $possibleDates,
-      'hoursPerServiceDay'     => $hoursPerServiceDay,
-      'tasksPerServiceDay'     => $tasksPerServiceDay,
-      'bankHolidays'           => $bankHolidays,
-      'countTaskNullDate'      => $countTaskNullDate,
-      'countTaskNullRessource' => $countTaskNullRessource,
-    ];
     $endpointsData = [
       'data'               => route('production.load.planning.data'),
       'task'               => route('production.task'),
@@ -72,6 +58,12 @@
       'capacity_from_resources' => __('general_content.load_planning_capacity_resources_trans_key'),
       'capacity_custom'         => __('general_content.load_planning_capacity_custom_trans_key'),
       'capacity_fallback'       => __('general_content.load_planning_capacity_fallback_trans_key'),
+      'granularity_service'     => __('general_content.load_planning_by_service_trans_key'),
+      'granularity_resource'    => __('general_content.load_planning_by_resource_trans_key'),
+      'granularity_label'       => __('general_content.load_planning_granularity_trans_key'),
+      'resource'                => __('general_content.ressource_trans_key'),
+      'labor'                   => __('general_content.labor_resource_trans_key'),
+      'capacity_real'           => __('general_content.load_planning_capacity_real_trans_key'),
     ];
   @endphp
 
@@ -80,6 +72,7 @@
     data-start-date="{{ $startDate }}"
     data-end-date="{{ $endDate }}"
     data-display-hours-diff="{{ $displayHoursDiff ? 'true' : 'false' }}"
+    data-granularity="{{ $granularity }}"
     data-endpoints="{{ json_encode($endpointsData) }}"
     data-trans="{{ json_encode($transData) }}"
   ></div>

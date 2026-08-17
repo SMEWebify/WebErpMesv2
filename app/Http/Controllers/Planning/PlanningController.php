@@ -10,49 +10,49 @@ use App\Jobs\CalculateTaskResources;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
+use App\Models\Methods\MethodsRessources;
+use App\Services\ResourceCapacityService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class PlanningController extends Controller
 {
+    /** Mailles d'affichage de la charge. */
+    public const GRANULARITY_SERVICE = 'service';
+    public const GRANULARITY_RESOURCE = 'resource';
+
+    /** Ligne des tâches de la période qui n'ont encore aucune ressource. */
+    private const ROW_UNASSIGNED = 'unassigned';
+
     public function index(Request $request)
     {
         $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
         $endDate   = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d'));
 
         $displayHoursDiff = $request->input('display_hours_diff', false);
+        $granularity = $this->granularity($request);
 
         if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
             return redirect()->route('production.load.planning')->withErrors(['The start date must be before or equal to the end date.']);
         }
 
-        $taches   = $this->getTasks($startDate, $endDate);
-        $services = $this->getServices();
+        $taches = $this->getTasks($startDate, $endDate);
 
         if ($taches->isEmpty() && $this->countTaskNullRessource() < 1) {
             return redirect()->route('production.task')->with('error', 'No task in planning');
         }
 
-        [$hoursPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
+        // Le payload initial est construit par le même code que l'endpoint JSON,
+        // pour que le premier affichage et les rafraîchissements ne divergent pas.
+        $initialData = $this->buildData($startDate, $endDate, $granularity, $taches);
 
-        $possibleDates          = $this->generatePossibleDates($startDate, $endDate);
-        $countTaskNullDate      = $this->countTaskNullDate();
-        $countTaskNullRessource = $this->countTaskNullRessource();
-        $bankHolidays           = $this->getBankHolidays();
-
-        return view('workflow/planning-index', compact(
-            'taches',
-            'countTaskNullRessource',
-            'countTaskNullDate',
-            'tasksPerServiceDay',
-            'hoursPerServiceDay',
-            'services',
-            'possibleDates',
-            'startDate',
-            'endDate',
-            'displayHoursDiff',
-            'bankHolidays',
-        ));
+        return view('workflow/planning-index', [
+            'initialData'      => $initialData,
+            'startDate'        => $startDate,
+            'endDate'          => $endDate,
+            'displayHoursDiff' => $displayHoursDiff,
+            'granularity'      => $granularity,
+        ]);
     }
 
     // -------------------------------------------------------------------------
@@ -68,21 +68,46 @@ class PlanningController extends Controller
             return response()->json(['error' => 'The start date must be before or equal to the end date.'], 422);
         }
 
-        $taches   = $this->getTasks($startDate, $endDate);
-        $services = $this->getServices();
+        return response()->json($this->buildData($startDate, $endDate, $this->granularity($request)));
+    }
 
-        [$hoursPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
-        $possibleDates = $this->generatePossibleDates($startDate, $endDate);
+    private function granularity(Request $request): string
+    {
+        return $request->input('granularity') === self::GRANULARITY_RESOURCE
+            ? self::GRANULARITY_RESOURCE
+            : self::GRANULARITY_SERVICE;
+    }
 
-        return response()->json([
-            'services'               => $this->mapServices($services),
-            'possibleDates'          => $possibleDates,
-            'hoursPerServiceDay'     => $hoursPerServiceDay,
-            'tasksPerServiceDay'     => $tasksPerServiceDay,
+    /**
+     * Charge de la période, à la maille demandée.
+     *
+     * Les deux mailles partagent la même convention de date que l'écran a
+     * toujours utilisée — les heures d'une tâche sont imputées à son end_date —
+     * pour que les totaux d'une vue à l'autre restent comparables.
+     */
+    private function buildData(string $startDate, string $endDate, string $granularity, $taches = null): array
+    {
+        $taches = $taches ?? $this->getTasks($startDate, $endDate);
+        $dates  = $this->generatePossibleDates($startDate, $endDate);
+
+        if ($granularity === self::GRANULARITY_RESOURCE) {
+            [$hours, $tasks] = $this->calculateHoursAndTasksPerResource($taches);
+            $rows = $this->mapResources($dates, $hours);
+        } else {
+            [$hours, $tasks] = $this->calculateHoursAndTasks($taches);
+            $rows = $this->mapServices($this->getServices());
+        }
+
+        return [
+            'granularity'            => $granularity,
+            'rows'                   => $rows,
+            'hoursPerRowDay'         => $hours,
+            'tasksPerRowDay'         => $tasks,
+            'possibleDates'          => $dates,
             'bankHolidays'           => $this->getBankHolidays(),
             'countTaskNullDate'      => $this->countTaskNullDate(),
             'countTaskNullRessource' => $this->countTaskNullRessource(),
-        ]);
+        ];
     }
 
     /**
@@ -143,13 +168,96 @@ class PlanningController extends Controller
 
     private function getTasks($startDate, $endDate)
     {
-        return Task::with(['service', 'OrderLines'])
+        return Task::with(['service', 'OrderLines', 'resources'])
                     ->whereBetween('end_date', [$startDate, $endDate])
                     ->whereNotNull('order_lines_id')
                     ->where(function (Builder $query) {
                         return $query->where('tasks.type', 1)
                                     ->orWhere('tasks.type', 7);
                     })->get();
+    }
+
+    /**
+     * Charge par ressource et par jour.
+     *
+     * Une tâche pèse sur chacune de ses affectations : la totalité des heures sur
+     * la machine, la quotité `load_factor` sur la main-d'œuvre. Les tâches encore
+     * sans ressource sont regroupées sur une ligne à part — les faire disparaître
+     * du tableau donnerait une charge d'atelier fausse.
+     */
+    private function calculateHoursAndTasksPerResource($taches): array
+    {
+        $hoursPerRowDay = [];
+        $tasksPerRowDay = [];
+
+        foreach ($taches as $tache) {
+            $jour = (new Carbon($tache['end_date']))->format('Y-m-d');
+
+            if ($tache->resources->isEmpty()) {
+                $hoursPerRowDay[self::ROW_UNASSIGNED][$jour] = ($hoursPerRowDay[self::ROW_UNASSIGNED][$jour] ?? 0)
+                    + $tache->TotalTime();
+                $tasksPerRowDay[self::ROW_UNASSIGNED][$jour][] = $tache->id;
+                continue;
+            }
+
+            foreach ($tache->resources as $resource) {
+                $key    = (string) $resource->id;
+                $factor = (float) ($resource->pivot->load_factor ?? 1);
+
+                $hoursPerRowDay[$key][$jour] = ($hoursPerRowDay[$key][$jour] ?? 0)
+                    + $tache->TotalTime() * $factor;
+                $tasksPerRowDay[$key][$jour][] = $tache->id;
+            }
+        }
+
+        return [$hoursPerRowDay, $tasksPerRowDay];
+    }
+
+    /**
+     * Lignes ressources du tableau, avec la capacité réelle de chaque jour :
+     * régime horaire, fériés, arrêts machine et absences validées. C'est plus
+     * juste que la maille service, où la capacité d'une machine partagée doit
+     * être répartie entre les services qu'elle réalise.
+     */
+    private function mapResources(array $dates, array $hoursPerRowDay): \Illuminate\Support\Collection
+    {
+        $capacityService = app(ResourceCapacityService::class);
+
+        $rows = MethodsRessources::with(['shiftPattern.slots', 'section:id,label'])
+            ->orderBy('ordre')
+            ->get()
+            ->map(function (MethodsRessources $resource) use ($dates, $capacityService) {
+                $perDay = [];
+
+                foreach ($dates as $date) {
+                    $perDay[$date] = $capacityService->availableHours($resource, Carbon::parse($date));
+                }
+
+                return [
+                    'id'             => (string) $resource->id,
+                    'label'          => $resource->label,
+                    'avatar'         => $resource->picture ? '/storage/images/ressources/' . $resource->picture : null,
+                    'capacity'       => round($resource->dailyCapacity(), 2),
+                    'capacityPerDay' => $perDay,
+                    'isLabor'        => (bool) $resource->is_labor,
+                    'section'        => $resource->section?->label,
+                ];
+            })
+            ->values();
+
+        if (isset($hoursPerRowDay[self::ROW_UNASSIGNED])) {
+            $rows->push([
+                'id'             => self::ROW_UNASSIGNED,
+                'label'          => __('general_content.load_planning_unassigned_trans_key'),
+                'avatar'         => null,
+                'capacity'       => 0,
+                'capacityPerDay' => [],
+                'isLabor'        => false,
+                'section'        => null,
+            ]);
+        }
+
+        return $rows;
     }
 
     private function getServices()
@@ -176,9 +284,9 @@ class PlanningController extends Controller
     private function mapServices($services): \Illuminate\Support\Collection
     {
         return $services->map(fn ($s) => [
-            'id'       => $s->id,
+            'id'       => (string) $s->id,
             'label'    => $s->label,
-            'picture'  => $s->picture,
+            'avatar'   => $s->picture ? '/storage/images/methods/' . $s->picture : null,
             // capacity is stored weekly — convert to daily (÷5) for load rate display
             'capacity' => round(
                 $s->Ressources->sum(fn ($resource) => $resource->capacity / max(1, (int) $resource->services_count))

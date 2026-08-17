@@ -774,6 +774,7 @@ async function mountLoadPlanningIndex() {
             startDate:        element.dataset.startDate ?? '',
             endDate:          element.dataset.endDate   ?? '',
             displayHoursDiff: element.dataset.displayHoursDiff === 'true',
+            granularity:      element.dataset.granularity ?? 'service',
             endpoints:        parse('endpoints')        ?? {},
             trans:            parse('trans')            ?? {},
         })

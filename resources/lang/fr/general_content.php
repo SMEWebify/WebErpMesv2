@@ -1558,4 +1558,9 @@ return [
     'load_planning_capacity_resources_trans_key'    => 'Capacité issue des ressources configurées',
     'load_planning_capacity_custom_trans_key'       => 'Capacité définie manuellement (aucune ressource configurée)',
     'load_planning_capacity_fallback_trans_key'     => 'Aucune ressource configurée — fallback 8h/j',
+    'load_planning_granularity_trans_key'           => 'Charge par',
+    'load_planning_by_service_trans_key'            => 'Service',
+    'load_planning_by_resource_trans_key'           => 'Ressource',
+    'load_planning_unassigned_trans_key'            => 'Tâches non affectées',
+    'load_planning_capacity_real_trans_key'         => 'Capacité :hours h/j',
 ];
