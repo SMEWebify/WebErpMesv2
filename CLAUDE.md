@@ -262,6 +262,7 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
   - **Avoirs** : CreditNotesIndex, ReturnsIndex, ReturnShow
   - **Stocks** : StockDetailPage, ProductHistory, ProductsIndex
   - **Tasks** : TasksIndex, TaskManagePage, TaskStatuApp, TaskLines, GtdBoard, TodayView
+  - **Atelier** : WorkshopReportsApp (rapports atelier : réalisé pointé, rebuts, charge machine, andon)
   - **Planning** : LoadPlanningIndex, KanbanBoard, KanbanSetting
   - **GMAO** : GmaoDashboard
   - **Qualité** : QualityIndex, NonConformitiesIndex, AuditPlannerApp, InspectionProjectsApp
