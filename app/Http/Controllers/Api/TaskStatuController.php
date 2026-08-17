@@ -7,6 +7,8 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Services\TaskService;
 use App\Models\Planning\TaskActivities;
+use App\Models\Planning\TaskResources;
+use App\Models\Methods\MethodsRessources;
 use App\Models\Products\StockMove;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Products\StockReservation;
@@ -16,6 +18,7 @@ use App\Services\Files\FileKindResolver;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class TaskStatuController extends Controller
 {
@@ -44,6 +47,7 @@ class TaskStatuController extends Controller
             'purchaseLines.purchaseReceiptLines',
             'StockMove',
             'taskActivities.user',
+            'taskActivities.resource',
         ])->findOrFail($id);
 
         $previousTask = null;
@@ -63,17 +67,20 @@ class TaskStatuController extends Controller
 
         $lastActivity    = TaskActivities::where('task_id', $id)->latest()->first(['id', 'type']);
         $serviceResources = $task->service
-            ? $task->service->Ressources->map(fn ($r) => ['id' => $r->id, 'label' => $r->label])->values()
+            ? $task->service->Ressources->where('is_labor', false)->map(fn ($r) => ['id' => $r->id, 'label' => $r->label])->values()
+            : [];
+        $serviceLaborResources = $task->service
+            ? $task->service->Ressources->where('is_labor', true)->map(fn ($r) => ['id' => $r->id, 'label' => $r->label])->values()
             : [];
 
-        $selectedResourceId = null;
-        $userforcedResource = false;
+        // Une tâche porte au plus une ligne par rôle : la machine et, si elle en
+        // consomme, la main-d'œuvre. Ne jamais repartir du premier venu.
+        $machineRow = $task->resources->firstWhere('pivot.role', TaskResources::ROLE_MACHINE);
+        $laborRow   = $task->resources->firstWhere('pivot.role', TaskResources::ROLE_LABOR);
 
-        if ($task->resources->isNotEmpty()) {
-            $res = $task->resources->first();
-            $selectedResourceId = $res->id;
-            $userforcedResource = (bool) ($res->pivot->userforced_ressource ?? false);
-        }
+        $selectedResourceId      = $machineRow?->id;
+        $selectedLaborResourceId = $laborRow?->id;
+        $userforcedResource      = ($machineRow?->pivot->source ?? null) === TaskResources::SOURCE_FORCED;
 
         $stockLocations = $task->component_id
             ? StockLocationProducts::where('products_id', $task->component_id)
@@ -156,7 +163,11 @@ class TaskStatuController extends Controller
                 'id'                  => $r->id,
                 'label'               => $r->label,
                 'picture'             => $r->picture,
-                'userforced_ressource'=> $r->pivot->userforced_ressource,
+                'role'                => $r->pivot->role,
+                'source'              => $r->pivot->source,
+                'load_factor'         => (float) $r->pivot->load_factor,
+                // conservé pour le front existant, dérivé de `source`
+                'userforced_ressource'=> $r->pivot->source === TaskResources::SOURCE_FORCED ? 1 : 0,
             ])->values(),
             'order_lines'         => $orderLines,
             'component'           => $task->Component ? [
@@ -171,9 +182,11 @@ class TaskStatuController extends Controller
             // activity
             'last_activity_type'  => $lastActivity?->type,
             // resources
-            'service_resources'   => $serviceResources,
-            'selected_resource_id'=> $selectedResourceId,
-            'userforced_resource' => $userforcedResource,
+            'service_resources'         => $serviceResources,
+            'service_labor_resources'   => $serviceLaborResources,
+            'selected_resource_id'      => $selectedResourceId,
+            'selected_labor_resource_id'=> $selectedLaborResourceId,
+            'userforced_resource'       => $userforcedResource,
             // stock
             'stock_locations'     => $stockLocations,
             'reservation'         => $reservation,
@@ -480,13 +493,37 @@ class TaskStatuController extends Controller
     // -------------------------------------------------------------------------
     public function updateResource(Request $request, int $id)
     {
-        $request->validate(['resource_id' => 'required|exists:methods_ressources,id']);
-
         $task = Task::findOrFail($id);
-        $task->resources()->sync([$request->resource_id => [
-            'autoselected_ressource' => 0,
-            'userforced_ressource'   => 1,
-        ]]);
+
+        // La ressource doit savoir réaliser le service de la tâche : un simple
+        // exists: laissait forcer une tâche de découpe sur une plieuse.
+        $request->validate([
+            'resource_id' => [
+                'required',
+                Rule::exists('methods_ressource_service', 'methods_ressources_id')
+                    ->where('methods_services_id', $task->methods_services_id),
+            ],
+        ], [
+            'resource_id.exists' => __('general_content.resource_not_in_service_trans_key'),
+        ]);
+
+        $resource = MethodsRessources::findOrFail($request->resource_id);
+
+        // Le rôle découle de la nature de la ressource, il n'est pas choisi par
+        // l'appelant : une capacité humaine ne peut pas être forcée comme machine.
+        // Le sync porte sur la relation du rôle concerné et laisse l'autre en place.
+        if ($resource->is_labor) {
+            $machine    = $task->machineResource()->first();
+            $loadFactor = (float) ($machine?->labor_ratio ?: 1);
+
+            $task->laborResource()->sync([
+                $resource->id => ['source' => TaskResources::SOURCE_FORCED, 'load_factor' => $loadFactor],
+            ]);
+        } else {
+            $task->machineResource()->sync([
+                $resource->id => ['source' => TaskResources::SOURCE_FORCED, 'load_factor' => 1],
+            ]);
+        }
 
         return response()->json(['success' => true]);
     }
@@ -550,7 +587,10 @@ class TaskStatuController extends Controller
                 'date_label'   => $activity->created_at->format('d M Y'),
                 'icon_class'   => $icon,
                 'content'      => $content,
-                'details'      => $activity->created_at->format('d F Y - H:i:s'),
+                // Ressource figée à la déclaration : la traçabilité reste juste
+                // même si la tâche est réaffectée par la suite.
+                'details'      => $activity->created_at->format('d F Y - H:i:s')
+                    . ($activity->resource ? ' — ' . $activity->resource->label : ''),
             ];
         }
 

@@ -10,6 +10,8 @@ use App\Models\Planning\Status;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use App\Models\Planning\TaskActivities;
+use App\Models\Planning\TaskResources;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 class TaskService
@@ -84,6 +86,7 @@ class TaskService
 
         $taskActivity = TaskActivities::create([
             'task_id' => $taskId,
+            'methods_ressources_id' => $this->resolveResourceId($taskId),
             'user_id'=> $userId,
             'type' => $type,
             'timestamp' => $timestamp,
@@ -93,5 +96,24 @@ class TaskService
         ]);
 
         broadcast(new TaskActivityTriggered($taskActivity));
+    }
+
+    /**
+     * Ressource à créditer du temps déclaré : la machine affectée, ou la
+     * main-d'œuvre quand la tâche est un poste manuel. Null si la tâche n'est
+     * pas affectée — la déclaration reste valide, simplement non imputée.
+     *
+     * Requête directe sur le pivot : recordTaskActivity est appelée en boucle
+     * (fermeture d'une ligne de commande), on évite d'hydrater les relations.
+     */
+    private function resolveResourceId($taskId): ?int
+    {
+        $rows = DB::table('task_resources')
+            ->where('task_id', $taskId)
+            ->get(['methods_ressources_id', 'role']);
+
+        $row = $rows->firstWhere('role', TaskResources::ROLE_MACHINE) ?? $rows->first();
+
+        return $row?->methods_ressources_id;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Accounting\AccountingPaymentConditions;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Times\TimesBanckHoliday;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,6 +21,10 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Le cache mémoire des jours fériés est statique : il survit au rollback
+        // de RefreshDatabase et un test hériterait sinon des fériés du précédent.
+        TimesBanckHoliday::clearCache();
 
         // Prevent Vite from throwing ViteManifestNotFoundException when
         // public/build/manifest.json doesn't exist (e.g. CI without npm build).

@@ -48,7 +48,16 @@
                 <td>{{ $MethodsRessource->capacity }} h/w</td>
                 <td>{{ $MethodsRessource->section['label'] }}</td>
                 <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}"></td>
-                <td>{{ $MethodsRessource->service['label'] }}</td>
+                <td>
+                  @if($MethodsRessource->is_labor)
+                    <span class="badge badge-warning"><i class="fas fa-users mr-1"></i>{{ __('general_content.labor_resource_trans_key') }}</span>
+                  @endif
+                  @forelse ($MethodsRessource->services as $service)
+                    <span class="badge badge-info">{{ $service->label }}</span>
+                  @empty
+                    <span class="text-muted">{{ __('general_content.no_service_trans_key') }}</span>
+                  @endforelse
+                </td>
                 <td class=" py-0 align-middle">
                   <!-- Button Modal -->
                   <x-ButtonTextEdit :modalTarget="'MethodsRessource' . $MethodsRessource->id" />
@@ -127,6 +136,56 @@
                               @endforelse
                             </select>
                           </div>
+                        </div>
+                        <div class="form-group">
+                          @php($additionalServices = $MethodsRessource->services->pluck('id')->all())
+                          <label for="additional_services_{{ $MethodsRessource->id }}">{{ __('general_content.additional_services_trans_key') }}</label>
+                          <select class="form-control" name="additional_services[]" id="additional_services_{{ $MethodsRessource->id }}" multiple>
+                            @forelse ($ServicesSelect as $item)
+                            <option value="{{ $item->id }}" @if(in_array($item->id, $additionalServices, true)) Selected @endif>{{ $item->label }}</option>
+                            @empty
+                            <option value="" disabled>{{ __('general_content.no_service_trans_key') }}</option>
+                            @endforelse
+                          </select>
+                          <small class="text-muted">{{ __('general_content.additional_services_hint_trans_key') }}</small>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-4 text-left"><label for="is_labor_update{{ $MethodsRessource->id }}" class="col-form-label">{{ __('general_content.labor_resource_trans_key') }}</label></div>
+                          <div class="col-8">
+                              @if($MethodsRessource->is_labor)
+                              <x-adminlte-input-switch id="is_labor_update{{ $MethodsRessource->id }}" name="is_labor" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                              @else
+                              <x-adminlte-input-switch id="is_labor_update{{ $MethodsRessource->id }}" name="is_labor" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                              @endif
+                          </div>
+                          <small class="text-muted">{{ __('general_content.labor_resource_hint_trans_key') }}</small>
+                        </div>
+                        <div class="form-group">
+                          <label for="labor_ratio_{{ $MethodsRessource->id }}">{{ __('general_content.labor_ratio_trans_key') }}</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user-cog"></i></span>
+                            </div>
+                            <input type="number" step="0.05" min="0" class="form-control" name="labor_ratio" id="labor_ratio_{{ $MethodsRessource->id }}" value="{{ $MethodsRessource->labor_ratio }}">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          @php($qualifiedUsers = $MethodsRessource->users->pluck('id')->all())
+                          <label for="qualified_users_{{ $MethodsRessource->id }}">{{ __('general_content.qualified_users_trans_key') }}</label>
+                          <select class="form-control" name="qualified_users[]" id="qualified_users_{{ $MethodsRessource->id }}" multiple>
+                            @foreach ($UsersSelect as $item)
+                            <option value="{{ $item->id }}" @if(in_array($item->id, $qualifiedUsers, true)) Selected @endif>{{ $item->name }}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="work_shift_pattern_id_{{ $MethodsRessource->id }}">{{ __('general_content.shift_pattern_trans_key') }}</label>
+                          <select class="form-control" name="work_shift_pattern_id" id="work_shift_pattern_id_{{ $MethodsRessource->id }}">
+                            <option value="">{{ __('general_content.shift_default_trans_key') }}</option>
+                            @foreach ($ShiftPatternsSelect as $item)
+                            <option value="{{ $item->id }}" @if($MethodsRessource->work_shift_pattern_id == $item->id) Selected @endif>{{ $item->label }}</option>
+                            @endforeach
+                          </select>
                         </div>
                         <!-- /.form-group -->
                       </div>
@@ -257,6 +316,50 @@
             </div>
             <div class="form-group">
               @include('include.form.form-select-service',['serviceId' =>  null ])
+            </div>
+            <div class="form-group">
+              <label for="additional_services">{{ __('general_content.additional_services_trans_key') }}</label>
+              <select class="form-control" name="additional_services[]" id="additional_services" multiple>
+                @forelse ($ServicesSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                @empty
+                  <option value="" disabled>{{ __('general_content.no_service_trans_key') }}</option>
+                @endforelse
+              </select>
+              <small class="text-muted">{{ __('general_content.additional_services_hint_trans_key') }}</small>
+            </div>
+            <div class="form-group">
+              <div class="col-4 text-left"><label for="is_labor" class="col-form-label">{{ __('general_content.labor_resource_trans_key') }}</label></div>
+              <div class="col-8">
+                <x-adminlte-input-switch id="is_labor" name="is_labor" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+              </div>
+              <small class="text-muted">{{ __('general_content.labor_resource_hint_trans_key') }}</small>
+            </div>
+            <div class="form-group">
+              <label for="labor_ratio">{{ __('general_content.labor_ratio_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user-cog"></i></span>
+                </div>
+                <input type="number" step="0.05" min="0" class="form-control" name="labor_ratio" id="labor_ratio" value="0">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="qualified_users">{{ __('general_content.qualified_users_trans_key') }}</label>
+              <select class="form-control" name="qualified_users[]" id="qualified_users" multiple>
+                @foreach ($UsersSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="work_shift_pattern_id">{{ __('general_content.shift_pattern_trans_key') }}</label>
+              <select class="form-control" name="work_shift_pattern_id" id="work_shift_pattern_id">
+                <option value="">{{ __('general_content.shift_default_trans_key') }}</option>
+                @foreach ($ShiftPatternsSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                @endforeach
+              </select>
             </div>
           <!-- /.form-group -->
           </div>

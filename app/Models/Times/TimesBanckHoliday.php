@@ -25,6 +25,17 @@ class TimesBanckHoliday extends Model
     }
 
     /**
+     * Le cache statique survit à la requête (et, en test, d'une classe à l'autre) :
+     * il doit être invalidé dès qu'un jour férié est ajouté ou supprimé, sinon un
+     * férié fraîchement saisi reste invisible du calcul des dates.
+     */
+    protected static function booted(): void
+    {
+        static::saved(fn () => self::clearCache());
+        static::deleted(fn () => self::clearCache());
+    }
+
+    /**
      * Load all holidays once into a static cache.
      * Eliminates N+1 SQL queries in WorkingTime loops.
      */

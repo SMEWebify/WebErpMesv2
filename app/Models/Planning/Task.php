@@ -114,18 +114,50 @@ class Task extends Model
         return $this->belongsTo(MethodsServices::class, 'methods_services_id');
     }
 
+    /**
+     * Define a many-to-many relationship with the MethodsRessources model.
+     * This relationship uses the 'task_resources' pivot table and includes
+     * the pivot attributes 'role' (machine / labor) and 'source' (auto,
+     * manual, forced), which replace the former autoselected_ressource /
+     * userforced_ressource integer flags.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function resources() {
-        /**
-         * Define a many-to-many relationship with the MethodsRessources model.
-         * This relationship uses the 'task_resources' pivot table and includes
-         * additional pivot attributes 'autoselected_ressource' and 'userforced_ressource'.
-         * Timestamps are also maintained on the pivot table.
-         *
-         * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-         */
         return $this->belongsToMany(MethodsRessources::class, 'task_resources')
-                    ->withPivot(['autoselected_ressource', 'userforced_ressource'])
+                    ->withPivot(['role', 'source', 'load_factor'])
                     ->withTimestamps();
+    }
+
+    /**
+     * Ressource machine affectée à la tâche — au plus une seule,
+     * garantie par l'index unique (task_id, methods_ressources_id, role).
+     */
+    public function machineResource()
+    {
+        return $this->resources()->withPivotValue('role', TaskResources::ROLE_MACHINE);
+    }
+
+    /**
+     * Ressource main-d'œuvre affectée à la tâche. Distincte de user_id /
+     * secondary_user_id, qui désignent le responsable et non la capacité
+     * consommée : une opération manuelle se planifie sur cette ressource.
+     */
+    public function laborResource()
+    {
+        return $this->resources()->withPivotValue('role', TaskResources::ROLE_LABOR);
+    }
+
+    /**
+     * Limite aux tâches productives : les lignes matière, fournitures et
+     * sous-traitance ne consomment aucune capacité interne, elles n'ont donc
+     * ni ressource à affecter ni à être comptées comme « sans ressource ».
+     */
+    public function scopeProductive(Builder $query): Builder
+    {
+        return $query->whereHas('service', function (Builder $serviceQuery) {
+            $serviceQuery->where('type', MethodsServices::TYPE_PRODUCTIVE);
+        });
     }
 
     

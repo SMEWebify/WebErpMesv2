@@ -636,8 +636,10 @@ function PlanningCard({ task, apiBase, onReload, trans }) {
     const [dateBusy, setDateBusy] = useState(false);
 
     const [resourceId, setResourceId] = useState(task.selected_resource_id ?? '');
+    const [laborResourceId, setLaborResourceId] = useState(task.selected_labor_resource_id ?? '');
     const [userforcedResource, setUserforcedResource] = useState(task.userforced_resource ?? false);
     const [resBusy, setResBusy] = useState(false);
+    const [laborBusy, setLaborBusy] = useState(false);
 
     async function submitDate(e) {
         e.preventDefault();
@@ -664,6 +666,20 @@ function PlanningCard({ task, apiBase, onReload, trans }) {
             onReload();
         } finally {
             setResBusy(false);
+        }
+    }
+
+    // Même endpoint : le rôle (machine / main-d'œuvre) est déduit côté serveur
+    // de la nature de la ressource, l'affectation machine reste en place.
+    async function submitLaborResource(e) {
+        e.preventDefault();
+        if (!laborResourceId) return;
+        setLaborBusy(true);
+        try {
+            await apiFetch(`${apiBase}/${task.id}/resource`, 'PUT', { resource_id: laborResourceId });
+            onReload();
+        } finally {
+            setLaborBusy(false);
         }
     }
 
@@ -725,6 +741,29 @@ function PlanningCard({ task, apiBase, onReload, trans }) {
                         </span>
                     )}
                 </form>
+
+                {task.service_labor_resources?.length > 0 && (
+                    <form onSubmit={submitLaborResource} style={{ borderTop: '1px solid var(--ts-border)', paddingTop: 12 }}>
+                        <span className="ts-label">{t('labor_resource_trans_key')}</span>
+                        <div className="ts-field">
+                            <select
+                                className="ts-select"
+                                value={laborResourceId}
+                                onChange={(e) => setLaborResourceId(e.target.value)}
+                            >
+                                <option value="">— {t('select_ressource_trans_key')} —</option>
+                                {task.service_labor_resources.map((r) => (
+                                    <option key={r.id} value={r.id}>
+                                        {r.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <button type="submit" className="ts-btn" disabled={laborBusy || !laborResourceId}>
+                                Set
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
         </Card>
     );

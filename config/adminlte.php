@@ -665,6 +665,18 @@ return [
             'icon'    => 'fas fa-user-clock',
             'url'  => 'times',
             'can'  => ['settings-time-menu'],
+            'submenu' => [
+                [
+                    'text' => 'times_overview_trans_key',
+                    'url'  => 'times',
+                    'icon_color' => 'info',
+                ],
+                [
+                    'text' => 'times_shifts_trans_key',
+                    'url'  => 'times/shift',
+                    'icon_color' => 'lime',
+                ],
+            ],
         ],
         [
             'text' => 'methods_trans_key',

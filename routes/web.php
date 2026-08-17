@@ -680,6 +680,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Times\MachineEventController@store')->name('times.machineevent.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Times\MachineEventController@update')->name('times.machineevent.update');
         });
+    
+        // Work shift patterns routes (1x8, 2x8, 3x8...)
+        Route::group(['prefix' => 'shift'], function () {
+            Route::get('/', 'App\Http\Controllers\Times\ShiftPatternsController@index')->name('times.shift');
+            Route::post('/create', 'App\Http\Controllers\Times\ShiftPatternsController@store')->name('times.shift.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Times\ShiftPatternsController@update')->name('times.shift.update');
+            Route::post('/{id}/slot', 'App\Http\Controllers\Times\ShiftPatternsController@storeSlot')->name('times.shift.slot.create');
+            Route::delete('/{id}/slot/{slotId}', 'App\Http\Controllers\Times\ShiftPatternsController@destroySlot')->name('times.shift.slot.delete');
+        });
     });
 
     Route::group(['prefix' => 'products', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

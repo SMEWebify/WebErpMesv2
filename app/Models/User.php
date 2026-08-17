@@ -13,6 +13,7 @@ use App\Models\Admin\Announcements;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
+use App\Models\Methods\MethodsRessources;
 use App\Models\HumanResources\Attendance;
 use App\Models\Products\StockLocation;
 use Spatie\Permission\Traits\HasRoles;
@@ -213,6 +214,19 @@ class User extends Authenticatable implements MustVerifyEmail
     public function section()
     {
         return $this->hasMany(MethodsSection::class);
+    }
+
+    /**
+     * Ressources que l'utilisateur peut tenir : postes manuels dont il fait
+     * partie, machines qu'il est habilité à conduire.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function resources()
+    {
+        return $this->belongsToMany(MethodsRessources::class, 'resource_user', 'user_id', 'methods_ressources_id')
+                    ->withPivot(['level', 'certified_until'])
+                    ->withTimestamps();
     }
 
     /**
