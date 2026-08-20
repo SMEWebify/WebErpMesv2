@@ -32,11 +32,14 @@ class CreditNoteKPIService
      */
     public function getCreditNotesMonthlyRecap($year)
     {
+        // LEFT JOIN : un avoir peut porter sur une ligne de facture libre, sans
+        // ligne de commande. Le prix figé sur la ligne d'avoir fait foi.
         return DB::table('credit_note_lines')
-                    ->join('order_lines', 'credit_note_lines.order_line_id', '=', 'order_lines.id')
+                    ->leftJoin('order_lines', 'credit_note_lines.order_line_id', '=', 'order_lines.id')
                     ->selectRaw('
                         MONTH(credit_note_lines.created_at) AS month,
-                        SUM((order_lines.selling_price * credit_note_lines.qty)-(order_lines.selling_price * credit_note_lines.qty)*(order_lines.discount/100)) AS orderSum
+                        SUM(COALESCE(credit_note_lines.unit_price, order_lines.selling_price, 0) * credit_note_lines.qty
+                            * (1 - COALESCE(credit_note_lines.discount, order_lines.discount, 0)/100)) AS orderSum
                     ')
                     ->whereYear('credit_note_lines.created_at', $year)
                     ->groupByRaw('MONTH(credit_note_lines.created_at) ')

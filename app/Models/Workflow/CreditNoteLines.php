@@ -18,13 +18,51 @@ class CreditNoteLines extends Model
     
     // Fillable attributes for mass assignment
     protected $fillable= [
-        'credit_note_id', 
-        'order_line_id', 
-        'invoice_line_id', 
-        'product_id', 
-        'qty', 
-        'unit_price', 
+        'credit_note_id',
+        'order_line_id',
+        'invoice_line_id',
+        'product_id',
+        'label',
+        'qty',
+        'unit_price',
+        'discount',
+        'vat_rate',
+        'accounting_vats_id',
     ];
+
+    /**
+     * Désignation à afficher. Une ligne d'avoir peut porter sur une ligne de
+     * facture libre, sans ligne de commande derrière.
+     */
+    public function getDisplayLabelAttribute(): string
+    {
+        return $this->label ?? $this->orderLine?->label ?? $this->invoiceLine?->display_label ?? '';
+    }
+
+    public function getDisplayCodeAttribute(): string
+    {
+        return $this->orderLine?->code ?? $this->invoiceLine?->display_code ?? '';
+    }
+
+    public function getDisplayUnitLabelAttribute(): string
+    {
+        return $this->orderLine?->Unit?->label ?? $this->invoiceLine?->display_unit_label ?? '';
+    }
+
+    public function getResolvedDiscountAttribute(): float
+    {
+        return (float) ($this->discount ?? $this->orderLine?->discount ?? 0);
+    }
+
+    public function getResolvedVatRateAttribute(): float
+    {
+        return (float) ($this->vat_rate ?? $this->orderLine?->VAT?->rate ?? 0);
+    }
+
+    public function getResolvedVatIdAttribute(): ?int
+    {
+        return $this->accounting_vats_id ?? $this->orderLine?->accounting_vats_id;
+    }
 
     public function creditNote()
     {

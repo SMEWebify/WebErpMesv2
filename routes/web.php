@@ -442,6 +442,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
         Route::patch('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@updateLine')->name('invoices.lines.update');
+        // Ligne libre sur facture en brouillon (frais de port, prestation oubliée)
+        Route::post('/{id}/lines', 'App\Http\Controllers\Workflow\InvoicesController@storeLine')->name('invoices.lines.store');
+        Route::delete('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@destroyLine')->name('invoices.lines.destroy');
         Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');

@@ -1622,6 +1622,8 @@ async function mountInvoiceLinesDraft() {
             lines:     parse('lines')     ?? [],
             endpoints: parse('endpoints') ?? {},
             currency:  el.dataset.currency ?? 'EUR',
+            vats:      parse('vats')      ?? [],
+            units:     parse('units')     ?? [],
             trans:     parse('trans')     ?? {},
         })
     );

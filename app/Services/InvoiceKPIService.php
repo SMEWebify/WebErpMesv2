@@ -29,12 +29,16 @@ class InvoiceKPIService
             : 'invoice_monthly_recap_' . $year;
 
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $start, $end) {
+            // LEFT JOIN : les lignes libres n'ont pas de ligne de commande et
+            // seraient sinon absentes du CA. Le snapshot de la ligne de facture
+            // prime sur le prix courant de la ligne de commande.
             $query = DB::table('invoice_lines')
-                        ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                        ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                         ->join('invoices', 'invoice_lines.invoices_id', '=', 'invoices.id')
                         ->selectRaw('
                             MONTH(invoice_lines.created_at) AS month,
-                            SUM((order_lines.selling_price * invoice_lines.qty) - (order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
+                            SUM(COALESCE(invoice_lines.unit_price, order_lines.selling_price, 0) * invoice_lines.qty
+                                * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0)/100)) AS orderSum
                         ')
                         ->where('invoices.invoice_type', 1)
                         ->whereNull('invoices.deleted_at')
@@ -64,13 +68,14 @@ class InvoiceKPIService
                 ->join('invoice_lines', fn ($j) => $j
                     ->on('invoice_lines.invoices_id', '=', 'invoices.id')
                     ->whereNull('invoice_lines.deleted_at'))
-                ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                 ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'order_lines.accounting_vats_id')
                 ->where('invoices.invoice_type', 1)
                 ->whereNull('invoices.deleted_at')
                 ->selectRaw('COALESCE(SUM(
-                    order_lines.selling_price * invoice_lines.qty * (1 - order_lines.discount / 100) *
-                    (1 + COALESCE(accounting_vats.rate, 0) / 100)
+                    COALESCE(invoice_lines.unit_price, order_lines.selling_price, 0) * invoice_lines.qty
+                    * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0) / 100) *
+                    (1 + COALESCE(invoice_lines.vat_rate, accounting_vats.rate, 0) / 100)
                 ), 0) as total')
                 ->value('total') ?? 0;
         });
@@ -83,14 +88,15 @@ class InvoiceKPIService
                 ->join('invoice_lines', fn ($j) => $j
                     ->on('invoice_lines.invoices_id', '=', 'invoices.id')
                     ->whereNull('invoice_lines.deleted_at'))
-                ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                 ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'order_lines.accounting_vats_id')
                 ->where('invoices.invoice_type', 1)
                 ->where('invoices.statu', 5)
                 ->whereNull('invoices.deleted_at')
                 ->selectRaw('COALESCE(SUM(
-                    order_lines.selling_price * invoice_lines.qty * (1 - order_lines.discount / 100) *
-                    (1 + COALESCE(accounting_vats.rate, 0) / 100)
+                    COALESCE(invoice_lines.unit_price, order_lines.selling_price, 0) * invoice_lines.qty
+                    * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0) / 100) *
+                    (1 + COALESCE(invoice_lines.vat_rate, accounting_vats.rate, 0) / 100)
                 ), 0) as total')
                 ->value('total') ?? 0;
         });
@@ -150,9 +156,9 @@ class InvoiceKPIService
     public function getTopClients()
     {
         return Cache::remember('invoice_top_clients_' . now()->year, now()->addHours(1), function () {
-            return Invoices::select('companies_id', DB::raw('SUM((invoice_lines.qty * order_lines.selling_price) - (invoice_lines.qty * order_lines.selling_price)*(order_lines.discount/100)) as total_amount'))
+            return Invoices::select('companies_id', DB::raw('SUM(invoice_lines.qty * COALESCE(invoice_lines.unit_price, order_lines.selling_price, 0) * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0)/100)) as total_amount'))
                             ->join('invoice_lines', 'invoices.id', '=', 'invoice_lines.invoices_id')
-                            ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                            ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                             ->where('invoices.invoice_type', 1)
                             ->whereNull('invoice_lines.deleted_at')
                             ->groupBy('companies_id')
@@ -165,12 +171,15 @@ class InvoiceKPIService
     public function getTopProducts()
     {
         return Cache::remember('invoice_top_products_' . now()->year, now()->addHours(1), function () {
-            return InvoiceLines::select('order_lines.product_id', DB::raw('SUM(invoice_lines.qty) as total_quantity'))
-                                ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+            // Une ligne libre peut porter son propre produit ; à défaut elle est
+            // exclue (product_id null), comme les lignes de commande sans produit.
+            return InvoiceLines::select(DB::raw('COALESCE(invoice_lines.product_id, order_lines.product_id) as product_id'), DB::raw('SUM(invoice_lines.qty) as total_quantity'))
+                                ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                                 ->join('invoices', 'invoice_lines.invoices_id', '=', 'invoices.id')
                                 ->where('invoices.invoice_type', 1)
                                 ->whereNull('invoices.deleted_at')
-                                ->groupBy('order_lines.product_id')
+                                ->whereRaw('COALESCE(invoice_lines.product_id, order_lines.product_id) IS NOT NULL')
+                                ->groupByRaw('COALESCE(invoice_lines.product_id, order_lines.product_id)')
                                 ->orderByDesc('total_quantity')
                                 ->take(5)
                                 ->get();

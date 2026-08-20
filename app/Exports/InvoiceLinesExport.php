@@ -33,15 +33,17 @@ class InvoiceLinesExport implements FromCollection , WithHeadings, WithMapping
 
     public function map($invoiceLine): array
     {
+        // Une ligne libre n'a pas de commande d'origine : tout vient du snapshot
+        // porté par la ligne de facture.
         return [
             $invoiceLine->invoice->code,
-            $invoiceLine->orderLine->order->code,
-            $invoiceLine->orderLine->label,
+            $invoiceLine->orderLine?->order?->code,
+            $invoiceLine->display_label,
             $invoiceLine->qty,
-            $invoiceLine->orderLine->Unit->label,
-            $invoiceLine->orderLine->selling_price,
-            $invoiceLine->orderLine->discount,
-            $invoiceLine->orderLine->vat->rate,
+            $invoiceLine->display_unit_label,
+            $invoiceLine->resolved_unit_price,
+            $invoiceLine->resolved_discount,
+            $invoiceLine->resolved_vat_rate,
         ];
     }
 

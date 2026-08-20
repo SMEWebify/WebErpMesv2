@@ -84,27 +84,39 @@ class CreditNoteController extends Controller
 
             foreach ($invoiceLines as $invoiceLine) {
                 CreditNoteLines::create([
-                    'credit_note_id'  => $creditNote->id,
-                    'order_line_id'   => $invoiceLine->order_line_id,
-                    'invoice_line_id' => $invoiceLine->id,
-                    'product_id'      => $invoiceLine->orderLine->product_id,
-                    'qty'             => $invoiceLine->qty,
+                    'credit_note_id'     => $creditNote->id,
+                    'order_line_id'      => $invoiceLine->order_line_id,
+                    'invoice_line_id'    => $invoiceLine->id,
+                    'product_id'         => $invoiceLine->product_id ?? $invoiceLine->orderLine?->product_id,
+                    // Snapshot descriptif : une ligne libre n'a pas de ligne de
+                    // commande où retrouver ces informations.
+                    'label'              => $invoiceLine->display_label,
+                    'qty'                => $invoiceLine->qty,
                     // Utilise le snapshot stocké sur la ligne de facture (fix immutabilité)
-                    'unit_price'      => $invoiceLine->unit_price ?? $invoiceLine->orderLine->selling_price,
+                    'unit_price'         => $invoiceLine->resolved_unit_price,
+                    'discount'           => $invoiceLine->resolved_discount,
+                    'vat_rate'           => $invoiceLine->resolved_vat_rate,
+                    'accounting_vats_id' => $invoiceLine->resolved_vat_id,
                 ]);
 
-                // Inverse les quantités facturées sur la ligne de commande
-                $orderLine = OrderLines::lockForUpdate()->find($invoiceLine->order_line_id);
-                $orderLine->invoiced_qty            = max(0, $orderLine->invoiced_qty - $invoiceLine->qty);
-                $orderLine->invoiced_remaining_qty += $invoiceLine->qty;
+                // Inverse les quantités facturées sur la ligne de commande.
+                // Sans objet pour une ligne libre, qui n'en a pas.
+                $orderLine = $invoiceLine->order_line_id
+                    ? OrderLines::lockForUpdate()->find($invoiceLine->order_line_id)
+                    : null;
 
-                if ($orderLine->invoiced_qty <= 0) {
-                    $orderLine->invoice_status = 1;
-                } elseif ($orderLine->invoiced_remaining_qty > 0) {
-                    $orderLine->invoice_status = 2;
+                if ($orderLine) {
+                    $orderLine->invoiced_qty            = max(0, $orderLine->invoiced_qty - $invoiceLine->qty);
+                    $orderLine->invoiced_remaining_qty += $invoiceLine->qty;
+
+                    if ($orderLine->invoiced_qty <= 0) {
+                        $orderLine->invoice_status = 1;
+                    } elseif ($orderLine->invoiced_remaining_qty > 0) {
+                        $orderLine->invoice_status = 2;
+                    }
+
+                    $orderLine->save();
                 }
-
-                $orderLine->save();
             }
 
             return $creditNote;

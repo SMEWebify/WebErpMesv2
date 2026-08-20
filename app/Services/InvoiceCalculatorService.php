@@ -20,13 +20,20 @@ class InvoiceCalculatorService
      * Résout le prix unitaire, remise et taux TVA pour une ligne.
      * Utilise le snapshot stocké sur invoice_lines en priorité ;
      * repli sur orderLine pour les lignes antérieures à la migration.
+     *
+     * Les lignes libres (frais de port, prestation ponctuelle) n'ont pas de
+     * ligne de commande : tout vient alors du snapshot.
      */
     private function lineSnapshot($invoicesLine): array
     {
-        $unitPrice = $invoicesLine->unit_price ?? $invoicesLine->orderLine->selling_price;
-        $discount  = $invoicesLine->discount  ?? $invoicesLine->orderLine->discount;
-        $vatRate   = $invoicesLine->vat_rate  ?? ($invoicesLine->orderLine->VAT['rate'] ?? 0);
-        $vatId     = $invoicesLine->orderLine->accounting_vats_id;
+        $unitPrice = $invoicesLine->resolved_unit_price;
+        $discount  = $invoicesLine->resolved_discount;
+        $vatRate   = $invoicesLine->resolved_vat_rate;
+
+        // Clé de regroupement de la ventilation TVA. Une ligne libre peut ne
+        // porter aucun identifiant de TVA : on retombe alors sur le taux, pour
+        // ne pas agréger toutes ces lignes sous une clé vide.
+        $vatId = $invoicesLine->resolved_vat_id ?? 'rate-' . number_format((float) $vatRate, 3, '.', '');
 
         return [$unitPrice, $discount, $vatRate, $vatId];
     }
@@ -129,15 +136,15 @@ class InvoiceCalculatorService
             $netUnitPrice = $unitPrice * (1 - $discount / 100);
 
             $lines[] = [
-                'label'          => $invoicesLine->orderLine->label ?? '',
-                'code'           => $invoicesLine->orderLine->code ?? '',
+                'label'          => $invoicesLine->display_label,
+                'code'           => $invoicesLine->display_code,
                 'qty'            => (float) $invoicesLine->qty,
                 'unit_price'     => (float) $unitPrice,
                 'discount'       => (float) $discount,
                 'vat_rate'       => (float) $vatRate,
                 'net_unit_price' => $netUnitPrice,
                 'line_total'     => $invoicesLine->qty * $netUnitPrice,
-                'unit_code'      => $invoicesLine->orderLine->Unit->code ?? null,
+                'unit_code'      => $invoicesLine->display_unit_code,
             ];
         }
 

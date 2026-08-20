@@ -28,9 +28,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\Companies;
+use App\Models\Accounting\AccountingEntry;
+use App\Models\Accounting\AccountingVat;
+use App\Models\Methods\MethodsUnits;
 use App\Services\InvoiceCalculatorService;
 use App\Services\AccountingPeriodService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
+use Illuminate\Support\Facades\DB;
 
 class InvoicesController extends Controller
 {
@@ -140,7 +144,10 @@ class InvoicesController extends Controller
         }
 
         $dir      = $sortAsc ? 'asc' : 'desc';
-        $totalSub = 'COALESCE((SELECT SUM((order_lines.selling_price * invoice_lines.qty) * (1 - COALESCE(order_lines.discount,0)/100)) FROM invoice_lines JOIN order_lines ON invoice_lines.order_line_id = order_lines.id WHERE invoice_lines.invoices_id = invoices.id AND invoice_lines.deleted_at IS NULL), 0)';
+        // LEFT JOIN : une ligne libre n'a pas de ligne de commande et serait
+        // sinon absente du total. Le snapshot porté par la ligne de facture
+        // prime sur le prix courant de la ligne de commande.
+        $totalSub = 'COALESCE((SELECT SUM((COALESCE(invoice_lines.unit_price, order_lines.selling_price, 0) * invoice_lines.qty) * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0)/100)) FROM invoice_lines LEFT JOIN order_lines ON invoice_lines.order_line_id = order_lines.id WHERE invoice_lines.invoices_id = invoices.id AND invoice_lines.deleted_at IS NULL), 0)';
 
         $query = Invoices::withCount('invoiceLines')
             ->selectRaw("invoices.*, {$totalSub} as total_amount")
@@ -545,6 +552,9 @@ class InvoicesController extends Controller
             'addresses'        => $addresses,
             'contacts'         => $contacts,
             'companyAcUrl'     => route('invoices.company-ac'),
+            // Référentiels du formulaire d'ajout de ligne libre (brouillon).
+            'vats'             => AccountingVat::orderBy('label')->get(['id', 'label', 'rate', 'default']),
+            'units'            => MethodsUnits::orderBy('label')->get(['id', 'label', 'code', 'default']),
             'paymentMethods'   => AccountingPaymentMethod::orderBy('label')->get(['id', 'label']),
             'paymentEndpoints' => [
                 'index'   => route('invoices.payments.index', $id->id),
@@ -620,6 +630,107 @@ class InvoicesController extends Controller
             'line_total' => round($line->qty * $line->unit_price * (1 - $line->discount / 100), 2),
             'formatted'  => Number::currency($line->unit_price, $currency, config('app.locale')),
         ]);
+    }
+
+    /**
+     * Ajoute une ligne libre à une facture en brouillon.
+     *
+     * Couvre le frais oublié au moment de la commande — port, frais de dossier,
+     * prestation ponctuelle — que l'on veut porter sur la facture existante
+     * plutôt que sur un second document.
+     *
+     * Volontairement limité au brouillon : une facture émise est intangible
+     * (art. L441-9 du code de commerce, art. 242 nonies A du CGI). Passée
+     * l'émission, la correction relève de la facture complémentaire ou de l'avoir.
+     */
+    public function storeLine(Request $request, int $id): \Illuminate\Http\JsonResponse
+    {
+        abort_unless(auth()->check(), 403);
+        $invoice = Invoices::findOrFail($id);
+        abort_if($invoice->statu !== 1, 403, 'La facture n\'est plus en brouillon.');
+
+        if (app(AccountingPeriodService::class)->isLocked($invoice->created_at)) {
+            return response()->json([
+                'message' => "Période {$invoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée.",
+            ], 422);
+        }
+
+        $data = $request->validate([
+            'label'              => 'required|string|max:255',
+            'code'               => 'nullable|string|max:255',
+            'qty'                => 'required|numeric|min:0',
+            'unit_price'         => 'required|numeric|min:0',
+            'discount'           => 'nullable|numeric|min:0|max:100',
+            'product_id'         => 'nullable|exists:products,id',
+            'methods_units_id'   => 'nullable|exists:methods_units,id',
+            'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
+        ]);
+
+        $line = $this->invoiceLineService->createFreeLine($invoice, $data);
+
+        return response()->json([
+            'ok'   => true,
+            'line' => $this->invoiceDataService->formatDraftLine($line),
+        ], 201);
+    }
+
+    /**
+     * Supprime une ligne d'une facture en brouillon.
+     *
+     * Une ligne issue d'une commande rend ses quantités à la ligne d'origine et
+     * rouvre la ligne de BL : sans cela la commande resterait marquée facturée
+     * sans facture en face. Aucun document n'étant encore sorti, il s'agit d'une
+     * correction de saisie et non d'un avoir.
+     */
+    public function destroyLine(Request $request, int $id, int $lineId): \Illuminate\Http\JsonResponse
+    {
+        abort_unless(auth()->check(), 403);
+        $invoice = Invoices::findOrFail($id);
+        abort_if($invoice->statu !== 1, 403, 'La facture n\'est plus en brouillon.');
+
+        if (app(AccountingPeriodService::class)->isLocked($invoice->created_at)) {
+            return response()->json([
+                'message' => "Période {$invoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée.",
+            ], 422);
+        }
+
+        $line = InvoiceLines::where('id', $lineId)->where('invoices_id', $id)->firstOrFail();
+
+        DB::transaction(function () use ($line) {
+            // Écritures de vente générées à la création de la ligne.
+            AccountingEntry::where('invoice_line_id', $line->id)->delete();
+
+            if ($line->order_line_id) {
+                $orderLine = OrderLines::lockForUpdate()->find($line->order_line_id);
+                if ($orderLine) {
+                    $orderLine->invoiced_qty            = max(0, $orderLine->invoiced_qty - $line->qty);
+                    $orderLine->invoiced_remaining_qty += $line->qty;
+                    $orderLine->invoice_status          = $orderLine->invoiced_qty <= 0 ? 1 : 2;
+                    $orderLine->save();
+                }
+            }
+
+            // La ligne de BL redevient facturable, sauf si une autre ligne de
+            // facture la référence encore. Statut dérivé plutôt que forcé : on
+            // ne repasse jamais « facturable » une ligne encore facturée ailleurs.
+            if ($line->delivery_line_id) {
+                $deliveryLine = DeliveryLines::find($line->delivery_line_id);
+                if ($deliveryLine) {
+                    $stillInvoiced = InvoiceLines::where('delivery_line_id', $deliveryLine->id)
+                        ->where('id', '<>', $line->id)
+                        ->exists();
+
+                    $deliveryLine->invoice_status = $stillInvoiced ? 4 : 1;
+                    $deliveryLine->save();
+                    // Recalcule l'en-tête du BL (deliverys.invoice_status).
+                    event(new DeliveryLineUpdated($deliveryLine));
+                }
+            }
+
+            $line->delete();
+        });
+
+        return response()->json(['ok' => true]);
     }
 
     public function emit(Request $request, int $id): \Illuminate\Http\JsonResponse
