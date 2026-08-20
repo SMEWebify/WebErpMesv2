@@ -78,6 +78,29 @@
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
 
+    {{-- Fond quadrillé ambiant — mode commercial (Nest2Prod) uniquement --}}
+    @if(config('branding.commercial'))
+    <style type="text/css">
+        .content-wrapper {
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.09) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.09) 1px, transparent 1px);
+            background-size: 34px 34px;
+            background-attachment: fixed;
+        }
+
+        body.dark-mode .content-wrapper {
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
+        }
+
+        @media print {
+            .content-wrapper { background-image: none; }
+        }
+    </style>
+    @endif
+
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
         <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
