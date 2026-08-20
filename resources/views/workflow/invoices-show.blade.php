@@ -171,25 +171,12 @@ $invoiceSteps = [
       </div>       
       <div class="tab-pane " id="InvoiceLines">
         @php
-          $invoiceLinesData = $Invoice->InvoiceLines->map(function ($l) {
-              return [
-                  'id'              => $l->id,
-                  'qty'             => (float) $l->qty,
-                  'unit_price'      => (float) ($l->unit_price ?? $l->orderLine->selling_price),
-                  'discount'        => (float) ($l->discount ?? 0),
-                  'vat_rate'        => (float) ($l->vat_rate ?? 0),
-                  'invoice_status'  => $l->invoice_status,
-                  'order_line_code' => $l->orderLine['code'],
-                  'order_line_label'=> $l->orderLine['label'],
-                  'unit_label'      => $l->orderLine->Unit['label'] ?? '',
-                  'order_code'      => $l->orderLine->order['code'],
-                  'order_url'       => route('orders.show', $l->orderLine->order['id']),
-                  'delivery_code'   => $l->delivery_line_id ? $l->deliveryLine->delivery['code'] : null,
-                  'delivery_url'    => $l->delivery_line_id ? route('deliverys.show', ['id' => $l->deliveryLine->delivery['id']]) : null,
-              ];
-          });
+          $invoiceDataService = app(\App\Services\InvoiceDataService::class);
+          $invoiceLinesData = $Invoice->InvoiceLines->map(fn ($l) => $invoiceDataService->formatDraftLine($l));
           $linesEndpoints = [
               'updateLine' => route('invoices.lines.update', [$Invoice->id, '__LINE_ID__']),
+              'storeLine'  => route('invoices.lines.store', $Invoice->id),
+              'deleteLine' => route('invoices.lines.destroy', [$Invoice->id, '__LINE_ID__']),
               'emit'       => route('invoices.emit', $Invoice->id),
           ];
           $linesTrans = [
@@ -218,6 +205,8 @@ $invoiceSteps = [
           data-lines="{{ json_encode($invoiceLinesData) }}"
           data-endpoints="{{ json_encode($linesEndpoints) }}"
           data-currency="{{ app('Factory')->curency ?? 'EUR' }}"
+          data-vats="{{ json_encode($vats) }}"
+          data-units="{{ json_encode($units) }}"
           data-trans="{{ json_encode($linesTrans) }}"
         ></div>
 
@@ -233,7 +222,7 @@ $invoiceSteps = [
               @foreach($Invoice->InvoiceLines as $line)
                 <label class="mr-3 mb-0 small">
                   <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="mr-1">
-                  {{ $line->orderLine['code'] }}
+                  {{ $line->display_code ?: $line->display_label }}
                 </label>
               @endforeach
               <button type="submit" class="btn btn-info btn-sm ml-auto">

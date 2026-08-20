@@ -105,6 +105,9 @@ class ImportsExportsController extends Controller
             'orderLine.order',
             'orderLine.Unit',
             'orderLine.VAT',
+            // Référentiels portés directement par la ligne (lignes libres)
+            'Unit',
+            'VAT',
         ])
         ->whereHas('invoice', fn ($q) => $q->where('invoice_type', 1))
         ->where('exported', false)
@@ -117,13 +120,13 @@ class ImportsExportsController extends Controller
             'order_code'      => $l->orderLine?->order?->code,
             'companie_id'     => $l->invoice?->companies_id,
             'companie_label'  => $l->invoice?->companie?->label,
-            'line_code'       => $l->orderLine?->code,
-            'line_label'      => $l->orderLine?->label,
+            'line_code'       => $l->display_code,
+            'line_label'      => $l->display_label,
             'qty'             => $l->qty,
-            'unit'            => $l->orderLine?->Unit?->label,
+            'unit'            => $l->display_unit_label,
             'formatted_price' => $l->formatted_selling_price,
-            'discount'        => $l->orderLine?->discount,
-            'vat_rate'        => $l->orderLine?->VAT?->rate,
+            'discount'        => $l->resolved_discount,
+            'vat_rate'        => $l->resolved_vat_rate,
         ]));
     }
 

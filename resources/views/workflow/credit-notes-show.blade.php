@@ -128,7 +128,11 @@
                             @forelse($CreditNotes->creditNotelines as $CreditNotesLine)
                             <tr>
                                 <td>
+                                    @if($CreditNotesLine->orderLine?->order)
                                     <x-OrderButton id="{{ $CreditNotesLine->orderLine->order['id'] }}" code="{{ $CreditNotesLine->orderLine->order['code'] }}"  />
+                                    @else
+                                    <span class="badge badge-light border">{{ __('general_content.no_data_trans_key') }}</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($CreditNotesLine->invoiceLine->delivery_line_id)
@@ -148,12 +152,12 @@
                                     -
                                     @endif
                                 </td>
-                                <td>{{ $CreditNotesLine->orderLine['code'] }}</td>
-                                <td>{{ $CreditNotesLine->orderLine['label'] }}</td>
+                                <td>{{ $CreditNotesLine->display_code }}</td>
+                                <td>{{ $CreditNotesLine->display_label }}</td>
                                 <td>{{ format_qty($CreditNotesLine->qty) }}</td>
-                                <td>{{ $CreditNotesLine->OrderLine->Unit['label'] }}</td>
+                                <td>{{ $CreditNotesLine->display_unit_label }}</td>
                                 <td>{{ $CreditNotesLine->formatted_selling_price }}</td>
-                                <td>{{ $CreditNotesLine->OrderLine->VAT['rate'] }} %</td>
+                                <td>{{ $CreditNotesLine->resolved_vat_rate }} %</td>
                             </tr>
                             @empty
                                 <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />

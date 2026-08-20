@@ -93,6 +93,40 @@ class CreditNotesTest extends TestCase
         ]);
     }
 
+    public function test_can_create_credit_note_from_a_free_invoice_line(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+        // Ligne libre : aucune ligne de commande à rembobiner derrière.
+        $invoiceLine = InvoiceLines::create([
+            'invoices_id'    => $invoice->id,
+            'label'          => 'Frais de port',
+            'ordre'          => 10,
+            'qty'            => 1,
+            'unit_price'     => 80,
+            'discount'       => 0,
+            'vat_rate'       => 20,
+            'invoice_status' => 4,
+        ]);
+
+        $response = $this->post(route('credit-notes.store.from.invoice'), [
+            'selected_invoice_lines' => [$invoiceLine->id],
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('credit_note_lines', [
+            'order_line_id'   => null,
+            'invoice_line_id' => $invoiceLine->id,
+            'label'           => 'Frais de port',
+            'unit_price'      => 80,
+            'vat_rate'        => 20,
+        ]);
+
+        $creditNote = CreditNotes::where('invoices_id', $invoice->id)->firstOrFail();
+        $calculator = new \App\Services\CreditNoteCalculatorService($creditNote);
+        $this->assertEquals(80.0, round($calculator->getSubTotal(), 2));
+        $this->assertEquals(96.0, round($calculator->getTotalPrice(), 2));
+    }
+
     public function test_credit_note_reverses_order_line_invoiced_qty(): void
     {
         $order = Orders::factory()->create();

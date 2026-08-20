@@ -116,17 +116,17 @@
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td align="center">{{ $DocumentLine->OrderLine->order['code'] }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->order['code'] ?? '-' }}</td>
                         <td>
-                            {{ $DocumentLine->OrderLine['label'] }}<br>
-                            <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
+                            {{ $DocumentLine->display_label }}<br>
+                            <span style="color: #6c757d">{{ $DocumentLine->display_code }}</span>
                         </td>
                         <td>{{ $DocumentLine->qty }}</td>
-                        <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
-                        <td>{{ $normalizeCurrency($DocumentLine->OrderLine->formatted_selling_price) }}</td>
-                        <td align="center">{{ $DocumentLine->OrderLine->discount }} %</td>
-                        <td>{{ $DocumentLine->OrderLine->VAT['rate'] }} %</td>
-                        @if($DocumentLine->OrderLine->delivery_date )
+                        <td>{{ $DocumentLine->display_unit_label }}</td>
+                        <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
+                        <td align="center">{{ $DocumentLine->resolved_discount }} %</td>
+                        <td>{{ $DocumentLine->resolved_vat_rate }} %</td>
+                        @if($DocumentLine->OrderLine?->delivery_date )
                         <td align="center">{{ $DocumentLine->OrderLine->delivery_date }}</td>
                         @else
                         <td align="center">-</td>

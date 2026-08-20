@@ -42,15 +42,15 @@
                                             <td>
                                                 <div class="d-flex mb-2">
                                                     <div class="flex-lg-grow-1">
-                                                        <h6 class="small mb-0">{{ $DocumentLine->orderLine?->label }}</h6>
-                                                        <span class="text-muted">{{ $DocumentLine->orderLine?->code }}</span>
+                                                        <h6 class="small mb-0">{{ $DocumentLine->display_label }}</h6>
+                                                        <span class="text-muted">{{ $DocumentLine->display_code }}</span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>{{ $DocumentLine->qty }} {{ $DocumentLine->orderLine?->Unit['label'] }}</td>
-                                            <td class="text-end">{{ number_format((float) $DocumentLine->selling_price, 2, '.', ' ') }} {{ $Factory->curency }}</td>
-                                            <td>{{ $DocumentLine->discount }} %</td>
-                                            <td>{{ $DocumentLine->orderLine?->VAT['rate'] }} %</td>
+                                            <td>{{ $DocumentLine->qty }} {{ $DocumentLine->display_unit_label }}</td>
+                                            <td class="text-end">{{ number_format($DocumentLine->resolved_unit_price, 2, '.', ' ') }} {{ $Factory->curency }}</td>
+                                            <td>{{ $DocumentLine->resolved_discount }} %</td>
+                                            <td>{{ $DocumentLine->resolved_vat_rate }} %</td>
                                             <td>
                                                 @if($DocumentLine->deliveryLine?->delivery)
                                                     <x-ButtonTextView route="{{ route('customer.deliveries.show', ['delivery' => $DocumentLine->deliveryLine->delivery->uuid]) }}" />

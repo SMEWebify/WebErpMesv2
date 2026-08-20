@@ -179,13 +179,13 @@
                       <x-OrderButton id="{{ $line->orderLine->order->id }}" code="{{ $line->orderLine->order->code }}" />
                     @endif
                   </td>
-                  <td>{{ $line->orderLine?->code }}</td>
-                  <td>{{ $line->orderLine?->label }}</td>
+                  <td>{{ $line->display_code }}</td>
+                  <td>{{ $line->display_label }}</td>
                   <td>{{ format_qty($line->qty) }}</td>
-                  <td>{{ $line->orderLine?->Unit?->label }}</td>
+                  <td>{{ $line->display_unit_label }}</td>
                   <td>{{ $line->formatted_selling_price }}</td>
-                  <td>{{ $line->orderLine?->discount }} %</td>
-                  <td>{{ $line->orderLine?->VAT?->rate }} %</td>
+                  <td>{{ $line->resolved_discount }} %</td>
+                  <td>{{ $line->resolved_vat_rate }} %</td>
                 </tr>
                 @empty
                   <x-EmptyDataLine col="8" text="Aucune ligne" />

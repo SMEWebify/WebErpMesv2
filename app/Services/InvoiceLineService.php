@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Services\TaskService;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\Invoices;
 use App\Models\Workflow\OrderLines;
+use App\Models\Accounting\AccountingVat;
+use App\Models\Methods\MethodsUnits;
 
 class InvoiceLineService
 {
@@ -48,8 +51,9 @@ class InvoiceLineService
             'unit_price'               => $orderLine->selling_price,
             'discount'                 => $orderLine->discount,
             'vat_rate'                 => $orderLine->VAT?->rate ?? 0,
+            'accounting_vats_id'       => $orderLine->accounting_vats_id,
             'accounting_allocation_id' => $allocationId,
-            'statu'                    => 1,
+            'invoice_status'           => 1,
         ]);
 
         if ($allocationId != null && $invoiceCreated->invoice_type === 1) {
@@ -61,5 +65,57 @@ class InvoiceLineService
         }
 
         return $invoiceLines;
+    }
+
+    /**
+     * Crée une ligne de facture libre, sans ligne de commande d'origine.
+     *
+     * Répond au cas des prestations facturées après coup — frais de port, frais
+     * de dossier, prestation ponctuelle — pour lesquelles il n'existe ni ligne
+     * de commande ni bon de livraison. La ligne porte elle-même sa désignation,
+     * son unité et sa TVA ; le snapshot de prix est donc complet dès la création.
+     *
+     * @param  \App\Models\Workflow\Invoices  $invoice  Facture (en brouillon) qui reçoit la ligne.
+     * @param  array  $data  label, code, qty, unit_price, discount, accounting_vats_id, methods_units_id, product_id.
+     * @return \App\Models\Workflow\InvoiceLines
+     */
+    public function createFreeLine(Invoices $invoice, array $data): InvoiceLines
+    {
+        $vat  = isset($data['accounting_vats_id'])
+            ? AccountingVat::find($data['accounting_vats_id'])
+            : AccountingVat::getDefault();
+
+        $unit = isset($data['methods_units_id'])
+            ? MethodsUnits::find($data['methods_units_id'])
+            : MethodsUnits::getDefault();
+
+        $allocationId = $vat ? $this->accountingEntryService->getAllocationId(1, $vat->id) : null;
+
+        // La ligne se place en fin de facture.
+        $ordre = (int) InvoiceLines::where('invoices_id', $invoice->id)->max('ordre') + 10;
+
+        $invoiceLine = InvoiceLines::create([
+            'invoices_id'              => $invoice->id,
+            'order_line_id'            => null,
+            'delivery_line_id'         => null,
+            'label'                    => $data['label'],
+            'code'                     => $data['code'] ?? null,
+            'product_id'               => $data['product_id'] ?? null,
+            'methods_units_id'         => $unit?->id,
+            'ordre'                    => $ordre,
+            'qty'                      => $data['qty'],
+            'unit_price'               => $data['unit_price'],
+            'discount'                 => $data['discount'] ?? 0,
+            'vat_rate'                 => $vat?->rate ?? 0,
+            'accounting_vats_id'       => $vat?->id,
+            'accounting_allocation_id' => $allocationId,
+            'invoice_status'           => $invoice->statu,
+        ]);
+
+        if ($allocationId !== null && $invoice->invoice_type === 1) {
+            $this->accountingEntryService->createSaleEntry($invoiceLine);
+        }
+
+        return $invoiceLine;
     }
 }
