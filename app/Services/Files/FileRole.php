@@ -18,6 +18,12 @@ class FileRole
     public const CAM = 'cam';
     public const CERTIFICATE = 'certificat';
     public const CONTROL = 'controle';
+    // Human resources
+    public const CONTRACT = 'contrat';
+    public const PAYSLIP = 'bulletin_paie';
+    public const SICK_NOTE = 'arret_travail';
+    public const DIPLOMA = 'diplome';
+    public const IDENTITY = 'identite';
     public const OTHER = 'autre';
 
     /**
@@ -33,6 +39,29 @@ class FileRole
             self::CAM,
             self::CERTIFICATE,
             self::CONTROL,
+            self::CONTRACT,
+            self::PAYSLIP,
+            self::SICK_NOTE,
+            self::DIPLOMA,
+            self::IDENTITY,
+            self::OTHER,
+        ];
+    }
+
+    /**
+     * Roles offered on an employee folder, in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forHumanResources(): array
+    {
+        return [
+            self::CONTRACT,
+            self::PAYSLIP,
+            self::SICK_NOTE,
+            self::DIPLOMA,
+            self::IDENTITY,
+            self::CERTIFICATE,
             self::OTHER,
         ];
     }

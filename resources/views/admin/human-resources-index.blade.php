@@ -13,6 +13,7 @@
         <ul class="nav nav-pills">
             <li class="nav-item"><a class="nav-link active" href="#ExpenseValidate" data-toggle="tab">{{ __('general_content.expense_validation_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#ExpenseCat" data-toggle="tab">{{ __('general_content.expense_categories_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#LeaveTypes" data-toggle="tab">{{ __('general_content.leave_types_trans_key') }}</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -201,6 +202,10 @@
                 <!-- /.row -->
             </div>
             <!-- /.tab-pane active -->
+            <div class="tab-pane" id="LeaveTypes">
+                @include('admin.partials.leave-types')
+            </div>
+            <!-- /.tab-pane -->
         </div>
         <!-- /.tab-content -->
     </div>

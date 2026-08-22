@@ -809,6 +809,16 @@ return [
                     'url'  => 'human-resources/attendance',
                     'icon_color' => 'primary',
                 ],
+                [
+                    'text' => 'leave_balances_trans_key',
+                    'url'  => 'human-resources/leave/balances',
+                    'icon_color' => 'success',
+                ],
+                [
+                    'text' => 'payroll_export_trans_key',
+                    'url'  => 'human-resources/payroll/export',
+                    'icon_color' => 'danger',
+                ],
             ],
         ],
         [
@@ -837,6 +847,11 @@ return [
                     'text' => 'formations_trans_key',
                     'url'  => 'osh/trainings',
                     'icon_color' => 'primary',
+                ],
+                [
+                    'text' => 'skills_matrix_trans_key',
+                    'url'  => 'osh/trainings/skills-matrix',
+                    'icon_color' => 'teal',
                 ],
                 [
                     'text' => 'conformites_trans_key',
