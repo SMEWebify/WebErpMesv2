@@ -15,6 +15,8 @@ const TYP_MOVE_LABELS = {
     11: 'Réservation composant production',
     12: 'Entrée composant fabriqué',
     13: 'Inventaire direct',
+    14: 'Entrée transfert',
+    15: 'Écart inventaire (sortie)',
 };
 
 function getCsrf() {

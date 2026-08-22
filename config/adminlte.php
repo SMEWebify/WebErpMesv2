@@ -565,10 +565,12 @@ return [
                     'icon_color' => 'danger',
                     'can'  => ['stock-lot-serial-management'],
                 ],
-                /*[
-                    'text' => 'inventory_trans_key',
-                    'url'  => '#',
-                ],*/
+                [
+                    'text' => 'inventories_trans_key',
+                    'url'  => 'products/inventories',
+                    'icon_color' => 'success',
+                    'can'  => ['stock-lot-serial-management'],
+                ],
             ],
         ],
         [

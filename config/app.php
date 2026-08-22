@@ -181,7 +181,7 @@ return [
         App\Providers\AIServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        //App\Providers\TelescopeServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         FactoryServiceProvider::class,
     ],
 

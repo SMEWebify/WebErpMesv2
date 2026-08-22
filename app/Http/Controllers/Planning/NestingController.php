@@ -17,7 +17,7 @@ class NestingController extends Controller
 {
     /** Stock move types counted as entries / exits (cf. StockReservationService). */
     private const STOCK_ENTRY_TYPES   = [1, 3, 5, 12, 14];
-    private const STOCK_SORTING_TYPES = [2, 4, 6, 9];
+    private const STOCK_SORTING_TYPES = [2, 4, 6, 9, 15];
 
     public function index()
     {

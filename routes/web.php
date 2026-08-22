@@ -768,6 +768,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/json/valuation', 'App\Http\Controllers\Products\StockController@valuationJson')->name('products.stock.json.valuation');
         });
 
+        // Inventories (Altior-style counting workflow: XLSX export -> paper/spreadsheet count -> import -> validate)
+        Route::group(['prefix' => 'inventories', 'middleware' => ['permission:stock-lot-serial-management']], function () {
+            Route::get('/', 'App\Http\Controllers\Products\InventoryController@index')->name('products.inventories.index');
+            Route::get('/json', 'App\Http\Controllers\Products\InventoryController@indexJson')->name('products.inventories.index.json');
+            Route::post('/', 'App\Http\Controllers\Products\InventoryController@store')->name('products.inventories.store');
+            Route::get('/{id}', 'App\Http\Controllers\Products\InventoryController@show')->whereNumber('id')->name('products.inventories.show');
+            Route::get('/{id}/json', 'App\Http\Controllers\Products\InventoryController@showJson')->whereNumber('id')->name('products.inventories.show.json');
+            Route::get('/{id}/export/{blind?}', 'App\Http\Controllers\Products\InventoryController@exportXlsx')->whereNumber('id')->name('products.inventories.export');
+            Route::post('/{id}/import/preview', 'App\Http\Controllers\Products\InventoryController@previewImport')->whereNumber('id')->name('products.inventories.import.preview');
+            Route::post('/{id}/import', 'App\Http\Controllers\Products\InventoryController@import')->whereNumber('id')->name('products.inventories.import');
+            Route::post('/{id}/validate', 'App\Http\Controllers\Products\InventoryController@validateInventory')->whereNumber('id')->name('products.inventories.validate');
+            Route::post('/{id}/cancel', 'App\Http\Controllers\Products\InventoryController@cancel')->whereNumber('id')->name('products.inventories.cancel');
+        });
+
         // Stock Location routes
         Route::group(['prefix' => 'stock/location', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::post('/create', 'App\Http\Controllers\Products\StockLocationController@store')->name('products.stocklocation.store');

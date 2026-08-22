@@ -1371,6 +1371,44 @@ mountStockDetailPage();
 mountWorkshopReportsApp();
 mountProformasIndex();
 mountProformasRequest();
+mountInventoriesIndex();
+mountInventoryShow();
+
+async function mountInventoriesIndex() {
+    const element = document.getElementById('inventories-index-app');
+    if (!element) return;
+
+    const { default: InventoriesIndex } = await import('./components/inventories/InventoriesIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InventoriesIndex, {
+            endpoints:      parse('endpoints')      ?? {},
+            trans:          parse('trans')          ?? {},
+            stockLocations: parse('stockLocations') ?? [],
+            categories:     parse('categories')     ?? [],
+        })
+    );
+}
+
+async function mountInventoryShow() {
+    const element = document.getElementById('inventory-show-app');
+    if (!element) return;
+
+    const { default: InventoryShow } = await import('./components/inventories/InventoryShow.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InventoryShow, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
 
 async function mountKanbanSetting() {
     const el = document.getElementById('kanban-setting-app');

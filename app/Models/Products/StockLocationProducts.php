@@ -73,11 +73,8 @@ class StockLocationProducts extends Model
     {
         $query = StockMove::where('stock_location_products_id', $this->id)
                             ->where(function (Builder $query) {
-                                                                                return $query->where('typ_move', '2')
-                                                                            ->orwhere('typ_move', '4')
-                                                                            ->orwhere('typ_move', '6')
-                                                                            ->orwhere('typ_move', '9');
-                                                            });
+                                return $query->whereIn('typ_move', [2, 4, 6, 9, 15]);
+                            });
 
         // Filtre par traçabilité si fourni
         if ($traceability) {

@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\DB;
 class StockValuationService
 {
     private const INCOMING = [1, 3, 5, 12, 14];
-    private const OUTGOING = [2, 4, 6, 9];
+    // 15 = inventory shortage (regularisation move emitted by the counting workflow).
+    private const OUTGOING = [2, 4, 6, 9, 15];
 
     /**
      * Total inventory value: SUM(current_qty × unit_cost) per stock_location_products.

@@ -107,6 +107,7 @@
                     @if(12 == $StockMove->typ_move ){{__('general_content.manufactured_component_entry_trans_key') }} @endif
                     @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                     @if(14 == $StockMove->typ_move ){{__('general_content.transfer_stock_entry_trans_key') }} @endif
+                    @if(15 == $StockMove->typ_move ){{__('general_content.inventory_shortage_trans_key') }} @endif
                   </td>
                   <td>{{ $StockMove->formatted_component_price }}</td>
                   <td>

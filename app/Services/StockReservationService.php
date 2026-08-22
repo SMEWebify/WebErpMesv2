@@ -23,7 +23,8 @@ class StockReservationService
 {
     // Types de mouvements comptés en entrée / sortie pour le stock physique.
     private const ENTRY_TYPES   = [1, 3, 5, 12, 14];
-    private const SORTING_TYPES = [2, 4, 6, 9];
+    // 15 = inventory shortage (regularisation move emitted by the counting workflow).
+    private const SORTING_TYPES = [2, 4, 6, 9, 15];
 
     /**
      * Recalcule intégralement les réservations pour ce composant.

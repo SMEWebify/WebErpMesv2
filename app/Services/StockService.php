@@ -121,7 +121,7 @@ class StockService
                 ->selectRaw("
                     COALESCE(SUM(CASE
                         WHEN typ_move IN (1,3,5,12,14) THEN qty
-                        WHEN typ_move IN (2,4,6,9)     THEN -qty
+                        WHEN typ_move IN (2,4,6,9,15)  THEN -qty
                         ELSE 0
                     END), 0) AS available
                 ");
