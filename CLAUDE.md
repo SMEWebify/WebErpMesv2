@@ -1,11 +1,21 @@
 # WebErpMesv2 — ERP/MES pour l'industrie (tôlerie, usinage, moule)
 
+> ⚠️ **PRODUCTION ACTIVE — 1 client en ligne depuis avril 2026.**
+> Le dépôt n'est plus un projet pré-prod : des données réelles (devis, commandes, BL,
+> factures, FEC) vivent sur une instance client. Conséquences sur toute modification :
+> - **Migrations rétro-compatibles** : additives par défaut. Pas de `drop`/`rename` de colonne
+>   sans étape de transition (ajout → double écriture → bascule → suppression).
+> - **Backup avant migration** : `php artisan backup:run` puis `migrate --pretend` avant `migrate`.
+> - **Pas de breaking change silencieux** sur les URLs, les exports comptables (FEC, factures)
+>   ni les fichiers déjà attachés (GED / `LegacyFileController`).
+> - **Toute régression est visible client** : privilégier le correctif ciblé au refactor large.
+
 ## Stack technique actuelle
 - **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
 - **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Vue.js** : SUPPRIMÉ
 - **Livewire** : SUPPRIMÉ ✅ (reste en vendor uniquement comme dépendance transitive de laravel/pulse)
-- **CSS** : Bootstrap 4 via AdminLTE (Tailwind supprimé)
+- **CSS** : Bootstrap 5.3 via AdminLTE 4 (Tailwind supprimé)
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), aucun test frontend
@@ -116,10 +126,24 @@ php artisan backup:list          # Lister les sauvegardes disponibles
 
 ## Architecture de déploiement
 
-### Phase 1 — Manuel (0 à 5 clients)
+### Phase 1 — Manuel (0 à 5 clients) — **en cours**
 - VPS Ionos : demo + commercial
 - VPS OVH (16vCore/64GB) : instances clients
 - Installation manuelle par client
+- **1 instance client en production depuis avril 2026**
+
+### Procédure de déploiement sur une instance en production
+```bash
+php artisan down                 # fenêtre hors heures ouvrées
+php artisan backup:run           # backup DB + storage AVANT tout
+git pull && composer install --no-dev -o && npm ci && npm run build
+php artisan migrate --pretend    # relire le SQL avant de l'appliquer
+php artisan migrate
+php artisan optimize:clear && php artisan config:cache && php artisan view:cache
+# ❌ jamais php artisan route:cache (casse la localisation mcamara)
+php artisan queue:restart        # les workers rechargent le nouveau code
+php artisan up
+```
 
 ### Phase 2 — Docker (5+ clients)
 - Portainer + Nginx Proxy Manager
@@ -139,11 +163,14 @@ php artisan backup:list          # Lister les sauvegardes disponibles
 
 ## Clients
 
-### Client 1 (mise en prod dans 2 semaines)
+### Client 1 — ✅ EN PRODUCTION depuis avril 2026
 - Secteur : Tôlerie
 - Utilisateurs : 1
 - Modules : CRM, Devis, Commandes, Pré-commandes IA, BL, Facturation, FEC
 - Tarif : 1 mois gratuit → 100€/mois
+- Données réelles → obligations RGPD effectives (mentions légales, registre des traitements)
+- Point de vigilance : instance mono-utilisateur, donc pas de couverture "test en charge"
+  par l'usage — les régressions se voient directement en exploitation
 
 ## Gestion documentaire unifiée (GED)
 
@@ -183,12 +210,15 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 
 ## Dette technique
 
-### 🔴 Bloquant avant prod
-- Queue worker → Supervisor sur VPS Linux
-- spatie/laravel-backup → backup base + fichiers
+### 🔴 Exploitation (client 1 en ligne)
+- ✅ spatie/laravel-backup en place (`backup:run` / `backup:clean` / `backup:monitor` planifiés)
+- Queue worker → Supervisor sur le VPS client : à confirmer + surveiller (jobs en échec,
+  `queue:failed` non vide = fonctionnalité silencieusement cassée côté client)
+- Vérifier que le cron `schedule:run` tourne bien sur l'instance client (sinon : pas de
+  backup, pas de purge RGPD, pas de rapports email auto)
+- Restauration de backup jamais testée en réel → à faire une fois sur une copie
 
-### 📋 Roadmap post-prod
-- Supprimer Livewire résiduel (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
+### 📋 Roadmap
 - Sélects dynamiques précommande (client/adresse/contact)
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
 - Try/catch sans logging
@@ -213,9 +243,9 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 - rgpd:purge passe par RgpdAnonymizationService avant force-delete
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage
 
-### RGPD — Reste à faire (hors code)
+### RGPD — Reste à faire (hors code) — ⚠️ exigible dès maintenant (client en prod)
 - Registre des traitements
-- Mentions légales par client déployé
+- Mentions légales par client déployé (client 1 concerné depuis avril 2026)
 - Durées de conservation documentées par type de donnée
 
 ## Fait ✅

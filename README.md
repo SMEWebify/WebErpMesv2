@@ -67,6 +67,39 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - **Payments**: settlement tracking, reminders
 - **Analytics**: profitability by project, customer, period
 
+### 🗂️ Document management with built-in CAD viewers
+- **Unified attachments**: products, quotes, orders, delivery notes, invoices, purchases,
+  non-conformities, stock movements, companies and opportunities share one file store
+- **Private storage**: files live outside the web root and are served through authenticated routes
+- **Viewers loaded on demand** (opening a PDF never downloads the 3D engine):
+  - **3D meshes**: STL, OBJ, PLY, 3MF, glTF (three.js)
+  - **3D CAD**: STEP, IGES, BREP via OpenCascade compiled to WebAssembly — no server-side converter
+  - **2D CAD**: DXF, plus PDF, images and spreadsheets
+
+### 🔧 Maintenance (CMMS) & shop floor
+- **Maintenance plans and work orders** per machine
+- **Andon alerts**: real-time escalation from the shop floor
+- **Shop reports**: booked vs. estimated time, scrap, machine load
+- **Kanban and GTD boards**, Gantt chart, machine load planning
+- **Nesting**: part layout attached to order lines
+- **Attendance and energy consumption tracking**
+
+### ✅ Quality, EHS & compliance
+- **Non-conformities**, inspection projects, audit planner, FMEA
+- **Control device calibration** with automatic alerts
+- **EHS**: incidents, risks, trainings, regulatory conformities
+- **GDPR**: soft deletes, activity log, anonymization service, data export and erasure,
+  automatic weekly purge, self-service requests
+
+### 🔌 Integrations & automation
+- **Electronic invoicing**: Factur-X / EN 16931 output, PDP gateway (Qonto driver) and
+  inbound Factur-X reading for supplier invoices
+- **FEC export** for French accounting
+- **Nest2Prod**: order push and sheet stock synchronization
+- **LDAP / Active Directory** user import
+- **REST API** (Laravel Sanctum) and an integrated AI assistant
+- **Automatic backups** (spatie/laravel-backup) and **Laravel Pulse** application monitoring
+
 
 ## 💼 Industry use cases
 
@@ -181,7 +214,8 @@ Without these settings, you cannot add lines to quotes.
 WebErpMesv2/
 ├── app/
 │   ├── Http/Controllers/    # API and web controllers (quotes, production, CRM)
-│   └── Models/              # Business entities (orders, products, stocks)
+│   ├── Models/              # Business entities (orders, products, stocks)
+│   └── Services/            # Business logic (stock, files, integrations, GDPR)
 ├── database/
 │   └── migrations/          # Database schemas (BOMs, routings, stock movements)
 ├── resources/
@@ -192,12 +226,17 @@ WebErpMesv2/
 ```
 
 **Key Technologies**:
-- **Backend**: Laravel 12, PHP 8.2
-- **Frontend**: Blade + Livewire (CRUD), React (rich components), Alpine.js (micro-interactions)
-- **CSS**: Bootstrap 4 / AdminLTE
+- **Backend**: Laravel 12, PHP 8.2+
+- **Frontend**: React 19 (rich components), Blade (layout/shell), Alpine.js (micro-interactions)
+- **Bundler**: Vite
+- **CSS**: Bootstrap 5 / AdminLTE 4
 - **Database**: MySQL/PostgreSQL
-- **Cache**: Redis
+- **Cache & queues**: Redis
+- **Real-time**: Laravel Echo
+- **2D/3D viewers**: three.js, occt-import-js (OpenCascade WASM), dxf-parser
 - **DevOps**: Docker, Nginx
+
+> Livewire and Vue.js have been removed: rich screens are React components mounted from Blade shells.
 
 ### 🧪 Tests
 
@@ -220,10 +259,39 @@ These commands are defined in this repository and complement the default Laravel
 | Command | Description | Example |
 | --- | --- | --- |
 | `php artisan wem:diagnostics` | Check common local setup requirements (PHP version, extensions, app key, cache/storage permissions, Redis, DB, broadcasting). | `php artisan wem:diagnostics` |
+| `php artisan wem:files:import` | One-shot migration of legacy `public/` attachments into the private file store. `--dry-run`, `--skip-move`. | `php artisan wem:files:import --dry-run` |
 | `php artisan wem:n2p:push-order {orderId} {--sync}` | Push a specific order to Nest2Prod (sync option bypasses the queue). | `php artisan wem:n2p:push-order 123 --sync` |
+| `php artisan wem:n2p:sync-sheet-stock` | Synchronize sheet stock with Nest2Prod. `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan preorders:scan-output` | Scan the output folder and import CSV files as pre-orders. `--path=`, `--pattern=`, `--done-path=`. | `php artisan preorders:scan-output` |
+| `php artisan stock:recalculate-cump` | Recompute the full weighted-average-cost history for every product location. `--dry-run`. | `php artisan stock:recalculate-cump --dry-run` |
+| `php artisan stock:rebuild-reservations` | Rebuild stock reservations for purchased components. `--product=`. | `php artisan stock:rebuild-reservations` |
 | `php artisan quality:dispatch-calibration-alerts` | Notify responsible users when quality control device calibration is due or overdue. | `php artisan quality:dispatch-calibration-alerts` |
 | `php artisan emails:send-auto-reports` | Send scheduled automatic email reports based on user preferences. | `php artisan emails:send-auto-reports` |
 | `php artisan ldap:import-users` | Import LDAP users into the Laravel database. | `php artisan ldap:import-users` |
+| `php artisan rgpd:export-contact {id}` | Export every piece of data held about a contact as JSON (GDPR art. 20). | `php artisan rgpd:export-contact 42` |
+| `php artisan rgpd:erase-contact {id}` | Handle a GDPR erasure request for a B2B contact. | `php artisan rgpd:erase-contact 42` |
+| `php artisan rgpd:purge` | Purge personal data past its retention period (expired tokens, old email logs, soft-deleted records). | `php artisan rgpd:purge` |
+| `php artisan wem:nesting:seed-svg` | Attach demo nesting vectors to order lines. `--count=`, `--force`. | `php artisan wem:nesting:seed-svg` |
+| `php artisan loadtest:seed` | Generate a realistic dataset for load testing. `--scale=`. | `php artisan loadtest:seed --scale=0.5` |
+
+### ⏱️ Scheduled tasks & queue
+
+The scheduler (`routes/console.php`) drives the daily backups (`backup:run`, `backup:clean`,
+`backup:monitor`), the weekly GDPR purge (`rgpd:purge`) and the monthly activity-log cleanup.
+Register it once on the server:
+
+```
+* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
+```
+
+A queue worker is required for asynchronous work (emails, integrations, exports):
+
+```bash
+php artisan queue:work redis --sleep=3 --tries=3
+```
+
+> Note: do **not** run `php artisan route:cache` — it freezes the locale resolved at cache
+> time and breaks the localized routes.
 
 ## 🤝 Contribute to the project
 
@@ -349,11 +417,12 @@ Check our [Contributing Guide](CONTRIBUTING.md) and make your first contribution
 
 ## 📊 Project Stats
 
-- ⭐ **182** Stars
-- 🍴 **88** Forks  
+- ⭐ **180+** Stars
+- 🍴 **88** Forks
 - 👥 **7+** Active Contributors
-- 📝 **1,225+** Commits
-- 🎉 **20** Releases
+- 📝 **2,200+** Commits
+- 🎉 **21** Releases (latest: v1.19)
+- 🧪 **60+** PHPUnit test files
 - 📦 **Open Source** under MIT License
 
 ## 📚 Documentation
@@ -370,9 +439,10 @@ Check our [Contributing Guide](CONTRIBUTING.md) and make your first contribution
 Check our [roadmap](ROADMAP.md) to see what's coming next and how you can help!
 
 **Current priorities:**
-- 📄 EN16931 electronic invoicing API
-- 🧪 Test coverage improvement
-- 📚 Complete API documentation
+- 🧪 Test coverage improvement (backend business rules; no frontend tests yet)
+- 📚 Complete API documentation ([docs/API.md](docs/API.md))
+- 📦 Stock: projected-stock curve, physical inventory screen, automatic replenishment alerts
+- 🐳 Multi-tenant Docker deployment (one container + one database per customer)
 
 ## 💬 Support & Community
 
