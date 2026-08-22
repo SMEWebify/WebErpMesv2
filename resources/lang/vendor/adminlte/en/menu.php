@@ -17,6 +17,7 @@ return [
     'orders_trans_key'                         => 'Orders',
     'orders_list_trans_key'                    => 'Orders list',
     'orders_lines_list_trans_key'              => 'Orders lines list',
+    'order_confirmations_trans_key'            => 'Order confirmations',
     'scheduling_trans_key'                     => 'Scheduling',
     'order_calendar_trans_key'                 => 'Order calendar',
     'load_planning_trans_key'                  => 'Load planning',

@@ -34,6 +34,8 @@ class Factory extends Model
                             'siren',
                             'nat_regis_num',
                             'vat_num',
+                            'electronic_address',
+                            'electronic_address_scheme',
                             'accounting_vats_id',
                             'share_capital', 
                             'curency',

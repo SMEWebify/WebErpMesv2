@@ -17,6 +17,7 @@ return [
     'orders_trans_key'                         => '订单',
     'orders_list_trans_key'                    => '订单列表',
     'orders_lines_list_trans_key'              => '订单明细列表',
+    'order_confirmations_trans_key'            => '订单确认',
     'scheduling_trans_key'                     => '计划',
     'order_calendar_trans_key'                 => '订单日历',
     'load_planning_trans_key'                  => '负荷计划',

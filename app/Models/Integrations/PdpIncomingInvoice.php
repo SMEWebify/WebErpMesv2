@@ -20,6 +20,7 @@ class PdpIncomingInvoice extends Model
     public const STATUS_SUPPLIER_UNMATCHED = 'supplier_unmatched'; // fournisseur inconnu en base
     public const STATUS_CONVERTED         = 'converted';          // convertie en facture d'achat
     public const STATUS_REJECTED          = 'rejected';           // refusée
+    public const STATUS_UNREADABLE        = 'unreadable';         // document reçu mais illisible (à traiter à la main)
 
     protected $fillable = [
         'provider',

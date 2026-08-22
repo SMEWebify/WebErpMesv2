@@ -24,6 +24,7 @@ class RelationalBreadcrumb extends Component
             'Opportunities' => $this->buildForOpportunity($entity),
             'Quotes'        => $this->buildForQuote($entity),
             'Orders'        => $this->buildForOrder($entity),
+            'OrderConfirmations' => $this->buildForOrderConfirmation($entity),
             'Deliverys'     => $this->buildForDelivery($entity),
             'Invoices'      => $this->buildForInvoice($entity),
             'CreditNotes'   => $this->buildForCreditNote($entity),
@@ -70,6 +71,16 @@ class RelationalBreadcrumb extends Component
             'url'   => route('orders.show', ['id' => $order->id]),
             'color' => 'success',
             'icon'  => 'fas fa-shopping-cart',
+        ];
+    }
+
+    private function orderConfirmationNode($confirmation): array
+    {
+        return [
+            'label' => $confirmation->code . ' (' . $confirmation->revision . ')',
+            'url'   => route('order.confirmations.show', ['id' => $confirmation->id]),
+            'color' => 'info',
+            'icon'  => 'fas fa-file-signature',
         ];
     }
 
@@ -191,6 +202,11 @@ class RelationalBreadcrumb extends Component
             $this->ancestors[] = $this->quoteNode($quote);
         }
 
+        // L'ARC se place juste après la commande : c'est le document qui l'engage.
+        foreach ($order->OrderConfirmations()->orderBy('id')->get() as $confirmation) {
+            $this->descendants[] = $this->orderConfirmationNode($confirmation);
+        }
+
         // order_id n'est pas renseigné sur deliverys/invoices → on passe par les lignes
         $orderLineIds = $order->OrderLines->pluck('id');
 
@@ -205,6 +221,39 @@ class RelationalBreadcrumb extends Component
         foreach (Invoices::whereIn('id', $invoiceIds)->get() as $invoice) {
             $this->descendants[] = $this->invoiceNode($invoice);
         }
+    }
+
+    private function buildForOrderConfirmation($confirmation): void
+    {
+        $this->current = [
+            'label' => $confirmation->code . ' (' . $confirmation->revision . ')',
+            'color' => 'info',
+            'icon'  => 'fas fa-file-signature',
+        ];
+
+        $order = $confirmation->Order;
+        if (!$order) {
+            return;
+        }
+
+        $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
+        if ($preOrder) {
+            $this->ancestors[] = $this->preOrderNode($preOrder);
+        }
+
+        if ($order->quotes_id && $order->Quote) {
+            $quote = $order->Quote;
+            if ($quote->opportunities_id && $quote->opportunities) {
+                $opp = $quote->opportunities;
+                if ($opp->leads_id && $opp->lead) {
+                    $this->ancestors[] = $this->leadNode($opp->lead);
+                }
+                $this->ancestors[] = $this->opportunityNode($opp);
+            }
+            $this->ancestors[] = $this->quoteNode($quote);
+        }
+
+        $this->ancestors[] = $this->orderNode($order);
     }
 
     private function buildForDelivery($delivery): void

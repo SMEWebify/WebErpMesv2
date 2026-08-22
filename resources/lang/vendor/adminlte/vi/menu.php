@@ -16,6 +16,7 @@ return [
     'orders_trans_key'                         => 'Đơn đặt',
     'orders_list_trans_key'                    => 'Danh sách đơn đặt',
     'orders_lines_list_trans_key'              => 'Danh sách đường đặt hàng',
+    'order_confirmations_trans_key'            => 'Xác nhận đơn hàng',
     'scheduling_trans_key'                     => 'Lập lịch',
     'order_calendar_trans_key'                 => 'Lịch đặt hàng',
     'load_planning_trans_key'                  => 'Nạp kế hoạch',

@@ -16,3 +16,12 @@
          data-currency="{{ optional(app('Factory'))->curency ?? 'EUR' }}">
     </div>
 @stop
+
+{{-- Le layout AdminLTE ne publie les assets que si `adminlte.laravel_asset_bundling`
+     vaut 'vite' ; ce n'est pas le cas ici, chaque page React déclare donc les
+     siens. Sans ce bloc, app.js n'est jamais chargé et le composant ne se monte
+     pas — la page s'affiche, simplement vide. --}}
+@section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
+@stop

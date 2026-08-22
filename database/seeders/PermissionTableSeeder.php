@@ -21,6 +21,7 @@ class PermissionTableSeeder  extends Seeder
                         'opportunities-menu',
                         'quotes-menu',
                         'orders-menu',
+                        'order-confirmations-menu',
                         'scheduling-menu',
                         'deliverys-menu',
                         'invoices-menu',

@@ -215,6 +215,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
         Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
+        // Annuaire : adresse electronique de facturation du client, par SIREN
+        Route::get('/{id}/pdp/lookup', 'App\Http\Controllers\Companies\CompaniesController@pdpLookup')->name('companies.pdp.lookup');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
         Route::get('/{id}/json/timeline', 'App\Http\Controllers\Companies\CompaniesController@timelineJson')->name('companies.json.timeline');
 
@@ -403,6 +405,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@destroy')->name('pre-orders.destroy');
     });
 
+    // ARC — les noms de route suivent le nom de table (order_confirmations) pour que
+    // NextPreviousTrait résolve order.confirmations.show tout seul.
+    Route::group(['prefix' => 'order-confirmations', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\OrderConfirmationsController@index')->name('order.confirmations');
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\OrderConfirmationsController@listJson')->name('order.confirmations.json.list');
+        Route::post('/from-order/{order}', 'App\Http\Controllers\Workflow\OrderConfirmationsController@storeFromOrder')->name('order.confirmations.store.from.order');
+        Route::post('/json/{id}/send', 'App\Http\Controllers\Workflow\OrderConfirmationsController@sendJson')->name('order.confirmations.json.send');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OrderConfirmationsController@show')->name('order.confirmations.show');
+    });
+
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys');
         Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request');
@@ -446,6 +458,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/lines', 'App\Http\Controllers\Workflow\InvoicesController@storeLine')->name('invoices.lines.store');
         Route::delete('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@destroyLine')->name('invoices.lines.destroy');
         Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
+
+        // Facturation électronique. Routes web et non API : la carte est rendue
+        // dans une page Blade authentifiée par session, sans jeton porteur.
+        Route::post('/{id}/pdp/submit', 'App\Http\Controllers\Workflow\InvoicesController@pdpSubmit')->name('invoices.pdp.submit');
+        Route::post('/{id}/pdp/poll', 'App\Http\Controllers\Workflow\InvoicesController@pdpPoll')->name('invoices.pdp.poll');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         // JSON endpoint for company address/contact selects on invoice show page
@@ -530,6 +547,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/incoming-invoices/upload', 'App\Http\Controllers\Purchases\IncomingInvoiceController@upload')->name('purchases.incoming.upload');
         Route::post('/incoming-invoices/{incoming}/convert', 'App\Http\Controllers\Purchases\IncomingInvoiceController@convert')->name('purchases.incoming.convert');
         Route::post('/incoming-invoices/{incoming}/reject', 'App\Http\Controllers\Purchases\IncomingInvoiceController@reject')->name('purchases.incoming.reject');
+        // Statuts déclarés au fournisseur (obligation de l'acheteur : fr:204 à fr:211)
+        Route::post('/incoming-invoices/{incoming}/status', 'App\Http\Controllers\Purchases\IncomingInvoiceController@reportStatus')->name('purchases.incoming.status');
 
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrderFromRFQ')->middleware(['auth'])->name('purchases.orders.store');
@@ -569,6 +588,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->name('pdf.quote');
         Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
+        // {Document} est désormais un ARC et non une commande : le PDF doit rendre les
+        // lignes gelées du document, pas l'état courant de la commande.
         Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
         Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@getDeliveryPdf')->name('pdf.delivery');
         Route::get('/invoice/{Document}',  'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');

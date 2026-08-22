@@ -162,7 +162,7 @@ $invoiceSteps = [
             </x-adminlte-card>
 
             @if($pdpEnabled && $Invoice->invoice_type === 1)
-            @include('integrations.partials.qonto-invoice-card', ['Invoice' => $Invoice, 'submission' => $pdpSubmission])
+            @include('integrations.partials.pdp-invoice-card', ['Invoice' => $Invoice, 'submission' => $pdpSubmission])
             @endif
 
             @include('include.email-list', ['mailsList'=> $Invoice->emailLogs,])

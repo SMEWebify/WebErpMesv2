@@ -17,6 +17,7 @@ use App\Observers\TaskObserver;
 use App\Services\SelectDataService;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Integrations\Pdp\Drivers\QontoGateway;
+use App\Services\Integrations\Pdp\Drivers\SuperPdpGateway;
 use Illuminate\Console\Command;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PdpManager::class, function ($app) {
             $manager = new PdpManager();
             $manager->extend('qonto', $app->make(QontoGateway::class));
+            $manager->extend('superpdp', $app->make(SuperPdpGateway::class));
             return $manager;
         });
 

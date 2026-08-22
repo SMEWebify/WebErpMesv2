@@ -61,9 +61,15 @@ class PdpInvoiceService
     }
 
     /**
-     * Traite un événement webhook normalisé (déjà vérifié par le driver).
+     * Traite un événement de cycle de vie normalisé (webhook vérifié par le
+     * driver, ou lu dans le flux d'événements de la plateforme).
+     *
+     * @return bool false si l'événement ne concerne aucune facture connue de
+     *              WEM — cas normal quand le compte de la plateforme porte des
+     *              factures déposées par un autre outil. L'appelant peut ainsi
+     *              rendre compte du traitement sans le surestimer.
      */
-    public function handleWebhook(string $provider, PdpWebhookEvent $event): void
+    public function handleWebhook(string $provider, PdpWebhookEvent $event): bool
     {
         $submission = PdpInvoiceSubmission::where('provider', $provider)
             ->where('external_id', $event->externalId)
@@ -74,13 +80,15 @@ class PdpInvoiceService
                 'provider'    => $provider,
                 'external_id' => $event->externalId,
             ]);
-            return;
+            return false;
         }
 
         // Idempotence : on n'applique que si le statut change réellement.
         if ($event->lifecycle->value !== $submission->lifecycle_status) {
             $this->applyLifecycle($submission, $event->lifecycle, $event->rejectionReason);
         }
+
+        return true;
     }
 
     /**
