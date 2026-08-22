@@ -550,9 +550,102 @@
                         <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                         @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    
+
+                </div>
+
+                {{-- Adresse électronique de facturation (EN 16931, BT-49).
+                     C'est elle qui indique à la plateforme où remettre la facture.
+                     Laissée vide, le SIREN sert de valeur par défaut : c'est le
+                     choix de la majorité des entreprises françaises. --}}
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label for="electronic_address_scheme" class="small text-muted mb-1">Annuaire</label>
+                        <select class="form-control" name="electronic_address_scheme" id="electronic_address_scheme" @if($Companie->client_type == 2) disabled @endif>
+                            <option value="0225" @if(($Companie->electronic_address_scheme ?? '0225') == '0225') selected @endif>0225 — France</option>
+                            <option value="0208" @if(($Companie->electronic_address_scheme ?? '') == '0208') selected @endif>0208 — Belgique</option>
+                            <option value="0009" @if(($Companie->electronic_address_scheme ?? '') == '0009') selected @endif>0009 — SIRET</option>
+                        </select>
+                        @error('electronic_address_scheme') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="electronic_address" class="small text-muted mb-1">Adresse électronique de facturation</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="electronic_address" id="electronic_address"
+                                   value="{{ $Companie->electronic_address }}"
+                                   placeholder="{{ $Companie->siren ?: 'SIREN' }}"
+                                   @if($Companie->client_type == 2) disabled @endif>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="pdp-lookup-btn"
+                                        data-url="{{ route('companies.pdp.lookup', $Companie->id) }}"
+                                        title="Chercher dans l'annuaire officiel à partir du SIREN">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted" id="pdp-lookup-result">
+                            Vide = le SIREN fait office d'adresse.
+                        </small>
+                        @error('electronic_address') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
                 </div>
               </x-adminlte-card>
+
+              @push('js')
+              <script>
+              (function () {
+                  const btn = document.getElementById('pdp-lookup-btn');
+                  if (!btn) return;
+
+                  const field  = document.getElementById('electronic_address');
+                  const result = document.getElementById('pdp-lookup-result');
+
+                  btn.addEventListener('click', function () {
+                      const siren = document.getElementById('siren')?.value?.trim();
+                      if (!siren) {
+                          result.className = 'form-text text-danger';
+                          result.textContent = 'Renseignez d\'abord le SIREN.';
+                          return;
+                      }
+
+                      btn.disabled = true;
+                      result.className = 'form-text text-muted';
+                      result.textContent = 'Consultation de l\'annuaire…';
+
+                      fetch(btn.dataset.url + '?siren=' + encodeURIComponent(siren), {
+                          headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                          credentials: 'same-origin',
+                      })
+                      .then(r => r.json().then(data => ({ ok: r.ok, data })))
+                      .then(({ ok, data }) => {
+                          btn.disabled = false;
+                          if (!ok) {
+                              result.className = 'form-text text-danger';
+                              result.textContent = data.message ?? 'Consultation impossible.';
+                              return;
+                          }
+                          const active = (data.entries ?? []).filter(e => e.is_active);
+                          if (!active.length) {
+                              result.className = 'form-text text-warning';
+                              result.textContent = 'Ce client n\'est pas encore inscrit à l\'annuaire : demandez-lui son adresse.';
+                              return;
+                          }
+                          // L'adresse est stockée sans son préfixe d'annuaire,
+                          // porté à part par le champ « Annuaire ».
+                          field.value = active[0].identifier.replace(/^\d{4}:/, '');
+                          result.className = 'form-text text-success';
+                          result.textContent = active.length > 1
+                              ? `${active.length} adresses trouvées, la première est reprise (${active[0].name ?? ''}).`
+                              : `Adresse trouvée${active[0].name ? ' — ' + active[0].name : ''}.`;
+                      })
+                      .catch(() => {
+                          btn.disabled = false;
+                          result.className = 'form-text text-danger';
+                          result.textContent = 'Erreur réseau.';
+                      });
+                  });
+              })();
+              </script>
+              @endpush
 
               <x-adminlte-card theme="lime" theme-mode="outline">
                 <div class="row">
@@ -1205,51 +1298,33 @@
       </div>
       <div class="tab-pane" id="evaluation">
         @php
-          $newEvaluationLabel = trans('general_content.new_supplier_evaluation_trans_key');
-          if ($newEvaluationLabel === 'general_content.new_supplier_evaluation_trans_key') {
-              $newEvaluationLabel = 'New supplier evaluation';
-          }
-
-          $latestEvaluationLabel = trans('general_content.latest_supplier_evaluation_trans_key');
-          if ($latestEvaluationLabel === 'general_content.latest_supplier_evaluation_trans_key') {
-              $latestEvaluationLabel = 'Latest supplier evaluation';
-          }
-
-          $evaluationHistoryLabel = trans('general_content.supplier_evaluation_history_trans_key');
-          if ($evaluationHistoryLabel === 'general_content.supplier_evaluation_history_trans_key') {
-              $evaluationHistoryLabel = 'Supplier evaluation history';
-          }
+          $newEvaluationLabel       = __('general_content.new_supplier_evaluation_trans_key');
+          $latestEvaluationLabel    = __('general_content.latest_supplier_evaluation_trans_key');
+          $evaluationHistoryLabel   = __('general_content.supplier_evaluation_history_trans_key');
+          $requalificationAlertLabel = __('general_content.supplier_requalification_alert_trans_key');
+          $requalificationSoonLabel  = __('general_content.supplier_requalification_soon_trans_key');
 
           $evaluationScoresLabel = [
-              'quality' => trans('general_content.evaluation_quality_score_trans_key'),
-              'logistics' => trans('general_content.evaluation_logistics_score_trans_key'),
-              'service' => trans('general_content.evaluation_service_score_trans_key'),
+              'quality'   => __('general_content.evaluation_quality_score_trans_key'),
+              'logistics' => __('general_content.evaluation_logistics_score_trans_key'),
+              'service'   => __('general_content.evaluation_service_score_trans_key'),
           ];
 
-          foreach ($evaluationScoresLabel as $key => $label) {
-              if ($label === 'general_content.evaluation_' . $key . '_score_trans_key') {
-                  $evaluationScoresLabel[$key] = ucfirst($key) . ' score';
-              }
-          }
-
-          $requalificationAlertLabel = trans('general_content.supplier_requalification_alert_trans_key');
-          if ($requalificationAlertLabel === 'general_content.supplier_requalification_alert_trans_key') {
-              $requalificationAlertLabel = 'Supplier requalification alert';
-          }
-
-          $requalificationSoonLabel = trans('general_content.supplier_requalification_soon_trans_key');
-          if ($requalificationSoonLabel === 'general_content.supplier_requalification_soon_trans_key') {
-              $requalificationSoonLabel = 'Upcoming supplier requalification';
-          }
+          $evaluationStatusLabels = [
+              'pending'      => __('general_content.evaluation_status_pending_trans_key'),
+              'approved'     => __('general_content.evaluation_status_approved_trans_key'),
+              'under_review' => __('general_content.evaluation_status_under_review_trans_key'),
+              'rejected'     => __('general_content.evaluation_status_rejected_trans_key'),
+          ];
         @endphp
 
         @if($needsRequalification)
           <x-adminlte-alert theme="danger" title="{{ $requalificationAlertLabel }}">
-            {{ __('The supplier must be requalified since :days day(s).', ['days' => abs($daysUntilNextReview ?? 0)]) }}
+            {{ __('general_content.supplier_requalification_overdue_trans_key', ['days' => abs($daysUntilNextReview ?? 0)]) }}
           </x-adminlte-alert>
         @elseif($nextReviewSoon && !is_null($daysUntilNextReview))
           <x-adminlte-alert theme="warning" title="{{ $requalificationSoonLabel }}">
-            {{ __('Next review scheduled in :days day(s).', ['days' => $daysUntilNextReview]) }}
+            {{ __('general_content.supplier_next_review_days_trans_key', ['days' => $daysUntilNextReview]) }}
           </x-adminlte-alert>
         @endif
 
@@ -1257,13 +1332,13 @@
           <div class="col-md-6">
             <x-adminlte-card title="{{ $newEvaluationLabel }}" theme="primary" maximizable>
               @if($purchasesForEvaluation->isEmpty())
-                <p class="text-muted">{{ __('No purchase orders available to evaluate this supplier yet.') }}</p>
+                <p class="text-muted">{{ __('general_content.no_purchase_order_to_evaluate_trans_key') }}</p>
               @else
                 <form method="POST" action="{{ route('companies.ratings.store') }}">
                   @csrf
                   <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                   <div class="form-group">
-                    <label for="purchases_id">{{ __('Purchase order') }}</label>
+                    <label for="purchases_id">{{ __('general_content.purchase_order_trans_key') }}</label>
                     <select name="purchases_id" id="purchases_id" class="form-control">
                       @foreach($purchasesForEvaluation as $purchase)
                         <option value="{{ $purchase->id }}">
@@ -1273,7 +1348,7 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="rating">{{ __('Rating') }}</label>
+                    <label for="rating">{{ __('general_content.evaluation_rating_trans_key') }}</label>
                     <select name="rating" id="rating" class="form-control">
                       @for ($i = 1; $i <= 5; $i++)
                         <option value="{{ $i }}">{{ $i }}</option>
@@ -1281,23 +1356,20 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="evaluation_status">{{ __('Status') }}</label>
+                    <label for="evaluation_status">{{ __('general_content.evaluation_status_trans_key') }}</label>
                     <select name="evaluation_status" id="evaluation_status" class="form-control">
-                      @php
-                        $statusOptions = ['pending', 'approved', 'under_review', 'rejected'];
-                      @endphp
-                      @foreach($statusOptions as $statusOption)
-                        <option value="{{ $statusOption }}">{{ ucfirst(str_replace('_', ' ', $statusOption)) }}</option>
+                      @foreach($evaluationStatusLabels as $statusOption => $statusLabel)
+                        <option value="{{ $statusOption }}">{{ $statusLabel }}</option>
                       @endforeach
                     </select>
                   </div>
                   <div class="form-row">
                     <div class="form-group col-md-6">
-                      <label for="approved_at">{{ __('Approved at') }}</label>
+                      <label for="approved_at">{{ __('general_content.evaluation_approved_at_trans_key') }}</label>
                       <input type="datetime-local" name="approved_at" id="approved_at" class="form-control">
                     </div>
                     <div class="form-group col-md-6">
-                      <label for="next_review_at">{{ __('Next review at') }}</label>
+                      <label for="next_review_at">{{ __('general_content.evaluation_next_review_at_trans_key') }}</label>
                       <input type="date" name="next_review_at" id="next_review_at" class="form-control">
                     </div>
                   </div>
@@ -1316,11 +1388,11 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="comment">{{ __('Comment') }}</label>
+                    <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                     <textarea name="comment" id="comment" rows="3" class="form-control"></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="action_plan">{{ __('Action plan') }}</label>
+                    <label for="action_plan">{{ __('general_content.evaluation_action_plan_trans_key') }}</label>
                     <textarea name="action_plan" id="action_plan" rows="3" class="form-control"></textarea>
                   </div>
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
@@ -1332,9 +1404,9 @@
             <x-adminlte-card title="{{ $latestEvaluationLabel }}" theme="secondary" maximizable>
               @if($latestEvaluation)
                 <ul class="list-unstyled mb-0">
-                  <li><strong>{{ __('Last updated') }}:</strong> {{ optional($latestEvaluation->created_at)->format('d/m/Y H:i') }}</li>
-                  <li><strong>{{ __('Status') }}:</strong> {{ ucfirst(str_replace('_', ' ', $latestEvaluation->evaluation_status ?? '')) }}</li>
-                  <li><strong>{{ __('Rating') }}:</strong>
+                  <li><strong>{{ __('general_content.evaluation_last_updated_trans_key') }}:</strong> {{ optional($latestEvaluation->created_at)->format('d/m/Y H:i') }}</li>
+                  <li><strong>{{ __('general_content.evaluation_status_trans_key') }}:</strong> {{ $evaluationStatusLabels[$latestEvaluation->evaluation_status] ?? ucfirst(str_replace('_', ' ', $latestEvaluation->evaluation_status ?? '')) }}</li>
+                  <li><strong>{{ __('general_content.evaluation_rating_trans_key') }}:</strong>
                     @for ($i = 1; $i <= 5; $i++)
                       @if ($i <= ($latestEvaluation->rating ?? 0))
                         <span class="badge badge-warning">&#9733;</span>
@@ -1343,21 +1415,21 @@
                       @endif
                     @endfor
                   </li>
-                  <li><strong>{{ __('Composite score') }}:</strong> {{ $latestEvaluation->composite_score ?? __('N/A') }}</li>
-                  <li><strong>{{ $evaluationScoresLabel['quality'] }}:</strong> {{ $latestEvaluation->evaluation_score_quality ?? __('N/A') }}</li>
-                  <li><strong>{{ $evaluationScoresLabel['logistics'] }}:</strong> {{ $latestEvaluation->evaluation_score_logistics ?? __('N/A') }}</li>
-                  <li><strong>{{ $evaluationScoresLabel['service'] }}:</strong> {{ $latestEvaluation->evaluation_score_service ?? __('N/A') }}</li>
-                  <li><strong>{{ __('Next review at') }}:</strong> {{ optional($latestEvaluation->next_review_at)->format('d/m/Y') ?? __('N/A') }}</li>
-                  <li><strong>{{ __('Approved at') }}:</strong> {{ optional($latestEvaluation->approved_at)->format('d/m/Y H:i') ?? __('N/A') }}</li>
-                  <li><strong>{{ __('Action plan') }}:</strong> {{ $latestEvaluation->action_plan ?? __('N/A') }}</li>
+                  <li><strong>{{ __('general_content.evaluation_composite_score_trans_key') }}:</strong> {{ $latestEvaluation->composite_score ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['quality'] }}:</strong> {{ $latestEvaluation->evaluation_score_quality ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['logistics'] }}:</strong> {{ $latestEvaluation->evaluation_score_logistics ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['service'] }}:</strong> {{ $latestEvaluation->evaluation_score_service ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ __('general_content.evaluation_next_review_at_trans_key') }}:</strong> {{ optional($latestEvaluation->next_review_at)->format('d/m/Y') ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ __('general_content.evaluation_approved_at_trans_key') }}:</strong> {{ optional($latestEvaluation->approved_at)->format('d/m/Y H:i') ?? __('general_content.not_available_trans_key') }}</li>
+                  <li><strong>{{ __('general_content.evaluation_action_plan_trans_key') }}:</strong> {{ $latestEvaluation->action_plan ?? __('general_content.not_available_trans_key') }}</li>
                 </ul>
               @else
-                <p class="text-muted">{{ __('No evaluation has been recorded for this supplier yet.') }}</p>
+                <p class="text-muted">{{ __('general_content.no_supplier_evaluation_trans_key') }}</p>
               @endif
               <hr>
               <ul class="list-unstyled mb-0">
-                <li><strong>{{ __('Average composite score') }}:</strong> {{ $averageCompositeScore ?? __('N/A') }}</li>
-                <li><strong>{{ __('Average rating') }}:</strong> {{ $Companie->averageRating() ? number_format($Companie->averageRating(), 2) : __('N/A') }}</li>
+                <li><strong>{{ __('general_content.evaluation_average_composite_score_trans_key') }}:</strong> {{ $averageCompositeScore ?? __('general_content.not_available_trans_key') }}</li>
+                <li><strong>{{ __('general_content.evaluation_average_rating_trans_key') }}:</strong> {{ $Companie->averageRating() ? number_format($Companie->averageRating(), 2) : __('general_content.not_available_trans_key') }}</li>
               </ul>
             </x-adminlte-card>
           </div>
@@ -1365,23 +1437,23 @@
 
         <x-adminlte-card title="{{ $evaluationHistoryLabel }}" theme="info" maximizable>
           @if($evaluationHistory->isEmpty())
-            <p class="text-muted">{{ __('No supplier evaluation history available yet.') }}</p>
+            <p class="text-muted">{{ __('general_content.no_supplier_evaluation_history_trans_key') }}</p>
           @else
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th>{{ __('Date') }}</th>
-                    <th>{{ __('Purchase order') }}</th>
-                    <th>{{ __('Rating') }}</th>
-                    <th>{{ __('Composite score') }}</th>
-                    <th>{{ __('Status') }}</th>
+                    <th>{{ __('general_content.date_trans_key') }}</th>
+                    <th>{{ __('general_content.purchase_order_trans_key') }}</th>
+                    <th>{{ __('general_content.evaluation_rating_trans_key') }}</th>
+                    <th>{{ __('general_content.evaluation_composite_score_trans_key') }}</th>
+                    <th>{{ __('general_content.evaluation_status_trans_key') }}</th>
                     <th>{{ $evaluationScoresLabel['quality'] }}</th>
                     <th>{{ $evaluationScoresLabel['logistics'] }}</th>
                     <th>{{ $evaluationScoresLabel['service'] }}</th>
-                    <th>{{ __('Next review at') }}</th>
-                    <th>{{ __('Approved at') }}</th>
-                    <th>{{ __('Action plan') }}</th>
+                    <th>{{ __('general_content.evaluation_next_review_at_trans_key') }}</th>
+                    <th>{{ __('general_content.evaluation_approved_at_trans_key') }}</th>
+                    <th>{{ __('general_content.evaluation_action_plan_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1390,8 +1462,8 @@
                       <td>{{ optional($evaluation->created_at)->format('d/m/Y') }}</td>
                       <td>{{ optional($evaluation->purchaseOrder)->code }}</td>
                       <td>{{ $evaluation->rating }}</td>
-                      <td>{{ $evaluation->composite_score ?? __('N/A') }}</td>
-                      <td>{{ ucfirst(str_replace('_', ' ', $evaluation->evaluation_status ?? '')) }}</td>
+                      <td>{{ $evaluation->composite_score ?? __('general_content.not_available_trans_key') }}</td>
+                      <td>{{ $evaluationStatusLabels[$evaluation->evaluation_status] ?? ucfirst(str_replace('_', ' ', $evaluation->evaluation_status ?? '')) }}</td>
                       <td>{{ $evaluation->evaluation_score_quality ?? '-' }}</td>
                       <td>{{ $evaluation->evaluation_score_logistics ?? '-' }}</td>
                       <td>{{ $evaluation->evaluation_score_service ?? '-' }}</td>

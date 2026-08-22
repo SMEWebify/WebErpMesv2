@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Purchases;
 
 use App\Http\Controllers\Controller;
 use App\Models\Integrations\PdpIncomingInvoice;
+use App\Services\Integrations\Pdp\Contracts\PdpDirectoryGateway;
+use App\Services\Integrations\Pdp\Enums\PdpOutgoingStatus;
+use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Integrations\Pdp\PdpIncomingInvoiceService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -49,8 +54,21 @@ class IncomingInvoiceController extends Controller
                 'purchase_invoice_url' => $r->purchase_invoice_id
                     ? route('purchase.invoices.show', ['id' => $r->purchase_invoice_id])
                     : null,
+                // Rapprochement : l'écran « en attente de facturation », filtré
+                // sur le fournisseur et nourri du document reçu. C'est la voie
+                // normale — les lignes facturées doivent correspondre à des
+                // réceptions, pas être recopiées depuis le document du vendeur.
+                'reconcile_url'   => $r->status === PdpIncomingInvoice::STATUS_RECEIVED && $r->supplier_company_id
+                    ? route('purchases.wainting.invoice', ['companies_id' => $r->supplier_company_id, 'incoming_id' => $r->id])
+                    : null,
+                // Repli pour les factures sans commande ni réception (frais,
+                // abonnements) : crée l'en-tête seul, à compléter à la main.
                 'convert_url'     => $r->status === PdpIncomingInvoice::STATUS_RECEIVED
                     ? route('purchases.incoming.convert', $r->id) : null,
+                // Déclaration de statut : seulement pour les documents venus
+                // d'une plateforme, un dépôt manuel n'ayant aucun destinataire.
+                'status_url'      => $this->service->canReportStatus($r)
+                    ? route('purchases.incoming.status', $r->id) : null,
                 'reject_url'      => in_array($r->status, [PdpIncomingInvoice::STATUS_RECEIVED, PdpIncomingInvoice::STATUS_SUPPLIER_UNMATCHED])
                     ? route('purchases.incoming.reject', $r->id) : null,
             ]),
@@ -59,7 +77,47 @@ class IncomingInvoiceController extends Controller
                 'current_page' => $rows->currentPage(),
                 'last_page'    => $rows->lastPage(),
             ],
+            'directory' => $this->directoryStatus(),
         ]);
+    }
+
+    /**
+     * L'entreprise est-elle joignable ?
+     *
+     * Sans ligne d'annuaire ouverte, aucun fournisseur ne peut lui adresser de
+     * facture — et rien ne le signale : la boîte de réception reste vide,
+     * exactement comme si personne n'avait encore facturé. Ce contrôle lève
+     * cette ambiguïté, qui est le pire des deux mondes à l'approche de
+     * l'obligation de réception.
+     *
+     * L'ouverture, elle, se fait dans l'interface de la plateforme : c'est
+     * l'identité du client vis-à-vis de sa PDP, WEM n'a pas à la dupliquer.
+     *
+     * Mise en cache : la réponse ne change qu'au rythme d'une démarche
+     * administrative, inutile d'interroger la plateforme à chaque affichage.
+     */
+    private function directoryStatus(): ?array
+    {
+        $gateway = app(PdpManager::class)->driver();
+
+        if (! $gateway->isEnabled() || ! $gateway instanceof PdpDirectoryGateway) {
+            return null;
+        }
+
+        return Cache::remember("pdp:directory:{$gateway->key()}", now()->addHour(), function () use ($gateway) {
+            try {
+                // Les lignes `_replyto` sont techniques : elles reçoivent les
+                // messages de cycle de vie, jamais de factures. Les compter
+                // laisserait croire à tort que l'entreprise est joignable.
+                $entries = array_filter($gateway->listEntries(), fn (array $e) => ! $e['is_replyto']);
+
+                return ['reachable' => $entries !== [], 'count' => count($entries)];
+            } catch (\Throwable $e) {
+                Log::warning('IncomingInvoice: directory check failed', ['error' => $e->getMessage()]);
+
+                return null;
+            }
+        });
     }
 
     public function upload(Request $request)
@@ -102,5 +160,46 @@ class IncomingInvoiceController extends Controller
         $incoming->update(['status' => PdpIncomingInvoice::STATUS_REJECTED]);
 
         return response()->json(['message' => 'Facture entrante refusée.']);
+    }
+
+    /**
+     * Déclare un statut au fournisseur via la plateforme.
+     *
+     * Obligation de l'acheteur dans la réforme : prise en charge, approbation,
+     * refus et transmission du paiement doivent remonter au fournisseur — et à
+     * l'administration, qui en déduit l'exigibilité de la TVA sur les services.
+     */
+    public function reportStatus(Request $request, PdpIncomingInvoice $incoming)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(array_column(PdpOutgoingStatus::cases(), 'value'))],
+            // Code motif AFNOR (MDT-113) ; la liste figure dans XP Z12-012.
+            'reason' => 'nullable|string|max:20',
+            'note'   => 'nullable|string|max:900',
+        ]);
+
+        $status = PdpOutgoingStatus::from($validated['status']);
+
+        if ($status->requiresReason() && blank($validated['note'] ?? null) && blank($validated['reason'] ?? null)) {
+            return response()->json([
+                'message' => "Un motif est obligatoire pour déclarer « {$status->label()} » : "
+                    . 'sans lui, le fournisseur ne peut pas corriger sa facture.',
+            ], 422);
+        }
+
+        try {
+            $this->service->reportStatus(
+                $incoming,
+                $status,
+                $validated['reason'] ?? null,
+                $validated['note'] ?? null,
+            );
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => "Statut « {$status->label()} » déclaré au fournisseur.",
+        ]);
     }
 }

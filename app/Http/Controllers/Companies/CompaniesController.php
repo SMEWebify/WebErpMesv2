@@ -566,4 +566,40 @@ class CompaniesController extends Controller
             $items->sortByDesc('date')->values()
         );
     }
+
+    /**
+     * Cherche l'adresse électronique de facturation d'un client dans l'annuaire
+     * officiel, à partir de son SIREN.
+     *
+     * Sans elle, la plateforme ne sait pas à qui remettre la facture. La saisir
+     * à la main expose à une coquille invisible : le document part et n'arrive
+     * nulle part, sans erreur immédiate.
+     */
+    public function pdpLookup(Request $request, $id)
+    {
+        $siren = trim((string) $request->get('siren'));
+
+        if ($siren === '') {
+            return response()->json(['message' => 'SIREN absent.'], 422);
+        }
+
+        $gateway = app(\App\Services\Integrations\Pdp\PdpManager::class)->driver();
+
+        if (! $gateway->isEnabled() || ! $gateway instanceof \App\Services\Integrations\Pdp\Contracts\PdpDirectoryGateway) {
+            return response()->json([
+                'message' => "Aucune plateforme configuree ne permet d'interroger l'annuaire.",
+            ], 422);
+        }
+
+        try {
+            return response()->json(['entries' => $gateway->lookupEntries($siren)]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('CompaniesController: directory lookup failed', [
+                'siren' => $siren,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['message' => "L'annuaire n'a pas repondu."], 422);
+        }
+    }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
+use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 use App\Http\Controllers\Api\N2P\SheetLotStockController;
 use App\Http\Controllers\Files\FileApiController;
@@ -101,6 +102,14 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/disconnect', [QontoIntegrationController::class, 'disconnect'])->name('disconnect');
         Route::post('/invoices/{invoiceId}/submit', [QontoIntegrationController::class, 'submitInvoice'])->name('invoices.submit');
         Route::post('/invoices/{invoiceId}/poll', [QontoIntegrationController::class, 'pollInvoice'])->name('invoices.poll');
+    });
+
+    // Facturation électronique — indépendant de la plateforme (le driver actif
+    // est résolu par PdpManager depuis config('services.pdp.default')).
+    Route::prefix('integrations/pdp')->name('api.integrations.pdp.')->group(function () {
+        Route::get('/status', [PdpIntegrationController::class, 'status'])->name('status');
+        Route::post('/invoices/{invoiceId}/submit', [PdpIntegrationController::class, 'submitInvoice'])->name('invoices.submit');
+        Route::post('/invoices/{invoiceId}/poll', [PdpIntegrationController::class, 'pollInvoice'])->name('invoices.poll');
     });
 
     // inspection...

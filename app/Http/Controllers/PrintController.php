@@ -11,9 +11,10 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
 use App\Models\Workflow\CreditNotes;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
-use horstoeko\zugferd\ZugferdProfiles;
 use App\Services\OrderCalculatorService;
 use App\Services\QuoteCalculatorService;
+use App\Models\Workflow\OrderConfirmations;
+use App\Services\OrderConfirmationCalculatorService;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
 use App\Services\PurchaseCalculatorService;
@@ -21,8 +22,7 @@ use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
 use App\Services\CreditNoteCalculatorService;
 use App\Services\PdfThemeResolver;
-use horstoeko\zugferd\ZugferdDocumentBuilder;
-use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
+use App\Services\Invoicing\FacturXBuilder;
 
 class PrintController extends Controller
 {
@@ -49,13 +49,20 @@ class PrintController extends Controller
     }
 
     /**
-     * @param Orders $Document
+     * ARC — rendu depuis les lignes figées du document, jamais depuis la commande.
+     *
+     * Un ARC en cours n'est pas imprimable : tant qu'il n'est pas envoyé il
+     * n'engage rien, comme une facture au brouillon.
+     *
+     * @param OrderConfirmations $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getOrderConfirmPdf(Orders $Document)
+    public function getOrderConfirmPdf(OrderConfirmations $Document)
     {
-        $typeDocumentName = __('general_content.order_confirm_trans_key');
-        $calculatorService = new OrderCalculatorService($Document);
+        abort_if((int) $Document->statu === OrderConfirmations::STATUS_IN_PROGRESS, 403, __('general_content.arc_draft_no_pdf_trans_key'));
+
+        $typeDocumentName = __('general_content.order_confirm_trans_key') . ' ' . $Document->revision;
+        $calculatorService = new OrderConfirmationCalculatorService($Document);
         return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-sales');
     }
 
@@ -104,160 +111,28 @@ class PrintController extends Controller
         return $this->generatePdf($Document, 'FACTURE PROFORMA', $calculatorService, 'print/pdf-invoice');
     }
 
-    public function getInvoiceFactureX(Invoices $Document)
+    /**
+     * Facture au format Factur-X (PDF/A-3 avec le XML CII en pièce jointe).
+     *
+     * Le document est construit en mémoire par FacturXBuilder et renvoyé tel
+     * quel : c'est exactement le même octet pour octet que celui déposé sur la
+     * PDP. Il n'est plus écrit dans public/ (document légal nominatif, il y
+     * était servi sans authentification).
+     *
+     * FacturXBuilder refuse déjà brouillons et proformas ; on garde ici pour
+     * répondre 403/404 plutôt que de laisser remonter une 500.
+     */
+    public function getInvoiceFactureX(Invoices $Document, FacturXBuilder $builder)
     {
-        $factory = app('Factory'); 
-        $currency = $factory->curency ?? 'EUR';
-        $typeDocumentName = __('general_content.invoice_trans_key');
-        $calculatorService = new InvoiceCalculatorService($Document);
-        $Factory = $this->getFactory();
-        $totalPrice = $calculatorService->getTotalPrice();
-        $subPrice = $calculatorService->getSubTotal();
-        $vatPrice = $calculatorService->getVatTotal();
-        
-        $formattedTotalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
-        $formattedSubPrice = Number::currency($subPrice, $currency, config('app.locale'));
-        $normalizeCurrency = fn ($value) => $this->normalizePdfCurrency($value);
+        abort_if($Document->statu === 1, 403, __('general_content.invoice_draft_no_facturx_trans_key'));
+        abort_if($Document->invoice_type === 3, 404, __('general_content.invoice_proforma_no_facturx_trans_key'));
 
-        $this->getDocumentLines($Document, 'invoiceLines');
-        $image = $Factory->getImageFactoryPath();
-        $resolver = app(PdfThemeResolver::class);
-        $view = $resolver->resolveForDocument($Document, 'print/pdf-invoice', $Factory);
-        $customCss = $Factory->pdf_custom_css;
-        $dompdf = PDF::loadView($view, compact('typeDocumentName', 'Document', 'Factory', 'image', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'customCss', 'normalizeCurrency'));
+        $filename = __('general_content.invoice_trans_key') . '-' . $Document->code . '.pdf';
 
-        // Récupération des informations client depuis le modèle associé
-        $client = $Document->companie;
-        // Adresse de facturation : celle liée à la facture en priorité, sinon
-        // l'adresse par défaut du client, sinon la première disponible.
-        $clientAddress = $Document->adresse
-            ?? $client->Addresses()->where('default', 1)->first()
-            ?? $client->Addresses()->first();
-
-        // Type de document (UNTDID 1001) selon le type de facture interne.
-        $documentTypeCode = [
-            1 => '380', // facture
-            2 => '381', // avoir
-            3 => '380', // proforma (traité comme facture)
-            4 => '386', // facture d'acompte
-        ][$Document->invoice_type] ?? '380';
-
-        $issueDate = $Document->created_at instanceof \DateTimeInterface
-            ? $Document->created_at
-            : \Carbon\Carbon::parse($Document->created_at);
-
-        $vatBreakdown = $calculatorService->getVatBreakdown();
-        $lines        = $calculatorService->getNormalizedLines();
-        $totalVAT     = round(array_sum(array_column($vatBreakdown, 'vat')), 2);
-
-        $zugferddatas = ZugferdDocumentBuilder::CreateNew(ZugferdProfiles::PROFILE_EN16931);
-        $zugferddatas
-        ->setDocumentInformation($Document->code, $documentTypeCode, $issueDate, $currency)
-        ->addDocumentNote('Facture ' . $Document->code . ' du ' . $issueDate->format('d/m/Y'))
-
-        // Référence acheteur (BT-10) : référence commande/marché côté client.
-        ->setDocumentBuyerReference($Document->customer_reference ?: $Document->code)
-
-        // Ajout des informations du vendeur (Factory)
-        ->setDocumentSeller($Factory->name)
-        ->setDocumentSellerLegalOrganisation($Factory->siren, '0002', $Factory->name)
-        ->addDocumentSellerTaxRegistration('VA', $Factory->vat_num)
-        ->setDocumentSellerAddress(
-            $Factory->address,
-            null,
-            null,
-            $Factory->zipcode,
-            $Factory->city,
-            $this->factureXCountryCode($Factory->country)
-        )
-        ->setDocumentSellerContact(
-            $Factory->name,
-            null,
-            $Factory->phone_number,
-            null,
-            $Factory->mail
-        )
-
-        // Ajout des informations du client
-        ->setDocumentBuyer($client->label, $client->code)
-        ->setDocumentBuyerAddress(
-            $clientAddress->adress ?? 'N/A',
-            null,
-            null,
-            $clientAddress->zipcode ?? '00000',
-            $clientAddress->city ?? 'N/A',
-            $this->factureXCountryCode($clientAddress->country ?? null)
-        );
-
-        if ($client->siren) {
-            $zugferddatas->setDocumentBuyerLegalOrganisation($client->siren, '0002', $client->label);
-        }
-        if ($client->intra_community_vat) {
-            $zugferddatas->addDocumentBuyerTaxRegistration('VA', $client->intra_community_vat);
-        }
-
-        // Moyen et conditions de paiement
-        if ($Factory->iban) {
-            $zugferddatas->addDocumentPaymentMeanToCreditTransfer(
-                $Factory->iban,
-                $Factory->name,
-                null,
-                $Factory->bic ?: null
-            );
-        }
-        if ($Document->due_date) {
-            $dueDate = \Carbon\Carbon::parse($Document->due_date);
-            $zugferddatas->addDocumentPaymentTerm('Échéance le ' . $dueDate->format('d/m/Y'), $dueDate);
-        }
-
-        // Ventilation de la TVA (BG-23) : une ligne par taux, base + montant.
-        foreach ($vatBreakdown as $vat) {
-            $category = $vat['rate'] > 0 ? 'S' : 'Z'; // S = taux standard, Z = taux zéro
-            $zugferddatas->addDocumentTax($category, 'VAT', round($vat['base'], 2), round($vat['vat'], 2), $vat['rate']);
-        }
-
-        // Totaux : grand total, dû, total lignes, charges, remises, base TVA, TVA, arrondi, payé.
-        $zugferddatas->setDocumentSummation(
-            round($totalPrice, 2),
-            round($Document->remaining_amount ?? $totalPrice, 2),
-            round($subPrice, 2),
-            0.0,
-            0.0,
-            round($subPrice, 2),
-            $totalVAT,
-            0.0,
-            round($Document->paid_amount ?? 0, 2)
-        );
-
-        // Lignes de facture (snapshot des prix, remise et TVA figés)
-        foreach ($lines as $key => $line) {
-            $zugferddatas->addNewPosition($key + 1)
-                ->setDocumentPositionProductDetails($line['label'] ?: $line['code'], null, $line['code'])
-                ->setDocumentPositionGrossPrice(round($line['unit_price'], 2));
-
-            if ($line['discount'] > 0) {
-                $zugferddatas->addDocumentPositionGrossPriceAllowanceCharge(
-                    round($line['unit_price'] * $line['discount'] / 100, 2),
-                    false, // remise (allowance), pas une charge
-                    $line['discount'],
-                    round($line['unit_price'], 2),
-                    'Remise'
-                );
-            }
-
-            $zugferddatas->setDocumentPositionNetPrice(round($line['net_unit_price'], 2))
-                ->setDocumentPositionQuantity($line['qty'], $this->factureXUnitCode($line['unit_code']))
-                ->addDocumentPositionTax($line['vat_rate'] > 0 ? 'S' : 'Z', 'VAT', $line['vat_rate'])
-                ->setDocumentPositionLineSummation(round($line['line_total'], 2));
-        }
-
-        // Génération du document PDF
-        $zugferdpdf = new ZugferdDocumentPdfBuilder($zugferddatas, $dompdf->stream());
-        $pdfFilePath = public_path('pdf/invoices/' . $typeDocumentName . '-' . $Document->id . '.pdf');
-        $zugferdpdf->generateDocument();
-        $zugferdpdf->saveDocument($pdfFilePath);
-
-        return response()->file($pdfFilePath);
+        return response($builder->buildPdf($Document), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
     }
 
     /**
@@ -389,6 +264,8 @@ class PrintController extends Controller
                 return 'OrderLines';
             case Invoices::class:
                 return 'invoiceLines';
+            case OrderConfirmations::class:
+                return 'OrderConfirmationLines';
             case Deliverys::class:
                 return 'DeliveryLines';
             case CreditNotes::class:
@@ -415,50 +292,5 @@ class PrintController extends Controller
     private function normalizePdfCurrency($value): string
     {
         return str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value);
-    }
-
-    /**
-     * Normalise un pays en code ISO 3166-1 alpha-2 (requis EN 16931, BT-40/BT-55).
-     *
-     * Accepte déjà un code à 2 lettres, sinon convertit quelques libellés
-     * courants. Faute de correspondance, retombe sur 'FR' (ERP français).
-     */
-    private function factureXCountryCode(?string $value): string
-    {
-        $value = trim((string) $value);
-
-        if ($value === '') {
-            return 'FR';
-        }
-
-        if (preg_match('/^[A-Za-z]{2}$/', $value)) {
-            return strtoupper($value);
-        }
-
-        $map = [
-            'france' => 'FR', 'belgique' => 'BE', 'belgium' => 'BE',
-            'allemagne' => 'DE', 'germany' => 'DE', 'espagne' => 'ES', 'spain' => 'ES',
-            'italie' => 'IT', 'italy' => 'IT', 'suisse' => 'CH', 'switzerland' => 'CH',
-            'luxembourg' => 'LU', 'pays-bas' => 'NL', 'netherlands' => 'NL',
-            'portugal' => 'PT', 'royaume-uni' => 'GB', 'united kingdom' => 'GB',
-        ];
-
-        return $map[mb_strtolower($value)] ?? 'FR';
-    }
-
-    /**
-     * Convertit l'unité interne en code unité UN/ECE Rec. 20 (EN 16931, BT-130).
-     * Par défaut 'C62' (unité/pièce), code générique recommandé par la norme.
-     */
-    private function factureXUnitCode(?string $code): string
-    {
-        $map = [
-            'pcs' => 'C62', 'pc' => 'C62', 'u' => 'C62', 'unite' => 'C62', 'piece' => 'C62',
-            'kg' => 'KGM', 'g' => 'GRM', 't' => 'TNE',
-            'm' => 'MTR', 'ml' => 'MTR', 'm2' => 'MTK', 'm²' => 'MTK', 'm3' => 'MTQ', 'm³' => 'MTQ',
-            'l' => 'LTR', 'h' => 'HUR', 'heure' => 'HUR',
-        ];
-
-        return $map[mb_strtolower(trim((string) $code))] ?? 'C62';
     }
 }

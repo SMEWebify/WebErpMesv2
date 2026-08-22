@@ -36,7 +36,12 @@ class UpdateCompanieRequest extends FormRequest
             'lkdsite'=> 'nullable|string',
             'siren'=> 'nullable|string', 
             'naf_code'=> 'nullable|string', 
-            'intra_community_vat'=> ['nullable', 'string', new ValidVatNumber(app(CompanyService::class))], 
+            'intra_community_vat'=> ['nullable', 'string', new ValidVatNumber(app(CompanyService::class))],
+            // Adresse électronique de facturation (BT-49). Les règles DGFiP et
+            // Peppol réunies n'autorisent que chiffres, lettres non accentuées
+            // et le souligné — un caractère de plus et l'adresse est introuvable.
+            'electronic_address'=> ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9_]+$/'],
+            'electronic_address_scheme'=> ['nullable', 'string', 'max:4'],
             'statu_customer'=>'required',
             'discount'=> 'nullable|numeric',
             'account_general_customer'=> 'nullable|string',

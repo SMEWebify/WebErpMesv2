@@ -641,6 +641,41 @@ class InvoicesController extends Controller
     }
 
     /**
+     * Dépose la facture sur la plateforme de dématérialisation active.
+     *
+     * Route web (session + CSRF) et non API : la carte est affichée dans une
+     * page Blade authentifiée par session, elle n'a pas de jeton porteur.
+     */
+    public function pdpSubmit(int $id, \App\Services\Integrations\Pdp\PdpInvoiceService $pdpInvoiceService): \Illuminate\Http\JsonResponse
+    {
+        $invoice = Invoices::findOrFail($id);
+
+        abort_if($invoice->invoice_type !== 1, 422, 'Seules les factures peuvent être déposées sur la plateforme.');
+        abort_if($invoice->statu === 1, 422, "Cette facture est encore en brouillon : émettez-la avant de la déposer.");
+
+        try {
+            $submission = $pdpInvoiceService->submit($invoice);
+        } catch (\RuntimeException $e) {
+            // Données manquantes, document non conforme ou refus de la
+            // plateforme : le message est rédigé pour l'utilisateur.
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['ok' => true, 'submission' => $submission]);
+    }
+
+    /** Interroge la plateforme et met à jour le statut de la facture. */
+    public function pdpPoll(int $id, \App\Services\Integrations\Pdp\PdpInvoiceService $pdpInvoiceService): \Illuminate\Http\JsonResponse
+    {
+        $submission = PdpInvoiceSubmission::where('invoice_id', $id)->firstOrFail();
+
+        return response()->json([
+            'ok'         => true,
+            'submission' => $pdpInvoiceService->poll($submission),
+        ]);
+    }
+
+    /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */

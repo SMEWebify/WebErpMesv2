@@ -15,6 +15,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\OrderRating;
+use App\Models\Workflow\OrderConfirmations;
 use App\Models\Workflow\PreOrder;
 use App\Models\Workflow\OrderSite;
 use Illuminate\Database\Eloquent\Model;
@@ -164,6 +165,17 @@ class Orders extends Model
     public function OrderSite()
     {
         return $this->hasOne(OrderSite::class, 'order_id', 'id');
+    }
+
+    public function OrderConfirmations()
+    {
+        return $this->hasMany(OrderConfirmations::class, 'order_id');
+    }
+
+    // ARC qui fait foi : le dernier indice envoyé, null tant que rien n'a été émis.
+    public function currentConfirmation()
+    {
+        return $this->hasOne(OrderConfirmations::class, 'order_id')->where('is_current', true);
     }
 
     public function Deliverys()

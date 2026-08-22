@@ -12,6 +12,7 @@ use App\Models\Planning\Status;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Services\OrderService;
+use App\Services\OrderConfirmationService;
 use App\Services\DocumentCodeGenerator;
 use App\Traits\NextPreviousTrait;
 use App\Models\Admin\Factory;
@@ -42,19 +43,22 @@ class OrdersController extends Controller
     protected $customFieldService;
     protected $OrderBusinessBalanceService;
     protected $OrderInvoiceDataService;
+    protected $orderConfirmationService;
 
     public function __construct(
-                                SelectDataService $SelectDataService, 
+                                SelectDataService $SelectDataService,
                                 OrderKPIService $orderKPIService,
                                 CustomFieldService $customFieldService,
-                                OrderBusinessBalanceService $OrderBusinessBalanceService, 
+                                OrderBusinessBalanceService $OrderBusinessBalanceService,
                                 OrderInvoiceDataService $OrderInvoiceDataService,
+                                OrderConfirmationService $orderConfirmationService,
                     ){
         $this->SelectDataService = $SelectDataService;
         $this->orderKPIService = $orderKPIService;
         $this->customFieldService = $customFieldService;
         $this->OrderBusinessBalanceService = $OrderBusinessBalanceService;
         $this->OrderInvoiceDataService = $OrderInvoiceDataService;
+        $this->orderConfirmationService = $orderConfirmationService;
     }
 
     /**
@@ -250,8 +254,16 @@ class OrdersController extends Controller
         // Retrieve the order
         $order = Orders::findOrFail($request->id);
 
+        $previousDecision = $order->review_decision;
+
         // Update the order using mass assignment
         $order->update($request->validated());
+
+        // La revue approuvée constitue l'ARC. Tant qu'il reste en cours, il est
+        // resynchronisé plutôt que dupliqué : c'est une photo de la commande.
+        if ($order->review_decision === 'approved' && $previousDecision !== 'approved' && $order->type == 1) {
+            $this->orderConfirmationService->createFromOrder($order, auth()->id());
+        }
 
         if ($request->boolean('apply_delivery_date') && $order->validity_date) {
             $factory = app('Factory');

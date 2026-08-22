@@ -1383,7 +1383,25 @@ async function mountKanbanSetting() {
     );
 }
 
+async function mountOrderConfirmationsIndex() {
+    const element = document.getElementById('order-confirmations-index-app');
+    if (!element) return;
+
+    const { default: OrderConfirmationsIndex } = await import('./components/OrderConfirmationsIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(OrderConfirmationsIndex, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 mountReturnsIndex();
+mountOrderConfirmationsIndex();
 mountDeliveryLinesTab();
 
 async function mountTaskLines() {

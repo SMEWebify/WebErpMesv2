@@ -43,6 +43,9 @@
 |---|---|
 | `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (PHP, extensions, APP_KEY, Redis, DB, Pusher) |
 | `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat) |
+| `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
+| `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
+| `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
@@ -60,6 +63,7 @@
 | Quotidien à 01h00 | `backup:clean` | Supprime les anciennes sauvegardes (rétention `config/backup.php`) |
 | Quotidien à 02h00 | `backup:run` | Sauvegarde complète DB + `storage/app` |
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
+| Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
 
@@ -181,11 +185,100 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Facturation électronique (PDP)
+
+Réforme française : réception obligatoire pour toutes les entreprises au **1er septembre 2026**.
+
+### Architecture
+Un contrat, plusieurs plateformes. `App\Services\Integrations\Pdp` :
+- `Contracts\PdpGateway` — émission et suivi (**obligatoire**)
+- `Contracts\PdpInboundGateway` — réception des factures fournisseurs
+- `Contracts\PdpCursorSyncGateway` — plateformes sans webhooks, synchro par curseur
+- `Contracts\PdpDirectoryGateway` — annuaire : nos lignes de réception, adresses de nos clients
+- `Contracts\PdpStatusReportingGateway` — statuts déclarés au fournisseur (obligation acheteur)
+- `PdpManager` — registre des drivers, résolu par `config('services.pdp.default')`
+- `PdpInvoiceService` / `PdpIncomingInvoiceService` — orchestration agnostique
+
+Seul `PdpGateway` est requis ; les quatre autres sont optionnels et testés par
+`instanceof`, ce qui permet à une plateforme pauvre en fonctions de coexister
+sans code mort ni méthodes vides.
+
+Les drivers sont enregistrés dans `AppServiceProvider::register()`.
+
+### Drivers
+| Driver | Émission | Réception | Suivi | Annuaire | Statuts sortants |
+|---|---|---|---|---|---|
+| `qonto` | données structurées, Qonto produit le document | non | polling manuel | non | non |
+| `superpdp` | **notre** Factur-X déposé tel quel | oui | curseurs + `wem:pdp:sync` | oui | oui |
+
+### Pièges vérifiés en conditions réelles (SUPER PDP, bac à sable)
+- **Un « warning » schematron fait rejeter.** `PEPPOL-EN16931-R008` porte le libellé « still status warning » et fait pourtant rejeter la facture en `fr:213` / `REJ_SEMAN`. Règle retenue : tout ce qui rend `is_valid` faux bloque le dépôt.
+- **Le rejet arrive des heures après.** Constaté : dépôt à 23h58, `fr:213` à 03h07. Interroger l'API quelques secondes après un dépôt n'apprend rien — seul `wem:pdp:sync` fait foi.
+- **Un dépôt accepté n'est pas une facture émise.** `POST /invoices` renvoie 200 et `api:uploaded` même quand le document sera rejeté. Il n'existe aucun signal synchrone.
+- **`POST /invoices/convert` est l'outil de diagnostic** : il analyse le document et renvoie l'erreur réelle sans rien déposer, là où `/validation_reports` minimise et où `/invoices` échoue en silence.
+- **Le numéro de facture est consommé dès le premier dépôt, même rejeté.** Tout renvoi sous le même numéro est refusé (`fr:213`, code `DOUBLON`). Corriger une facture rejetée impose donc d'en émettre une nouvelle — la carte masque le bouton de dépôt dans ce cas.
+
+### SUPER PDP
+API REST `https://api.superpdp.tech/v1.beta/`, OAuth 2.1 `client_credentials`
+(access_token 30 min). **Aucun webhook** : la spec OpenAPI n'en déclare pas, la
+synchronisation officielle passe par `starting_after_id` sur `/invoices` et
+`/invoice_events`, d'où la table `pdp_sync_cursors` et la tâche planifiée.
+Le mode bac à sable / production est porté par les identifiants, pas par l'URL.
+
+### Statuts déclarés au fournisseur (obligation de l'acheteur)
+Recevoir ne suffit pas : l'acheteur doit renvoyer le cycle de vie du document
+(`fr:204` prise en charge, `fr:205` approuvée, `fr:207` litige, `fr:210` refus,
+`fr:211` paiement transmis). Ces statuts remontent aussi à l'administration,
+qui en déduit l'exigibilité de la TVA sur les prestations de services.
+
+Menu « Déclarer » sur chaque ligne de la boîte de réception →
+`PdpIncomingInvoiceService::reportStatus()` → `PdpStatusReportingGateway`.
+Un motif est **exigé** sur les statuts défavorables et transmis tel quel au
+fournisseur ; un document déposé à la main n'a pas de destinataire et ne
+propose pas l'action.
+
+### Réception et rapprochement
+Une facture reçue entre dans `pdp_incoming_invoices` (boîte de réception), puis
+deux voies :
+- **Rapprochement** (voie normale) : l'écran `/purchases/waiting/invoice` est
+  ouvert avec `?companies_id=&incoming_id=`, affiche le document du fournisseur
+  en regard des réceptions à cocher, signale l'écart de total, et rattache le
+  document à la facture d'achat créée.
+- **Sans rapprochement** : crée l'en-tête seul, pour les factures sans commande
+  ni réception (frais, abonnements).
+
+Les lignes du document reçu **ne sont jamais recopiées** :
+`purchase_invoice_lines` ne porte ni libellé ni montant, seulement les clés vers
+la ligne de commande et la ligne de réception. C'est ce qui garantit qu'on ne
+paie que ce qui a été commandé et reçu ; le document du fournisseur reste une
+pièce à confronter, conservée dans `payload`.
+
+### Document
+`App\Services\Invoicing\FacturXBuilder` est la source unique du Factur-X
+(profil EN 16931, via `horstoeko/zugferd`) : le PDF téléchargé par le client et
+celui déposé sur la plateforme sont le même fichier. Il n'écrit rien sur disque.
+
+`assertPartiesAreIdentifiable()` refuse en amont les documents dont les parties
+ne sont pas identifiables (SIREN, TVA, adresse, acheminement), avec un message
+en français listant tout ce qui manque — sinon l'utilisateur reçoit une règle
+schematron après un aller-retour jusqu'à la plateforme.
+
+`config/invoicing.php` porte le contenu **normatif** : mode de facturation
+(BT-23) et mentions légales obligatoires (BT-22 : pénalités de retard,
+indemnité de recouvrement, escompte). ⚠️ Les textes par défaut sont le régime
+légal supplétif : **à aligner sur les CGV de chaque société déployée**, une
+facture qui les contredit n'étant pas opposable.
+
 ## Dette technique
 
 ### 🔴 Bloquant avant prod
 - Queue worker → Supervisor sur VPS Linux
 - spatie/laravel-backup → backup base + fichiers
+
+### 🔴 Facturation électronique — avant le 1er sept. 2026
+- **Ligne d'annuaire** : son ouverture se fait **dans l'interface de la plateforme**, pas dans WEM — c'est l'identité du client vis-à-vis de sa PDP, et l'y dupliquer n'apporterait rien. WEM se contente de constater son absence et d'alerter. La commande `wem:pdp:directory --open=` reste disponible pour un déploiement en masse.
+- **`factory.electronic_address` sans UI** : éditable en base uniquement, contrairement à celui des sociétés clientes
+- **`companies.siren` non obligatoire à la saisie** : `FacturXBuilder::assertPartiesAreIdentifiable()` bloque désormais l'émission si SIREN/TVA sont absents ou malformés, mais rien n'empêche encore de créer une société sans ces champs
 
 ### 📋 Roadmap post-prod
 - Supprimer Livewire résiduel (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
