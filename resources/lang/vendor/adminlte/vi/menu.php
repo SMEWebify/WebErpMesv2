@@ -59,6 +59,8 @@ return [
     'delevery_method_trans_key'                => 'Phương thức giao hàng',
     'human_resources_trans_key'                => 'Nguồn nhân lực',
     'attendance_report_trans_key'              => 'Báo cáo chấm công',
+    'leave_balances_trans_key'                  => 'Số ngày phép còn lại',
+    'payroll_export_trans_key'                  => 'Xuất bảng lương',
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty của bạn',
     'energy_consumption_trans_key'             => 'Mức tiêu thụ năng lượng',
@@ -69,4 +71,5 @@ return [
     'internal_audits_trans_key'                => 'Internal Audits',
     'methods_overview_trans_key'               => 'Tổng quan phương pháp',
     'assets_trans_key'                         => 'Tài sản',
+    'skills_matrix_trans_key'                   => 'Ma trận kỹ năng',
 ];

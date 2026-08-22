@@ -2,12 +2,14 @@
 
 namespace App\Services\Files;
 
+use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Companies\Companies;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\Purchases;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\User;
 use App\Models\Workflow\CreditNotes;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
@@ -44,7 +46,43 @@ class FileableRegistry
         'purchase-receipt' => PurchaseReceipt::class,
         'stock-move' => StockMove::class,
         'non-conformity' => QualityNonConformity::class,
+        // Employee folder: confidential, see FilePolicy / self::CONFIDENTIAL.
+        'user' => User::class,
+        'employment-contract' => UserEmploymentContracts::class,
     ];
+
+    /**
+     * Aliases whose documents hold personal data. They are never readable by
+     * the whole factory: FilePolicy narrows them down to the employee
+     * concerned and to HR.
+     *
+     * @var array<int, string>
+     */
+    private const CONFIDENTIAL = [
+        'user',
+        'employment-contract',
+    ];
+
+    /**
+     * Does this alias carry personal data?
+     */
+    public static function isConfidential(string $alias): bool
+    {
+        return in_array($alias, self::CONFIDENTIAL, true);
+    }
+
+    /**
+     * Model classes holding personal data.
+     *
+     * @return array<int, class-string<Model>>
+     */
+    public static function confidentialClasses(): array
+    {
+        return array_values(array_map(
+            static fn (string $alias) => self::MAP[$alias],
+            self::CONFIDENTIAL
+        ));
+    }
 
     /**
      * @return array<int, string>

@@ -1010,6 +1010,21 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::put('/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->name('human.resources.update.user.contract');
         });
 
+        // Payroll variable elements export
+        Route::group(['prefix' => 'payroll', 'middleware' => ['permission:human-resources-menu']], function () {
+            Route::get('/export', 'App\Http\Controllers\HumanResources\PayrollExportController@index')->name('human.resources.payroll.export');
+            Route::post('/export/{ext}', 'App\Http\Controllers\HumanResources\PayrollExportController@export')->name('human.resources.payroll.export.download');
+        });
+
+        // Leave entitlements and balances
+        Route::group(['prefix' => 'leave', 'middleware' => ['permission:human-resources-menu']], function () {
+            Route::get('/balances', 'App\Http\Controllers\HumanResources\LeaveController@index')->name('human.resources.leave.balances');
+            Route::post('/balances', 'App\Http\Controllers\HumanResources\LeaveController@storeBalance')->name('human.resources.leave.balance.store');
+            Route::post('/balances/generate', 'App\Http\Controllers\HumanResources\LeaveController@generateBalances')->name('human.resources.leave.balance.generate');
+            Route::post('/types', 'App\Http\Controllers\HumanResources\LeaveController@storeType')->name('human.resources.leave.type.store');
+            Route::post('/types/{id}', 'App\Http\Controllers\HumanResources\LeaveController@updateType')->name('human.resources.leave.type.update');
+        });
+
         // Employment Contract
         Route::group(['prefix' => 'expense'], function () {
             // Create Expense category
@@ -1234,6 +1249,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::group(['prefix' => 'trainings'], function () {
             Route::get('/', 'App\Http\Controllers\OSH\TrainingsController@index')->name('osh.training');
+            // Versatility matrix - informative only, gates nothing
+            Route::get('/skills-matrix', 'App\Http\Controllers\OSH\SkillsMatrixController@index')->name('osh.skills.matrix');
+            Route::post('/types', 'App\Http\Controllers\OSH\SkillsMatrixController@storeType')->middleware('permission:osh-menu')->name('osh.training.type.store');
+            Route::post('/types/{id}', 'App\Http\Controllers\OSH\SkillsMatrixController@updateType')->middleware('permission:osh-menu')->name('osh.training.type.update');
             Route::post('/create', 'App\Http\Controllers\OSH\TrainingsController@store')->name('osh.training.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\OSH\TrainingsController@update')->name('osh.training.update');
         });

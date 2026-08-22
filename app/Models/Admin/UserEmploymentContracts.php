@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Methods\MethodsSection;
 use Illuminate\Database\Eloquent\Model;
@@ -45,5 +46,11 @@ class UserEmploymentContracts extends Model
     public function section()
     {
         return $this->belongsTo(MethodsSection::class);
+    }
+
+    // Signed contract, amendments... served through the unified document manager
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 }

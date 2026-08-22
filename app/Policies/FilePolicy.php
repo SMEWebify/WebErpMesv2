@@ -4,11 +4,15 @@ namespace App\Policies;
 
 use App\Models\File;
 use App\Models\User;
+use App\Services\Files\FileConfidentiality;
 
 /**
  * Documents are readable by any authenticated user of the factory — the routes
  * already carry the auth / verified / has.role / check.factory stack — but only
  * the uploader or an administrator may alter or remove one.
+ *
+ * Employee folder documents are the exception: FileConfidentiality narrows them
+ * down to the employee they belong to and to HR.
  */
 class FilePolicy
 {
@@ -27,7 +31,9 @@ class FilePolicy
 
     public function view(User $user, File $file): bool
     {
-        return true;
+        // Employee folder documents (contract, payslip, sick note) are personal
+        // data: only the employee concerned and HR may open them.
+        return FileConfidentiality::allowsFile($user, $file);
     }
 
     public function create(User $user): bool
@@ -37,12 +43,12 @@ class FilePolicy
 
     public function update(User $user, File $file): bool
     {
-        return $this->isOwner($user, $file);
+        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file);
     }
 
     public function delete(User $user, File $file): bool
     {
-        return $this->isOwner($user, $file);
+        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file);
     }
 
     /**

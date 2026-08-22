@@ -22,6 +22,7 @@ class StoreTrainingRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'training_type_id' => 'nullable|exists:training_types,id',
             'type_of_training' => 'required|string|max:255',
             'training_date' => 'required|date',
             'expiration_date' => 'nullable|date',

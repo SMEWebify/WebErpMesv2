@@ -82,6 +82,8 @@
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">{{__('general_content.hr_information_trans_key') }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contract" data-toggle="tab">{{__('general_content.contract_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#leave" data-toggle="tab">{{__('general_content.leave_balances_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#documents" data-toggle="tab">{{__('general_content.documents_trans_key') }}</a></li>
                 </ul>
             </div>
             <div class="card-body">
@@ -97,6 +99,16 @@
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
                                         <input type="text" class="form-control"  name="job_title" id="job_title" placeholder="{{ __('general_content.job_title_trans_key') }}" value="{{ $User->job_title }}">
+                                    </div>
+                                </div>
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="payroll_number">{{ __('general_content.payroll_matricule_trans_key') }} :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="payroll_number" id="payroll_number" maxlength="50" placeholder="{{ __('general_content.payroll_matricule_trans_key') }}" value="{{ $User->payroll_number }}">
                                     </div>
                                 </div>
                                 <!-- /.form-group -->
@@ -586,6 +598,27 @@
                             </div>
                         </div>
                         <!-- /.card-body -->
+                    </div>
+                    <div class="tab-pane" id="leave">
+                        <x-adminlte-card title="{{ __('general_content.leave_balances_trans_key') }} — {{ $LeaveSummary['period_label'] }}" theme="primary" maximizable>
+                            @include('include.leave-balance-table', [
+                                'summary' => $LeaveSummary,
+                                'balanceUserId' => $User->id,
+                                'balanceEditable' => true,
+                            ])
+                        </x-adminlte-card>
+                    </div>
+                    <div class="tab-pane" id="documents">
+                        <x-adminlte-card title="{{ __('general_content.documents_trans_key') }}" theme="primary" maximizable>
+                            <p class="text-muted">
+                                <i class="fas fa-lock"></i> {{ __('general_content.hr_documents_confidential_trans_key') }}
+                            </p>
+                            @include('include.file-manager-mount', [
+                                'fileableType' => 'user',
+                                'fileableId' => $User->id,
+                                'fileRoles' => \App\Services\Files\FileRole::forHumanResources(),
+                            ])
+                        </x-adminlte-card>
                     </div>
                 </div>
             </div>

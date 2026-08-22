@@ -17,6 +17,7 @@
                     <thead>
                         <tr>
                             <th>{{ __('general_content.user_trans_key') }}</th>
+                            <th>{{ __('general_content.training_type_trans_key') }}</th>
                             <th>{{ __('general_content.type_of_training_trans_key') }}</th>
                             <th>{{ __('general_content.training_date_trans_key') }}</th>
                             <th>{{ __('general_content.expiration_date_trans_key') }}</th>
@@ -28,6 +29,14 @@
                         @forelse ($trainings as $training)
                         <tr>
                             <td><img src="{{  Avatar::create($training->UserManagement['name'] ?? 'N/A')->toBase64() }}" alt="User Avatar"/></td>
+                            <td>
+                                @if($training->trainingType)
+                                    <span class="badge" style="background-color: {{ $training->trainingType->color ?? '#6c757d' }}">&nbsp;</span>
+                                    {{ $training->trainingType->code }}
+                                @else
+                                    <span class="text-muted">&mdash;</span>
+                                @endif
+                            </td>
                             <td>{{ $training->type_of_training }}</td>
                             <td>{{ $training->training_date }}</td>
                             <td>{{ $training->expiration_date }}</td>
@@ -46,6 +55,15 @@
                                             <div class="form-group">
                                                 <label for="type_of_training">{{ __('general_content.type_of_training_trans_key') }}</label>
                                                 <input type="text" class="form-control" name="type_of_training" id="type_of_training" value="{{ $training->type_of_training }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>{{ __('general_content.training_type_trans_key') }}</label>
+                                                <select class="form-control" name="training_type_id">
+                                                    <option value="">--</option>
+                                                    @foreach($trainingTypes as $trainingType)
+                                                        <option value="{{ $trainingType->id }}" @if($training->training_type_id == $trainingType->id) selected @endif>{{ $trainingType->code }} — {{ $trainingType->label }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <label for="training_date">{{ __('general_content.training_date_trans_key') }}</label>
@@ -81,12 +99,13 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}" />
+                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}" />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>{{ __('general_content.user_trans_key') }}</th>
+                            <th>{{ __('general_content.training_type_trans_key') }}</th>
                             <th>{{ __('general_content.type_of_training_trans_key') }}</th>
                             <th>{{ __('general_content.training_date_trans_key') }}</th>
                             <th>{{ __('general_content.expiration_date_trans_key') }}</th>
@@ -106,6 +125,15 @@
                 <div class="form-group">
                     <label for="type_of_training">{{ __('general_content.type_of_training_trans_key') }}</label>
                     <input type="text" class="form-control" name="type_of_training" id="type_of_training" placeholder="{{ __('general_content.type_of_training_trans_key') }}">
+                </div>
+                <div class="form-group">
+                    <label for="training_type_id">{{ __('general_content.training_type_trans_key') }}</label>
+                    <select class="form-control" name="training_type_id" id="training_type_id">
+                        <option value="">--</option>
+                        @foreach($trainingTypes as $trainingType)
+                            <option value="{{ $trainingType->id }}">{{ $trainingType->code }} — {{ $trainingType->label }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="training_date">{{ __('general_content.training_date_trans_key') }}</label>

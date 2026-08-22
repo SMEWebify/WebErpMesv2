@@ -66,6 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'driving_license_exp_date',
         'employment_status',
         'job_title',
+        'payroll_number',
         'pay_grade',
         'work_station_id',
         'address1', //crypt 
@@ -400,11 +401,23 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Define a one-to-many relationship with the File model.
+     * Documents attached to the employee folder (contract, sick note, diploma).
+     *
+     * Confidential: FilePolicy restricts them to the employee and to HR.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
+
+    /**
+     * Files this user uploaded, whatever entity they are attached to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function files()
+    public function uploadedFiles()
     {
         return $this->hasMany(File::class);
     }
