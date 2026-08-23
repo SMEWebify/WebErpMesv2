@@ -54,6 +54,9 @@
     'download_counting_file'   => __('general_content.download_counting_file_trans_key'),
     'entry_move'               => __('general_content.entry_move_trans_key'),
     'exit_move'                => __('general_content.exit_move_trans_key'),
+    'importing'                => __('general_content.importing_trans_key'),
+    'reimport_hint'            => __('general_content.reimport_hint_trans_key'),
+    'analysing'                => __('general_content.analysing_trans_key'),
     'locale'                   => str_replace('_', '-', config('app.locale')),
   ];
 @endphp

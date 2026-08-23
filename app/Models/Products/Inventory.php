@@ -53,6 +53,16 @@ class Inventory extends Model
         return $this->hasMany(InventoryDetail::class, 'inventory_id');
     }
 
+    /**
+     * The counting XLSX file lives in the shared GED via the fileable pivot,
+     * matching how quotes / orders / stock_moves already carry attachments.
+     * Required by FileStorageService::attach() during the import step.
+     */
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

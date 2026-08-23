@@ -79,7 +79,11 @@ export default function InventoryShow({ endpoints, trans }) {
                 setError(json.message ?? trans.errors_found);
                 return;
             }
-            setPreview(json);
+            // Import succeeded: clear the preview so BilanCard takes over
+            // and the operator does not see the "Confirmer l'import" button
+            // twice.
+            setPreview(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
             await reload();
         } catch (e) {
             setError(e.message);
@@ -137,7 +141,12 @@ export default function InventoryShow({ endpoints, trans }) {
 
     const statusMeta = STATUS_META[inventory.statu] ?? STATUS_META[1];
     const locked = inventory.statu === STATUS.VALIDATED || inventory.statu === STATUS.CANCELLED;
-    const importDone = inventory.statu === STATUS.EXPORTED || locked;
+    // "Import has been persisted" is derived from the summary, not from the
+    // statu column: statu=EXPORTED covers both "just exported, waiting for
+    // the file" and "file already imported", which are two different UI
+    // states. counted_lines > 0 disambiguates them.
+    const hasImportedCount = (summary?.counted_lines ?? 0) > 0;
+    const previewOk = preview && (preview.errors?.length ?? 0) === 0 && preview.summary;
 
     return (
         <div>
@@ -145,11 +154,11 @@ export default function InventoryShow({ endpoints, trans }) {
 
             <ContextCard inventory={inventory} statusMeta={statusMeta} trans={trans} endpoints={endpoints} />
 
-            {inventory.statu === STATUS.DRAFT && (
+            {!locked && inventory.statu === STATUS.DRAFT && (
                 <ExportStep endpoints={endpoints} trans={trans} />
             )}
 
-            {inventory.statu === STATUS.EXPORTED && !locked && (
+            {!locked && inventory.statu === STATUS.EXPORTED && (
                 <>
                     <ExportStep endpoints={endpoints} trans={trans} compact />
                     <ImportStep
@@ -157,6 +166,7 @@ export default function InventoryShow({ endpoints, trans }) {
                         busy={busy}
                         trans={trans}
                         onFileChosen={onFileChosen}
+                        alreadyImported={hasImportedCount}
                     />
                 </>
             )}
@@ -165,7 +175,7 @@ export default function InventoryShow({ endpoints, trans }) {
                 <ErrorsCard errors={preview.errors} trans={trans} />
             )}
 
-            {preview && preview.errors?.length === 0 && preview.summary && !importDone && (
+            {previewOk && !locked && (
                 <PreviewOkCard
                     summary={preview.summary}
                     trans={trans}
@@ -174,7 +184,7 @@ export default function InventoryShow({ endpoints, trans }) {
                 />
             )}
 
-            {importDone && summary && (
+            {(hasImportedCount || locked) && summary && (
                 <>
                     <BilanCard
                         summary={summary}
@@ -298,11 +308,14 @@ function ExportStep({ endpoints, trans, compact }) {
     );
 }
 
-function ImportStep({ fileInputRef, busy, trans, onFileChosen }) {
+function ImportStep({ fileInputRef, busy, trans, onFileChosen, alreadyImported }) {
     return (
         <div className="card mt-3">
             <div className="card-header">
                 <strong><i className="fas fa-file-upload mr-1"></i>{trans.import_step}</strong>
+                {alreadyImported && (
+                    <span className="badge badge-info ml-2">{trans.reimport_hint ?? 'Réimport possible'}</span>
+                )}
             </div>
             <div className="card-body">
                 <p className="mb-2">{trans.import_hint}</p>
@@ -321,6 +334,9 @@ function ImportStep({ fileInputRef, busy, trans, onFileChosen }) {
                 />
                 {busy === 'preview' && (
                     <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin mr-1"></i>{trans.analysing}</div>
+                )}
+                {busy === 'import' && (
+                    <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin mr-1"></i>{trans.importing ?? 'Import en cours…'}</div>
                 )}
             </div>
         </div>

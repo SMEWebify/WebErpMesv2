@@ -1676,6 +1676,8 @@ return [
     'created_by_trans_key'                          => 'Created by',
     'import_trans_key'                              => 'Import',
     'validated_at_trans_key'                        => 'Validated on',
+    'notes_trans_key'                               => 'Notes',
+    'unit_cost_trans_key'                           => 'Unit cost',
 
     // Inventory show UX (stepper + explanatory blocks)
     'step_draft_trans_key'                          => 'Creation',
@@ -1689,6 +1691,8 @@ return [
     'export_blind_tooltip_trans_key'                => 'The blind version hides Theoretical qty, Reserved qty, Cost and Variance columns - meant for shop-floor printing without bias.',
     'import_stock_change_warning_trans_key'         => 'If a stock movement occurred after the inventory creation, the import will be rejected with the list of affected products.',
     'analysing_trans_key'                           => 'Analysing…',
+    'importing_trans_key'                           => 'Importing…',
+    'reimport_hint_trans_key'                       => 'Re-import allowed',
     'errors_hint_trans_key'                         => 'Fix these errors in the XLSX file and re-upload. Only the first 50 errors are displayed.',
     'more_errors_trans_key'                         => 'more errors',
     'preview_ok_title_trans_key'                    => 'File valid - ready to import',

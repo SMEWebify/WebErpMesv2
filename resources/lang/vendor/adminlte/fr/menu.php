@@ -46,6 +46,7 @@ return [
     'stock_trans_key'                          => 'Stock',
     'stock_shortages_trans_key'                => 'Statut du stock',
     'inventory_trans_key'                      => 'Inventaire',
+    'inventories_trans_key'                    => 'Inventaires',
     'purchase_trans_key'                       => 'Acheter',
     'purchase_request_trans_key'               => 'Demande d\'achat',
     'requests_for_quotation_list_trans_key'    => 'Demandes de devis',

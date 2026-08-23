@@ -1676,6 +1676,8 @@ return [
     'created_by_trans_key'                          => 'Créé par',
     'import_trans_key'                              => 'Importer',
     'validated_at_trans_key'                        => 'Validé le',
+    'notes_trans_key'                               => 'Notes',
+    'unit_cost_trans_key'                           => 'Coût unitaire',
 
     // Inventory show UX (stepper + explanatory blocks)
     'step_draft_trans_key'                          => 'Création',
@@ -1689,6 +1691,8 @@ return [
     'export_blind_tooltip_trans_key'                => 'La version aveugle masque les colonnes Qté théorique, Qté réservée, Coût, Écart — à imprimer pour un comptage terrain sans biais.',
     'import_stock_change_warning_trans_key'         => 'Si un mouvement de stock a eu lieu depuis la création de l\'inventaire, l\'import sera rejeté avec la liste des produits concernés.',
     'analysing_trans_key'                           => 'Analyse en cours…',
+    'importing_trans_key'                           => 'Import en cours…',
+    'reimport_hint_trans_key'                       => 'Réimport possible',
     'errors_hint_trans_key'                         => 'Corrigez ces erreurs dans le fichier XLSX puis retentez l\'import. Les 50 premières erreurs sont affichées.',
     'more_errors_trans_key'                         => 'autres erreurs',
     'preview_ok_title_trans_key'                    => 'Fichier valide — prêt à importer',

@@ -4,6 +4,7 @@ namespace App\Services\Files;
 
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Companies\Companies;
+use App\Models\Products\Inventory;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseReceipt;
@@ -46,6 +47,8 @@ class FileableRegistry
         'purchase-receipt' => PurchaseReceipt::class,
         'stock-move' => StockMove::class,
         'non-conformity' => QualityNonConformity::class,
+        // Counting XLSX archived at inventory validation.
+        'inventory' => Inventory::class,
         // Employee folder: confidential, see FilePolicy / self::CONFIDENTIAL.
         'user' => User::class,
         'employment-contract' => UserEmploymentContracts::class,
