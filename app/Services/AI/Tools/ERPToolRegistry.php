@@ -15,11 +15,12 @@ use App\Services\AI\Tools\DailyJournalTool;
 class ERPToolRegistry
 {
     public function __construct(
-        private readonly OrderQueryTool   $orderTool,
-        private readonly StockQueryTool   $stockTool,
-        private readonly InvoiceQueryTool $invoiceTool,
-        private readonly QuoteQueryTool   $quoteTool,
-        private readonly DailyJournalTool $journalTool,
+        private readonly OrderQueryTool     $orderTool,
+        private readonly StockQueryTool     $stockTool,
+        private readonly InvoiceQueryTool   $invoiceTool,
+        private readonly QuoteQueryTool     $quoteTool,
+        private readonly DailyJournalTool   $journalTool,
+        private readonly UniversalQueryTool $queryTool,
     ) {}
 
     /**
@@ -33,6 +34,7 @@ class ERPToolRegistry
             InvoiceQueryTool::definition(),
             QuoteQueryTool::definition(),
             DailyJournalTool::definition(),
+            UniversalQueryTool::definition(),
         ];
     }
 
@@ -71,6 +73,7 @@ class ERPToolRegistry
             'get_daily_journal' => $this->journalTool->fetch(
                 date: $input['date'] ?? null,
             ),
+            'query'           => $this->queryTool->run($input),
             default => throw new InvalidArgumentException("Outil inconnu : {$toolName}"),
         };
     }

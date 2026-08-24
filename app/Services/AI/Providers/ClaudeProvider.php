@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Providers;
 
+use App\Services\AI\AISettingsResolver;
 use App\Services\AI\Contracts\AIProviderInterface;
 use App\Services\AI\DTOs\AIRequest;
 use App\Services\AI\DTOs\AIResponse;
@@ -10,12 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class ClaudeProvider implements AIProviderInterface
 {
-    private readonly array $config;
-
-    public function __construct()
-    {
-        $this->config = config('ai.providers.claude', []);
-    }
+    public function __construct(private readonly AISettingsResolver $settings) {}
 
     public function getName(): string
     {
@@ -24,15 +20,16 @@ class ClaudeProvider implements AIProviderInterface
 
     public function complete(AIRequest $request): AIResponse
     {
-        $apiKey = $this->config['api_key'] ?? null;
+        $config = $this->settings->claude();
+        $apiKey = $config['api_key'];
 
         if (empty($apiKey)) {
-            return AIResponse::failure('ANTHROPIC_API_KEY non configurée.', $this->getName());
+            return AIResponse::failure('Clé API Claude non configurée. Renseignez-la dans /admin/integrations/ai.', $this->getName());
         }
 
-        $model     = $request->model     ?? $this->config['default_model'];
-        $maxTokens = $request->maxTokens ?? $this->config['max_tokens'] ?? 1024;
-        $timeout   = $this->config['timeout'] ?? 30;
+        $model     = $request->model     ?? $config['model'];
+        $maxTokens = $request->maxTokens ?? $config['max_tokens'];
+        $timeout   = $config['timeout'];
 
         $payload = [
             'model'      => $model,
@@ -47,11 +44,11 @@ class ClaudeProvider implements AIProviderInterface
         try {
             $response = Http::withHeaders([
                 'x-api-key'         => $apiKey,
-                'anthropic-version' => $this->config['api_version'] ?? '2023-06-01',
+                'anthropic-version' => $this->settings->claudeApiVersion(),
                 'content-type'      => 'application/json',
             ])
             ->timeout($timeout)
-            ->post($this->config['api_url'] ?? 'https://api.anthropic.com/v1/messages', $payload);
+            ->post($this->settings->claudeEndpoint(), $payload);
 
             if ($response->failed()) {
                 $errorBody = $response->json('error.message', $response->body());

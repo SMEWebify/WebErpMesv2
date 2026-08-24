@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\AI\AIGateway;
+use App\Services\AI\AISettingsResolver;
 use App\Services\AI\Modules\ERPAssistantModule;
 use App\Services\AI\Providers\ClaudeProvider;
 use App\Services\AI\Providers\PythonMLProvider;
@@ -13,18 +14,23 @@ use App\Services\AI\Tools\OrderQueryTool;
 use App\Services\AI\Tools\DailyJournalTool;
 use App\Services\AI\Tools\QuoteQueryTool;
 use App\Services\AI\Tools\StockQueryTool;
+use App\Services\AI\Tools\UniversalQueryTool;
 use Illuminate\Support\ServiceProvider;
 
 class AIServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Resolver de config (DB → .env fallback)
+        $this->app->singleton(AISettingsResolver::class);
+
         // Tools
         $this->app->singleton(OrderQueryTool::class);
         $this->app->singleton(StockQueryTool::class);
         $this->app->singleton(InvoiceQueryTool::class);
         $this->app->singleton(QuoteQueryTool::class);
         $this->app->singleton(DailyJournalTool::class);
+        $this->app->singleton(UniversalQueryTool::class);
 
         $this->app->singleton(ERPToolRegistry::class, fn ($app) => new ERPToolRegistry(
             $app->make(OrderQueryTool::class),
@@ -32,14 +38,19 @@ class AIServiceProvider extends ServiceProvider
             $app->make(InvoiceQueryTool::class),
             $app->make(QuoteQueryTool::class),
             $app->make(DailyJournalTool::class),
+            $app->make(UniversalQueryTool::class),
         ));
 
         // Gateway avec tous les providers
         $this->app->singleton(AIGateway::class, function ($app) {
-            $gateway = new AIGateway();
-            $gateway->registerProvider(new ClaudeProvider());
+            $gateway  = new AIGateway();
+            $resolver = $app->make(AISettingsResolver::class);
+            $gateway->registerProvider(new ClaudeProvider($resolver));
             $gateway->registerProvider(new PythonMLProvider());
-            $gateway->registerProvider(new ToolAwareClaudeProvider($app->make(ERPToolRegistry::class)));
+            $gateway->registerProvider(new ToolAwareClaudeProvider(
+                $app->make(ERPToolRegistry::class),
+                $resolver,
+            ));
             return $gateway;
         });
 

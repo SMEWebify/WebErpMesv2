@@ -199,6 +199,60 @@
             </div>
         </div>
 
+        {{-- ─────────────────────────── Assistant IA ─────────────────────────── --}}
+        <div class="col-md-6">
+            <div class="card card-outline {{ $ai['configured'] && $ai['is_active'] ? 'card-success' : ($ai['configured'] ? 'card-secondary' : 'card-warning') }}">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-robot mr-1"></i> Assistant IA
+                    </h3>
+                    <div class="card-tools">
+                        @if(! $ai['configured'])
+                            <span class="badge badge-warning">Non configuré</span>
+                        @elseif(! $ai['is_active'])
+                            <span class="badge badge-secondary">Désactivé</span>
+                        @else
+                            <span class="badge badge-success">Actif</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Chat ERP en langage naturel — commandes, stock, factures, devis, requêtes ad hoc.
+                    </p>
+                    <dl class="row mb-0">
+                        <dt class="col-6">Provider</dt>
+                        <dd class="col-6"><code>{{ $ai['provider'] }}</code></dd>
+
+                        <dt class="col-6">Modèle</dt>
+                        <dd class="col-6">
+                            @if($ai['model'])
+                                <code>{{ $ai['model'] }}</code>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </dd>
+
+                        <dt class="col-6">Source de la clé</dt>
+                        <dd class="col-6">
+                            @if($ai['source'] === 'db')
+                                <span class="badge badge-success">Base</span>
+                            @else
+                                <span class="badge badge-warning" title="Encore lue depuis le .env — à migrer.">
+                                    .env (legacy)
+                                </span>
+                            @endif
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="{{ route('admin.integrations.ai.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> Configurer
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }}">

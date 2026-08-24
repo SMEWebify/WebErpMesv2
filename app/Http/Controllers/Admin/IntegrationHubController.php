@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Integrations\AISetting;
 use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
+use App\Services\AI\AISettingsResolver;
 use App\Services\Integrations\Pdp\PdpManager;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,7 +27,8 @@ use Illuminate\View\View;
 class IntegrationHubController extends Controller
 {
     public function __construct(
-        private PdpManager $pdp,
+        private PdpManager         $pdp,
+        private AISettingsResolver $aiResolver,
     ) {
     }
 
@@ -41,7 +44,25 @@ class IntegrationHubController extends Controller
             'pdp'       => $this->pdpCard(),
             'endpoints' => $this->endpointsCard(),
             'n8n'       => $this->n8nCard(),
+            'ai'        => $this->aiCard(),
         ]);
+    }
+
+    /**
+     * Assistant IA : provider actif, présence de la clé, source (DB ou .env legacy).
+     */
+    private function aiCard(): array
+    {
+        $resolved = $this->aiResolver->claude();
+        $row      = AISetting::current();
+
+        return [
+            'configured' => ! empty($resolved['api_key']),
+            'provider'   => $row->provider ?? $resolved['provider'],
+            'model'      => $resolved['model'],
+            'source'     => $resolved['source'], // 'db' | 'env'
+            'is_active'  => $row?->is_active ?? false,
+        ];
     }
 
     /**

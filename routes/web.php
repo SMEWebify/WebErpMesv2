@@ -930,6 +930,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/{endpoint}/deliveries',  [\App\Http\Controllers\Admin\IntegrationEndpointController::class, 'deliveries'])->name('deliveries');
         });
 
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/ai')->name('admin.integrations.ai.')->group(function () {
+            Route::get('/',              [\App\Http\Controllers\Admin\AISettingsController::class, 'index'])->name('index');
+            Route::put('/',              [\App\Http\Controllers\Admin\AISettingsController::class, 'update'])->name('update');
+            Route::post('/import-env',   [\App\Http\Controllers\Admin\AISettingsController::class, 'importFromEnv'])->name('import-env');
+            Route::post('/test',         [\App\Http\Controllers\Admin\AISettingsController::class, 'test'])->name('test');
+        });
+
         Route::middleware(['auth'])->prefix('integrations/qonto')->name('admin.integrations.qonto.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'index'])->name('index');
             Route::get('/connect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'connect'])->name('connect');
