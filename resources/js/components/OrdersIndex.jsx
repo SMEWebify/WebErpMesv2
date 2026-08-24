@@ -1027,13 +1027,25 @@ function CreateModal({ endpoints, trans, onClose }) {
         const addrUrl = endpoints.addresses.replace('__ID__', form.companies_id);
         const contUrl = endpoints.contacts.replace('__ID__', form.companies_id);
         Promise.all([apiFetch(addrUrl), apiFetch(contUrl)])
-            .then(([addr, cont]) => {
-                setAddressOptions(addr ?? []);
+            .then(([addrData, cont]) => {
+                const addr      = addrData?.addresses ?? addrData ?? [];
+                const docAddrId = addrData?.default_address_id ? String(addrData.default_address_id) : null;
+                const docCtctId = addrData?.default_contact_id ? String(addrData.default_contact_id) : null;
+                setAddressOptions(addr);
                 setContactOptions(cont ?? []);
+
+                const resolveId = (docId, list) => {
+                    if (docId && list.some(x => String(x.id) === docId)) return docId;
+                    const byDefault = list.find(x => x.default == 1);
+                    if (byDefault) return String(byDefault.id);
+                    if (list.length === 1) return String(list[0].id);
+                    return '';
+                };
+
                 setForm(f => ({
                     ...f,
-                    companies_addresses_id: addr?.[0]?.id ? String(addr[0].id) : '',
-                    companies_contacts_id:  cont?.[0]?.id ? String(cont[0].id) : '',
+                    companies_addresses_id: resolveId(docAddrId, addr),
+                    companies_contacts_id:  resolveId(docCtctId, cont ?? []),
                 }));
             })
             .catch(() => {});

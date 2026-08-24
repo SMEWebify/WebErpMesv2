@@ -83,6 +83,21 @@ export default function InvoicesRequest({
                 setContacts(data.contacts);
                 setLines(data.lines);
                 setSelected(new Set());
+
+                const resolveId = (defaultId, list) => {
+                    if (defaultId && list.some(x => x.id === defaultId)) return String(defaultId);
+                    if (list.length === 1) return String(list[0].id);
+                    return '';
+                };
+                setForm(f => {
+                    const keepIfStillValid = (current, list) =>
+                        current && list.some(x => String(x.id) === String(current)) ? current : null;
+                    const nextAddr = keepIfStillValid(f.companiesAddressesId, data.addresses ?? [])
+                        ?? resolveId(data.default_address_id, data.addresses ?? []);
+                    const nextCtct = keepIfStillValid(f.companiesContactsId, data.contacts ?? [])
+                        ?? resolveId(data.default_contact_id, data.contacts ?? []);
+                    return { ...f, companiesAddressesId: nextAddr, companiesContactsId: nextCtct };
+                });
             })
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -90,8 +105,6 @@ export default function InvoicesRequest({
 
     useEffect(() => {
         fetchLines();
-        // Reset address/contact when company changes
-        setForm(f => ({ ...f, companiesAddressesId: '', companiesContactsId: '' }));
     }, [form.companiesId]);
 
     useEffect(() => {

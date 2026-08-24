@@ -26,6 +26,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -429,20 +430,28 @@ class OrdersController extends Controller
 
     public function addressesJson(int $companyId)
     {
-        return response()->json(
-            CompaniesAddresses::select('id', 'label', 'adress')
-                ->where('companies_id', $companyId)
-                ->get()
-        );
+        $addresses = CompaniesAddresses::select('id', 'label', 'adress', 'default')
+            ->where('companies_id', $companyId)
+            ->get();
+
+        $docDefault = CompanyDocumentDefault::where('companies_id', $companyId)
+            ->where('document_type', 'order')
+            ->first();
+
+        return response()->json([
+            'addresses'          => $addresses,
+            'default_address_id' => $docDefault?->companies_addresses_id,
+            'default_contact_id' => $docDefault?->companies_contacts_id,
+        ]);
     }
 
     public function contactsJson(int $companyId)
     {
         return response()->json(
-            CompaniesContacts::select('id', 'first_name', 'name')
+            CompaniesContacts::select('id', 'first_name', 'name', 'default')
                 ->where('companies_id', $companyId)
                 ->get()
-                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name)])
+                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name), 'default' => $c->default])
         );
     }
 

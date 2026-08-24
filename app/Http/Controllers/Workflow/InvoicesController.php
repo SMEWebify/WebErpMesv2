@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\Companies;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Accounting\AccountingEntry;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Methods\MethodsUnits;
@@ -281,7 +282,19 @@ class InvoicesController extends Controller
         $lines = $this->invoiceDataService->getInvoiceRequestsLines($companyId, $dateStart, $dateEnd, 'id', true);
         $lines->load(['delivery:id,code,companies_id', 'OrderLine.order.companie:id,label', 'OrderLine.Unit:id,label', 'OrderLine.VAT:id,label']);
 
+        $defaults = $companyId ? CompanyDocumentDefault::forCompany($companyId)['invoice'] : ['contact_id' => null, 'address_id' => null];
+
+        $defaultAddressId = $defaults['address_id'] && $addresses->contains('id', $defaults['address_id'])
+            ? $defaults['address_id']
+            : null;
+
+        $defaultContactId = $defaults['contact_id'] && $contacts->contains('id', $defaults['contact_id'])
+            ? $defaults['contact_id']
+            : null;
+
         return response()->json([
+            'default_address_id' => $defaultAddressId,
+            'default_contact_id' => $defaultContactId,
             'addresses' => $addresses->map(fn($a) => [
                 'id'     => $a->id,
                 'label'  => $a->label,
