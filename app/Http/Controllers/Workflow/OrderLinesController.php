@@ -25,6 +25,7 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\OrderLineDetails;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\Products;
 use App\Models\Products\CustomerPriceList;
 use App\Models\Methods\MethodsUnits;
@@ -790,12 +791,18 @@ class OrderLinesController extends Controller
         $deliveryLineService= app(DeliveryLineService::class);
         $serialService      = app(SerialNumberService::class);
 
+        $invoiceRecipient = CompanyDocumentDefault::resolveFor(
+            $order->companies_id,
+            'invoice',
+            $order->companies_addresses_id,
+            $order->companies_contacts_id
+        );
         $invoice = $invoiceService->createInvoice(
             $invoiceCode,
             $order->label,
             $order->companies_id,
-            $order->companies_addresses_id,
-            $order->companies_contacts_id,
+            $invoiceRecipient['address_id'],
+            $invoiceRecipient['contact_id'],
             Auth::id(),
             $order->customer_reference
         );

@@ -39,6 +39,22 @@ class CompanyDocumentDefault extends Model
         return $result;
     }
 
+    /**
+     * Resolves the recipient (address, contact) for a document type on a company.
+     * Returns the preferred pair if set, otherwise the provided fallback IDs.
+     *
+     * @return array{address_id: ?int, contact_id: ?int}
+     */
+    public static function resolveFor(int $companiesId, string $type, ?int $fallbackAddressId = null, ?int $fallbackContactId = null): array
+    {
+        $defaults = self::forCompany($companiesId)[$type] ?? ['address_id' => null, 'contact_id' => null];
+
+        return [
+            'address_id' => $defaults['address_id'] ?? $fallbackAddressId,
+            'contact_id' => $defaults['contact_id'] ?? $fallbackContactId,
+        ];
+    }
+
     public function company()
     {
         return $this->belongsTo(Companies::class, 'companies_id');

@@ -491,12 +491,18 @@ class InvoicesController extends Controller
         $DeliveryData = Deliverys::find($id);
 
         $user = Auth::user();
+        $recipient = CompanyDocumentDefault::resolveFor(
+            $DeliveryData->companies_id,
+            'invoice',
+            $DeliveryData->companies_addresses_id,
+            $DeliveryData->companies_contacts_id
+        );
         $InvoiceCreated = $this->invoiceService->createInvoice(
             $code,
             $DeliveryData->label,
             $DeliveryData->companies_id,
-            $DeliveryData->companies_addresses_id,
-            $DeliveryData->companies_contacts_id,
+            $recipient['address_id'],
+            $recipient['contact_id'],
             $user->id,
             $DeliveryData->customer_reference
         );
