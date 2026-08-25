@@ -84,12 +84,13 @@ function Card({ title, theme, children }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyForm({ company: initial, users, endpoint, trans }) {
+export default function CompanyForm({ company: initial, users, endpoint, pdpLookupUrl, trans }) {
     const [form, setForm]       = useState({ ...initial });
     const [errors, setErrors]   = useState({});
     const [saving, setSaving]   = useState(false);
     const [success, setSuccess] = useState(null);
     const [warning, setWarning] = useState(null);
+    const [pdpLookup, setPdpLookup] = useState({ status: 'idle', message: '' });
 
     const set = (field) => (value) => {
         setForm(f => ({ ...f, [field]: value }));
@@ -102,6 +103,7 @@ export default function CompanyForm({ company: initial, users, endpoint, trans }
         const nullableFields = [
             'civility', 'last_name', 'website', 'fbsite', 'twittersite', 'lkdsite',
             'siren', 'naf_code', 'intra_community_vat',
+            'electronic_address', 'electronic_address_scheme',
             'discount', 'tolerance_days',
             'account_general_customer', 'account_auxiliary_customer',
             'account_general_supplier', 'account_auxiliary_supplier',
@@ -139,6 +141,60 @@ export default function CompanyForm({ company: initial, users, endpoint, trans }
     };
 
     const isIndividual = parseInt(form.client_type, 10) === 2;
+
+    // Consultation de l'annuaire PDP (BT-49). Fetch direct : endpoint GET
+    // avec ?siren=…, sans CSRF ni JSON body — pas d'apiFetch.
+    const handlePdpLookup = async () => {
+        const siren = (form.siren ?? '').trim();
+        if (!siren) {
+            setPdpLookup({ status: 'error', message: 'Renseignez d’abord le SIREN.' });
+            return;
+        }
+
+        setPdpLookup({ status: 'busy', message: 'Consultation de l’annuaire…' });
+
+        try {
+            const res  = await fetch(`${pdpLookupUrl}?siren=${encodeURIComponent(siren)}`, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                setPdpLookup({ status: 'error', message: data.message ?? 'Consultation impossible.' });
+                return;
+            }
+
+            const active = (data.entries ?? []).filter(e => e.is_active);
+            if (!active.length) {
+                setPdpLookup({
+                    status: 'warning',
+                    message: 'Ce client n’est pas encore inscrit à l’annuaire : demandez-lui son adresse.',
+                });
+                return;
+            }
+
+            // L'adresse est stockée sans son préfixe d'annuaire, porté à part
+            // par le champ « Annuaire ».
+            set('electronic_address')(active[0].identifier.replace(/^\d{4}:/, ''));
+            setPdpLookup({
+                status: 'success',
+                message: active.length > 1
+                    ? `${active.length} adresses trouvées, la première est reprise (${active[0].name ?? ''}).`
+                    : `Adresse trouvée${active[0].name ? ' — ' + active[0].name : ''}.`,
+            });
+        } catch {
+            setPdpLookup({ status: 'error', message: 'Erreur réseau.' });
+        }
+    };
+
+    const pdpLookupClass = {
+        idle:    'text-muted',
+        busy:    'text-muted',
+        success: 'text-success',
+        warning: 'text-warning',
+        error:   'text-danger',
+    }[pdpLookup.status];
 
     return (
         <form onSubmit={handleSubmit}>
@@ -319,6 +375,60 @@ export default function CompanyForm({ company: initial, users, endpoint, trans }
                                 placeholder={trans.vat_number}
                                 disabled={isIndividual}
                             />
+                        </Field>
+                    </div>
+                </div>
+            </Card>
+
+            {/* Electronic invoicing address (EN 16931, BT-49).
+                Vide, le SIREN sert de valeur par défaut : choix de la plupart
+                des entreprises françaises. */}
+            <Card title="Adresse électronique de facturation" theme="info">
+                <div className="row">
+                    <div className="col-md-2">
+                        <Field label="Annuaire" error={errors.electronic_address_scheme?.[0]}>
+                            <select
+                                className="form-control"
+                                value={form.electronic_address_scheme ?? '0225'}
+                                onChange={setVal('electronic_address_scheme')}
+                                disabled={isIndividual}
+                            >
+                                <option value="0225">0225 — France</option>
+                                <option value="0208">0208 — Belgique</option>
+                                <option value="0009">0009 — SIRET</option>
+                            </select>
+                        </Field>
+                    </div>
+                    <div className="col-md-6">
+                        <Field label="Adresse électronique" error={errors.electronic_address?.[0]}>
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className={`form-control ${errors.electronic_address ? 'is-invalid' : ''}`}
+                                    value={form.electronic_address ?? ''}
+                                    onChange={setVal('electronic_address')}
+                                    placeholder={form.siren || 'SIREN'}
+                                    disabled={isIndividual}
+                                />
+                                {pdpLookupUrl && (
+                                    <div className="input-group-append">
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-secondary"
+                                            onClick={handlePdpLookup}
+                                            disabled={pdpLookup.status === 'busy' || isIndividual}
+                                            title="Chercher dans l’annuaire officiel à partir du SIREN"
+                                        >
+                                            <i className={`fas ${pdpLookup.status === 'busy' ? 'fa-spinner fa-spin' : 'fa-search'}`} />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <small className={`form-text ${pdpLookupClass}`}>
+                                {pdpLookup.status === 'idle'
+                                    ? 'Vide = le SIREN fait office d’adresse.'
+                                    : pdpLookup.message}
+                            </small>
                         </Field>
                     </div>
                 </div>

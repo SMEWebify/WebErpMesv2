@@ -559,10 +559,11 @@ async function mountCompanyForm() {
 
     createRoot(element).render(
         React.createElement(CompanyForm, {
-            company:  parse('company')  ?? {},
-            users:    parse('users')    ?? [],
-            endpoint: element.dataset.endpoint ?? '',
-            trans:    parse('trans')    ?? {},
+            company:      parse('company') ?? {},
+            users:        parse('users')   ?? [],
+            endpoint:     element.dataset.endpoint ?? '',
+            pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
+            trans:        parse('trans')   ?? {},
         })
     );
 }
