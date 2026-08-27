@@ -149,7 +149,13 @@ class SetupController extends Controller
             'mail'    => 'nullable|email|max:255',
             'siren'   => 'nullable|string|max:20',
             'vat_num' => 'nullable|string|max:50',
-            'logo'    => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'logo'    => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif,webp',
+                'mimetypes:image/jpeg,image/png,image/gif,image/webp',
+                'max:2048',
+            ],
         ]);
 
         $update = [
@@ -168,13 +174,14 @@ class SetupController extends Controller
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
             }
-            $file     = $request->file('logo');
-            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+            $file      = $request->file('logo');
+            $extension = $file->guessExtension() ?: 'bin';
+            $filename  = 'logo_' . time() . '_' . uniqid() . '.' . $extension;
             $file->move($dir, $filename);
 
             $existing = Factory::first();
-            if ($existing?->picture && file_exists($dir . '/' . $existing->picture)) {
-                @unlink($dir . '/' . $existing->picture);
+            if ($existing?->picture && file_exists($dir . '/' . basename($existing->picture))) {
+                @unlink($dir . '/' . basename($existing->picture));
             }
 
             $update['picture'] = $filename;

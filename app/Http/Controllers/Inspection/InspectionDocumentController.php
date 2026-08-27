@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Inspection\InspectionDocument;
 use App\Models\Inspection\InspectionProject;
@@ -14,28 +15,31 @@ use App\Notifications\InspectionDocumentApprovalNotification;
 
 class InspectionDocumentController extends Controller
 {
+    private const STORAGE_DIRECTORY = 'inspection-documents';
+
     public function store(Request $request, $projectId)
     {
         $project = InspectionProject::findOrFail($projectId);
 
         $validated = $request->validate([
-            'file'          => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
+            'file'          => [
+                'required',
+                'file',
+                'mimes:pdf,png,jpg,jpeg',
+                'mimetypes:application/pdf,image/png,image/jpeg',
+                'max:10240',
+            ],
             'type'          => ['nullable', 'in:plan,spec,photo,other'],
             'version_label' => ['nullable', 'string', 'max:50'],
         ]);
 
         $file = $validated['file'];
         $originalName = $file->getClientOriginalName();
-        $mime = $file->getClientMimeType();
-        $extension = $file->getClientOriginalExtension();
+        $mime = $file->getMimeType();
+        $extension = $file->guessExtension() ?: 'bin';
         $fileName = Auth::id() . '_' . Str::uuid()->toString() . '.' . $extension;
 
-        $directory = public_path('inspection-documents');
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        $file->move($directory, $fileName);
+        Storage::disk('local')->putFileAs(self::STORAGE_DIRECTORY, $file, $fileName);
 
         // Obsolète les documents approuvés du même projet/type avant d'en créer un nouveau
         InspectionDocument::where('inspection_project_id', $project->id)
@@ -46,7 +50,7 @@ class InspectionDocumentController extends Controller
         $document = InspectionDocument::create([
             'inspection_project_id' => $project->id,
             'type'                  => $validated['type'] ?? 'plan',
-            'file_path'             => 'inspection-documents/' . $fileName,
+            'file_path'             => self::STORAGE_DIRECTORY . '/' . $fileName,
             'file_name'             => $originalName,
             'mime'                  => $mime,
             'version_label'         => $validated['version_label'] ?? null,
@@ -54,6 +58,18 @@ class InspectionDocumentController extends Controller
         ]);
 
         return response()->json($document, 201);
+    }
+
+    public function download($documentId)
+    {
+        $document = InspectionDocument::findOrFail($documentId);
+        $path = self::STORAGE_DIRECTORY . '/' . basename($document->file_path);
+
+        if (!Storage::disk('local')->exists($path)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->download($path, $document->file_name);
     }
 
     public function submit($documentId)

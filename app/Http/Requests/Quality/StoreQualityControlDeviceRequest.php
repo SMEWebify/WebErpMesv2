@@ -28,7 +28,7 @@ class StoreQualityControlDeviceRequest extends FormRequest
             'code' =>'required|unique:quality_control_devices',
             'label'=>'required',
             'serial_number'=>'required|unique:quality_control_devices',
-            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif,webp|mimetypes:image/jpeg,image/png,image/gif,image/webp|max:10240',
             'service_id'=>'required',
             'user_id' => 'required',
             'calibrated_at' => 'nullable|date',

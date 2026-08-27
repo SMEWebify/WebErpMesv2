@@ -1097,6 +1097,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'device'], function () {
             Route::post('/create', 'App\Http\Controllers\Quality\QualityControlDeviceController@store')->name('quality.device.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@update')->name('quality.device.update');
+            Route::get('/picture/{filename}', 'App\Http\Controllers\Quality\QualityControlDeviceController@servePicture')
+                ->where('filename', '[A-Za-z0-9._-]+')
+                ->name('quality.device.picture');
         });
     
         // Routes for NonConformitie
@@ -1167,6 +1170,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
         Route::put('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@update')->name('inspection.projects.update');
         Route::post('/{id}/documents', 'App\Http\Controllers\Inspection\InspectionDocumentController@store')->name('inspection.projects.documents.store');
+        Route::get('/documents/{id}/download', 'App\Http\Controllers\Inspection\InspectionDocumentController@download')->name('inspection.documents.download');
         Route::post('/documents/{id}/submit', 'App\Http\Controllers\Inspection\InspectionDocumentController@submit')->name('inspection.documents.submit');
         Route::post('/documents/{id}/approve', 'App\Http\Controllers\Inspection\InspectionDocumentController@approve')->name('inspection.documents.approve');
         Route::post('/documents/{id}/obsolete', 'App\Http\Controllers\Inspection\InspectionDocumentController@obsolete')->name('inspection.documents.obsolete');
