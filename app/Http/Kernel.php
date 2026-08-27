@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
         'check.factory'           => \App\Http\Middleware\CheckFactory::class,
+        'setup.open'              => \App\Http\Middleware\BlockOnceFactoryConfigured::class,
         'has.role'                => \App\Http\Middleware\CheckUserRole::class,
         'check.task.status'       => \App\Http\Middleware\CheckTaskStatus::class,
         'customer'                => \App\Http\Middleware\EnsureCustomerIsAuthenticated::class,

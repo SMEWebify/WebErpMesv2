@@ -70,7 +70,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/pending-role', fn () => view('pending-role'))->middleware(['auth', 'verified'])->name('pending.role');
 
     // --- Setup wizard (installation initiale) ---
-    Route::middleware(['auth'])->prefix('setup')->name('setup.')->group(function () {
+    // setup.open ferme les endpoints dès que Factory + comptes de base sont créés,
+    // pour qu'un utilisateur post-install ne puisse pas ré-écrire la config société.
+    Route::middleware(['auth', 'setup.open'])->prefix('setup')->name('setup.')->group(function () {
         Route::get('/',                    'App\Http\Controllers\Setup\SetupController@index')->name('index');
         Route::post('/company',            'App\Http\Controllers\Setup\SetupController@saveCompany')->name('company');
         Route::post('/vat',                'App\Http\Controllers\Setup\SetupController@saveVat')->name('vat');
