@@ -929,6 +929,18 @@ return [
                     'icon_color' => 'secondary',
                 ],
                 [
+                    'text'       => 'mail_config_menu_trans_key',
+                    'url'        => 'admin/integrations/mail',
+                    'icon'       => 'fas fa-envelope',
+                    'icon_color' => 'primary',
+                ],
+                [
+                    'text'       => 'email_logs_trans_key',
+                    'url'        => 'admin/email-logs',
+                    'icon'       => 'fas fa-history',
+                    'icon_color' => 'secondary',
+                ],
+                [
                     'text' => 'energy_consumption_trans_key',
                     'url'  => 'energy-consumptions',
                     'icon_color' => 'success',

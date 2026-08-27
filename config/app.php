@@ -179,6 +179,7 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\AIServiceProvider::class,
+        App\Providers\MailSettingsServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,

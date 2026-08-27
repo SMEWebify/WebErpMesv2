@@ -105,6 +105,8 @@ return [
     'workflow_settings_trans_key'              => 'Flux des Tâches',
     'estimated_budget_trans_key'               => 'Objectif de chiffre',
     'template_mail_trans_key'                  => 'Template de mail',
+    'mail_config_menu_trans_key'               => 'Configuration e-mail',
+    'email_logs_trans_key'                     => 'Journal des e-mails',
     'energy_consumption_trans_key'             => "Consommation d'énergie",
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',

@@ -253,6 +253,75 @@
             </div>
         </div>
 
+        {{-- ──────────────────────── Envoi d'e-mail (SMTP) ─────────────────────── --}}
+        <div class="col-md-6">
+            <div class="card card-outline {{ $mail['configured'] && $mail['is_active'] ? 'card-success' : ($mail['configured'] ? 'card-secondary' : 'card-warning') }}">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-envelope mr-1"></i> Envoi d'e-mail
+                    </h3>
+                    <div class="card-tools">
+                        @if(! $mail['configured'])
+                            <span class="badge badge-warning">Non configuré</span>
+                        @elseif(! $mail['is_active'])
+                            <span class="badge badge-secondary">Désactivé</span>
+                        @else
+                            <span class="badge badge-success">Actif</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Serveur SMTP, expéditeur des documents et journal des envois.
+                    </p>
+                    <dl class="row mb-0">
+                        <dt class="col-6">Serveur</dt>
+                        <dd class="col-6">
+                            @if($mail['host'])
+                                <code>{{ $mail['host'] }}</code>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </dd>
+
+                        <dt class="col-6">Expéditeur</dt>
+                        <dd class="col-6">
+                            @if($mail['from'])
+                                <code>{{ $mail['from'] }}</code>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </dd>
+
+                        <dt class="col-6">Source</dt>
+                        <dd class="col-6">
+                            @if($mail['source'] === 'db')
+                                <span class="badge badge-success">Base</span>
+                            @else
+                                <span class="badge badge-warning" title="Encore lue depuis le .env — à migrer.">.env (legacy)</span>
+                            @endif
+                        </dd>
+
+                        <dt class="col-6">Dernières 24 h</dt>
+                        <dd class="col-6">
+                            <span class="badge badge-success mr-1">{{ $mail['sent_24h'] }} envoyés</span>
+                            @if($mail['failed_24h'] > 0)
+                                <span class="badge badge-danger">{{ $mail['failed_24h'] }} échecs</span>
+                            @endif
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="{{ route('admin.email-logs.index') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-history"></i> Journal
+                    </a>
+                    <a href="{{ route('admin.integrations.mail.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> Configurer
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }}">

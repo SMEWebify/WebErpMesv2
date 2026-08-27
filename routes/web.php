@@ -937,6 +937,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/test',         [\App\Http\Controllers\Admin\AISettingsController::class, 'test'])->name('test');
         });
 
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/mail')->name('admin.integrations.mail.')->group(function () {
+            Route::get('/',    [\App\Http\Controllers\Admin\MailSettingsController::class, 'index'])->name('index');
+            Route::put('/',    [\App\Http\Controllers\Admin\MailSettingsController::class, 'update'])->name('update');
+            Route::post('/test', [\App\Http\Controllers\Admin\MailSettingsController::class, 'test'])->name('test');
+        });
+
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('email-logs')->name('admin.email-logs.')->group(function () {
+            Route::get('/',        [\App\Http\Controllers\Admin\EmailLogsController::class, 'index'])->name('index');
+            Route::get('/{log}',   [\App\Http\Controllers\Admin\EmailLogsController::class, 'show'])->name('show');
+            Route::post('/{log}/resend', [\App\Http\Controllers\Admin\EmailLogsController::class, 'resend'])->name('resend');
+        });
+
         Route::middleware(['auth'])->prefix('integrations/qonto')->name('admin.integrations.qonto.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'index'])->name('index');
             Route::get('/connect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'connect'])->name('connect');
@@ -1273,6 +1285,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/{type}/{id}/email', 'App\Http\Controllers\EmailController@create')->name('email.create');
     Route::post('/{type}/{id}/email', 'App\Http\Controllers\EmailController@send')->name('email.send');
+    Route::get('/{type}/{id}/email/preview.pdf', 'App\Http\Controllers\EmailController@previewPdf')->name('email.preview-pdf');
 
     Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
     Route::post('upload-photo', 'App\Http\Controllers\FileUpload@photoUpload')->middleware(['auth'])->name('photo.store');

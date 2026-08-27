@@ -154,7 +154,13 @@ $invoiceSteps = [
                     @if(config('mail.default') && config('mail.from.address'))
                     <tr>
                       <td style="width:50%">{{ __('general_content.email_trans_key') }}</td>
-                      <td><x-ButtonTextEmail route="{{ route('email.create', ['type' => 'invoice', 'id' => $Invoice->id]) }}" /></td>
+                      <td>
+                        @if($Invoice->statu === 1)
+                            <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} - {{ __('general_content.invoice_draft_no_email_short_trans_key') }}</span>
+                        @else
+                            <x-ButtonTextEmail route="{{ route('email.create', ['type' => 'invoice', 'id' => $Invoice->id]) }}" />
+                        @endif
+                      </td>
                     </tr>
                     @endif
                 </table>

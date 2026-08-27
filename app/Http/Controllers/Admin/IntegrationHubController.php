@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmailLog;
 use App\Models\Integrations\AISetting;
 use App\Models\Integrations\IntegrationEndpoint;
+use App\Models\Integrations\MailSetting;
 use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
 use App\Services\AI\AISettingsResolver;
 use App\Services\Integrations\Pdp\PdpManager;
+use App\Services\Mail\MailSettingsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -27,8 +30,9 @@ use Illuminate\View\View;
 class IntegrationHubController extends Controller
 {
     public function __construct(
-        private PdpManager         $pdp,
-        private AISettingsResolver $aiResolver,
+        private PdpManager          $pdp,
+        private AISettingsResolver  $aiResolver,
+        private MailSettingsService $mailService,
     ) {
     }
 
@@ -45,7 +49,28 @@ class IntegrationHubController extends Controller
             'endpoints' => $this->endpointsCard(),
             'n8n'       => $this->n8nCard(),
             'ai'        => $this->aiCard(),
+            'mail'      => $this->mailCard(),
         ]);
+    }
+
+    /**
+     * SMTP : rapport de santé — configuré ou non, source (DB / .env), et
+     * combien d'échecs récents pour signaler un incident silencieux.
+     */
+    private function mailCard(): array
+    {
+        $resolved = $this->mailService->resolved();
+        $setting  = MailSetting::current();
+
+        return [
+            'configured'  => ! empty($resolved['host']),
+            'source'      => $resolved['source'],       // 'db' | 'env'
+            'is_active'   => $setting?->is_active ?? false,
+            'host'        => $resolved['host'],
+            'from'        => $resolved['from_address'],
+            'failed_24h'  => EmailLog::where('status', 'failed')->where('created_at', '>=', now()->subDay())->count(),
+            'sent_24h'    => EmailLog::where('status', 'sent')->where('created_at', '>=', now()->subDay())->count(),
+        ];
     }
 
     /**

@@ -105,6 +105,8 @@ return [
     'workflow_settings_trans_key'              => 'Task Workflow',
     'estimated_budget_trans_key'               => 'Estimated budget',
     'template_mail_trans_key'                  => 'Template mail',
+    'mail_config_menu_trans_key'               => 'Email settings',
+    'email_logs_trans_key'                     => 'Email log',
     'energy_consumption_trans_key'             => 'Energy consumption',
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',

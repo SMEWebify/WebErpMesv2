@@ -2,68 +2,73 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 
+/**
+ * Mail d'envoi d'un document (devis / commande / facture…).
+ *
+ * L'expéditeur, le reply-to, la pièce jointe manuelle et le PDF auto-généré
+ * sont fournis par EmailController : le mailable n'est qu'un porteur, il ne
+ * décide plus rien tout seul (avant, le "from" était figé sur .env, ce qui
+ * empêchait de configurer un expéditeur par instance).
+ */
 class DocumentMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    public function __construct(
+        public $document,
+        public string $subjectText,
+        public string $messageContent,
+        public string $fromAddress,
+        public string $fromName,
+        public ?string $replyToAddress = null,
+        public ?string $replyToName = null,
+        public ?string $manualAttachmentPath = null,
+        public ?string $manualAttachmentName = null,
+        public ?string $pdfBytes = null,
+        public ?string $pdfFileName = null,
+    ) {}
 
-    public $document;
-    public $data;
-    public $attachmentPath;
-
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($document, $data)
-    {
-        $this->document = $document;
-        $this->data = $data;
-        $this->attachmentPath = $data['attachment'] ?? null;
-    }
-
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: $this->data['subject'],
+        $envelope = new Envelope(
+            from:    new Address($this->fromAddress, $this->fromName),
+            replyTo: $this->replyToAddress
+                ? [new Address($this->replyToAddress, $this->replyToName ?: $this->replyToAddress)]
+                : [],
+            subject: $this->subjectText,
         );
+
+        return $envelope;
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             view: 'emails.document',
             with: [
-                'messageContent' => $this->data['message'],
-                'document' => $this->document
+                'messageContent' => $this->messageContent,
+                'document'       => $this->document,
             ],
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
+    /** @return array<int, Attachment> */
     public function attachments(): array
     {
         $attachments = [];
 
-        if ($this->attachmentPath) {
-            $attachments[] = Attachment::fromPath(storage_path('app/' . $this->attachmentPath));
+        if ($this->pdfBytes !== null) {
+            $attachments[] = Attachment::fromData(fn () => $this->pdfBytes, $this->pdfFileName ?? 'document.pdf')
+                ->withMime('application/pdf');
+        }
+
+        if ($this->manualAttachmentPath !== null) {
+            $attachments[] = Attachment::fromPath(storage_path('app/' . $this->manualAttachmentPath))
+                ->as($this->manualAttachmentName ?? basename($this->manualAttachmentPath));
         }
 
         return $attachments;

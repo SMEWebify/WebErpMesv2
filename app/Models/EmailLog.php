@@ -9,15 +9,33 @@ class EmailLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['to', 'subject', 'message', 'attachment'];
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_SENT    = 'sent';
+    public const STATUS_FAILED  = 'failed';
+
+    protected $fillable = [
+        'to',
+        'subject',
+        'message',
+        'attachment',
+        'attachment_original_name',
+        'status',
+        'sent_at',
+        'error',
+        'sent_by_user_id',
+    ];
+
+    protected $casts = [
+        'sent_at' => 'datetime',
+    ];
 
     public function emailable()
     {
         return $this->morphTo();
     }
 
-    public function emailLogs()
+    public function sender()
     {
-        return $this->morphMany(EmailLog::class, 'emailable');
+        return $this->belongsTo(\App\Models\User::class, 'sent_by_user_id');
     }
 }
