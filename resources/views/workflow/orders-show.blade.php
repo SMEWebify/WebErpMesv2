@@ -338,8 +338,12 @@ if (!$orderHasInvoicedLines) {
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     @php
-                      $nest2prodEnabled = (bool) app(\App\Services\Settings\SettingsService::class)->get('n2p_enabled', false);
-                      $nest2prodUrl = rtrim((string) app(\App\Services\Settings\SettingsService::class)->get('n2p_base_url'), '/');
+                      $nest2prodEndpoint = \App\Models\Integrations\IntegrationEndpoint::query()
+                        ->forSystem('n2p')
+                        ->outbound()
+                        ->active()
+                        ->first();
+                      $nest2prodUrl = $nest2prodEndpoint ? rtrim((string) $nest2prodEndpoint->url, '/') : '';
                     @endphp
                     @if($Order->type == 1)
                     <tr>
@@ -394,7 +398,7 @@ if (!$orderHasInvoicedLines) {
                         </form>
                       </td>
                     </tr>
-                    @if($Order->statu != 1 && $nest2prodEnabled && $nest2prodUrl !== '')
+                    @if($Order->statu != 1 && $nest2prodUrl !== '')
                     <tr>
                       <td style="width:50%">Nest2Prod</td>
                       <td>
