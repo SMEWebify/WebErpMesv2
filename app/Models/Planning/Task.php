@@ -614,7 +614,8 @@ class Task extends Model
      */
     public function getTotalRealizedCost()
     {
-        return   round($this->getTotalLogTime()*$this->service->hourly_rate,2);
+        $hourlyRate = (float) ($this->service->hourly_rate ?? 0);
+        return round($this->getTotalLogTime() * $hourlyRate, 2);
     }
 
     /**
