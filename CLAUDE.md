@@ -224,6 +224,74 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Nesting (imbrication tôle)
+
+Deux moteurs coexistent derrière la même interface `/nesting`. Le back décide,
+le front s'adapte — pas de bouton séparé, l'utilisateur ne sait même pas quel
+moteur tourne.
+
+### Sélection du moteur
+- **Shelf packing local** (défaut, open source) — algorithme rectangulaire
+  côté navigateur (`resources/js/components/NestingPage.jsx nestSheets()`).
+  Chaque pièce est placée sur sa bounding box ; le rendu SVG en forme exacte
+  (contour reconstruit à partir des LINE, cercles creusés en evenodd)
+  n'améliore que le visuel, pas le calcul.
+- **NestEngine** (payant, forme exacte) — moteur NFP + algorithme génétique
+  déployé localement à côté de Laravel. Actif si :
+  ```
+  APP_COMMERCIAL=true
+  NESTENGINE_URL=http://127.0.0.1:8000
+  ```
+  `NestingController::dispatchNestEngineJobs()` copie les DXF de la GED dans
+  `NESTENGINE_INPUTS_DIR`, POSTe un job v1 par groupe (matière+épaisseur),
+  puis le front poll `/nesting/engine/status/{jobId}` toutes les 2 s et
+  affiche les preview SVG servies par `/nesting/engine/preview/{jobId}/{n}`.
+
+### Déploiement du service NestEngine local (Windows + NSSM)
+
+Le moteur tourne dans un `venv` Python + uvicorn, encapsulé par NSSM pour
+survivre aux redémarrages. Pas de Docker requis (cf. mémoire
+`project_windows_prod.md`).
+
+```powershell
+# 1. Installation
+cd C:\services\NestEngine
+python -m venv .venv
+.venv\Scripts\pip install -r requirements-api.txt
+
+# 2. NSSM
+nssm install NestEngine "C:\services\NestEngine\.venv\Scripts\python.exe"
+nssm set NestEngine AppParameters "-m uvicorn api.main:app --host 127.0.0.1 --port 8000"
+nssm set NestEngine AppDirectory "C:\services\NestEngine"
+nssm set NestEngine AppEnvironmentExtra ^
+    NEST_INPUTS_DIR=C:\laragon\www\WebErpMesv2\storage\app\nesting-inputs ^
+    NEST_JOBS_DIR=C:\services\NestEngine\jobs ^
+    NEST_RETENTION_HOURS=24
+nssm start NestEngine
+```
+
+Sanity check : `curl http://127.0.0.1:8000/healthz` retourne `{"status":"ok"}`.
+
+### Variables `.env` côté Laravel
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `APP_COMMERCIAL` | `false` | Master switch du mode payant (déjà existant, gate global) |
+| `NESTENGINE_URL` | *(vide)* | Point d'entrée HTTP du service NestEngine local |
+| `NESTENGINE_TIMEOUT` | `120` | Timeout HTTP (s) — un job peut durer 60 s |
+| `NESTENGINE_ROTATIONS` | `36` | Nb d'orientations testées (36 = tous les 10°) |
+| `NESTENGINE_SPACING` | `5` | Marge entre pièces (mm, laser kerf compris) |
+| `NESTENGINE_MAX_SHEETS` | `50` | Plafond de tôles par job |
+| `NESTENGINE_INPUTS_DIR` | `storage/app/nesting-inputs` | Dossier de travail partagé Laravel↔NestEngine |
+
+### Retour arrière et diagnostic
+- Si NestEngine est injoignable au moment du POST /compute, `dispatchNestEngineJobs()`
+  loggue un warning et retombe silencieusement sur le shelf packer — l'utilisateur
+  voit toujours un résultat.
+- Le format tôle envoyé à NestEngine est résolu par `resolveSheetFormat()` :
+  produit stock exact → même matière → plus grande dispo → 3000×1500 en dernier
+  recours. À affiner via l'écran stock quand le multi-format (`/v2/jobs`) sera
+  branché.
+
 ## Facturation électronique (PDP)
 
 Réforme française : réception obligatoire pour toutes les entreprises au **1er septembre 2026**.

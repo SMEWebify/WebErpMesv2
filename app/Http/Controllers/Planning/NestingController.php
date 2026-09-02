@@ -11,7 +11,11 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Services\Files\FileKindResolver;
+use App\Services\Integrations\NestEngine\NestEngineClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class NestingController extends Controller
 {
@@ -231,29 +235,35 @@ class NestingController extends Controller
             ->groupBy('order_lines_id')
             ->map->first();
 
-        // DXF/SVG files attached to products (priority 1). We look at the file
-        // kind rather than the business role: a DXF is a DXF whether the user
-        // classified it as "plan" or "vectoriel".
+        // DXF/SVG files attached to products or order lines. All candidates are
+        // returned to the front-end; the browser tries them in order until one
+        // parses to a real geometry. SVG is preferred: the flat-pattern export
+        // holds only the cutting contour, whereas DXF often carries bend lines
+        // on dedicated layers that poison the outer-loop reconstruction.
+        $cadKinds = [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR];
+        $kindOrder = "FIELD(files.kind, '" . FileKindResolver::KIND_VECTOR . "', '" . FileKindResolver::KIND_CAD2D . "')";
+
         $productFiles = $productIds->isEmpty() ? collect() : File::query()
             ->join('fileables', 'fileables.file_id', '=', 'files.id')
             ->whereIn('fileables.fileable_id', $productIds)
             ->where('fileables.fileable_type', Products::class)
-            ->whereIn('files.kind', [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR])
+            ->whereIn('files.kind', $cadKinds)
+            ->orderByRaw($kindOrder)
+            ->orderBy('files.id')
             ->select('files.*', 'fileables.fileable_id as _entity_id')
             ->get()
-            ->groupBy('_entity_id')
-            ->map->first();
+            ->groupBy('_entity_id');
 
-        // DXF/SVG files attached to order lines (fallback)
         $lineFiles = $lineIds->isEmpty() ? collect() : File::query()
             ->join('fileables', 'fileables.file_id', '=', 'files.id')
             ->whereIn('fileables.fileable_id', $lineIds)
             ->where('fileables.fileable_type', OrderLines::class)
-            ->whereIn('files.kind', [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR])
+            ->whereIn('files.kind', $cadKinds)
+            ->orderByRaw($kindOrder)
+            ->orderBy('files.id')
             ->select('files.*', 'fileables.fileable_id as _entity_id')
             ->get()
-            ->groupBy('_entity_id')
-            ->map->first();
+            ->groupBy('_entity_id');
 
         $servicesMap     = [];
         $missingGeometry = [];
@@ -345,12 +355,12 @@ class NestingController extends Controller
                 continue;
             }
 
-            $file  = $lineFiles[$line->id] ?? $productFiles[$line->product_id] ?? null;
+            $files = $lineFiles[$line->id] ?? $productFiles[$line->product_id] ?? collect();
             $xLine = (float) ($details?->x_size ?? 0);
             $yLine = (float) ($details?->y_size ?? 0);
             $hasLineDims = $xLine > 0 && $yLine > 0;
 
-            if (!$hasLineDims && !$file) {
+            if (!$hasLineDims && $files->isEmpty()) {
                 $missingGeometry[] = $entry + [
                     'material'  => $material,
                     'thickness' => $thickness,
@@ -369,12 +379,14 @@ class NestingController extends Controller
             }
 
             $servicesMap[$sid]['groups'][$gkey]['pieces'][] = $entry + [
-                'x_line'    => $xLine,
-                'y_line'    => $yLine,
-                'file_id'   => $file?->id,
-                'file_ext'  => $file?->extension,
-                'file_kind' => $file?->kind,
-                'file_url'  => $file ? route('files.raw', ['file' => $file->id]) : null,
+                'x_line' => $xLine,
+                'y_line' => $yLine,
+                'files'  => $files->map(fn ($f) => [
+                    'file_id'   => $f->id,
+                    'file_ext'  => $f->extension,
+                    'file_kind' => $f->kind,
+                    'file_url'  => route('files.raw', ['file' => $f->id]),
+                ])->values(),
             ];
         }
 
@@ -384,7 +396,20 @@ class NestingController extends Controller
             return $svc;
         }, $servicesMap));
 
+        // If NestEngine is enabled and reachable, dispatch one nesting job per
+        // sheet group. Each group carries back its `job_id` and the sheet size
+        // used; the front polls those jobs and displays SVG previews instead
+        // of running its local shelf packer.
+        $engine = 'shelf';
+        if (config('services.nestengine.enabled')) {
+            $dispatched = $this->dispatchNestEngineJobs($services);
+            if ($dispatched) {
+                $engine = 'nestengine';
+            }
+        }
+
         return response()->json([
+            'engine'           => $engine,
             'services'         => $services,
             'missing_geometry' => $missingGeometry,
             'missing_material' => $missingMaterial,
@@ -395,6 +420,270 @@ class NestingController extends Controller
                 'include_open'    => $includeOpen,
             ],
         ]);
+    }
+
+    /**
+     * For each sheet group, copy the DXF files of every piece into a shared
+     * inputs directory and POST a NestEngine v1 job. Enriches each group with
+     * `job_id`, `sheet_format` and `parts_prepared`.
+     *
+     * Returns true if at least one job was dispatched; false if NestEngine is
+     * unreachable or nothing had a usable DXF (in that case we let the front
+     * fall back to the shelf packer).
+     */
+    private function dispatchNestEngineJobs(array &$services): bool
+    {
+        try {
+            $client = NestEngineClient::fromConfig();
+        } catch (\Throwable $e) {
+            Log::warning('NestEngine désactivé (config)', ['error' => $e->getMessage()]);
+            return false;
+        }
+
+        if (!$client->isReachable()) {
+            Log::warning('NestEngine injoignable — bascule shelf', ['url' => config('services.nestengine.url')]);
+            return false;
+        }
+
+        $inputsRoot = $this->nestEngineInputsRoot();
+        if (!is_dir($inputsRoot) && !mkdir($inputsRoot, 0775, true) && !is_dir($inputsRoot)) {
+            Log::warning('NestEngine — impossible de créer inputs dir', ['path' => $inputsRoot]);
+            return false;
+        }
+
+        $rotations = (int) config('services.nestengine.rotations', 36);
+        $spacing   = (float) config('services.nestengine.spacing', 5);
+        $maxSheets = (int) config('services.nestengine.max_sheets', 50);
+
+        $anyDispatched = false;
+
+        foreach ($services as &$svc) {
+            foreach ($svc['groups'] as &$group) {
+                if (($group['nest_type'] ?? 'sheet') !== 'sheet') continue;
+
+                $piecesWithFile = array_values(array_filter(
+                    $group['pieces'] ?? [],
+                    fn ($p) => !empty($p['files'])
+                ));
+                if (empty($piecesWithFile)) continue;
+
+                $sheetFormat = $this->resolveSheetFormat($group['material'] ?? '', (float) ($group['thickness'] ?? 0));
+                if (!$sheetFormat) continue;
+
+                $jobFolder = Str::uuid()->toString();
+                $jobInputs = $inputsRoot.DIRECTORY_SEPARATOR.$jobFolder;
+                if (!mkdir($jobInputs, 0775, true) && !is_dir($jobInputs)) continue;
+
+                $parts = [];
+                foreach ($piecesWithFile as $piece) {
+                    $sourceFile = $this->preferredDxfFor($piece);
+                    if (!$sourceFile) continue;
+
+                    $sourcePath = $this->resolveFilePath($sourceFile['file_id']);
+                    if (!$sourcePath || !is_file($sourcePath)) continue;
+
+                    $destName = sprintf('%d_%s.%s',
+                        $piece['line_id'],
+                        preg_replace('/[^A-Za-z0-9_-]/', '', substr((string) $piece['label'], 0, 40)),
+                        $sourceFile['file_ext']
+                    );
+                    $destAbs = $jobInputs.DIRECTORY_SEPARATOR.$destName;
+                    if (!@copy($sourcePath, $destAbs)) continue;
+
+                    $parts[] = [
+                        'id'       => 'line-'.$piece['line_id'],
+                        'name'     => (string) ($piece['label'] ?? $piece['line_id']),
+                        'qty'      => max(1, (int) ($piece['qty'] ?? 1)),
+                        'color'    => '#7aa2f7',
+                        'gradeId'  => (string) ($group['material'] ?? ''),
+                        'dxfFile'  => $jobFolder.'/'.$destName,
+                    ];
+                }
+
+                if (empty($parts)) {
+                    @rmdir($jobInputs);
+                    continue;
+                }
+
+                try {
+                    $jobId = $client->createJob(
+                        binW: $sheetFormat['x'],
+                        binH: $sheetFormat['y'],
+                        parts: $parts,
+                        config: [
+                            'spacing'      => $spacing,
+                            'rotations'    => $rotations,
+                            'generations'  => 20,
+                            'svgFullColor' => true,
+                        ],
+                        maxSheets: $maxSheets,
+                    );
+                    $group['job_id']         = $jobId;
+                    $group['sheet_format']   = $sheetFormat;
+                    $group['parts_prepared'] = count($parts);
+                    $anyDispatched = true;
+                } catch (\Throwable $e) {
+                    Log::warning('NestEngine — createJob failed', [
+                        'material'  => $group['material'] ?? null,
+                        'thickness' => $group['thickness'] ?? null,
+                        'error'     => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+        unset($svc, $group);
+
+        return $anyDispatched;
+    }
+
+    /** DXF preferred (ezdxf resolves everything). Falls back to SVG. */
+    private function preferredDxfFor(array $piece): ?array
+    {
+        $files = $piece['files'] ?? [];
+        foreach ($files as $f) {
+            if (($f['file_kind'] ?? null) === FileKindResolver::KIND_CAD2D) return $f;
+        }
+        foreach ($files as $f) {
+            if (($f['file_kind'] ?? null) === FileKindResolver::KIND_VECTOR) return $f;
+        }
+        return null;
+    }
+
+    private function resolveFilePath(int $fileId): ?string
+    {
+        $file = File::find($fileId);
+        if (!$file) return null;
+        try {
+            return Storage::disk($file->disk ?: 'local')->path($file->path);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Pick a sheet size for a (material, thickness) group. Uses the first
+     * matching stocked product; falls back to any stocked sheet of that
+     * material; then to the largest stocked sheet overall; last resort
+     * 3000×1500.
+     *
+     * @return array{x: float, y: float}|null
+     */
+    private function resolveSheetFormat(string $material, float $thickness): ?array
+    {
+        $mat = trim($material);
+
+        $q = Products::query()
+            ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+            ->where('methods_families.nest_type', 'sheet')
+            ->where('products.x_size', '>', 0)
+            ->where('products.y_size', '>', 0);
+
+        $exact = (clone $q)
+            ->where('products.material', $mat)
+            ->where('products.thickness', $thickness)
+            ->orderByDesc(\DB::raw('products.x_size * products.y_size'))
+            ->first(['products.x_size', 'products.y_size']);
+        if ($exact) return ['x' => (float) $exact->x_size, 'y' => (float) $exact->y_size];
+
+        $sameMat = (clone $q)
+            ->where('products.material', $mat)
+            ->orderByDesc(\DB::raw('products.x_size * products.y_size'))
+            ->first(['products.x_size', 'products.y_size']);
+        if ($sameMat) return ['x' => (float) $sameMat->x_size, 'y' => (float) $sameMat->y_size];
+
+        $any = (clone $q)
+            ->orderByDesc(\DB::raw('products.x_size * products.y_size'))
+            ->first(['products.x_size', 'products.y_size']);
+        if ($any) return ['x' => (float) $any->x_size, 'y' => (float) $any->y_size];
+
+        return ['x' => 3000.0, 'y' => 1500.0];
+    }
+
+    private function nestEngineInputsRoot(): string
+    {
+        $path = (string) config('services.nestengine.inputs_dir', 'storage/app/nesting-inputs');
+        return $this->isAbsolutePath($path) ? $path : base_path($path);
+    }
+
+    private function isAbsolutePath(string $path): bool
+    {
+        return $path !== '' && (
+            $path[0] === '/' || $path[0] === '\\'
+            || (strlen($path) > 1 && $path[1] === ':')
+        );
+    }
+
+    /**
+     * Proxy the NestEngine job status. Called by the front on a short interval
+     * while any group is still `pending` or `running`.
+     *
+     * GET /nesting/engine/status/{jobId}
+     */
+    public function engineStatus(string $jobId)
+    {
+        $this->assertNestEngineEnabled();
+        try {
+            $meta = NestEngineClient::fromConfig()->getJob($jobId);
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'error' => $e->getMessage()], 502);
+        }
+
+        // Slim payload — the front only needs status, progress hints, and file list.
+        return response()->json([
+            'jobId'       => $meta['jobId'] ?? $jobId,
+            'status'      => $meta['status'] ?? 'unknown',
+            'error'       => $meta['error'] ?? null,
+            'files'       => $meta['files'] ?? [],
+            'totalPlaced' => $meta['result']['totalPlaced'] ?? null,
+            'totalParts'  => $meta['result']['totalParts'] ?? null,
+            'unplaced'    => $meta['result']['unplaced'] ?? [],
+            'durationMs'  => $meta['result']['durationMs'] ?? null,
+        ]);
+    }
+
+    /**
+     * Proxy the SVG preview of sheet N — served inline for the browser to embed.
+     *
+     * GET /nesting/engine/preview/{jobId}/{sheet}
+     */
+    public function enginePreview(string $jobId, int $sheet)
+    {
+        $this->assertNestEngineEnabled();
+        try {
+            $body = NestEngineClient::fromConfig()->fetchSvg($jobId, $sheet);
+        } catch (\Throwable $e) {
+            abort(502, $e->getMessage());
+        }
+        return response($body, 200, [
+            'Content-Type'  => 'image/svg+xml',
+            'Cache-Control' => 'private, max-age=300',
+        ]);
+    }
+
+    /**
+     * Proxy the DXF of sheet N — served as attachment for download.
+     *
+     * GET /nesting/engine/download/{jobId}/{sheet}
+     */
+    public function engineDownload(string $jobId, int $sheet)
+    {
+        $this->assertNestEngineEnabled();
+        try {
+            $body = NestEngineClient::fromConfig()->fetchDxf($jobId, $sheet);
+        } catch (\Throwable $e) {
+            abort(502, $e->getMessage());
+        }
+        return response($body, 200, [
+            'Content-Type'        => 'application/vnd.dxf',
+            'Content-Disposition' => sprintf('attachment; filename="nest-%s-sheet_%02d.dxf"', $jobId, $sheet),
+        ]);
+    }
+
+    private function assertNestEngineEnabled(): void
+    {
+        if (!config('services.nestengine.enabled')) {
+            abort(404, 'NestEngine désactivé.');
+        }
     }
 
     /**

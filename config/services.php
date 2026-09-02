@@ -65,4 +65,19 @@ return [
         'default' => env('PDP_DRIVER', 'qonto'),
     ],
 
+    // NestEngine — moteur d'imbrication en forme exacte (payant). L'écran
+    // nesting bascule automatiquement dessus quand `enabled` est vrai ; sinon
+    // il retombe sur le shelf packing local (rectangle capable).
+    'nestengine' => [
+        'enabled'     => env('APP_COMMERCIAL', false) && !empty(env('NESTENGINE_URL')),
+        'url'         => env('NESTENGINE_URL'),
+        'timeout'     => (int) env('NESTENGINE_TIMEOUT', 120),
+        'rotations'   => (int) env('NESTENGINE_ROTATIONS', 36),
+        'spacing'     => (float) env('NESTENGINE_SPACING', 5),
+        'max_sheets'  => (int) env('NESTENGINE_MAX_SHEETS', 50),
+        // Dossier de travail partagé (Laravel écrit, NestEngine lit). Relatif
+        // à base_path() sauf s'il s'agit d'un chemin absolu.
+        'inputs_dir'  => env('NESTENGINE_INPUTS_DIR', 'storage/app/nesting-inputs'),
+    ],
+
 ];

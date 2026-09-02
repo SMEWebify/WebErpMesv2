@@ -151,26 +151,29 @@ function nestBars(pieces, barLengths, kerf) {
     }));
 }
 
-// ─── Rendu d'une pièce placée (BB colorée + contour réel si dispo) ──────────
+// ─── Rendu d'une pièce placée (forme reconstruite si dispo, sinon BB) ───────
 function PieceShape({ placement, scale }) {
     const { px, py, w, h, colorIdx, code, label, geometry } = placement;
     const fill  = pieceColor(colorIdx);
     const wPx   = w * scale;
     const hPx   = h * scale;
     const showLabel = wPx > 30 && hPx > 14;
+    const hasShape  = geometry?.pathD;
 
     return (
         <g>
-            <rect
-                x={px * scale}
-                y={py * scale}
-                width={wPx}
-                height={hPx}
-                fill={fill}
-                fillOpacity="0.55"
-                stroke="#222"
-                strokeWidth="0.5"
-            />
+            {!hasShape && (
+                <rect
+                    x={px * scale}
+                    y={py * scale}
+                    width={wPx}
+                    height={hPx}
+                    fill={fill}
+                    fillOpacity="0.55"
+                    stroke="#222"
+                    strokeWidth="0.5"
+                />
+            )}
 
             {geometry && (
                 <svg
@@ -186,7 +189,21 @@ function PieceShape({ placement, scale }) {
                     <g transform={geometry.source === 'dxf'
                         ? `translate(0, ${geometry.bb.y + 2 * geometry.minY}) scale(1, -1)`
                         : undefined}>
-                        {geometry.primitives.map((prim, i) => renderPrimitive(prim, i))}
+                        {hasShape && (
+                            <path
+                                d={geometry.pathD}
+                                fill={fill}
+                                fillOpacity="0.55"
+                                fillRule="evenodd"
+                                stroke="#222"
+                                strokeWidth={0.6}
+                                vectorEffect="non-scaling-stroke"
+                            />
+                        )}
+                        {/* Open segments and non-closed primitives on top for visual context */}
+                        {hasShape
+                            ? (geometry.openLines || []).map((prim, i) => renderPrimitive(prim, `o${i}`))
+                            : geometry.primitives.map((prim, i) => renderPrimitive(prim, i))}
                     </g>
                 </svg>
             )}
@@ -261,6 +278,128 @@ function SheetSvg({ sheet, index }) {
                     <PieceShape key={i} placement={p} scale={scale} />
                 ))}
             </svg>
+        </div>
+    );
+}
+
+// ─── Groupe rendu par NestEngine (forme exacte, calcul serveur asynchrone) ──
+function NestEngineGroupPanel({ group, service }) {
+    const [expanded, setExpanded] = useState(false);
+    const [meta, setMeta] = useState({ status: 'pending', files: [] });
+    const jobId = group.job_id;
+
+    useEffect(() => {
+        if (!jobId) return;
+        let cancelled = false;
+
+        const poll = async () => {
+            try {
+                const res = await window.axios.get(`/nesting/engine/status/${jobId}`);
+                if (cancelled) return;
+                setMeta(res.data);
+                if (res.data.status === 'pending' || res.data.status === 'running') {
+                    setTimeout(poll, 2000);
+                }
+            } catch (e) {
+                if (cancelled) return;
+                setMeta({ status: 'error', error: e.response?.data?.error || e.message });
+            }
+        };
+        poll();
+
+        return () => { cancelled = true; };
+    }, [jobId]);
+
+    const totalPieces = (group.pieces || []).reduce((s, p) => s + p.qty, 0);
+    const sheetsCount = meta.files?.length || 0;
+    const avgUsage = sheetsCount
+        ? Math.round(meta.files.reduce((s, f) => s + (f.efficiency || 0), 0) / sheetsCount)
+        : 0;
+    const isRunning = meta.status === 'pending' || meta.status === 'running';
+
+    return (
+        <div className="mb-3 border rounded">
+            <div className="d-flex align-items-center p-2 bg-light" style={{ cursor: 'pointer' }} onClick={() => setExpanded(!expanded)}>
+                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} mr-2`} />
+                <strong className="mr-2">{group.material}</strong>
+                <span className="badge badge-secondary mr-2">{group.thickness} mm</span>
+                {service && (
+                    <span className="badge mr-2" style={{ background: service.service_color || '#6c757d', color: '#fff' }}>
+                        {service.service_label}
+                    </span>
+                )}
+                <span className="badge badge-info mr-2">{formatQty(totalPieces)} pièce(s)</span>
+                {isRunning ? (
+                    <span className="badge badge-warning mr-2">
+                        <i className="fas fa-spinner fa-spin mr-1" />{meta.status}
+                    </span>
+                ) : meta.status === 'done' ? (
+                    <>
+                        <span className="badge badge-primary mr-2">{sheetsCount} tôle(s)</span>
+                        <span className={`badge mr-2 ${avgUsage < 40 ? 'badge-warning' : 'badge-success'}`}>{avgUsage}%</span>
+                    </>
+                ) : meta.status === 'error' ? (
+                    <span className="badge badge-danger mr-2">Erreur</span>
+                ) : null}
+                <span className="ml-auto badge badge-dark">
+                    <i className="fas fa-star mr-1" />Forme exacte
+                </span>
+            </div>
+
+            {expanded && (
+                <div className="p-2">
+                    {meta.status === 'error' && (
+                        <div className="alert alert-danger py-1 px-2 small mb-2">
+                            NestEngine : {meta.error || 'erreur inconnue'}
+                        </div>
+                    )}
+
+                    {meta.status === 'done' && meta.unplaced?.length > 0 && (
+                        <div className="alert alert-warning py-1 px-2 small mb-2">
+                            {meta.unplaced.length} pièce(s) non placée(s) : {meta.unplaced.slice(0, 8).join(', ')}
+                            {meta.unplaced.length > 8 && ` … et ${meta.unplaced.length - 8} de plus`}
+                        </div>
+                    )}
+
+                    {isRunning && (
+                        <div className="text-center py-3 text-muted">
+                            <i className="fas fa-spinner fa-spin fa-2x" />
+                            <div className="mt-2 small">Imbrication en cours ({group.parts_prepared || '?'} pièce(s), format {group.sheet_format?.x} × {group.sheet_format?.y} mm)</div>
+                        </div>
+                    )}
+
+                    {meta.status === 'done' && (meta.files || []).map(f => {
+                        const num = f.sheetIdx + 1;
+                        return (
+                            <div key={num} className="mb-2 border p-1 bg-white">
+                                <div className="d-flex justify-content-between align-items-center px-1 mb-1">
+                                    <small>
+                                        <strong>Tôle {num}</strong>
+                                        <span className="text-muted ml-2">{f.placed} pièce(s)</span>
+                                    </small>
+                                    <div>
+                                        <small className={f.efficiency < 40 ? 'text-warning' : 'text-success'}>
+                                            Utilisation {Math.round(f.efficiency)}%
+                                        </small>
+                                        <a
+                                            className="btn btn-sm btn-outline-secondary ml-2 py-0"
+                                            href={`/nesting/engine/download/${jobId}/${num}`}
+                                            title="Télécharger le DXF"
+                                        >
+                                            <i className="fas fa-download" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <img
+                                    src={`/nesting/engine/preview/${jobId}/${num}`}
+                                    alt={`Tôle ${num}`}
+                                    style={{ width: '100%', maxWidth: 720, background: '#f6f6f6', border: '1px solid #999' }}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
@@ -744,6 +883,7 @@ export default function NestingPage() {
             setProgress({ current: 0, total: totalPieces, label: 'Analyse des géométries…' });
 
             let done = 0;
+            const debugRows = [];
 
             // Resolve BB — DXF/SVG geometry is the source of truth when a file is
             // attached (drawings age better than the numbers typed on the line).
@@ -756,15 +896,28 @@ export default function NestingPage() {
                         setProgress(p => ({ ...p, current: done }));
                         continue;
                     }
+                    // NestEngine handles the geometry server-side and returns
+                    // its own SVG previews — no need to parse anything here.
+                    if (group.job_id) {
+                        done += group.pieces.length;
+                        setProgress(p => ({ ...p, current: done }));
+                        continue;
+                    }
                     for (const piece of group.pieces) {
                         let bb = null;
+                        const candidates = piece.files || [];
+                        const tried = [];
 
-                        if (piece.file_url) {
-                            // Full geometry parse also gives us the BB — one fetch, two uses.
-                            const geo = await geometryFor(piece);
+                        // Try each attached CAD file in order (DXF first, SVG fallback).
+                        // Full geometry parse also gives us the BB — one fetch, two uses.
+                        for (const f of candidates) {
+                            const geo = await geometryFor(f);
+                            tried.push(`${f.file_kind}#${f.file_id}${geo ? '✓' : '✗'}`);
                             if (geo) {
                                 bb = { x: geo.bb.x, y: geo.bb.y, source: geo.source };
                                 piece.geometry = geo;
+                                piece.file_used = f;
+                                break;
                             }
                         }
 
@@ -774,6 +927,18 @@ export default function NestingPage() {
 
                         piece.bb = bb || { x: 100, y: 100, source: 'fallback' };
 
+                        debugRows.push({
+                            line: piece.line_id,
+                            order: piece.order_code,
+                            label: piece.label,
+                            files: candidates.length,
+                            tried: tried.join(' '),
+                            used: piece.file_used ? `#${piece.file_used.file_id} ${piece.file_used.file_kind}` : null,
+                            bb_source: piece.bb.source,
+                            bb: `${Math.round(piece.bb.x)}x${Math.round(piece.bb.y)}`,
+                            primitives: piece.geometry?.primitives?.length ?? 0,
+                        });
+
                         done++;
                         if (done % 5 === 0 || done === totalPieces) {
                             setProgress(p => ({ ...p, current: done }));
@@ -782,6 +947,10 @@ export default function NestingPage() {
                     group.piecesWithBB = group.pieces;
                 }
             }
+
+            console.groupCollapsed(`[nest] BB resolution summary — ${debugRows.length} pieces`);
+            console.table(debugRows);
+            console.groupEnd();
 
             setProgress({ current: totalPieces, total: totalPieces, label: 'Imbrication…' });
             setData(res.data);
@@ -1308,6 +1477,12 @@ export default function NestingPage() {
                                     group={g}
                                     barLengths={activeBarLengths}
                                     kerf={kerf}
+                                    service={svc}
+                                />
+                            ) : g.job_id ? (
+                                <NestEngineGroupPanel
+                                    key={`ne|${g.material}|${g.thickness}|${g.job_id}`}
+                                    group={g}
                                     service={svc}
                                 />
                             ) : (
