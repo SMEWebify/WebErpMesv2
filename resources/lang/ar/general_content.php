@@ -1237,4 +1237,9 @@ return [
     'error_503_title_trans_key'         => 'صيانة',
     'error_503_heading_trans_key'       => 'سنعود قريباً!',
     'error_503_message_trans_key'       => 'نعتذر عن الإزعاج، نحن نجري بعض أعمال الصيانة حالياً. سنعود للعمل قريباً.',
+
+    // Widget de bascule d'affichage dans la navbar (clair / sombre / pro)
+    'theme_light_trans_key'             => 'العرض: الوضع الفاتح',
+    'theme_dark_trans_key'              => 'العرض: الوضع الداكن',
+    'theme_pro_trans_key'               => 'العرض: الوضع الاحترافي (محايد)',
 ];

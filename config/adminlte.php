@@ -1030,6 +1030,18 @@ return [
                 ],
             ],
         ],
+        // Mode "pro" : chargé en permanence, tout est scopé sous body.theme-pro
+        // et ne s'applique donc que si l'utilisateur a choisi ce mode.
+        'ThemePro' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/theme-pro.css',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [

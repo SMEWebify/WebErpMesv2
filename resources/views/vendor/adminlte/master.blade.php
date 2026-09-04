@@ -126,7 +126,7 @@
 
 </head>
 
-<body class="@yield('classes_body')" @yield('body_data')>
+<body class="@yield('classes_body') {{ \App\Support\ThemeMode::bodyClass() }}" @yield('body_data')>
 
     {{-- Body Content --}}
     @yield('body')

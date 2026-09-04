@@ -1320,6 +1320,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::view('/iframe-mode', 'iframe-mode')->middleware(['auth'])->name('iframe.mode');
 
+    // Mode d'affichage de l'interface (clair / sombre / pro), persiste en session.
+    Route::post('/theme-mode', [\App\Http\Controllers\ThemeModeController::class, 'store'])
+        ->middleware(['auth'])->name('theme.mode.store');
+
     // Self-service RGPD utilisateur interne (Art. 15 / 17 / 20)
     Route::middleware(['auth'])->prefix('me/rgpd')->name('me.rgpd.')->group(function () {
         Route::get('/',       [\App\Http\Controllers\RgpdSelfServiceController::class, 'index'])->name('index');

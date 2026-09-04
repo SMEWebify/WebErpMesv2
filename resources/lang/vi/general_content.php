@@ -387,4 +387,9 @@ return [
     'error_503_title_trans_key'         => 'Bảo trì',
     'error_503_heading_trans_key'       => 'Chúng tôi sẽ quay lại sớm!',
     'error_503_message_trans_key'       => 'Xin lỗi vì sự bất tiện, chúng tôi đang thực hiện bảo trì. Chúng tôi sẽ trực tuyến trở lại trong thời gian ngắn.',
+
+    // Widget de bascule d'affichage dans la navbar (clair / sombre / pro)
+    'theme_light_trans_key'             => 'Hiển thị: chế độ sáng',
+    'theme_dark_trans_key'              => 'Hiển thị: chế độ tối',
+    'theme_pro_trans_key'               => 'Hiển thị: chế độ pro (trung tính)',
 ];

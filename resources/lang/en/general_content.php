@@ -1795,4 +1795,9 @@ return [
     'details_trans_key'                        => 'Details',
     'search_by_recipient_or_subject_trans_key' => 'Search by recipient or subject…',
     'reset_trans_key'                          => 'Reset',
+
+    // Widget de bascule d'affichage dans la navbar (clair / sombre / pro)
+    'theme_light_trans_key'             => 'Display: light mode',
+    'theme_dark_trans_key'              => 'Display: dark mode',
+    'theme_pro_trans_key'               => 'Display: pro mode (neutral)',
 ];

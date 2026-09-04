@@ -1238,4 +1238,9 @@ return [
     'error_503_title_trans_key'         => 'Mantenimiento',
     'error_503_heading_trans_key'       => '¡Volvemos pronto!',
     'error_503_message_trans_key'       => 'Disculpe las molestias, estamos realizando tareas de mantenimiento. Estaremos de nuevo en línea en breve.',
+
+    // Widget de bascule d'affichage dans la navbar (clair / sombre / pro)
+    'theme_light_trans_key'             => 'Visualización: modo claro',
+    'theme_dark_trans_key'              => 'Visualización: modo oscuro',
+    'theme_pro_trans_key'               => 'Visualización: modo pro (neutro)',
 ];

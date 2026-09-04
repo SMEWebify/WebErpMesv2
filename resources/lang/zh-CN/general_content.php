@@ -1417,4 +1417,9 @@ return [
     'error_503_title_trans_key'         => '维护中',
     'error_503_heading_trans_key'       => '我们很快就会回来！',
     'error_503_message_trans_key'       => '抱歉给您带来不便，我们目前正在进行维护。我们很快就会恢复在线。',
+
+    // Widget de bascule d'affichage dans la navbar (clair / sombre / pro)
+    'theme_light_trans_key'             => '显示：浅色模式',
+    'theme_dark_trans_key'              => '显示：深色模式',
+    'theme_pro_trans_key'               => '显示：专业模式（中性）',
 ];

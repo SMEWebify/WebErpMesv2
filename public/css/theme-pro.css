@@ -1,0 +1,586 @@
+/* ==========================================================================
+   THEME "PRO" — chrome neutre, couleur réservée aux statuts
+   --------------------------------------------------------------------------
+   Troisième mode d'affichage, à côté du clair et du sombre d'AdminLTE.
+   Tout est scopé sous body.theme-pro : le fichier est chargé en permanence
+   (plugin ThemePro de config/adminlte.php) et ne s'applique que si l'utilisateur
+   a choisi ce mode depuis le widget de la navbar.
+
+   Principe : les aplats de couleur décoratifs (navbar, sidebar, small-box,
+   en-têtes de card, boutons non destructifs) passent en gris/blanc. La couleur
+   ne subsiste que là où elle porte une information métier : badges de statut,
+   alertes, retards, barres de progression.
+
+   Les surfaces reprennent la palette de l'écran "Statut de tâche"
+   (resources/sass/_task-statu.scss) pour rester cohérent avec l'existant.
+   ========================================================================== */
+
+body.theme-pro {
+    /* Surfaces */
+    --pro-bg: #f5f6f8;
+    --pro-surface: #ffffff;
+    --pro-surface-alt: #f8f9fc;
+    --pro-border: #e4e7ef;
+    --pro-border-strong: #cbd1de;
+
+    /* Typographie */
+    --pro-ink: #131a2b;
+    --pro-ink-2: #48526b;
+    --pro-muted: #7a8399;
+
+    /* Accent neutre : remplace le bleu primaire sur tout le chrome */
+    --pro-accent: #475569;
+    --pro-accent-hover: #334155;
+    --pro-accent-soft: #eef0f4;
+    --pro-link: #3d5a80;
+    --pro-link-hover: #27405f;
+
+    /* Statuts conservés, mais désaturés */
+    --pro-ok: #0d8060;
+    --pro-ok-soft: #e6f6f1;
+    --pro-info: #4a7086;
+    --pro-info-soft: #eaf1f5;
+    --pro-warn: #b05a06;
+    --pro-warn-soft: #fdf2e4;
+    --pro-danger: #cf342c;
+    --pro-danger-soft: #fdecea;
+
+    --pro-shadow: 0 1px 2px rgba(19, 26, 43, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   1. Base
+   -------------------------------------------------------------------------- */
+
+body.theme-pro {
+    background-color: var(--pro-bg) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .content-wrapper {
+    background-color: var(--pro-bg) !important;
+    /* Neutralise le fond quadrillé ambiant du mode commercial (master.blade.php) */
+    background-image: none !important;
+}
+
+body.theme-pro a {
+    color: var(--pro-link);
+}
+
+body.theme-pro a:hover {
+    color: var(--pro-link-hover);
+}
+
+body.theme-pro .text-muted {
+    color: var(--pro-muted) !important;
+}
+
+/* Anneau de focus : slate plutôt que bleu vif */
+body.theme-pro {
+    --bs-focus-ring-color: rgba(71, 85, 105, 0.25);
+}
+
+body.theme-pro .form-control:focus,
+body.theme-pro .form-select:focus,
+body.theme-pro .custom-select:focus {
+    border-color: var(--pro-border-strong);
+    box-shadow: 0 0 0 0.2rem rgba(71, 85, 105, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   2. Navbar
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .main-header.navbar {
+    background-color: var(--pro-surface) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+    box-shadow: none !important;
+}
+
+body.theme-pro .main-header .nav-link,
+body.theme-pro .main-header .navbar-nav .nav-link {
+    color: var(--pro-ink-2) !important;
+}
+
+body.theme-pro .main-header .nav-link:hover {
+    color: var(--pro-ink) !important;
+}
+
+/* Compteur de notifications : reste lisible, mais désaturé */
+body.theme-pro .navbar-badge {
+    background-color: var(--pro-danger) !important;
+    color: #fff !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Sidebar
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .main-sidebar {
+    background-color: var(--pro-surface) !important;
+    border-right: 1px solid var(--pro-border);
+    box-shadow: none !important;
+}
+
+body.theme-pro .brand-link {
+    background-color: var(--pro-surface) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .nav-sidebar .nav-link {
+    color: var(--pro-ink-2) !important;
+}
+
+body.theme-pro .nav-sidebar .nav-link i,
+body.theme-pro .nav-sidebar .nav-link .nav-icon {
+    color: var(--pro-muted) !important;
+}
+
+body.theme-pro .nav-sidebar .nav-link:hover {
+    background-color: var(--pro-surface-alt) !important;
+    color: var(--pro-ink) !important;
+}
+
+/* Élément actif : aplat gris + filet d'accent, au lieu du bleu plein */
+body.theme-pro .nav-sidebar .nav-link.active,
+body.theme-pro .nav-sidebar > .nav-item > .nav-link.active,
+body.theme-pro .nav-treeview > .nav-item > .nav-link.active {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+    box-shadow: inset 3px 0 0 var(--pro-accent) !important;
+    font-weight: 600;
+}
+
+body.theme-pro .nav-sidebar .nav-link.active i,
+body.theme-pro .nav-sidebar .nav-link.active .nav-icon {
+    color: var(--pro-accent) !important;
+}
+
+body.theme-pro .nav-sidebar .nav-header {
+    color: var(--pro-muted) !important;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+}
+
+body.theme-pro .user-panel {
+    border-bottom-color: var(--pro-border) !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. Cards
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .card {
+    background-color: var(--pro-surface) !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: var(--pro-shadow) !important;
+}
+
+body.theme-pro .card-header {
+    background-color: var(--pro-surface) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .card-title {
+    color: var(--pro-ink) !important;
+    font-weight: 600;
+}
+
+body.theme-pro .card-footer {
+    background-color: var(--pro-surface-alt) !important;
+    border-top: 1px solid var(--pro-border) !important;
+}
+
+/* En-tête de card colorée (card-primary, card-info, bg-gradient-*, ...) :
+   on retire l'aplat, le titre suffit. */
+body.theme-pro .card > .card-header[class*="bg-"],
+body.theme-pro .card[class*="card-"]:not(.card-outline) > .card-header {
+    background-color: var(--pro-surface) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .card > .card-header[class*="bg-"] .card-title,
+body.theme-pro .card > .card-header[class*="bg-"] a,
+body.theme-pro .card > .card-header[class*="bg-"] .btn-tool {
+    color: var(--pro-ink) !important;
+}
+
+/* Filet supérieur des card-outline : une seule teinte neutre au lieu d'un
+   arc-en-ciel de bordures sur les dashboards. */
+body.theme-pro .card.card-outline {
+    border-top: 3px solid var(--pro-border-strong) !important;
+}
+
+body.theme-pro .btn-tool {
+    color: var(--pro-muted) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. Tuiles de dashboard (small-box / info-box)
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .small-box,
+body.theme-pro .small-box[class*="bg-"] {
+    background-color: var(--pro-surface) !important;
+    color: var(--pro-ink) !important;
+    border: 1px solid var(--pro-border) !important;
+    border-radius: 8px;
+    box-shadow: var(--pro-shadow) !important;
+}
+
+body.theme-pro .small-box h3 {
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .small-box p {
+    color: var(--pro-ink-2) !important;
+}
+
+body.theme-pro .small-box > .icon,
+body.theme-pro .small-box > .icon > i {
+    color: var(--pro-border-strong) !important;
+    opacity: 1;
+}
+
+body.theme-pro .small-box .small-box-footer {
+    background-color: var(--pro-surface-alt) !important;
+    color: var(--pro-ink-2) !important;
+    border-top: 1px solid var(--pro-border);
+}
+
+body.theme-pro .small-box:hover .small-box-footer {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .info-box {
+    background-color: var(--pro-surface) !important;
+    color: var(--pro-ink) !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: var(--pro-shadow) !important;
+}
+
+body.theme-pro .info-box .info-box-icon,
+body.theme-pro .info-box .info-box-icon[class*="bg-"] {
+    background-color: var(--pro-surface-alt) !important;
+    color: var(--pro-ink-2) !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Boutons
+   Primaire = slate (l'action principale reste identifiable sans bleu vif).
+   Secondaire / light / default = contours gris.
+   Success / warning / danger gardent leur teinte, désaturée : ils portent
+   une intention métier (valider, alerter, supprimer).
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .btn-primary,
+body.theme-pro .btn-info,
+body.theme-pro .btn-navy,
+body.theme-pro .btn-teal,
+body.theme-pro .btn-purple,
+body.theme-pro .btn-indigo {
+    background-color: var(--pro-accent) !important;
+    border-color: var(--pro-accent) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .btn-primary:hover,
+body.theme-pro .btn-primary:focus,
+body.theme-pro .btn-info:hover,
+body.theme-pro .btn-info:focus {
+    background-color: var(--pro-accent-hover) !important;
+    border-color: var(--pro-accent-hover) !important;
+}
+
+body.theme-pro .btn-secondary,
+body.theme-pro .btn-light,
+body.theme-pro .btn-default {
+    background-color: var(--pro-surface) !important;
+    border-color: var(--pro-border-strong) !important;
+    color: var(--pro-ink-2) !important;
+}
+
+body.theme-pro .btn-secondary:hover,
+body.theme-pro .btn-light:hover,
+body.theme-pro .btn-default:hover {
+    background-color: var(--pro-surface-alt) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .btn-outline-primary,
+body.theme-pro .btn-outline-info,
+body.theme-pro .btn-outline-secondary {
+    color: var(--pro-accent) !important;
+    border-color: var(--pro-border-strong) !important;
+    background-color: transparent !important;
+}
+
+body.theme-pro .btn-outline-primary:hover,
+body.theme-pro .btn-outline-info:hover,
+body.theme-pro .btn-outline-secondary:hover {
+    background-color: var(--pro-accent) !important;
+    border-color: var(--pro-accent) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .btn-success {
+    background-color: var(--pro-ok) !important;
+    border-color: var(--pro-ok) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .btn-warning {
+    background-color: var(--pro-warn) !important;
+    border-color: var(--pro-warn) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .btn-danger {
+    background-color: var(--pro-danger) !important;
+    border-color: var(--pro-danger) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .btn-link {
+    color: var(--pro-link) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Statuts : badges, alertes, callouts, barres de progression
+   La couleur est conservée ici — c'est ce qui reste lisible d'un coup d'oeil.
+   Style "pastille" : fond très clair + texte teinté, plus sobre qu'un aplat.
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .badge {
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+body.theme-pro .badge.bg-primary,
+body.theme-pro .badge-primary,
+body.theme-pro .badge.bg-secondary,
+body.theme-pro .badge-secondary,
+body.theme-pro .badge.bg-dark,
+body.theme-pro .badge-dark,
+body.theme-pro .badge.bg-light,
+body.theme-pro .badge-light {
+    background-color: var(--pro-accent-soft) !important;
+    border-color: var(--pro-border) !important;
+    color: var(--pro-ink-2) !important;
+}
+
+body.theme-pro .badge.bg-success,
+body.theme-pro .badge-success {
+    background-color: var(--pro-ok-soft) !important;
+    color: var(--pro-ok) !important;
+}
+
+body.theme-pro .badge.bg-info,
+body.theme-pro .badge-info {
+    background-color: var(--pro-info-soft) !important;
+    color: var(--pro-info) !important;
+}
+
+body.theme-pro .badge.bg-warning,
+body.theme-pro .badge-warning {
+    background-color: var(--pro-warn-soft) !important;
+    color: var(--pro-warn) !important;
+}
+
+body.theme-pro .badge.bg-danger,
+body.theme-pro .badge-danger {
+    background-color: var(--pro-danger-soft) !important;
+    color: var(--pro-danger) !important;
+}
+
+body.theme-pro .alert {
+    border-width: 1px;
+    border-left-width: 3px;
+}
+
+body.theme-pro .alert-success {
+    background-color: var(--pro-ok-soft) !important;
+    border-color: var(--pro-ok) !important;
+    color: #0a5a44 !important;
+}
+
+body.theme-pro .alert-info,
+body.theme-pro .alert-primary {
+    background-color: var(--pro-info-soft) !important;
+    border-color: var(--pro-info) !important;
+    color: #2f4d5e !important;
+}
+
+body.theme-pro .alert-warning {
+    background-color: var(--pro-warn-soft) !important;
+    border-color: var(--pro-warn) !important;
+    color: #7d3f04 !important;
+}
+
+body.theme-pro .alert-danger {
+    background-color: var(--pro-danger-soft) !important;
+    border-color: var(--pro-danger) !important;
+    color: #942420 !important;
+}
+
+body.theme-pro .callout {
+    background-color: var(--pro-surface) !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: none !important;
+}
+
+body.theme-pro .callout.callout-success { border-left: 3px solid var(--pro-ok) !important; }
+body.theme-pro .callout.callout-info    { border-left: 3px solid var(--pro-info) !important; }
+body.theme-pro .callout.callout-warning { border-left: 3px solid var(--pro-warn) !important; }
+body.theme-pro .callout.callout-danger  { border-left: 3px solid var(--pro-danger) !important; }
+
+body.theme-pro .progress {
+    background-color: var(--pro-surface-alt) !important;
+}
+
+body.theme-pro .progress-bar,
+body.theme-pro .progress-bar.bg-primary,
+body.theme-pro .progress-bar.bg-info { background-color: var(--pro-accent) !important; }
+body.theme-pro .progress-bar.bg-success { background-color: var(--pro-ok) !important; }
+body.theme-pro .progress-bar.bg-warning { background-color: var(--pro-warn) !important; }
+body.theme-pro .progress-bar.bg-danger  { background-color: var(--pro-danger) !important; }
+
+/* Helpers texte : le "primary" décoratif devient neutre, les statuts restent */
+body.theme-pro .text-primary,
+body.theme-pro .text-secondary,
+body.theme-pro .text-dark { color: var(--pro-ink-2) !important; }
+body.theme-pro .text-success { color: var(--pro-ok) !important; }
+body.theme-pro .text-info    { color: var(--pro-info) !important; }
+body.theme-pro .text-warning { color: var(--pro-warn) !important; }
+body.theme-pro .text-danger  { color: var(--pro-danger) !important; }
+
+/* --------------------------------------------------------------------------
+   8. Tableaux, pagination, onglets, formulaires
+   -------------------------------------------------------------------------- */
+
+body.theme-pro .table {
+    --bs-table-bg: transparent;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .table > thead th {
+    background-color: var(--pro-surface-alt) !important;
+    color: var(--pro-ink-2) !important;
+    border-bottom: 1px solid var(--pro-border-strong) !important;
+    font-weight: 600;
+}
+
+body.theme-pro .table > tbody > tr > td,
+body.theme-pro .table > tbody > tr > th {
+    border-color: var(--pro-border) !important;
+}
+
+body.theme-pro .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(19, 26, 43, 0.018) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .table-hover > tbody > tr:hover > * {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .page-item.active .page-link {
+    background-color: var(--pro-accent) !important;
+    border-color: var(--pro-accent) !important;
+    color: #fff !important;
+}
+
+body.theme-pro .page-link {
+    color: var(--pro-ink-2) !important;
+    border-color: var(--pro-border) !important;
+}
+
+body.theme-pro .nav-pills .nav-link.active,
+body.theme-pro .nav-tabs .nav-link.active {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+    border-color: var(--pro-border) !important;
+}
+
+body.theme-pro .form-check-input:checked,
+body.theme-pro .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--pro-accent) !important;
+    border-color: var(--pro-accent) !important;
+}
+
+body.theme-pro .form-control,
+body.theme-pro .form-select,
+body.theme-pro .custom-select,
+body.theme-pro .input-group-text {
+    background-color: var(--pro-surface) !important;
+    border-color: var(--pro-border-strong) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .dropdown-menu {
+    border-color: var(--pro-border) !important;
+    box-shadow: 0 4px 12px rgba(19, 26, 43, 0.08) !important;
+}
+
+body.theme-pro .dropdown-item.active,
+body.theme-pro .dropdown-item:active {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+}
+
+/* Select2 (plugin actif dans config/adminlte.php) */
+body.theme-pro .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--pro-accent-soft) !important;
+    color: var(--pro-ink) !important;
+}
+
+body.theme-pro .select2-container--default .select2-selection {
+    border-color: var(--pro-border-strong) !important;
+}
+
+/* Modales */
+body.theme-pro .modal-header[class*="bg-"] {
+    background-color: var(--pro-surface) !important;
+    color: var(--pro-ink) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Aplats résiduels
+   Les dégradés d'AdminLTE (bg-gradient-*) sont purement décoratifs.
+   -------------------------------------------------------------------------- */
+
+body.theme-pro [class*="bg-gradient-"] {
+    background-image: none !important;
+}
+
+body.theme-pro .login-page,
+body.theme-pro .register-page {
+    background-color: var(--pro-bg) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. Écran "Statut de tâche"
+   Déjà neutre par construction (_task-statu.scss) : seul l'accent bleu vif
+   doit s'aligner sur l'accent du mode pro.
+   -------------------------------------------------------------------------- */
+
+body.theme-pro #task-statu-app {
+    --ts-accent: var(--pro-accent);
+    --ts-accent-soft: var(--pro-accent-soft);
+}
+
+/* --------------------------------------------------------------------------
+   11. Impression — le mode pro ne doit rien changer aux documents imprimés
+   -------------------------------------------------------------------------- */
+
+@media print {
+    body.theme-pro .content-wrapper {
+        background: #fff !important;
+    }
+}
