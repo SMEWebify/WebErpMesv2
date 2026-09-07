@@ -1,7 +1,8 @@
 @extends('adminlte::page')
 
 @section('css')
-  @vite(['resources/sass/app.scss'])
+  @viteReactRefresh
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('title', __('general_content.update_detail_information_for_trans_key', ['label' => $line->label]))
