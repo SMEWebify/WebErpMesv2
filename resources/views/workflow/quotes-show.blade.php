@@ -245,6 +245,17 @@ $arrowSteps = json_encode([
                     {{ $simulation['requested_date'] }}
                   </p>
 
+                  @if(!empty($simulation['internal_delay_days']))
+                    <p class="mb-1">
+                      <strong>{{ __('general_content.simulation_internal_delay_trans_key') }}:</strong>
+                      {{ $simulation['internal_delay_days'] }} {{ __('general_content.day_trans_key') }}
+                    </p>
+                    <p class="mb-1">
+                      <strong>{{ __('general_content.simulation_internal_deadline_trans_key') }}:</strong>
+                      {{ $simulation['internal_deadline'] }}
+                    </p>
+                  @endif
+
                   @if(!empty($simulation['earliest_date']))
                     <p class="mb-2">
                       <strong>{{ __('general_content.earliest_possible_date_trans_key') }}:</strong>

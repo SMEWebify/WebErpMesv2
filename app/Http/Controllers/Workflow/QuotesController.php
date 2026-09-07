@@ -287,6 +287,10 @@ class QuotesController extends Controller
                 ->with('error', __('general_content.simulation_no_tasks_trans_key'));
         }
 
+        $factory = app('Factory');
+        $internalDelayDays = max(0, (int) ($factory->add_delivery_delay_order ?? 0));
+        $internalDeadline = $requestedDate->copy()->subDays($internalDelayDays);
+
         $maxSearchDays = 365;
         $simulationEndDate = $startDate->copy()->addDays($maxSearchDays);
         if ($requestedDate->gt($simulationEndDate)) {
@@ -313,22 +317,29 @@ class QuotesController extends Controller
         }
 
         $capacityPerDay = 16;
-        $remainingAfterRequested = $this->simulateRemainingHours(
-            $requiredByService,
-            $startDate,
-            $requestedDate,
-            $capacityPerDay,
-            $loadByServiceDay
-        );
 
-        $isPossible = $this->allServicesSatisfied($remainingAfterRequested);
-        $earliestDate = $this->calculateEarliestCompletionDate(
+        if ($internalDeadline->lt($startDate)) {
+            $isPossible = false;
+            $remainingAfterRequested = $requiredByService;
+        } else {
+            $remainingAfterRequested = $this->simulateRemainingHours(
+                $requiredByService,
+                $startDate,
+                $internalDeadline,
+                $capacityPerDay,
+                $loadByServiceDay
+            );
+            $isPossible = $this->allServicesSatisfied($remainingAfterRequested);
+        }
+
+        $earliestInternal = $this->calculateEarliestCompletionDate(
             $requiredByService,
             $startDate,
             $simulationEndDate,
             $capacityPerDay,
             $loadByServiceDay
         );
+        $earliestDate = $earliestInternal?->copy()->addDays($internalDelayDays);
 
         $missingByService = [];
         if (!$isPossible) {
@@ -354,6 +365,8 @@ class QuotesController extends Controller
                 'missing_by_service' => $missingByService,
                 'service_labels' => $serviceLabels,
                 'capacity_per_day' => $capacityPerDay,
+                'internal_delay_days' => $internalDelayDays,
+                'internal_deadline' => $internalDeadline->toDateString(),
             ]);
     }
 

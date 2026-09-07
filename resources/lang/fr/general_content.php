@@ -972,6 +972,8 @@ return [
     'simulation_service_trans_key'             => 'Service',
     'simulation_remaining_hours_trans_key'     => 'Heures manquantes',
     'simulation_capacity_per_day_trans_key'    => 'Capacité journalière utilisée',
+    'simulation_internal_delay_trans_key'      => 'Délai interne',
+    'simulation_internal_deadline_trans_key'   => 'Butée interne (fin de production)',
     
     'info_statu_trans_key'                     => 'Le statut du document ne permet pas d\'ajouter/modifier/supprimer des lignes.',
 
