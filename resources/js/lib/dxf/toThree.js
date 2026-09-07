@@ -41,6 +41,18 @@ function inkFor(color) {
 
 const v3 = (point) => new THREE.Vector3(point?.x ?? 0, point?.y ?? 0, point?.z ?? 0);
 
+/**
+ * Z component of the OCS normal (DXF group code 230), or 1 when the entity
+ * has no extrusion. dxf-parser exposes it as either a flat `extrusionDirectionZ`
+ * (ARC, LWPOLYLINE) or an `extrusionDirection.z` object (LINE, POLYLINE, INSERT,
+ * SOLID) depending on the entity type.
+ */
+function extrusionZ(entity) {
+    if (typeof entity?.extrusionDirectionZ === 'number') return entity.extrusionDirectionZ;
+    if (typeof entity?.extrusionDirection?.z === 'number') return entity.extrusionDirection.z;
+    return 1;
+}
+
 function arcPoints(rawCenter, radius, startAngle, endAngle, segments = ARC_SEGMENTS) {
     const center = v3(rawCenter);
 
@@ -237,9 +249,12 @@ export async function dxfToThree(dxf) {
                 const container = new THREE.Group();
                 const position = v3(entity.position);
                 const base = v3(block.position);
+                // Flipped OCS normal ((0,0,-1)) on an INSERT mirrors the block
+                // on X in world space — encoded as a negative X scale here.
+                const mirror = extrusionZ(entity) < 0 ? -1 : 1;
 
-                container.position.set(position.x - base.x, position.y - base.y, position.z - base.z);
-                container.scale.set(entity.xScale ?? 1, entity.yScale ?? 1, entity.zScale ?? 1);
+                container.position.set(mirror * position.x - base.x, position.y - base.y, position.z - base.z);
+                container.scale.set(mirror * (entity.xScale ?? 1), entity.yScale ?? 1, entity.zScale ?? 1);
                 container.rotation.z = ((entity.rotation ?? 0) * Math.PI) / 180;
 
                 parent.add(container);
@@ -255,6 +270,17 @@ export async function dxfToThree(dxf) {
             }
 
             if (points.length < 2) continue;
+
+            // OCS → WCS for the common flipped-normal case. AutoCAD's Arbitrary
+            // Axis Algorithm simplifies to negating X (and Z) when the extrusion
+            // normal is (0,0,-1) — typical of faces viewed from below in exports
+            // from SolidWorks / TopSolid / Vero.
+            if (extrusionZ(entity) < 0) {
+                for (const p of points) {
+                    p.x = -p.x;
+                    p.z = -p.z;
+                }
+            }
 
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
             parent.add(new THREE.Line(geometry, materialFor(colorOf(entity, layers))));
