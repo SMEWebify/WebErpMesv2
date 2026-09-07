@@ -199,7 +199,7 @@
                   <td class="text-right">{{ $line->discount }} %</td>
                   <td class="text-right">{{ $line->vat_rate }} %</td>
                   <td>{{ $line->delivery_date ?: '-' }}</td>
-                  <td class="text-right">{{ $line->total }}</td>
+                  <td class="text-right">{{ $line->formatted_total }}</td>
                 </tr>
               @empty
                 <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}" />

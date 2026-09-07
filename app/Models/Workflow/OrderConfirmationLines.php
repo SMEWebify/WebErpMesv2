@@ -86,6 +86,16 @@ class OrderConfirmationLines extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getFormattedTotalAttribute()
+    {
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->total, $currency, config('app.locale'));
+    }
+
+    /**
      * Get the formatted creation date of the line.
      *
      * @return string
