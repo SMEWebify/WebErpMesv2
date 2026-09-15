@@ -11,7 +11,6 @@ use App\Models\Purchases\Purchases;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseReceiptLines;
-use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Accounting\AccountingVat;
 use App\Services\DocumentCodeGenerator;
@@ -63,19 +62,12 @@ class PurchaseLinesController extends Controller
     public function selectDataForPurchaseJson(int $purchaseId)
     {
         abort_unless(auth()->check(), 403);
-        $purchase = Purchases::findOrFail($purchaseId);
+        Purchases::findOrFail($purchaseId);
         $factory  = app('Factory');
 
-        // Filter products by preferred suppliers for this purchase company
-        $productsQuery = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price');
-        if ($purchase->companies_id) {
-            $productsQuery->whereHas('preferredSuppliers', function ($q) use ($purchase) {
-                $q->where('companies_id', $purchase->companies_id);
-            });
-        }
-
+        // Products are searched on demand (products.json.search, filtered on the purchase
+        // supplier) rather than sent in full: the catalogue can exceed PHP memory.
         return response()->json([
-            'products' => $productsQuery->orderBy('code')->get(),
             'units'    => $this->selectDataService->getUnitsSelect(),
             'vats'     => $this->selectDataService->getVATSelect(),
             'currency' => $factory->curency ?? 'EUR',

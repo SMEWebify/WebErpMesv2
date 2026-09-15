@@ -25,16 +25,14 @@ class QualityAmdecController extends Controller
 
         $userSelect = $this->SelectDataService->getUsers();
         $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
-        $ProductSelect = $this->SelectDataService->getProductsSelect();
         $QualityAmdecs = QualityAmdec::orderBy('id', 'desc')->paginate(10);
         $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
-        
+
         return view('quality/quality-amdec', [
             'LastAction' => $LastAction,
             'QualityAmdecs' => $QualityAmdecs,
             'NonConformitysSelect' =>  $NonConformitysSelect,
             'userSelect' => $userSelect,
-            'ProductSelect' => $ProductSelect,
         ]);
     }
 

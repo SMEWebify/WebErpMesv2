@@ -168,6 +168,7 @@ $purchaseSteps = json_encode([
               data-endpoints="{{ json_encode([
                   'lines'         => route('purchases.lines.json.for-purchase', ['purchaseId' => $Purchase->id]),
                   'selectData'    => route('purchases.lines.json.select-data',  ['purchaseId' => $Purchase->id]),
+                  'productSearch' => route('products.json.search', array_filter(['supplier_id' => $Purchase->companies_id])),
                   'store'         => route('purchases.lines.json.store',         ['purchaseId' => $Purchase->id]),
                   'update'        => route('purchases.lines.json.update',        ['purchaseId' => $Purchase->id, 'id' => '__ID__']),
                   'destroy'       => route('purchases.lines.json.destroy',       ['purchaseId' => $Purchase->id, 'id' => '__ID__']),

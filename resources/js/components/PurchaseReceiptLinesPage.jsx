@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import useProductSearch from '../hooks/useProductSearch';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -479,12 +480,22 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
 // ManualLineForm
 // ---------------------------------------------------------------------------
 
-function ManualLineForm({ products, endpoints, onAdded }) {
+function ManualLineForm({ endpoints, onAdded }) {
     const [productId, setProductId] = useState('');
+    const [productSearch, setProductSearch]     = useState('');
+    const [showProductList, setShowProductList] = useState(false);
     const [qty, setQty]             = useState(1);
     const [saving, setSaving]       = useState(false);
     const [errors, setErrors]       = useState({});
     const [open, setOpen]           = useState(false);
+
+    const filteredProducts = useProductSearch(endpoints.productSearch, productSearch, open && showProductList);
+
+    const handleProductSelect = (product) => {
+        setProductId(product.id);
+        setProductSearch(`${product.code} — ${product.label}`);
+        setShowProductList(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -495,6 +506,7 @@ function ManualLineForm({ products, endpoints, onAdded }) {
             const data = await res.json();
             if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
             setProductId('');
+            setProductSearch('');
             setQty(1);
             setOpen(false);
             onAdded(data.line);
@@ -521,15 +533,36 @@ function ManualLineForm({ products, endpoints, onAdded }) {
                     {errors._global && <div className="alert alert-danger py-2 mb-2 small">{errors._global}</div>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-row align-items-end">
-                            <div className="form-group col-md-7 mb-0">
+                            <div className="form-group col-md-7 mb-0" style={{ position: 'relative' }}>
                                 <label className="mb-1 small font-weight-bold">Produit <span className="text-danger">*</span></label>
-                                <select className={`form-control form-control-sm ${errors.product_id ? 'is-invalid' : ''}`}
-                                    value={productId} onChange={(e) => setProductId(e.target.value)}>
-                                    <option value="">— Sélectionner un produit —</option>
-                                    {products.map((p) => (
-                                        <option key={p.id} value={p.id}>{p.code} — {p.label}</option>
-                                    ))}
-                                </select>
+                                <input
+                                    type="text"
+                                    className={`form-control form-control-sm ${errors.product_id ? 'is-invalid' : ''}`}
+                                    placeholder="Rechercher un produit…"
+                                    value={productSearch}
+                                    onChange={(e) => { setProductSearch(e.target.value); setProductId(''); setShowProductList(true); }}
+                                    onFocus={() => setShowProductList(true)}
+                                    onBlur={() => setTimeout(() => setShowProductList(false), 150)}
+                                />
+                                {showProductList && filteredProducts.length > 0 && (
+                                    <div style={{
+                                        position: 'absolute', zIndex: 1060, left: 5, right: 5,
+                                        background: '#fff', border: '1px solid #ccc',
+                                        borderRadius: '0 0 4px 4px', maxHeight: 200, overflowY: 'auto',
+                                        boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
+                                    }}>
+                                        {filteredProducts.map((p) => (
+                                            <div key={p.id} className="px-3 py-2"
+                                                style={{ cursor: 'pointer', fontSize: '0.85rem' }}
+                                                onMouseDown={() => handleProductSelect(p)}
+                                                onMouseEnter={(e) => e.currentTarget.style.background = '#f0f4ff'}
+                                                onMouseLeave={(e) => e.currentTarget.style.background = ''}>
+                                                <strong>{p.code}</strong>
+                                                <span className="text-muted ml-2">{p.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                                 {errors.product_id && <div className="invalid-feedback d-block">{errors.product_id[0]}</div>}
                             </div>
                             <div className="form-group col-md-3 mb-0">
@@ -749,7 +782,6 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
 
             {/* Add manual line */}
             <ManualLineForm
-                products={selectData.products ?? []}
                 endpoints={endpoints}
                 onAdded={handleManualLineAdded}
             />

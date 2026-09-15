@@ -736,6 +736,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
         Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
+        Route::get('/json/search', 'App\Http\Controllers\Products\ProductsController@searchJson')->name('products.json.search');
         Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
         Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
 

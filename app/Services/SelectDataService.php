@@ -187,18 +187,34 @@ class SelectDataService
     }
 
     /**
-     * Retrieve a list of products with selected fields.
+     * Search products for the pickers (quote, order, purchase and receipt lines, AMDEC,
+     * stock locations). The whole catalogue is never loaded: past a few thousand
+     * references it no longer fits in PHP memory.
      *
-     * This method fetches products from the database, selecting the 'id', 'label', 'code',
-     * and 'methods_services_id' fields. The results are ordered by the 'code' field.
-     *
-     * @return \Illuminate\Support\Collection A collection of products.
+     * @param string   $search     Matched against code and label (contains).
+     * @param int|null $supplierId Restrict to products having this company as preferred supplier.
+     * @param int      $limit      Maximum number of results.
+     * @return \Illuminate\Support\Collection
      */
-    public function getProductsSelect()
+    public function searchProducts(string $search = '', ?int $supplierId = null, int $limit = 30)
     {
-        return Cache::remember('select_data_products_v2', now()->addMinutes(30), fn() =>
-            Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price')->orderBy('code')->get()
-        );
+        $query = Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price');
+
+        if ($search !== '') {
+            $like = '%' . addcslashes($search, '\\%_') . '%';
+            $query->where(function ($q) use ($like) {
+                $q->where('code', 'like', $like)
+                  ->orWhere('label', 'like', $like);
+            });
+        }
+
+        if ($supplierId) {
+            $query->whereHas('preferredSuppliers', function ($q) use ($supplierId) {
+                $q->where('companies_id', $supplierId);
+            });
+        }
+
+        return $query->orderBy('code')->limit($limit)->get();
     }
 
     /**

@@ -210,6 +210,24 @@ class ProductsController extends Controller
     }
 
     /**
+     * JSON endpoint — product search for the line entry pickers.
+     */
+    public function searchJson(Request $request)
+    {
+        $validated = $request->validate([
+            'q'           => 'nullable|string|max:100',
+            'supplier_id' => 'nullable|integer',
+        ]);
+
+        return response()->json([
+            'products' => $this->SelectDataService->searchProducts(
+                trim($validated['q'] ?? ''),
+                isset($validated['supplier_id']) ? (int) $validated['supplier_id'] : null,
+            ),
+        ]);
+    }
+
+    /**
      * Fetch select data for the view.
      *
      * @return array
@@ -218,7 +236,6 @@ class ProductsController extends Controller
     {
         return [
             'userSelect' => $this->SelectDataService->getUsers(),
-            'ProductSelect' => $this->SelectDataService->getProductsSelect(),
             'ServicesSelect' => $this->SelectDataService->getServices(),
             'UnitsSelect' => $this->SelectDataService->getUnitsSelect(),
             'FamiliesSelect' => $this->SelectDataService->getFamilies(),

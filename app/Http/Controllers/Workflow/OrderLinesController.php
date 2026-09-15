@@ -250,7 +250,6 @@ class OrderLinesController extends Controller
         $factory = app('Factory');
 
         return response()->json([
-            'products'          => $this->selectDataService->getProductsSelect(),
             'units'             => $this->selectDataService->getUnitsSelect(),
             'vats'              => $this->selectDataService->getVATSelect(),
             'currency'          => $factory->curency ?? 'EUR',

@@ -342,6 +342,7 @@ $arrowSteps = json_encode([
             'lines'           => route('quotes.lines.json.for-quote',       ['quoteId' => $Quote->id]),
             'selectData'      => route('quotes.lines.json.select-data',     ['quoteId' => $Quote->id]),
             'priceList'       => route('quotes.lines.json.price-list',      ['quoteId' => $Quote->id, 'productId' => '__PRODUCT__']),
+            'productSearch'   => route('products.json.search'),
             'store'           => route('quotes.lines.json.store',           ['quoteId' => $Quote->id]),
             'update'          => route('quotes.lines.json.update',          ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'destroy'         => route('quotes.lines.json.destroy',         ['quoteId' => $Quote->id, 'id' => '__ID__']),

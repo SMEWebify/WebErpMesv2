@@ -431,6 +431,7 @@ if (!$orderHasInvoicedLines) {
           'lines'           => route('orders.lines.json.for-order',        ['orderId' => $Order->id]),
           'selectData'      => route('orders.lines.json.select-data',      ['orderId' => $Order->id]),
           'priceList'       => route('orders.lines.json.price-list',       ['orderId' => $Order->id, 'productId' => '__PRODUCT__']),
+          'productSearch'   => route('products.json.search'),
           'store'           => route('orders.lines.json.store',            ['orderId' => $Order->id]),
           'update'          => route('orders.lines.json.update',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'destroy'         => route('orders.lines.json.destroy',          ['orderId' => $Order->id, 'id' => '__ID__']),

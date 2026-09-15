@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
+import useProductSearch from '../hooks/useProductSearch';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -213,12 +214,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         setProductSearch('');
     };
 
-    const filteredProducts = (selectData.products ?? [])
-        .filter((p) => {
-            const q = productSearch.toLowerCase();
-            return !q || p.code.toLowerCase().includes(q) || p.label.toLowerCase().includes(q);
-        })
-        .slice(0, 30);
+    const filteredProducts = useProductSearch(endpoints.productSearch, productSearch, open && showProductList);
 
     const resetFormForCreate = (nextOrdre) => {
         const defaultUnit = selectData.units?.find((u) => u.default) ?? selectData.units?.[0];

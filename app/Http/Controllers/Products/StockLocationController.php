@@ -30,15 +30,13 @@ class StockLocationController extends Controller
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
         $StockLocationsProducts = StockLocationProducts::where('stock_locations_id', '=', $id)->get();
         $userSelect = $this->SelectDataService->getUsers();
-        $ProductSelect = $this->SelectDataService->getProductsSelect();
         $LastStockLocationProduct =  DB::table('stock_location_products')->orderBy('id', 'desc')->first();
-        
+
         return view('products/stockLocation-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
             'StockLocationsProducts' => $StockLocationsProducts,
             'userSelect' => $userSelect,
-            'ProductSelect' => $ProductSelect,
             'LastStockLocationProduct' => $LastStockLocationProduct
         ]);
     }

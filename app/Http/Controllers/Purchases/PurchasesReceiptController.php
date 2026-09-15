@@ -231,7 +231,6 @@ class PurchasesReceiptController extends Controller
         $StockLocationProductList = StockLocationProducts::all();
         $userSelect = $this->SelectDataService->getUsers();
         $nonConformities = $this->SelectDataService->getQualityNonConformity();
-        $productSelect = $this->SelectDataService->getProductsSelect();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseReceipt(), $id->id);
 
         $averageReceptionDelay = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
@@ -245,6 +244,7 @@ class PurchasesReceiptController extends Controller
             'manualLine'       => route('purchase.receipts.lines.manual', ['id' => $id->id]),
             'storeNewStock'    => route('products.stockline.store.from.purchase.order'),
             'entryExistingStock' => route('products.stockline.entry.from.purchase.order'),
+            'productSearch'    => route('products.json.search'),
         ];
 
         return view('purchases/purchases-receipt-show', [
@@ -455,7 +455,6 @@ class PurchasesReceiptController extends Controller
 
         $users           = $this->SelectDataService->getUsers();
         $nonConformities = $this->SelectDataService->getQualityNonConformity();
-        $products        = $this->SelectDataService->getProductsSelect();
         $stockLocations  = StockLocation::with('Stocks')->get();
         $stockLocProds   = StockLocationProducts::with('StockLocation')->get();
 
@@ -464,7 +463,6 @@ class PurchasesReceiptController extends Controller
             'select' => [
                 'users'                   => $users->map(fn($u) => ['id' => $u->id, 'name' => $u->name]),
                 'non_conformities'        => $nonConformities->map(fn($nc) => ['id' => $nc->id, 'code' => $nc->code]),
-                'products'                => $products->map(fn($p) => ['id' => $p->id, 'code' => $p->code, 'label' => $p->label]),
                 'stock_locations'         => $stockLocations->map(fn($sl) => [
                     'id'         => $sl->id,
                     'code'       => $sl->code,

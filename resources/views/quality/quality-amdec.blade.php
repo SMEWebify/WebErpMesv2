@@ -229,17 +229,7 @@
             
             <div class="form-row">
                 <div class="form-group col-md-4">
-                    <x-adminlte-select2 name="product_id" id="product_id" label="{{ __('general_content.product_trans_key') }}" label-class="text-lightblue"
-                        igroup-size="s" data-placeholder="Select an product...">
-                        <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
-                                <i class="fas fa-barcode"></i>
-                            </div>
-                        </x-slot>
-                        @foreach ($ProductSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                        @endforeach
-                    </x-adminlte-select2>
+                    <x-product-autocomplete name="product_id" label="{{ __('general_content.product_trans_key') }}" />
                 </div>
                 <div class="form-group col-md-4">
                     @include('include.form.form-select-user',['userId' =>   null])
