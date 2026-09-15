@@ -25,6 +25,15 @@ class SeedLoadtestData extends Command
 {
     protected $signature = 'loadtest:seed
         {--scale=1.0 : Facteur d\'échelle global (1.0 = profil "client mûr")}
+        {--companies= : Nombre de sociétés (défaut : 300 × scale)}
+        {--products= : Nombre de produits (défaut : 800 × scale)}
+        {--stock-moves= : Nombre de mouvements de stock (défaut : 50000 × scale)}
+        {--quotes= : Nombre de devis (défaut : 5000 × scale)}
+        {--lines-per-quote=10-20 : Lignes par devis, fourchette min-max}
+        {--orders= : Nombre de commandes (défaut : 3000 × scale)}
+        {--lines-per-order=8-16 : Lignes par commande, fourchette min-max}
+        {--purchases= : Nombre de commandes d\'achat (défaut : 1000 × scale)}
+        {--days=760 : Profondeur d\'historique en jours, jusqu\'à aujourd\'hui}
         {--tasks-per-line=8 : Tâches (gamme) par ligne de commande}
         {--activities-per-task=10 : Pointages atelier par tâche}
         {--fresh : Vide les tables loadtest avant génération}';
@@ -35,6 +44,9 @@ class SeedLoadtestData extends Command
     private float $scale;
     private int $seq = 0;
     private Carbon $start;
+    private int $days;
+    private array $quoteLineRange;
+    private array $orderLineRange;
 
     /** Référentiels résolus une seule fois. */
     private array $ref = [];
@@ -51,11 +63,15 @@ class SeedLoadtestData extends Command
         }
 
         $this->scale = max(0.01, (float) $this->option('scale'));
-        $this->start = Carbon::create(2024, 1, 1, 8, 0, 0);
+        $this->days = max(1, (int) $this->option('days'));
+        // Dates réparties sur les N derniers jours, pour que l'exercice en cours soit peuplé
+        $this->start = now()->subDays($this->days)->setTime(8, 0);
+        $this->quoteLineRange = $this->lineRange('lines-per-quote');
+        $this->orderLineRange = $this->lineRange('lines-per-order');
         $tasksPerLine = max(0, (int) $this->option('tasks-per-line'));
         $actPerTask = max(0, (int) $this->option('activities-per-task'));
 
-        $this->info("Base cible : {$dbName} | scale={$this->scale} | tâches/ligne={$tasksPerLine} | pointages/tâche={$actPerTask}");
+        $this->info("Base cible : {$dbName} | scale={$this->scale} | historique={$this->days} j | tâches/ligne={$tasksPerLine} | pointages/tâche={$actPerTask}");
 
         if ($this->option('fresh')) {
             $this->truncateAll();
@@ -66,20 +82,20 @@ class SeedLoadtestData extends Command
         $this->resolveReferentials();
 
         // Sociétés (clients + fournisseurs) ----------------------------------
-        $companyIds = $this->seedCompanies($this->n(300));
+        $companyIds = $this->seedCompanies($this->volume('companies', 300));
         [$contactByCompany, $addressByCompany] = $this->seedContactsAddresses($companyIds);
 
         // Produits + stock ---------------------------------------------------
-        $productIds = $this->seedProducts($this->n(800));
+        $productIds = $this->seedProducts($this->volume('products', 800));
         $slpIds = $this->seedStockLocationProducts($productIds);
-        $this->seedStockMoves($slpIds, $this->n(50000));
+        $this->seedStockMoves($slpIds, $this->volume('stock-moves', 50000));
 
         // Devis --------------------------------------------------------------
-        $this->seedQuotes($this->n(5000), $companyIds, $contactByCompany, $addressByCompany, $productIds);
+        $this->seedQuotes($this->volume('quotes', 5000), $companyIds, $contactByCompany, $addressByCompany, $productIds);
 
         // Commandes + lignes + tâches + pointages (le cœur du coût) ----------
         [$orderIds, $orderLineIds] = $this->seedOrders(
-            $this->n(3000), $companyIds, $contactByCompany, $addressByCompany, $productIds
+            $this->volume('orders', 3000), $companyIds, $contactByCompany, $addressByCompany, $productIds
         );
         $taskIds = $this->seedTasks($orderLineIds, $tasksPerLine, $productIds);
         $this->seedTaskActivities($taskIds, $actPerTask);
@@ -88,7 +104,7 @@ class SeedLoadtestData extends Command
         $this->seedDeliveriesInvoicesAccounting($orderIds, $orderLineIds, $companyIds, $contactByCompany, $addressByCompany);
 
         // Achats -------------------------------------------------------------
-        $this->seedPurchases($this->n(1000), $companyIds, $contactByCompany, $addressByCompany, $taskIds, $slpIds);
+        $this->seedPurchases($this->volume('purchases', 1000), $companyIds, $contactByCompany, $addressByCompany, $taskIds, $slpIds);
 
         $this->db->statement('SET FOREIGN_KEY_CHECKS=1');
 
@@ -104,6 +120,47 @@ class SeedLoadtestData extends Command
     private function n(int $base): int
     {
         return max(1, (int) round($base * $this->scale));
+    }
+
+    /** Volume explicite (--option) ou, à défaut, base × scale. */
+    private function volume(string $option, int $base): int
+    {
+        $value = $this->option($option);
+
+        return $value !== null ? max(1, (int) $value) : $this->n($base);
+    }
+
+    /** Fourchette « min-max » (ex. 10-20) ; une valeur seule donne min = max. */
+    private function lineRange(string $option): array
+    {
+        $parts = array_map('intval', explode('-', (string) $this->option($option), 2));
+        $min = max(1, $parts[0]);
+        $max = max($min, $parts[1] ?? $min);
+
+        return [$min, $max];
+    }
+
+    /** Commande ancienne : presque toujours livrée ; récente : ouverte ou en cours. */
+    private function orderStatus(Carbon $created): int
+    {
+        if ($created->lt(now()->subDays(60))) {
+            return random_int(1, 100) <= 95 ? 3 : random_int(1, 2);
+        }
+
+        return random_int(1, 2);
+    }
+
+    /** 1 non livrée, 2 partielle, 3 livrée ; quelques retards sur les dates passées. */
+    private function lineDeliveryStatus(Carbon $deliveryDate): int
+    {
+        if ($deliveryDate->lt(now()->subDays(10))) {
+            return random_int(1, 100) <= 97 ? 3 : 2;
+        }
+        if ($deliveryDate->isPast()) {
+            return random_int(1, 3);
+        }
+
+        return random_int(1, 100) <= 90 ? 1 : 2;
     }
 
     private function code(string $prefix): string
@@ -122,7 +179,7 @@ class SeedLoadtestData extends Command
 
     private function someDate(): Carbon
     {
-        return (clone $this->start)->addMinutes(random_int(0, 760 * 24 * 60));
+        return (clone $this->start)->addMinutes(random_int(0, $this->days * 24 * 60));
     }
 
     private function ts(Carbon $d): string
@@ -370,7 +427,7 @@ class SeedLoadtestData extends Command
 
     private function seedQuotes(int $count, array $companyIds, array $byContact, array $byAddress, array $productIds): void
     {
-        $this->line("→ quotes ({$count}) + lignes (~15/devis) + détails");
+        $this->line("→ quotes ({$count}) + lignes ({$this->quoteLineRange[0]}-{$this->quoteLineRange[1]}/devis) + détails");
         $customerIds = array_values(array_filter($companyIds, fn ($cid) => isset($byContact[$cid])));
 
         $headers = [];
@@ -394,7 +451,7 @@ class SeedLoadtestData extends Command
         $lines = [];
         foreach ($quoteIds as $idx => $qid) {
             $d = $this->ts($meta[$idx]);
-            $nb = random_int(10, 20);
+            $nb = random_int(...$this->quoteLineRange);
             for ($o = 1; $o <= $nb; $o++) {
                 $lines[] = [
                     'quotes_id' => $qid, 'ordre' => $o, 'label' => 'Ligne devis ' . $o,
@@ -429,7 +486,7 @@ class SeedLoadtestData extends Command
 
     private function seedOrders(int $count, array $companyIds, array $byContact, array $byAddress, array $productIds): array
     {
-        $this->line("→ orders ({$count}) + lignes (~12/cmd) + détails");
+        $this->line("→ orders ({$count}) + lignes ({$this->orderLineRange[0]}-{$this->orderLineRange[1]}/cmd) + détails");
         $customerIds = array_values(array_filter($companyIds, fn ($cid) => isset($byContact[$cid])));
 
         $headers = [];
@@ -440,7 +497,7 @@ class SeedLoadtestData extends Command
             $headers[] = [
                 'uuid' => $this->uuid(), 'code' => $this->code('CMD'), 'label' => 'Commande ' . ($i + 1),
                 'companies_id' => $cid, 'companies_contacts_id' => $byContact[$cid], 'companies_addresses_id' => $byAddress[$cid],
-                'statu' => random_int(1, 3), 'type' => 1, 'user_id' => $this->ref['user'],
+                'statu' => $this->orderStatus($d), 'type' => 1, 'user_id' => $this->ref['user'],
                 'accounting_payment_conditions_id' => $this->ref['payCond'],
                 'accounting_payment_methods_id' => $this->ref['payMethod'],
                 'accounting_deliveries_id' => $this->ref['delivery'],
@@ -455,15 +512,17 @@ class SeedLoadtestData extends Command
         $lineMeta = [];
         foreach ($orderIds as $idx => $oid) {
             $d = $this->ts($meta[$idx]);
-            $nb = random_int(8, 16);
+            $nb = random_int(...$this->orderLineRange);
             for ($o = 1; $o <= $nb; $o++) {
                 $qty = random_int(1, 500);
+                $deliveryDate = (clone $meta[$idx])->addDays(random_int(3, 42));
                 $lines[] = [
                     'orders_id' => $oid, 'ordre' => $o, 'label' => 'Ligne cmd ' . $o,
                     'qty' => $qty, 'delivered_qty' => 0, 'delivered_remaining_qty' => $qty,
                     'invoiced_qty' => 0, 'invoiced_remaining_qty' => $qty,
                     'methods_units_id' => $this->ref['unit'], 'selling_price' => random_int(1, 500), 'discount' => 0,
-                    'accounting_vats_id' => $this->ref['vat'], 'tasks_status' => 1, 'delivery_status' => 1, 'invoice_status' => 1,
+                    'accounting_vats_id' => $this->ref['vat'], 'tasks_status' => 1, 'delivery_status' => $this->lineDeliveryStatus($deliveryDate), 'invoice_status' => 1,
+                    'delivery_date' => $deliveryDate->toDateString(),
                     'product_id' => (string) $productIds[array_rand($productIds)],
                     'created_at' => $d, 'updated_at' => $d,
                 ];
