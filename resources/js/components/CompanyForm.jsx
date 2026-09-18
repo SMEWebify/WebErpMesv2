@@ -15,7 +15,7 @@ async function apiFetch(url, body) {
         body: JSON.stringify(body),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok) throw json;
+    if (!res.ok) throw { ...json, status: res.status };
     return json;
 }
 
@@ -90,6 +90,7 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
     const [saving, setSaving]   = useState(false);
     const [success, setSuccess] = useState(null);
     const [warning, setWarning] = useState(null);
+    const [error, setError]     = useState(null);
     const [pdpLookup, setPdpLookup] = useState({ status: 'idle', message: '' });
 
     const set = (field) => (value) => {
@@ -127,14 +128,23 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
         setSaving(true);
         setSuccess(null);
         setWarning(null);
+        setError(null);
         setErrors({});
         try {
             const res = await apiFetch(endpoint, normalizeForm(form));
             setSuccess(trans.save_success);
             if (res.warning) setWarning(res.warning);
         } catch (err) {
-            if (err.errors) setErrors(err.errors);
-            else setSuccess(null);
+            // Sans ce message, un refus hors validation (403, 419, 500…)
+            // laissait croire que l'enregistrement avait eu lieu.
+            if (err.errors) {
+                setErrors(err.errors);
+                setError(`Enregistrement refusé : ${Object.values(err.errors).flat().join(' ')}`);
+            } else if (err.status === 419) {
+                setError('Session expirée : rechargez la page puis enregistrez à nouveau.');
+            } else {
+                setError(`Enregistrement impossible (${err.status ?? 'réseau'})${err.message ? ' : ' + err.message : ''}.`);
+            }
         } finally {
             setSaving(false);
         }
@@ -214,6 +224,14 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
                         <span>&times;</span>
                     </button>
                     <i className="fas fa-exclamation-triangle mr-1" />{warning}
+                </div>
+            )}
+            {error && (
+                <div className="alert alert-danger alert-dismissible">
+                    <button type="button" className="close" onClick={() => setError(null)}>
+                        <span>&times;</span>
+                    </button>
+                    <i className="fas fa-times-circle mr-1" />{error}
                 </div>
             )}
 
