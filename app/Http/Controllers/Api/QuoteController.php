@@ -20,9 +20,12 @@ use App\Models\Planning\Task;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Http\Requests\Api\UpsertQuoteRequest;
+use App\Services\Files\SvgSanitizer;
 
 class QuoteController extends Controller
 {
+    private const MAX_PICTURE_BYTES = 10 * 1024 * 1024;
+
     public function index()
     {
         return QuoteResource::collection(
@@ -44,7 +47,7 @@ class QuoteController extends Controller
         $logger->info('STORE — payload reçu', [
             'user_id'    => Auth::id(),
             'ip'         => $request->ip(),
-            'payload'    => $request->except(['password']),
+            'payload'    => $this->loggablePayload($request),
         ]);
 
         try {
@@ -104,7 +107,7 @@ class QuoteController extends Controller
             $logger->error('STORE — échec', [
                 'user_id' => Auth::id(),
                 'error'   => $e->getMessage(),
-                'payload' => $request->except(['password']),
+                'payload' => $this->loggablePayload($request),
             ]);
             throw $e;
         }
@@ -120,7 +123,7 @@ class QuoteController extends Controller
             'code'     => $quote->code,
             'user_id'  => Auth::id(),
             'ip'       => $request->ip(),
-            'payload'  => $request->except(['password']),
+            'payload'  => $this->loggablePayload($request),
         ]);
 
         try {
@@ -160,10 +163,26 @@ class QuoteController extends Controller
                 'quote_id' => $quote->id,
                 'user_id'  => Auth::id(),
                 'error'    => $e->getMessage(),
-                'payload'  => $request->except(['password']),
+                'payload'  => $this->loggablePayload($request),
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * Payload pour les logs : sans mot de passe et sans images base64 (remplacées par leur taille).
+     */
+    private function loggablePayload(\Illuminate\Http\Request $request): array
+    {
+        $payload = $request->except(['password']);
+
+        foreach ($payload['lines'] ?? [] as $i => $line) {
+            if (is_array($line) && !empty($line['detail']['picture_base64']) && is_string($line['detail']['picture_base64'])) {
+                $payload['lines'][$i]['detail']['picture_base64'] = '[' . strlen($line['detail']['picture_base64']) . ' caractères]';
+            }
+        }
+
+        return $payload;
     }
 
     private function syncLines(Quotes $quote, array $lines): void
@@ -227,19 +246,45 @@ class QuoteController extends Controller
             ->each(fn (QuoteLines $line) => $line->delete());
     }
 
+    /**
+     * Enregistre la vignette d'une ligne dans public/images/quote-lines.
+     * Une image non reconnue ne donne pas de vignette (null) plutôt qu'un
+     * fichier que le navigateur ne saurait pas afficher.
+     */
     private function savePictureFromBase64(string $raw): ?string
     {
+        $logger = Log::channel('quote_import');
+
+        // Même plafond que l'upload manuel (StoreImage : max 10 240 Ko) ; base64 = +33 %
+        if (strlen($raw) > self::MAX_PICTURE_BYTES * 4 / 3 + 1024) {
+            $logger->warning('Vignette ignorée : trop volumineuse', ['base64_length' => strlen($raw)]);
+            return null;
+        }
+
         // Retire le préfixe data URI si présent (data:image/png;base64,...)
         $base64 = preg_replace('/^data:[^;]+;base64,/', '', $raw);
         $binary = base64_decode(preg_replace('/\s+/', '', $base64), true);
 
         if ($binary === false || strlen($binary) < 10) {
+            $logger->warning('Vignette ignorée : base64 invalide');
             return null;
         }
 
         $dir = public_path('images/quote-lines');
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
+        }
+
+        // SVG (aperçu généré depuis RADAN) : nettoyé puis enregistré tel quel
+        if (SvgSanitizer::looksLikeSvg($binary)) {
+            $svg = app(SvgSanitizer::class)->sanitize($binary);
+            if ($svg === null) {
+                $logger->warning('Vignette ignorée : SVG invalide ou refusé par SvgSanitizer', ['bytes' => strlen($binary)]);
+                return null;
+            }
+            $filename = time() . '_' . uniqid() . '.svg';
+            file_put_contents($dir . '/' . $filename, $svg);
+            return $filename;
         }
 
         if (function_exists('imagecreatefromstring')) {
@@ -252,21 +297,32 @@ class QuoteController extends Controller
             }
         }
 
-        // Fallback : sauvegarde brute avec extension détectée
-        $ext      = $this->detectImageExtension($binary);
+        // Fallback : image que GD ne lit pas (webp sans support compilé...), sauvegarde brute
+        $ext = $this->detectImageExtension($binary);
+        if ($ext === null) {
+            $logger->warning('Vignette ignorée : format non reconnu', [
+                'bytes' => strlen($binary),
+                'head'  => bin2hex(substr($binary, 0, 8)),
+            ]);
+            return null;
+        }
+
         $filename = time() . '_' . uniqid() . '.' . $ext;
         file_put_contents($dir . '/' . $filename, $binary);
         return $filename;
     }
 
-    private function detectImageExtension(string $binary): string
+    private function detectImageExtension(string $binary): ?string
     {
+        if (str_starts_with($binary, 'RIFF') && substr($binary, 8, 4) === 'WEBP') {
+            return 'webp';
+        }
+
         $signatures = [
             'png'  => "\x89PNG",
             'jpg'  => "\xFF\xD8\xFF",
             'gif'  => 'GIF8',
             'bmp'  => 'BM',
-            'webp' => 'RIFF',
         ];
 
         foreach ($signatures as $ext => $sig) {
@@ -275,7 +331,7 @@ class QuoteController extends Controller
             }
         }
 
-        return 'bin';
+        return null;
     }
 
     private function resolveServicesMap(array $tasks): array
