@@ -110,7 +110,9 @@ class N2PPayloadBuilder
     private function mapTasks(OrderLines $orderLine, $tasks): array
     {
         return $tasks->map(function (Task $task) use ($orderLine) {
-            $operationCode = $task->code ?: self::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey();
+            $operationCode = $task->code
+                ?: ($task->service?->code
+                    ?: self::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey());
 
             $plannedTimeMinutes = null;
             if ($task->seting_time !== null || $task->unit_time !== null) {

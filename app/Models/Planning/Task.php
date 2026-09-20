@@ -777,7 +777,8 @@ class Task extends Model
      * Clé métier stable (voir ligne directrice) :
      *  - $ofCode       : "OF" + orderLine.id (format produit par N2PPayloadBuilder)
      *  - $lineRef      : orderLine.id (string), redondant avec ofCode mais transporté
-     *  - $operationCode: task.code si défini, sinon "op-<task.id>" (voir
+     *  - $operationCode: task.code si défini, sinon methods_services.code
+     *                    (LASER, PLI...), sinon "op-<task.id>" (voir
      *                    N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX)
      */
     public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode): ?self
@@ -805,7 +806,21 @@ class Task extends Model
         // la même ligne existent. On trie par ordre puis id pour cibler la
         // 1re occurrence (celle qui doit démarrer/finir en premier) et on
         // logue une ambiguïté détectée pour audit.
-        $matches = $query->where('code', $operationCode)->orderBy('ordre')->orderBy('id')->get();
+        //
+        // Repli sur methods_services.code : sur les tâches héritées, tasks.code
+        // est vide et le payload emet le code service (LASER, PLI...) via
+        // N2PPayloadBuilder::mapTasks(). On matche donc aussi les tâches dont
+        // le service porte ce code, pour que le canal de retour retrouve bien
+        // la tâche même sans tasks.code renseigné.
+        $matches = $query
+            ->where(function ($q) use ($operationCode) {
+                $q->where('code', $operationCode)
+                  ->orWhereHas('service', fn ($s) => $s->where('code', $operationCode));
+            })
+            ->orderBy('ordre')
+            ->orderBy('id')
+            ->get();
+
         if ($matches->count() > 1) {
             \Illuminate\Support\Facades\Log::channel('n2p')->warning('Ambiguous task code on order line', [
                 'order_line_id' => $orderLineId,
