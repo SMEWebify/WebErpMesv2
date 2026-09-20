@@ -23,7 +23,7 @@ class PushOrderToN2P implements ShouldQueue
 
     public $backoff = [60, 300, 900, 1800, 3600];
 
-    public function __construct(public readonly int $orderId)
+    public function __construct(public readonly int $orderId, public readonly bool $skipTasks = false)
     {
     }
 
@@ -53,10 +53,18 @@ class PushOrderToN2P implements ShouldQueue
         // la table settings — mono-source-of-truth par endpoint.
         // N2PPayloadBuilder attend encore les clés préfixées n2p_* (contrat
         // non touché ici pour ne pas casser les tests unit du builder).
+        //
+        // skipTasks force l'omission du bloc tasks du payload — utilisé par
+        // le repush "livraison" (OrdersObserver) : N2P efface et recrée toutes
+        // les tâches à chaque envoi (JobSyncService::sync), un repush avec
+        // tasks détruirait l'historique atelier (actual_time_min, statuts).
+        // Le repush de livraison ne modifie QUE le statut du job.
         $businessConfig = [
             'n2p_job_status_on_send' => $endpoint->meta(IntegrationEndpoint::META_JOB_STATUS_ON_SEND),
             'n2p_priority_default'   => $endpoint->meta(IntegrationEndpoint::META_DEFAULT_PRIORITY),
-            'n2p_send_tasks'         => $endpoint->meta(IntegrationEndpoint::META_SEND_TASKS),
+            'n2p_send_tasks'         => $this->skipTasks
+                ? false
+                : $endpoint->meta(IntegrationEndpoint::META_SEND_TASKS),
         ];
 
         $payload = $payloadBuilder->build($order, $businessConfig);

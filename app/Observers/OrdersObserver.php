@@ -44,14 +44,26 @@ class OrdersObserver
         $oldStatus = $this->normalizeStatus($order->getOriginal('statu'));
         $newStatus = $this->normalizeStatus($order->statu);
 
-        if ($oldStatus === $fromSetting && $newStatus === $toSetting) {
+        // Deux déclencheurs :
+        //  - Transition métier configurée (typiquement OPEN → IN_PROGRESS) qui
+        //    envoie l'OF à N2P au lancement de la commande, avec les tâches.
+        //  - Passage à DELIVERED (3) ou PARTLY_DELIVERED (4) automatiquement mis
+        //    par CheckOrderDeliveredStatus à chaque BL — les jobs livrés
+        //    remontent en status='completed' via N2PPayloadBuilder. On envoie
+        //    SANS les tâches (skipTasks) : côté N2P, JobSyncService écrase et
+        //    recrée les tâches à chaque payload, un repush avec tâches
+        //    détruirait l'historique atelier pointé (temps réels, statuts).
+        $configuredTransition = $oldStatus === $fromSetting && $newStatus === $toSetting;
+        $deliveryTransition   = in_array($newStatus, [3, 4], true);
+
+        if ($configuredTransition || $deliveryTransition) {
             // En QUEUE_CONNECTION=sync, une exception du job (endpoint inactif,
             // N2P down, HMAC KO) remonterait au contrôleur et 500erait la mise
             // à jour de la commande — opération métier critique qu'on ne veut
             // JAMAIS bloquer sur un push d'intégration. On isole. En Redis async
             // le try/catch est un no-op (dispatch ne throw pas).
             try {
-                PushOrderToN2P::dispatch($order->getKey());
+                PushOrderToN2P::dispatch($order->getKey(), skipTasks: $deliveryTransition);
             } catch (Throwable $e) {
                 Log::channel('n2p')->error('N2P push dispatch failed (defensive catch)', [
                     'order_id' => $order->getKey(),

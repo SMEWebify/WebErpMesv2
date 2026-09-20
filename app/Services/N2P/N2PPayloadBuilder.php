@@ -59,7 +59,7 @@ class N2PPayloadBuilder
         $job = [
             'of_code' => "OF" . $orderLine->id,
             'line_ref' => (string) $orderLine->getKey(),
-            'status' => $jobStatus,
+            'status' => $this->resolveJobStatus($orderLine, $jobStatus),
             'priority' => $priority,
             'due_date' => $this->nullableDate($dueDate),
             "alias_erp" => $product?->code ?? $orderLine->code,
@@ -139,6 +139,20 @@ class N2PPayloadBuilder
     {
         $priority = $priority ?? 3;
         return max(1, min(5, $priority));
+    }
+
+    /**
+     * Statut du job côté N2P dérivé de l'état de livraison ERP.
+     *
+     * OrderLines.delivery_status : 1=Non livrée, 2=Partielle, 3=Livrée.
+     * Un OF entièrement livré remonte en 'completed' — N2P peut alors clôturer
+     * son suivi. Une ligne partielle ou non livrée garde le statut par défaut
+     * (metadata.job_status_on_send, 'released' de base) : N2P conserve son
+     * propre cycle in_progress → completed piloté par les événements atelier.
+     */
+    private function resolveJobStatus(OrderLines $orderLine, string $default): string
+    {
+        return ((int) $orderLine->delivery_status === 3) ? 'completed' : $default;
     }
 
     private function nullableDate($date): ?string
