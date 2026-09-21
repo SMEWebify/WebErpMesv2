@@ -1,8 +1,8 @@
 @extends('adminlte::master')
 
 @php
-    $brandName = 'Nest2Prod ERP';
-    $brandLogo = asset('images/nest2prodERP-logo.png');
+    $brandName = config('branding.app_name_full', 'Nest2Prod ERP');
+    $brandLogo = asset(config('branding.logo_img'));
 @endphp
 
 @section('classes_body', 'n2p-auth-page')

@@ -60,7 +60,7 @@ return [
     */
 
     'logo' => '',
-    'logo_img' => env('APP_COMMERCIAL', false) ? 'img/nest2prod-logo.png' : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
+    'logo_img' => env('APP_COMMERCIAL', false) ? 'img/nest2prod_logo_seul.png' : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',

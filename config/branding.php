@@ -24,15 +24,18 @@ return [
     'app_name_full' => $commercial ? 'Nest2Prod ERP' : 'WEB ERP MES',
 
     // Logo image path (relative to public/)
-    // For commercial mode: place your logo at public/img/nest2prod-logo.png
+    // Commercial mode: public/img/nest2prod_logo_seul.png
     'logo_img' => $commercial
-        ? 'img/nest2prod-logo.png'
+        ? 'img/nest2prod_logo_seul.png'
         : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
 
     'logo_alt' => $commercial ? 'Nest2Prod ERP' : 'WEM',
 
     // Sigle court (preloader, pastilles, favicons texte)
     'logo_short' => $commercial ? 'N2P' : 'WEM',
+
+    // Répertoire (relatif à public/) contenant les favicons servis dans <head>
+    'favicon_dir' => $commercial ? 'favicons/nest2prod' : 'favicons',
 
     // Publisher / editor name shown in legal pages
     'publisher_name' => $commercial ? 'Nest2Prod' : 'SMEWebify',
