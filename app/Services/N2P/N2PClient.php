@@ -18,10 +18,12 @@ class N2PClient
     public const PATH_JOBS = '/api/plugin/jobs';
     public const PATH_STOCK_LOTS = '/api/plugin/stock-lots';
     public const PATH_PING = '/api/plugin/ping';
+    public const PATH_ERP_JOB_DOCUMENT = '/api/erp/jobs/%d/documents';
 
     public const EVENT_JOB_PUSHED = 'job.pushed';
     public const EVENT_SHEET_LOT_PUSHED = 'sheet_lot.pushed';
     public const EVENT_PING = '__test__.ping';
+    public const EVENT_JOB_DOCUMENT_PUSHED = 'job.document.pushed';
 
     public function __construct(private readonly IntegrationEndpoint $endpoint)
     {
@@ -41,6 +43,108 @@ class N2PClient
     public function pushSheetLots(array $payload): array
     {
         return $this->sendPayload(self::PATH_STOCK_LOTS, $payload, self::EVENT_SHEET_LOT_PUSHED);
+    }
+
+    /**
+     * Attache un fichier brut (SVG typiquement) à un OF côté N2P via l'endpoint
+     * ERP HMAC. Contrat imposé par N2P (VerifyErpInboundHmac) :
+     *  - corps = fichier brut, PAS de multipart (PHP consomme php://input, la
+     *    signature du raw body est donc la seule fiable)
+     *  - headers X-N2P-Signature-256 = hex(hmac_sha256(ts . '.' . body, secret))
+     *    et X-N2P-Timestamp = unix seconds
+     *  - X-N2P-Filename optionnel (sinon N2P génère un nom)
+     *
+     * Le secret HMAC est celui de l'endpoint outbound n2p. Il DOIT être configuré
+     * à l'identique côté N2P dans tenant_settings.erp_integration.hmac_secret,
+     * sinon 401.
+     */
+    public function pushJobDocument(int $jobId, string $body, string $mime, ?string $filename = null): array
+    {
+        $url = rtrim($this->endpoint->url, '/') . sprintf(self::PATH_ERP_JOB_DOCUMENT, $jobId);
+        $timestamp = time();
+
+        $delivery = IntegrationDelivery::create([
+            'integration_endpoint_id' => $this->endpoint->id,
+            'direction'   => IntegrationDelivery::DIRECTION_OUT,
+            'event_id'    => (string) Str::uuid(),
+            'event_type'  => self::EVENT_JOB_DOCUMENT_PUSHED,
+            // Ne pas persister le binaire (potentiellement des Mo) dans le journal
+            // — l'audit garde la trace du push, pas du contenu.
+            'payload'     => [
+                'job_id'   => $jobId,
+                'mime'     => $mime,
+                'filename' => $filename,
+                'bytes'    => strlen($body),
+            ],
+            'occurred_at' => now(),
+            'error'       => 'sending',
+        ]);
+
+        $started = microtime(true);
+        $secret  = (string) $this->endpoint->hmac_secret;
+
+        if ($secret === '') {
+            $this->recordFailure($delivery, 'hmac_secret_missing', null);
+            throw new RuntimeException('N2P outbound endpoint has no HMAC secret configured');
+        }
+
+        $headers = [
+            'X-N2P-Timestamp'    => (string) $timestamp,
+            'X-N2P-Signature-256' => hash_hmac('sha256', $timestamp . '.' . $body, $secret),
+        ];
+
+        if ($filename !== null && $filename !== '') {
+            $headers['X-N2P-Filename'] = $filename;
+        }
+
+        if ($this->endpoint->requiresBearer() && ! empty($this->endpoint->bearer_token)) {
+            $headers['Authorization'] = 'Bearer ' . $this->endpoint->bearer_token;
+        }
+
+        try {
+            $response = Http::acceptJson()
+                ->timeout(self::TIMEOUT)
+                ->withHeaders($headers)
+                ->withOptions(['verify' => (bool) $this->endpoint->verify_ssl])
+                ->withBody($body, $mime)
+                ->post($url);
+        } catch (Throwable $e) {
+            $this->recordFailure($delivery, $e->getMessage(), null);
+            Log::channel('n2p')->error('N2P document push transport error', [
+                'endpoint_id' => $this->endpoint->id,
+                'job_id' => $jobId,
+                'url' => $url,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+
+        $durationMs = (int) ((microtime(true) - $started) * 1000);
+        $status = $response->status();
+        $responseBody = $response->body();
+
+        Log::channel('n2p')->info('N2P document push request', [
+            'endpoint_id' => $this->endpoint->id,
+            'delivery_id' => $delivery->id,
+            'job_id' => $jobId,
+            'status' => $status,
+            'bytes' => strlen($body),
+        ]);
+
+        if ($response->failed()) {
+            $this->recordFailure($delivery, "http_{$status}: {$responseBody}", $status);
+            throw new RequestException($response);
+        }
+
+        $delivery->markProcessed($status, $responseBody, $durationMs);
+
+        $this->endpoint->update([
+            'last_success_at' => now(),
+            'last_error_at' => null,
+            'last_error_message' => null,
+        ]);
+
+        return $response->json() ?? [];
     }
 
     /**
