@@ -866,7 +866,7 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
 // Section footer totals
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SectionTotals({ items, currency, isBOM, isSubAssembly }) {
+function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
     if (isSubAssembly) {
         const total = items.reduce((s, sa) => s + (sa.qty ?? 0) * (sa.unit_price ?? 0), 0);
         return (
@@ -874,7 +874,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly }) {
                 <tr style={{ background: '#f8f9fa', fontWeight: 600 }}>
                     <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>Total sous-ensembles</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{total.toFixed(2)} {currency}</td>
-                    <td />
+                    {canEdit && <td />}
                 </tr>
             </tfoot>
         );
@@ -890,7 +890,8 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly }) {
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
                     <td style={{ textAlign: 'right', fontSize: 12, color: margin >= 0 ? '#28a745' : '#dc3545' }}>{margin}%</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{totalPrice.toFixed(2)} {currency}</td>
-                    <td /><td />
+                    <td />
+                    {canEdit && <td />}
                 </tr>
             </tfoot>
         );
@@ -913,7 +914,8 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly }) {
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
                 <td style={{ textAlign: 'right', fontSize: 12, color: margin >= 0 ? '#28a745' : '#dc3545' }}>{margin}%</td>
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalPrice.toFixed(2)} {currency}</td>
-                <td /><td />
+                <td />
+                {canEdit && <td />}
             </tr>
         </tfoot>
     );
@@ -1280,7 +1282,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                              onDuplicate={handleTaskDuplicate} />
                                 ))}
                             </tbody>
-                            <SectionTotals items={techCutTasks} currency={currency} isBOM={false} />
+                            <SectionTotals items={techCutTasks} currency={currency} isBOM={false} canEdit={canEdit} />
                         </table>
                     </div>
                 )}
@@ -1329,7 +1331,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                              onDuplicate={handleTaskDuplicate} />
                                 ))}
                             </tbody>
-                            <SectionTotals items={bomTasks} currency={currency} isBOM={true} />
+                            <SectionTotals items={bomTasks} currency={currency} isBOM={true} canEdit={canEdit} />
                         </table>
                     </div>
                 )}
@@ -1369,7 +1371,7 @@ export default function TaskManagePage({ context, endpoints }) {
                                                         onDuplicate={handleSubAssemblyDuplicate} />
                                     ))}
                                 </tbody>
-                                <SectionTotals items={subAssemblies} currency={currency} isSubAssembly={true} />
+                                <SectionTotals items={subAssemblies} currency={currency} isSubAssembly={true} canEdit={canEdit} />
                             </table>
                         </div>
                     )}
