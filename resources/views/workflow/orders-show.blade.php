@@ -190,11 +190,13 @@ if (!$orderHasInvoicedLines) {
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-secondary" type="submit" name="apply_delivery_date" value="1" title="Appliquer aux lignes" aria-label="Appliquer aux lignes">
-                            <i class="fas fa-level-down-alt"></i>
-                          </button>
-                        </div>
+                      </div>
+                      <div class="form-check mt-1">
+                        <input type="hidden" name="apply_delivery_date" value="0">
+                        <input type="checkbox" class="form-check-input" name="apply_delivery_date" value="1" id="apply_delivery_date" checked>
+                        <label class="form-check-label small text-muted" for="apply_delivery_date">
+                          Propager aux lignes et recalculer les jalons des tâches
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -207,11 +209,13 @@ if (!$orderHasInvoicedLines) {
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-secondary" type="submit" name="apply_delivery_date" value="1" title="Appliquer aux lignes" aria-label="Appliquer aux lignes">
-                            <i class="fas fa-level-down-alt"></i>
-                          </button>
-                        </div>
+                      </div>
+                      <div class="form-check mt-1">
+                        <input type="hidden" name="apply_delivery_date" value="0">
+                        <input type="checkbox" class="form-check-input" name="apply_delivery_date" value="1" id="apply_delivery_date" checked>
+                        <label class="form-check-label small text-muted" for="apply_delivery_date">
+                          Propager aux lignes et recalculer les jalons des tâches
+                        </label>
                       </div>
                     </div>
                   </div>

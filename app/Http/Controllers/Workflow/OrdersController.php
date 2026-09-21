@@ -266,7 +266,7 @@ class OrdersController extends Controller
             $this->orderConfirmationService->createFromOrder($order, auth()->id());
         }
 
-        if ($request->boolean('apply_delivery_date') && $order->validity_date) {
+        if ($request->boolean('apply_delivery_date') && $order->wasChanged('validity_date') && $order->validity_date) {
             $factory = app('Factory');
             $updates = ['delivery_date' => $order->validity_date];
 
@@ -280,6 +280,9 @@ class OrdersController extends Controller
             }
 
             OrderLines::where('orders_id', $order->id)->update($updates);
+
+            Cache::forget(CalculateTaskDates::cacheKeyForOrder($order->id));
+            CalculateTaskDates::dispatchAfterResponse($order->id);
         }
 
         // Redirect with success message
