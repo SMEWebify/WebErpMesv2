@@ -1255,6 +1255,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Methods\StandardNomenclatureController@store')->name('methods.standard.nomenclature.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\StandardNomenclatureController@update')->name('methods.standard.nomenclature.update');
         });
+
+        // Routes for Operation Transition Delays
+        Route::group(['prefix' => 'operation-transition-delay'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\OperationTransitionDelayController@index')->name('methods.operation-transition-delay');
+            Route::post('/create', 'App\Http\Controllers\Methods\OperationTransitionDelayController@store')->name('methods.operation-transition-delay.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Methods\OperationTransitionDelayController@update')->name('methods.operation-transition-delay.update');
+            Route::post('/delete/{id}', 'App\Http\Controllers\Methods\OperationTransitionDelayController@destroy')->name('methods.operation-transition-delay.destroy');
+        });
     });
 
     Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

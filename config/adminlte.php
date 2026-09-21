@@ -731,6 +731,11 @@ return [
                     'url'  => 'methods/standard-nomenclature',
                     'icon_color' => 'purple',
                 ],
+                [
+                    'text' => 'operation_transition_delays_trans_key',
+                    'url'  => 'methods/operation-transition-delay',
+                    'icon_color' => 'teal',
+                ],
             ],
         ],
         [

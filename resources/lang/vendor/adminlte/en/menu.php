@@ -77,6 +77,7 @@ return [
     'methods_familys_trans_key'                => 'Famillys',
     'methods_tools_trans_key'                  => 'Tools',
     'methods_standard_bom_trans_key'           => 'Nomenclature standard',
+    'operation_transition_delays_trans_key'    => 'Inter-operation delays',
     'accounting_trans_key'                     => 'Accounting',
     'payment_conditions_trans_key'             => 'Payment Conditions',
     'payment_methods_trans_key'                => 'Payment Methods',

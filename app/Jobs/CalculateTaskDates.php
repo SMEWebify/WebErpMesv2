@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Workflow\OrderLines;
-use App\Support\WorkingTime;
+use App\Services\Planning\InterOperationDelayResolver;
 use App\Services\TaskDateCalculator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -71,29 +71,24 @@ class CalculateTaskDates implements ShouldQueue
         }
 
         $taskDateCalculator = app(TaskDateCalculator::class);
+        // Nouvelle instance par run : les surcharges de paires et les défauts
+        // config peuvent avoir été modifiés depuis le dernier calcul.
+        $delayResolver = app(InterOperationDelayResolver::class);
+        $delayCallback = fn (?int $from, ?int $to) => $delayResolver->hoursBetween($from, $to);
+
         $processed = 0;
         $messages = [];
 
-        $orderLines->lazy()->each(function ($line) use ($taskDateCalculator, $countLines, &$processed, &$messages) {
-            $taskEndDate = Carbon::parse($line->internal_delay);
-            $taskEndDate = $taskDateCalculator->adjustForWeekendsAndHolidays($taskEndDate);
+        $orderLines->lazy()->each(function ($line) use ($taskDateCalculator, $delayCallback, $countLines, &$processed, &$messages) {
+            $anchor = Carbon::parse($line->internal_delay);
+            $tasks  = $line->Task->sortByDesc('ordre');
 
-            $elapsedTimeInSeconds = 0;
-            $tasks = $line->Task->sortByDesc('ordre');
+            $chained = $taskDateCalculator->chainTasks($tasks, $anchor, $delayCallback);
 
-            foreach ($tasks as $task) {
-                $endDate = $taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
-                $task->end_date = $endDate;
-
-                $totalTaskHours = $task->TotalTime();
-                $secondsToSubtract = $this->calculateSecondsForHours($taskDateCalculator, $endDate, $totalTaskHours);
-
-                $elapsedTimeInSeconds += $secondsToSubtract;
-                $startDate = $taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
-                $task->start_date = $startDate;
-                $task->save();
-
-                $taskEndDate = $startDate;
+            foreach ($chained as $entry) {
+                $entry['task']->end_date   = $entry['end'];
+                $entry['task']->start_date = $entry['start'];
+                $entry['task']->save();
             }
 
             $processed++;
@@ -107,13 +102,6 @@ class CalculateTaskDates implements ShouldQueue
         });
 
         $this->markFinished();
-    }
-
-    private function calculateSecondsForHours(TaskDateCalculator $taskDateCalculator, Carbon $fromDate, float $totalTaskHours): int
-    {
-        $startDate = WorkingTime::subtractWorkingHours($fromDate, $totalTaskHours);
-
-        return $fromDate->diffInSeconds($startDate);
     }
 
     private function initializeProgress(): void

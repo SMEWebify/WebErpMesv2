@@ -5,10 +5,12 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Carbon\Carbon;
 use App\Services\TaskDateCalculator;
+use App\Services\Planning\InterOperationDelayResolver;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsRessources;
 use App\Models\Planning\Task;
+use App\Models\Planning\OperationTransitionDelay;
 use App\Models\Times\TimesBanckHoliday;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -90,6 +92,23 @@ class TaskDateCalculatorTest extends TestCase
                 $table->timestamps();
             });
         }
+
+        if (!Schema::hasTable('operation_transition_delays')) {
+            Schema::create('operation_transition_delays', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('from_service_id');
+                $table->foreignId('to_service_id');
+                $table->decimal('transfer_hours', 8, 2)->default(0);
+                $table->timestamps();
+                $table->unique(['from_service_id', 'to_service_id']);
+            });
+        } else {
+            OperationTransitionDelay::query()->delete();
+        }
+
+        // Neutralise les défauts config pour que chaque test décide de son propre délai.
+        config()->set('planning.inter_operation_hours', 0);
+        config()->set('planning.min_operation_gap_hours', 0);
     }
 
     public function test_adjustment_of_weekends_and_holidays(): void
@@ -128,6 +147,133 @@ class TaskDateCalculatorTest extends TestCase
 
         $this->assertEquals('2024-05-03 16:00:00', $start->format('Y-m-d H:i:s'));
         $this->assertEquals('2024-05-03 18:00:00', $finish->format('Y-m-d H:i:s'));
+    }
+
+    public function test_chain_tasks_places_two_consecutive_tasks_without_compounding(): void
+    {
+        // Régression : l'ancien enchaînement cumulait la durée à chaque itération,
+        // ce qui décalait la 2e tâche du double de sa durée. Deux tâches de 2h
+        // doivent finir/commencer bord à bord si aucun délai n'est configuré.
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+
+        $downstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id,
+            'methods_units_id' => $unit->id,
+            'ordre' => 20,
+            'seting_time' => 0,
+            'unit_time' => 1,
+            'qty' => 2,
+        ]);
+        $upstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id,
+            'methods_units_id' => $unit->id,
+            'ordre' => 10,
+            'seting_time' => 0,
+            'unit_time' => 1,
+            'qty' => 2,
+        ]);
+
+        $calculator = new TaskDateCalculator();
+        // Vendredi 3 mai 2024 18:00 — ancre alignée sur un jour ouvré.
+        $anchor = Carbon::create(2024, 5, 3, 18, 0, 0);
+
+        $chained = $calculator->chainTasks(collect([$downstream, $upstream]), $anchor);
+
+        $this->assertCount(2, $chained);
+        $this->assertSame('2024-05-03 16:00:00', $chained[0]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 18:00:00', $chained[0]['end']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 14:00:00', $chained[1]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 16:00:00', $chained[1]['end']->format('Y-m-d H:i:s'));
+    }
+
+    public function test_chain_tasks_applies_default_inter_operation_delay(): void
+    {
+        config()->set('planning.inter_operation_hours', 1);
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+
+        $downstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 20, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+        $upstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 10, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+
+        $resolver = new InterOperationDelayResolver();
+        $calculator = new TaskDateCalculator();
+        $anchor = Carbon::create(2024, 5, 3, 18, 0, 0);
+
+        $chained = $calculator->chainTasks(
+            collect([$downstream, $upstream]),
+            $anchor,
+            fn (?int $from, ?int $to) => $resolver->hoursBetween($from, $to),
+        );
+
+        // Aval inchangé
+        $this->assertSame('2024-05-03 16:00:00', $chained[0]['start']->format('Y-m-d H:i:s'));
+        // Amont décalé d'1h vers l'amont (délai) — 2h de durée → start = 13h
+        $this->assertSame('2024-05-03 13:00:00', $chained[1]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 15:00:00', $chained[1]['end']->format('Y-m-d H:i:s'));
+    }
+
+    public function test_chain_tasks_prefers_pair_override_over_default_delay(): void
+    {
+        // Pair-spécifique 3h prime sur défaut config 1h.
+        config()->set('planning.inter_operation_hours', 1);
+
+        $unit = MethodsUnitsFactory::new()->create();
+        $laser = MethodsServicesFactory::new()->create(['code' => 'LASER', 'label' => 'Laser']);
+        $soud  = MethodsServicesFactory::new()->create(['code' => 'SOUD',  'label' => 'Soudure']);
+
+        OperationTransitionDelay::create([
+            'from_service_id' => $laser->id,
+            'to_service_id'   => $soud->id,
+            'transfer_hours'  => 3,
+        ]);
+
+        $downstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $soud->id, 'methods_units_id' => $unit->id,
+            'ordre' => 20, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+        $upstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $laser->id, 'methods_units_id' => $unit->id,
+            'ordre' => 10, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+
+        $resolver = new InterOperationDelayResolver();
+        $calculator = new TaskDateCalculator();
+        $anchor = Carbon::create(2024, 5, 3, 18, 0, 0);
+
+        $chained = $calculator->chainTasks(
+            collect([$downstream, $upstream]),
+            $anchor,
+            fn (?int $from, ?int $to) => $resolver->hoursBetween($from, $to),
+        );
+
+        // Aval inchangé
+        $this->assertSame('2024-05-03 16:00:00', $chained[0]['start']->format('Y-m-d H:i:s'));
+        // Amont : cursor 16h - 3h (paire) = 13h → end=13h, 2h durée → start=11h
+        $this->assertSame('2024-05-03 11:00:00', $chained[1]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 13:00:00', $chained[1]['end']->format('Y-m-d H:i:s'));
+    }
+
+    public function test_resolver_falls_back_to_default_when_pair_is_missing(): void
+    {
+        config()->set('planning.inter_operation_hours', 2);
+        config()->set('planning.min_operation_gap_hours', 0.5);
+
+        $resolver = new InterOperationDelayResolver();
+
+        // Aucune paire en base → 2h défaut + 0.5h écart minimum = 2.5h
+        $this->assertSame(2.5, $resolver->hoursBetween(1, 2));
+        // transfer seul (sans écart minimum)
+        $this->assertSame(2.0, $resolver->transferHoursBetween(1, 2));
+        // Aucun service → 0 transfer, mais l'écart minimum reste appliqué
+        $this->assertSame(0.5, $resolver->hoursBetween(null, 2));
+        $this->assertSame(0.0, $resolver->transferHoursBetween(null, 2));
     }
 
     public function test_selects_resource_respecting_capacity(): void

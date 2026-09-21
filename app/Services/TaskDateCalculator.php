@@ -66,4 +66,60 @@ class TaskDateCalculator
         }
         return null;
     }
+
+    /**
+     * Enchaîne rétroactivement les tâches d'une même ligne : la dernière tâche
+     * finit à l'ancre (`internal_delay`), la précédente finit là où la suivante
+     * commence — avec, en option, un délai inter-opérations glissé entre les
+     * deux.
+     *
+     * Les $tasks doivent être fournies en ordre décroissant de `ordre`
+     * (downstream d'abord, upstream ensuite) : c'est la clé de lecture du
+     * backscheduling en aval.
+     *
+     * Le closure $delayHoursBetween reçoit `(fromServiceId, toServiceId)` — où
+     * `from` est la tâche courante (upstream, sur le point d'être placée) et
+     * `to` la tâche déjà placée juste en aval — et renvoie un nombre d'heures
+     * atelier à intercaler entre la fin de la première et le début de la
+     * seconde. Passer null (le défaut) revient au comportement historique
+     * « transition instantanée ».
+     *
+     * Correction au passage : l'ancienne boucle déplaçait `$taskEndDate` vers
+     * `$startDate` ET accumulait `$elapsedTimeInSeconds`, ce qui appliquait
+     * deux fois la durée à partir de la 2e tâche. Ici on garde uniquement le
+     * curseur mobile et on repart de 0 pour chaque tâche.
+     *
+     * @param  iterable<Task>  $tasks
+     * @return array<int, array{task: Task, start: Carbon, end: Carbon}>
+     */
+    public function chainTasks(iterable $tasks, Carbon $anchor, ?callable $delayHoursBetween = null): array
+    {
+        $cursor = $this->adjustForWeekendsAndHolidays($anchor->copy());
+        $result = [];
+        $previousServiceId = null;
+
+        foreach ($tasks as $task) {
+            if ($previousServiceId !== null && $delayHoursBetween !== null) {
+                $delayHours = (float) $delayHoursBetween(
+                    $task->methods_services_id ?? null,
+                    $previousServiceId
+                );
+
+                if ($delayHours > 0) {
+                    $cursor = WorkingTime::subtractWorkingHours($cursor, $delayHours);
+                }
+            }
+
+            $end = $cursor->copy();
+            $duration = (float) $task->TotalTime();
+            $start = WorkingTime::subtractWorkingHours($cursor, $duration);
+
+            $result[] = ['task' => $task, 'start' => $start, 'end' => $end];
+
+            $cursor = $start;
+            $previousServiceId = $task->methods_services_id ?? null;
+        }
+
+        return $result;
+    }
 }
