@@ -11,7 +11,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
 use App\Models\Methods\MethodsRessources;
+use App\Services\Planning\FiniteCapacityScheduler;
 use App\Services\ResourceCapacityService;
+use App\Services\TaskDateCalculator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -112,13 +114,29 @@ class PlanningController extends Controller
 
     /**
      * POST — dispatch the date calculation job.
+     *
+     * `direction` : `alap` (défaut, backscheduling depuis internal_delay) ou
+     * `asap` (forward depuis start_date/today). Les autres dispatch dans le
+     * code (OrdersController) restent en ALAP via la valeur par défaut du job.
      */
-    public function calculateDates()
+    public function calculateDates(Request $request)
     {
-        Cache::forget(CalculateTaskDates::CACHE_KEY);
-        CalculateTaskDates::dispatchAfterResponse();
+        $direction = $request->input('direction') === TaskDateCalculator::DIRECTION_ASAP
+            ? TaskDateCalculator::DIRECTION_ASAP
+            : TaskDateCalculator::DIRECTION_ALAP;
 
-        return response()->json(['dispatched' => true]);
+        $capacityMode = $request->input('capacity_mode') === FiniteCapacityScheduler::MODE_FINITE
+            ? FiniteCapacityScheduler::MODE_FINITE
+            : FiniteCapacityScheduler::MODE_INFINITE;
+
+        Cache::forget(CalculateTaskDates::CACHE_KEY);
+        CalculateTaskDates::dispatchAfterResponse(null, $direction, $capacityMode);
+
+        return response()->json([
+            'dispatched'    => true,
+            'direction'     => $direction,
+            'capacity_mode' => $capacityMode,
+        ]);
     }
 
     /**

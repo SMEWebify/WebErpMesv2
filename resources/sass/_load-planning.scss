@@ -1,21 +1,348 @@
 //
-// Load planning timeline (resources/js/components/LoadPlanningIndex.jsx)
+// Load planning heatmap (resources/js/components/LoadPlanningIndex.jsx)
 //
-// Services × days heat grid, inspired by the job planning timeline:
-// sticky service column, sticky two-line day header, today marker,
-// week separators and pill-shaped load cells.
+// Visual style aligned on Nest2Prod /jobs/capacity: same editor, same
+// vocabulary (« Heatmap », « Simuler », « Aujourd'hui »), same feel.
+// Built with Bootstrap 5 primitives (Tailwind is not available here).
 //
 
-$lp-border:      #e9ecef;
-$lp-service-col: 260px;
+$lp-orange:      #f97316;
+$lp-orange-soft: #ffedd5;
+$lp-orange-dark: #ea580c;
+$lp-slate-50:    #f8fafc;
+$lp-slate-100:   #f1f5f9;
+$lp-slate-200:   #e2e8f0;
+$lp-slate-300:   #cbd5e1;
+$lp-slate-400:   #94a3b8;
+$lp-slate-500:   #64748b;
+$lp-slate-600:   #475569;
+$lp-slate-700:   #334155;
+$lp-slate-800:   #1e293b;
 
-.lp-timeline {
+.lp-app {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: $lp-slate-700;
+}
+
+// ─── Top bar ───────────────────────────────────────────────────────────
+
+.lp-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.lp-topbar__title p {
+    margin: 0;
+}
+
+.lp-topbar__subtitle {
+    font-size: .8rem;
+    color: $lp-slate-500;
+}
+
+.lp-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}
+
+.lp-segbar {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid $lp-slate-200;
+    border-radius: .5rem;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.lp-segbar__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .4rem .75rem;
+    border: 0;
+    background: transparent;
+    color: $lp-slate-600;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: background-color .15s ease, color .15s ease;
+
+    &:hover:not(:disabled):not(.is-active) {
+        background-color: $lp-slate-50;
+    }
+
+    &.is-active {
+        background-color: $lp-orange;
+        color: #fff;
+    }
+
+    &:disabled {
+        color: $lp-slate-400;
+        cursor: not-allowed;
+    }
+}
+
+.lp-search {
     position: relative;
+    width: 220px;
+}
+
+.lp-search__icon {
+    position: absolute;
+    top: 50%;
+    left: .625rem;
+    transform: translateY(-50%);
+    color: $lp-slate-400;
+    font-size: .75rem;
+    pointer-events: none;
+}
+
+.lp-search__input.form-control-sm {
+    height: 32px;
+    padding-left: 1.85rem;
+    padding-right: 1.85rem;
+    border-color: $lp-slate-200;
+    border-radius: .5rem;
+    font-size: .8rem;
+    color: $lp-slate-700;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+
+    &:focus {
+        border-color: $lp-orange;
+        box-shadow: 0 0 0 2px rgba(249, 115, 22, .18);
+    }
+
+    &::placeholder {
+        color: $lp-slate-400;
+    }
+}
+
+.lp-search__clear {
+    position: absolute;
+    top: 50%;
+    right: .35rem;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: .25rem;
+    background: transparent;
+    color: $lp-slate-400;
+
+    &:hover {
+        background-color: $lp-slate-100;
+        color: $lp-slate-600;
+    }
+}
+
+.lp-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+}
+
+.lp-nav__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid $lp-slate-200;
+    border-radius: .5rem;
+    background-color: #fff;
+    color: $lp-slate-500;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    transition: background-color .15s ease, color .15s ease;
+
+    &:hover {
+        background-color: $lp-slate-50;
+        color: $lp-slate-700;
+    }
+}
+
+.lp-nav__today {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 .85rem;
+    border: 1px solid $lp-slate-200;
+    border-radius: .5rem;
+    background-color: #fff;
+    color: $lp-slate-600;
+    font-size: .75rem;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+
+    &:hover {
+        background-color: $lp-slate-50;
+    }
+}
+
+// ─── Scenario card ─────────────────────────────────────────────────────
+
+.lp-scenario {
+    padding: 1rem 1.25rem;
+    border: 1px solid $lp-slate-200;
+    border-radius: 1rem;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.lp-scenario__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .85rem;
+}
+
+.lp-scenario__spacer {
+    flex: 1 1 auto;
+    min-width: .5rem;
+}
+
+.lp-scenario__alerts {
+    margin-top: .85rem;
+    padding-top: .75rem;
+    border-top: 1px solid $lp-slate-100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}
+
+.lp-scenario__hint {
+    color: $lp-slate-500;
+    font-size: .72rem;
+    margin-left: auto;
+}
+
+.lp-field {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    min-width: 180px;
+
+    label {
+        margin: 0;
+        font-size: .65rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: $lp-slate-500;
+    }
+
+    .form-control-sm {
+        height: 34px;
+        border-color: $lp-slate-200;
+        border-radius: .5rem;
+        background-color: #fff;
+        color: $lp-slate-700;
+        font-size: .8rem;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+
+        &:focus {
+            border-color: $lp-orange;
+            box-shadow: 0 0 0 2px rgba(249, 115, 22, .18);
+        }
+
+        &:disabled {
+            background-color: $lp-slate-50;
+            color: $lp-slate-400;
+        }
+    }
+}
+
+.lp-check {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    margin: 0;
+    padding: .35rem 0;
+    color: $lp-slate-600;
+    font-size: .8rem;
+    font-weight: 500;
+
+    input {
+        margin: 0;
+        accent-color: $lp-orange;
+    }
+}
+
+.lp-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: .5rem;
+    background-color: $lp-orange;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(249, 115, 22, .25);
+    transition: background-color .15s ease;
+
+    &:hover:not(:disabled) {
+        background-color: $lp-orange-dark;
+    }
+
+    &:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+}
+
+.lp-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: .25rem .65rem;
+    border: 0;
+    border-radius: 999px;
+    background-color: $lp-slate-100;
+    color: $lp-slate-700;
+    font-size: .72rem;
+    font-weight: 600;
+    transition: background-color .15s ease;
+
+    &:hover {
+        background-color: $lp-slate-200;
+    }
+
+    &--warn {
+        background-color: #fef3c7;
+        color: #92400e;
+
+        &:hover {
+            background-color: #fde68a;
+        }
+    }
+}
+
+// ─── Heatmap ───────────────────────────────────────────────────────────
+
+.lp-heatmap-card {
+    border: 1px solid $lp-slate-200;
+    border-radius: 1rem;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    overflow: hidden;
+}
+
+.lp-heatmap-scroll {
     overflow: auto;
     max-height: 74vh;
-    background-color: #fff;
 
-    // Cross-browser thin scrollbars — the grid is scrolled in both directions.
     scrollbar-width: thin;
 
     &::-webkit-scrollbar {
@@ -24,333 +351,401 @@ $lp-service-col: 260px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #ced4da;
+        background-color: $lp-slate-300;
         border-radius: 5px;
     }
 }
 
-.lp-table {
-    // max-content, so the day columns keep their min-width and the wrapper
-    // scrolls horizontally instead of squeezing a whole month into the card
+.lp-heatmap {
     width: max-content;
     min-width: 100%;
-    margin-bottom: 0;
-    // separate + box-shadow borders, otherwise sticky cells lose their borders
+    margin: 0;
     border-collapse: separate;
     border-spacing: 0;
 
-    th,
-    td {
+    th, td {
         padding: 0;
         vertical-align: middle;
-        box-shadow: inset 0 -1px 0 $lp-border;
+        background-clip: padding-box;
     }
 }
 
-// --- Service column ---------------------------------------------------------
+// Row header (sticky "OPÉRATION" column)
 
-.lp-col-service {
+$lp-row-col: 240px;
+
+.lp-row-head {
     position: sticky;
     left: 0;
     z-index: 2;
-    width: $lp-service-col;
-    min-width: $lp-service-col;
-    max-width: $lp-service-col;
-    padding: .5rem .75rem !important;
+    width: $lp-row-col;
+    min-width: $lp-row-col;
+    max-width: $lp-row-col;
+    padding: .65rem .9rem !important;
     background-color: #fff;
-    font-weight: 400;
     text-align: left;
-    box-shadow: inset 0 -1px 0 $lp-border, 6px 0 6px -6px rgba(0, 0, 0, .12);
+    font-weight: 400;
+    border-bottom: 1px solid $lp-slate-100;
+    border-right: 1px solid $lp-slate-200;
+    box-shadow: 6px 0 6px -6px rgba(15, 23, 42, .06);
 }
 
-.lp-col-service--head {
+.lp-row-head--head {
     z-index: 4;
-    font-size: .72rem;
+    top: 0;
+    font-size: .65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .04em;
-    color: #6c757d;
+    letter-spacing: .05em;
+    color: $lp-slate-500;
+    border-bottom: 1px solid $lp-slate-200;
 }
 
-.lp-service {
+.lp-row-head__main {
     display: flex;
     align-items: center;
-
-    &--compact {
-        gap: .5rem;
-    }
+    gap: .5rem;
 }
 
-.lp-service__avatar {
-    flex: 0 0 auto;
-    width: 38px;
-    height: 38px;
-    margin-right: .6rem;
-    border: 1px solid $lp-border;
-    border-radius: 50%;
-    background-color: #f8f9fa;
-    object-fit: cover;
-
-    &--empty {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #adb5bd;
-    }
-}
-
-.lp-service__dot {
+.lp-row-head__dot {
     flex: 0 0 auto;
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: currentColor;
 }
 
-.lp-service__body {
-    min-width: 0;
-}
-
-.lp-service__name {
-    display: block;
-    min-width: 0;
-    overflow: hidden;
+.lp-row-head__label {
+    font-size: .85rem;
     font-weight: 600;
-    color: #343a40;
+    color: $lp-slate-800;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.lp-service__cap {
-    margin-left: auto;
-    font-size: .72rem;
-    white-space: nowrap;
-}
-
-.lp-service__badges {
+.lp-row-head__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: .25rem;
-    margin-top: .2rem;
+    align-items: center;
+    gap: .3rem;
+    margin-top: .25rem;
+    font-size: .68rem;
+    color: $lp-slate-500;
+}
 
-    .badge {
-        font-weight: 600;
-        font-size: .66rem;
+.lp-row-head__cap {
+    display: inline-flex;
+    align-items: center;
+    padding: .05rem .4rem;
+    border-radius: 999px;
+    background-color: $lp-slate-100;
+    color: $lp-slate-600;
+    font-weight: 600;
+}
+
+.lp-row-head__count {
+    display: inline-flex;
+    align-items: center;
+    padding: .05rem .4rem;
+    border-radius: 999px;
+    background-color: $lp-slate-50;
+    color: $lp-slate-500;
+    font-weight: 500;
+}
+
+.lp-row-head__over {
+    display: inline-flex;
+    align-items: center;
+    padding: .05rem .45rem;
+    border-radius: 999px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.lp-row-head__custom {
+    width: 52px;
+    height: 22px;
+    padding: 0 .3rem;
+    border: 1px solid $lp-slate-200;
+    border-radius: .35rem;
+    background-color: #fff;
+    font-size: .68rem;
+    color: $lp-slate-600;
+
+    &:focus {
+        outline: none;
+        border-color: $lp-orange;
+        box-shadow: 0 0 0 2px rgba(249, 115, 22, .18);
     }
 }
 
-// --- Day header -------------------------------------------------------------
+// Day header
 
-.lp-table thead th {
+.lp-heatmap thead th {
     position: sticky;
     top: 0;
     z-index: 3;
     background-color: #fff;
 }
 
+.lp-heatmap thead th.lp-row-head {
+    z-index: 5;
+}
+
 .lp-day {
-    width: 76px;
-    min-width: 76px;
-    padding: .35rem .15rem !important;
+    min-width: 84px;
+    padding: .5rem .25rem !important;
     text-align: center;
     line-height: 1.15;
-    box-shadow: inset 0 -1px 0 $lp-border;
+    border-bottom: 1px solid $lp-slate-200;
+    border-right: 1px solid $lp-slate-100;
+
+    &:last-child { border-right: 0; }
+
+    &.is-weekend {
+        background-color: $lp-slate-50;
+    }
+
+    &.is-off {
+        background-color: $lp-slate-100;
+    }
+
+    &.is-week-start:not(.is-today) {
+        border-left: 1px solid $lp-slate-200;
+    }
 }
 
-.lp-day__weekday {
-    display: block;
-    font-size: .62rem;
-    font-weight: 700;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-    opacity: .75;
-}
-
-.lp-day__date {
-    display: block;
-    font-size: .82rem;
-    font-weight: 700;
-}
-
-.lp-day__today {
-    display: inline-block;
-    margin-top: .15rem;
-    padding: 0 .35rem;
-    border-radius: 10px;
-    background-color: #f6993f;
-    color: #fff;
-    font-size: .56rem;
-    font-weight: 700;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-// Today column marker — the equivalent of the timeline "today" rule.
-.lp-col-today {
-    box-shadow:
-        inset 0 -1px 0 $lp-border,
-        inset 2px 0 0 #f6993f,
-        inset -2px 0 0 #f6993f;
-}
-
-// Subtle week separator on Mondays, to keep long ranges readable.
-.lp-week-start:not(.lp-col-today) {
-    border-left: 1px solid #dee2e6;
-}
-
-// --- Load cells -------------------------------------------------------------
-
-.lp-cell {
-    padding: .3rem .25rem !important;
-    text-align: center;
-}
-
-.lp-cell__inner {
+.lp-day__inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .2rem;
+    gap: .1rem;
+}
+
+.lp-day__weekday {
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: $lp-slate-400;
+
+    .is-today & { color: $lp-orange-dark; }
+}
+
+.lp-day__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-size: .95rem;
+    font-weight: 700;
+    color: $lp-slate-700;
+
+    .is-today & {
+        background-color: $lp-orange;
+        color: #fff;
+    }
+}
+
+.lp-day__month {
+    font-size: .6rem;
+    color: $lp-slate-400;
+    text-transform: lowercase;
+}
+
+.lp-day__total {
+    margin-top: .15rem;
+    font-size: .62rem;
+    font-weight: 600;
+    color: $lp-slate-500;
+}
+
+// Cells
+
+.lp-cell {
+    padding: .3rem .3rem !important;
+    text-align: center;
+    border-bottom: 1px solid $lp-slate-100;
+    border-right: 1px solid $lp-slate-100;
+
+    &:last-child { border-right: 0; }
+
+    &.is-weekend {
+        background-color: rgba($lp-slate-100, .6);
+    }
+    &.is-off {
+        background-color: rgba($lp-slate-200, .4);
+    }
+    &.is-today {
+        background-color: rgba($lp-orange-soft, .35);
+    }
+    &.is-week-start:not(.is-today) {
+        border-left: 1px solid $lp-slate-200;
+    }
 }
 
 .lp-cell__empty {
     display: block;
-    color: #ced4da;
-    font-size: .75rem;
+    height: 48px;
 }
 
-.lp-pill {
-    display: inline-flex;
+.lp-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: .2rem;
-    min-width: 46px;
-    padding: .12rem .4rem;
-    border: 1px solid currentColor;
-    border-radius: 999px;
-    background-color: rgba(255, 255, 255, .55);
-    font-size: .72rem;
-    font-weight: 700;
-    white-space: nowrap;
     justify-content: center;
+    padding: .3rem .35rem;
+    min-height: 52px;
+    border-radius: .65rem;
+    transition: transform .15s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
 }
 
-.lp-pill__warn {
-    font-size: .62rem;
+.lp-tile__warn {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: .6rem;
     opacity: .8;
 }
 
-.lp-gauge {
-    display: block;
-    width: 80%;
-    height: 3px;
-    border-radius: 2px;
-    background-color: rgba(0, 0, 0, .1);
-    overflow: hidden;
+.lp-tile__hours {
+    font-size: .82rem;
+    font-weight: 700;
+    line-height: 1;
 }
 
-.lp-gauge__fill {
-    display: block;
-    height: 100%;
-    background-color: currentColor;
-    opacity: .75;
+.lp-tile__count {
+    margin-top: .15rem;
+    font-size: .62rem;
+    font-weight: 500;
+    opacity: .8;
 }
 
-.lp-row:hover .lp-col-service,
-.lp-row:hover .lp-cell {
-    filter: brightness(.97);
+.lp-tile__pct {
+    margin-top: .15rem;
+    font-size: .62rem;
+    font-weight: 700;
+    opacity: .9;
 }
 
-// Service overloaded at least one day within the range.
-.lp-row--overloaded .lp-col-service {
-    background-color: #fdf3f3;
-    box-shadow: inset 0 -1px 0 $lp-border, inset 3px 0 0 #e3342f, 6px 0 6px -6px rgba(0, 0, 0, .12);
+// Overloaded row: red side strip on the sticky label
+.lp-row.is-overloaded .lp-row-head {
+    box-shadow:
+        inset 3px 0 0 #ef4444,
+        6px 0 6px -6px rgba(15, 23, 42, .08);
+    background-color: #fef2f2;
 }
 
-// --- Tones ------------------------------------------------------------------
-//
-// Each tone sets `color`, so the pill border and the gauge fill (currentColor)
-// follow the background automatically.
+// ─── Tones ─────────────────────────────────────────────────────────────
 
 .lp-tone-free {
-    background-color: #f8f9fa;
-    color: #868e96;
+    background-color: $lp-slate-50;
+    color: $lp-slate-500;
 }
 
 .lp-tone-low {
-    background-color: #e6f6ed;
-    color: #1e7e46;
+    background-color: #dcfce7;
+    color: #166534;
 }
 
 .lp-tone-medium {
-    background-color: #fff6e0;
-    color: #9a6700;
+    background-color: #fef9c3;
+    color: #854d0e;
 }
 
 .lp-tone-high {
-    background-color: #ffeada;
-    color: #b5560d;
+    background-color: #ffedd5;
+    color: #9a3412;
 }
 
 .lp-tone-over {
-    background-color: #fdeaea;
-    color: #b02a25;
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 .lp-tone-weekend {
-    background-color: #f1f3f5;
-    color: #868e96;
+    background-color: $lp-slate-100;
+    color: $lp-slate-500;
 }
 
 .lp-tone-off {
-    background-color: #dee2e6;
-    color: #495057;
+    background-color: $lp-slate-200;
+    color: $lp-slate-600;
 }
 
 .lp-tone-none {
     background-color: #fff;
-    color: #adb5bd;
+    color: $lp-slate-400;
 }
 
-// --- Compact mode -----------------------------------------------------------
+// ─── Footer parts ──────────────────────────────────────────────────────
 
-.lp-timeline--compact {
-    .lp-col-service {
-        padding: .2rem .6rem !important;
+.lp-heatmap-footer {
+    padding: .75rem 1rem;
+    background-color: $lp-slate-50;
+    border-top: 1px solid $lp-slate-100;
+}
+
+.lp-custom-capacity {
+    padding: .75rem 1rem 1rem;
+    background-color: #fff;
+    border-top: 1px solid $lp-slate-100;
+}
+
+.lp-custom-capacity__title {
+    margin-bottom: .5rem;
+    font-size: .78rem;
+    font-weight: 700;
+    color: $lp-slate-600;
+}
+
+.lp-custom-capacity__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.lp-custom-capacity__field {
+    width: auto;
+
+    .input-group-text {
+        border-color: $lp-slate-200;
+        background-color: $lp-slate-50;
+        color: $lp-slate-600;
+        font-size: .75rem;
     }
-
-    .lp-cell {
-        padding: .12rem .15rem !important;
-    }
-
-    .lp-day {
-        width: 56px;
-        min-width: 56px;
-    }
-
-    .lp-pill {
-        min-width: 40px;
-        padding: 0 .3rem;
-        font-size: .68rem;
+    .form-control {
+        max-width: 70px;
+        border-color: $lp-slate-200;
+        font-size: .8rem;
     }
 }
 
-// --- Legend -----------------------------------------------------------------
+// ─── Legend ────────────────────────────────────────────────────────────
 
 .lp-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: .4rem;
-    font-size: .74rem;
+    font-size: .72rem;
 }
 
 .lp-legend__title {
-    margin-right: .25rem;
-    color: #6c757d;
+    margin-right: .35rem;
+    color: $lp-slate-500;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    font-size: .68rem;
+    font-size: .65rem;
 }
 
 .lp-legend__item {
@@ -358,7 +753,6 @@ $lp-service-col: 260px;
     align-items: center;
     gap: .35rem;
     padding: .12rem .55rem;
-    border: 1px solid currentColor;
     border-radius: 999px;
     font-weight: 600;
 }
@@ -368,10 +762,34 @@ $lp-service-col: 260px;
     height: 7px;
     border-radius: 50%;
     background-color: currentColor;
-    opacity: .7;
+    opacity: .8;
 }
 
 .lp-legend__hint {
     opacity: .7;
     font-weight: 400;
+}
+
+// ─── States ────────────────────────────────────────────────────────────
+
+.lp-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    color: $lp-slate-500;
+    font-size: .85rem;
+}
+
+.lp-empty {
+    padding: 2rem;
+    text-align: center;
+    color: $lp-slate-500;
+    font-size: .85rem;
+    background-color: $lp-slate-50;
+}
+
+.lp-fade {
+    opacity: .6;
+    transition: opacity .15s ease;
 }

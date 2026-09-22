@@ -11,6 +11,10 @@ use Illuminate\Support\Collection;
 
 class TaskDateCalculator
 {
+    /** Sens de calcul possibles pour le planificateur. */
+    public const DIRECTION_ALAP = 'alap';
+    public const DIRECTION_ASAP = 'asap';
+
     /**
      * Adjust date to previous working day if it falls on weekend or bank holiday.
      */
@@ -24,6 +28,26 @@ class TaskDateCalculator
             }
             if (TimesBanckHoliday::isBankHoliday($date)) {
                 $date->subDay();
+            }
+        } while ($date->isWeekend() || TimesBanckHoliday::isBankHoliday($date));
+
+        return $date;
+    }
+
+    /**
+     * Miroir avant de adjustForWeekendsAndHolidays : cale une date sur le
+     * prochain jour ouvré au lieu du précédent. Utilisé par l'ASAP.
+     */
+    public function adjustForWeekendsAndHolidaysForward(Carbon $date): Carbon
+    {
+        do {
+            if ($date->isSaturday()) {
+                $date->addDays(2);
+            } elseif ($date->isSunday()) {
+                $date->addDay();
+            }
+            if (TimesBanckHoliday::isBankHoliday($date)) {
+                $date->addDay();
             }
         } while ($date->isWeekend() || TimesBanckHoliday::isBankHoliday($date));
 
@@ -117,6 +141,51 @@ class TaskDateCalculator
             $result[] = ['task' => $task, 'start' => $start, 'end' => $end];
 
             $cursor = $start;
+            $previousServiceId = $task->methods_services_id ?? null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * ASAP — miroir avant de chainTasks. Les tâches doivent être fournies en
+     * ordre croissant de `ordre` (upstream d'abord) : la première tâche
+     * démarre à l'ancre, chaque suivante démarre là où la précédente termine
+     * — décalée du délai inter-opérations si fourni.
+     *
+     * Le closure $delayHoursBetween est appelé avec `(fromServiceId, toServiceId)`
+     * où `from` est la tâche déjà placée juste en amont et `to` la tâche
+     * courante — même convention que chainTasks pour que le resolver de délais
+     * reste symétrique.
+     *
+     * @param  iterable<Task>  $tasks
+     * @return array<int, array{task: Task, start: Carbon, end: Carbon}>
+     */
+    public function chainTasksForward(iterable $tasks, Carbon $anchor, ?callable $delayHoursBetween = null): array
+    {
+        $cursor = $this->adjustForWeekendsAndHolidaysForward($anchor->copy());
+        $result = [];
+        $previousServiceId = null;
+
+        foreach ($tasks as $task) {
+            if ($previousServiceId !== null && $delayHoursBetween !== null) {
+                $delayHours = (float) $delayHoursBetween(
+                    $previousServiceId,
+                    $task->methods_services_id ?? null
+                );
+
+                if ($delayHours > 0) {
+                    $cursor = WorkingTime::addWorkingHours($cursor, $delayHours);
+                }
+            }
+
+            $start = $cursor->copy();
+            $duration = (float) $task->TotalTime();
+            $end = WorkingTime::addWorkingHours($cursor, $duration);
+
+            $result[] = ['task' => $task, 'start' => $start, 'end' => $end];
+
+            $cursor = $end;
             $previousServiceId = $task->methods_services_id ?? null;
         }
 

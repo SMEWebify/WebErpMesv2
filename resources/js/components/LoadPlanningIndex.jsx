@@ -35,6 +35,18 @@ function toDateKey(date) {
     ].join('-');
 }
 
+function addDaysISO(iso, delta) {
+    const d = new Date(`${iso}T00:00:00`);
+    d.setDate(d.getDate() + delta);
+    return toDateKey(d);
+}
+
+function diffDays(startIso, endIso) {
+    const a = new Date(`${startIso}T00:00:00`);
+    const b = new Date(`${endIso}T00:00:00`);
+    return Math.round((b - a) / 86400000);
+}
+
 /**
  * Turn the flat Y-m-d list into decorated day columns:
  * weekday label, short date, today / weekend / bank holiday flags.
@@ -54,6 +66,10 @@ function buildDays(possibleDates, bankHolidays, locale) {
                 .toLocaleDateString(locale, { weekday: 'short' })
                 .replace(/\.$/, '')
                 .toLocaleUpperCase(locale),
+            dayNum: parsed.getDate(),
+            month: parsed
+                .toLocaleDateString(locale, { month: 'short' })
+                .replace(/\.$/, ''),
             label: parsed.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }),
             fullLabel: parsed.toLocaleDateString(locale, {
                 weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -81,7 +97,6 @@ function effectiveCapacity(service, customCapacities) {
 /**
  * Compute the load tone + label of a single cell.
  * Uses raw hours worked + effective capacity — no hardcoded value.
- * Thresholds are unchanged from the previous table version.
  */
 function computeCell(hoursWorked, capacity, displayHoursDiff) {
     if (hoursWorked === null || hoursWorked === undefined) {
@@ -119,6 +134,34 @@ function toneRank(tone) {
     return index === -1 ? -1 : index;
 }
 
+/** Format a number of hours as `1h30` / `45m` / `2h` — compact like Nest2Prod. */
+function formatHoursCompact(h) {
+    if (h === null || h === undefined || h === 0) return '';
+    const totalMinutes = Math.round(h * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours === 0) return `${minutes}m`;
+    if (minutes === 0) return `${hours}h`;
+    return `${hours}h${String(minutes).padStart(2, '0')}`;
+}
+
+/**
+ * Deterministic pastel-ish color per row id, so each service/resource gets its
+ * own dot even when the back does not send one.
+ */
+function colorFor(id) {
+    const palette = [
+        '#f97316', '#22c55e', '#0ea5e9', '#a855f7', '#ef4444',
+        '#eab308', '#14b8a6', '#8b5cf6', '#ec4899', '#64748b',
+    ];
+    const str = String(id);
+    let hash = 0;
+    for (let i = 0; i < str.length; i += 1) {
+        hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return palette[hash % palette.length];
+}
+
 // ---------------------------------------------------------------------------
 // Polling hook
 // ---------------------------------------------------------------------------
@@ -135,20 +178,22 @@ function useInterval(callback, delay) {
 
 // localStorage keys for persisted preferences
 const STORAGE_KEY = 'lp_custom_capacities';
-const VIEW_KEY    = 'lp_compact_view';
+const WINDOW_KEY  = 'lp_window_days';
 
 function loadStoredCapacities() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'); }
     catch { return {}; }
 }
 
-function loadStoredCompact() {
-    try { return localStorage.getItem(VIEW_KEY) === '1'; }
-    catch { return false; }
+function loadStoredWindow(fallback) {
+    try {
+        const value = parseInt(localStorage.getItem(WINDOW_KEY) ?? '', 10);
+        return [7, 14, 30].includes(value) ? value : fallback;
+    } catch { return fallback; }
 }
 
 // ---------------------------------------------------------------------------
-// TaskCalculationPanel (replaces Livewire)
+// Calculation panel (job progress modals)
 // ---------------------------------------------------------------------------
 
 const POLL_MS  = 3000;
@@ -251,8 +296,8 @@ function CalcModal({ id, title, status, trans, onCalculate, onRebalance }) {
     );
 }
 
-function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
-    const [counts,         setCounts]         = useState(initialCounts);
+function useCalculationStatus(endpoints) {
+    const [counts,         setCounts]         = useState({ date: 0, resource: 0 });
     const [dateStatus,     setDateStatus]     = useState(EMPTY_JOB);
     const [resourceStatus, setResourceStatus] = useState(EMPTY_JOB);
 
@@ -274,9 +319,10 @@ function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
         } catch (_) {}
     }, [endpoints.calculationStatus]);
 
+    useEffect(() => { fetchStatus(); }, [fetchStatus]);
     useInterval(fetchStatus, isPolling ? POLL_MS : null);
 
-    const triggerJob = async (endpoint, setStatus, body = null) => {
+    const triggerJob = useCallback(async (endpoint, setStatus, body = null) => {
         try {
             const res = await fetch(endpoint, {
                 method: 'POST',
@@ -287,144 +333,257 @@ function TaskCalculationPanel({ endpoints, initialCounts, trans }) {
             setStatus({ jobStatus: 'running', progress: 0, count: 0, messages: [] });
             setTimeout(fetchStatus, 800);
         } catch (_) {}
+    }, [fetchStatus]);
+
+    return {
+        counts,
+        dateStatus,
+        resourceStatus,
+        isPolling,
+        triggerDates:     (direction = 'alap', capacityMode = 'infinite') => triggerJob(
+            endpoints.calculateDates,
+            setDateStatus,
+            { direction, capacity_mode: capacityMode },
+        ),
+        triggerResources: (rebalance = false) => triggerJob(
+            endpoints.calculateResources,
+            setResourceStatus,
+            rebalance ? { rebalance: true } : null,
+        ),
     };
-
-    return (
-        <>
-            <div className="d-flex justify-content-end mb-3" style={{ gap: '0.5rem' }}>
-                <button
-                    type="button"
-                    className={`btn btn-sm ${counts.resource > 0 ? 'btn-warning' : 'btn-outline-secondary'}`}
-                    data-toggle="modal"
-                    data-target="#taskCalculationRessource"
-                >
-                    <i className="fas fa-user-cog mr-1"></i>
-                    {trans.null_resource ?? 'Ressources manquantes'} ({counts.resource})
-                </button>
-                <button
-                    type="button"
-                    className={`btn btn-sm ${counts.date > 0 ? 'btn-warning' : 'btn-outline-secondary'}`}
-                    data-toggle="modal"
-                    data-target="#taskCalculationDate"
-                >
-                    <i className="fas fa-calendar-times mr-1"></i>
-                    {trans.null_date ?? 'Dates manquantes'} ({counts.date})
-                </button>
-            </div>
-
-            <CalcModal
-                id="taskCalculationRessource"
-                title={trans.calc_resource_title ?? 'Calculer les ressources'}
-                status={resourceStatus}
-                trans={trans}
-                onCalculate={() => triggerJob(endpoints.calculateResources, setResourceStatus)}
-                onRebalance={() => triggerJob(endpoints.calculateResources, setResourceStatus, { rebalance: true })}
-            />
-            <CalcModal
-                id="taskCalculationDate"
-                title={trans.calc_date_title ?? 'Calculer les dates'}
-                status={dateStatus}
-                trans={trans}
-                onCalculate={() => triggerJob(endpoints.calculateDates, setDateStatus)}
-            />
-        </>
-    );
 }
 
 // ---------------------------------------------------------------------------
-// Filter form
+// Toolbar (top-right controls)
 // ---------------------------------------------------------------------------
 
-function FilterForm({ startDate, endDate, displayHoursDiff, granularity, loading, trans, onStartDate, onEndDate, onDisplayHoursDiff, onGranularity, onSubmit }) {
+function Toolbar({
+    viewMode,
+    onViewMode,
+    windowDays,
+    onWindowDays,
+    onShift,
+    onToday,
+    search,
+    onSearch,
+    trans,
+}) {
+    const [localSearch, setLocalSearch] = useState(search);
+    useEffect(() => { setLocalSearch(search); }, [search]);
+
+    const windowOptions = [
+        { value: 7,  label: '1 sem.' },
+        { value: 14, label: '2 sem.' },
+        { value: 30, label: '1 mois' },
+    ];
+
     return (
-        <div className="card card-outline card-lime">
-            <div className="card-body">
-                <form onSubmit={onSubmit}>
-                    <div className="row">
-                        <div className="form-group col-2">
-                            <label htmlFor="lp-start-date">{trans.start_date}</label>
-                            <input type="date" id="lp-start-date" className="form-control" required
-                                value={startDate} onChange={e => onStartDate(e.target.value)} />
-                        </div>
-                        <div className="form-group col-2">
-                            <label htmlFor="lp-end-date">{trans.end_date}</label>
-                            <input type="date" id="lp-end-date" className="form-control" required
-                                value={endDate} onChange={e => onEndDate(e.target.value)} />
-                        </div>
-                        <div className="form-group col-2">
-                            <label htmlFor="lp-hours-diff">{trans.display_hours_diff}</label>
-                            <div className="custom-control custom-switch mt-2">
-                                <input type="checkbox" className="custom-control-input" id="lp-hours-diff"
-                                    checked={displayHoursDiff} onChange={e => onDisplayHoursDiff(e.target.checked)} />
-                                <label className="custom-control-label" htmlFor="lp-hours-diff">
-                                    {displayHoursDiff ? trans.yes : trans.no}
-                                </label>
-                            </div>
-                        </div>
-                        <div className="form-group col-3">
-                            <label htmlFor="lp-granularity">{trans.granularity_label ?? 'Charge par'}</label>
-                            <div className="btn-group btn-block" role="group" id="lp-granularity">
-                                <button
-                                    type="button"
-                                    className={`btn btn-flat ${granularity === 'service' ? 'btn-info' : 'btn-outline-info'}`}
-                                    onClick={() => onGranularity('service')}
-                                >
-                                    <i className="fas fa-list mr-1"></i>
-                                    {trans.granularity_service ?? 'Service'}
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`btn btn-flat ${granularity === 'resource' ? 'btn-info' : 'btn-outline-info'}`}
-                                    onClick={() => onGranularity('resource')}
-                                >
-                                    <i className="fas fa-industry mr-1"></i>
-                                    {trans.granularity_resource ?? 'Ressource'}
-                                </button>
-                            </div>
-                        </div>
-                        <div className="form-group col-2 d-flex align-items-end">
-                            <button type="submit" className="btn btn-danger btn-flat" disabled={loading}>
-                                <i className="fas fa-save mr-1"></i>
-                                {loading ? '...' : trans.submit}
-                            </button>
-                        </div>
-                    </div>
-                </form>
+        <div className="lp-toolbar">
+            {/* View toggle: only heatmap for now, Timeline stays as a hint. */}
+            <div className="lp-segbar" role="group" aria-label="Vue">
+                <button
+                    type="button"
+                    className={`lp-segbar__btn ${viewMode === 'heatmap' ? 'is-active' : ''}`}
+                    onClick={() => onViewMode('heatmap')}
+                    title="Charge par service et par jour"
+                >
+                    <i className="fas fa-th-large mr-1"></i>Heatmap
+                </button>
+                <button
+                    type="button"
+                    className="lp-segbar__btn"
+                    disabled
+                    title="Bientôt disponible"
+                >
+                    <i className="fas fa-stream mr-1"></i>Timeline
+                </button>
+            </div>
+
+            {/* Search: filters row labels client-side. */}
+            <div className="lp-search">
+                <i className="fas fa-search lp-search__icon"></i>
+                <input
+                    type="text"
+                    className="form-control form-control-sm lp-search__input"
+                    placeholder={trans.search_placeholder ?? 'Rechercher un service…'}
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') onSearch(localSearch);
+                        if (e.key === 'Escape') { setLocalSearch(''); onSearch(''); }
+                    }}
+                    onBlur={() => onSearch(localSearch)}
+                />
+                {localSearch && (
+                    <button
+                        type="button"
+                        className="lp-search__clear"
+                        onClick={() => { setLocalSearch(''); onSearch(''); }}
+                        title="Effacer"
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                )}
+            </div>
+
+            {/* Period picker */}
+            <div className="lp-segbar" role="group" aria-label="Fenêtre">
+                {windowOptions.map((opt) => (
+                    <button
+                        key={opt.value}
+                        type="button"
+                        className={`lp-segbar__btn ${windowDays === opt.value ? 'is-active' : ''}`}
+                        onClick={() => onWindowDays(opt.value)}
+                    >
+                        {opt.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Navigation */}
+            <div className="lp-nav">
+                <button
+                    type="button"
+                    className="lp-nav__btn"
+                    onClick={() => onShift(-1)}
+                    title="Période précédente"
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" className="lp-nav__today" onClick={onToday}>
+                    {trans.today ?? "Aujourd'hui"}
+                </button>
+                <button
+                    type="button"
+                    className="lp-nav__btn"
+                    onClick={() => onShift(1)}
+                    title="Période suivante"
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     );
 }
 
 // ---------------------------------------------------------------------------
-// Capacity column badge
+// Scenario card (Vue / Sens / Capacité / Simuler)
 // ---------------------------------------------------------------------------
 
-function CapacityBadge({ service, customCapacities, trans }) {
-    const cap = effectiveCapacity(service, customCapacities);
+function ScenarioCard({
+    granularity,
+    onGranularity,
+    direction,
+    onDirection,
+    capacityMode,
+    onCapacityMode,
+    displayHoursDiff,
+    onDisplayHoursDiff,
+    calc,
+    trans,
+}) {
+    const running = calc.isPolling;
 
-    if (service.capacity > 0) {
-        // Real capacity from configured resources
-        return (
-            <span className="badge badge-primary" title={trans.capacity_from_resources ?? 'Capacité issue des ressources configurées'}>
-                {cap}h/j
-            </span>
-        );
-    }
-
-    if (customCapacities[service.id] > 0) {
-        // User-defined custom capacity
-        return (
-            <span className="badge badge-warning" title={trans.capacity_custom ?? 'Capacité définie manuellement (aucune ressource configurée)'}>
-                {cap}h/j
-            </span>
-        );
-    }
-
-    // No capacity at all — fallback used, shown as warning
     return (
-        <span className="badge badge-secondary" title={trans.capacity_fallback ?? 'Aucune ressource configurée — fallback 8h/j'}>
-            8h/j*
-        </span>
+        <div className="lp-scenario">
+            <div className="lp-scenario__row">
+                <div className="lp-field">
+                    <label>Vue</label>
+                    <select
+                        className="form-control form-control-sm"
+                        value={granularity}
+                        onChange={(e) => onGranularity(e.target.value)}
+                    >
+                        <option value="service">Référence (baseline) · Service</option>
+                        <option value="resource">Référence (baseline) · Ressource</option>
+                    </select>
+                </div>
+
+                <div className="lp-scenario__spacer" />
+
+                <div className="lp-field">
+                    <label>Sens</label>
+                    <select
+                        className="form-control form-control-sm"
+                        value={direction}
+                        onChange={(e) => onDirection(e.target.value)}
+                        title="ALAP : rétro-planifié depuis la date d'engagement client. ASAP : planifié au plus tôt depuis la date de démarrage prévue."
+                    >
+                        <option value="alap">Au plus tard (ALAP)</option>
+                        <option value="asap">Au plus tôt (ASAP)</option>
+                    </select>
+                </div>
+
+                <div className="lp-field">
+                    <label>Capacité</label>
+                    <select
+                        className="form-control form-control-sm"
+                        value={capacityMode}
+                        onChange={(e) => onCapacityMode(e.target.value)}
+                        title="Infinie : les tâches concurrentes ne se voient pas (comportement historique). Finie : chaque tâche vérifie la capacité déjà consommée sur sa ressource et se décale si nécessaire."
+                    >
+                        <option value="infinite">Infinie</option>
+                        <option value="finite">Finie</option>
+                    </select>
+                </div>
+
+                <label
+                    className="lp-check"
+                    title="Coché : afficher la marge en heures (ex. +2h) au lieu du taux de charge (%)."
+                >
+                    <input
+                        type="checkbox"
+                        checked={displayHoursDiff}
+                        onChange={(e) => onDisplayHoursDiff(e.target.checked)}
+                    />
+                    <span>Afficher la marge en heures</span>
+                </label>
+
+                <button
+                    type="button"
+                    className="lp-btn-primary"
+                    disabled={running}
+                    onClick={() => calc.triggerDates(direction, capacityMode)}
+                    title={
+                        (direction === 'asap' ? 'Au plus tôt (ASAP) depuis start_date' : 'Au plus tard (ALAP) depuis internal_delay')
+                        + ' · ' + (capacityMode === 'finite' ? 'capacité finie partagée' : 'capacité infinie')
+                    }
+                >
+                    <i className="fas fa-play mr-1"></i>
+                    {running ? 'Calcul…' : 'Simuler'}
+                </button>
+            </div>
+
+            {(calc.counts.date > 0 || calc.counts.resource > 0) && (
+                <div className="lp-scenario__alerts">
+                    {calc.counts.resource > 0 && (
+                        <button
+                            type="button"
+                            className="lp-chip lp-chip--warn"
+                            data-toggle="modal"
+                            data-target="#taskCalculationRessource"
+                        >
+                            <i className="fas fa-user-cog mr-1"></i>
+                            {trans.null_resource ?? 'Ressources manquantes'} · {calc.counts.resource}
+                        </button>
+                    )}
+                    {calc.counts.date > 0 && (
+                        <button
+                            type="button"
+                            className="lp-chip lp-chip--warn"
+                            data-toggle="modal"
+                            data-target="#taskCalculationDate"
+                        >
+                            <i className="fas fa-calendar-times mr-1"></i>
+                            {trans.null_date ?? 'Dates manquantes'} · {calc.counts.date}
+                        </button>
+                    )}
+                    <span className="lp-scenario__hint">
+                        Traiter ces éléments avant de figer la charge.
+                    </span>
+                </div>
+            )}
+        </div>
     );
 }
 
@@ -434,49 +593,35 @@ function CapacityBadge({ service, customCapacities, trans }) {
 
 function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChange, trans }) {
     const unconfigured = services.filter(s => s.capacity === 0);
-
     if (unconfigured.length === 0) return null;
 
     return (
-        <div className="card-footer bg-light">
-            <p className="mb-2 font-weight-bold text-secondary">
+        <div className="lp-custom-capacity">
+            <div className="lp-custom-capacity__title">
                 <i className="fas fa-sliders-h mr-1"></i>
                 {trans.default_capacity ?? 'Capacité journalière par défaut'}
-                <small className="ml-2 text-muted font-weight-normal">
-                    ({trans.default_capacity_hint ?? 'services sans ressources configurées — valeurs utilisées pour le calcul du taux de charge'})
+                <small className="text-muted ml-2">
+                    ({trans.default_capacity_hint ?? 'services sans ressources configurées'})
                 </small>
-            </p>
-            <div className="row">
+            </div>
+            <div className="lp-custom-capacity__grid">
                 {unconfigured.map(service => (
-                    <div key={service.id} className="col-auto mb-2">
-                        <div className="input-group input-group-sm">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text bg-white">
-                                    {service.picture && (
-                                        <img
-                                            src={`/storage/images/methods/${service.picture}`}
-                                            alt={service.label}
-                                            width="16" height="16"
-                                            className="rounded-circle mr-1"
-                                        />
-                                    )}
-                                    {service.label}
-                                </span>
-                            </div>
-                            <input
-                                type="number"
-                                className="form-control"
-                                style={{ width: 70 }}
-                                min="1"
-                                max="24"
-                                step="0.5"
-                                value={customCapacities[service.id] ?? ''}
-                                placeholder="8"
-                                onChange={e => onCustomCapacityChange(service.id, e.target.value)}
-                            />
-                            <div className="input-group-append">
-                                <span className="input-group-text">h/j</span>
-                            </div>
+                    <div key={service.id} className="input-group input-group-sm lp-custom-capacity__field">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text bg-white">{service.label}</span>
+                        </div>
+                        <input
+                            type="number"
+                            className="form-control"
+                            min="1"
+                            max="24"
+                            step="0.5"
+                            value={customCapacities[service.id] ?? ''}
+                            placeholder="8"
+                            onChange={e => onCustomCapacityChange(service.id, e.target.value)}
+                        />
+                        <div className="input-group-append">
+                            <span className="input-group-text">h/j</span>
                         </div>
                     </div>
                 ))}
@@ -528,15 +673,15 @@ function Legend({ displayHoursDiff, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Timeline (services × days)
+// Heatmap
 // ---------------------------------------------------------------------------
 
-function DayHeader({ day, trans }) {
+function DayHeader({ day, dayTotal }) {
     const classes = ['lp-day'];
-    if (day.isHoliday)      classes.push('lp-tone-off');
-    else if (day.isWeekend) classes.push('lp-tone-weekend');
-    if (day.isToday)        classes.push('lp-col-today');
-    if (day.isWeekStart)    classes.push('lp-week-start');
+    if (day.isHoliday)      classes.push('is-off');
+    else if (day.isWeekend) classes.push('is-weekend');
+    if (day.isToday)        classes.push('is-today');
+    if (day.isWeekStart)    classes.push('is-week-start');
 
     return (
         <th
@@ -544,102 +689,67 @@ function DayHeader({ day, trans }) {
             className={classes.join(' ')}
             title={day.holidayLabel ? `${day.fullLabel} — ${day.holidayLabel}` : day.fullLabel}
         >
-            <span className="lp-day__weekday">{day.weekday}</span>
-            <span className="lp-day__date">{day.label}</span>
-            {day.isToday && (
-                <span className="lp-day__today">{trans.today ?? "Aujourd'hui"}</span>
-            )}
-        </th>
-    );
-}
-
-function RowHeaderCell({ row, stats, byResource, compact, customCapacities, trans }) {
-    if (compact) {
-        return (
-            <th scope="row" className="lp-col-service">
-                <div className="lp-service lp-service--compact">
-                    <span className={`lp-service__dot lp-tone-${stats.peakTone}`}></span>
-                    <span className="lp-service__name">{row.label}</span>
-                    <span className="lp-service__cap text-muted">{stats.capacity}h/j</span>
-                </div>
-            </th>
-        );
-    }
-
-    return (
-        <th scope="row" className="lp-col-service">
-            <div className="lp-service">
-                {row.avatar ? (
-                    <img
-                        alt={row.label}
-                        className="lp-service__avatar"
-                        src={row.avatar}
-                        width="38" height="38"
-                    />
-                ) : (
-                    <span className="lp-service__avatar lp-service__avatar--empty">
-                        <i className={`fas ${row.isLabor ? 'fa-users' : 'fa-industry'}`}></i>
-                    </span>
+            <div className="lp-day__inner">
+                <span className="lp-day__weekday">{day.weekday}</span>
+                <span className="lp-day__num">{day.dayNum}</span>
+                <span className="lp-day__month">{day.month}</span>
+                {dayTotal > 0 && (
+                    <span className="lp-day__total">{formatHoursCompact(dayTotal)}</span>
                 )}
-                <div className="lp-service__body">
-                    <span className="lp-service__name">{row.label}</span>
-                    <div className="lp-service__badges">
-                        {byResource ? (
-                            <span className="badge badge-light border">
-                                {fmt(trans.capacity_real ?? 'Capacité :hours h/j', {
-                                    hours: Math.round(stats.capacity * 10) / 10,
-                                })}
-                            </span>
-                        ) : (
-                            <CapacityBadge service={row} customCapacities={customCapacities} trans={trans} />
-                        )}
-                        {byResource && row.isLabor && (
-                            <span className="badge badge-warning">
-                                <i className="fas fa-users mr-1"></i>
-                                {trans.labor ?? "Main-d'œuvre"}
-                            </span>
-                        )}
-                        {byResource && row.section && (
-                            <span className="badge badge-light border">{row.section}</span>
-                        )}
-                        {stats.totalHours > 0 && (
-                            <span className="badge badge-light border">
-                                {fmt(trans.period_total ?? 'Total :hours h', {
-                                    hours: Math.round(stats.totalHours * 10) / 10,
-                                })}
-                            </span>
-                        )}
-                        {stats.taskCount > 0 && (
-                            <span className="badge badge-light border">
-                                {fmt(trans.tasks_count ?? ':count tâche(s)', { count: stats.taskCount })}
-                            </span>
-                        )}
-                        {stats.overloadedDays > 0 && (
-                            <span className="badge badge-danger">
-                                {fmt(trans.overloaded_days ?? ':count jour(s) en surcharge', {
-                                    count: stats.overloadedDays,
-                                })}
-                            </span>
-                        )}
-                    </div>
-                </div>
             </div>
         </th>
     );
 }
 
-function LoadCell({ day, cell, capacity, taskCount, compact, trans }) {
+function RowLabel({ row, stats, byResource, customCapacities, onCustomCapacityChange }) {
+    const dotColor = colorFor(row.id);
+    const capLabel = byResource
+        ? `${Math.round(stats.capacity * 10) / 10}h/j`
+        : `${effectiveCapacity(row, customCapacities)}h/j`;
+
+    return (
+        <th scope="row" className="lp-row-head">
+            <div className="lp-row-head__main">
+                <span className="lp-row-head__dot" style={{ backgroundColor: dotColor }} />
+                <span className="lp-row-head__label">{row.label}</span>
+            </div>
+            <div className="lp-row-head__meta">
+                <span className="lp-row-head__cap">{capLabel}</span>
+                {stats.taskCount > 0 && (
+                    <span className="lp-row-head__count">{stats.taskCount} tâches</span>
+                )}
+                {stats.overloadedDays > 0 && (
+                    <span className="lp-row-head__over">
+                        <i className="fas fa-exclamation-triangle mr-1"></i>
+                        {stats.overloadedDays} j en surcharge
+                    </span>
+                )}
+                {!byResource && row.capacity === 0 && (
+                    <input
+                        type="number"
+                        className="lp-row-head__custom"
+                        min="1"
+                        max="24"
+                        step="0.5"
+                        value={customCapacities[row.id] ?? ''}
+                        placeholder="8"
+                        onChange={(e) => onCustomCapacityChange(row.id, e.target.value)}
+                        title="Capacité personnalisée (h/j)"
+                    />
+                )}
+            </div>
+        </th>
+    );
+}
+
+function LoadCell({ day, cell, capacity, taskCount, trans }) {
     const classes = ['lp-cell'];
-    if (day.isHoliday)      classes.push('lp-tone-off');
-    else if (day.isWeekend) classes.push('lp-tone-weekend');
-    else                    classes.push(`lp-tone-${cell.tone}`);
-    if (day.isToday)        classes.push('lp-col-today');
-    if (day.isWeekStart)    classes.push('lp-week-start');
+    if (day.isHoliday)      classes.push('is-off');
+    else if (day.isWeekend) classes.push('is-weekend');
+    if (day.isToday)        classes.push('is-today');
+    if (day.isWeekStart)    classes.push('is-week-start');
 
     const hasLoad = cell.hours !== null;
-
-    // A day off with booked hours must still be readable: keep the "off" tone
-    // for the column but show the load, flagged with a warning icon.
     const offWithLoad = day.isOff && hasLoad;
 
     const tooltipParts = [day.fullLabel];
@@ -654,161 +764,158 @@ function LoadCell({ day, cell, capacity, taskCount, compact, trans }) {
     return (
         <td className={classes.join(' ')} title={tooltipParts.join(' — ')}>
             {hasLoad ? (
-                <div className="lp-cell__inner">
-                    <span className="lp-pill">
-                        {offWithLoad && <i className="fas fa-exclamation-triangle lp-pill__warn"></i>}
-                        {cell.label}
-                    </span>
-                    {!compact && (
-                        <span className="lp-gauge">
-                            <span
-                                className="lp-gauge__fill"
-                                style={{ width: `${Math.min(Math.max(cell.pct, 0), 100)}%` }}
-                            ></span>
-                        </span>
+                <div className={`lp-tile lp-tone-${cell.tone}`}>
+                    {offWithLoad && (
+                        <i className="fas fa-exclamation-triangle lp-tile__warn" />
                     )}
+                    <span className="lp-tile__hours">
+                        {formatHoursCompact(cell.hours)}
+                    </span>
+                    <span className="lp-tile__count">
+                        {taskCount > 0
+                            ? `${taskCount} tâche${taskCount > 1 ? 's' : ''}`
+                            : '—'}
+                    </span>
+                    <span className="lp-tile__pct">{cell.label}</span>
                 </div>
             ) : (
-                <span className="lp-cell__empty">
-                    {day.isHoliday ? 'OFF' : day.isWeekend ? '·' : '—'}
-                </span>
+                <span className="lp-cell__empty" aria-hidden="true"></span>
             )}
         </td>
     );
 }
 
-function LoadTimeline({
-    data, days, displayHoursDiff, compact, customCapacities,
-    onToggleCompact, onCustomCapacityChange, trans,
+function Heatmap({
+    data, days, displayHoursDiff, customCapacities, search,
+    onCustomCapacityChange, trans,
 }) {
     const { rows: rowDefs, hoursPerRowDay, tasksPerRowDay, granularity } = data;
     const byResource = granularity === 'resource';
 
-    // Une ligne par service ou par ressource selon la maille, avec ses agrégats
-    // sur la période (badges + surlignage de ligne).
-    const rows = useMemo(() => (rowDefs ?? []).map((row) => {
-        const rowId = String(row.id);
-        // En maille ressource, la capacité est connue jour par jour (régime horaire,
-        // fériés, arrêts, absences). En maille service, elle est moyennée, et une
-        // saisie manuelle peut la remplacer quand aucune ressource n'est configurée.
-        const rowCapacity = byResource ? (row.capacity ?? 0) : effectiveCapacity(row, customCapacities);
-        const hoursMap = hoursPerRowDay?.[rowId] ?? {};
-        const tasksMap = tasksPerRowDay?.[rowId] ?? {};
+    // Per-row aggregates, cell tones and per-day column totals (for header sums).
+    const { rows, dayTotals } = useMemo(() => {
+        const totals = Object.fromEntries(days.map((d) => [d.date, 0]));
 
-        let totalHours = 0;
-        let taskCount = 0;
-        let overloadedDays = 0;
-        let workingDays = 0;
-        let capacitySum = 0;
-        let peakTone = 'free';
+        const computedRows = (rowDefs ?? []).map((row) => {
+            const rowId = String(row.id);
+            const rowCapacity = byResource
+                ? (row.capacity ?? 0)
+                : effectiveCapacity(row, customCapacities);
+            const hoursMap = hoursPerRowDay?.[rowId] ?? {};
+            const tasksMap = tasksPerRowDay?.[rowId] ?? {};
 
-        const cells = days.map((day) => {
-            const hours = hoursMap[day.date] ?? null;
-            const tasks = tasksMap[day.date] ?? [];
-            const dayCapacity = row.capacityPerDay?.[day.date] ?? rowCapacity;
-            const cell  = computeCell(hours, dayCapacity, displayHoursDiff);
+            let totalHours = 0;
+            let taskCount = 0;
+            let overloadedDays = 0;
+            let workingDays = 0;
+            let capacitySum = 0;
+            let peakTone = 'free';
 
-            if (!day.isOff) {
-                workingDays += 1;
-                capacitySum += dayCapacity;
-            }
-            if (hours !== null) {
-                totalHours += hours;
-                taskCount  += tasks.length;
+            const cells = days.map((day) => {
+                const hours = hoursMap[day.date] ?? null;
+                const tasks = tasksMap[day.date] ?? [];
+                const dayCapacity = row.capacityPerDay?.[day.date] ?? rowCapacity;
+                const cell  = computeCell(hours, dayCapacity, displayHoursDiff);
+
                 if (!day.isOff) {
-                    if (cell.pct >= 100) overloadedDays += 1;
-                    if (toneRank(cell.tone) > toneRank(peakTone)) peakTone = cell.tone;
+                    workingDays += 1;
+                    capacitySum += dayCapacity;
                 }
-            }
+                if (hours !== null) {
+                    totalHours += hours;
+                    taskCount  += tasks.length;
+                    totals[day.date] += hours;
+                    if (!day.isOff) {
+                        if (cell.pct >= 100) overloadedDays += 1;
+                        if (toneRank(cell.tone) > toneRank(peakTone)) peakTone = cell.tone;
+                    }
+                }
 
-            return { day, cell, capacity: dayCapacity, taskCount: tasks.length };
+                return { day, cell, capacity: dayCapacity, taskCount: tasks.length };
+            });
+
+            return {
+                row,
+                capacity: rowCapacity,
+                cells,
+                totalHours,
+                taskCount,
+                overloadedDays,
+                peakTone,
+            };
         });
 
-        return {
-            row,
-            capacity: rowCapacity,
-            cells,
-            totalHours,
-            taskCount,
-            overloadedDays,
-            peakTone,
-            avgPct: capacitySum > 0 ? (totalHours / capacitySum) * 100 : 0,
-        };
-    }), [rowDefs, days, hoursPerRowDay, tasksPerRowDay, customCapacities, displayHoursDiff, byResource]);
+        return { rows: computedRows, dayTotals: totals };
+    }, [rowDefs, days, hoursPerRowDay, tasksPerRowDay, customCapacities, displayHoursDiff, byResource]);
+
+    // Client-side search: filter row labels.
+    const needle = search.trim().toLocaleLowerCase();
+    const filteredRows = needle
+        ? rows.filter((r) => String(r.row.label ?? '').toLocaleLowerCase().includes(needle))
+        : rows;
 
     return (
-        <div className="card card-outline card-lime">
-            <div className="card-header d-flex align-items-center flex-wrap">
-                <h3 className="card-title mb-0">
-                    <i className="fas fa-chart-bar mr-1"></i>
-                    {byResource
-                        ? (trans.granularity_resource ?? 'Ressource')
-                        : trans.service}
-                </h3>
-                <button
-                    type="button"
-                    className="btn btn-sm btn-outline-secondary ml-auto"
-                    onClick={onToggleCompact}
-                >
-                    <i className={`fas ${compact ? 'fa-expand-alt' : 'fa-compress-alt'} mr-1`}></i>
-                    {compact
-                        ? (trans.detailed_view ?? 'Vue détaillée')
-                        : (trans.compact_view ?? 'Vue compacte')}
-                </button>
-            </div>
-
-            <div className="card-body p-0">
-                <div className={`lp-timeline ${compact ? 'lp-timeline--compact' : ''}`}>
-                    <table className="lp-table">
-                        <thead>
+        <div className="lp-heatmap-card">
+            <div className="lp-heatmap-scroll">
+                <table className="lp-heatmap">
+                    <thead>
+                        <tr>
+                            <th scope="col" className="lp-row-head lp-row-head--head">
+                                {byResource
+                                    ? (trans.granularity_resource ?? 'Ressource')
+                                    : (trans.granularity_service ?? 'Service')}
+                            </th>
+                            {days.map((day) => (
+                                <DayHeader
+                                    key={day.date}
+                                    day={day}
+                                    dayTotal={dayTotals[day.date] ?? 0}
+                                />
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredRows.length === 0 && (
                             <tr>
-                                <th scope="col" className="lp-col-service lp-col-service--head">
-                                    {byResource ? (trans.granularity_resource ?? 'Ressource') : trans.service}
-                                </th>
-                                {days.map(day => (
-                                    <DayHeader key={day.date} day={day} trans={trans} />
-                                ))}
+                                <td colSpan={days.length + 1} className="lp-empty">
+                                    <i className="fas fa-inbox mr-2"></i>
+                                    Aucun {byResource ? 'ressource' : 'service'} ne correspond à la recherche.
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {rows.map(row => (
-                                <tr
-                                    key={row.row.id}
-                                    className={row.overloadedDays > 0 ? 'lp-row lp-row--overloaded' : 'lp-row'}
-                                >
-                                    <RowHeaderCell
-                                        row={row.row}
-                                        stats={row}
-                                        byResource={byResource}
-                                        compact={compact}
-                                        customCapacities={customCapacities}
+                        )}
+                        {filteredRows.map((r) => (
+                            <tr
+                                key={r.row.id}
+                                className={r.overloadedDays > 0 ? 'lp-row is-overloaded' : 'lp-row'}
+                            >
+                                <RowLabel
+                                    row={r.row}
+                                    stats={r}
+                                    byResource={byResource}
+                                    customCapacities={customCapacities}
+                                    onCustomCapacityChange={onCustomCapacityChange}
+                                />
+                                {r.cells.map(({ day, cell, capacity, taskCount }) => (
+                                    <LoadCell
+                                        key={day.date}
+                                        day={day}
+                                        cell={cell}
+                                        capacity={capacity}
+                                        taskCount={taskCount}
                                         trans={trans}
                                     />
-                                    {row.cells.map(({ day, cell, capacity, taskCount }) => (
-                                        <LoadCell
-                                            key={day.date}
-                                            day={day}
-                                            cell={cell}
-                                            capacity={capacity}
-                                            taskCount={taskCount}
-                                            compact={compact}
-                                            trans={trans}
-                                        />
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            <div className="card-body py-2">
+            <div className="lp-heatmap-footer">
                 <Legend displayHoursDiff={displayHoursDiff} trans={trans} />
             </div>
 
-            {/* Capacité saisie à la main : uniquement en maille service, où une
-                capacité nulle signifie « aucune ressource configurée ». */}
-            {! byResource && (
+            {!byResource && (
                 <CustomCapacityFooter
                     services={rowDefs}
                     customCapacities={customCapacities}
@@ -816,13 +923,6 @@ function LoadTimeline({
                     trans={trans}
                 />
             )}
-
-            <div className="card-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => history.back()}>
-                    <i className="fas fa-arrow-left mr-1"></i>
-                    {trans.back}
-                </button>
-            </div>
         </div>
     );
 }
@@ -831,18 +931,64 @@ function LoadTimeline({
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function LoadPlanningIndex({ initial, startDate: initStart, endDate: initEnd, displayHoursDiff: initHoursDiff, granularity: initGranularity, endpoints, trans }) {
-    const [startDate,        setStartDate]        = useState(initStart     ?? '');
-    const [endDate,          setEndDate]          = useState(initEnd       ?? '');
+const DEFAULT_WINDOW_DAYS = 14;
+
+function formatPeriodLabel(startIso, endIso, locale) {
+    if (!startIso || !endIso) return '';
+    const start = new Date(`${startIso}T00:00:00`);
+    const end   = new Date(`${endIso}T00:00:00`);
+    return `${start.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })} — ${end.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}`;
+}
+
+export default function LoadPlanningIndex({
+    initial,
+    startDate: initStart,
+    endDate: initEnd,
+    displayHoursDiff: initHoursDiff,
+    granularity: initGranularity,
+    endpoints,
+    trans,
+}) {
+    const locale = currentLocale();
+
+    // Window is derived from persisted preference — the initial dates from the
+    // server are honored only when we can not restore anything from storage.
+    const initialWindow = useMemo(() => {
+        const persisted = loadStoredWindow(null);
+        if (persisted !== null) return persisted;
+        if (initStart && initEnd) {
+            const spread = diffDays(initStart, initEnd) + 1;
+            if (spread <= 8)  return 7;
+            if (spread <= 16) return 14;
+            return 30;
+        }
+        return DEFAULT_WINDOW_DAYS;
+    }, [initStart, initEnd]);
+
+    const [windowDays, setWindowDays] = useState(initialWindow);
+    const [startDate,  setStartDate]  = useState(() => {
+        if (initStart) return initStart;
+        return toDateKey(new Date());
+    });
+    const endDate = useMemo(
+        () => addDaysISO(startDate, windowDays - 1),
+        [startDate, windowDays],
+    );
+
     const [displayHoursDiff, setDisplayHoursDiff] = useState(initHoursDiff ?? false);
     const [granularity,      setGranularity]      = useState(initGranularity ?? 'service');
-    const [data,             setData]             = useState(initial       ?? null);
+    const [direction,        setDirection]        = useState('alap');
+    const [capacityMode,     setCapacityMode]     = useState('infinite');
+    const [viewMode,         setViewMode]         = useState('heatmap');
+    const [search,           setSearch]           = useState('');
+
+    const [data,             setData]             = useState(initial ?? null);
     const [loading,          setLoading]          = useState(false);
     const [error,            setError]            = useState(null);
-    const [compact,          setCompact]          = useState(loadStoredCompact);
 
-    // Custom capacities persisted in localStorage (keyed by service id)
     const [customCapacities, setCustomCapacities] = useState(loadStoredCapacities);
+
+    const calc = useCalculationStatus(endpoints);
 
     const handleCustomCapacityChange = useCallback((serviceId, value) => {
         setCustomCapacities(prev => {
@@ -852,12 +998,9 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
         });
     }, []);
 
-    const handleToggleCompact = useCallback(() => {
-        setCompact(prev => {
-            const next = !prev;
-            try { localStorage.setItem(VIEW_KEY, next ? '1' : '0'); } catch (_) {}
-            return next;
-        });
+    const handleWindow = useCallback((value) => {
+        setWindowDays(value);
+        try { localStorage.setItem(WINDOW_KEY, String(value)); } catch (_) {}
     }, []);
 
     const fetchData = useCallback(async (sd, ed, gr) => {
@@ -880,66 +1023,119 @@ export default function LoadPlanningIndex({ initial, startDate: initStart, endDa
         }
     }, [endpoints.data]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    // Refetch whenever the period, the window or the granularity changes.
+    // We skip the first render if the server already sent an `initial` payload
+    // that matches the current settings.
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current && data
+            && startDate === (initStart ?? startDate)
+            && endDate === (initEnd ?? endDate)
+            && granularity === (initGranularity ?? granularity)) {
+            firstRender.current = false;
+            return;
+        }
+        firstRender.current = false;
         fetchData(startDate, endDate, granularity);
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startDate, endDate, granularity]);
 
-    // Changer de maille recharge les données : la capacité réelle par ressource
-    // et par jour n'est calculée que lorsqu'elle est demandée.
-    const handleGranularity = useCallback((next) => {
-        setGranularity(next);
-        fetchData(startDate, endDate, next);
-    }, [fetchData, startDate, endDate]);
+    const handleShift = useCallback((direction) => {
+        setStartDate((prev) => addDaysISO(prev, direction * windowDays));
+    }, [windowDays]);
+
+    const handleToday = useCallback(() => {
+        setStartDate(toDateKey(new Date()));
+    }, []);
 
     const days = useMemo(
-        () => buildDays(data?.possibleDates, data?.bankHolidays ?? {}, currentLocale()),
-        [data?.possibleDates, data?.bankHolidays]
+        () => buildDays(data?.possibleDates, data?.bankHolidays ?? {}, locale),
+        [data?.possibleDates, data?.bankHolidays, locale],
     );
 
-    const initialCounts = {
-        date:     initial?.countTaskNullDate      ?? 0,
-        resource: initial?.countTaskNullRessource ?? 0,
-    };
+    const periodLabel = formatPeriodLabel(startDate, endDate, locale);
+    const rowLabel = granularity === 'resource' ? 'ressource' : 'service';
 
     return (
-        <div>
-            {endpoints.calculationStatus && (
-                <TaskCalculationPanel
-                    endpoints={endpoints}
-                    initialCounts={initialCounts}
+        <div className="lp-app">
+            {/* ── Top bar : subtitle + controls ─────────────────────── */}
+            <div className="lp-topbar">
+                <div className="lp-topbar__title">
+                    <p className="lp-topbar__subtitle">
+                        Charge par {rowLabel} · {periodLabel}
+                    </p>
+                </div>
+                <Toolbar
+                    viewMode={viewMode}
+                    onViewMode={setViewMode}
+                    windowDays={windowDays}
+                    onWindowDays={handleWindow}
+                    onShift={handleShift}
+                    onToday={handleToday}
+                    search={search}
+                    onSearch={setSearch}
                     trans={trans}
                 />
-            )}
+            </div>
 
-            <FilterForm
-                startDate={startDate}
-                endDate={endDate}
-                displayHoursDiff={displayHoursDiff}
+            {/* ── Scenario card ─────────────────────────────────────── */}
+            <ScenarioCard
                 granularity={granularity}
-                loading={loading}
-                trans={trans}
-                onStartDate={setStartDate}
-                onEndDate={setEndDate}
+                onGranularity={setGranularity}
+                direction={direction}
+                onDirection={setDirection}
+                capacityMode={capacityMode}
+                onCapacityMode={setCapacityMode}
+                displayHoursDiff={displayHoursDiff}
                 onDisplayHoursDiff={setDisplayHoursDiff}
-                onGranularity={handleGranularity}
-                onSubmit={handleSubmit}
+                calc={calc}
+                trans={trans}
             />
 
-            {error && <div className="alert alert-danger">{error}</div>}
+            {error && (
+                <div className="alert alert-danger mt-3">
+                    <i className="fas fa-exclamation-triangle mr-1"></i>
+                    {error}
+                </div>
+            )}
+
+            {loading && !data && (
+                <div className="lp-loading">
+                    <div className="spinner-border text-warning" role="status"></div>
+                    <span className="ml-2">Chargement du planning…</span>
+                </div>
+            )}
 
             {data && (
-                <LoadTimeline
-                    data={data}
-                    days={days}
-                    displayHoursDiff={displayHoursDiff}
-                    compact={compact}
-                    customCapacities={customCapacities}
-                    onToggleCompact={handleToggleCompact}
-                    onCustomCapacityChange={handleCustomCapacityChange}
-                    trans={trans}
-                />
+                <div className={loading ? 'lp-fade' : ''}>
+                    <Heatmap
+                        data={data}
+                        days={days}
+                        displayHoursDiff={displayHoursDiff}
+                        customCapacities={customCapacities}
+                        search={search}
+                        onCustomCapacityChange={handleCustomCapacityChange}
+                        trans={trans}
+                    />
+                </div>
             )}
+
+            {/* Calculation modals (kept from the previous version) */}
+            <CalcModal
+                id="taskCalculationRessource"
+                title={trans.calc_resource_title ?? 'Calculer les ressources'}
+                status={calc.resourceStatus}
+                trans={trans}
+                onCalculate={() => calc.triggerResources(false)}
+                onRebalance={() => calc.triggerResources(true)}
+            />
+            <CalcModal
+                id="taskCalculationDate"
+                title={trans.calc_date_title ?? 'Calculer les dates'}
+                status={calc.dateStatus}
+                trans={trans}
+                onCalculate={() => calc.triggerDates()}
+            />
         </div>
     );
 }

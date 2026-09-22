@@ -276,6 +276,109 @@ class TaskDateCalculatorTest extends TestCase
         $this->assertSame(0.0, $resolver->transferHoursBetween(null, 2));
     }
 
+    public function test_forward_adjustment_of_weekends_and_holidays(): void
+    {
+        // Miroir avant : samedi 4 mai → lundi 6 ; férié isolé → jour ouvré suivant.
+        TimesBanckHoliday::create(['fixed' => false, 'date' => '2024-05-08', 'label' => 'Holiday']);
+        $calculator = new TaskDateCalculator();
+
+        $this->assertSame('2024-05-06', $calculator->adjustForWeekendsAndHolidaysForward(Carbon::create(2024, 5, 4))->toDateString());
+        $this->assertSame('2024-05-09', $calculator->adjustForWeekendsAndHolidaysForward(Carbon::create(2024, 5, 8))->toDateString());
+    }
+
+    public function test_chain_tasks_forward_places_two_consecutive_tasks_from_anchor(): void
+    {
+        // Symétrique de test_chain_tasks_places_two_consecutive_tasks : deux
+        // tâches de 2h démarrent bord à bord à l'ancre (pas de délai config).
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+
+        $upstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id,
+            'methods_units_id' => $unit->id,
+            'ordre' => 10,
+            'seting_time' => 0,
+            'unit_time' => 1,
+            'qty' => 2,
+        ]);
+        $downstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id,
+            'methods_units_id' => $unit->id,
+            'ordre' => 20,
+            'seting_time' => 0,
+            'unit_time' => 1,
+            'qty' => 2,
+        ]);
+
+        $calculator = new TaskDateCalculator();
+        // Lundi 6 mai 2024 08:00 — début de journée ouvrée.
+        $anchor = Carbon::create(2024, 5, 6, 8, 0, 0);
+
+        $chained = $calculator->chainTasksForward(collect([$upstream, $downstream]), $anchor);
+
+        $this->assertCount(2, $chained);
+        // Upstream : 08:00 → 10:00
+        $this->assertSame('2024-05-06 08:00:00', $chained[0]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-06 10:00:00', $chained[0]['end']->format('Y-m-d H:i:s'));
+        // Downstream : 10:00 → 12:00 (bord à bord, pas de délai)
+        $this->assertSame('2024-05-06 10:00:00', $chained[1]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-06 12:00:00', $chained[1]['end']->format('Y-m-d H:i:s'));
+    }
+
+    public function test_chain_tasks_forward_applies_default_inter_operation_delay(): void
+    {
+        config()->set('planning.inter_operation_hours', 1);
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+
+        $upstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 10, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+        $downstream = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 20, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+
+        $resolver = new InterOperationDelayResolver();
+        $calculator = new TaskDateCalculator();
+        $anchor = Carbon::create(2024, 5, 6, 8, 0, 0);
+
+        $chained = $calculator->chainTasksForward(
+            collect([$upstream, $downstream]),
+            $anchor,
+            fn (?int $from, ?int $to) => $resolver->hoursBetween($from, $to),
+        );
+
+        // Upstream inchangé : 08:00 → 10:00
+        $this->assertSame('2024-05-06 10:00:00', $chained[0]['end']->format('Y-m-d H:i:s'));
+        // Downstream décalé d'1h vers l'aval : start = 11:00, end = 13:00
+        $this->assertSame('2024-05-06 11:00:00', $chained[1]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-06 13:00:00', $chained[1]['end']->format('Y-m-d H:i:s'));
+    }
+
+    public function test_chain_tasks_forward_skips_weekend_when_anchor_falls_on_saturday(): void
+    {
+        // Ancrer un samedi doit recaler au lundi ouvré suivant, symétrique à
+        // adjustForWeekendsAndHolidays côté ALAP.
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+
+        $task = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 10, 'seting_time' => 0, 'unit_time' => 1, 'qty' => 2,
+        ]);
+
+        $calculator = new TaskDateCalculator();
+        $anchor = Carbon::create(2024, 5, 4, 8, 0, 0); // samedi
+
+        $chained = $calculator->chainTasksForward(collect([$task]), $anchor);
+
+        // Recalé au lundi 6 mai : 08:00 → 10:00
+        $this->assertSame('2024-05-06 08:00:00', $chained[0]['start']->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-06 10:00:00', $chained[0]['end']->format('Y-m-d H:i:s'));
+    }
+
     public function test_selects_resource_respecting_capacity(): void
     {
         $service = MethodsServicesFactory::new()->create();

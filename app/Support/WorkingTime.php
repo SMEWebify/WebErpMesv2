@@ -49,6 +49,55 @@ class WorkingTime
         return $current;
     }
 
+    /**
+     * Add a number of working hours to a date. Miroir de subtractWorkingHours
+     * pour le forward-scheduling (ASAP) : on avance heure par heure et on saute
+     * les créneaux non travaillés (nuits, week-ends, fériés).
+     *
+     * L'ancre est d'abord recalée sur le prochain instant travaillé — sinon
+     * un ancrage à 18h vendredi consommerait la première heure sur samedi 0h.
+     */
+    public static function addWorkingHours(Carbon $from, int|float $hours): Carbon
+    {
+        $remaining = (int) round(((float) $hours) * 3600);
+        $current = $from->copy();
+
+        if ($remaining <= 0) {
+            return $current;
+        }
+
+        // Recale l'ancre sur un instant travaillé : sans ça, un ancrage à
+        // 18h (fin de journée) commencerait à consommer les heures de nuit.
+        while (!self::isWorkingInstant($current)) {
+            $current->addHour()->startOfHour();
+        }
+
+        $period = CarbonPeriod::create($current, '1 hour');
+        foreach ($period as $step) {
+            if ($remaining <= 0) {
+                break;
+            }
+
+            $hourStart = $step->copy();
+
+            if (!self::isWorkingInstant($hourStart)) {
+                $current = $hourStart->copy()->addHour();
+                continue;
+            }
+
+            if ($remaining >= 3600) {
+                $remaining -= 3600;
+                $current = $hourStart->copy()->addHour();
+            } else {
+                // Fraction d'heure : on s'arrête pile dedans.
+                $current = $hourStart->copy()->addSeconds($remaining);
+                $remaining = 0;
+            }
+        }
+
+        return $current;
+    }
+
     /** L'instant tombe-t-il dans une plage travaillée ? */
     public static function isWorkingInstant(Carbon $date): bool
     {
