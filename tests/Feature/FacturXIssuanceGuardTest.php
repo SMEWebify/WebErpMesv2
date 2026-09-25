@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Admin\Factory;
 use App\Models\Companies\Companies;
+use App\Models\User;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\OrderLines;
@@ -54,6 +55,22 @@ class FacturXIssuanceGuardTest extends TestCase
         $xml = $this->app->make(FacturXBuilder::class)->buildXml($invoice);
 
         $this->assertStringContainsString('<ram:TypeCode>380</ram:TypeCode>', $xml);
+    }
+
+    /**
+     * Un client sans SIREN bloque l'émission : l'écran doit afficher les
+     * informations à compléter, pas une erreur 500.
+     */
+    public function test_a_client_without_siren_shows_what_to_fix_instead_of_a_500(): void
+    {
+        $invoice = $this->makeInvoice(['statu' => 2, 'invoice_type' => 1]);
+        $invoice->companie->forceFill(['siren' => null, 'intra_community_vat' => null])->save();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('pdf.facturex', ['Document' => $invoice->id]))
+            ->assertStatus(422)
+            ->assertSee('ni adresse électronique de facturation ni SIREN', false)
+            ->assertSee(route('companies.show', ['id' => $invoice->companies_id]), false);
     }
 
     /* ------------------------------------------------------------- Utilitaires */

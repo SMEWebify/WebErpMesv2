@@ -129,7 +129,22 @@ class PrintController extends Controller
 
         $filename = __('general_content.invoice_trans_key') . '-' . $Document->code . '.pdf';
 
-        return response($builder->buildPdf($Document), 200, [
+        try {
+            $pdf = $builder->buildPdf($Document);
+        } catch (\RuntimeException $e) {
+            // Données manquantes (SIREN, TVA, adresse…) : le message est rédigé
+            // pour l'utilisateur, on l'affiche au lieu d'une 500 — même rendu
+            // titre + puces que l'aperçu de l'envoi par mail.
+            $lines = preg_split('/\r?\n/', trim($e->getMessage()));
+
+            return response()->view('print.facturx-error', [
+                'invoice' => $Document,
+                'title'   => array_shift($lines),
+                'items'   => array_values(array_filter(array_map(fn ($l) => ltrim(trim($l), "—- \t"), $lines))),
+            ], 422);
+        }
+
+        return response($pdf, 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
