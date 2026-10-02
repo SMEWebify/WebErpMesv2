@@ -3,7 +3,18 @@
 @section('title', __('general_content.tools_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.tools_trans_key') }}</h1>
+    <div class="d-flex align-items-center">
+        <h1 class="mb-0">{{ __('general_content.tools_trans_key') }}</h1>
+        <a href="{{ route('purchases.reorder', ['scope' => 'tools']) }}" class="btn btn-sm btn-warning ml-auto mr-2">
+            <i class="fas fa-cart-plus mr-1"></i>Réapprovisionner
+        </a>
+        <a href="{{ route('methods.tool.configurator') }}" class="btn btn-sm btn-primary mr-2">
+            <i class="fas fa-tools mr-1"></i>{{ __('adminlte::menu.methods_tool_configurator_trans_key') }}
+        </a>
+        <a href="{{ route('methods.tool.punch-designer') }}" class="btn btn-sm btn-info">
+            <i class="fas fa-drafting-compass mr-1"></i>{{ __('adminlte::menu.methods_punch_designer_trans_key') }}
+        </a>
+    </div>
 @stop
 
 @section('right-sidebar')
@@ -24,6 +35,7 @@
                 <th>{{ __('general_content.cost_trans_key') }}</th>
                 <th>{{ __('general_content.end_date_trans_key') }}</th>
                 <th>{{ __('general_content.qty_trans_key') }}</th>
+                <th>Stock</th>
                 <th></th>
               </tr>
             </thead>
@@ -44,6 +56,20 @@
                 <td>{{ $MethodsTool->cost }}</td>
                 <td>{{ $MethodsTool->end_date }}</td>
                 <td>{{ $MethodsTool->qty }}</td>
+                <td class="text-nowrap">
+                  @if($MethodsTool->stockProduct && isset($ToolStock[$MethodsTool->id]))
+                    @php($ts = $ToolStock[$MethodsTool->id])
+                    <a href="{{ route('products.show', ['id' => $MethodsTool->products_id]) }}" title="Article de stock {{ $MethodsTool->stockProduct->code }}">
+                      <span class="badge badge-{{ $ts['below'] ? 'danger' : 'success' }}">{{ rtrim(rtrim(number_format($ts['stock'], 3, ',', ' '), '0'), ',') }}</span>
+                    </a>
+                    @if($ts['mini'] > 0)<small class="text-muted">/ mini {{ rtrim(rtrim(number_format($ts['mini'], 3, ',', ' '), '0'), ',') }}</small>@endif
+                    <a href="{{ route('purchases.reorder', ['products' => [$MethodsTool->products_id]]) }}" class="btn btn-xs btn-outline-warning ml-1" title="Commander">
+                      <i class="fas fa-cart-plus"></i>
+                    </a>
+                  @else
+                    <small class="text-muted">—</small>
+                  @endif
+                </td>
                 <td class="py-0 align-middle">
                   <!-- Button Modal -->
                   <x-ButtonTextEdit :modalTarget="'MethodsTool' . $MethodsTool->id" />
@@ -117,11 +143,73 @@
                           </div>
                       </form>
                     </div>
+                    <div class="card-body border-top">
+                      <h5 class="mb-3"><i class="fas fa-boxes mr-1"></i>Article de stock</h5>
+                      @if($MethodsTool->stockProduct)
+                        <p class="mb-2">
+                          Lié à <a href="{{ route('products.show', ['id' => $MethodsTool->products_id]) }}">{{ $MethodsTool->stockProduct->code }} — {{ $MethodsTool->stockProduct->label }}</a>.
+                          Le stock, le seuil mini et les prix fournisseurs se gèrent sur la fiche article.
+                        </p>
+                        <form method="POST" action="{{ route('methods.tool.stock-product', ['id' => $MethodsTool->id]) }}">
+                          @csrf
+                          <input type="hidden" name="mode" value="unlink">
+                          <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-unlink mr-1"></i>Délier l'article</button>
+                        </form>
+                      @else
+                        <p class="text-muted small">Sans article, l'outil n'a pas de stock suivi. Créez-en un (consommable, outillage acheté) ou liez un article existant.</p>
+                        <form method="POST" action="{{ route('methods.tool.stock-product', ['id' => $MethodsTool->id]) }}">
+                          @csrf
+                          <input type="hidden" name="mode" value="create">
+                          <div class="form-row">
+                            <div class="form-group col-md-4">
+                              <label class="small">Service</label>
+                              <select name="methods_services_id" class="form-control form-control-sm" required>
+                                @foreach($StockServices as $item)<option value="{{ $item->id }}">{{ $item->label }}</option>@endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label class="small">Famille</label>
+                              <select name="methods_families_id" class="form-control form-control-sm" required>
+                                @foreach($StockFamilies as $item)<option value="{{ $item->id }}">{{ $item->label }}</option>@endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label class="small">Unité</label>
+                              <select name="methods_units_id" class="form-control form-control-sm" required>
+                                @foreach($StockUnits as $item)<option value="{{ $item->id }}">{{ $item->label }}</option>@endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label class="small">Emplacement</label>
+                              <select name="stock_locations_id" class="form-control form-control-sm">
+                                <option value="">— aucun —</option>
+                                @foreach($StockLocations as $item)<option value="{{ $item->id }}">{{ $item->code }} — {{ $item->label }}</option>@endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label class="small">Seuil mini</label>
+                              <input type="number" step="any" min="0" name="mini_qty" class="form-control form-control-sm" placeholder="0">
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label class="small">Qté éco. d'achat</label>
+                              <input type="number" step="any" min="0" name="qty_eco_min" class="form-control form-control-sm" placeholder="ex. 10">
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-plus mr-1"></i>Créer l'article {{ $MethodsTool->code }}</button>
+                        </form>
+                        <form method="POST" action="{{ route('methods.tool.stock-product', ['id' => $MethodsTool->id]) }}" class="form-inline mt-3">
+                          @csrf
+                          <input type="hidden" name="mode" value="link">
+                          <input type="text" name="product_code" class="form-control form-control-sm mr-2" placeholder="Code d'un article existant" required>
+                          <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-link mr-1"></i>Lier</button>
+                        </form>
+                      @endif
+                    </div>
                   </x-adminlte-modal>
                 </td>
               </tr>
               @empty
-              <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+              <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
               @endforelse
             </tbody>
             <tfoot>
@@ -133,6 +221,7 @@
                 <th>{{ __('general_content.cost_trans_key') }}</th>
                 <th>{{ __('general_content.end_date_trans_key') }}</th>
                 <th>{{ __('general_content.qty_trans_key') }}</th>
+                <th>Stock</th>
                 <th></th>
               </tr>
             </tfoot>

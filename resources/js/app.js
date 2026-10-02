@@ -85,6 +85,51 @@ async function mountNestingPage() {
     createRoot(element).render(React.createElement(NestingPage));
 }
 
+async function mountPunchDesigner() {
+    const element = document.getElementById('punch-designer-app');
+    if (!element) return;
+
+    const { default: PunchDesigner } = await import('./components/PunchDesigner.jsx');
+    createRoot(element).render(React.createElement(PunchDesigner, {
+        brand: element.dataset.brand,
+        libraryUrl: element.dataset.libraryUrl,
+    }));
+}
+
+async function mountToolCatalog() {
+    const element = document.getElementById('tool-catalog-app');
+    if (!element) return;
+
+    const { default: ToolCatalog } = await import('./components/ToolCatalog.jsx');
+    createRoot(element).render(React.createElement(ToolCatalog, { libraryUrl: element.dataset.libraryUrl }));
+}
+
+async function mountToolConfigurator() {
+    const element = document.getElementById('tool-configurator-app');
+    if (!element) return;
+
+    const { default: ToolConfigurator } = await import('./components/ToolConfigurator.jsx');
+    createRoot(element).render(React.createElement(ToolConfigurator, {
+        storeUrl: element.dataset.storeUrl,
+        indexUrl: element.dataset.indexUrl,
+        currency: element.dataset.currency,
+        stockOptions: parseJsonAttribute(element.dataset.stockOptions) || {},
+    }));
+}
+
+async function mountReorderPage() {
+    const element = document.getElementById('reorder-app');
+    if (!element) return;
+
+    const { default: ReorderPage } = await import('./components/ReorderPage.jsx');
+    createRoot(element).render(React.createElement(ReorderPage, {
+        endpoints: parseJsonAttribute(element.dataset.endpoints) || {},
+        scope:     element.dataset.scope,
+        products:  parseJsonAttribute(element.dataset.products) || [],
+        currency:  element.dataset.currency,
+    }));
+}
+
 async function mountQuotesIndex() {
     const element = document.getElementById('quotes-index-app');
     if (!element) return;
@@ -1317,6 +1362,10 @@ mountDocumentTable();
 mountCompaniesIndex();
 mountWhiteboard();
 mountNestingPage();
+mountPunchDesigner();
+mountToolCatalog();
+mountToolConfigurator();
+mountReorderPage();
 mountQuotesIndex();
 mountLeadsIndex();
 mountOpportunitiesIndex();

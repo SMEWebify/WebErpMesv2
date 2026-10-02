@@ -12,11 +12,20 @@ class MethodsTools extends Model
     use HasFactory;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['code',  'label',  'ETAT', 'cost' , 'picture',  'end_date',  'comment',  'qty', 'availability'];
+    protected $fillable= ['code',  'label',  'ETAT', 'cost' , 'picture',  'end_date',  'comment',  'qty', 'availability', 'products_id'];
 
     protected $casts = [
         'availability' => 'boolean',
     ];
+
+    /**
+     * Article qui porte le stock de l'outil (emplacements, seuil mini, prix fournisseurs).
+     * Distinct de products() : celui-ci liste les articles fabriqués AVEC l'outil.
+     */
+    public function stockProduct()
+    {
+        return $this->belongsTo(Products::class, 'products_id');
+    }
 
     public function Task()
     {

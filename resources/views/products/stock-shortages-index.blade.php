@@ -3,7 +3,12 @@
 @section('title', 'Statut du stock')
 
 @section('content_header')
-    <h1>Statut du stock</h1>
+    <div class="d-flex align-items-center">
+        <h1 class="mb-0">Statut du stock</h1>
+        <a href="{{ route('purchases.reorder') }}" class="btn btn-sm btn-warning ms-auto">
+            <i class="fas fa-cart-plus me-1"></i>Réapprovisionner
+        </a>
+    </div>
 @stop
 
 @section('content')

@@ -503,6 +503,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         
         Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request');
+        // Réapprovisionnement (avant /{id}, qui capterait « reorder »)
+        Route::get('/reorder', 'App\Http\Controllers\Purchases\ReorderController@index')->name('purchases.reorder');
+        Route::get('/reorder/json', 'App\Http\Controllers\Purchases\ReorderController@json')->name('purchases.reorder.json');
+        Route::post('/reorder', 'App\Http\Controllers\Purchases\ReorderController@store')->name('purchases.reorder.store');
         Route::get('/request/tasks', 'App\Http\Controllers\Purchases\PurchasesRFQController@requestTasks')->name('purchases.request.tasks');
         Route::post('/request/store', 'App\Http\Controllers\Purchases\PurchasesRFQController@storePurchaseApi')->name('purchases.request.store');
         Route::get('/request/export-csv', 'App\Http\Controllers\Purchases\PurchasesRFQController@exportCsvApi')->name('purchases.request.export-csv');
@@ -1244,9 +1248,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Routes for Tool
         Route::group(['prefix' => 'tool'], function () {
             Route::get('/', 'App\Http\Controllers\Methods\ToolsController@index')->name('methods.tool');
+            Route::get('/punch-designer', 'App\Http\Controllers\Methods\ToolsController@punchDesigner')->name('methods.tool.punch-designer');
+            Route::get('/library/{name}', 'App\Http\Controllers\Methods\ToolsController@library')
+                ->whereIn('name', ['press-brake-punches', 'press-brake-catalog'])->name('methods.tool.library');
+            Route::get('/catalog', 'App\Http\Controllers\Methods\ToolsController@catalog')->name('methods.tool.catalog');
+            Route::get('/configurator', 'App\Http\Controllers\Methods\ToolsController@configurator')->name('methods.tool.configurator');
+            Route::post('/configurator', 'App\Http\Controllers\Methods\ToolsController@storeConfigured')->name('methods.tool.configurator.store');
             Route::post('/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->name('methods.tool.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.update.picture');
+            Route::post('/edit/{id}/stock-product', 'App\Http\Controllers\Methods\ToolsController@storeStockProduct')->name('methods.tool.stock-product');
         });
 
         // Routes for Standard Nomenclature

@@ -3,8 +3,15 @@
 namespace App\Http\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Services\SelectDataService;
 use App\Models\Methods\MethodsTools;
+use App\Models\Methods\MethodsUnits;
+use App\Models\Products\Products;
+use App\Models\Methods\MethodsFamilies;
+use App\Models\Methods\MethodsServices;
+use App\Models\Products\StockLocation;
+use App\Services\Stock\ToolStockService;
 use App\Http\Requests\Methods\StoreToolRequest;
 use App\Http\Requests\Methods\UpdateToolRequest;
 
@@ -23,14 +30,171 @@ class ToolsController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(ToolStockService $toolStockService)
     {
-        $MethodsTools = MethodsTools::orderBy('code')->get();
+        $MethodsTools = MethodsTools::with('stockProduct.Stock_location_product')->orderBy('code')->get();
         return view('methods/methods-tools', [
             'MethodsTools' => $MethodsTools,
-        ]);
+            'ToolStock'    => $toolStockService->stockFor($MethodsTools),
+        ] + $this->stockProductSelectData());
+    }
+
+    /**
+     * Listes nécessaires pour créer l'article de stock d'un outil.
+     */
+    private function stockProductSelectData(): array
+    {
+        return [
+            'StockServices'  => MethodsServices::select('id', 'label')->orderBy('ordre')->get(),
+            'StockFamilies'  => MethodsFamilies::select('id', 'label')->orderBy('label')->get(),
+            'StockUnits'     => MethodsUnits::select('id', 'label')->orderBy('label')->get(),
+            'StockLocations' => StockLocation::select('id', 'code', 'label')->orderBy('code')->get(),
+        ];
+    }
+
+    /**
+     * Règles de création de l'article de stock (préfixe pour les champs du configurateur).
+     */
+    private function stockProductRules(string $prefix = ''): array
+    {
+        return [
+            $prefix . 'methods_services_id' => 'required|exists:methods_services,id',
+            $prefix . 'methods_families_id' => 'required|exists:methods_families,id',
+            $prefix . 'methods_units_id'    => 'required|exists:methods_units,id',
+            $prefix . 'stock_locations_id'  => 'nullable|exists:stock_locations,id',
+            $prefix . 'mini_qty'            => 'nullable|numeric|min:0',
+            $prefix . 'qty_eco_min'         => 'nullable|numeric|min:0',
+        ];
+    }
+
+    /**
+     * Article de stock d'un outil : le créer, lier un article existant (par code) ou délier.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeStockProduct(Request $request, $id, ToolStockService $toolStockService)
+    {
+        $tool = MethodsTools::findOrFail($id);
+        $mode = $request->validate(['mode' => 'required|in:create,link,unlink'])['mode'];
+
+        if ($mode === 'unlink') {
+            $tool->update(['products_id' => null]);
+            return redirect()->route('methods.tool')->with('success', "Outil {$tool->code} délié de son article de stock.");
+        }
+
+        if ($mode === 'link') {
+            $code = $request->validate(['product_code' => 'required|string|exists:products,code'], [
+                'product_code.exists' => 'Aucun article ne porte ce code.',
+            ])['product_code'];
+            $tool->update(['products_id' => Products::where('code', $code)->value('id')]);
+            return redirect()->route('methods.tool')->with('success', "Outil {$tool->code} lié à l'article {$code}.");
+        }
+
+        if (Products::withTrashed()->where('code', $tool->code)->exists()) {
+            return back()->withErrors(['msg' => "Un article porte déjà le code {$tool->code} : utilisez « Lier à un article existant »."]);
+        }
+        $data = $request->validate($this->stockProductRules());
+        $toolStockService->createProductForTool($tool, $data);
+
+        return redirect()->route('methods.tool')->with('success', "Article de stock {$tool->code} créé.");
     }
     
+    /**
+     * Configurateur de poinçon de presse plieuse sur mesure (profil paramétrique ou
+     * bibliothèque constructeurs, simulation de la pièce pliée, export PDF).
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function punchDesigner()
+    {
+        return view('methods/methods-punch-designer');
+    }
+
+    /**
+     * Bibliothèques d'outillage constructeurs (profils de poinçons, catalogue). Données
+     * tierces non versionnées : déposées par instance dans storage/app/private/tool-libraries.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+     */
+    public function library(string $name)
+    {
+        $path = storage_path("app/private/tool-libraries/{$name}.json");
+        if (!is_file($path)) {
+            return response()->json([
+                'message' => "Bibliothèque non installée sur ce serveur : déposez {$name}.json dans storage/app/private/tool-libraries/.",
+            ], 404);
+        }
+
+        return response()->file($path, [
+            'Content-Type'  => 'application/json',
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
+    }
+
+    /**
+     * Catalogue d'outillage de presse plieuse (poinçons, matrices, adaptateurs des
+     * bibliothèques constructeurs), consultable et filtrable.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function catalog()
+    {
+        return view('methods/methods-tool-catalog');
+    }
+
+    /**
+     * Configurateur d'outil de tournage : assemble le code ISO (porte-outil, barre
+     * d'alésage, plaquette) à partir des planches normalisées.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function configurator()
+    {
+        return view('methods/methods-tool-configurator', $this->stockProductSelectData());
+    }
+
+    /**
+     * Crée l'outil assemblé par le configurateur (appel AJAX multipart). L'image,
+     * optionnelle, est l'illustration PNG générée côté navigateur à partir du code.
+     *
+     * @param \App\Http\Requests\Methods\StoreToolRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeConfigured(StoreToolRequest $request, ToolStockService $toolStockService)
+    {
+        $request->validate([
+            'cost'     => 'nullable|numeric|min:0',
+            'qty'      => 'integer|min:0',
+            'end_date' => 'nullable|date',
+            'comment'  => 'nullable|string|max:5000',
+        ]);
+        $stock = null;
+        if ($request->boolean('create_product')) {
+            $request->validate(['code' => [Rule::unique('products', 'code')]], [
+                'code.unique' => 'Un article porte déjà ce code : créez l\'outil sans article puis liez-le depuis la liste des outils.',
+            ]);
+            $stock = $request->validate($this->stockProductRules('stock.'))['stock'];
+        }
+
+        $attributes = $request->only('code', 'label', 'cost', 'end_date', 'comment', 'qty') + ['ETAT' => 1];
+        if ($request->hasFile('picture')) {
+            // même emplacement que les images déposées à la main (storage/images/tools)
+            $attributes['picture'] = basename($request->file('picture')->store('images/tools', 'public'));
+        }
+
+        $tool = MethodsTools::create($attributes);
+        if ($stock !== null) {
+            $toolStockService->createProductForTool($tool, $stock);
+        }
+
+        session()->flash('success', __('general_content.tool_created_success_trans_key'));
+
+        return response()->json([
+            'id'       => $tool->id,
+            'redirect' => route('methods.tool'),
+        ], 201);
+    }
+
     /**
      * Store a newly created tool in storage.
      *
