@@ -10,7 +10,7 @@
   <a href="https://github.com/SMEWebify/WebErpMesv2/network/members"><img src="https://img.shields.io/github/forks/SMEWebify/WebErpMesv2?style=social" alt="Forks"></a>
   <a href="https://github.com/SMEWebify/WebErpMesv2/issues"><img src="https://img.shields.io/github/issues/SMEWebify/WebErpMesv2" alt="Issues"></a>
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/LICENSE"><img src="https://img.shields.io/github/license/SMEWebify/WebErpMesv2" alt="License"></a>
-  <a href="https://github.com/SMEWebify/WebErpMesv2"><img src="https://img.shields.io/github/downloads/SMEWebify/WebErpMesv2/total" alt="License"></a>
+  <a href="https://github.com/SMEWebify/WebErpMesv2"><img src="https://img.shields.io/github/downloads/SMEWebify/WebErpMesv2/total" alt="Downloads"></a>
 </p>
 
 <img width="1904" height="952" alt="image" src="https://github.com/user-attachments/assets/90853ec1-59dd-4a9c-9d90-3477103fa8cc" />
@@ -32,8 +32,8 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 |----------|-------------|
 | 📋 **Complex quotes** with many operations | Detailed BOMs, machining routings, automatic time/cost calculation |
 | ⏱️ **Real-time production tracking** not possible | Live dashboard, shop-floor time tracking, progress by work order |
-| 📦 **Raw material management** (sheets, bars, tubes) | Stock by dimensions, material traceability, replenishment alerts |
-| 🔄 **Chaotic shop planning** | Visual planning per machine, priority management, machine load |
+| 📦 **Raw material management** (sheets, bars, tubes) | Stock by dimensions, material traceability, replenishment proposals |
+| 🔄 **Chaotic shop planning** | ASAP scheduling with finite capacity, priority management, machine load |
 | 📊 **Unclear project profitability** | Actual vs. forecast cost tracking, margin analysis per order |
 | 🚚 **Limited customer/supplier traceability** | Full history, attached documents, technical notes |
 
@@ -42,30 +42,50 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 ### 🏭 Production Module (MES)
 - **Machining routings**: define operations (cutting, bending, welding, machining...)
 - **Bills of Materials (BOM)**: raw materials, components, sub-assemblies
-- **Shop planning**: visualize load per machine/work center
+- **Shop planning**: ASAP scheduling with finite capacity, inter-operation delays
+  (global setting or per operation pair, in shop hours), load per machine/work center
 - **Work orders**: automatic generation from quotes
 - **Production time tracking**: real-time tracking by operation
 - **Quality control**: control sheets, non-conformities
+
+### 🛠️ Tooling
+- **Press brake punch designer**: parametric profile or manufacturer library, bent-part
+  simulation, PDF export, browsable press brake tooling catalog
+- **Turning tool configurator** (ISO 5608 / 6261 / 1832): code assembled step by step,
+  holder ↔ insert compatibility check, optional creation of the matching stock item
+- **Tool stock**: each tool can be linked to the stock item that carries its quantity and minimum
 
 ### 📋 Sales Management
 - **Detailed quotes**: multiple lines, options, variants
 - **Cost calculation**: material + labor + subcontracting
 - **Opportunity tracking**: from lead to delivery
+- **Order acknowledgments** sent to the customer
 - **Multi-currency** and multi-language support
 - **Customer history**: all orders at a glance
 
 ### 📦 Inventory & Procurement
 - **Dimension-based management**: Sheet 2000x1000x3mm, Tube Ø50x3...
-- **Material traceability**: heat numbers, material certificates
-- **Stock movements**: receipts, issues, transfers, inventories
-- **Alerts**: minimum thresholds, automatic replenishment
+- **Traceability**: batches, serial numbers, material certificates attached to documents
+- **Stock movements**: receipts, issues, transfers, weighted average cost (CUMP)
+- **Physical inventory**: guided counting, valued summary, variance table
+- **Replenishment**: minimum + reserved needs − stock − on order, one draft purchase order per supplier
 - **Suppliers**: pricing, lead times, evaluation
 
 ### 💰 Accounting & Invoicing
-- **Invoicing**: deposits, progress billing, credit notes
-- **VAT**: multi-rate management, declarations
-- **Payments**: settlement tracking, reminders
+- **Invoicing**: invoices, credit notes, returns
+- **VAT**: multi-rate management
+- **Payments**: settlement tracking
 - **Analytics**: profitability by project, customer, period
+- **Email**: SMTP configured from the application, sending log, PDF attached automatically
+
+### 👥 Human resources
+- **Leave balances** per employee, leave type and reference period (CP, RTT, time off in lieu...)
+- **Absence requests** with an approval workflow
+- **Payroll export** (CSV / XLSX): absences, clocked hours and production hours per employee,
+  in a neutral format that any payroll software can map
+- **Skills matrix**: authorizations per employee and per machine, with expiry tracking
+- **Employee file**: confidential documents (contract, payslips, certificates) restricted to
+  the employee and HR
 
 ### 🗂️ Document management with built-in CAD viewers
 - **Unified attachments**: products, quotes, orders, delivery notes, invoices, purchases,
@@ -81,7 +101,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - **Andon alerts**: real-time escalation from the shop floor
 - **Shop reports**: booked vs. estimated time, scrap, machine load
 - **Kanban and GTD boards**, Gantt chart, machine load planning
-- **Nesting**: part layout attached to order lines
+- **Nesting**: sheet layout grouped by material and thickness, parts placed by their bounding rectangle
 - **Attendance and energy consumption tracking**
 
 ### ✅ Quality, EHS & compliance
@@ -92,8 +112,9 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
   automatic weekly purge, self-service requests
 
 ### 🔌 Integrations & automation
-- **Electronic invoicing**: Factur-X / EN 16931 output, PDP gateway (Qonto driver) and
-  inbound Factur-X reading for supplier invoices
+- **Electronic invoicing** (French 2026 reform): Factur-X / EN 16931 output, PDP gateway with
+  SUPER PDP and Qonto drivers — invoice issuing and lifecycle tracking, supplier invoice inbox
+  matched against purchase receipts, statuses reported back to suppliers, directory lookup
 - **FEC export** for French accounting
 - **Nest2Prod**: order push and sheet stock synchronization
 - **LDAP / Active Directory** user import
@@ -112,7 +133,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - Sheet stock management by format and thickness
 - Real-time tracking of work orders in progress
 
-**Result**: +30% planning productivity, -20% dormant stock
+**Goal**: faster planning, less dormant stock
 
 ### Example 2: Precision mechanics
 **Context**: Automotive subcontracting, medium series
@@ -123,7 +144,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - Integrated quality control (inspection sheets per work order)
 - Full traceability from material to finished part
 
-**Result**: ISO 9001 compliance, perfect traceability
+**Goal**: traceability records ready for an ISO 9001 audit
 
 ### Example 3: Mold manufacturer
 **Context**: Plastic injection molds, complex projects
@@ -134,7 +155,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - Real-time project profitability tracking
 - Centralized technical documentation
 
-**Result**: Better cost control, on-time delivery
+**Goal**: better cost control, on-time delivery
 
 
 ## 🎬 See ΣEM in action
@@ -151,8 +172,6 @@ https://github.com/user-attachments/assets/200e1322-ae60-4270-aa9c-0a28e5ca737a
 
 <img width="1877" height="831" alt="image" src="https://github.com/user-attachments/assets/21b92345-46ad-4af2-9f3a-b38d601eb091" />
 
-
-### Installation
 
 ## 🚀 Quick installation
 
@@ -262,6 +281,10 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan wem:files:import` | One-shot migration of legacy `public/` attachments into the private file store. `--dry-run`, `--skip-move`. | `php artisan wem:files:import --dry-run` |
 | `php artisan wem:n2p:push-order {orderId} {--sync}` | Push a specific order to Nest2Prod (sync option bypasses the queue). | `php artisan wem:n2p:push-order 123 --sync` |
 | `php artisan wem:n2p:sync-sheet-stock` | Synchronize sheet stock with Nest2Prod. `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:pdp:sync` | E-invoicing: sync issued invoice statuses and receive supplier invoices (required for platforms without webhooks). `--tenant=`, `--events`, `--inbound`. | `php artisan wem:pdp:sync --inbound` |
+| `php artisan wem:pdp:directory` | E-invoicing directory: list/open/close our receiving line, look up a customer's billing address by SIREN or name. `--open=`, `--date=`, `--close=`, `--lookup=`, `--search=`. | `php artisan wem:pdp:directory --lookup=123456789` |
+| `php artisan wem:pdp:seed-sandbox` | **Dev only.** Write the SUPER PDP sandbox identity (overwrites the company identity). `--force`. | `php artisan wem:pdp:seed-sandbox` |
+| `php artisan hr:recompute-absence-days` | Recompute the day cost of every absence request (after a leave-balance migration or a public-holiday change). `--dry-run`. | `php artisan hr:recompute-absence-days --dry-run` |
 | `php artisan preorders:scan-output` | Scan the output folder and import CSV files as pre-orders. `--path=`, `--pattern=`, `--done-path=`. | `php artisan preorders:scan-output` |
 | `php artisan stock:recalculate-cump` | Recompute the full weighted-average-cost history for every product location. `--dry-run`. | `php artisan stock:recalculate-cump --dry-run` |
 | `php artisan stock:rebuild-reservations` | Rebuild stock reservations for purchased components. `--product=`. | `php artisan stock:rebuild-reservations` |
@@ -277,12 +300,15 @@ These commands are defined in this repository and complement the default Laravel
 ### ⏱️ Scheduled tasks & queue
 
 The scheduler (`routes/console.php`) drives the daily backups (`backup:run`, `backup:clean`,
-`backup:monitor`), the weekly GDPR purge (`rgpd:purge`) and the monthly activity-log cleanup.
-Register it once on the server:
+`backup:monitor`), the e-invoicing sync every 15 minutes (`wem:pdp:sync`), the weekly GDPR
+purge (`rgpd:purge`) and the monthly activity-log cleanup. Register it once on the server:
 
 ```
 * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
 ```
+
+On Windows, run `php artisan schedule:run` every minute from the Task Scheduler, and keep the
+queue worker alive as a service (NSSM, for example).
 
 A queue worker is required for asynchronous work (emails, integrations, exports):
 
@@ -428,12 +454,12 @@ Check our [Contributing Guide](CONTRIBUTING.md) and make your first contribution
 
 ## 📊 Project Stats
 
-- ⭐ **180+** Stars
-- 🍴 **88** Forks
+- ⭐ **220+** Stars
+- 🍴 **99** Forks
 - 👥 **7+** Active Contributors
 - 📝 **2,200+** Commits
 - 🎉 **21** Releases (latest: v1.19)
-- 🧪 **60+** PHPUnit test files
+- 🧪 **85+** PHPUnit test files
 - 📦 **Open Source** under MIT License
 
 ## 📚 Documentation
@@ -452,7 +478,8 @@ Check our [roadmap](ROADMAP.md) to see what's coming next and how you can help!
 **Current priorities:**
 - 🧪 Test coverage improvement (backend business rules; no frontend tests yet)
 - 📚 Complete API documentation ([docs/API.md](docs/API.md))
-- 📦 Stock: projected-stock curve, physical inventory screen, automatic replenishment alerts
+- 📦 Stock: projected-stock curve, low-stock notifications
+- 👥 HR: absence notifications, absences taken into account in planning capacity
 - 🐳 Multi-tenant Docker deployment (one container + one database per customer)
 
 ## 💬 Support & Community

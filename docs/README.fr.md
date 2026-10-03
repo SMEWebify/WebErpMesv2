@@ -30,8 +30,8 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 |----------|-------------|
 | 📋 **Devis complexes** avec nombreuses opérations | Nomenclatures (BOM) détaillées, gammes d'usinage, calcul automatique temps/coûts |
 | ⏱️ **Suivi production** en temps réel impossible | Tableau de bord live, pointage atelier, avancement par OF |
-| 📦 **Gestion matières premières** (tôles, barres, tubes) | Stock par dimensions, traçabilité matière, alertes réapprovisionnement |
-| 🔄 **Planification atelier** chaotique | Planning visuel par machine, gestion priorités, charge machines |
+| 📦 **Gestion matières premières** (tôles, barres, tubes) | Stock par dimensions, traçabilité matière, propositions de réapprovisionnement |
+| 🔄 **Planification atelier** chaotique | Ordonnancement au plus tôt à capacité finie, gestion priorités, charge machines |
 | 📊 **Rentabilité par projet** floue | Suivi coûts réels vs prévisionnels, analyse marges par commande |
 | 🚚 **Traçabilité client/fournisseur** limitée | Historique complet, documents attachés, notes techniques |
 
@@ -40,30 +40,51 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 ### 🏭 Module Production (MES)
 - **Gammes d'usinage** : définir les opérations (découpe, pliage, soudure, usinage...)
 - **Nomenclatures (BOM)** : matières premières, composants, sous-ensembles
-- **Planning atelier** : visualisation charge par machine/poste
+- **Planning atelier** : ordonnancement au plus tôt à capacité finie, délais inter-opérations
+  (réglage global ou par couple d'opérations, en heures atelier), charge par machine/poste
 - **Ordres de fabrication** : génération automatique depuis devis
 - **Pointage production** : suivi temps réel par opération
 - **Contrôle qualité** : fiches de contrôle, non-conformités
+
+### 🛠️ Outillage
+- **Conception de poinçon de presse plieuse** : profil paramétrique ou bibliothèque constructeur,
+  simulation de la pièce pliée, export PDF, catalogue d'outillage consultable
+- **Configurateur d'outil de tournage** (ISO 5608 / 6261 / 1832) : code assemblé pas à pas,
+  contrôle porte-outil ↔ plaquette, création optionnelle de l'article de stock associé
+- **Stock des outils** : chaque outil peut être relié à l'article qui porte sa quantité et son mini
 
 ### 📋 Gestion Commerciale
 - **Devis détaillés** : lignes multiples, options, variantes
 - **Calcul coûts** : matière + main d'œuvre + sous-traitance
 - **Suivi affaires** : du lead jusqu'à la livraison
+- **Accusés de réception de commande** (ARC) envoyés au client
 - **Gestion multi-devises** et multi-langues
 - **Historique client** : toutes les commandes en un clin d'œil
 
 ### 📦 Stocks & Approvisionnement
 - **Gestion par dimensions** : Tôle 2000x1000x3mm, Tube Ø50x3...
-- **Traçabilité matière** : numéros de coulée, certificats matière
-- **Mouvements stocks** : entrées, sorties, transferts, inventaires
-- **Alertes** : seuils mini, réapprovisionnement automatique
+- **Traçabilité** : lots, numéros de série, certificats matière attachés aux documents
+- **Mouvements stocks** : entrées, sorties, transferts, coût unitaire moyen pondéré (CUMP)
+- **Inventaire physique** : comptage guidé, bilan valorisé, table des écarts
+- **Réapprovisionnement** : mini + besoins réservés − stock − en commande, une commande d'achat
+  brouillon par fournisseur
 - **Fournisseurs** : tarifs, délais, évaluation
 
 ### 💰 Comptabilité & Facturation
-- **Facturation** : acomptes, situations, avoirs
-- **TVA** : gestion multi-taux, déclarations
-- **Paiements** : suivi règlements, relances
+- **Facturation** : factures, avoirs, retours
+- **TVA** : gestion multi-taux
+- **Paiements** : suivi des règlements
 - **Analytique** : rentabilité par projet, client, période
+- **Emails** : SMTP configurable depuis l'application, journal des envois, PDF joint automatiquement
+
+### 👥 Ressources humaines
+- **Soldes de congés** par salarié, nature de congé et période de référence (CP, RTT, récupération...)
+- **Demandes d'absence** avec circuit de validation
+- **Export paie** (CSV / XLSX) : absences, heures badgées et heures de production par salarié,
+  dans un format neutre que tout logiciel de paie peut reprendre
+- **Matrice de polyvalence** : habilitations par salarié et par machine, avec suivi des péremptions
+- **Dossier salarié** : documents confidentiels (contrat, bulletins, attestations) réservés au
+  salarié et aux RH
 
 ### 🗂️ Gestion documentaire avec visionneuses CAO intégrées
 - **Pièces jointes unifiées** : produits, devis, commandes, bons de livraison, factures,
@@ -80,7 +101,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - **Alertes Andon** : escalade temps réel depuis l'atelier
 - **Rapports atelier** : temps pointé vs estimé, rebuts, charge machine
 - **Tableaux Kanban et GTD**, diagramme de Gantt, planning de charge
-- **Imbrication (nesting)** : plans d'imbrication attachés aux lignes de commande
+- **Imbrication (nesting)** : placement sur tôle par matière et épaisseur, pièces placées sur leur rectangle capable
 - **Suivi des présences** et de la consommation énergétique
 
 ### ✅ Qualité, QHSE & conformité
@@ -91,8 +112,9 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
   effacement des données, purge hebdomadaire automatique, demandes en self-service
 
 ### 🔌 Intégrations & automatisation
-- **Facturation électronique** : génération Factur-X / EN 16931, passerelle PDP (driver Qonto)
-  et lecture des factures fournisseurs Factur-X entrantes
+- **Facturation électronique** (réforme 2026) : génération Factur-X / EN 16931, passerelle PDP
+  avec drivers SUPER PDP et Qonto — émission et suivi du cycle de vie, boîte de réception des
+  factures fournisseurs rapprochées des réceptions, statuts déclarés au fournisseur, annuaire
 - **Export FEC** pour la comptabilité française
 - **Nest2Prod** : envoi des commandes et synchronisation du stock tôles
 - **Import d'utilisateurs LDAP / Active Directory**
@@ -111,7 +133,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - Gestion stock tôles par format et épaisseur
 - Suivi temps réel des OF en cours
 
-**Résultat** : +30% productivité planning, -20% stocks dormants
+**Objectif** : planifier plus vite, réduire les stocks dormants
 
 ### Exemple 2 : Mécanique de précision
 **Contexte** : Sous-traitance automobile, séries moyennes
@@ -122,7 +144,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - Contrôle qualité intégré (fiches de contrôle par OF)
 - Traçabilité complète matière → pièce finie
 
-**Résultat** : Conformité ISO 9001, traçabilité parfaite
+**Objectif** : des enregistrements de traçabilité prêts pour un audit ISO 9001
 
 ### Exemple 3 : Fabricant de moules
 **Contexte** : Moules injection plastique, projets complexes
@@ -133,7 +155,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - Suivi rentabilité projet en temps réel
 - Documentation technique centralisée
 
-**Résultat** : Meilleure maîtrise coûts, délais respectés
+**Objectif** : meilleure maîtrise des coûts, délais respectés
 
 
 ## 🎬 Voir ΣEM en action
@@ -150,8 +172,6 @@ https://github.com/user-attachments/assets/200e1322-ae60-4270-aa9c-0a28e5ca737a
 
 <img width="1877" height="831" alt="image" src="https://github.com/user-attachments/assets/21b92345-46ad-4af2-9f3a-b38d601eb091" />
 
-
-### Installation
 
 ## 🚀 Installation rapide
 
@@ -194,14 +214,14 @@ php artisan serve
 > - [Development setup](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 > - [Production deployment](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
-### ⚙️ Post-Installation Configuration
+### ⚙️ Configuration après installation
 
-**Important**: Before adding lines to a quote, configure:
+**Important** : avant d'ajouter des lignes à un devis, configurez :
 
-1. **Default VAT**: Go to **Accounting → VAT** and mark an item as default
-2. **Default Unit**: Go to **Methods → Units** and mark an item as default
+1. **TVA par défaut** : allez dans **Comptabilité → TVA** et marquez un taux par défaut
+2. **Unité par défaut** : allez dans **Méthodes → Unités** et marquez une unité par défaut
 
-Without these settings, you cannot add lines to quotes.
+Sans ces réglages, impossible d'ajouter des lignes aux devis.
 
 <img width="831" alt="Configuration screenshot" src="https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8" />
 
@@ -239,13 +259,13 @@ WebErpMesv2/
 
 ### 🧪 Tests
 
-Run the complete test suite:
+Lancer toute la suite de tests :
 
 ```bash
 php artisan test
 ```
 
-Run specific tests:
+Lancer des tests ciblés :
 
 ```bash
 php artisan test --filter TestName
@@ -261,6 +281,10 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan wem:files:import` | Migration unique des pièces jointes historiques de `public/` vers le stockage privé. `--dry-run`, `--skip-move`. | `php artisan wem:files:import --dry-run` |
 | `php artisan wem:n2p:push-order {orderId} {--sync}` | Pousse une commande vers Nest2Prod (`--sync` contourne la file d'attente). | `php artisan wem:n2p:push-order 123 --sync` |
 | `php artisan wem:n2p:sync-sheet-stock` | Synchronise le stock tôles avec Nest2Prod. `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:pdp:sync` | Facturation électronique : statuts des factures émises et réception des factures fournisseurs (indispensable pour les plateformes sans webhooks). `--tenant=`, `--events`, `--inbound`. | `php artisan wem:pdp:sync --inbound` |
+| `php artisan wem:pdp:directory` | Annuaire : liste/ouvre/ferme notre ligne de réception, cherche l'adresse de facturation d'un client par SIREN ou raison sociale. `--open=`, `--date=`, `--close=`, `--lookup=`, `--search=`. | `php artisan wem:pdp:directory --lookup=123456789` |
+| `php artisan wem:pdp:seed-sandbox` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP (écrase l'identité de la société). `--force`. | `php artisan wem:pdp:seed-sandbox` |
+| `php artisan hr:recompute-absence-days` | Recalcule le coût en jours de toutes les demandes d'absence (après migration des soldes ou changement des jours fériés). `--dry-run`. | `php artisan hr:recompute-absence-days --dry-run` |
 | `php artisan preorders:scan-output` | Scanne le dossier de sortie et importe les CSV comme pré-commandes. `--path=`, `--pattern=`, `--done-path=`. | `php artisan preorders:scan-output` |
 | `php artisan stock:recalculate-cump` | Recalcule tout l'historique du CUMP pour chaque emplacement produit. `--dry-run`. | `php artisan stock:recalculate-cump --dry-run` |
 | `php artisan stock:rebuild-reservations` | Reconstruit les réservations de stock des composants achetés. `--product=`. | `php artisan stock:rebuild-reservations` |
@@ -276,12 +300,16 @@ These commands are defined in this repository and complement the default Laravel
 ### ⏱️ Tâches planifiées & file d'attente
 
 Le planificateur (`routes/console.php`) déclenche les sauvegardes quotidiennes (`backup:run`,
-`backup:clean`, `backup:monitor`), la purge RGPD hebdomadaire (`rgpd:purge`) et le nettoyage
-mensuel du journal d'activité. À déclarer une fois sur le serveur :
+`backup:clean`, `backup:monitor`), la synchronisation de facturation électronique toutes les
+15 minutes (`wem:pdp:sync`), la purge RGPD hebdomadaire (`rgpd:purge`) et le nettoyage mensuel
+du journal d'activité. À déclarer une fois sur le serveur :
 
 ```
 * * * * * php /chemin/vers/artisan schedule:run >> /dev/null 2>&1
 ```
+
+Sous Windows, lancer `php artisan schedule:run` chaque minute depuis le Planificateur de tâches,
+et faire tourner le worker de file d'attente comme service (NSSM par exemple).
 
 Un worker de file d'attente est nécessaire pour les traitements asynchrones (emails,
 intégrations, exports) :
@@ -417,12 +445,12 @@ Check our [Contributing Guide](../CONTRIBUTING.md) and make your first contribut
 
 ## 📊 Project Stats
 
-- ⭐ **180+** Stars
-- 🍴 **88** Forks
+- ⭐ **220+** Stars
+- 🍴 **99** Forks
 - 👥 **7+** Active Contributors
 - 📝 **2 200+** Commits
 - 🎉 **21** Releases (dernière : v1.19)
-- 🧪 **60+** fichiers de tests PHPUnit
+- 🧪 **85+** fichiers de tests PHPUnit
 - 📦 **Open Source** sous licence MIT
 
 ## 📚 Documentation
@@ -441,7 +469,8 @@ Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 **Priorités actuelles :**
 - 🧪 Amélioration de la couverture de tests (règles métier backend ; pas encore de tests front)
 - 📚 Documentation complète de l'API ([docs/API.md](API.md))
-- 📦 Stock : courbe de stock projeté, écran d'inventaire physique, alertes de réappro automatiques
+- 📦 Stock : courbe de stock projeté, notifications de stock bas
+- 👥 RH : notifications d'absence, prise en compte des congés dans la capacité du planning
 - 🐳 Déploiement Docker multi-clients (1 conteneur + 1 base par client)
 
 ## 💬 Support & Communauté
@@ -489,6 +518,6 @@ Rejoignez-nous → [Guide de contribution](../CONTRIBUTING.md)
   <br />
   <a href="https://github.com/SMEWebify/WebErpMesv2/stargazers">⭐ Star le projet</a> •
   <a href="https://github.com/SMEWebify/WebErpMesv2/fork">🍴 Fork</a> •
-  <a href="CONTRIBUTING.md">🤝 Contribuer</a> •
+  <a href="../CONTRIBUTING.md">🤝 Contribuer</a> •
   <a href="http://demo.wem-project.org">🎬 Tester la démo</a>
 </p>
