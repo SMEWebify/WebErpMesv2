@@ -1,186 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-// ─── Données ────────────────────────────────────────────────────────────────
-// Interfaces de serrage (queue du poinçon) : largeur, décalage, hauteur, encoches de sécurité.
-const IFACE = {
-    amada:     { label: 'Amada',         w: 13, off: 7,  h: 30, notch: ['right'] },
-    trumpf:    { label: 'Trumpf · Wila', w: 20, off: 10, h: 30, notch: ['left', 'right'] },
-    lvd:       { label: 'LVD',           w: 13, off: 7,  h: 30, notch: [] },
-    bystronic: { label: 'Bystronic',     w: 20, off: 10, h: 30, notch: ['left'] },
-};
-// bends[i] = pli entre côté i et côté i+1 (sauf le pli actif k, formé par le poinçon à l'angle A)
-const PRESETS = {
-    L: { legs: [30, 60], bends: [{ a: 90, s: 1 }], k: 0 },
-    U: { legs: [30, 60, 30], bends: [{ a: 90, s: 1 }, { a: 90, s: 1 }], k: 0 },
-    Z: { legs: [30, 40, 30], bends: [{ a: 90, s: 1 }, { a: 90, s: -1 }], k: 0 },
-};
-const DEFAULTS = { iface: 'amada', H: 150, A: 88, R: 0.5, T: 40, b: 18, tp: 7.6, t: 1.2, L: 835, part: PRESETS.L };
-// [clé, libellé, symbole, min, max, pas, unité]
-const PROFILE_PRM = [
-    ['H', 'Hauteur totale', 'H', 60, 250, 1, 'mm'],
-    ['A', 'Angle de pointe', '', 20, 90, 1, '°'],
-    ['R', 'Rayon de pointe', 'R', 0.2, 5, 0.1, 'mm'],
-    ['T', 'Épaisseur totale', '', 15, 60, 1, 'mm'],
-    ['b', 'Épaisseur du corps', '', 6, 40, 0.5, 'mm'],
-    ['tp', 'Épaisseur de pointe', '', 3, 20, 0.2, 'mm'],
-];
-const PART_PRM = [['t', 'Épaisseur de tôle', '', 0.5, 8, 0.1, 'mm']];
-const MFG_PRM  = [['L', 'Longueur du poinçon', '', 20, 4000, 5, 'mm']];
-const PRM = [...PROFILE_PRM, ...PART_PRM, ...MFG_PRM];
-const DENSITY = 7.85e-6; // acier, kg/mm³
+import {
+    IFACE, PRESETS, DEFAULTS, PROFILE_PRM, PART_PRM, MFG_PRM, DIE_PRM, BEND_MIN, BEND_MAX, DENSITY,
+    clone, clampPrm, clampBend, bendA, seqOf, normBends, build, usablePunches, dieCatalog,
+} from '../lib/pressbrake/geometry';
+import {
+    drawing, PAPER, SVG_W, SVG_H, fmt,
+} from '../lib/pressbrake/drawing';
 
-const clone = (o) => JSON.parse(JSON.stringify(o));
-const fmt = (n, d = 1) => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: d });
-const esc = (x) => String(x ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-function clampPrm(k, v) {
-    const p = PRM.find((x) => x[0] === k);
-    v = Math.max(p[3], Math.min(p[4], v));
-    v = Math.round(v / p[5]) * p[5];
-    return +v.toFixed(2);
-}
-
-function normBends(part) {
-    const pp = clone(part);
-    while (pp.bends.length < pp.legs.length - 1) pp.bends.push({ a: 90, s: 1 });
-    pp.bends.length = pp.legs.length - 1;
-    pp.k = Math.max(0, Math.min(pp.k, pp.legs.length - 2));
-    return pp;
-}
-
-const polyArea = (pts) => {
-    let a = 0;
-    for (let i = 0; i < pts.length; i++) {
-        const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length];
-        a += x1 * y2 - x2 * y1;
-    }
-    return Math.abs(a) / 2;
-};
-
-// ─── Géométrie ──────────────────────────────────────────────────────────────
-// Repère : origine = apex de la pointe, x vers la droite, y vers le haut (mm).
-function build(s, libt) {
-    if (libt) return buildLib(s, libt);
-    const f = IFACE[s.iface];
-    const notes = [];
-    const T = s.T, b = Math.min(s.b, T - 2), tp = Math.min(s.tp, b);
-    if (b !== s.b) notes.push(`Corps limité à ${b} mm (épaisseur totale ${T} mm).`);
-    if (tp !== s.tp) notes.push(`Pointe limitée à ${tp} mm (corps ${b} mm).`);
-    const theta = s.A / 2 * Math.PI / 180;
-    const ht = (tp / 2) / Math.tan(theta);           // hauteur du V de pointe
-    const R = Math.min(s.R, 0.9 * (tp / 2) / Math.cos(theta));
-    if (R !== s.R) notes.push(`Rayon limité à ${R.toFixed(2)} mm.`);
-    const block = 15;
-    const rest = s.H - f.h - block - ht;
-    if (rest < 30) notes.push('Hauteur très faible pour cette interface : col raccourci.');
-    const lt = Math.max(4, Math.min(15, rest * 0.25));        // partie droite de la pointe
-    const XL = -tp / 2;                                       // bord gauche de la pointe
-    const yBlockTop = s.H - f.h, yBlockBot = yBlockTop - block;
-    const yT = ht + lt;
-    const yN1 = yBlockBot - Math.min(25, (yBlockBot - yT) * 0.2); // bas du chanfrein sous le bloc
-    const yN2 = yT + (yN1 - yT) * 0.45;                           // bas du col (face gauche)
-    // face droite : parallèle à l'aile de la pièce (flanc prolongé) jusqu'au bord droit
-    let yN2R = (XL + T) / Math.tan(theta);
-    if (yN2R > yBlockBot - 5) {
-        yN2R = yBlockBot - 5;
-        notes.push('Angle trop fermé pour une face droite dans le prolongement du flanc.');
-    }
-    const pts = [];
-    const P = (x, y) => pts.push([x, y]);
-    // queue
-    const sx = XL + f.off, sw = f.w;
-    P(sx, s.H); P(sx + sw, s.H);
-    if (f.notch.includes('right')) { P(sx + sw, s.H - 17.5); P(sx + sw - 3, s.H - 17.5); P(sx + sw - 3, s.H - 25.5); P(sx + sw, s.H - 25.5); }
-    P(sx + sw, yBlockTop); P(XL + T, yBlockTop);
-    // face droite : verticale puis biais vers la pointe
-    P(XL + T, yN2R);
-    // pointe arrondie
-    const d = R / Math.tan(theta), cy = R / Math.sin(theta);
-    const t1 = [d * Math.sin(theta), d * Math.cos(theta)], t2 = [-d * Math.sin(theta), d * Math.cos(theta)];
-    P(t1[0], t1[1]);
-    const a0 = Math.atan2(t1[1] - cy, t1[0]), a1 = Math.atan2(t2[1] - cy, t2[0]);
-    for (let i = 1; i < 10; i++) { const a = a0 + (a1 - a0) * i / 10; P(R * Math.cos(a), cy + R * Math.sin(a)); }
-    P(t2[0], t2[1]);
-    // face gauche : pointe, biais, col vertical, chanfrein sous le bloc
-    P(XL, ht); P(XL, yT); P(XL + T - b, yN2); P(XL + T - b, yN1); P(XL, yBlockBot); P(XL, yBlockTop); P(sx, yBlockTop);
-    if (f.notch.includes('left')) { P(sx, s.H - 25.5); P(sx + 3, s.H - 25.5); P(sx + 3, s.H - 17.5); P(sx, s.H - 17.5); }
-    const pg = partGeom(s, pts, theta, yT, 0.05);
-    return { ...pg, pts, area: polyArea(pts), notes, theta, ht, yT, yN: yN2, yN1, yN2, XL, T, b, tp, R, cy, f, sx, sw, yBlockTop, yBlockBot };
-}
-
-function partGeom(s, pts, theta, yExclude, tol) {
-    // pièce pliée : polyligne intérieure passant par l'apex au pli actif, épaisseur t vers l'extérieur
-    const uL = [-Math.sin(theta), Math.cos(theta)];
-    const t = s.t, pp = s.part, n = pp.legs.length, k = Math.min(pp.k, n - 2);
-    const ang = new Array(n);
-    ang[k] = Math.atan2(-uL[1], -uL[0]);                         // côté k arrive à l'apex
-    const bendAt = (i) => (i === k ? { a: s.A, s: 1 } : pp.bends[i]);
-    for (let i = k; i < n - 1; i++) { const bd = bendAt(i); ang[i + 1] = ang[i] + bd.s * (Math.PI - bd.a * Math.PI / 180); }
-    for (let i = k; i > 0; i--) { const bd = bendAt(i - 1); ang[i - 1] = ang[i] - bd.s * (Math.PI - bd.a * Math.PI / 180); }
-    const dir = ang.map((a) => [Math.cos(a), Math.sin(a)]);
-    const V = new Array(n + 1); V[k + 1] = [0, 0];              // V[i] = début du côté i, V[n] = fin
-    for (let i = k + 1; i < n; i++) V[i + 1] = [V[i][0] + dir[i][0] * pp.legs[i], V[i][1] + dir[i][1] * pp.legs[i]];
-    for (let i = k; i >= 0; i--) V[i] = [V[i + 1][0] - dir[i][0] * pp.legs[i], V[i + 1][1] - dir[i][1] * pp.legs[i]];
-    const rn = dir.map((dd) => [dd[1], -dd[0]]);                 // normale droite = face extérieure
-    const outer = [];
-    for (let i = 0; i <= n; i++) {
-        if (i === 0) outer.push([V[0][0] + rn[0][0] * t, V[0][1] + rn[0][1] * t]);
-        else if (i === n) outer.push([V[n][0] + rn[n - 1][0] * t, V[n][1] + rn[n - 1][1] * t]);
-        else { // intersection des deux faces extérieures décalées
-            const p1 = [V[i][0] + rn[i - 1][0] * t, V[i][1] + rn[i - 1][1] * t], d1 = dir[i - 1];
-            const p2 = [V[i][0] + rn[i][0] * t, V[i][1] + rn[i][1] * t], d2 = dir[i];
-            const den = d1[0] * d2[1] - d1[1] * d2[0];
-            if (Math.abs(den) < 1e-6) outer.push(p2);
-            else { const a = ((p2[0] - p1[0]) * d2[1] - (p2[1] - p1[1]) * d2[0]) / den; outer.push([p1[0] + d1[0] * a, p1[1] + d1[1] * a]); }
-        }
-    }
-    const part = [...V, ...outer.slice().reverse()];
-    // jeu : distance des points du poinçon (hors V de pointe) à la face intérieure ; collision si un point est dans la tôle
-    const inPoly = (p, poly) => {
-        let c = false;
-        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-            const a = poly[i], bb = poly[j];
-            if ((a[1] > p[1]) !== (bb[1] > p[1]) && p[0] < (bb[0] - a[0]) * (p[1] - a[1]) / (bb[1] - a[1]) + a[0]) c = !c;
-        }
-        return c;
-    };
-    const segD = (p, a, bb) => {
-        const dx = bb[0] - a[0], dy = bb[1] - a[1], l2 = dx * dx + dy * dy;
-        let q = l2 ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2 : 0;
-        q = Math.max(0, Math.min(1, q));
-        return Math.hypot(p[0] - a[0] - dx * q, p[1] - a[1] - dy * q);
-    };
-    let clear = Infinity, collide = false;
-    const samp = [];
-    for (let i = 0; i < pts.length; i++) {
-        const a = pts[i], c = pts[(i + 1) % pts.length];
-        for (let kk = 0; kk < 6; kk++) { const q = kk / 6; samp.push([a[0] + (c[0] - a[0]) * q, a[1] + (c[1] - a[1]) * q]); }
-    }
-    samp.filter((p) => p[1] > yExclude - 0.01).forEach((p) => {
-        let dmin = Infinity;
-        for (let i = 0; i < n; i++) dmin = Math.min(dmin, segD(p, V[i], V[i + 1]));
-        if (dmin < tol) return;
-        if (inPoly(p, part)) collide = true; else clear = Math.min(clear, dmin);
-    });
-    if (clear === Infinity) clear = 0;
-    return { part, clear, collide, V, dir, rn, n, k };
-}
-
-function buildLib(s, lt) {
-    const notes = [];
-    let pts = lt.poly.map((p) => [s.mirror ? -p[0] : p[0], p[1]]);
-    if (s.mirror) pts = pts.slice().reverse();
-    const theta = s.A / 2 * Math.PI / 180;
-    const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-    if (lt.angle != null && Math.abs(lt.angle - s.A) > 0.5) notes.push(`Angle de pointe de l'outil : ${lt.angle}°, pièce simulée à ${s.A}°.`);
-    const pg = partGeom(s, pts, theta, 1.5, 0.35);
-    return { ...pg, pts, area: polyArea(pts), notes, theta, lib: lt, R: lt.radius, ht: 0, yT: 0, XL: Math.min(...xs), T: Math.max(...xs) - Math.min(...xs), Hb: Math.max(...ys), cy: 0 };
-}
-
-// ─── Dessin (SVG en chaîne : réutilisé tel quel pour le PDF) ────────────────
-const INK = '#1A2029', DIM = '#1F5C99', FILL = '#1F5C99', PAPER = '#F4F6F8', PART = '#C8541C';
-const SVG_W = 640, SVG_H = 560;
 const ZOOM_MAX = 20;
+const BRAND_KEY = 'wem.punchDesigner.brand';
 
 /** Cadre visible du dessin : z = facteur de zoom, (x, y) = coin haut gauche en unités SVG. */
 function clampView(z, x, y) {
@@ -189,103 +18,6 @@ function clampView(z, x, y) {
     return { z, x: Math.max(0, Math.min(SVG_W - w, x)), y: Math.max(0, Math.min(SVG_H - h, y)) };
 }
 const toSvgPoint = (inv, clientX, clientY) => new DOMPoint(clientX, clientY).matrixTransform(inv);
-
-function arrow(x, y, d) {
-    const p = {
-        0: `${x},${y} ${x - 3},${y + 8} ${x + 3},${y + 8}`,
-        1: `${x},${y} ${x - 3},${y - 8} ${x + 3},${y - 8}`,
-        2: `${x},${y} ${x + 8},${y - 3} ${x + 8},${y + 3}`,
-        3: `${x},${y} ${x - 8},${y - 3} ${x - 8},${y + 3}`,
-    }[d];
-    return `<polygon points="${p}" fill="${DIM}"/>`;
-}
-function dimV(x, y1, y2, label, font, xa, xb) {
-    return `<line x1="${xa}" y1="${y1}" x2="${x + 5}" y2="${y1}" stroke="${DIM}" stroke-width=".6"/><line x1="${xb}" y1="${y2}" x2="${x + 5}" y2="${y2}" stroke="${DIM}" stroke-width=".6"/><line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${DIM}" stroke-width=".9"/>`
-        + arrow(x, y1, 0) + arrow(x, y2, 1) + `<text x="${x + 7}" y="${(y1 + y2) / 2 + 4}" fill="${DIM}" ${font}>${label}</text>`;
-}
-function dimH(y, x1, x2, label, font, above) {
-    return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${DIM}" stroke-width=".9"/>`
-        + arrow(x1, y, 2) + arrow(x2, y, 3) + `<text x="${(x1 + x2) / 2}" y="${above ? y - 4 : y + 14}" text-anchor="middle" fill="${DIM}" ${font}>${label}</text>`;
-}
-
-function partDims(s, g, X, Y, font) {
-    let o = '';
-    // cotes de la pièce : longueur de chaque côté le long de la face extérieure, angle des plis non actifs
-    for (let i = 0; i < g.n; i++) {
-        const off = s.t + 9, a = g.V[i], c = g.V[i + 1], nn = g.rn[i], d = g.dir[i];
-        const p0 = [a[0] + nn[0] * off, a[1] + nn[1] * off], p1 = [c[0] + nn[0] * off, c[1] + nn[1] * off];
-        const mx = (X(p0[0]) + X(p1[0])) / 2, my = (Y(p0[1]) + Y(p1[1])) / 2;
-        let an = -Math.atan2(d[1], d[0]) * 180 / Math.PI;
-        if (an > 90 || an < -90) an += 180;
-        o += `<line x1="${X(p0[0])}" y1="${Y(p0[1])}" x2="${X(p1[0])}" y2="${Y(p1[1])}" stroke="${PART}" stroke-width=".9"/><text transform="translate(${mx} ${my}) rotate(${an})" dy="-4" text-anchor="middle" fill="${PART}" ${font}>${s.part.legs[i]}</text>`;
-        if (i < g.n - 1 && i !== g.k) {
-            const bd = s.part.bends[i], v = g.V[i + 1];
-            o += `<text x="${X(v[0]) + (bd.s > 0 ? -8 : 8)}" y="${Y(v[1]) + (bd.s > 0 ? -8 : 14)}" text-anchor="${bd.s > 0 ? 'end' : 'start'}" fill="${PART}" ${font}>${bd.a}°</text>`;
-        }
-    }
-    o += `<text x="${X(g.part[g.n + 1][0]) + 6}" y="${Y(g.part[g.n + 1][1]) + 4}" fill="${PART}" ${font}>ép. ${s.t}</text>`;
-    return o;
-}
-
-function handle(key, cx, cy, cursor) {
-    return `<circle class="pd-hd" data-k="${key}" cx="${cx}" cy="${cy}" r="6" fill="#fff" stroke="${DIM}" stroke-width="1.6" style="cursor:${cursor}"/>`;
-}
-
-/** Renvoie { svg, tf } — tf = transformation écran ↔ mm utilisée par le glisser-déposer. */
-function drawing(s, g) {
-    const all = [...g.pts, ...g.part];
-    const minx = Math.min(...all.map((p) => p[0])) - 22, maxx = Math.max(...all.map((p) => p[0])) + 40;
-    const miny = Math.min(...all.map((p) => p[1])) - 16, maxy = Math.max(...all.map((p) => p[1])) + 22;
-    const m = 36;
-    const sc = Math.min((SVG_W - 2 * m) / (maxx - minx), (SVG_H - 2 * m) / (maxy - miny));
-    const ox = m - minx * sc + ((SVG_W - 2 * m) - (maxx - minx) * sc) / 2;
-    const oy = SVG_H - m + miny * sc - ((SVG_H - 2 * m) - (maxy - miny) * sc) / 2;
-    const X = (x) => +(ox + x * sc).toFixed(2), Y = (y) => +(oy - y * sc).toFixed(2);
-    const path = (pts) => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]) + ' ' + Y(p[1])).join(' ') + ' Z';
-    const font = 'font-family="Arial, sans-serif" font-size="12"';
-    const H = g.lib ? g.Hb : s.H;
-
-    let o = `<defs><pattern id="pd-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${FILL}" stroke-opacity=".3"/></pattern></defs>`;
-    o += `<path d="${path(g.part)}" fill="${PART}" fill-opacity=".18" stroke="${PART}" stroke-width="1.2" stroke-linejoin="round"/>`;
-    o += `<path d="${path(g.pts)}" fill="url(#pd-h)" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>`;
-    o += `<line x1="${X(0)}" y1="${Y(-8)}" x2="${X(0)}" y2="${Y(H + 6)}" stroke="${INK}" stroke-width=".6" stroke-dasharray="10 3 2 3"/>`;
-
-    const xr = X(g.XL + g.T) + 34;
-    const ar = 36, ax = X(0), ay = Y(0), a1 = -Math.PI / 2 - g.theta, a2 = -Math.PI / 2 + g.theta;
-    const angleArc = `<path d="M ${ax + ar * Math.cos(a1)} ${ay + ar * Math.sin(a1)} A ${ar} ${ar} 0 0 1 ${ax + ar * Math.cos(a2)} ${ay + ar * Math.sin(a2)}" fill="none" stroke="${DIM}"/><text x="${ax}" y="${ay - ar - 5}" text-anchor="middle" fill="${DIM}" ${font}>${s.A}°</text>`;
-    const radiusTag = g.R != null ? `<line x1="${ax}" y1="${ay}" x2="${ax + 34}" y2="${ay + 30}" stroke="${DIM}"/><text x="${ax + 37}" y="${ay + 34}" fill="${DIM}" ${font}>R${g.R}</text>` : '';
-    const tHandle = ['t', (g.V[g.k][0] + g.V[g.k + 1][0]) / 2 + g.rn[g.k][0] * s.t, (g.V[g.k][1] + g.V[g.k + 1][1]) / 2 + g.rn[g.k][1] * s.t, 'move'];
-    const legHandles = [];
-    for (let i = 0; i < g.n; i++) { const v = i <= g.k ? g.V[i] : g.V[i + 1]; legHandles.push(['leg' + i, v[0], v[1], 'move']); }
-    const angleHandle = handle('A', ax + ar * Math.cos(a1), ay + ar * Math.sin(a1), 'ew-resize');
-
-    let hs, caption;
-    if (g.lib) {
-        o += dimV(xr, Y(g.Hb), Y(0), 'H ' + fmt(g.Hb), font, X(g.XL + g.T) + 4, X(0) + 4);
-        o += dimH(Y(g.Hb) - 14, X(g.XL), X(g.XL + g.T), fmt(g.T), font, true);
-        hs = [tHandle, ...legHandles];
-        caption = `${esc(g.lib.brand)} ${esc(g.lib.name)} · ${s.A}°${g.R != null ? ' · R' + g.R : ''} · L ${s.L} mm`;
-    } else {
-        o += dimV(xr, Y(s.H), Y(0), 'H ' + s.H, font, X(g.XL + g.T) + 4, X(0) + 4);
-        o += dimH(Y(s.H) - 30, X(g.XL), X(g.XL + g.T), g.T, font, true);
-        o += dimH(Y(s.H) - 12, X(g.XL), X(g.sx), g.f.off, font, true) + dimH(Y(s.H) - 12, X(g.sx), X(g.sx + g.sw), g.f.w, font, true);
-        const xl = X(g.XL) - 26;
-        o += dimV(xl, Y(s.H), Y(g.yBlockTop), g.f.h, font, X(g.sx) - 4, X(g.XL) - 4) + dimV(xl, Y(g.yBlockTop), Y(g.yBlockBot), 15, font, X(g.XL) - 4, X(g.XL) - 4);
-        o += dimH(Y(g.yN) + 10, X(g.XL + g.T - g.b), X(g.XL + g.T), g.b, font);
-        o += dimH(Y(g.ht) + 1, X(g.XL), X(g.tp / 2), g.tp, font, true);
-        hs = [
-            ['H', g.sx + g.sw / 2, s.H, 'ns-resize'], ['T', g.XL + g.T, (g.yBlockTop + g.yBlockBot) / 2, 'ew-resize'],
-            ['b', g.XL + g.T - g.b, (g.yN1 + g.yN2) / 2, 'ew-resize'], ['tp', g.XL, (g.ht + g.yT) / 2, 'ew-resize'],
-            ['R', 0, g.cy - g.R, 'ns-resize'], tHandle, ...legHandles,
-        ];
-        caption = `${g.f.label} · H${s.H} · ${s.A}° · R${g.R} · L ${s.L} mm`;
-    }
-    o += angleArc + radiusTag + partDims(s, g, X, Y, font);
-    o += hs.map((h) => handle(h[0], X(h[1]), Y(h[2]), h[3])).join('') + angleHandle;
-    o += `<text x="${m}" y="${SVG_H - 12}" fill="${INK}" ${font}>${caption}</text>`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SVG_W}" height="${SVG_H}" viewBox="0 0 ${SVG_W} ${SVG_H}"><rect width="100%" height="100%" fill="${PAPER}"/>${o}</svg>`;
-    return { svg, tf: { ox, oy, sc } };
-}
 
 // ─── PDF ────────────────────────────────────────────────────────────────────
 function svgToPng(svg, scale = 2) {
@@ -317,13 +49,15 @@ async function buildPdf(s, g, brand) {
     doc.addImage(img, 'PNG', M, y, 178, 178 * SVG_H / SVG_W); y += 178 * SVG_H / SVG_W + 8;
     const mass = fmt(g.area * s.L * DENSITY, 1) + ' kg', section = fmt(g.area / 100, 1) + ' cm²';
     const partRow = ['Pièce', `tôle ${s.t} mm · côtés ${s.part.legs.join(' / ')} mm`];
+    const seqRow = ['Séquence de pliage', g.seq.map((i) => 'pli ' + (i + 1)).join(' → ') + (g.seq.length > 1 ? ` (étape ${g.step + 1}/${g.seq.length} représentée)` : '')];
+    const dieRows = g.die ? [['Matrice', `${g.die.label} · V${fmt(g.die.v)} · ${fmt(g.die.a)}° · R${fmt(g.die.r)} · H${fmt(g.die.h)}`]] : [];
     const clearRow = ['Jeu minimal', g.collide ? 'collision' : fmt(g.clear, 1) + ' mm'];
     const rows = g.lib
-        ? [['Poinçon de bibliothèque', g.lib.brand + ' ' + g.lib.name], ['Angle de pointe simulé', s.A + '°'], ['Rayon', g.R != null ? g.R + ' mm' : '—'],
-           ['Hauteur', fmt(g.Hb) + ' mm'], ['Longueur', s.L + ' mm'], ['Masse estimée', mass], ['Aire de section', section], partRow, clearRow]
-        : [['Interface', g.f.label + ' (' + g.f.w + ' mm)'], ['Hauteur totale', s.H + ' mm'], ['Angle de pointe', s.A + '°'], ['Rayon de pointe', g.R + ' mm'],
+        ? [['Poinçon de bibliothèque', g.lib.brand + ' ' + g.lib.name], ['Angle de pointe', g.toolA ? g.toolA + '°' : '—'], ['Angle de pliage', bendA(s) + '°'], ['Rayon', g.R != null ? g.R + ' mm' : '—'],
+           ['Hauteur', fmt(g.Hb) + ' mm'], ['Longueur', s.L + ' mm'], ['Masse estimée', mass], ['Aire de section', section], partRow, seqRow, ...dieRows, clearRow]
+        : [['Interface', g.f.label + ' (' + g.f.w + ' mm)'], ['Hauteur totale', s.H + ' mm'], ['Angle de pointe', s.A + '°'], ['Angle de pliage', bendA(s) + '°'], ['Rayon de pointe', g.R + ' mm'],
            ['Épaisseur totale', g.T + ' mm'], ['Épaisseur du corps', g.b + ' mm'], ['Épaisseur de pointe', g.tp + ' mm'], ['Longueur', s.L + ' mm'],
-           ['Masse estimée', mass], ['Aire de section', section], partRow, clearRow];
+           ['Masse estimée', mass], ['Aire de section', section], partRow, seqRow, ...dieRows, clearRow];
     doc.setFont('helvetica', 'bold'); doc.text('Caractéristiques', M, y); doc.setFont('helvetica', 'normal');
     rows.forEach((r) => {
         y += 6;
@@ -390,11 +124,16 @@ function LibThumb({ poly }) {
 }
 
 // ─── Composant principal ────────────────────────────────────────────────────
-export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
-    const [s, setS] = useState(() => ({ ...clone(DEFAULTS), src: 'param', libId: null, mirror: false }));
+export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl, catalogUrl }) {
+    const [s, setS] = useState(() => ({ ...clone(DEFAULTS), src: 'lib', libId: null, mirror: false }));
     const [lib, setLib] = useState(null);
     const [libError, setLibError] = useState(null);
-    const [libBrand, setLibBrand] = useState('');
+    // Marque partagée par les deux listes (poinçons et matrices), mémorisée dans le navigateur.
+    const [toolBrand, setBrandRaw] = useState(() => { try { return localStorage.getItem(BRAND_KEY) || ''; } catch { return ''; } });
+    const setBrand = (b) => {
+        setBrandRaw(b);
+        try { if (b) localStorage.setItem(BRAND_KEY, b); else localStorage.removeItem(BRAND_KEY); } catch { /* stockage indisponible */ }
+    };
     const [libQ, setLibQ] = useState('');
     const [status, setStatus] = useState('');
     const [busy, setBusy] = useState(false);
@@ -406,27 +145,78 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
             .then(async (res) => {
                 const data = await res.json().catch(() => null);
                 if (!res.ok) throw new Error(data?.message || `Erreur ${res.status}`);
-                setLib(data);
+                setLib(usablePunches(data));
             })
-            .catch((e) => setLibError(e.message || String(e)));
+            .catch((e) => {
+                setLibError(e.message || String(e));
+                // bibliothèque absente sur cette instance : on retombe sur le profil paramétrique
+                setS((prev) => ({ ...prev, src: 'param' }));
+            });
     }, [s.src, lib]);
 
     const libTool = s.src === 'lib' && lib && s.libId != null ? lib.find((t) => t.id === s.libId) : null;
     // Bascule sur la bibliothèque : sélectionne le premier poinçon une fois les données arrivées.
     useEffect(() => {
-        if (s.src === 'lib' && lib && s.libId == null && lib.length) pickLib(lib[0]);
+        if (s.src === 'lib' && lib && s.libId == null && lib.length) pickLib(lib.find((t) => t.brand === toolBrand) || lib[0]);
     }, [s.src, lib]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const g = useMemo(() => build(s, s.src === 'lib' ? libTool : null), [s, libTool]);
+    // Catalogue des matrices (~2,8 Mo, fichier partagé avec le catalogue d'outillage) : chargé à la
+    // première sélection « Catalogue », réduit aux matrices en V dont les cotes sont renseignées.
+    const [dies, setDies] = useState(null);
+    const [dieError, setDieError] = useState(null);
+    const [dieQ, setDieQ] = useState('');
+    const [dieFit, setDieFit] = useState(true);
+    useEffect(() => {
+        if (s.dieSrc !== 'cat' || dies || !catalogUrl) return;
+        fetch(catalogUrl, { headers: { Accept: 'application/json' } })
+            .then(async (res) => {
+                const data = await res.json().catch(() => null);
+                if (!res.ok) throw new Error(data?.message || `Erreur ${res.status}`);
+                setDies(dieCatalog(data));
+            })
+            .catch((e) => {
+                setDieError(e.message || String(e));
+                setS((prev) => ({ ...prev, dieSrc: 'manual' }));
+            });
+    }, [s.dieSrc, dies, catalogUrl]);
+    const dieTool = s.dieSrc === 'cat' && dies && s.dieId != null ? dies.find((d) => d.id === s.dieId) : null;
+    const dieSpec = useMemo(() => {
+        if (s.dieSrc === 'manual') return { v: s.dieV, a: s.dieA, r: s.dieR, h: s.dieH, label: 'Matrice' };
+        if (dieTool) return { v: dieTool.v, a: dieTool.a, r: dieTool.r, h: dieTool.h, label: `${dieTool.brand} ${dieTool.name}` };
+        return null;
+    }, [s.dieSrc, s.dieV, s.dieA, s.dieR, s.dieH, dieTool]);
+    const dieBrands = useMemo(() => (dies ? [...new Set(dies.map((d) => d.brand))].sort() : []), [dies]);
+    // marque absente de ce côté (ex. poinçons UKB, pas de matrice UKB) : la liste reste sur « Toutes marques »
+    const dieBrand = dieBrands.includes(toolBrand) ? toolBrand : '';
+    const dieItems = useMemo(() => {
+        if (!dies) return [];
+        const q = dieQ.trim().toLowerCase();
+        return dies
+            .filter((d) => (!dieBrand || d.brand === dieBrand) && (!dieFit || (d.v >= 6 * s.t && d.v <= 12 * s.t))
+                && (!q || `${d.brand} ${d.name} v${d.v} ${d.a}°`.toLowerCase().includes(q)))
+            .sort((a, b) => a.v - b.v || a.brand.localeCompare(b.brand))
+            .slice(0, 150);
+    }, [dies, dieBrand, dieQ, dieFit, s.t]);
+    // première ouverture du catalogue : la matrice la plus proche de V = 8 × t, dans la marque choisie s'il y en a
+    useEffect(() => {
+        if (s.dieSrc !== 'cat' || !dies || s.dieId != null || !dies.length) return;
+        const ofBrand = dies.filter((d) => d.brand === toolBrand);
+        const best = (ofBrand.length ? ofBrand : dies).slice().sort((a, b) => Math.abs(a.v - 8 * s.t) - Math.abs(b.v - 8 * s.t))[0];
+        setS((prev) => ({ ...prev, dieId: best.id }));
+    }, [s.dieSrc, dies]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const g = useMemo(() => build(s, s.src === 'lib' ? libTool : null, dieSpec), [s, libTool, dieSpec]);
+
     const { svg, tf } = useMemo(() => drawing(s, g), [s, g]);
 
     const setVal = useCallback((k, v) => setS((prev) => ({ ...prev, [k]: clampPrm(k, v) })), []);
     const setPart = (fn) => setS((prev) => ({ ...prev, part: normBends(fn(clone(prev.part))) }));
     function pickLib(t) {
-        setS((prev) => ({ ...prev, libId: t.id, ...(t.angle != null ? { A: clampPrm('A', t.angle) } : {}) }));
+        setS((prev) => ({ ...prev, libId: t.id }));
     }
 
     const brands = useMemo(() => (lib ? [...new Set(lib.map((t) => t.brand))].sort() : []), [lib]);
+    const libBrand = brands.includes(toolBrand) ? toolBrand : '';
     const libItems = useMemo(() => {
         if (!lib) return [];
         const q = libQ.trim().toLowerCase();
@@ -485,13 +275,19 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                 case 'tp': v = drag.v0 - 2 * dx; break;
                 case 'R':  v = drag.v0 + dy * 0.5; break;
                 case 't':  v = drag.v0 + dot(g0.rn[g0.k]); break;
-                case 'A': { // angle lu depuis la position du pointeur par rapport à l'apex
-                    const p = toSvgPoint(drag.inv, e.clientX, e.clientY);
-                    const mx = (p.x - drag.tf.ox) / drag.tf.sc, my = -(p.y - drag.tf.oy) / drag.tf.sc;
+                case 'A':
+                case 'Ap': { // angle lu depuis la position du pointeur par rapport à l'intersection des flancs (outil ou pièce)
+                    const p = toSvgPoint(drag.inv, e.clientX, e.clientY), I = k === 'A' ? g0.It : g0.Ip;
+                    const mx = (p.x - drag.tf.ox) / drag.tf.sc - I[0], my = -(p.y - drag.tf.oy) / drag.tf.sc - I[1];
                     v = 2 * Math.atan2(Math.abs(mx), Math.max(0.1, my)) * 180 / Math.PI;
                     break;
                 }
                 default: return;
+            }
+            if (k === 'Ap') { // angle du pli actif : stocké sur le pli lui-même
+                const nv = clampBend(v);
+                setS((prev) => (bendA(prev) === nv ? prev : { ...prev, part: { ...prev.part, bends: prev.part.bends.map((bd, j) => (j === prev.part.k ? { ...bd, a: nv } : bd)) } }));
+                return;
             }
             setVal(k, v);
         };
@@ -520,7 +316,7 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
     };
 
     // ── Actions ─────────────────────────────────────────────────────────────
-    const reset = () => setS((prev) => ({ ...clone(DEFAULTS), src: prev.src, libId: prev.libId, mirror: false, ...(libTool?.angle != null ? { A: clampPrm('A', libTool.angle) } : {}) }));
+    const reset = () => setS((prev) => ({ ...clone(DEFAULTS), src: prev.src, libId: prev.libId, mirror: false, dieSrc: prev.dieSrc, dieId: prev.dieId }));
     const exportPdf = async () => {
         setBusy(true); setStatus('Génération du PDF…');
         try { await buildPdf(s, g, brand); setStatus('PDF généré.'); }
@@ -536,8 +332,9 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
         [g.collide ? 'Collision' : fmt(g.clear, 1), g.collide ? '' : 'mm', 'jeu minimal avec la pièce', g.collide],
     ];
     const notices = [...g.notes];
+    if (g.dieCollide) notices.unshift('La pièce pliée touche la matrice : changez de V, de hauteur de matrice ou de séquence.');
     if (g.collide) notices.unshift('La pièce pliée touche le poinçon : réduisez les ailes, augmentez le col ou changez de profil.');
-    const pp = s.part, n = pp.legs.length;
+    const pp = s.part, n = pp.legs.length, seq = g.seq;
     const isLib = s.src === 'lib';
 
     return (
@@ -589,7 +386,7 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                             ))}
                         </div>
                         {notices.length > 0 && (
-                            <div className={`alert ${g.collide ? 'alert-danger' : 'alert-warning'} py-1 px-2 small mt-2 mb-0`}>{notices.join(' ')}</div>
+                            <div className={`alert ${g.collide || g.dieCollide ? "alert-danger" : "alert-warning"} py-1 px-2 small mt-2 mb-0`}>{notices.join(' ')}</div>
                         )}
                     </div>
                 </div>
@@ -607,14 +404,14 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                             ))}
                         </div>
 
+                        {libError && <div className={`alert ${isLib ? 'alert-danger' : 'alert-warning'} py-2 small`}>Bibliothèque indisponible : {libError}</div>}
                         {isLib ? (
                             <>
-                                {libError && <div className="alert alert-danger py-2 small">Bibliothèque indisponible : {libError}</div>}
                                 {!lib && !libError && <div className="small text-muted mb-2"><i className="fas fa-spinner fa-spin me-1" />Chargement de la bibliothèque…</div>}
                                 {lib && (
                                     <>
                                         <div className="d-flex gap-2 mb-2">
-                                            <select className="form-select form-select-sm" style={{ maxWidth: 140 }} aria-label="Marque" value={libBrand} onChange={(e) => setLibBrand(e.target.value)}>
+                                            <select className="form-select form-select-sm" style={{ maxWidth: 140 }} aria-label="Marque" value={libBrand} onChange={(e) => setBrand(e.target.value)}>
                                                 <option value="">Toutes marques</option>
                                                 {brands.map((b) => <option key={b} value={b}>{b}</option>)}
                                             </select>
@@ -642,7 +439,6 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                                                 </button>
                                             </div>
                                         )}
-                                        <div className="mt-3"><ParamRow prm={PROFILE_PRM[1]} value={s.A} onSet={setVal} /></div>
                                     </>
                                 )}
                             </>
@@ -685,23 +481,29 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                                         <Stepper value={leg} step={1} unit="mm" min={2} max={500} inputWidth={60} ariaLabel={`Côté ${i + 1}`}
                                             onCommit={(v) => setPart((p) => { p.legs[i] = Math.max(2, Math.min(500, Math.round(v))); return p; })} />
                                         <button type="button" className="btn btn-sm btn-link text-muted p-0" disabled={n <= 2} aria-label="supprimer"
-                                            onClick={() => setPart((p) => { p.legs.splice(i, 1); p.bends.splice(Math.min(i, p.bends.length - 1), 1); return p; })}>×</button>
+                                            onClick={() => setPart((p) => {
+                                                const bi = Math.min(i, p.bends.length - 1), seq = seqOf(p);
+                                                p.legs.splice(i, 1); p.bends.splice(bi, 1);
+                                                p.seq = seq.filter((x) => x !== bi).map((x) => (x > bi ? x - 1 : x));
+                                                return p;
+                                            })}>×</button>
                                     </div>
                                     {i < n - 1 && (
                                         <div className="d-flex align-items-center gap-2 py-1 ps-3 border-bottom small text-muted" style={{ borderBottomStyle: 'dashed' }}>
                                             <span>Pli {i + 1}</span>
+                                            {/* chaque pli garde son angle : déplacer le poinçon ne le modifie pas */}
+                                            <Stepper value={pp.bends[i].a} step={1} unit="°" min={BEND_MIN} max={BEND_MAX} inputWidth={50} ariaLabel={`Angle du pli ${i + 1}`}
+                                                onCommit={(v) => setPart((p) => { p.bends[i].a = clampBend(v); return p; })} />
                                             {i === pp.k ? (
-                                                <span className="fw-semibold text-primary flex-grow-1">formé par le poinçon · {s.A}°</span>
+                                                <span className="fw-semibold text-primary">formé par le poinçon</span>
                                             ) : (
-                                                <>
-                                                    <Stepper value={pp.bends[i].a} step={1} unit="°" min={30} max={179} inputWidth={50} ariaLabel={`Angle du pli ${i + 1}`}
-                                                        onCommit={(v) => setPart((p) => { p.bends[i].a = Math.max(30, Math.min(179, Math.round(v))); return p; })} />
-                                                    <button type="button" className="btn btn-sm btn-outline-secondary py-0" title="sens du pli"
-                                                        onClick={() => setPart((p) => { p.bends[i].s *= -1; return p; })}>{pp.bends[i].s > 0 ? 'même sens' : 'inverse'}</button>
-                                                </>
+                                                <button type="button" className="btn btn-sm btn-outline-secondary py-0" title="sens du pli"
+                                                    onClick={() => setPart((p) => { p.bends[i].s *= -1; return p; })}>{pp.bends[i].s > 0 ? 'même sens' : 'inverse'}</button>
                                             )}
-                                            <button type="button" className={`btn btn-sm py-0 ms-auto ${i === pp.k ? 'btn-primary' : 'btn-outline-secondary'}`} aria-pressed={i === pp.k}
-                                                onClick={() => setPart((p) => { p.k = i; return p; })}>poinçon ici</button>
+                                            <span className={`badge ms-auto ${i === pp.k ? 'bg-primary' : g.flat[i] ? 'bg-light text-muted border' : 'bg-secondary'}`}
+                                                title={g.flat[i] ? 'pas encore plié à cette étape' : ''}>
+                                                étape {seq.indexOf(i) + 1}{g.flat[i] ? ' · à plat' : ''}
+                                            </span>
                                         </div>
                                     )}
                                 </React.Fragment>
@@ -709,6 +511,82 @@ export default function PunchDesigner({ brand = 'Votre atelier', libraryUrl }) {
                         </div>
                         <button type="button" className="btn btn-sm btn-outline-primary w-100 mt-2" style={{ borderStyle: 'dashed' }}
                             onClick={() => setPart((p) => { p.legs.push(30); return p; })}>+ Ajouter un côté</button>
+
+                        {seq.length > 1 && (
+                            <>
+                                <h6 className="text-muted mt-3">Séquence de pliage</h6>
+                                <p className="small text-muted mb-1">Cliquez une étape pour la représenter : les plis précédents sont faits, les suivants encore à plat.</p>
+                                <div className="list-group">
+                                    {seq.map((bi, j) => (
+                                        <div key={bi} className={`list-group-item d-flex align-items-center gap-2 py-1 px-2 ${bi === pp.k ? 'active' : ''}`}>
+                                            <button type="button" className="btn btn-link btn-sm p-0 text-reset text-decoration-none flex-grow-1 text-start"
+                                                aria-pressed={bi === pp.k} onClick={() => setPart((p) => { p.k = bi; return p; })}>
+                                                <b>Étape {j + 1}</b> · pli {bi + 1} à {pp.bends[bi].a}°
+                                            </button>
+                                            <div className="btn-group btn-group-sm">
+                                                {[[-1, 'fa-arrow-up', 'plus tôt'], [1, 'fa-arrow-down', 'plus tard']].map(([dlt, ic, lbl]) => (
+                                                    <button key={dlt} type="button" className={`btn py-0 ${bi === pp.k ? 'btn-light' : 'btn-outline-secondary'}`}
+                                                        title={lbl} aria-label={lbl} disabled={j + dlt < 0 || j + dlt >= seq.length}
+                                                        onClick={() => setPart((p) => { const q = seqOf(p); [q[j], q[j + dlt]] = [q[j + dlt], q[j]]; p.seq = q; return p; })}>
+                                                        <i className={`fas ${ic}`} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+
+                        <h6 className="text-muted mt-3">Matrice</h6>
+                        <div className="btn-group w-100 mb-2" role="group">
+                            {[['none', 'Aucune'], ['cat', 'Catalogue'], ['manual', 'Manuelle']].map(([v, l]) => (
+                                <button key={v} type="button" className={`btn btn-sm ${s.dieSrc === v ? 'btn-primary' : 'btn-outline-primary'}`}
+                                    aria-pressed={s.dieSrc === v} disabled={v === 'cat' && !catalogUrl}
+                                    onClick={() => setS((prev) => ({ ...prev, dieSrc: v }))}>{l}</button>
+                            ))}
+                        </div>
+                        {dieError && <div className="alert alert-warning py-2 small">Catalogue indisponible : {dieError}</div>}
+                        {s.dieSrc === 'cat' && (
+                            <>
+                                {!dies && !dieError && <div className="small text-muted mb-2"><i className="fas fa-spinner fa-spin me-1" />Chargement du catalogue…</div>}
+                                {dies && (
+                                    <>
+                                        <div className="d-flex gap-2 mb-2">
+                                            <select className="form-select form-select-sm" style={{ maxWidth: 140 }} aria-label="Marque de matrice" value={dieBrand} onChange={(e) => setBrand(e.target.value)}>
+                                                <option value="">Toutes marques</option>
+                                                {dieBrands.map((b) => <option key={b} value={b}>{b}</option>)}
+                                            </select>
+                                            <input type="search" className="form-control form-control-sm" placeholder="Référence, V…" autoComplete="off" value={dieQ} onChange={(e) => setDieQ(e.target.value)} />
+                                        </div>
+                                        <div className="form-check form-switch small mb-2">
+                                            <input className="form-check-input" type="checkbox" id="pd-die-fit" checked={dieFit} onChange={(e) => setDieFit(e.target.checked)} />
+                                            <label className="form-check-label" htmlFor="pd-die-fit">
+                                                V adaptés à {s.t} mm (V{fmt(6 * s.t)} à V{fmt(12 * s.t)})
+                                            </label>
+                                        </div>
+                                        <div className="list-group list-group-flush border" style={{ maxHeight: 220, overflowY: 'auto' }}>
+                                            {dieItems.length === 0 && <div className="p-2 small text-muted">Aucune matrice{dieFit ? ' adaptée — désactivez le filtre V' : ''}.</div>}
+                                            {dieItems.map((d) => (
+                                                <button key={d.id} type="button" onClick={() => setS((prev) => ({ ...prev, dieId: d.id }))}
+                                                    className={`list-group-item list-group-item-action d-flex align-items-center gap-2 py-1 px-2 ${d.id === s.dieId ? 'active' : ''}`}>
+                                                    <span className="badge bg-secondary flex-shrink-0" style={{ minWidth: 44 }}>V{fmt(d.v)}</span>
+                                                    <span className="lh-sm">
+                                                        <b className="d-block small">{d.name}</b>
+                                                        <span className="small opacity-75">{d.brand} · {d.a}° · R{d.r} · H{fmt(d.h)}{d.subtype && d.subtype !== 'Standard die' ? ` · ${d.subtype}` : ''}</span>
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="small text-muted mt-1">{dieItems.length === 150 ? '150 premiers résultats — affinez la recherche.' : `${dieItems.length} matrice(s)`} · {dies.length} au total</div>
+                                    </>
+                                )}
+                            </>
+                        )}
+                        {s.dieSrc === 'manual' && DIE_PRM.map((p) => <ParamRow key={p[0]} prm={p} value={s[p[0]]} onSet={setVal} />)}
+                        {s.dieSrc !== 'none' && (
+                            <p className="small text-muted mb-0">Matrice schématisée d'après ses cotes, posée sous le pli au contact de la tôle.</p>
+                        )}
 
                         <h6 className="text-muted mt-3">Fabrication</h6>
                         {MFG_PRM.map((p) => <ParamRow key={p[0]} prm={p} value={s[p[0]]} onSet={setVal} />)}

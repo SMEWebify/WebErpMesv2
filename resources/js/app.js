@@ -93,6 +93,7 @@ async function mountPunchDesigner() {
     createRoot(element).render(React.createElement(PunchDesigner, {
         brand: element.dataset.brand,
         libraryUrl: element.dataset.libraryUrl,
+        catalogUrl: element.dataset.catalogUrl,
     }));
 }
 

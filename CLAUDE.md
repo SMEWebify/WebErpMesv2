@@ -18,7 +18,7 @@
 - **CSS** : Bootstrap 5.3 via AdminLTE 4 (Tailwind supprimé)
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
-- **Tests** : PHPUnit (backend), aucun test frontend
+- **Tests** : PHPUnit (backend), Vitest (frontend, `resources/js/tests`, `npm test`)
 - **Infra** : Docker (Nginx + PHP-FPM), docker-compose.yaml
 
 ## Structure clé

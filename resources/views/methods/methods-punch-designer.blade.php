@@ -16,7 +16,8 @@
 
 @section('content')
     <div id="punch-designer-app" data-brand="{{ $Factory->name ?: config('app.name') }}"
-         data-library-url="{{ route('methods.tool.library', ['name' => 'press-brake-punches']) }}"></div>
+         data-library-url="{{ route('methods.tool.library', ['name' => 'press-brake-punches']) }}"
+         data-catalog-url="{{ route('methods.tool.library', ['name' => 'press-brake-catalog']) }}"></div>
 @stop
 
 @section('css')
