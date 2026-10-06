@@ -103,6 +103,29 @@ async function dxfBBox(url) {
     };
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+// Shapes that contribute to a bounding box, and the attributes that position
+// them. Anything else (script, image, foreignObject, use, a, animate, every
+// on* handler, href) is dropped.
+const GEOMETRY_TAGS = new Set(['svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon']);
+const GEOMETRY_ATTRS = new Set(['d', 'x', 'y', 'width', 'height', 'cx', 'cy', 'r', 'rx', 'ry', 'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox']);
+
+export function geometryOnlyClone(node) {
+    const tag = node.localName;
+    const clone = document.createElementNS(SVG_NS, tag);
+
+    for (const { name, value } of Array.from(node.attributes)) {
+        if (GEOMETRY_ATTRS.has(name)) clone.setAttribute(name, value);
+    }
+
+    for (const child of Array.from(node.children)) {
+        if (GEOMETRY_TAGS.has(child.localName)) clone.appendChild(geometryOnlyClone(child));
+    }
+
+    return clone;
+}
+
 async function svgBBox(url) {
     const response = await fetch(url, { credentials: 'same-origin' });
     if (!response.ok) return null;
@@ -122,13 +145,16 @@ async function svgBBox(url) {
     const h = parseFloat(svg.getAttribute('height'));
     if (w > 0 && h > 0) return { x: w, y: h, source: 'svg-attr' };
 
-    // Last resort: mount off-screen and use getBBox()
+    // Last resort: mount off-screen and use getBBox(). The uploaded markup is
+    // never attached as is — an onerror/onload on any node would run in our
+    // origin (GHSA-8fp9-7236-m69r). Only the geometry is copied across.
+    const geometry = geometryOnlyClone(svg);
     const host = document.createElement('div');
     host.style.cssText = 'position:absolute;left:-99999px;top:0;visibility:hidden;';
-    host.appendChild(svg);
+    host.appendChild(geometry);
     document.body.appendChild(host);
     try {
-        const box = svg.getBBox();
+        const box = geometry.getBBox();
         if (box.width > 0 && box.height > 0) {
             return { x: box.width, y: box.height, source: 'svg-getbbox' };
         }

@@ -67,6 +67,23 @@ class FileableRegistry
     ];
 
     /**
+     * Permission required to list or attach documents on an alias, when the
+     * entity screen itself is permission-gated. Without it the GED was a side
+     * door: a role kept off the catalogue could still upload to any product
+     * through /files/json/store (GHSA-rqxq-q992-xj2h).
+     *
+     * @var array<string, string>
+     */
+    private const PERMISSIONS = [
+        'product' => 'products-menu',
+    ];
+
+    public static function permissionFor(string $alias): ?string
+    {
+        return self::PERMISSIONS[$alias] ?? null;
+    }
+
+    /**
      * Does this alias carry personal data?
      */
     public static function isConfidential(string $alias): bool

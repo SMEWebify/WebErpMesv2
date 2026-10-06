@@ -39,7 +39,7 @@ class UpdateRessourceRequest extends FormRequest
             'qualified_users'=>'nullable|array',
             'qualified_users.*'=>'exists:users,id',
             'work_shift_pattern_id'=>'nullable|exists:work_shift_patterns,id',
-            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ];
     }
 

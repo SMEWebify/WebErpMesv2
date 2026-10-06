@@ -110,14 +110,16 @@ class FactoryController extends Controller
 
         // Secure file validation https://github.com/SMEWebify/WebErpMesv2/issues/654
         $request->validate([
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'cgv_file' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         // Logo (image) management
         if ($request->hasFile('picture')) {
             $file = $request->file('picture');
-            $extension = $file->getClientOriginalExtension(); // Sécurisé par validation
+            // Extension déduite du contenu : un SVG renommé en .png reste un SVG
+            // et ne doit pas être servi par nginx depuis public/ (GHSA-cvm4-63hj-966j).
+            $extension = $file->guessExtension() ?: 'bin';
             $filename = 'logo_' . time() . '_' . uniqid() . '.' . $extension;
             $file->move(public_path('images/factory'), $filename);
             $Factory->picture = $filename;

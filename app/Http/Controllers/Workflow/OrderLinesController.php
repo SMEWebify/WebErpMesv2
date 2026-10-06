@@ -176,13 +176,13 @@ class OrderLinesController extends Controller
     {
         
         $request->validate([
-            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
         
         if($request->hasFile('picture')){
             $OrderLineDetails = OrderLineDetails::findOrFail($request->id);
             $file =  $request->file('picture');
-            $extension = $file->getClientOriginalExtension();
+            $extension = $file->guessExtension() ?: 'bin';
             $filename = time() . '_' . uniqid() . '.' . $extension;
             $file->move(public_path('images/order-lines'), $filename);
             $OrderLineDetails->update(['picture' => $filename]);

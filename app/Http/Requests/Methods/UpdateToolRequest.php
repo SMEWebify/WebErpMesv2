@@ -27,7 +27,7 @@ class UpdateToolRequest extends FormRequest
             //
             'label'=>'required',
             'qty'=>'required',
-            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ];
     }
 }

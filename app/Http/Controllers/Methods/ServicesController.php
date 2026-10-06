@@ -114,7 +114,7 @@ class ServicesController extends Controller
     public function StoreImage(Request $request)
     {
         $request->validate([
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
         
         if($request->hasFile('picture')){

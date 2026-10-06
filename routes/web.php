@@ -725,24 +725,42 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'products', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
-        //index product route
-        Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
-
-        //product route 
-        Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
-        Route::post('/supplier', 'App\Http\Controllers\Products\ProductsController@StoreSupplier')->name('products.supplier.create');
-        Route::post('/supplier/price/qty/{id}', 'App\Http\Controllers\Products\ProductsController@StoreSupplierPriceQty')->name('products.supplier.qty.price.create');
-        
-        Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
-        Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
-
-        // JSON API endpoints for React ProductsIndex
-        Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
-        Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
+        // Lookups shared with quotes, orders, purchases, tasks and quality: any
+        // role picking a product on a line needs them, so they stay outside the
+        // catalogue permission below.
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
         Route::get('/json/search', 'App\Http\Controllers\Products\ProductsController@searchJson')->name('products.json.search');
-        Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
-        Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
+
+        // Catalogue screens and writes. products-menu used to only hide the menu
+        // entry, so any role (asset_manager included) could read and edit
+        // products by URL — GHSA-rqxq-q992-xj2h.
+        Route::middleware('permission:products-menu')->group(function () {
+            //index product route
+            Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
+
+            //product route
+            Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
+            Route::post('/supplier', 'App\Http\Controllers\Products\ProductsController@StoreSupplier')->name('products.supplier.create');
+            Route::post('/supplier/price/qty/{id}', 'App\Http\Controllers\Products\ProductsController@StoreSupplierPriceQty')->name('products.supplier.qty.price.create');
+
+            Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
+            Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
+
+            // JSON API endpoints for React ProductsIndex
+            Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
+            Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
+            Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
+            Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
+
+            Route::group(['prefix' => '{product}/customer-price-list'], function () {
+                Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
+                Route::put('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@update')->name('products.customer-price-list.update');
+                Route::delete('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@destroy')->name('products.customer-price-list.destroy');
+            });
+
+            //import
+            Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
+        });
 
         // Merge duplicates (permission réservée)
         Route::group(['middleware' => ['permission:products-merge']], function () {
@@ -750,15 +768,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/json/merge/{master}/{duplicate}/preview', 'App\Http\Controllers\Products\ProductsController@mergePreviewJson')->name('products.json.merge.preview');
             Route::post('/json/merge/{master}/{duplicate}', 'App\Http\Controllers\Products\ProductsController@mergeJson')->name('products.json.merge');
         });
-
-        Route::group(['prefix' => '{product}/customer-price-list'], function () {
-            Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
-            Route::put('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@update')->name('products.customer-price-list.update');
-            Route::delete('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@destroy')->name('products.customer-price-list.destroy');
-        });
-
-        //import
-        Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
 
         // Serial numbers routes
         Route::group(['prefix' => 'serial-numbers', 'middleware' => ['permission:stock-lot-serial-management']], function () {
@@ -831,7 +840,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/transfer', 'App\Http\Controllers\Products\StockLocationProductsController@transfer')->name('products.stockline.transfer');
         });
         
-        Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->name('products.show');
+        // Declared last: /{id} would otherwise swallow the sub-paths above.
+        Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->middleware('permission:products-menu')->name('products.show');
     });
 
     Route::group(['prefix' => 'task', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

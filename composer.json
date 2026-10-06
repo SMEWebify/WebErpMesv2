@@ -4,7 +4,7 @@
                                                                                                                                 "barryvdh/laravel-dompdf": "^v3.0.0",
                                                                                                                                 "directorytree/ldaprecord-laravel": "^4.0",
                                                                                                                                 "doctrine/dbal": "^3.10",
-                                                                                                                                "dragonbe/vies": "^2.3",
+                                                                                                                                "dragonbe/vies": "^2.3", "ezyang/htmlpurifier": "^4.19",
                                                                                                                                 "fruitcake/php-cors": "^1.2",
                                                                                                                                 "guzzlehttp/guzzle": "^7.0.1",
                                                                                                                                 "horstoeko/zugferd": "^1",

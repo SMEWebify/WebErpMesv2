@@ -68,7 +68,7 @@
                 <hr>
                 <h5>{{ __('general_content.message_trans_key') }}</h5>
                 <div class="border rounded p-3 bg-light">
-                    {!! $log->message !!}
+                    {!! \App\Support\SafeHtml::clean($log->message) !!}
                 </div>
 
                 @if($log->status === 'failed')

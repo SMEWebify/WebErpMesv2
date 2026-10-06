@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Files;
 
 use App\Http\Controllers\Controller;
 use App\Services\Files\FileStorageService;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -35,6 +34,8 @@ class LegacyFileController extends Controller
 
         [$disk, $path] = $located;
 
-        return Storage::disk($disk)->response($path, basename($filename), [], 'inline');
+        // Same header policy as the GED: these folders hold years of user
+        // uploads, SVGs included, served from our own origin.
+        return $this->storage->stream($disk, $path, basename($filename));
     }
 }

@@ -30,7 +30,7 @@ class StoreServicesRequest extends FormRequest
             'label'=>'required',
             'hourly_rate'=>'required',
             'margin'=>'required',
-            'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'companies_ids'   => 'nullable|array',
             'companies_ids.*' => 'integer|exists:companies,id',
             'is_nesting'      => 'nullable|boolean',

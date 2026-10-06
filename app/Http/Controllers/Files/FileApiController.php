@@ -186,6 +186,9 @@ class FileApiController extends Controller
 
         abort_if($alias === null || $id === null, 404);
 
+        $permission = FileableRegistry::permissionFor($alias);
+        abort_if($permission !== null && ! $request->user()?->can($permission), 403);
+
         $entity = FileableRegistry::find($alias, $id);
 
         abort_if($entity === null, 404);

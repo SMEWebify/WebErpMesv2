@@ -71,6 +71,38 @@ class FileKindResolver
     ];
 
     /**
+     * Extensions a browser may render inline, with the only Content-Type they
+     * are ever served under. The type is decided here, never taken from the
+     * upload: the client-declared MIME is attacker controlled, and a .pdf sent
+     * as text/html would otherwise be rendered as a page of our own origin.
+     *
+     * @var array<string, string>
+     */
+    private const INLINE_MIME_TYPES = [
+        'pdf' => 'application/pdf',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'bmp' => 'image/bmp',
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+    ];
+
+    /**
+     * Content-Type a stored file may be served inline under, or null when it
+     * must only ever be sent as an opaque download.
+     */
+    public static function inlineMimeType(?string $extension): ?string
+    {
+        if ($extension === null) {
+            return null;
+        }
+
+        return self::INLINE_MIME_TYPES[mb_strtolower($extension)] ?? null;
+    }
+
+    /**
      * Extract the lowercase extension of a file name, without the dot.
      */
     public static function extensionOf(?string $filename): ?string

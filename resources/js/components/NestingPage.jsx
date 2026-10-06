@@ -250,8 +250,6 @@ function renderPrimitive(p, key) {
                 d={`M ${x0} ${y0} A ${p.r} ${p.r} 0 ${largeArc} 1 ${x1} ${y1}`}
                 fill="none" stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />;
         }
-        case 'svg-inner':
-            return <g key={key} dangerouslySetInnerHTML={{ __html: p.html }} />;
         default:
             return null;
     }

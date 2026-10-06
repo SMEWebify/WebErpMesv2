@@ -51,7 +51,7 @@ class UpdateProductsRequest extends FormRequest
             'finishing' => 'nullable|string|max:255',
             'cad_file_path' => 'nullable|string|max:255',
             'cam_file_path' => 'nullable|string|max:255',
-            'picture'=> 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'picture'=> 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 }

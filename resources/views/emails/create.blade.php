@@ -58,7 +58,7 @@
                 ]
                 @endphp
                 <x-adminlte-text-editor name="message" label="{{ __('general_content.message_trans_key') }}" label-class="text-primary"
-                    igroup-size="sm" placeholder="..." :config="$config"> {!! old('message', $emailTemplate->content ?? '') !!}
+                    igroup-size="sm" placeholder="..." :config="$config">{{ \App\Support\SafeHtml::clean(old('message', $emailTemplate->content ?? '')) }}
                 </x-adminlte-text-editor>
             </div>
 

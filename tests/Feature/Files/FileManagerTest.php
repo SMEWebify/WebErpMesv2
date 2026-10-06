@@ -12,6 +12,7 @@ use App\Services\Files\FileRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class FileManagerTest extends TestCase
@@ -36,7 +37,10 @@ class FileManagerTest extends TestCase
         MethodsUnits::factory()->create();
         MethodsFamilies::factory()->create();
 
+        Permission::findOrCreate('products-menu');
+
         $this->user = User::factory()->create();
+        $this->user->givePermissionTo('products-menu');
         $this->actingAs($this->user);
     }
 
@@ -208,6 +212,63 @@ class FileManagerTest extends TestCase
         $response = $this->get(route('files.raw', ['file' => $file->id]));
 
         $response->assertStatus(200);
+        $response->assertHeader('X-Content-Type-Options', 'nosniff');
+        $this->assertStringContainsString('sandbox', $response->headers->get('Content-Security-Policy'));
+    }
+
+    /**
+     * GHSA-cqq2-7c22-p2gg: the MIME declared by the browser was stored and
+     * reflected as the response Content-Type, so a "poc.pdf" sent as text/html
+     * rendered as a page of our origin.
+     */
+    public function test_the_client_declared_mime_is_never_reflected(): void
+    {
+        $product = $this->product();
+
+        $this->postJson(route('files.json.store'), [
+            'fileable_type' => 'product',
+            'fileable_id' => $product->id,
+            'files' => [UploadedFile::fake()->createWithContent('poc.pdf', '<script>alert(document.domain)</script>')->mimeType('text/html')],
+        ])->assertStatus(201);
+
+        $file = File::firstOrFail();
+
+        $response = $this->get(route('files.raw', ['file' => $file->id]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+        $response->assertHeader('X-Content-Type-Options', 'nosniff');
+    }
+
+    public function test_a_row_already_stored_with_a_hostile_type_is_neutralised(): void
+    {
+        $product = $this->product();
+
+        $this->postJson(route('files.json.store'), [
+            'fileable_type' => 'product',
+            'fileable_id' => $product->id,
+            'files' => [UploadedFile::fake()->create('notes.txt', 1, 'text/plain')],
+        ])->assertStatus(201);
+
+        $file = File::firstOrFail();
+        $file->update(['type' => 'text/html']);
+
+        $response = $this->get(route('files.raw', ['file' => $file->id]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/octet-stream');
+        $this->assertStringStartsWith('attachment', $response->headers->get('Content-Disposition'));
+    }
+
+    public function test_a_legacy_svg_is_served_with_a_locked_down_policy(): void
+    {
+        $path = trim(config('files.legacy_root'), '/') . '/svg/flat.svg';
+        Storage::disk(config('files.disk'))->put($path, '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>');
+
+        $response = $this->get('/svg/flat.svg');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'image/svg+xml');
         $response->assertHeader('X-Content-Type-Options', 'nosniff');
         $this->assertStringContainsString('sandbox', $response->headers->get('Content-Security-Policy'));
     }

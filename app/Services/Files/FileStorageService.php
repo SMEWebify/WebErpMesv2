@@ -125,19 +125,39 @@ class FileStorageService
 
         [$disk, $path] = $located;
 
+        return $this->stream($disk, $path, $file->original_file_name ?: $file->name, $download);
+    }
+
+    /**
+     * Stream stored bytes with headers derived from the stored file itself.
+     *
+     * files.type holds the MIME the browser declared at upload time and is
+     * never reflected: the Content-Type comes from the extension of the stored
+     * path, which the upload whitelist already vetted. Anything that is not a
+     * known inline-safe format goes out as an opaque attachment, so a payload
+     * uploaded as "poc.pdf" with Content-Type text/html can no longer be
+     * rendered as a page of our origin — including rows already in the table.
+     */
+    public function stream(string $disk, string $path, string $name, bool $download = false): StreamedResponse
+    {
+        $extension = FileKindResolver::extensionOf($path);
+        $inlineType = FileKindResolver::inlineMimeType($extension);
+
+        if ($inlineType === null) {
+            $download = true;
+        }
+
         $headers = [
-            'Content-Type' => $file->type ?: 'application/octet-stream',
+            'Content-Type' => $inlineType ?? 'application/octet-stream',
             'X-Content-Type-Options' => 'nosniff',
         ];
 
         // An SVG is an executable document: served inline from our own origin it
         // could run scripts against the session. Uploads are user supplied, so
         // the response is locked down to a static image.
-        if ($file->kind === FileKindResolver::KIND_VECTOR) {
+        if (FileKindResolver::fromExtension($extension) === FileKindResolver::KIND_VECTOR) {
             $headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox";
         }
-
-        $name = $file->original_file_name ?: $file->name;
 
         return $download
             ? Storage::disk($disk)->download($path, $name, $headers)

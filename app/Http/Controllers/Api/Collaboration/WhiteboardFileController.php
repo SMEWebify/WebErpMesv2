@@ -22,7 +22,7 @@ class WhiteboardFileController extends Controller
     {
         $request->validate([
             'files'   => ['required', 'array'],
-            'files.*' => ['file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,csv,txt,jpg,jpeg,png,gif,webp,svg,zip'],
+            'files.*' => ['file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,csv,txt,jpg,jpeg,png,gif,webp,zip'],
         ]);
 
         $userId = optional($request->user())->id;
