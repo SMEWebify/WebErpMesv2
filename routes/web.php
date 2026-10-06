@@ -276,6 +276,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\OpportunitiesController@addressesJson')->name('opportunities.json.addresses');
         Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OpportunitiesController@contactsJson')->name('opportunities.json.contacts');
 
+        // Calendrier commercial (activités + événements)
+        Route::get('/calendar',        'App\Http\Controllers\Workflow\OpportunityCalendarController@index')->name('opportunities.calendar');
+        Route::get('/calendar/events', 'App\Http\Controllers\Workflow\OpportunityCalendarController@events')->name('opportunities.calendar.events');
+
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
 

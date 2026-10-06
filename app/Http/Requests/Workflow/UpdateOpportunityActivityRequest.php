@@ -22,6 +22,7 @@ class UpdateOpportunityActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'nullable|integer|exists:users,id',
             'label' => 'required|string|max:255',
             'type' => 'required|integer|in:1,2,3,4,5',
             'statu' => 'required|integer|in:1,2,3,4',

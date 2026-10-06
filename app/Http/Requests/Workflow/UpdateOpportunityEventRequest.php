@@ -23,6 +23,7 @@ class UpdateOpportunityEventRequest extends FormRequest
     {
         return [
             //
+            'user_id' => 'nullable|integer|exists:users,id',
             'label' => 'required|string|max:255',
             'type' => 'required|integer|in:1,2,3,4',
             'start_date' => 'nullable|date',

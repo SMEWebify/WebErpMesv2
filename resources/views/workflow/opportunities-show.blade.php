@@ -199,6 +199,7 @@ $oppSteps = json_encode([
                       <th>{{ __('general_content.statu_trans_key') }}</th>
                       <th>{{ __('general_content.priority_trans_key') }}</th>
                       <th>{{ __('general_content.due_date_trans_key') }}</th>
+                      <th>{{ __('general_content.assigned_user_trans_key') }}</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -226,6 +227,7 @@ $oppSteps = json_encode([
                         @if(4 == $Activity->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
                       </td>
                       <td>{{ $Activity->due_date }}</td>
+                      <td>{{ $Activity->user->name ?? '' }}</td>
                       <td class="py-0 align-middle">
                         <!-- Button Modal -->
                         <x-ButtonTextEdit :modalTarget="'Activity' . $Activity->id" />
@@ -291,6 +293,7 @@ $oppSteps = json_encode([
                                 <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
                                 <input type="date" class="form-control" name="due_date"  id="due_date"  value="{{ $Activity->due_date }}" >
                               </div>
+                              @include('include.opportunity-user-select', ['selected' => $Activity->user_id])
                               <div class="form-group">
                                 <x-FormTextareaComment  comment="{{ $Activity->comment }}" />
                               </div>
@@ -303,7 +306,7 @@ $oppSteps = json_encode([
                       </td>
                     </tr>
                     @empty
-                    <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                   </tbody>
                   <tfoot>
@@ -313,6 +316,7 @@ $oppSteps = json_encode([
                       <th>{{ __('general_content.statu_trans_key') }}</th>
                       <th>{{ __('general_content.priority_trans_key') }}</th>
                       <th>{{ __('general_content.due_date_trans_key') }}</th>
+                      <th>{{ __('general_content.assigned_user_trans_key') }}</th>
                       <th></th>
                     </tr>
                   </tfoot>
@@ -367,6 +371,7 @@ $oppSteps = json_encode([
                   <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
                   <input type="date" class="form-control" name="due_date"  id="due_date"  >
                 </div>
+                @include('include.opportunity-user-select', ['selected' => auth()->id()])
                 <div class="form-group">
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
@@ -391,6 +396,7 @@ $oppSteps = json_encode([
                       <th>{{ __('general_content.type_trans_key') }}</th>
                       <th>{{ __('general_content.start_date_trans_key') }}</th>
                       <th>{{ __('general_content.end_date_trans_key') }}</th>
+                      <th>{{ __('general_content.assigned_user_trans_key') }}</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -406,6 +412,7 @@ $oppSteps = json_encode([
                       </td>
                       <td>{{ $Event->start_date }}</td>
                       <td>{{ $Event->end_date }}</td>
+                      <td>{{ $Event->user->name ?? '' }}</td>
                       <td class="py-0 align-middle">
                         <!-- Button Modal -->
                         <x-ButtonTextEdit :modalTarget="'Event' . $Event->id" />
@@ -446,6 +453,7 @@ $oppSteps = json_encode([
                                 <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                                 <input type="date" class="form-control" name="end_date"  id="end_date"  value="{{ $Event->end_date }}" >
                               </div>
+                              @include('include.opportunity-user-select', ['selected' => $Event->user_id])
                               <div class="form-group">
                                 <x-FormTextareaComment  comment="{{ $Event->comment }}" />
                               </div>
@@ -458,7 +466,7 @@ $oppSteps = json_encode([
                       </td>
                     </tr>
                     @empty
-                    <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                   </tbody>
                   <tfoot>
@@ -467,6 +475,7 @@ $oppSteps = json_encode([
                       <th>{{ __('general_content.type_trans_key') }}</th>
                       <th>{{ __('general_content.start_date_trans_key') }}</th>
                       <th>{{ __('general_content.end_date_trans_key') }}</th>
+                      <th>{{ __('general_content.assigned_user_trans_key') }}</th>
                       <th></th>
                     </tr>
                   </tfoot>
@@ -510,6 +519,7 @@ $oppSteps = json_encode([
                   <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                   <input type="date" class="form-control" name="end_date"  id="end_date"  >
                 </div>
+                @include('include.opportunity-user-select', ['selected' => auth()->id()])
                 <div class="form-group">
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
@@ -542,4 +552,16 @@ $oppSteps = json_encode([
 @stop
 
 @section('js')
+<script>
+    // Ouvre l'onglet ciblé par l'ancre (liens du calendrier commercial : #Activities, #Events)
+    (function () {
+        var hash = window.location.hash;
+        if (hash && $('a[data-toggle="tab"][href="' + hash + '"]').length) {
+            $('a[data-toggle="tab"]').removeClass('active');
+            $('.tab-pane').removeClass('active show');
+            $('a[data-toggle="tab"][href="' + hash + '"]').addClass('active');
+            $(hash).addClass('active show');
+        }
+    })();
+</script>
 @stop

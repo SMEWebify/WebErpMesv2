@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Workflow\Opportunities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ class OpportunitiesEventsLogs extends Model
     // Fillable attributes for mass assignment
     protected $fillable= [
         'opportunities_id',
+        'user_id',
         'label',
         'type',
         'start_date',
@@ -24,6 +26,12 @@ class OpportunitiesEventsLogs extends Model
     public function opportunity()
     {
         return $this->belongsTo(Opportunities::class, 'opportunities_id');
+    }
+
+    // Responsible user (falls back to the opportunity owner when null)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     

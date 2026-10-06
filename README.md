@@ -451,6 +451,20 @@ Thanks to everyone who keeps this project alive!
 
 Check our [Contributing Guide](CONTRIBUTING.md) and make your first contribution!
 
+### 🛡️ Security researchers
+
+Thanks to the researchers who reported vulnerabilities responsibly. Each report made ΣEM safer for every workshop running it.
+
+| Researcher | Advisories |
+|---|---|
+| [@redhotchilihacker1](https://github.com/redhotchilihacker1) | [GHSA-cqq2-7c22-p2gg](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-cqq2-7c22-p2gg), [GHSA-cvm4-63hj-966j](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-cvm4-63hj-966j), [GHSA-8fp9-7236-m69r](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-8fp9-7236-m69r), [GHSA-fp5p-mpqh-7fvx](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-fp5p-mpqh-7fvx), [GHSA-rqxq-q992-xj2h](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-rqxq-q992-xj2h) |
+| [@DifficultSnow](https://github.com/DifficultSnow) | [GHSA-c2xh-26jp-56fx](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-c2xh-26jp-56fx) |
+| [@sec-reex](https://github.com/sec-reex) | [GHSA-5x85-8gmm-7v5w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-5x85-8gmm-7v5w) |
+| [@germadarangalvarez-ops](https://github.com/germadarangalvarez-ops) | [GHSA-chhq-7p67-2ff9](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-chhq-7p67-2ff9) (CVE-2026-49827) |
+| [@nedlir](https://github.com/nedlir) | [GHSA-pp68-5pc2-hv7w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-pp68-5pc2-hv7w) (CVE-2026-22788), [GHSA-64rv-f829-x6m4](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-64rv-f829-x6m4) (CVE-2026-22789) |
+
+Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md).
+
 
 ## 📊 Project Stats
 

@@ -241,7 +241,7 @@ class OpportunitiesController extends Controller
      */
     private function getActivities($opportunityId)
     {
-        return OpportunitiesActivitiesLogs::where('opportunities_id', $opportunityId)->orderBy('id')->get();
+        return OpportunitiesActivitiesLogs::with('user:id,name')->where('opportunities_id', $opportunityId)->orderBy('id')->get();
     }
 
     /**
@@ -252,7 +252,7 @@ class OpportunitiesController extends Controller
      */
     private function getEvents($opportunityId)
     {
-        return OpportunitiesEventsLogs::where('opportunities_id', $opportunityId)->orderBy('id')->get();
+        return OpportunitiesEventsLogs::with('user:id,name')->where('opportunities_id', $opportunityId)->orderBy('id')->get();
     }
 
     /**
@@ -414,6 +414,7 @@ class OpportunitiesController extends Controller
             'nextUrl' =>  $nextUrl,
             'ActivitiesList' =>  $Activities,
             'EventsList' =>  $Events,
+            'UsersSelect' => User::select('id', 'name')->orderBy('name')->get(),
             'timelineData' => $timelineData,
         ]);
     }

@@ -23,6 +23,7 @@ class StoreOpportunityEventRequest extends FormRequest
     {
         return [
             'opportunities_id' => 'required|integer|exists:opportunities,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'label' => 'required|string|max:255',
             'type' => 'required|integer|in:1,2,3,4',
             'start_date' => 'nullable|date',
