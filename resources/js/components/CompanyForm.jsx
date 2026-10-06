@@ -631,6 +631,14 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
                                 label={trans.quoted_delivery_note}
                             />
                         </div>
+                        <div className="col-md-3 d-flex align-items-center">
+                            <Toggle
+                                id="order_status_email"
+                                checked={form.order_status_email}
+                                onChange={set('order_status_email')}
+                                label={trans.order_status_email}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

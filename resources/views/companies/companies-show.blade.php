@@ -164,6 +164,7 @@
     'delivery_constraint'       => $Companie->delivery_constraint,
     'tolerance_days'            => $Companie->tolerance_days,
     'quoted_delivery_note'      => (bool) $Companie->quoted_delivery_note,
+    'order_status_email'        => (bool) $Companie->order_status_email,
     'comment'                   => $Companie->comment,
     'barcode_value'             => $Companie->barcode_value,
   ];
@@ -205,6 +206,7 @@
     'tolerance_in_days'      => __('general_content.tolerance_in_days_trans_key'),
     'tolerance_days'         => __('general_content.tolerance_days_trans_key'),
     'quoted_delivery_note'   => __('general_content.quoted_delivery_note_trans_key'),
+    'order_status_email'     => __('general_content.order_status_email_trans_key'),
     'comment'                => __('general_content.comment_trans_key'),
     'update'                 => __('general_content.update_trans_key'),
     'saving'                 => __('general_content.saving_trans_key'),

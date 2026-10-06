@@ -76,6 +76,7 @@ class Companies extends Model
                             'delivery_constraint',
                             'tolerance_days',
                             'quoted_delivery_note',
+                            'order_status_email',
                             'csv_file_name',
                         ];
 

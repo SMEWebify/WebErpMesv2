@@ -355,6 +355,7 @@ class CompaniesController extends Controller
         $company->update($request->validated());
         $company->active               = $request->boolean('active');
         $company->quoted_delivery_note = $request->boolean('quoted_delivery_note');
+        $company->order_status_email   = $request->boolean('order_status_email');
         $company->save();
 
         return response()->json([
@@ -393,6 +394,7 @@ class CompaniesController extends Controller
         // Handle specific cases outside mass assignment
         $company->active = $request->has('active') ? 1 : 0;
         $company->quoted_delivery_note = $request->has(key: 'quoted_delivery_note') ? 1 : 0;
+        $company->order_status_email = $request->has('order_status_email') ? 1 : 0;
         $company->save();
 
         return redirect()->route('companies.show', ['id' =>  $company->id])->with('success', 'Successfully updated companie');

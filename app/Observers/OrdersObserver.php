@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Jobs\PushOrderToN2P;
+use App\Jobs\SendOrderStatusEmail;
 use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Workflow\Orders;
 use Illuminate\Support\Facades\Cache;
@@ -12,6 +13,11 @@ use Throwable;
 class OrdersObserver
 {
     private const MENU_ORDERS_NOT_FINISH_CACHE_KEY = 'menu_orders_not_finish';
+
+    // Étapes annoncées au client : ouverte, en cours, partiellement livrée, livrée.
+    // Stoppée (5) et annulée (6) sont exclues volontairement : un mail automatique
+    // sur ces étapes crée de la friction, c'est au commercial de l'annoncer.
+    private const CUSTOMER_NOTIFIED_STATUSES = [1, 2, 3, 4];
 
     public function created(Orders $order): void
     {
@@ -25,6 +31,8 @@ class OrdersObserver
         }
 
         Cache::forget(self::MENU_ORDERS_NOT_FINISH_CACHE_KEY);
+
+        $this->notifyCustomer($order);
 
         // Source de vérité unique : l'endpoint n2p/outbound. is_active =
         // master switch, metadata porte la règle de transition métier.
@@ -70,6 +78,32 @@ class OrdersObserver
                     'error' => $e->getMessage(),
                 ]);
             }
+        }
+    }
+
+    /**
+     * Mail au contact client si sa société l'a demandé (opt-in sur la fiche,
+     * `companies.order_status_email`). Commandes clients uniquement : une
+     * commande interne (type 2, mise en stock) n'a pas de destinataire externe.
+     * Isolé comme le push N2P : un échec ne doit jamais bloquer la commande.
+     */
+    private function notifyCustomer(Orders $order): void
+    {
+        $status = $this->normalizeStatus($order->statu);
+
+        if (! in_array($status, self::CUSTOMER_NOTIFIED_STATUSES, true)
+            || (int) $order->type !== 1
+            || ! $order->companie?->order_status_email) {
+            return;
+        }
+
+        try {
+            SendOrderStatusEmail::dispatch($order->getKey(), $status, app()->getLocale())->afterCommit();
+        } catch (Throwable $e) {
+            Log::error('Order status email dispatch failed (defensive catch)', [
+                'order_id' => $order->getKey(),
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
