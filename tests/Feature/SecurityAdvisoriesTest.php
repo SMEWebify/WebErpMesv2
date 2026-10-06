@@ -12,6 +12,10 @@ use Tests\TestCase;
 /**
  * Regression tests for the reports fixed in 2.0.1. Each test names the
  * advisory it closes.
+ *
+ * App\Http\Middleware\Authenticate lets non-JSON requests through in the
+ * testing environment, so the anonymous-access tests speak JSON to actually
+ * exercise the guard.
  */
 class SecurityAdvisoriesTest extends TestCase
 {
@@ -54,6 +58,44 @@ class SecurityAdvisoriesTest extends TestCase
         $html = '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="logo"></p>';
 
         $this->assertStringContainsString('data:image/png;base64', SafeHtml::clean($html));
+    }
+
+    /**
+     * Found while fixing GHSA-fp5p: the template routes had no middleware at
+     * all, so the payload could be planted anonymously.
+     */
+    public function test_email_templates_cannot_be_changed_anonymously(): void
+    {
+        $template = EmailTemplate::create(['document_type' => 'quote', 'subject' => 'Devis', 'content' => '<p>ok</p>']);
+
+        $this->postJson(route('admin.emails.templates.update', ['emailTemplate' => $template->id]), [
+            'subject' => 'Pwned',
+            'content' => '<p>pwned</p>',
+        ])->assertUnauthorized();
+
+        $this->assertSame('Devis', $template->fresh()->subject);
+    }
+
+    /**
+     * The compose, send and PDF preview routes sat outside any auth group:
+     * anyone could render a document PDF by id or send it from our SMTP.
+     */
+    public function test_document_email_routes_require_authentication(): void
+    {
+        $this->getJson(route('email.create', ['type' => 'quote', 'id' => 1]))->assertUnauthorized();
+        $this->getJson(route('email.preview-pdf', ['type' => 'invoice', 'id' => 1]))->assertUnauthorized();
+        $this->postJson(route('email.send', ['type' => 'quote', 'id' => 1]), [
+            'to' => 'victim@example.com',
+            'subject' => 'x',
+            'message' => 'x',
+        ])->assertUnauthorized();
+
+        $this->assertDatabaseCount('email_logs', 0);
+    }
+
+    public function test_the_global_search_requires_authentication(): void
+    {
+        $this->getJson('/navbar/search?searchVal=a')->assertUnauthorized();
     }
 
     /**

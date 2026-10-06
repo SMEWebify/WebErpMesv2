@@ -1013,10 +1013,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
         Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->middleware(['auth'])->name('admin.logs-viewer.json.list');
     
-        Route::get('/emails/templates', 'App\Http\Controllers\Admin\EmailTemplateController@index')->name('admin.emails.templates.index');
-        Route::post('/emails/templates/store', 'App\Http\Controllers\Admin\EmailTemplateController@store')->name('admin.emails.templates.store');
-        Route::post('/emails/templates/update/{emailTemplate}', 'App\Http\Controllers\Admin\EmailTemplateController@update')->name('admin.emails.templates.update');
-        Route::delete('/emails/templates/delete/{emailTemplate}', 'App\Http\Controllers\Admin\EmailTemplateController@destroy')->name('admin.emails.templates.delete');
+        // Were declared without any middleware: update/delete answered anonymous
+        // requests, which made the template XSS (GHSA-fp5p-mpqh-7fvx) injectable
+        // without an account.
+        Route::middleware(['auth', 'verified', 'has.role'])->group(function () {
+            Route::get('/emails/templates', 'App\Http\Controllers\Admin\EmailTemplateController@index')->name('admin.emails.templates.index');
+            Route::post('/emails/templates/store', 'App\Http\Controllers\Admin\EmailTemplateController@store')->name('admin.emails.templates.store');
+            Route::post('/emails/templates/update/{emailTemplate}', 'App\Http\Controllers\Admin\EmailTemplateController@update')->name('admin.emails.templates.update');
+            Route::delete('/emails/templates/delete/{emailTemplate}', 'App\Http\Controllers\Admin\EmailTemplateController@destroy')->name('admin.emails.templates.delete');
+        });
 
     });
 
@@ -1322,9 +1327,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
     });
 
-    Route::get('/{type}/{id}/email', 'App\Http\Controllers\EmailController@create')->name('email.create');
-    Route::post('/{type}/{id}/email', 'App\Http\Controllers\EmailController@send')->name('email.send');
-    Route::get('/{type}/{id}/email/preview.pdf', 'App\Http\Controllers\EmailController@previewPdf')->name('email.preview-pdf');
+    // These used to sit outside any auth group: an anonymous visitor could
+    // render any document PDF by id and send it from the company SMTP.
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::get('/{type}/{id}/email', 'App\Http\Controllers\EmailController@create')->name('email.create');
+        Route::post('/{type}/{id}/email', 'App\Http\Controllers\EmailController@send')->name('email.send');
+        Route::get('/{type}/{id}/email/preview.pdf', 'App\Http\Controllers\EmailController@previewPdf')->name('email.preview-pdf');
+    });
 
     Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
     Route::post('upload-photo', 'App\Http\Controllers\FileUpload@photoUpload')->middleware(['auth'])->name('photo.store');
@@ -1382,7 +1391,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         '/navbar/search',
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
 
-    );
+    )->middleware(['auth', 'verified', 'has.role', 'check.factory']);
     Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
 
     Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
