@@ -32,11 +32,22 @@
     'contacts'       => route('quotes.json.contacts',     ['companyId' => '__ID__']),
     'storeAddress'   => route('quotes.json.address.store'),
     'storeContact'   => route('quotes.json.contact.store'),
+    'templates'      => route('quotes.json.templates'),
   ];
 
   $reactTrans = [
     'dashboard'             => __('general_content.dashboard_trans_key'),
     'quotes_list'           => __('general_content.quotes_list_trans_key'),
+    'quote_templates'       => __('general_content.quote_templates_trans_key'),
+    'start_from_template'   => __('general_content.start_from_template_trans_key'),
+    'no_template'           => __('general_content.no_template_trans_key'),
+    'no_templates_yet'      => __('general_content.no_templates_yet_trans_key'),
+    'delete_template'       => __('general_content.delete_template_trans_key'),
+    'delete_template_confirm' => __('general_content.delete_template_confirm_trans_key'),
+    'open_template'         => __('general_content.quote_template_trans_key'),
+    'lines'                 => __('general_content.lines_trans_key'),
+    'author'                => __('general_content.user_trans_key'),
+    'updated_at'            => __('general_content.updated_at_trans_key'),
     'open'                  => __('general_content.open_trans_key'),
     'send'                  => __('general_content.send_trans_key'),
     'win'                   => __('general_content.win_trans_key'),

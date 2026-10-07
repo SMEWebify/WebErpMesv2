@@ -69,7 +69,7 @@ class HomeController extends Controller
         $all_count = DB::table('users')->selectRaw("'user_count' as type, count(*) as count")
             ->unionAll(DB::table('companies')->selectRaw("'customers_count' as type, count(*) as count")->where('statu_customer', '=', '2')->whereYear('created_at', '=', $CurentYear))
             ->unionAll(DB::table('companies')->selectRaw("'suppliers_count' as type, count(*) as count")->where('statu_supplier', '=', '2'))
-            ->unionAll(DB::table('quotes')->selectRaw("'quotes_count' as type, count(*) as count")->where('statu', 1))
+            ->unionAll(DB::table('quotes')->selectRaw("'quotes_count' as type, count(*) as count")->where('statu', 1)->where('is_template', false))
             ->unionAll(DB::table('orders')->selectRaw("'orders_count' as type, count(*) as count")->where('statu', 1))
             ->unionAll(DB::table('quality_non_conformities')->selectRaw("'quality_non_conformities_count' as type, count(*) as count"))
             ->get();

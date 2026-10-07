@@ -127,6 +127,7 @@ class OpportunitiesKPIService
                 ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'quote_lines.accounting_vats_id')
                 ->whereNotNull('quotes.opportunities_id')
                 ->whereNull('quotes.deleted_at')
+                ->where('quotes.is_template', false)
                 ->whereIn('quotes.statu', [3, 4])
                 ->selectRaw('
                     quotes.statu,

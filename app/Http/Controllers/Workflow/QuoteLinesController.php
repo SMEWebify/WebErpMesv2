@@ -66,6 +66,7 @@ class QuoteLinesController extends Controller
         $dir = $sortAsc ? 'asc' : 'desc';
 
         $query = QuoteLines::with(['quote:id,code', 'Unit:id,label', 'VAT:id,label'])
+            ->excludingTemplates()
             ->withCount(['Task', 'SubAssembly'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when(is_numeric($productId), fn ($q) => $q->where('product_id', $productId))
@@ -227,7 +228,7 @@ class QuoteLinesController extends Controller
 
     public function linesForQuoteJson($quoteId)
     {
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_unless(auth()->check(), 403);
 
         $lines = QuoteLines::with([
@@ -256,7 +257,7 @@ class QuoteLinesController extends Controller
     public function selectDataForQuoteJson($quoteId)
     {
         abort_unless(auth()->check(), 403);
-        $quote   = Quotes::with('companie')->findOrFail($quoteId);
+        $quote   = Quotes::withTemplates()->with('companie')->findOrFail($quoteId);
         $factory = app('Factory');
 
         return response()->json([
@@ -273,7 +274,7 @@ class QuoteLinesController extends Controller
     public function priceListForProductJson($quoteId, $productId)
     {
         abort_unless(auth()->check(), 403);
-        $quote       = Quotes::with('companie')->findOrFail($quoteId);
+        $quote       = Quotes::withTemplates()->with('companie')->findOrFail($quoteId);
         $factory     = app('Factory');
         $currency    = $factory->curency ?? 'EUR';
         $locale      = config('app.locale', 'fr');
@@ -314,7 +315,7 @@ class QuoteLinesController extends Controller
     public function storeLineJson($quoteId, Request $request)
     {
         abort_unless(auth()->check(), 403);
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
 
         $validated = $request->validate([
@@ -431,7 +432,7 @@ class QuoteLinesController extends Controller
     public function duplicateLineJson($quoteId, $id, QuoteLineCopier $copier)
     {
         abort_unless(auth()->check(), 403);
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
         $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
 
@@ -456,6 +457,95 @@ class QuoteLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($newLine, $currency, config('app.locale'))], 201);
     }
 
+    /**
+     * Devis et trames dont on peut reprendre des lignes, avec leurs lignes.
+     */
+    public function importSourcesJson($quoteId, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+        Quotes::withTemplates()->findOrFail($quoteId);
+
+        $search = trim((string) $request->get('search', ''));
+
+        $sources = Quotes::withTemplates()
+            ->where('id', '!=', $quoteId)
+            ->whereHas('QuoteLines')
+            ->with(['companie:id,label', 'QuoteLines:id,quotes_id,ordre,code,label,qty,selling_price,discount'])
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
+                ->where('code', 'like', '%' . $search . '%')
+                ->orWhere('label', 'like', '%' . $search . '%')
+                ->orWhereHas('companie', fn ($c) => $c->where('label', 'like', '%' . $search . '%'))
+                ->orWhereHas('QuoteLines', fn ($l) => $l
+                    ->where('label', 'like', '%' . $search . '%')
+                    ->orWhere('code', 'like', '%' . $search . '%'))))
+            // Les trames d'abord, puis les devis les plus récents.
+            ->orderByDesc('is_template')
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get();
+
+        return response()->json([
+            'data' => $sources->map(fn ($q) => [
+                'id'          => $q->id,
+                'code'        => $q->code,
+                'label'       => $q->label,
+                'is_template' => (bool) $q->is_template,
+                'companie'    => $q->is_template ? null : $q->companie?->label,
+                'lines'       => $q->QuoteLines->map(fn ($l) => [
+                    'id'            => $l->id,
+                    'code'          => $l->code,
+                    'label'         => $l->label,
+                    'qty'           => $l->qty,
+                    'selling_price' => (float) $l->getRawOriginal('selling_price'),
+                    'discount'      => $l->discount,
+                ])->values(),
+            ]),
+        ]);
+    }
+
+    /**
+     * Recopie en fin de devis des lignes prises dans un autre devis ou une
+     * trame, avec leur gamme, leur nomenclature et leurs fichiers.
+     */
+    public function importFromJson($quoteId, Request $request, QuoteLineCopier $copier)
+    {
+        abort_unless(auth()->check(), 403);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
+
+        $validated = $request->validate([
+            'line_ids'   => 'required|array|min:1',
+            'line_ids.*' => 'integer',
+        ]);
+
+        $sources = QuoteLines::whereIn('id', $validated['line_ids'])
+            ->where('quotes_id', '!=', $quote->id)
+            ->orderBy('quotes_id')
+            ->orderBy('ordre')
+            ->get();
+
+        $copied = DB::transaction(function () use ($sources, $quote, $copier) {
+            $ordre = (int) QuoteLines::where('quotes_id', $quote->id)->max('ordre');
+
+            return $sources->map(fn (QuoteLines $line) => $copier->copy($line, $quote->id, ++$ordre, [
+                'statu'         => 1,
+                'delivery_date' => null,
+            ]));
+        });
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        $lines = $copied->map(function (QuoteLines $line) use ($currency) {
+            $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+            $line->loadCount(['Task', 'SubAssembly']);
+
+            return $this->formatLineJson($line, $currency, config('app.locale'));
+        });
+
+        return response()->json(['lines' => $lines->values()], 201);
+    }
+
     public function moveLineJson($quoteId, $id, Request $request)
     {
         abort_unless(auth()->check(), 403);
@@ -474,7 +564,7 @@ class QuoteLinesController extends Controller
     public function reorderJson($quoteId, Request $request)
     {
         abort_unless(auth()->check(), 403);
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
 
         $request->validate([
@@ -495,7 +585,7 @@ class QuoteLinesController extends Controller
     public function priceIncreaseJson($quoteId, Request $request)
     {
         abort_unless(auth()->check(), 403);
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
 
         $request->validate(['amount' => 'required|numeric|gt:0']);
@@ -568,8 +658,12 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Aucune ligne sélectionnée.'], 422);
         }
 
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_unless($quote->user_id === Auth::id() || Auth::user()->hasRole(['admin','manager']), 403);
+
+        if ($quote->is_template) {
+            return response()->json(['error' => "Une trame de devis ne se convertit pas en commande : créez d'abord un devis à partir de la trame."], 422);
+        }
 
         if (!in_array($quote->statu, [1, 2])) {
             return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
@@ -871,7 +965,7 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Import CAO désactivé'], 403);
         }
 
-        $quote = Quotes::findOrFail($quoteId);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
         abort_unless($quote->user_id === Auth::id() || Auth::user()->hasRole(['admin', 'manager']), 403);
 

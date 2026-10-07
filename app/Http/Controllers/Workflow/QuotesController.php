@@ -23,6 +23,8 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\QuoteCalculatorService;
+use App\Services\Quotes\QuoteDuplicator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\QuoteProjectEstimate;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
@@ -174,7 +176,7 @@ class QuotesController extends Controller
         $validated = $request->validated();
 
         try {
-            $Quote = Quotes::findOrFail($request->id);
+            $Quote = Quotes::withTemplates()->findOrFail($request->id);
             $Quote->fill($validated);
             $Quote->save();
 
@@ -539,12 +541,26 @@ class QuotesController extends Controller
             'customer_reference'                => 'nullable|string|max:255',
             'validity_date'                     => 'nullable|date',
             'comment'                           => 'nullable|string',
+            'template_id'                       => 'nullable|integer',
         ]);
 
-        $quote = Quotes::create(array_merge($validated, [
-            'uuid'  => Str::uuid(),
-            'statu' => 1,
-        ]));
+        $template = !empty($validated['template_id'])
+            ? Quotes::onlyTemplates()->findOrFail($validated['template_id'])
+            : null;
+        unset($validated['template_id']);
+
+        $quote = DB::transaction(function () use ($validated, $template) {
+            $quote = Quotes::create(array_merge($validated, [
+                'uuid'  => Str::uuid(),
+                'statu' => 1,
+            ]));
+
+            if ($template) {
+                app(QuoteDuplicator::class)->fillFromTemplate($template, $quote);
+            }
+
+            return $quote;
+        });
 
         $this->notificationService->sendNotification(QuoteNotification::class, $quote, 'quotes_notification');
         event(new QuoteCreated($quote));
@@ -552,6 +568,78 @@ class QuotesController extends Controller
         return response()->json([
             'redirect' => route('quotes.show', ['id' => $quote->id]),
         ], 201);
+    }
+
+    // -------------------------------------------------------------------------
+    // Duplication et trames de devis
+    // -------------------------------------------------------------------------
+
+    public function duplicate(int $id, QuoteDuplicator $duplicator)
+    {
+        $source = Quotes::findOrFail($id);
+
+        $quote = $duplicator->duplicate($source);
+
+        $this->notificationService->sendNotification(QuoteNotification::class, $quote, 'quotes_notification');
+        event(new QuoteCreated($quote));
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])
+            ->with('success', 'Devis ' . $source->code . ' dupliqué en ' . $quote->code);
+    }
+
+    public function saveAsTemplate(Request $request, int $id, QuoteDuplicator $duplicator)
+    {
+        $validated = $request->validate([
+            'template_label' => 'required|string|max:255',
+        ]);
+
+        $source   = Quotes::findOrFail($id);
+        $template = $duplicator->saveAsTemplate($source, $validated['template_label']);
+
+        return redirect()->route('quotes.show', ['id' => $template->id])
+            ->with('success', 'Trame « ' . $template->label . ' » créée à partir du devis ' . $source->code);
+    }
+
+    public function destroyTemplate(int $id)
+    {
+        $template = Quotes::onlyTemplates()->findOrFail($id);
+        abort_unless($template->user_id === auth()->id() || auth()->user()->hasRole(['admin', 'manager']), 403);
+
+        DB::transaction(function () use ($template) {
+            QuoteLines::where('quotes_id', $template->id)->delete();
+            $template->delete();
+        });
+
+        return redirect()->route('quotes', ['tab' => 'templates'])
+            ->with('success', 'Trame « ' . $template->label . ' » supprimée');
+    }
+
+    public function templatesJson(Request $request)
+    {
+        $search = trim((string) $request->get('search', ''));
+
+        $templates = Quotes::onlyTemplates()
+            ->withCount('QuoteLines')
+            ->with('UserManagement:id,name')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
+                ->where('label', 'like', '%' . $search . '%')
+                ->orWhere('code', 'like', '%' . $search . '%')))
+            ->orderBy('label')
+            ->get();
+
+        return response()->json([
+            'data' => $templates->map(fn ($t) => [
+                'id'                => $t->id,
+                'code'              => $t->code,
+                'label'             => $t->label,
+                'comment'           => $t->comment,
+                'quote_lines_count' => $t->quote_lines_count,
+                'author'            => $t->UserManagement?->name,
+                'updated_at'        => $t->updated_at?->format('d/m/Y'),
+                'url'               => route('quotes.show', ['id' => $t->id]),
+                'destroy_url'       => route('quotes.template.destroy', ['id' => $t->id]),
+            ]),
+        ]);
     }
 
     public function selectDataJson()

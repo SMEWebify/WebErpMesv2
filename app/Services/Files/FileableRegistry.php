@@ -145,6 +145,11 @@ class FileableRegistry
             return null;
         }
 
+        // Les documents d'une trame de devis restent accessibles depuis la trame.
+        if (method_exists($class, 'withTemplates')) {
+            return $class::withTemplates()->find($id);
+        }
+
         return $class::find($id);
     }
 }

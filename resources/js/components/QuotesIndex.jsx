@@ -998,8 +998,9 @@ function CreateContactSubModal({ show, onClose, companiesId, storeUrl, onCreated
 // Create Quote Modal
 // ---------------------------------------------------------------------------
 
-function CreateModal({ show, onClose, endpoints, trans }) {
+function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null }) {
     const [selectData, setSelectData]         = useState(null);
+    const [templates, setTemplates]           = useState([]);
     const [addresses, setAddresses]           = useState([]);
     const [contacts, setContacts]             = useState([]);
     const [errors, setErrors]                 = useState({});
@@ -1020,7 +1021,38 @@ function CreateModal({ show, onClose, endpoints, trans }) {
         user_id:                          '',
         validity_date:                    '',
         comment:                          '',
+        template_id:                      '',
     });
+
+    // Trames proposées comme point de départ ; la liste est courte, on la charge en entier.
+    useEffect(() => {
+        if (!show || !endpoints.templates) return;
+        apiFetch(endpoints.templates)
+            .then(data => {
+                const list = data.data ?? [];
+                setTemplates(list);
+                const preset = list.find(t => String(t.id) === String(initialTemplateId ?? ''));
+                if (preset) {
+                    setForm(f => ({
+                        ...f,
+                        template_id: String(preset.id),
+                        label: !f.label || f.label === '-' ? preset.label : f.label,
+                    }));
+                }
+            })
+            .catch(() => setTemplates([]));
+    }, [show, initialTemplateId]);
+
+    const handleTemplateChange = (templateId) => {
+        const previous = templates.find(t => String(t.id) === String(form.template_id));
+        const next     = templates.find(t => String(t.id) === String(templateId));
+        setForm(f => ({
+            ...f,
+            template_id: templateId,
+            // Le libellé suit la trame tant que l'utilisateur ne l'a pas personnalisé.
+            label: next && (!f.label || f.label === '-' || f.label === previous?.label) ? next.label : f.label,
+        }));
+    };
 
     useEffect(() => {
         if (!show || selectData) return;
@@ -1130,6 +1162,22 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                 {!selectData && <div className="text-center py-4"><i className="fas fa-spinner fa-spin fa-2x" /></div>}
                                 {selectData && (
                                     <div className="card card-body">
+                                        {templates.length > 0 && (
+                                            <div className="form-row">
+                                                <div className="form-group col-md-12">
+                                                    <label><i className="fas fa-layer-group mr-1 text-info" />{trans.start_from_template}</label>
+                                                    <select className="form-control" value={form.template_id} onChange={e => handleTemplateChange(e.target.value)}>
+                                                        <option value="">{trans.no_template}</option>
+                                                        {templates.map(t => (
+                                                            <option key={t.id} value={t.id}>
+                                                                {t.label} ({t.quote_lines_count} {String(trans.lines ?? '').toLowerCase()})
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {fieldError('template_id')}
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="form-row">
                                             <div className="form-group col-md-4">
                                                 <label>{trans.code}</label>
@@ -1306,7 +1354,7 @@ function saveFilters(filters) {
 // List Tab
 // ---------------------------------------------------------------------------
 
-function ListTab({ endpoints, trans, companieId }) {
+function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
     const saved = loadFilters();
 
     const [quotes, setQuotes]         = useState([]);
@@ -1318,7 +1366,7 @@ function ListTab({ endpoints, trans, companieId }) {
     const [sortAsc, setSortAsc]       = useState(saved?.sortAsc   ?? false);
     const [page, setPage]             = useState(1);
     const [viewType, setViewType]     = useState(saved?.viewType  ?? 'table');
-    const [showModal, setShowModal]   = useState(false);
+    const [showModal, setShowModal]   = useState(!!initialTemplateId);
 
     const searchTimeout = useRef(null);
 
@@ -1431,7 +1479,110 @@ function ListTab({ endpoints, trans, companieId }) {
                 onClose={() => setShowModal(false)}
                 endpoints={endpoints}
                 trans={trans}
+                initialTemplateId={initialTemplateId}
             />
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Templates Tab — trames de devis
+// ---------------------------------------------------------------------------
+
+function TemplatesTab({ endpoints, trans }) {
+    const [templates, setTemplates] = useState(null);
+    const [search, setSearch]       = useState('');
+    const [startFrom, setStartFrom] = useState(null);
+
+    const load = useCallback(() => {
+        const params = new URLSearchParams(search ? { search } : {});
+        apiFetch(`${endpoints.templates}?${params}`)
+            .then(data => setTemplates(data.data ?? []))
+            .catch(() => setTemplates([]));
+    }, [search, endpoints.templates]);
+
+    useEffect(() => {
+        const timer = setTimeout(load, 300);
+        return () => clearTimeout(timer);
+    }, [load]);
+
+    const handleDelete = async (template) => {
+        if (!window.confirm(trans.delete_template_confirm)) return;
+        // La route renvoie une redirection (formulaire de la page devis) : seul le statut compte ici.
+        const res = await fetch(template.destroy_url, {
+            method:  'DELETE',
+            headers: { 'X-CSRF-TOKEN': csrfToken(), 'Accept': 'text/html' },
+        });
+        if (res.ok) load();
+    };
+
+    return (
+        <div>
+            <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
+                <div className="input-group input-group-sm flex-shrink-0" style={{ width: 240 }}>
+                    <div className="input-group-prepend">
+                        <span className="input-group-text"><i className="fas fa-search" /></span>
+                    </div>
+                    <input type="text" className="form-control" placeholder={trans.search}
+                        value={search} onChange={e => setSearch(e.target.value)} />
+                </div>
+            </div>
+
+            {templates === null ? (
+                <div className="text-center py-4"><i className="fas fa-spinner fa-spin fa-2x" /></div>
+            ) : templates.length === 0 ? (
+                <div className="callout callout-info mb-0">{trans.no_templates_yet}</div>
+            ) : (
+                <div className="table-responsive">
+                    <table className="table table-hover table-sm mb-0">
+                        <thead className="thead-light">
+                            <tr>
+                                <th>{trans.label}</th>
+                                <th>{trans.code}</th>
+                                <th className="text-right">{trans.lines}</th>
+                                <th>{trans.author}</th>
+                                <th>{trans.updated_at}</th>
+                                <th className="text-right" />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {templates.map(t => (
+                                <tr key={t.id}>
+                                    <td>
+                                        <a href={t.url}><i className="fas fa-layer-group mr-1 text-info" />{t.label}</a>
+                                        {t.comment && <div className="small text-muted text-truncate" style={{ maxWidth: 420 }}>{t.comment}</div>}
+                                    </td>
+                                    <td className="text-muted small">{t.code}</td>
+                                    <td className="text-right">{t.quote_lines_count}</td>
+                                    <td>{t.author ?? '—'}</td>
+                                    <td>{t.updated_at}</td>
+                                    <td className="text-right text-nowrap">
+                                        <button className="btn btn-xs btn-success mr-1" onClick={() => setStartFrom(t.id)}>
+                                            <i className="fas fa-plus mr-1" />{trans.new_quote}
+                                        </button>
+                                        <a href={t.url} className="btn btn-xs btn-outline-secondary mr-1" title={trans.open_template}>
+                                            <i className="fas fa-pen" />
+                                        </a>
+                                        <button className="btn btn-xs btn-outline-danger" title={trans.delete_template} onClick={() => handleDelete(t)}>
+                                            <i className="fas fa-trash" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {startFrom && (
+                <CreateModal
+                    show
+                    onClose={() => setStartFrom(null)}
+                    endpoints={endpoints}
+                    trans={trans}
+                    initialTemplateId={startFrom}
+                />
+            )}
         </div>
     );
 }
@@ -1440,8 +1591,21 @@ function ListTab({ endpoints, trans, companieId }) {
 // Root Component
 // ---------------------------------------------------------------------------
 
+function readUrlParam(name) {
+    try { return new URLSearchParams(window.location.search).get(name); } catch { return null; }
+}
+
 export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser, endpoints, trans, companieId = null }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    // ?tab=templates|list ouvre directement l'onglet, ?template=ID pré-remplit « Nouveau devis ».
+    const canTemplates = !companieId && !!endpoints.templates;
+    const initialTemplateId = canTemplates ? readUrlParam('template') : null;
+    const [activeTab, setActiveTab] = useState(() => {
+        const tab = readUrlParam('tab');
+        if (initialTemplateId) return 'list';
+        if (tab === 'templates' && canTemplates) return 'templates';
+        if (tab === 'list') return 'list';
+        return companieId ? 'list' : 'dashboard';
+    });
 
     return (
         <div className="card card-outline card-teal">
@@ -1465,6 +1629,17 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
                             {trans.quotes_list}
                         </a>
                     </li>
+                    {canTemplates && (
+                        <li className="nav-item">
+                            <a
+                                className={`nav-link ${activeTab === 'templates' ? 'active' : ''}`}
+                                href="#"
+                                onClick={e => { e.preventDefault(); setActiveTab('templates'); }}
+                            >
+                                <i className="fas fa-layer-group mr-1" />{trans.quote_templates}
+                            </a>
+                        </li>
+                    )}
                 </ul>
             </div>
             <div className="card-body p-3">
@@ -1478,7 +1653,10 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
                     />
                 )}
                 {activeTab === 'list' && (
-                    <ListTab endpoints={endpoints} trans={trans} companieId={companieId} />
+                    <ListTab endpoints={endpoints} trans={trans} companieId={companieId} initialTemplateId={initialTemplateId} />
+                )}
+                {activeTab === 'templates' && (
+                    <TemplatesTab endpoints={endpoints} trans={trans} />
                 )}
             </div>
         </div>

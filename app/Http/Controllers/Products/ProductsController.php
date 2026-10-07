@@ -521,6 +521,7 @@ class ProductsController extends Controller
         $items = collect();
 
         QuoteLines::where('product_id', $id)
+            ->excludingTemplates()
             ->with(['quote:id,code,statu,created_at', 'Unit:id,label'])
             ->get()
             ->each(function ($l) use (&$items) {

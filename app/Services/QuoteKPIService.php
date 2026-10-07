@@ -21,6 +21,7 @@ class QuoteKPIService
                         ->select('statu', DB::raw('count(*) as QuoteCountRate'))
                         ->whereYear('created_at', $year)
                         ->whereNull('deleted_at')
+                        ->where('is_template', false)
                         ->groupBy('statu');
 
             if ($companyId) {
@@ -50,6 +51,7 @@ class QuoteKPIService
                     SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS quoteSum
                 ')
                 ->whereYear('quote_lines.created_at', $year)
+                ->whereNotIn('quote_lines.quotes_id', $this->templateIds())
                 ->groupByRaw('MONTH(quote_lines.created_at)');
 
             // If a company ID is provided, add the filter
@@ -79,6 +81,7 @@ class QuoteKPIService
                             SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS quoteSum
                         ')
                         ->whereYear('quote_lines.created_at', $lastyear)
+                        ->whereNotIn('quote_lines.quotes_id', $this->templateIds())
                         ->groupByRaw('MONTH(quote_lines.created_at)')
                         ->get();
         });
@@ -138,6 +141,7 @@ class QuoteKPIService
                 ->leftJoin('quote_lines', 'quote_lines.quotes_id', '=', 'quotes.id')
                 ->leftJoin('accounting_vats', 'accounting_vats.id', '=', 'quote_lines.accounting_vats_id')
                 ->whereNull('quotes.deleted_at')
+                ->where('quotes.is_template', false)
                 ->selectRaw('quotes.id, COALESCE(SUM(
                     quote_lines.selling_price * quote_lines.qty * (1 - quote_lines.discount / 100) *
                     (1 + COALESCE(accounting_vats.rate, 0) / 100)
@@ -213,6 +217,7 @@ class QuoteKPIService
         return Cache::remember('quote_response_rate', now()->addHours(1), function () {
             $counts = DB::table('quotes')
                 ->whereNull('deleted_at')
+                ->where('is_template', false)
                 ->selectRaw('COUNT(*) as total, SUM(CASE WHEN statu IN (3, 4, 5, 6) THEN 1 ELSE 0 END) as responded')
                 ->first();
 
@@ -224,4 +229,12 @@ class QuoteKPIService
         });
     }
 
+    /**
+     * Sous-requête des trames de devis, pour les agrégats lus directement
+     * sur quote_lines que le scope global de Quotes ne couvre pas.
+     */
+    private function templateIds(): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('quotes')->where('is_template', true)->select('id');
+    }
 }

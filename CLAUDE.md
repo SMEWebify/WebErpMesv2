@@ -237,6 +237,23 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 - **Compte rendu** : `VisitReportService`, provider IA actif, éditable ; la validation crée un
   événement type 3 « Visite sur site » et fige la visite.
 
+## Trames de devis, duplication, copie de lignes
+
+Une trame est un devis `quotes.is_template = true`, éditée avec l'écran devis habituel
+(code `TRAME-{id}`, hors numérotation). Elle garde un client de l'origine sans importance :
+le vrai client est choisi à l'instanciation (« Nouveau devis » → « Partir d'une trame »).
+- **Scope global** sur `Quotes` : une trame est invisible partout par défaut (listes,
+  sélecteurs, KPI Eloquent, IA). Un écran qui édite un devis donné passe par
+  `Quotes::withTemplates()` ; `onlyTemplates()` liste les trames. La liaison de route
+  `/quotes/{id}` et `FileableRegistry::find()` incluent les trames.
+- Les agrégats lus **directement** sur `quotes` / `quote_lines` (`DB::table`) ne voient pas le
+  scope : filtrer `is_template` ou `QuoteLines::excludingTemplates()`.
+- Une trame ne se convertit jamais en commande (`storeOrderJson` → 422).
+- Toutes les copies passent par `App\Services\Quotes` (`QuoteDuplicator` pour un devis entier,
+  `QuoteLineCopier` pour une ligne) et `Planning\BillOfMaterialsCopier` pour la gamme : la
+  nomenclature est recopiée sur toute sa profondeur (les niveaux inférieurs ne portent que
+  `sub_assembly_id`).
+
 ## Nesting (imbrication tôle)
 
 Deux moteurs coexistent derrière la même interface `/nesting`. Le back décide,

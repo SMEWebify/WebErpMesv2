@@ -319,6 +319,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/contacts/{companyId}', 'App\Http\Controllers\Workflow\QuotesController@contactsJson')->name('quotes.json.contacts');
         Route::post('/json/address', 'App\Http\Controllers\Workflow\QuotesController@storeAddressJson')->name('quotes.json.address.store');
         Route::post('/json/contact', 'App\Http\Controllers\Workflow\QuotesController@storeContactJson')->name('quotes.json.contact.store');
+        Route::get('/json/templates', 'App\Http\Controllers\Workflow\QuotesController@templatesJson')->name('quotes.json.templates');
+        Route::post('/{id}/duplicate', 'App\Http\Controllers\Workflow\QuotesController@duplicate')->name('quotes.duplicate');
+        Route::post('/{id}/save-as-template', 'App\Http\Controllers\Workflow\QuotesController@saveAsTemplate')->name('quotes.save-template');
+        Route::delete('/{id}/template', 'App\Http\Controllers\Workflow\QuotesController@destroyTemplate')->name('quotes.template.destroy');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\QuotesController@changeStatusJson')->name('quotes.json.statu');
         //quote line
@@ -328,6 +332,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // JSON API for React QuoteLinesPage
         Route::get('/{quoteId}/lines/json', 'App\Http\Controllers\Workflow\QuoteLinesController@linesForQuoteJson')->name('quotes.lines.json.for-quote');
         Route::get('/{quoteId}/lines/json/select-data', 'App\Http\Controllers\Workflow\QuoteLinesController@selectDataForQuoteJson')->name('quotes.lines.json.select-data');
+        Route::get('/{quoteId}/lines/json/import-sources', 'App\Http\Controllers\Workflow\QuoteLinesController@importSourcesJson')->name('quotes.lines.json.import-sources');
+        Route::post('/{quoteId}/lines/json/import-from', 'App\Http\Controllers\Workflow\QuoteLinesController@importFromJson')->name('quotes.lines.json.import-from');
         Route::get('/{quoteId}/lines/json/price-list/{productId}', 'App\Http\Controllers\Workflow\QuoteLinesController@priceListForProductJson')->name('quotes.lines.json.price-list');
         Route::post('/{quoteId}/lines/json/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeLineJson')->name('quotes.lines.json.store');
         Route::post('/{quoteId}/lines/json/price-increase', 'App\Http\Controllers\Workflow\QuoteLinesController@priceIncreaseJson')->name('quotes.lines.json.price-increase');

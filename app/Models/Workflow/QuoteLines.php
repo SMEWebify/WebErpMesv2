@@ -41,7 +41,20 @@ class QuoteLines extends Model
 
     public function quote()
     {
-        return $this->belongsTo(Quotes::class, 'quotes_id');
+        // Une ligne de trame doit retrouver sa trame (gamme, fichiers…).
+        return $this->belongsTo(Quotes::class, 'quotes_id')->withoutGlobalScope(Quotes::TEMPLATE_SCOPE);
+    }
+
+    /**
+     * Écarte les lignes des trames de devis, que le scope global de Quotes ne
+     * filtre pas quand on interroge les lignes directement.
+     */
+    public function scopeExcludingTemplates(Builder $query): Builder
+    {
+        return $query->whereNotIn(
+            $query->qualifyColumn('quotes_id'),
+            Quotes::onlyTemplates()->withTrashed()->select('id')
+        );
     }
 
     public function orderLine()

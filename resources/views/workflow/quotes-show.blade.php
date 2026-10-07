@@ -15,11 +15,17 @@ $arrowSteps = json_encode([
 
 @section('content_header')
     <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
+    @if($Quote->is_template)
+    {{-- Une trame n'a pas de cycle de vie : ni statut, ni navigation entre devis. --}}
+    <x-document-header h1="{{ __('general_content.quote_template_trans_key') }} : {{ $Quote->label }}"
+                       list="{{ route('quotes', ['tab' => 'templates']) }}"/>
+    @else
     <x-document-header h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}"
                        previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"
                        :steps="$arrowSteps" statu="{{ $Quote->statu }}"
                        endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
                        redirect="{{ route('quotes.show', $Quote->id) }}"/>
+    @endif
 @stop
 
 @section('right-sidebar')
@@ -27,6 +33,27 @@ $arrowSteps = json_encode([
 @section('content')
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+@if($Quote->is_template)
+<div class="callout callout-info d-flex flex-wrap align-items-center justify-content-between" style="gap:.5rem">
+  <div>
+    <i class="fas fa-layer-group mr-2 text-info"></i>{{ __('general_content.quote_template_banner_trans_key') }}
+  </div>
+  <div class="d-flex flex-wrap" style="gap:.5rem">
+    <a href="{{ route('quotes', ['tab' => 'list', 'template' => $Quote->id]) }}" class="btn btn-sm btn-success">
+      <i class="fas fa-plus mr-1"></i>{{ __('general_content.new_quote_from_template_trans_key') }}
+    </a>
+    <form method="POST" action="{{ route('quotes.template.destroy', ['id' => $Quote->id]) }}"
+          onsubmit="return confirm(@js(__('general_content.delete_template_confirm_trans_key')))">
+      @csrf
+      @method('DELETE')
+      <button type="submit" class="btn btn-sm btn-outline-danger">
+        <i class="fas fa-trash mr-1"></i>{{ __('general_content.delete_template_trans_key') }}
+      </button>
+    </form>
+  </div>
+</div>
+@endif
 
 <div class="card">
   <div class="card-header p-2">
@@ -301,13 +328,43 @@ $arrowSteps = json_encode([
                   <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
                   <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
                 </tr>
-                @if(config('mail.default') && config('mail.from.address'))
+                @unless($Quote->is_template)
+                <tr>
+                  <td style="width:50%">
+                    {{ __('general_content.duplicate_quote_trans_key') }}
+                    <div class="small text-muted">{{ __('general_content.duplicate_quote_help_trans_key') }}</div>
+                  </td>
+                  <td>
+                    <form method="POST" action="{{ route('quotes.duplicate', ['id' => $Quote->id]) }}">
+                      @csrf
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-copy mr-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:50%">{{ __('general_content.save_as_template_trans_key') }}</td>
+                  <td>
+                    <form method="POST" action="{{ route('quotes.save-template', ['id' => $Quote->id]) }}">
+                      @csrf
+                      <input type="text" name="template_label" class="form-control form-control-sm mb-1" required maxlength="255"
+                             title="{{ __('general_content.template_label_trans_key') }}"
+                             placeholder="{{ __('general_content.template_label_trans_key') }}" value="{{ $Quote->label }}">
+                      <button type="submit" class="btn btn-sm btn-outline-info">
+                        <i class="fas fa-layer-group mr-1"></i>{{ __('general_content.save_as_template_trans_key') }}
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                @endunless
+                @if(!$Quote->is_template && config('mail.default') && config('mail.from.address'))
                 <tr>
                   <td style="width:50%">{{ __('general_content.email_trans_key') }} </td>
                   <td><x-ButtonTextEmail route="{{ route('email.create', ['type' => 'quote', 'id' => $Quote->id]) }}" /></td>
                 </tr>
                 @endif
-                @if($Quote->uuid)
+                @if($Quote->uuid && !$Quote->is_template)
                 <tr>
                   <td style="width:50%">{{ __('general_content.public_link_trans_key') }}</td>
                   <td>
@@ -356,7 +413,13 @@ $arrowSteps = json_encode([
             'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
             'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
+            'importSources'   => route('quotes.lines.json.import-sources',  ['quoteId' => $Quote->id]),
+            'importFrom'      => route('quotes.lines.json.import-from',     ['quoteId' => $Quote->id]),
           ];
+          if ($Quote->is_template) {
+            // Une trame ne se convertit pas en commande.
+            unset($quoteLineEndpoints['storeOrder']);
+          }
           if (config('cad.line_import')) {
             $quoteLineEndpoints['importCad'] = route('quotes.lines.json.import-cad', ['quoteId' => $Quote->id]);
           }

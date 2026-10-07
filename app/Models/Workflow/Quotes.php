@@ -14,6 +14,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use App\Services\QuoteCalculatorService;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -51,12 +52,46 @@ class Quotes extends Model
                             'change_requested_by',
                             'change_reason',
                             'change_approved_at',
+                            'is_template',
                         ];
 
     protected $casts = [
         'reviewed_at' => 'datetime',
         'change_approved_at' => 'datetime',
+        'is_template' => 'boolean',
     ];
+
+    public const TEMPLATE_SCOPE = 'not_template';
+
+    /**
+     * Une trame de devis n'est pas un devis : elle reste hors des listes, des
+     * sélecteurs et des indicateurs. Les écrans qui éditent un devis donné
+     * passent par withTemplates() pour pouvoir ouvrir aussi une trame.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope(self::TEMPLATE_SCOPE, function (Builder $query) {
+            $query->where($query->qualifyColumn('is_template'), false);
+        });
+    }
+
+    public static function withTemplates(): Builder
+    {
+        return static::withoutGlobalScope(self::TEMPLATE_SCOPE);
+    }
+
+    public static function onlyTemplates(): Builder
+    {
+        return static::withTemplates()->where('is_template', true);
+    }
+
+    /**
+     * L'URL /quotes/{id} doit ouvrir une trame comme un devis.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return static::withTemplates()->where($field ?? $this->getRouteKeyName(), $value)->first();
+    }
 
     // Only log changes
     protected static $logOnlyDirty = true;

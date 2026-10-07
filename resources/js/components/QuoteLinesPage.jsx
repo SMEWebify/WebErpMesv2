@@ -839,6 +839,133 @@ function LineRow({
 // QuoteLinesPage
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Import de lignes depuis un autre devis ou une trame
+// ---------------------------------------------------------------------------
+
+function ImportLinesModal({ endpoints, onImported, onClose }) {
+    const [search, setSearch]     = useState('');
+    const [sources, setSources]   = useState(null);
+    const [open, setOpen]         = useState(new Set());
+    const [picked, setPicked]     = useState(new Set());
+    const [saving, setSaving]     = useState(false);
+    const [error, setError]       = useState(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSources(null);
+            const params = new URLSearchParams(search ? { search } : {});
+            fetch(`${endpoints.importSources}?${params}`, { headers: { Accept: 'application/json' } })
+                .then((r) => r.json())
+                .then((data) => setSources(data.data ?? []))
+                .catch(() => setSources([]));
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    const toggle = (set, setter, id) => setter(() => { const ns = new Set(set); ns.has(id) ? ns.delete(id) : ns.add(id); return ns; });
+
+    const toggleQuote = (source) => {
+        const ids = source.lines.map((l) => l.id);
+        const all = ids.every((id) => picked.has(id));
+        setPicked(() => { const ns = new Set(picked); ids.forEach((id) => (all ? ns.delete(id) : ns.add(id))); return ns; });
+    };
+
+    const handleImport = async () => {
+        setSaving(true);
+        setError(null);
+        const res  = await apiFetch(endpoints.importFrom, { method: 'POST', body: JSON.stringify({ line_ids: [...picked] }) });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+            onImported(data.lines ?? []);
+        } else {
+            setError(data.message ?? "Erreur lors de l'import des lignes");
+            setSaving(false);
+        }
+    };
+
+    const money = (v) => Number(v ?? 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    return (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,.5)' }}>
+            <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title"><i className="fas fa-file-import mr-2" />Importer des lignes d'un autre devis</h5>
+                        <button type="button" className="close" onClick={onClose}>&times;</button>
+                    </div>
+                    <div className="modal-body">
+                        <div className="input-group input-group-sm mb-3">
+                            <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-search" /></span></div>
+                            <input type="text" className="form-control" autoFocus
+                                placeholder="Code, libellé, client ou ligne…"
+                                value={search} onChange={(e) => setSearch(e.target.value)} />
+                        </div>
+                        <p className="text-muted small">
+                            Les lignes sont recopiées en fin de devis avec leur détail technique, leur gamme, leur nomenclature et leurs fichiers.
+                        </p>
+                        {error && <div className="alert alert-danger py-2">{error}</div>}
+                        {sources === null ? (
+                            <div className="text-center py-4"><i className="fas fa-spinner fa-spin mr-2" />Chargement…</div>
+                        ) : sources.length === 0 ? (
+                            <p className="text-muted text-center py-4">Aucun devis ne correspond.</p>
+                        ) : sources.map((source) => {
+                            const isOpen   = open.has(source.id);
+                            const selected = source.lines.filter((l) => picked.has(l.id)).length;
+                            return (
+                                <div key={source.id} className="card card-outline card-secondary mb-2">
+                                    <div className="card-header py-2 d-flex align-items-center" style={{ cursor: 'pointer', gap: '.5rem' }}
+                                        onClick={() => toggle(open, setOpen, source.id)}>
+                                        <input type="checkbox" onClick={(e) => e.stopPropagation()}
+                                            checked={selected > 0 && selected === source.lines.length}
+                                            ref={(el) => { if (el) el.indeterminate = selected > 0 && selected < source.lines.length; }}
+                                            onChange={() => toggleQuote(source)} />
+                                        <i className={`fas fa-chevron-${isOpen ? 'down' : 'right'} text-muted`} />
+                                        {source.is_template
+                                            ? <span className="badge badge-info"><i className="fas fa-layer-group mr-1" />Trame</span>
+                                            : <span className="badge badge-light">{source.code}</span>}
+                                        <strong className="text-truncate">{source.label}</strong>
+                                        {source.companie && <span className="text-muted small text-truncate">— {source.companie}</span>}
+                                        <span className="ml-auto badge badge-secondary">
+                                            {selected > 0 ? `${selected} / ` : ''}{source.lines.length} ligne{source.lines.length > 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                    {isOpen && (
+                                        <div className="card-body p-0">
+                                            <table className="table table-sm table-hover mb-0">
+                                                <tbody>
+                                                    {source.lines.map((l) => (
+                                                        <tr key={l.id} style={{ cursor: 'pointer' }} onClick={() => toggle(picked, setPicked, l.id)}>
+                                                            <td style={{ width: 32 }}>
+                                                                <input type="checkbox" checked={picked.has(l.id)} readOnly />
+                                                            </td>
+                                                            <td className="text-muted small">{l.code}</td>
+                                                            <td>{l.label}</td>
+                                                            <td className="text-right">{formatQty(l.qty)}</td>
+                                                            <td className="text-right text-nowrap">{money(l.selling_price)}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-primary btn-sm" disabled={picked.size === 0 || saving} onClick={handleImport}>
+                            {saving ? <i className="fas fa-spinner fa-spin mr-1" /> : <i className="fas fa-file-import mr-1" />}
+                            Importer {picked.size > 0 ? `${picked.size} ligne${picked.size > 1 ? 's' : ''}` : ''}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints }) {
     const [lines, setLines]             = useState([]);
     const [quoteStatu, setQuoteStatu]   = useState(Number(initialStatu));
@@ -851,6 +978,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const [priceIncAmt, setPriceIncAmt]   = useState('');
     const [flash, setFlash]               = useState(null);
     const [taskModalLine, setTaskModalLine] = useState(null);
+    const [importOpen, setImportOpen]       = useState(false);
 
     // Drag-and-drop state
     const dragIndexRef  = useRef(null);   // index in filteredLines
@@ -1071,6 +1199,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         }
     };
 
+    const handleLinesImported = (newLines) => {
+        setImportOpen(false);
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''}`);
+    };
+
     const handleCadImported = (newLines) => {
         setLines((prev) => {
             const updated = [...prev, ...newLines];
@@ -1136,7 +1274,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                         Créer produits ({selected.size})
                     </button>
                 )}
-                {(quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
+                {endpoints.storeOrder && (quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
                     <button className="btn btn-primary btn-sm" onClick={handleStoreOrder}>
                         <i className="fas fa-folder mr-1" />
                         Créer une commande ({selected.size})
@@ -1165,6 +1303,11 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                             </button>
                         </div>
                     </div>
+                )}
+                {quoteStatu === 1 && endpoints.importFrom && (
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => setImportOpen(true)}>
+                        <i className="fas fa-file-import mr-1" />Importer d'un autre devis
+                    </button>
                 )}
                 <span className="badge badge-secondary ml-auto">
                     {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
@@ -1264,6 +1407,14 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 onSaved={handleSaved}
                 quoteStatu={quoteStatu}
             />
+
+            {importOpen && (
+                <ImportLinesModal
+                    endpoints={endpoints}
+                    onImported={handleLinesImported}
+                    onClose={() => setImportOpen(false)}
+                />
+            )}
 
             {/* Task modal */}
             {taskModalLine && (
