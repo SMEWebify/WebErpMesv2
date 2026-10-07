@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
+import { SortIcon, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -63,15 +64,6 @@ function lsGet(key, fallback) {
 }
 function lsSet(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon — same style as OrdersIndex
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (!field || field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -534,23 +526,7 @@ export default function OrderLinesIndex({ endpoints, trans }) {
                     onColFilter={handleColFilter}
                 />
 
-                {meta && meta.last_page > 1 && (
-                    <nav className="mt-2">
-                        <ul className="pagination pagination-sm m-0 flex-wrap">
-                            <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(p => p - 1)}>&laquo;</button>
-                            </li>
-                            {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(p => (
-                                <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                                    <button className="page-link" onClick={() => setPage(p)}>{p}</button>
-                                </li>
-                            ))}
-                            <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(p => p + 1)}>&raquo;</button>
-                            </li>
-                        </ul>
-                    </nav>
-                )}
+                <Pagination meta={meta} navClassName="mt-2" ulClassName="pagination pagination-sm m-0 flex-wrap" onPage={setPage} />
             </div>
         </div>
     );

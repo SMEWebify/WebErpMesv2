@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QuoteRateWidget from './dashboard/widgets/QuoteRateWidget.jsx';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -359,43 +360,11 @@ function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
 // Status Badge
 // ---------------------------------------------------------------------------
 
-function StatusBadge({ statu, trans }) {
-    const cfg = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: 'unknown' };
-    return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? statu}</span>;
-}
-
 // ---------------------------------------------------------------------------
 // Status Filter
 // ---------------------------------------------------------------------------
 
 const ALL_STATUSES = [1, 2, 3, 4, 5, 6];
-
-function StatusFilter({ selected, onChange, trans }) {
-    const toggle = (id) => {
-        const next = selected.includes(id)
-            ? selected.filter(s => s !== id)
-            : [...selected, id];
-        onChange(next.length ? next : [id]);
-    };
-
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {ALL_STATUSES.map(id => {
-                const cfg    = STATUS_CONFIG[id];
-                const active = selected.includes(id);
-                return (
-                    <button
-                        key={id}
-                        className={`btn btn-sm ${active ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => toggle(id)}
-                    >
-                        {trans[cfg.label] ?? id}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
 
 // ---------------------------------------------------------------------------
 // Quotes Table — with drag-and-drop column reorder + per-column filters
@@ -414,11 +383,6 @@ function dmyToISO(str) {
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-}
-
 function colDefs(trans) {
     return {
         code:          { label: trans.code,          sortField: 'code',               align: '',       render: q => <code>{q.code}</code> },
@@ -426,7 +390,7 @@ function colDefs(trans) {
         client:        { label: trans.client,        sortField: 'companie',           align: '',       render: q => q.companie?.label ?? '—' },
         contact:       { label: trans.contact,       sortField: 'contact',            align: '',       render: q => q.contact?.name ?? '—' },
         validity_date: { label: trans.validity_date, sortField: 'validity_date',      align: '',       render: q => formatDate(q.validity_date, trans.locale) },
-        status:        { label: trans.status,        sortField: 'statu',              align: '',       render: q => <StatusBadge statu={q.statu} trans={trans} /> },
+        status:        { label: trans.status,        sortField: 'statu',              align: '',       render: q => <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" /> },
         lines:         { label: trans.lines,         sortField: 'quote_lines_count',  align: 'center', render: q => <span className="badge badge-secondary">{q.quote_lines_count}</span> },
         created_at:    { label: trans.created_at,   sortField: 'created_at',         align: '',       render: q => q.created_at },
         total:         { label: trans.total,         sortField: 'total_amount',       align: 'right',  bold: true,
@@ -699,7 +663,7 @@ function QuoteCards({ quotes, loading, trans }) {
                     <div className="card h-100">
                         <div className="card-header py-1 px-2 d-flex justify-content-between align-items-center">
                             <code className="small">{q.code}</code>
-                            <StatusBadge statu={q.statu} trans={trans} />
+                            <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />
                         </div>
                         <div className="card-body py-2 px-2">
                             <p className="mb-1 font-weight-bold">{q.label}</p>
@@ -757,32 +721,6 @@ function KanbanBoard({ quotes, trans }) {
                 );
             })}
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page - 1)}>«</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -1432,7 +1370,7 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
                 </div>
 
                 {/* Status filter */}
-                <StatusFilter selected={statuses} onChange={handleStatusChange} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
 
                 {/* Spacer */}
                 <div className="flex-grow-1" />
@@ -1472,7 +1410,7 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
                 <KanbanBoard quotes={quotes} trans={trans} />
             )}
 
-            <Pagination meta={meta} onPageChange={setPage} />
+            <Pagination meta={meta} ulClassName="pagination pagination-sm justify-content-end" onPage={setPage} />
 
             <CreateModal
                 show={showModal}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -41,11 +42,6 @@ function Avatar({ name }) {
             {initials(name)}
         </span>
     );
-}
-
-function StatusBadge({ statu, trans }) {
-    const cfg = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: String(statu) };
-    return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
 }
 
 function TypeBadge({ type, trans }) {
@@ -507,29 +503,6 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
     );
 }
 
-// ---------------------------------------------------------------------------
-// StatusFilter
-// ---------------------------------------------------------------------------
-
-function StatusFilter({ active, onToggle, trans }) {
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
-                const sid = Number(id);
-                const isActive = active.includes(sid);
-                return (
-                    <button key={sid} type="button"
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => onToggle(sid)}
-                    >
-                        {trans[cfg.label] ?? cfg.label}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
 function TypeFilter({ active, onToggle, trans }) {
     return (
         <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
@@ -546,32 +519,6 @@ function TypeFilter({ active, onToggle, trans }) {
                 );
             })}
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
-    return (
-        <nav className="mt-2">
-            <ul className="pagination pagination-sm m-0 flex-wrap">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(meta.current_page - 1)}>&laquo;</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(meta.current_page + 1)}>&raquo;</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -625,11 +572,6 @@ export default function NonConformitiesIndex({
         setPage(1);
     }
 
-    function SortIcon({ field }) {
-        if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-        return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-    }
-
     function handleSaved(updated) {
         setItems(prev => prev.map(nc => nc.id === updated.id ? updated : nc));
         setEditNc(null);
@@ -660,7 +602,7 @@ export default function NonConformitiesIndex({
                                 </div>
                             )}
                         </div>
-                        <StatusFilter active={statuses} onToggle={sid => { setStatuses(p => p.includes(sid) ? p.filter(s => s !== sid) : [...p, sid]); setPage(1); }} trans={trans} />
+                        <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={sid => { setStatuses(p => p.includes(sid) ? p.filter(s => s !== sid) : [...p, sid]); setPage(1); }} trans={trans} buttonType="button" />
                         <TypeFilter   active={types}    onToggle={tid => { setTypes(p => p.includes(tid) ? p.filter(t => t !== tid) : [...p, tid]); setPage(1); }} trans={trans} />
                         <div className="flex-grow-1" />
                         {loading && <i className="fas fa-spinner fa-spin text-muted" />}
@@ -672,16 +614,16 @@ export default function NonConformitiesIndex({
                         <table className="table table-sm table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('code')}>{t('external_id')}<SortIcon field="code" /></th>
-                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('label')}>{t('label')}<SortIcon field="label" /></th>
+                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('code')}>{t('external_id')}<SortIcon field="code" sortField={sortField} sortAsc={sortAsc} /></th>
+                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('label')}>{t('label')}<SortIcon field="label" sortField={sortField} sortAsc={sortAsc} /></th>
                                     <th>{t('user')}</th>
-                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('type')}>{t('type')}<SortIcon field="type" /></th>
-                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('statu')}>{t('status')}<SortIcon field="statu" /></th>
+                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('type')}>{t('type')}<SortIcon field="type" sortField={sortField} sortAsc={sortAsc} /></th>
+                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('statu')}>{t('status')}<SortIcon field="statu" sortField={sortField} sortAsc={sortAsc} /></th>
                                     <th>{t('company')}</th>
                                     <th>{t('order')}</th>
                                     <th>{t('task')}</th>
                                     <th>{t('delivery_notes')}</th>
-                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('created_at')}>{t('created_at')}<SortIcon field="created_at" /></th>
+                                    <th style={{ cursor: 'pointer' }} onClick={() => handleSort('created_at')}>{t('created_at')}<SortIcon field="created_at" sortField={sortField} sortAsc={sortAsc} /></th>
                                     <th>{t('actions')}</th>
                                 </tr>
                             </thead>
@@ -695,7 +637,7 @@ export default function NonConformitiesIndex({
                                         <td>{nc.label}</td>
                                         <td><Avatar name={nc.user_name} /></td>
                                         <td><TypeBadge type={nc.type} trans={trans} /></td>
-                                        <td><StatusBadge statu={nc.statu} trans={trans} /></td>
+                                        <td><StatusBadge statu={nc.statu} config={STATUS_CONFIG} trans={trans} /></td>
                                         <td>
                                             {nc.companie_id
                                                 ? <a href={`${endpoints.companieBase}/${nc.companie_id}`} className="btn btn-xs btn-outline-secondary">{nc.companie_label}</a>
@@ -734,7 +676,7 @@ export default function NonConformitiesIndex({
                         </table>
                     </div>
 
-                    <Pagination meta={meta} onPage={setPage} />
+                    <Pagination meta={meta} navClassName="mt-2" ulClassName="pagination pagination-sm m-0 flex-wrap" onPage={setPage} />
                 </div>
             </div>
 

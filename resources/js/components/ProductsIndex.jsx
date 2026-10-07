@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { SortIcon, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -268,11 +269,6 @@ function dmyToISO(str) {
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-}
-
 function BoolBadge({ value }) {
     if (value === 1) return <span className="badge badge-success"><i className="fas fa-check" /></span>;
     return <span className="badge badge-danger"><i className="fas fa-times" /></span>;
@@ -495,53 +491,6 @@ function ProductsTable({ products, loading, sortField, sortAsc, onSort, trans })
                 </table>
             </div>
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-
-    const current = meta.current_page;
-    const last = meta.last_page;
-    const delta = 2;
-
-    const range = [];
-    for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
-        range.push(i);
-    }
-
-    const items = [1];
-    if (range[0] > 2) items.push('…left');
-    items.push(...range);
-    if (range[range.length - 1] < last - 1) items.push('…right');
-    if (last > 1) items.push(last);
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end flex-wrap">
-                <li className={`page-item ${current === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(current - 1)}>«</button>
-                </li>
-                {items.map((p, i) =>
-                    typeof p === 'string' ? (
-                        <li key={p} className="page-item disabled">
-                            <span className="page-link">…</span>
-                        </li>
-                    ) : (
-                        <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                        </li>
-                    )
-                )}
-                <li className={`page-item ${current === last ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(current + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -908,7 +857,7 @@ function ListTab({ endpoints, trans }) {
                 trans={trans}
             />
 
-            <Pagination meta={meta} onPageChange={(p) => setPage(p)} />
+            <Pagination meta={meta} around={2} boundaries ulClassName="pagination pagination-sm justify-content-end flex-wrap" onPage={(p) => setPage(p)} />
 
             {showModal && (
                 <CreateModal

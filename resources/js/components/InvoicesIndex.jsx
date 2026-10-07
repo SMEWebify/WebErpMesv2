@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -412,38 +413,6 @@ function DashboardTab({ kpi, chartData, topClients, trans }) {
 // Status Badge & Status Filter
 // ---------------------------------------------------------------------------
 
-function StatusBadge({ statu, trans }) {
-    const cfg = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: 'unknown' };
-    return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? statu}</span>;
-}
-
-function StatusFilter({ selected, onChange, trans }) {
-    const toggle = (id) => {
-        const next = selected.includes(id)
-            ? selected.filter(s => s !== id)
-            : [...selected, id];
-        onChange(next.length ? next : [id]);
-    };
-
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {ALL_STATUSES.map(id => {
-                const cfg    = STATUS_CONFIG[id];
-                const active = selected.includes(id);
-                return (
-                    <button
-                        key={id}
-                        className={`btn btn-sm ${active ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => toggle(id)}
-                    >
-                        {trans[cfg.label] ?? id}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
 // ---------------------------------------------------------------------------
 // Invoices Table — drag-and-drop colonnes, filtres par colonne, masquage
 // ---------------------------------------------------------------------------
@@ -459,11 +428,6 @@ function dmyToISO(str) {
     if (!str || !str.includes('/')) return str ?? '';
     const [d, m, y] = str.split('/');
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-}
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 const QONTO_LIFECYCLE_CONFIG = {
@@ -490,7 +454,7 @@ function colDefs(trans, qontoEnabled) {
         client:     { label: trans.client,     sortField: 'companie',            align: '',       render: inv => inv.companie?.label ?? '—' },
         contact:    { label: trans.contact,    sortField: 'contact',             align: '',       render: inv => inv.contact?.name ?? '—' },
         due_date:   { label: trans.due_date,   sortField: 'due_date',            align: '',       render: inv => formatDate(inv.due_date, trans.locale) },
-        status:     { label: trans.status,     sortField: 'statu',               align: '',       render: inv => <StatusBadge statu={inv.statu} trans={trans} /> },
+        status:     { label: trans.status,     sortField: 'statu',               align: '',       render: inv => <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} fallback="value" /> },
         lines:      { label: trans.lines,      sortField: 'invoice_lines_count', align: 'center', render: inv => <span className="badge badge-secondary">{inv.invoice_lines_count}</span> },
         created_at: { label: trans.created_at, sortField: 'created_at',          align: '',       render: inv => inv.created_at },
         total:      { label: trans.total,      sortField: 'total_amount',        align: 'right',  bold: true,
@@ -746,32 +710,6 @@ function InvoicesTable({ invoices, loading, sortField, sortAsc, onSort, trans, q
 }
 
 // ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page - 1)}>«</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
-    );
-}
-
-// ---------------------------------------------------------------------------
 // LocalStorage helpers
 // ---------------------------------------------------------------------------
 
@@ -878,7 +816,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
                         onChange={handleSearchChange}
                     />
                 </div>
-                <StatusFilter selected={statuses} onChange={handleStatusChange} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
             </div>
 
             <InvoicesTable
@@ -891,7 +829,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
                 qontoEnabled={qontoEnabled}
             />
 
-            <Pagination meta={meta} onPageChange={(p) => setPage(p)} />
+            <Pagination meta={meta} ulClassName="pagination pagination-sm justify-content-end" onPage={(p) => setPage(p)} />
         </div>
     );
 }

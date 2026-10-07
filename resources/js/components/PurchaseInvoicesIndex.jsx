@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -82,49 +83,6 @@ function niceMax(value) {
     if (value <= 0) return 100;
     const exp = Math.pow(10, Math.floor(Math.log10(value)));
     return Math.ceil(value / exp) * exp;
-}
-
-// ---------------------------------------------------------------------------
-// StatusBadge
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ statu, trans }) {
-    const cfg   = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: String(statu) };
-    const label = trans[cfg.label] ?? cfg.label;
-    return <span className={`badge ${cfg.badge}`}>{label}</span>;
-}
-
-// ---------------------------------------------------------------------------
-// StatusFilter
-// ---------------------------------------------------------------------------
-
-function StatusFilter({ active, onToggle, trans }) {
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
-                const sid      = Number(id);
-                const isActive = active.includes(sid);
-                return (
-                    <button
-                        key={sid}
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => onToggle(sid)}
-                    >
-                        {trans[cfg.label] ?? cfg.label}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -417,7 +375,7 @@ function PurchaseInvoicesTable({ invoices, trans, onSort, sortField, sortAsc, lo
             case 'label':       return inv.label;
             case 'companie':    return inv.companie?.label ?? '—';
             case 'lines_count': return <span className="badge badge-secondary">{inv.lines_count}</span>;
-            case 'statu':       return <StatusBadge statu={inv.statu} trans={trans} />;
+            case 'statu':       return <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} />;
             case 'created_at':  return inv.created_at;
             default: return '—';
         }
@@ -532,50 +490,6 @@ function PurchaseInvoicesTable({ invoices, trans, onSort, sortField, sortAsc, lo
                 </table>
             </div>
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const { current_page, last_page } = meta;
-
-    const pages = [];
-    for (let p = Math.max(1, current_page - 2); p <= Math.min(last_page, current_page + 2); p++) {
-        pages.push(p);
-    }
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-center mb-0">
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page - 1)}>&laquo;</button>
-                </li>
-                {pages[0] > 1 && (
-                    <>
-                        <li className="page-item"><button className="page-link" onClick={() => onPage(1)}>1</button></li>
-                        {pages[0] > 2 && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                    </>
-                )}
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                    </li>
-                ))}
-                {pages[pages.length - 1] < last_page && (
-                    <>
-                        {pages[pages.length - 1] < last_page - 1 && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                        <li className="page-item"><button className="page-link" onClick={() => onPage(last_page)}>{last_page}</button></li>
-                    </>
-                )}
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page + 1)}>&raquo;</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -712,7 +626,7 @@ export default function PurchaseInvoicesIndex({
                                     </div>
                                 </div>
                                 <div className="col-md-7">
-                                    <StatusFilter active={activeStatuses} onToggle={handleStatusToggle} trans={trans} />
+                                    <StatusFilter config={STATUS_CONFIG} selected={activeStatuses} onToggle={handleStatusToggle} trans={trans} />
                                 </div>
                             </div>
                         </div>
@@ -742,7 +656,7 @@ export default function PurchaseInvoicesIndex({
                                 <small className="text-muted">
                                     {meta.total} {trans.results ?? 'résultats'}
                                 </small>
-                                <Pagination meta={meta} onPage={handlePage} />
+                                <Pagination meta={meta} around={2} boundaries ulClassName="pagination pagination-sm justify-content-center mb-0" onPage={handlePage} />
                             </div>
                         )}
                     </div>

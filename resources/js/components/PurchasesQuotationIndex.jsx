@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { SortIcon } from './table';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -23,11 +24,6 @@ async function apiFetch(url, options = {}) {
         throw { status: res.status, data };
     }
     return res.json();
-}
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (sortField !== field) return <i className="fas fa-sort ml-1 text-muted" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 const STATUS_LABELS = {

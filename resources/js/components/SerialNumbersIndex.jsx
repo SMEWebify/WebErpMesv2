@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -87,50 +88,13 @@ function KPICards({ kpi, trans }) {
 // Status Badge
 // ---------------------------------------------------------------------------
 
-function StatusBadge({ status, trans }) {
-    const cfg = STATUS_CONFIG[status] ?? { badge: 'badge-secondary', label: 'unknown' };
-    return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? status}</span>;
-}
-
 // ---------------------------------------------------------------------------
 // Status Filter
 // ---------------------------------------------------------------------------
 
-function StatusFilter({ selected, onChange, trans }) {
-    const toggle = (id) => {
-        const next = selected.includes(id)
-            ? selected.filter(s => s !== id)
-            : [...selected, id];
-        onChange(next.length ? next : [id]);
-    };
-
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {ALL_STATUSES.map(id => {
-                const cfg    = STATUS_CONFIG[id];
-                const active = selected.includes(id);
-                return (
-                    <button
-                        key={id}
-                        className={`btn btn-sm ${active ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => toggle(id)}
-                    >
-                        {trans[cfg.label] ?? id}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
 // ---------------------------------------------------------------------------
 // Sort Icon
 // ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-}
 
 // ---------------------------------------------------------------------------
 // Serial Numbers Table
@@ -214,7 +178,7 @@ function SerialNumbersTable({ items, sortField, sortAsc, onSort, trans }) {
                                 ) : '—'}
                             </td>
                             <td>
-                                <StatusBadge status={sn.status} trans={trans} />
+                                <StatusBadge statu={sn.status} config={STATUS_CONFIG} trans={trans} fallback="value" />
                             </td>
                             <td style={{ whiteSpace: 'nowrap' }}>{sn.created_at}</td>
                             <td>
@@ -227,46 +191,6 @@ function SerialNumbersTable({ items, sortField, sortAsc, onSort, trans }) {
                 </tbody>
             </table>
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-
-    const pages = [];
-    const current = meta.current_page;
-    const last    = meta.last_page;
-
-    for (let p = 1; p <= last; p++) {
-        if (p === 1 || p === last || (p >= current - 2 && p <= current + 2)) {
-            pages.push(p);
-        } else if (pages[pages.length - 1] !== '...') {
-            pages.push('...');
-        }
-    }
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${current === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(current - 1)}>«</button>
-                </li>
-                {pages.map((p, i) => (
-                    p === '...'
-                        ? <li key={`dots-${i}`} className="page-item disabled"><span className="page-link">…</span></li>
-                        : <li key={p} className={`page-item ${p === current ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                        </li>
-                ))}
-                <li className={`page-item ${current === last ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(current + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -394,7 +318,7 @@ function ListTab({ endpoints, trans, productId = null }) {
                         onChange={e => handleSearch(e.target.value)}
                     />
                 </div>
-                <StatusFilter selected={statuses} onChange={handleStatusChange} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
                 <div className="flex-grow-1" />
                 {meta && (
                     <small className="text-muted">{meta.total} {trans.total_serial_numbers}</small>
@@ -417,7 +341,7 @@ function ListTab({ endpoints, trans, productId = null }) {
                 />
             )}
 
-            <Pagination meta={meta} onPageChange={setPage} />
+            <Pagination meta={meta} around={2} boundaries ulClassName="pagination pagination-sm justify-content-end" onPage={setPage} />
         </div>
     );
 }

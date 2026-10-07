@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -158,43 +159,10 @@ function DonutChart({ data, trans }) {
     );
 }
 
-// ---------------------------------------------------------------------------
-// StatusBadge / PriorityBadge
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ statu, trans }) {
-    const cfg   = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: String(statu) };
-    const label = trans[cfg.label] ?? cfg.label;
-    return <span className={`badge ${cfg.badge}`}>{label}</span>;
-}
-
 function PriorityBadge({ priority, trans }) {
     const cfg   = PRIORITY_CONFIG[priority] ?? { badge: 'badge-secondary', label: String(priority) };
     const label = trans[cfg.label] ?? cfg.label;
     return <span className={`badge ${cfg.badge}`}>{label}</span>;
-}
-
-// ---------------------------------------------------------------------------
-// StatusFilter / PriorityFilter
-// ---------------------------------------------------------------------------
-
-function StatusFilter({ active, onToggle, trans }) {
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
-                const sid      = Number(id);
-                const isActive = active.includes(sid);
-                return (
-                    <button key={sid}
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => onToggle(sid)}
-                    >
-                        {trans[cfg.label] ?? cfg.label}
-                    </button>
-                );
-            })}
-        </div>
-    );
 }
 
 function PriorityFilter({ active, onToggle, trans }) {
@@ -214,15 +182,6 @@ function PriorityFilter({ active, onToggle, trans }) {
             })}
         </div>
     );
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -461,7 +420,7 @@ function LeadsTable({ items, loading, trans, onSort, sortField, sortAsc, locale 
             case 'source':     return <span>{l.source ?? '—'}</span>;
             case 'priority':   return <PriorityBadge priority={l.priority} trans={trans} />;
             case 'campaign':   return <span>{l.campaign ?? '—'}</span>;
-            case 'statu':      return <StatusBadge statu={l.statu} trans={trans} />;
+            case 'statu':      return <StatusBadge statu={l.statu} config={STATUS_CONFIG} trans={trans} />;
             case 'created_at': return l.created_at ? formatDate(l.created_at, locale) : '—';
             default:           return '—';
         }
@@ -647,7 +606,7 @@ function LeadCards({ items, loading, trans }) {
                                     </p>
                                 )}
                                 <p className="mb-0" style={{ fontSize: '0.78rem' }}>
-                                    <StatusBadge statu={l.statu} trans={trans} />
+                                    <StatusBadge statu={l.statu} config={STATUS_CONFIG} trans={trans} />
                                 </p>
                             </div>
                             <div className="card-footer bg-secondary py-1 d-flex justify-content-between align-items-center">
@@ -753,43 +712,6 @@ function KanbanBoard({ endpoints, trans }) {
                 );
             })}
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const { current_page, last_page } = meta;
-    const pages = [];
-    for (let p = Math.max(1, current_page - 2); p <= Math.min(last_page, current_page + 2); p++) pages.push(p);
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm mb-0">
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(1)}>«</button>
-                </li>
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page - 1)}>‹</button>
-                </li>
-                {pages[0] > 1 && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                    </li>
-                ))}
-                {pages[pages.length - 1] < last_page && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page + 1)}>›</button>
-                </li>
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(last_page)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -1037,7 +959,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                 </div>
 
                 {/* Status filter */}
-                <StatusFilter active={statuses} onToggle={handleStatusToggle} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
 
                 {/* Priority filter */}
                 <PriorityFilter active={priorities} onToggle={handlePriorityToggle} trans={trans} />
@@ -1086,7 +1008,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     <small className="text-muted">
                         {meta.total} {trans.list ?? 'leads'} — {trans.page ?? 'Page'} {meta.current_page}/{meta.last_page}
                     </small>
-                    <Pagination meta={meta} onPage={handlePage} />
+                    <Pagination meta={meta} around={2} jumpButtons ulClassName="pagination pagination-sm mb-0" onPage={handlePage} />
                 </div>
             )}
 

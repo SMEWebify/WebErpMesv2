@@ -15,7 +15,12 @@
 - **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Vue.js** : SUPPRIMÉ
 - **Livewire** : SUPPRIMÉ ✅ (reste en vendor uniquement comme dépendance transitive de laravel/pulse)
-- **CSS** : Bootstrap 5.3 via AdminLTE 4 (Tailwind supprimé)
+- **CSS** : le shell (jeroennoten/laravel-adminlte) charge **AdminLTE 3.2 / Bootstrap 4.6**
+  depuis `public/vendor/adminlte` ; Vite compile en plus Bootstrap 5.3 (`resources/sass/app.scss`).
+  Les composants React s'appuient sur les classes **BS4** (`ml-1`, `badge-*`, `float-right`) :
+  ne pas les « moderniser » en BS5 sans migrer le shell. Tailwind supprimé.
+- **Briques de tableau** : `resources/js/components/table/` (`SortIcon`, `Pagination`,
+  `StatusBadge`, `StatusFilter`) — à utiliser plutôt que d'en recopier dans un écran
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), Vitest (frontend, `resources/js/tests`, `npm test`)

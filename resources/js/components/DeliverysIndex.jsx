@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -213,15 +214,6 @@ function KpiCards({ deliveryKpi, trans }) {
             ))}
         </div>
     );
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon (external, same as QuotesIndex)
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -463,49 +455,6 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-
-    const pages = [];
-    const cur = meta.current_page;
-    const last = meta.last_page;
-
-    // Show first, last, current ±2, with ellipses
-    const visible = new Set([1, last, cur - 1, cur, cur + 1, cur - 2, cur + 2]
-        .filter(p => p >= 1 && p <= last));
-    const sorted = [...visible].sort((a, b) => a - b);
-
-    return (
-        <nav className="d-flex justify-content-between align-items-center px-3 pb-2">
-            <small className="text-muted">
-                {meta.total} {meta.total > 1 ? 'résultats' : 'résultat'}
-            </small>
-            <ul className="pagination pagination-sm mb-0">
-                <li className={`page-item ${cur === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(cur - 1)}>«</button>
-                </li>
-                {sorted.map((p, i) => (
-                    <React.Fragment key={p}>
-                        {i > 0 && sorted[i - 1] < p - 1 && (
-                            <li className="page-item disabled"><span className="page-link">…</span></li>
-                        )}
-                        <li className={`page-item ${p === cur ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                        </li>
-                    </React.Fragment>
-                ))}
-                <li className={`page-item ${cur === last ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(cur + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
-    );
-}
-
-// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -718,7 +667,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                             trans={trans}
                         />
 
-                        <Pagination meta={meta} onPage={p => setPage(p)} />
+                        <Pagination meta={meta} around={2} boundaries showTotal navClassName="d-flex justify-content-between align-items-center px-3 pb-2" ulClassName="pagination pagination-sm mb-0" onPage={p => setPage(p)} />
                     </div>
                 </div>
             </div>

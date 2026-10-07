@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -85,54 +86,6 @@ function readSavedHiddenCols() {
         if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
     } catch {}
     return new Set();
-}
-
-// ---------------------------------------------------------------------------
-// StatusBadge
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ statu, trans }) {
-    const cfg = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: String(statu) };
-    return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
-}
-
-// ---------------------------------------------------------------------------
-// StatusFilter
-// ---------------------------------------------------------------------------
-
-function StatusFilter({ selected, onChange, trans }) {
-    const toggle = (id) => {
-        const next = selected.includes(id)
-            ? selected.filter(s => s !== id)
-            : [...selected, id];
-        onChange(next.length ? next : [id]);
-    };
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {ALL_STATUSES.map(id => {
-                const cfg    = STATUS_CONFIG[id];
-                const active = selected.includes(id);
-                return (
-                    <button
-                        key={id}
-                        className={`btn btn-sm ${active ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => toggle(id)}
-                    >
-                        {trans[cfg.label] ?? id}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -379,7 +332,7 @@ function colDefs(trans) {
         },
         statu: {
             label: trans.status ?? 'Statut', sortField: 'statu',
-            render: r => <StatusBadge statu={r.statu} trans={trans} />,
+            render: r => <StatusBadge statu={r.statu} config={STATUS_CONFIG} trans={trans} />,
         },
         created_at: {
             label: trans.created_at ?? 'Créé le', sortField: 'created_at',
@@ -405,32 +358,6 @@ function matchesColFilter(row, colId, value) {
         case 'companie': return (row.companie_label ?? '').toLowerCase().includes(v);
         default:        return true;
     }
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page - 1)}>«</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
-    );
 }
 
 // ---------------------------------------------------------------------------
@@ -701,7 +628,7 @@ function ListTab({ endpoints, trans }) {
                         onChange={e => handleSearch(e.target.value)}
                     />
                 </div>
-                <StatusFilter selected={statuses} onChange={handleStatusChange} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
                 <div className="flex-grow-1" />
                 {meta && (
                     <small className="text-muted flex-shrink-0">
@@ -728,7 +655,7 @@ function ListTab({ endpoints, trans }) {
                 />
             )}
 
-            <Pagination meta={meta} onPageChange={p => setPage(p)} />
+            <Pagination meta={meta} ulClassName="pagination pagination-sm justify-content-end" onPage={p => setPage(p)} />
         </div>
     );
 }

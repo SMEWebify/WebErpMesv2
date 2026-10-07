@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SortIcon, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -275,11 +276,6 @@ function ActiveBadge({ active }) {
 // Sort Icon
 // ---------------------------------------------------------------------------
 
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" style={{ fontSize: '0.7rem' }} />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} style={{ fontSize: '0.7rem' }} />;
-}
-
 // ---------------------------------------------------------------------------
 // Type Filter
 // ---------------------------------------------------------------------------
@@ -462,7 +458,7 @@ function CompaniesTable({ companies, loading, sortField, sortAsc, onSort, trans 
                                     >
                                         <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
                                         {col.label}
-                                        <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} />
+                                        <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} size="sm" />
                                         <span
                                             role="button"
                                             aria-label="Masquer la colonne"
@@ -551,32 +547,6 @@ function CompaniesTable({ companies, loading, sortField, sortAsc, onSort, trans 
                 </table>
             </div>
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = Array.from({ length: meta.last_page }, (_, i) => i + 1);
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-end">
-                <li className={`page-item ${meta.current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page - 1)}>«</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === meta.current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${meta.current_page === meta.last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(meta.current_page + 1)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -836,7 +806,7 @@ function ListTab({ endpoints, trans }) {
                 trans={trans}
             />
 
-            <Pagination meta={meta} onPageChange={p => { setPage(p); fetchCompanies({ page: p }); }} />
+            <Pagination meta={meta} ulClassName="pagination pagination-sm justify-content-end" onPage={p => { setPage(p); fetchCompanies({ page: p }); }} />
 
             <CreateModal
                 show={showModal}

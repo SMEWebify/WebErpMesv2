@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // useRef used by OrdersTable drag-and-drop + ListTab debounce
+import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -78,49 +79,6 @@ function dmyToISO(str) {
     const parts = str.split('/');
     if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
     return str;
-}
-
-// ---------------------------------------------------------------------------
-// StatusBadge
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ statu, trans }) {
-    const cfg   = STATUS_CONFIG[statu] ?? { badge: 'badge-secondary', label: String(statu) };
-    const label = trans[cfg.label] ?? cfg.label;
-    return <span className={`badge ${cfg.badge}`}>{label}</span>;
-}
-
-// ---------------------------------------------------------------------------
-// StatusFilter
-// ---------------------------------------------------------------------------
-
-function StatusFilter({ active, onToggle, trans }) {
-    return (
-        <div className="d-flex flex-wrap" style={{ gap: '0.25rem' }}>
-            {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
-                const sid      = Number(id);
-                const isActive = active.includes(sid);
-                return (
-                    <button
-                        key={sid}
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
-                        onClick={() => onToggle(sid)}
-                    >
-                        {trans[cfg.label] ?? cfg.label}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// SortIcon
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (field !== sortField) return <i className="fas fa-sort text-muted ml-1" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -580,7 +538,7 @@ function OrdersTable({ orders, loading, trans, onSort, sortField, sortAsc, curre
             case 'customer_reference': return o.customer_reference ?? '—';
             case 'companie':           return o.companie?.label ?? '—';
             case 'contact':            return o.contact?.name ?? '—';
-            case 'statu':              return <StatusBadge statu={o.statu} trans={trans} />;
+            case 'statu':              return <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />;
             case 'validity_date':      return formatDate(o.validity_date, locale);
             case 'created_at':         return o.created_at;
             case 'order_lines_count':  return <span className="badge badge-secondary">{o.order_lines_count}</span>;
@@ -754,7 +712,7 @@ function OrderCards({ orders, loading, trans, currency, locale }) {
                         <div className="card-body p-2">
                             <div className="d-flex justify-content-between align-items-start mb-1">
                                 <a href={o.url} className="font-weight-bold text-primary"><code>{o.code}</code></a>
-                                <StatusBadge statu={o.statu} trans={trans} />
+                                <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />
                             </div>
                             <div className="text-truncate small" title={o.label}>{o.label}</div>
                             {o.companie && <div className="text-muted" style={{ fontSize: '0.72rem' }}>{o.companie.label}</div>}
@@ -813,43 +771,6 @@ function KanbanBoard({ statuses, trans, currency, locale }) {
                 );
             })}
         </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const { current_page, last_page } = meta;
-    const pages = [];
-    for (let p = Math.max(1, current_page - 2); p <= Math.min(last_page, current_page + 2); p++) pages.push(p);
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm mb-0">
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(1)}>«</button>
-                </li>
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page - 1)}>‹</button>
-                </li>
-                {pages[0] > 1 && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                    </li>
-                ))}
-                {pages[pages.length - 1] < last_page && <li className="page-item disabled"><span className="page-link">…</span></li>}
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page + 1)}>›</button>
-                </li>
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(last_page)}>»</button>
-                </li>
-            </ul>
-        </nav>
     );
 }
 
@@ -1377,7 +1298,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </div>
 
                 {/* Status filter */}
-                <StatusFilter active={statuses} onToggle={handleStatusToggle} trans={trans} />
+                <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
 
                 {/* Spacer */}
                 <div className="flex-grow-1" />
@@ -1425,7 +1346,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                     <small className="text-muted">
                         {meta.total} {trans.orders ?? 'orders'} — {trans.page ?? 'Page'} {meta.current_page}/{meta.last_page}
                     </small>
-                    <Pagination meta={meta} onPage={handlePage} />
+                    <Pagination meta={meta} around={2} jumpButtons ulClassName="pagination pagination-sm mb-0" onPage={handlePage} />
                 </div>
             )}
 

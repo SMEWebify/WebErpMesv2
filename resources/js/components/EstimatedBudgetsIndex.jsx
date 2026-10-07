@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -241,27 +242,6 @@ function SortTh({ field, sortField, sortAsc, onSort, children }) {
 }
 
 // ---------------------------------------------------------------------------
-// Pagination
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPageChange }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const pages = [];
-    for (let p = 1; p <= meta.last_page; p++) pages.push(p);
-    return (
-        <nav>
-            <ul className="pagination pagination-sm m-0 float-right">
-                {pages.map(p => (
-                    <li key={p} className={`page-item${meta.current_page === p ? ' active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(p)}>{p}</button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-}
-
-// ---------------------------------------------------------------------------
 // BudgetTable
 // ---------------------------------------------------------------------------
 
@@ -349,7 +329,7 @@ function BudgetTable({ budgets, meta, sortField, sortAsc, onSort, onEdit, onDele
                     </table>
                 </div>
 
-                <Pagination meta={meta} onPageChange={onPageChange} />
+                <Pagination meta={meta} prevNext={false} ulClassName="pagination pagination-sm m-0 float-right" onPage={onPageChange} />
             </div>
         </div>
     );
