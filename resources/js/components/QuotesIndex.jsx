@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QuoteRateWidget from './dashboard/widgets/QuoteRateWidget.jsx';
-import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -367,282 +367,52 @@ function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
 const ALL_STATUSES = [1, 2, 3, 4, 5, 6];
 
 // ---------------------------------------------------------------------------
-// Quotes Table — with drag-and-drop column reorder + per-column filters
+// Quotes Table — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
 const LS_COL_ORDER     = 'quotes_table_col_order';
 const LS_HIDDEN_COLS   = 'quotes_table_hidden_cols';
-const DEFAULT_COL_ORDER = ['code', 'label', 'client', 'contact', 'validity_date', 'status', 'lines', 'created_at', 'total'];
-const TEXT_FILTER_COLS  = new Set(['code', 'label', 'client', 'contact']);
-const DATE_RANGE_COLS   = new Set(['validity_date', 'created_at']);
 
-// Parse "dd/mm/yyyy" → "yyyy-mm-dd" for date comparison
-function dmyToISO(str) {
-    if (!str || !str.includes('/')) return str ?? '';
-    const [d, m, y] = str.split('/');
-    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-}
-
-function colDefs(trans) {
-    return {
-        code:          { label: trans.code,          sortField: 'code',               align: '',       render: q => <code>{q.code}</code> },
-        label:         { label: trans.label,         sortField: 'label',              align: '',       render: q => q.label },
-        client:        { label: trans.client,        sortField: 'companie',           align: '',       render: q => q.companie?.label ?? '—' },
-        contact:       { label: trans.contact,       sortField: 'contact',            align: '',       render: q => q.contact?.name ?? '—' },
-        validity_date: { label: trans.validity_date, sortField: 'validity_date',      align: '',       render: q => formatDate(q.validity_date, trans.locale) },
-        status:        { label: trans.status,        sortField: 'statu',              align: '',       render: q => <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" /> },
-        lines:         { label: trans.lines,         sortField: 'quote_lines_count',  align: 'center', render: q => <span className="badge badge-secondary">{q.quote_lines_count}</span> },
-        created_at:    { label: trans.created_at,   sortField: 'created_at',         align: '',       render: q => q.created_at },
-        total:         { label: trans.total,         sortField: 'total_amount',       align: 'right',  bold: true,
-                         render: q => q.total_amount > 0
-                             ? formatCurrency(q.total_amount, trans.currency, trans.locale)
-                             : <span className="text-muted">—</span> },
-    };
-}
-
-function matchesColFilter(q, colId, value) {
-    if (DATE_RANGE_COLS.has(colId)) {
-        const { from, to } = value ?? {};
-        const iso = colId === 'validity_date' ? (q.validity_date ?? '') : dmyToISO(q.created_at ?? '');
-        if (!iso) return true;
-        if (from && iso < from) return false;
-        if (to   && iso > to)   return false;
-        return true;
-    }
-    const v = (value ?? '').toLowerCase().trim();
-    if (!v) return true;
-    switch (colId) {
-        case 'code':    return (q.code ?? '').toLowerCase().includes(v);
-        case 'label':   return (q.label ?? '').toLowerCase().includes(v);
-        case 'client':  return (q.companie?.label ?? '').toLowerCase().includes(v);
-        case 'contact': return (q.contact?.name ?? '').toLowerCase().includes(v);
-        default:        return true;
-    }
-}
-
-function readSavedColOrder() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
-    } catch {}
-    return DEFAULT_COL_ORDER;
-}
-
-function readSavedHiddenCols() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
-        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
-    } catch {}
-    return new Set();
+function quoteColumns(trans) {
+    return [
+        { key: 'code',          label: trans.code,          sortable: true,
+          render: q => <code>{q.code}</code>, filter: 'text', mobile: 'title', mobileRender: q => q.code },
+        { key: 'label',         label: trans.label,         sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'client',        label: trans.client,        sortable: 'companie',
+          render: q => q.companie?.label ?? '—', filterValue: q => q.companie?.label, filter: 'text', mobile: 'subtitle', mobileOrder: 1 },
+        { key: 'contact',       label: trans.contact,       sortable: true,
+          render: q => q.contact?.name ?? '—', filterValue: q => q.contact?.name, filter: 'text' },
+        { key: 'validity_date', label: trans.validity_date, sortable: true,
+          render: q => formatDate(q.validity_date, trans.locale), filter: 'date' },
+        { key: 'status',        label: trans.status,        sortable: 'statu',
+          render: q => <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />, mobile: 'badge' },
+        { key: 'lines',         label: trans.lines,         sortable: 'quote_lines_count', align: 'center',
+          render: q => <span className="badge badge-secondary">{q.quote_lines_count}</span> },
+        { key: 'created_at',    label: trans.created_at,    sortable: true,
+          filter: 'date' },
+        { key: 'total',         label: trans.total,         sortable: 'total_amount', align: 'right', bold: true,
+          render: q => (q.total_amount > 0
+              ? formatCurrency(q.total_amount, trans.currency, trans.locale)
+              : <span className="text-muted">—</span>),
+          total: { value: q => q.total_amount ?? 0, format: sum => formatCurrency(sum, trans.currency, trans.locale) },
+          mobile: 'amount', mobileRender: q => (q.total_amount > 0 ? formatCurrency(q.total_amount, trans.currency, trans.locale) : null) },
+    ];
 }
 
 function QuotesTable({ quotes, loading, sortField, sortAsc, onSort, trans }) {
-    const [colOrder,   setColOrder]   = useState(readSavedColOrder);
-    const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
-    const [colFilters, setColFilters] = useState({});
-    const [dragOver,   setDragOver]   = useState(null);
-    const dragCol = useRef(null);
-
-    const COLS       = colDefs(trans);
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c));
-
-    const hideCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.add(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const showCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.delete(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    // Apply per-column filters on top of whatever quotes were passed in
-    const filtered = quotes.filter(q =>
-        visibleCols.every(colId => matchesColFilter(q, colId, colFilters[colId] ?? ''))
-    );
-
-    // ---- drag handlers ----
-    const onDragStart = (colId) => { dragCol.current = colId; };
-    const onDragOver  = (e, colId) => { e.preventDefault(); setDragOver(colId); };
-    const onDragLeave = () => setDragOver(null);
-    const onDrop      = (targetId) => {
-        const src = dragCol.current;
-        if (!src || src === targetId) { setDragOver(null); return; }
-        const next = [...colOrder];
-        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
-        setColOrder(next);
-        localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
-        setDragOver(null);
-        dragCol.current = null;
-    };
-
-    const pageTotal  = filtered.reduce((s, q) => s + (q.total_amount ?? 0), 0);
-    const totalIdx   = visibleCols.indexOf('total');
-    const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
-
     return (
-        <div>
-            {/* ── hidden-column restore chips ── */}
-            {hiddenCols.size > 0 && (
-                <div className="mb-2 d-flex flex-wrap" style={{ gap: '4px' }}>
-                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
-                        <button
-                            key={colId}
-                            type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
-                            onClick={() => showCol(colId)}
-                            title="Réafficher la colonne"
-                        >
-                            + {COLS[colId].label}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            <div className="table-responsive">
-                <table className="table table-hover table-sm">
-                    <thead>
-                        {/* ── row 1 : column headers (draggable + hide button) ── */}
-                        <tr>
-                            {visibleCols.map(colId => {
-                                const col      = COLS[colId];
-                                const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                const dropping = dragOver === colId;
-                                return (
-                                    <th
-                                        key={colId}
-                                        className={alignCls}
-                                        draggable
-                                        style={{
-                                            cursor:     'pointer',
-                                            whiteSpace: 'nowrap',
-                                            userSelect: 'none',
-                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
-                                            background: dropping ? '#e8f0fe' : undefined,
-                                        }}
-                                        onDragStart={() => onDragStart(colId)}
-                                        onDragOver={(e) => onDragOver(e, colId)}
-                                        onDragLeave={onDragLeave}
-                                        onDrop={() => onDrop(colId)}
-                                        onClick={() => onSort(col.sortField)}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {col.label}
-                                        <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} />
-                                        <span
-                                            role="button"
-                                            aria-label="Masquer la colonne"
-                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                            className="text-danger"
-                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
-                                        >
-                                            ×
-                                        </span>
-                                    </th>
-                                );
-                            })}
-                            <th style={{ width: 36 }} />
-                        </tr>
-                        {/* ── row 2 : per-column filter inputs ── */}
-                        <tr>
-                            {visibleCols.map(colId => (
-                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
-                                    {TEXT_FILTER_COLS.has(colId) && (
-                                        <input
-                                            type="text"
-                                            className="form-control form-control-sm"
-                                            style={inputStyle}
-                                            placeholder="⌕"
-                                            value={colFilters[colId] ?? ''}
-                                            onChange={e => setColFilters(prev => ({ ...prev, [colId]: e.target.value }))}
-                                        />
-                                    )}
-                                    {DATE_RANGE_COLS.has(colId) && (
-                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Du"
-                                                value={(colFilters[colId] ?? {}).from ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev,
-                                                    [colId]: { ...(prev[colId] ?? {}), from: e.target.value },
-                                                }))}
-                                            />
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Au"
-                                                value={(colFilters[colId] ?? {}).to ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev,
-                                                    [colId]: { ...(prev[colId] ?? {}), to: e.target.value },
-                                                }))}
-                                            />
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
-                        ) : filtered.length === 0 ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        ) : null}
-                        {!loading && filtered.map(q => (
-                            <tr key={q.id}>
-                                {visibleCols.map(colId => {
-                                    const col      = COLS[colId];
-                                    const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                    return (
-                                        <td
-                                            key={colId}
-                                            className={`${alignCls}${col.bold ? ' font-weight-bold' : ''}`}
-                                            style={(col.align === 'right' || col.bold) ? { whiteSpace: 'nowrap' } : {}}
-                                        >
-                                            {col.render(q)}
-                                        </td>
-                                    );
-                                })}
-                                <td>
-                                    <a href={q.url} className="btn btn-xs btn-info">
-                                        <i className="fas fa-eye" />
-                                    </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    {filtered.length > 0 && (
-                        <tfoot>
-                            <tr className="font-weight-bold bg-light">
-                                {visibleCols.map((colId, i) => {
-                                    if (colId === 'total') return (
-                                        <td key={colId} className="text-right" style={{ whiteSpace: 'nowrap' }}>
-                                            {formatCurrency(pageTotal, trans.currency, trans.locale)}
-                                        </td>
-                                    );
-                                    if (i === totalIdx - 1) return <td key={colId} className="text-right">{trans.total}</td>;
-                                    return <td key={colId} />;
-                                })}
-                                <td />
-                            </tr>
-                        </tfoot>
-                    )}
-                </table>
-            </div>
-        </div>
+        <DataTable
+            rows={quotes}
+            columns={quoteColumns(trans)}
+            loading={loading}
+            trans={trans}
+            sortField={sortField}
+            sortAsc={sortAsc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            rowHref={q => q.url}
+        />
     );
 }
 
