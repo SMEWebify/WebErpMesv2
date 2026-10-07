@@ -289,6 +289,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
+        Route::get('/{id}/json/summary', 'App\Http\Controllers\Workflow\OpportunitySummaryController@summary')->name('opportunities.json.summary');
+        Route::get('/{id}/json/timeline', 'App\Http\Controllers\Workflow\OpportunitySummaryController@timeline')->name('opportunities.json.timeline');
         Route::get('/{id}/visit', 'App\Http\Controllers\Workflow\OpportunityVisitsController@show')->name('opportunities.visit');
         Route::post('/{id}/visits/json', 'App\Http\Controllers\Workflow\OpportunityVisitsController@store')->name('opportunities.visits.store');
 

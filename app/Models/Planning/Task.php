@@ -537,13 +537,26 @@ class Task extends Model
             ->orderBy('id')
             ->get(['type', 'timestamp']);
 
+        return $this->cachedLogWorkedSeconds = self::workedSecondsFrom($activities);
+    }
+
+    /**
+     * Appariement START → STOP décrit sur computeWorkedSeconds(), à partir
+     * d'activités déjà chargées et triées par (timestamp, id). Public pour les
+     * agrégats multi-tâches (synthèse d'affaire) qui chargent toutes les
+     * activités en une requête au lieu d'une par tâche.
+     *
+     * @param iterable<object{type:int|string,timestamp:mixed}> $activities
+     */
+    public static function workedSecondsFrom(iterable $activities): int
+    {
         $worked  = 0;
         $openAt  = null;
 
         foreach ($activities as $activity) {
             $ts = Carbon::parse($activity->timestamp);
 
-            if ($activity->type === TaskActivities::TYPE_START) {
+            if ((int) $activity->type === TaskActivities::TYPE_START) {
                 if ($openAt === null) {
                     $openAt = $ts;
                 }
@@ -551,16 +564,17 @@ class Task extends Model
             }
 
             if ($openAt !== null) {
-                $worked += max(0, $ts->diffInSeconds($openAt));
+                // Carbon 3 : écart signé, $debut->diffInSeconds($fin) est positif.
+                $worked += (int) max(0, $openAt->diffInSeconds($ts));
                 $openAt  = null;
             }
         }
 
         if ($openAt !== null) {
-            $worked += max(0, Carbon::now()->diffInSeconds($openAt));
+            $worked += (int) max(0, $openAt->diffInSeconds(Carbon::now()));
         }
 
-        return $this->cachedLogWorkedSeconds = $worked;
+        return $worked;
     }
 
     /**

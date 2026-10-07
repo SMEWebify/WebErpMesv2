@@ -237,6 +237,28 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 - **Compte rendu** : `VisitReportService`, provider IA actif, éditable ; la validation crée un
   événement type 3 « Visite sur site » et fige la visite.
 
+## Dossier d'affaire (synthèse de l'opportunité)
+
+L'affaire **est** l'opportunité : pas d'entité propre. Onglet « Synthèse » (premier, actif)
+de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline`
+(`OpportunitySummaryController`, mêmes middlewares que la fiche).
+- **Périmètre** (`App\Services\Affairs\AffairScope`) : devis `opportunities_id` → commandes
+  client `quotes_id` → lignes article → tâches → lignes d'achat `tasks_id` ; factures par
+  `order_id` **ou** par une ligne de facture sur une ligne de l'affaire (facture
+  multi-commandes). Un devis sans opportunité reste un devis courant, jamais rattaché.
+- **`AffairSummaryService`** : étape déduite des documents (`App\Enums\AffairStage`),
+  blocages par règles explicites (devis expiré / envoyé sans réponse, achat en retard,
+  réception partielle, tâche suspendue, commande en retard, facture échue, visite non
+  validée), prochaine action, montants. **9 requêtes quelle que soit la taille**, lectures
+  en `toBase()` (les accesseurs de prix feraient une requête par ligne) — couvert par un
+  test de comptage. Seuils dans `config/affairs.php`.
+- **Permissions** : les sections d'un module dont l'utilisateur n'a pas le menu
+  (`quotes-menu`, `orders-menu`, `purchases-menu`, `deliverys-menu`, `invoices-menu`)
+  disparaissent avec leurs blocages, montants et actions ; l'étape reste calculée sur tout.
+- Front : `components/affairs/AffairSummary.jsx` et `AffairTimeline.jsx` (onglet
+  `#TimeLine`, chargé quand il devient visible). Traductions `resources/lang/*/affairs.php`.
+- Tests : `tests/Feature/Affairs/`.
+
 ## Trames de devis, duplication, copie de lignes
 
 Une trame est un devis `quotes.is_template = true`, éditée avec l'écran devis habituel

@@ -3,6 +3,10 @@
 @section('title', __('general_content.opportunity_trans_key')  . ' - ' . $Opportunity->label)
 
 @php
+$affairEndpoints = [
+    'summary'  => route('opportunities.json.summary', $Opportunity->id),
+    'timeline' => route('opportunities.json.timeline', $Opportunity->id),
+];
 $oppSteps = json_encode([
     ['value' => 1, 'label' => __('general_content.new_trans_key')],
     ['value' => 2, 'label' => __('general_content.quote_made_trans_key')],
@@ -30,8 +34,9 @@ $oppSteps = json_encode([
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab">TimeLine</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Summary" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{ __('affairs.summary_tab') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab"><i class="fas fa-stream"></i> {{ __('affairs.timeline_tab') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Visits" data-toggle="tab"><i class="fas fa-mobile-alt"></i> {{ __('visits.visits') }} ({{ count($VisitsList) }})</a></li>
@@ -42,7 +47,14 @@ $oppSteps = json_encode([
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Opportunity">
+      <div class="tab-pane active" id="Summary">
+        <div data-react="affair-summary"
+             data-endpoints='@json($affairEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-trans='@json(__('affairs'), JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-locale="{{ app()->getLocale() }}"
+             data-currency="{{ app('Factory')->curency ?? 'EUR' }}"></div>
+      </div>
+      <div class="tab-pane" id="Opportunity">
         <x-relational-breadcrumb :entity="$Opportunity" />
         <div class="row">
           <div class="col-md-9">
@@ -159,33 +171,12 @@ $oppSteps = json_encode([
           </div>
         </div>
       </div>   
-      <div class="tab-pane " id="TimeLine">
-        <div class="timeline timeline-inverse">
-          @php
-              $previousDate = null;
-          @endphp
-
-          @foreach($timelineData as $item)
-            @if ($item['date'] != $previousDate)
-            <div class="time-label">
-                <span class="bg-info">{{ $item['date'] }}</span>
-            </div>
-            @endif
-            <div>
-                <i class="{{ $item['icon'] }}"></i>
-                <div class="timeline-item">
-                    <span class="time"><i class="far fa-clock"></i> {{ $item['details'] }}</span>
-                    <h3 class="timeline-header">{{ $item['content'] }}</h3>
-                </div>
-            </div>
-            @php
-              $previousDate = $item['date'];
-            @endphp
-        @endforeach
-          <div>
-            <i class="far fa-clock bg-gray"></i>
-          </div>
-        </div>
+      <div class="tab-pane" id="TimeLine">
+        <div data-react="affair-timeline"
+             data-endpoint="{{ $affairEndpoints['timeline'] }}"
+             data-trans='@json(__('affairs'), JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-locale="{{ app()->getLocale() }}"
+             data-currency="{{ app('Factory')->curency ?? 'EUR' }}"></div>
       </div>
       <div class="tab-pane " id="Activities">
         <div class="row">
