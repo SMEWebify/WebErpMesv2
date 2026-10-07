@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -410,25 +410,16 @@ function DashboardTab({ kpi, chartData, topClients, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Status Badge & Status Filter
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Invoices Table — drag-and-drop colonnes, filtres par colonne, masquage
+// Invoices Table — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
 const LS_COL_ORDER    = 'invoices_table_col_order';
 const LS_HIDDEN_COLS  = 'invoices_table_hidden_cols';
-const DEFAULT_COL_ORDER         = ['code', 'label', 'client', 'contact', 'due_date', 'status', 'lines', 'created_at', 'total'];
-const DEFAULT_COL_ORDER_QONTO   = ['code', 'label', 'client', 'contact', 'due_date', 'status', 'lines', 'created_at', 'total', 'qonto'];
-const TEXT_FILTER_COLS  = new Set(['code', 'label', 'client', 'contact']);
-const DATE_RANGE_COLS   = new Set(['due_date', 'created_at']);
 
-function dmyToISO(str) {
-    if (!str || !str.includes('/')) return str ?? '';
-    const [d, m, y] = str.split('/');
-    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-}
+// La colonne de statut PDP n'a jamais été affichée : l'ancien tableau figeait l'ordre des
+// colonnes avant de recevoir pdp_enabled. Elle reste masquée tant que son libellé (« Qonto »)
+// et ses statuts, propres à Qonto, ne sont pas adaptés aux autres plateformes (SUPER PDP).
+const PDP_COLUMN_VISIBLE = false;
 
 const QONTO_LIFECYCLE_CONFIG = {
     pending:      { badge: 'badge-secondary', label: 'Non déposée' },
@@ -447,265 +438,86 @@ function QontoStatusBadge({ status }) {
     return <span className={`badge ${cfg.badge}`} title="Statut de la facture chez Qonto">{cfg.label}</span>;
 }
 
-function colDefs(trans, qontoEnabled) {
-    const defs = {
-        code:       { label: trans.code,       sortField: 'code',                align: '',       render: inv => <code>{inv.code}</code> },
-        label:      { label: trans.label,      sortField: 'label',               align: '',       render: inv => inv.label },
-        client:     { label: trans.client,     sortField: 'companie',            align: '',       render: inv => inv.companie?.label ?? '—' },
-        contact:    { label: trans.contact,    sortField: 'contact',             align: '',       render: inv => inv.contact?.name ?? '—' },
-        due_date:   { label: trans.due_date,   sortField: 'due_date',            align: '',       render: inv => formatDate(inv.due_date, trans.locale) },
-        status:     { label: trans.status,     sortField: 'statu',               align: '',       render: inv => <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} fallback="value" /> },
-        lines:      { label: trans.lines,      sortField: 'invoice_lines_count', align: 'center', render: inv => <span className="badge badge-secondary">{inv.invoice_lines_count}</span> },
-        created_at: { label: trans.created_at, sortField: 'created_at',          align: '',       render: inv => inv.created_at },
-        total:      { label: trans.total,      sortField: 'total_amount',        align: 'right',  bold: true,
-                      render: inv => inv.total_amount > 0
-                          ? formatCurrency(inv.total_amount, trans.currency, trans.locale)
-                          : <span className="text-muted">—</span> },
-    };
-
-    if (qontoEnabled) {
-        defs.qonto = {
-            label: 'Qonto',
-            sortField: null,
-            align: 'center',
-            render: inv => <QontoStatusBadge status={inv.pdp_status} />,
-        };
+function invoiceColumns(trans, pdpEnabled) {
+    const columns = [
+        { key: 'code',       label: trans.code,       sortable: true,
+          render: inv => <code>{inv.code}</code>, filter: 'text', mobile: 'title', mobileRender: inv => inv.code },
+        { key: 'label',      label: trans.label,      sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'client',     label: trans.client,     sortable: 'companie',
+          render: inv => inv.companie?.label ?? '—', filterValue: inv => inv.companie?.label, filter: 'text', mobile: 'subtitle', mobileOrder: 1 },
+        { key: 'contact',    label: trans.contact,    sortable: true,
+          render: inv => inv.contact?.name ?? '—', filterValue: inv => inv.contact?.name, filter: 'text' },
+        { key: 'due_date',   label: trans.due_date,   sortable: true,
+          render: inv => formatDate(inv.due_date, trans.locale), filter: 'date' },
+        { key: 'status',     label: trans.status,     sortable: 'statu',
+          render: inv => <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />, mobile: 'badge' },
+        { key: 'lines',      label: trans.lines,      sortable: 'invoice_lines_count', align: 'center',
+          render: inv => <span className="badge badge-secondary">{inv.invoice_lines_count}</span> },
+        { key: 'created_at', label: trans.created_at, sortable: true,
+          filter: 'date' },
+        { key: 'total',      label: trans.total,      sortable: 'total_amount', align: 'right', bold: true,
+          render: inv => (inv.total_amount > 0
+              ? formatCurrency(inv.total_amount, trans.currency, trans.locale)
+              : <span className="text-muted">—</span>),
+          total: { value: inv => inv.total_amount ?? 0, format: sum => formatCurrency(sum, trans.currency, trans.locale) },
+          mobile: 'amount', mobileRender: inv => (inv.total_amount > 0 ? formatCurrency(inv.total_amount, trans.currency, trans.locale) : null) },
+    ];
+    if (pdpEnabled && PDP_COLUMN_VISIBLE) {
+        columns.push({ key: 'qonto', label: 'Qonto', align: 'center', render: inv => <QontoStatusBadge status={inv.pdp_status} /> });
     }
-
-    return defs;
+    return columns;
 }
 
-function matchesColFilter(inv, colId, value) {
-    if (DATE_RANGE_COLS.has(colId)) {
-        const { from, to } = value ?? {};
-        const iso = colId === 'due_date' ? (inv.due_date ?? '') : dmyToISO(inv.created_at ?? '');
-        if (!iso) return true;
-        if (from && iso < from) return false;
-        if (to   && iso > to)   return false;
-        return true;
-    }
-    const v = (value ?? '').toLowerCase().trim();
-    if (!v) return true;
-    switch (colId) {
-        case 'code':    return (inv.code ?? '').toLowerCase().includes(v);
-        case 'label':   return (inv.label ?? '').toLowerCase().includes(v);
-        case 'client':  return (inv.companie?.label ?? '').toLowerCase().includes(v);
-        case 'contact': return (inv.contact?.name ?? '').toLowerCase().includes(v);
-        default:        return true;
-    }
-}
-
-function readSavedColOrder(qontoEnabled) {
-    const baseOrder = qontoEnabled ? DEFAULT_COL_ORDER_QONTO : DEFAULT_COL_ORDER;
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => baseOrder.includes(c))) return saved;
-    } catch {}
-    return baseOrder;
-}
-
-function readSavedHiddenCols() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
-        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
-    } catch {}
-    return new Set();
+function InvoiceActions({ inv, trans }) {
+    return (
+        <>
+            <a href={inv.url} className="btn btn-xs btn-info mr-1" title={trans.view}>
+                <i className="fas fa-eye" />
+            </a>
+            {/* Un brouillon n'est pas émis : ni PDF légal ni Factur-X.
+                Les routes le refusent (403), on n'affiche donc pas
+                des boutons qui mènent à une page d'erreur. */}
+            {Number(inv.statu) !== 1 && (
+                <>
+                    <a href={inv.url_pdf} className="btn btn-xs btn-secondary mr-1" title="PDF" target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-pdf" />
+                    </a>
+                    <a href={inv.url_facturex} className="btn btn-xs btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-invoice" />
+                    </a>
+                </>
+            )}
+        </>
+    );
 }
 
 function InvoicesTable({ invoices, loading, sortField, sortAsc, onSort, trans, qontoEnabled }) {
-    const [colOrder,   setColOrder]   = useState(() => readSavedColOrder(qontoEnabled));
-    const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
-    const [colFilters, setColFilters] = useState({});
-    const [dragOver,   setDragOver]   = useState(null);
-    const dragCol = useRef(null);
-
-    const COLS        = colDefs(trans, qontoEnabled);
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c) && COLS[c]);
-
-    const hideCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.add(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const showCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.delete(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const filtered = invoices.filter(inv =>
-        visibleCols.every(colId => matchesColFilter(inv, colId, colFilters[colId] ?? ''))
-    );
-
-    const onDragStart = (colId) => { dragCol.current = colId; };
-    const onDragOver  = (e, colId) => { e.preventDefault(); setDragOver(colId); };
-    const onDragLeave = () => setDragOver(null);
-    const onDrop      = (targetId) => {
-        const src = dragCol.current;
-        if (!src || src === targetId) { setDragOver(null); return; }
-        const next = [...colOrder];
-        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
-        setColOrder(next);
-        localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
-        setDragOver(null);
-        dragCol.current = null;
-    };
-
-    const pageTotal = filtered.reduce((s, inv) => s + (inv.total_amount ?? 0), 0);
-    const totalIdx  = visibleCols.indexOf('total');
-    const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
-
     return (
-        <div>
-            {hiddenCols.size > 0 && (
-                <div className="mb-2 d-flex flex-wrap" style={{ gap: '4px' }}>
-                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
-                        <button key={colId} type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
-                            onClick={() => showCol(colId)}
-                        >
-                            + {COLS[colId].label}
-                        </button>
-                    ))}
+        <DataTable
+            rows={invoices}
+            columns={invoiceColumns(trans, qontoEnabled)}
+            loading={loading}
+            trans={trans}
+            sortField={sortField}
+            sortAsc={sortAsc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            rowHref={inv => inv.url}
+            rowActions={inv => <InvoiceActions inv={inv} trans={trans} />}
+            actionsWidth={90}
+            actionsCellStyle={{ whiteSpace: 'nowrap' }}
+            mobileActions={inv => Number(inv.statu) !== 1 && (
+                <div className="d-flex" style={{ gap: '0.5rem' }}>
+                    <a href={inv.url_pdf} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-pdf mr-1" />PDF
+                    </a>
+                    <a href={inv.url_facturex} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-invoice mr-1" />Factur-X
+                    </a>
                 </div>
             )}
-
-            <div className="table-responsive">
-                <table className="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            {visibleCols.map(colId => {
-                                const col      = COLS[colId];
-                                const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                const dropping = dragOver === colId;
-                                return (
-                                    <th key={colId} className={alignCls} draggable
-                                        style={{
-                                            cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none',
-                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
-                                            background: dropping ? '#e8f0fe' : undefined,
-                                        }}
-                                        onDragStart={() => onDragStart(colId)}
-                                        onDragOver={(e) => onDragOver(e, colId)}
-                                        onDragLeave={onDragLeave}
-                                        onDrop={() => onDrop(colId)}
-                                        onClick={() => onSort(col.sortField)}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {col.label}
-                                        <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} />
-                                        <span
-                                            role="button"
-                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                            className="text-danger"
-                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
-                                        >
-                                            ×
-                                        </span>
-                                    </th>
-                                );
-                            })}
-                            <th style={{ width: 90 }} />
-                        </tr>
-                        <tr>
-                            {visibleCols.map(colId => (
-                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
-                                    {TEXT_FILTER_COLS.has(colId) && (
-                                        <input type="text" className="form-control form-control-sm"
-                                            style={inputStyle} placeholder="⌕"
-                                            value={colFilters[colId] ?? ''}
-                                            onChange={e => setColFilters(prev => ({ ...prev, [colId]: e.target.value }))}
-                                        />
-                                    )}
-                                    {DATE_RANGE_COLS.has(colId) && (
-                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
-                                            <input type="date" className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }} title="Du"
-                                                value={(colFilters[colId] ?? {}).from ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev, [colId]: { ...(prev[colId] ?? {}), from: e.target.value },
-                                                }))}
-                                            />
-                                            <input type="date" className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }} title="Au"
-                                                value={(colFilters[colId] ?? {}).to ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev, [colId]: { ...(prev[colId] ?? {}), to: e.target.value },
-                                                }))}
-                                            />
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
-                        ) : filtered.length === 0 ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        ) : null}
-                        {!loading && filtered.map(inv => (
-                            <tr key={inv.id}>
-                                {visibleCols.map(colId => {
-                                    const col      = COLS[colId];
-                                    const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                    return (
-                                        <td key={colId}
-                                            className={`${alignCls}${col.bold ? ' font-weight-bold' : ''}`}
-                                            style={(col.align === 'right' || col.bold) ? { whiteSpace: 'nowrap' } : {}}
-                                        >
-                                            {col.render(inv)}
-                                        </td>
-                                    );
-                                })}
-                                <td style={{ whiteSpace: 'nowrap' }}>
-                                    <a href={inv.url} className="btn btn-xs btn-info mr-1" title={trans.view}>
-                                        <i className="fas fa-eye" />
-                                    </a>
-                                    {/* Un brouillon n'est pas émis : ni PDF légal ni Factur-X.
-                                        Les routes le refusent (403), on n'affiche donc pas
-                                        des boutons qui mènent à une page d'erreur. */}
-                                    {Number(inv.statu) !== 1 && (
-                                        <>
-                                            <a href={inv.url_pdf} className="btn btn-xs btn-secondary mr-1" title="PDF" target="_blank" rel="noreferrer">
-                                                <i className="fas fa-file-pdf" />
-                                            </a>
-                                            <a href={inv.url_facturex} className="btn btn-xs btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
-                                                <i className="fas fa-file-invoice" />
-                                            </a>
-                                        </>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    {filtered.length > 0 && (
-                        <tfoot>
-                            <tr className="font-weight-bold bg-light">
-                                {visibleCols.map((colId, i) => {
-                                    if (colId === 'total') return (
-                                        <td key={colId} className="text-right" style={{ whiteSpace: 'nowrap' }}>
-                                            {formatCurrency(pageTotal, trans.currency, trans.locale)}
-                                        </td>
-                                    );
-                                    if (i === totalIdx - 1) return <td key={colId} className="text-right">{trans.total}</td>;
-                                    return <td key={colId} />;
-                                })}
-                                <td />
-                            </tr>
-                        </tfoot>
-                    )}
-                </table>
-            </div>
-        </div>
+        />
     );
 }
 

@@ -181,6 +181,14 @@ describe('DataTable — cartes (mobile)', () => {
         expect(document.querySelector('.small.text-muted').textContent).toBe('Acme · Capots');
     });
 
+    it("mobileActions : boutons sous la carte, rien quand la ligne n'en a pas", () => {
+        setup({ forceLayout: 'cards', mobileActions: r => r.statu === 2 && <a href={`/pdf/${r.id}`}>PDF</a> });
+        expect(screen.getAllByText('PDF')).toHaveLength(1);
+        const card = screen.getByText('PDF').closest('.list-group-item');
+        expect(within(card).getByText('CM-002')).toBeInTheDocument();
+        expect(screen.getByText('CM-001').closest('.list-group-item').querySelector('.mt-2')).toBeNull();
+    });
+
     it('tri par liste déroulante et bouton de sens', () => {
         const onSort = vi.fn();
         setup({ forceLayout: 'cards', onSort });

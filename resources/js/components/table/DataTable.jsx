@@ -126,6 +126,7 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, l
                 const subtitles = valuesFor('subtitle', row);
                 const badges    = valuesFor('badge', row);
                 const amounts   = valuesFor('amount', row);
+                const extra     = mobileActions?.(row);
                 return (
                     <div key={row[rowKey]} className={`list-group-item position-relative py-2${href ? ' list-group-item-action' : ''}`} style={{ minHeight: 44 }}>
                         <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
@@ -146,8 +147,8 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, l
                                 </div>
                             )}
                         </div>
-                        {mobileActions && (
-                            <div className="mt-1 position-relative" style={{ zIndex: 2 }}>{mobileActions(row)}</div>
+                        {extra && (
+                            <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{extra}</div>
                         )}
                     </div>
                 );
