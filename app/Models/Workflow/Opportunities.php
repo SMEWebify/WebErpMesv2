@@ -107,6 +107,12 @@ class Opportunities extends Model
         return $this->hasMany(OpportunitiesEventsLogs::class);
     }
 
+    // On-site visits captured from a phone (measurements, voice memo, report)
+    public function visits()
+    {
+        return $this->hasMany(OpportunityVisits::class);
+    }
+
     /**
      * Get the formatted creation date of the line.
      *

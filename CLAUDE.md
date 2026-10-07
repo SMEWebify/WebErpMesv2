@@ -224,6 +224,19 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Visite sur site (opportunité, mobile)
+
+`/opportunities/{id}/visit` : page autonome sans sidebar (`opportunity-visit.blade.php` →
+`components/visits/OpportunityVisitApp.jsx`), un brouillon `opportunity_visits` par visite.
+- **Photos** : réduites à 2560 px dans le navigateur, envoyées par `files.json.store` dans la
+  GED **de l'opportunité** (rôle `photo`, hashtag `visite-{id}`) — pas de stockage propre.
+- **Cotes** : JSON `measurements` [{label, value, unit, note}], sauvegarde automatique.
+- **Mémo vocal** : `MediaRecorder` → `VisitTranscriptionService` (Whisper OVH, clé OVH de
+  l'écran IA). L'audio n'est **jamais écrit** côté serveur (fichier temporaire de la requête) ;
+  en cas d'échec le navigateur le garde pour réessayer. Sans clé OVH : dictée navigateur.
+- **Compte rendu** : `VisitReportService`, provider IA actif, éditable ; la validation crée un
+  événement type 3 « Visite sur site » et fige la visite.
+
 ## Nesting (imbrication tôle)
 
 Deux moteurs coexistent derrière la même interface `/nesting`. Le back décide,

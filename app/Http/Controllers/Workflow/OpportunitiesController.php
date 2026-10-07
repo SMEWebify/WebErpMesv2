@@ -416,6 +416,7 @@ class OpportunitiesController extends Controller
             'EventsList' =>  $Events,
             'UsersSelect' => User::select('id', 'name')->orderBy('name')->get(),
             'timelineData' => $timelineData,
+            'VisitsList' => $id->visits()->with('user:id,name')->latest('visited_at')->get(),
         ]);
     }
 

@@ -56,6 +56,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Transcription audio (mémo vocal de visite)
+    |--------------------------------------------------------------------------
+    | Whisper sur OVHcloud AI Endpoints, avec la clé OVH déjà utilisée par
+    | l'assistant. Sans clé, l'écran de visite retombe sur la dictée du
+    | navigateur. L'audio n'est jamais conservé : il transite par le fichier
+    | temporaire de la requête et disparaît avec elle.
+    | url vide → {base_url OVH}/audio/transcriptions
+    */
+    'transcription' => [
+        'enabled' => (bool) env('AI_TRANSCRIPTION_ENABLED', true),
+        'url'     => env('AI_TRANSCRIPTION_URL'),
+        'model'   => env('AI_TRANSCRIPTION_MODEL', 'whisper-large-v3'),
+        'timeout' => (int) env('AI_TRANSCRIPTION_TIMEOUT', 180),
+        // Ko — Whisper refuse au-delà de 25 Mo
+        'max_size' => (int) env('AI_TRANSCRIPTION_MAX_SIZE', 25600),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue pour les appels asynchrones
     |--------------------------------------------------------------------------
     */

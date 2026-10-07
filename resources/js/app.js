@@ -1588,6 +1588,16 @@ async function mountFileManagers() {
     });
 }
 
+// Phone-first on-site visit screen (opportunity-visit.blade.php).
+async function mountOpportunityVisit() {
+    const el = document.querySelector('[data-react="opportunity-visit"]');
+    if (!el) return;
+    const { default: OpportunityVisitApp } = await import('./components/visits/OpportunityVisitApp.jsx');
+    let props = {};
+    try { props = JSON.parse(el.dataset.props ?? '{}'); } catch { props = {}; }
+    createRoot(el).render(React.createElement(OpportunityVisitApp, props));
+}
+
 async function mountArrowSteps() {
     const els = document.querySelectorAll('[data-react="arrow-steps"]');
     if (!els.length) return;
@@ -1708,6 +1718,7 @@ mountReturnShow();
 mountTaskLines();
 mountLogsViewer();
 mountFileManagers();
+mountOpportunityVisit();
 mountArrowSteps();
 mountStockCurrentApp();
 mountChatLive();

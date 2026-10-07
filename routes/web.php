@@ -280,8 +280,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/calendar',        'App\Http\Controllers\Workflow\OpportunityCalendarController@index')->name('opportunities.calendar');
         Route::get('/calendar/events', 'App\Http\Controllers\Workflow\OpportunityCalendarController@events')->name('opportunities.calendar.events');
 
+        // Visite sur site (écran mobile : photos, cotes, mémo vocal, compte rendu)
+        Route::patch('/visits/{visit}/json',          'App\Http\Controllers\Workflow\OpportunityVisitsController@update')->name('opportunities.visits.update');
+        Route::post('/visits/{visit}/json/transcribe', 'App\Http\Controllers\Workflow\OpportunityVisitsController@transcribe')->middleware('throttle:20,1')->name('opportunities.visits.transcribe');
+        Route::post('/visits/{visit}/json/report',     'App\Http\Controllers\Workflow\OpportunityVisitsController@report')->middleware('throttle:10,1')->name('opportunities.visits.report');
+        Route::post('/visits/{visit}/json/validate',   'App\Http\Controllers\Workflow\OpportunityVisitsController@validateVisit')->name('opportunities.visits.validate');
+        Route::delete('/visits/{visit}/json',         'App\Http\Controllers\Workflow\OpportunityVisitsController@destroy')->name('opportunities.visits.destroy');
+
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
+        Route::get('/{id}/visit', 'App\Http\Controllers\Workflow\OpportunityVisitsController@show')->name('opportunities.visit');
+        Route::post('/{id}/visits/json', 'App\Http\Controllers\Workflow\OpportunityVisitsController@store')->name('opportunities.visits.store');
 
         // store routes
         Route::group(['prefix' => 'store'], function () {

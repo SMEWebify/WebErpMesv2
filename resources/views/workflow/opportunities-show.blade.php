@@ -34,6 +34,7 @@ $oppSteps = json_encode([
       <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab">TimeLine</a></li>
       <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Visits" data-toggle="tab"><i class="fas fa-mobile-alt"></i> {{ __('visits.visits') }} ({{ count($VisitsList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Opportunity->files) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
@@ -532,6 +533,47 @@ $oppSteps = json_encode([
           </div>
         </div>
       </div>
+      <div class="tab-pane" id="Visits">
+        <a href="{{ route('opportunities.visit', $Opportunity->id) }}" class="btn btn-primary mb-3">
+          <i class="fas fa-mobile-alt"></i> {{ __('visits.open_visit') }}
+        </a>
+        <div class="table-responsive p-0">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>{{ __('visits.visited_at') }}</th>
+                <th>{{ __('general_content.assigned_user_trans_key') }}</th>
+                <th>{{ __('visits.measurements') }}</th>
+                <th>{{ __('general_content.status_trans_key') }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($VisitsList as $Visit)
+              <tr>
+                <td>{{ $Visit->visited_at->format('d/m/Y H:i') }}</td>
+                <td>{{ $Visit->user->name ?? '' }}</td>
+                <td>{{ count($Visit->measurements ?? []) }}</td>
+                <td>
+                  @if($Visit->isDraft())
+                    <span class="badge badge-secondary">{{ __('visits.draft') }}</span>
+                  @else
+                    <span class="badge badge-success">{{ __('visits.validated') }}</span>
+                  @endif
+                </td>
+                <td>
+                  <a href="{{ route('opportunities.visit', ['id' => $Opportunity->id, 'visit' => $Visit->id]) }}" class="btn btn-sm btn-outline-primary">
+                    {{ $Visit->isDraft() ? __('visits.continue') : __('visits.view') }}
+                  </a>
+                </td>
+              </tr>
+              @empty
+              <tr><td colspan="5" class="text-muted">{{ __('visits.no_visit') }}</td></tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+      </div>
       <div class="tab-pane" id="Documents">
         @include('include.file-manager-mount', [
           'fileableType' => 'opportunity',
@@ -549,6 +591,8 @@ $oppSteps = json_encode([
 @stop
 
 @section('css')
+  @viteReactRefresh
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
