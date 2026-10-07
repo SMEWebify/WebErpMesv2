@@ -20,6 +20,7 @@ import { toISODate } from './dates.js';
  *     total:     { value: row => number, format: sum => node },   // pied de tableau
  *     mobile:    'title' | 'subtitle' | 'badge' | 'amount' | 'hidden',
  *     mobileRender: row => node,              // contenu sur la carte (défaut : render)
+ *     mobileOrder: 1,                         // ordre sur la carte (défaut : ordre des colonnes)
  *   }
  *
  * Sur PC : colonnes masquables et réordonnables (persistées), ligne de filtres, total
@@ -105,7 +106,11 @@ function MobileSort({ columns, sortField, sortAsc, onSort, trans }) {
 }
 
 function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, loadingContent, emptyText, totals, totalLabel }) {
-    const byRole = role => columns.filter(c => c.mobile === role);
+    const byRole = role => columns
+        .filter(c => c.mobile === role)
+        .map((c, i) => [c.mobileOrder ?? 1000 + i, c])
+        .sort((a, b) => a[0] - b[0])
+        .map(([, c]) => c);
     const valuesFor = (role, row) => byRole(role)
         .map(c => (c.mobileRender ? c.mobileRender(row) : renderCell(c, row)))
         .filter(v => !EMPTY_VALUES.includes(v));
@@ -127,7 +132,7 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, l
                             <div className="flex-grow-1" style={{ minWidth: 0 }}>
                                 <div className="font-weight-bold text-truncate">
                                     {href
-                                        ? <a href={href} className="stretched-link text-body">{joinNodes(title, ' · ')}</a>
+                                        ? <a href={href} className="stretched-link text-body text-decoration-none">{joinNodes(title, ' · ')}</a>
                                         : joinNodes(title, ' · ')}
                                 </div>
                                 {subtitles.length > 0 && (

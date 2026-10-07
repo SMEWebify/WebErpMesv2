@@ -164,6 +164,16 @@ describe('DataTable — cartes (mobile)', () => {
         expect(screen.getByText('150.50 €')).toBeInTheDocument();
     });
 
+    it('mobileOrder réordonne le sous-titre sans toucher aux colonnes', () => {
+        const columns = [
+            ...COLUMNS.slice(0, 1),
+            { key: 'label', label: 'Libellé', mobile: 'subtitle' },
+            { ...COLUMNS[1], mobileOrder: 1 },
+        ];
+        render(<DataTable rows={[{ ...ROWS[0], label: 'Capots' }]} columns={columns} forceLayout="cards" />);
+        expect(document.querySelector('.small.text-muted').textContent).toBe('Acme · Capots');
+    });
+
     it('tri par liste déroulante et bouton de sens', () => {
         const onSort = vi.fn();
         setup({ forceLayout: 'cards', onSort });
