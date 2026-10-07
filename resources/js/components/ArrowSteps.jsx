@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const STYLE_ID = 'arrow-steps-react-v1';
 
@@ -66,23 +66,28 @@ const CSS = `
 .as-btn:nth-child(7) { z-index: 7; }
 .as-btn:nth-child(8) { z-index: 8; }
 
+/* Mobile : une seule ligne qui défile (barre de statut façon Odoo) plutôt
+   qu'une pile de boutons pleine largeur ; l'étape courante est ramenée à l'écran. */
 @media (max-width: 576px) {
-    .as-row {
-        flex-direction: column;
-        gap: 5px;
+    .as-track {
+        scrollbar-width: none;
     }
-    .as-btn,
-    .as-btn:first-child,
-    .as-btn:last-child,
-    .as-btn:only-child {
-        clip-path: none !important;
-        border-radius: 6px !important;
-        margin-left: 0 !important;
-        padding: 10px 16px !important;
-        width: 100%;
-        justify-content: flex-start;
-        font-size: 13px;
-        z-index: auto !important;
+    .as-track::-webkit-scrollbar {
+        display: none;
+    }
+    .as-btn {
+        flex: 0 0 auto;
+        min-width: 0;
+        padding: 9px 20px;
+    }
+    .as-btn:first-child {
+        padding-left: 12px;
+    }
+    .as-btn:last-child {
+        padding-right: 12px;
+    }
+    .as-btn.as-current {
+        font-size: 12px;
     }
 }
 `;
@@ -100,6 +105,16 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
     const [error, setError] = useState('');
 
     useEffect(() => { injectStyles(); }, []);
+
+    // Sur mobile la barre défile : on y ramène l'étape courante
+    const trackRef = useRef(null);
+    useEffect(() => {
+        const track = trackRef.current;
+        const current = track?.querySelector('.as-current');
+        if (!current || track.scrollWidth <= track.clientWidth) return;
+        const offset = current.getBoundingClientRect().left - track.getBoundingClientRect().left;
+        track.scrollLeft += offset - (track.clientWidth - current.offsetWidth) / 2;
+    }, [currentStatu]);
 
     const currentIndex = steps.findIndex(s => s.value === currentStatu);
 
@@ -130,7 +145,7 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
     };
 
     return (
-        <div className="as-track">
+        <div className="as-track" ref={trackRef}>
             {error && (
                 <div className="alert alert-danger py-2 mb-2" role="alert">
                     <i className="fas fa-exclamation-triangle mr-1" />{error}

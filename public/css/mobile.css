@@ -1,0 +1,120 @@
+/* ==========================================================================
+   MOBILE — ajustements globaux sous md (< 768 px)
+   --------------------------------------------------------------------------
+   Chargé en permanence (plugin Mobile de config/adminlte.php), tout est sous
+   media query : rien ne change au-dessus de 768 px.
+
+   Volontairement générique : marges, titres, onglets, champs, boutons,
+   modales. Les tableaux ne sont PAS traités ici — leur rendu mobile (cartes)
+   relève du composant de tableau partagé, pas d'une surcharge CSS.
+   Le menu est remplacé par le lanceur (include/mobile-app-launcher).
+   ========================================================================== */
+
+@media (max-width: 767.98px) {
+
+    /* ---- Gouttières et titres ---------------------------------------- */
+    .content-wrapper > .content-header {
+        padding: .75rem .5rem .5rem;
+    }
+
+    .content-header h1 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+    }
+
+    .content-wrapper > .content {
+        padding: 0 .25rem;
+    }
+
+    .card {
+        margin-bottom: .75rem;
+    }
+
+    .card-body {
+        padding: .85rem;
+    }
+
+    /* ---- Onglets : une ligne qui défile au lieu de six lignes empilées - */
+    .card-header > .nav:not(.flex-column),
+    .nav-tabs:not(.flex-column) {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .card-header > .nav:not(.flex-column)::-webkit-scrollbar,
+    .nav-tabs:not(.flex-column)::-webkit-scrollbar {
+        display: none;
+    }
+
+    .card-header > .nav:not(.flex-column) > .nav-item,
+    .nav-tabs:not(.flex-column) > .nav-item {
+        flex: 0 0 auto;
+    }
+
+    .card-header > .nav:not(.flex-column) .nav-link,
+    .nav-tabs:not(.flex-column) .nav-link {
+        white-space: nowrap;
+    }
+
+    /* ---- Tuiles KPI (small-box) : compactes ------------------------- */
+    .small-box > .inner {
+        padding: .6rem .9rem;
+    }
+
+    .small-box h3 {
+        font-size: 1.6rem;
+        margin-bottom: .1rem;
+    }
+
+    .small-box p {
+        margin-bottom: 0;
+    }
+
+    .small-box .icon {
+        display: none;
+    }
+
+    /* ---- Champs : 16 px évite le zoom automatique d'iOS au focus ----- */
+    input.form-control,
+    select.form-control,
+    textarea.form-control,
+    .custom-select,
+    .select2-container .select2-selection__rendered,
+    .select2-search__field {
+        font-size: 16px;
+    }
+
+    /* ---- Cibles tactiles -------------------------------------------- */
+    .btn-sm,
+    .btn-group-sm > .btn {
+        padding: .4rem .65rem;
+    }
+
+    .btn-tool {
+        padding: .5rem .6rem;
+    }
+
+    .dropdown-item {
+        padding-top: .6rem;
+        padding-bottom: .6rem;
+    }
+}
+
+/* ---- Modales plein écran sur téléphone ------------------------------- */
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        margin: 0;
+        max-width: none;
+        min-height: 100%;
+    }
+
+    .modal-content {
+        min-height: 100vh;
+        min-height: 100dvh;
+        border: 0;
+        border-radius: 0;
+    }
+}

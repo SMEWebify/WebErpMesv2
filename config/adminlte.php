@@ -1051,6 +1051,17 @@ return [
                 ],
             ],
         ],
+        // Ajustements globaux sous 768 px (marges, onglets, champs, modales).
+        'Mobile' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/mobile.css',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [
