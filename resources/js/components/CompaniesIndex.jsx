@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { SortIcon, Pagination } from './table';
+import { DataTable, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -273,10 +273,6 @@ function ActiveBadge({ active }) {
 }
 
 // ---------------------------------------------------------------------------
-// Sort Icon
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
 // Type Filter
 // ---------------------------------------------------------------------------
 
@@ -308,245 +304,46 @@ function TypeFilter({ selected, onChange, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Companies Table — drag-and-drop columns + per-column filters
+// Companies Table — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
 const LS_COL_ORDER     = 'companies_table_col_order';
 const LS_HIDDEN_COLS   = 'companies_table_hidden_cols';
-const DEFAULT_COL_ORDER = ['code', 'label', 'active', 'statu_customer', 'statu_supplier', 'created_at'];
-const TEXT_FILTER_COLS  = new Set(['code', 'label']);
-const DATE_RANGE_COLS   = new Set(['created_at']);
 
-function dmyToISO(str) {
-    if (!str || !str.includes('/')) return str ?? '';
-    const [d, m, y] = str.split('/');
-    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-}
-
-function colDefs(trans) {
-    return {
-        code:           { label: trans.code,            sortField: 'code',           align: '',       render: c => <code>{c.code}</code> },
-        label:          { label: trans.label,           sortField: 'label',          align: '',       render: c => c.label },
-        active:         { label: trans.active,          sortField: 'active',         align: 'center', render: c => <ActiveBadge active={c.active} /> },
-        statu_customer: { label: trans.status_client,   sortField: 'statu_customer', align: 'center', render: c => <CustomerBadge statu={c.statu_customer} /> },
-        statu_supplier: { label: trans.status_supplier, sortField: 'statu_supplier', align: 'center', render: c => <SupplierBadge statu={c.statu_supplier} /> },
-        created_at:     { label: trans.created_at,      sortField: 'created_at',     align: '',       render: c => c.created_at ?? '—' },
-    };
-}
-
-function matchesColFilter(c, colId, value) {
-    if (DATE_RANGE_COLS.has(colId)) {
-        const { from, to } = value ?? {};
-        const iso = dmyToISO(c.created_at ?? '');
-        if (!iso) return true;
-        if (from && iso < from) return false;
-        if (to   && iso > to)   return false;
-        return true;
-    }
-    const v = (value ?? '').toLowerCase().trim();
-    if (!v) return true;
-    switch (colId) {
-        case 'code':  return (c.code  ?? '').toLowerCase().includes(v);
-        case 'label': return (c.label ?? '').toLowerCase().includes(v);
-        default:      return true;
-    }
-}
-
-function readSavedColOrder() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
-    } catch {}
-    return DEFAULT_COL_ORDER;
-}
-
-function readSavedHiddenCols() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
-        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
-    } catch {}
-    return new Set();
+function companyColumns(trans) {
+    return [
+        { key: 'code',           label: trans.code,            sortable: true, sortIconSize: 'sm',
+          render: c => <code>{c.code}</code>, filter: 'text', mobile: 'subtitle', mobileRender: c => c.code },
+        { key: 'label',          label: trans.label,           sortable: true, sortIconSize: 'sm',
+          filter: 'text', mobile: 'title' },
+        { key: 'active',         label: trans.active,          sortable: true, sortIconSize: 'sm', align: 'center',
+          render: c => <ActiveBadge active={c.active} />,
+          mobile: 'badge', mobileOrder: 2000,
+          mobileRender: c => (c.active == 1 ? null : <span className="badge badge-danger">{trans.inactive ?? 'Inactive'}</span>) },
+        { key: 'statu_customer', label: trans.status_client,   sortable: true, sortIconSize: 'sm', align: 'center',
+          render: c => <CustomerBadge statu={c.statu_customer} />,
+          mobile: 'badge', mobileRender: c => ([2, 3].includes(c.statu_customer) ? <CustomerBadge statu={c.statu_customer} /> : null) },
+        { key: 'statu_supplier', label: trans.status_supplier, sortable: true, sortIconSize: 'sm', align: 'center',
+          render: c => <SupplierBadge statu={c.statu_supplier} />,
+          mobile: 'badge', mobileRender: c => (c.statu_supplier === 2 ? <span className="badge badge-info">{trans.supplier ?? trans.status_supplier}</span> : null) },
+        { key: 'created_at',     label: trans.created_at,      sortable: true, sortIconSize: 'sm',
+          render: c => c.created_at ?? '—', filter: 'date' },
+    ];
 }
 
 function CompaniesTable({ companies, loading, sortField, sortAsc, onSort, trans }) {
-    const [colOrder,   setColOrder]   = useState(readSavedColOrder);
-    const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
-    const [colFilters, setColFilters] = useState({});
-    const [dragOver,   setDragOver]   = useState(null);
-    const dragCol = useRef(null);
-
-    const COLS        = colDefs(trans);
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c));
-
-    const hideCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.add(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const showCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.delete(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const filtered = companies.filter(c =>
-        visibleCols.every(colId => matchesColFilter(c, colId, colFilters[colId] ?? ''))
-    );
-
-    const onDragStart = (colId) => { dragCol.current = colId; };
-    const onDragOver  = (e, colId) => { e.preventDefault(); setDragOver(colId); };
-    const onDragLeave = () => setDragOver(null);
-    const onDrop      = (targetId) => {
-        const src = dragCol.current;
-        if (!src || src === targetId) { setDragOver(null); return; }
-        const next = [...colOrder];
-        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
-        setColOrder(next);
-        localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
-        setDragOver(null);
-        dragCol.current = null;
-    };
-
-    const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
-
     return (
-        <div>
-            {hiddenCols.size > 0 && (
-                <div className="mb-2 d-flex flex-wrap" style={{ gap: '4px' }}>
-                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
-                        <button
-                            key={colId}
-                            type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
-                            onClick={() => showCol(colId)}
-                            title="Réafficher la colonne"
-                        >
-                            + {COLS[colId].label}
-                        </button>
-                    ))}
-                </div>
-            )}
-            <div className="table-responsive">
-                <table className="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            {visibleCols.map(colId => {
-                                const col      = COLS[colId];
-                                const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                const dropping = dragOver === colId;
-                                return (
-                                    <th
-                                        key={colId}
-                                        className={alignCls}
-                                        draggable
-                                        style={{
-                                            cursor:     'pointer',
-                                            whiteSpace: 'nowrap',
-                                            userSelect: 'none',
-                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
-                                            background: dropping ? '#e8f0fe' : undefined,
-                                        }}
-                                        onDragStart={() => onDragStart(colId)}
-                                        onDragOver={(e) => onDragOver(e, colId)}
-                                        onDragLeave={onDragLeave}
-                                        onDrop={() => onDrop(colId)}
-                                        onClick={() => onSort(col.sortField)}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {col.label}
-                                        <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} size="sm" />
-                                        <span
-                                            role="button"
-                                            aria-label="Masquer la colonne"
-                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                            className="text-danger"
-                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
-                                        >
-                                            ×
-                                        </span>
-                                    </th>
-                                );
-                            })}
-                            <th style={{ width: 36 }} />
-                        </tr>
-                        <tr>
-                            {visibleCols.map(colId => (
-                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
-                                    {TEXT_FILTER_COLS.has(colId) && (
-                                        <input
-                                            type="text"
-                                            className="form-control form-control-sm"
-                                            style={inputStyle}
-                                            placeholder="⌕"
-                                            value={colFilters[colId] ?? ''}
-                                            onChange={e => setColFilters(prev => ({ ...prev, [colId]: e.target.value }))}
-                                        />
-                                    )}
-                                    {DATE_RANGE_COLS.has(colId) && (
-                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Du"
-                                                value={(colFilters[colId] ?? {}).from ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev,
-                                                    [colId]: { ...(prev[colId] ?? {}), from: e.target.value },
-                                                }))}
-                                            />
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Au"
-                                                value={(colFilters[colId] ?? {}).to ?? ''}
-                                                onChange={e => setColFilters(prev => ({
-                                                    ...prev,
-                                                    [colId]: { ...(prev[colId] ?? {}), to: e.target.value },
-                                                }))}
-                                            />
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
-                        ) : filtered.length === 0 ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_results}</td></tr>
-                        ) : null}
-                        {!loading && filtered.map(c => (
-                            <tr key={c.id}>
-                                {visibleCols.map(colId => {
-                                    const col      = COLS[colId];
-                                    const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                    return (
-                                        <td key={colId} className={alignCls}>
-                                            {col.render(c)}
-                                        </td>
-                                    );
-                                })}
-                                <td>
-                                    <a href={c.url} className="btn btn-xs btn-info">
-                                        <i className="fas fa-eye" />
-                                    </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <DataTable
+            rows={companies}
+            columns={companyColumns(trans)}
+            loading={loading}
+            trans={trans}
+            sortField={sortField}
+            sortAsc={sortAsc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            rowHref={c => c.url}
+        />
     );
 }
 
