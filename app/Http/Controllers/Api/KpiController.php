@@ -379,8 +379,8 @@ class KpiController extends Controller
      */
     public function otd(OrderKPIService $service)
     {
-        $total  = OrderLines::where('delivery_status', 3)->count();
-        $onTime = OrderLines::where('delivery_status', 3)
+        $total  = OrderLines::articles()->where('delivery_status', 3)->count();
+        $onTime = OrderLines::articles()->where('delivery_status', 3)
             ->whereHas('DeliveryLines', function ($q) {
                 $q->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
             })->count();

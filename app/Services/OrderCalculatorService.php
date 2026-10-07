@@ -29,7 +29,7 @@ class OrderCalculatorService
     public function getVatTotal()
     {
         $tableauTVA = array();
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             $vatRate = optional($orderLine->VAT)['rate'] ?? 0;
             $TotalCurentLine = ($orderLine->qty*$orderLine->selling_price)-($orderLine->qty*$orderLine->selling_price)*($orderLine->discount/100);
@@ -57,7 +57,7 @@ class OrderCalculatorService
     public function getTotalPrice()
     {
         $TotalPrice = 0;
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
 
         foreach ($orderLines as $orderLine) {
             $vatRate = optional($orderLine->VAT)['rate'] ?? 0;
@@ -80,7 +80,7 @@ class OrderCalculatorService
     public function getSubTotal()
     {
         $SubTotal = 0;
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             $SubTotal += round(
                 ($orderLine->qty * $orderLine->selling_price) * (1 - $orderLine->discount / 100),
@@ -104,7 +104,7 @@ class OrderCalculatorService
     public function getTotalProductTimeByService()
     {
         $tableauService = array();
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             foreach ($orderLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceProductTimeForQuoteCurentLine =  $TechnicalCutLine->unit_time*$orderLine->qty ;
@@ -135,7 +135,7 @@ class OrderCalculatorService
     public function getTotalSettingTimeByService()
     {
         $tableauService = array();
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             foreach ($orderLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceSettingTimeForQuoteCurentLine =  $TechnicalCutLine->seting_time ;
@@ -166,7 +166,7 @@ class OrderCalculatorService
     public function getTotalCostByService()
     {
         $tableauService = array();
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             foreach ($orderLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceCostForQuoteCurentLine =  $TechnicalCutLine->unit_cost*$orderLine->qty ;
@@ -197,7 +197,7 @@ class OrderCalculatorService
     public function getTotalPriceByService()
     {
         $tableauService = array();
-        $orderLines = $this->order->orderLines;
+        $orderLines = $this->order->orderLines->filter->isArticle();
         foreach ($orderLines as $orderLine) {
             foreach ($orderLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServicePriceForQuoteCurentLine =  $TechnicalCutLine->unit_price*$orderLine->qty ;

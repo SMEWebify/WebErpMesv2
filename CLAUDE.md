@@ -254,6 +254,32 @@ le vrai client est choisi à l'instanciation (« Nouveau devis » → « Partir 
   nomenclature est recopiée sur toute sa profondeur (les niveaux inférieurs ne portent que
   `sub_assembly_id`).
 
+## Lignes de présentation (sections, sous-totaux, textes, masquage, forfait)
+
+`quote_lines`, `order_lines` et `order_confirmation_lines` portent `line_type`
+(`article` par défaut | `section` | `subtotal` | `text`, enum `App\Enums\SalesLineType`),
+`hide_on_pdf` (article compté dans le total mais non imprimé) et `pdf_package`
+(section imprimée au forfait : 0 détail, 1 montant seul, 2 « 1 × unité », l'unité étant
+le `methods_units_id` de la section — pas d'unité « forfait » en dur).
+- **Une ligne non article vaut zéro** : `HasSalesLineType` force qty/prix/remise à 0 à
+  l'enregistrement, et côté commande reliquats à 0 + statuts livraison/facturation à 3.
+  Une somme SQL non filtrée reste donc juste ; **un comptage ou une moyenne par ligne doit
+  filtrer** (`->articles()`, `->filter->isArticle()`), de même que la ventilation de TVA.
+- **Jamais livrée ni facturée** : `DeliveryLines` et `InvoiceLines` refusent à la création
+  une ligne de commande non article (`OrderLines::guardArticle`), donc rien n'atteint le
+  Factur-X. N2P, planning, nesting et export des commandes ne voient que les articles.
+- **PDF** : `SalesPrintLayout` réécrit `$Document->Lines` (articles visibles + une ligne
+  synthétique par forfait) et fournit `$printRows` aux vues qui savent afficher titres et
+  sous-totaux. Un document sans présentation n'est pas touché (`printRows = null`) :
+  `SalesPdfLegacyRenderingTest` compare le HTML à des références capturées avant la
+  fonctionnalité — **ne jamais régénérer ces références pour faire passer le test**.
+  Une vue `print/custom/*` (non versionnée) qui ignore `$printRows` imprime quand même un
+  document juste, sans les titres.
+- Pages client (lien public devis/commande, portail) : `SalesPrintLayout::webRows()`.
+- Conversion en commande : `presentation=keep|drop` (`QuoteLineToOrderLineConverter::linesToConvert`) ;
+  une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
+  une ligne non article absente du payload.
+
 ## Nesting (imbrication tôle)
 
 Deux moteurs coexistent derrière la même interface `/nesting`. Le back décide,

@@ -2,11 +2,13 @@
 
 namespace App\Services\Quotes;
 
+use App\Enums\SalesLineType;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Services\Planning\BillOfMaterialsCopier;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * Transforme une ligne de devis en ligne de commande avec tout son contenu
@@ -17,7 +19,69 @@ use Carbon\Carbon;
  */
 class QuoteLineToOrderLineConverter
 {
+    /** Les sections, sous-totaux et textes du devis sont reportés sur la commande. */
+    public const PRESENTATION_KEEP = 'keep';
+    /** Seuls les articles passent sur la commande. */
+    public const PRESENTATION_DROP = 'drop';
+
     public function __construct(private readonly BillOfMaterialsCopier $bom) {}
+
+    /**
+     * Lignes du devis à convertir, dans l'ordre du devis.
+     *
+     * Seuls les articles se sélectionnent. Avec PRESENTATION_KEEP, une section
+     * suit dès qu'un de ses articles est retenu, avec ses sous-totaux et ses
+     * textes ; un sous-total ou un texte placé avant toute section suit dès
+     * qu'un article est retenu.
+     *
+     * @param  Collection<int, QuoteLines>  $quoteLines  toutes les lignes du devis
+     * @param  int[]  $selectedIds
+     * @return Collection<int, QuoteLines>
+     */
+    public function linesToConvert(Collection $quoteLines, array $selectedIds, string $presentation = self::PRESENTATION_KEEP): Collection
+    {
+        $selectedIds = array_map('intval', $selectedIds);
+        $lines       = $quoteLines->sortBy('ordre')->values();
+        $articles    = $lines->filter(fn (QuoteLines $l) => $l->isArticle() && in_array((int) $l->id, $selectedIds, true));
+
+        if ($presentation !== self::PRESENTATION_KEEP || $articles->isEmpty()) {
+            return $articles->values();
+        }
+
+        // Regroupe par bloc : tout ce qui précède la première section, puis une section par bloc.
+        $blocks = [];
+        $block  = [];
+        foreach ($lines as $line) {
+            if ($line->lineType() === SalesLineType::Section && !empty($block)) {
+                $blocks[] = $block;
+                $block    = [];
+            }
+            $block[] = $line;
+        }
+        $blocks[] = $block;
+
+        $kept = collect();
+        foreach ($blocks as $block) {
+            $hasSelected = collect($block)->contains(fn (QuoteLines $l) => $articles->contains('id', $l->id));
+            foreach ($block as $line) {
+                if ($line->isArticle() ? $articles->contains('id', $line->id) : $hasSelected) {
+                    $kept->push($line);
+                }
+            }
+        }
+
+        // Le bloc d'en-tête (avant toute section) suit dès qu'un article est retenu.
+        $head = $blocks[0];
+        if (!empty($head) && $head[0]->lineType() !== SalesLineType::Section) {
+            foreach ($head as $line) {
+                if (!$line->isArticle() && !$kept->contains('id', $line->id)) {
+                    $kept->push($line);
+                }
+            }
+        }
+
+        return $kept->sortBy('ordre')->values();
+    }
 
     /**
      * @param  int  $defaultDeliveryDays  délai retenu pour le délai interne quand la ligne n'a pas de date de livraison
@@ -50,7 +114,15 @@ class QuoteLineToOrderLineConverter
             'accounting_vats_id'      => $quoteLine->accounting_vats_id,
             'internal_delay'          => $internalDelay,
             'delivery_date'           => $quoteLine->delivery_date,
+            'line_type'               => $quoteLine->line_type ?? SalesLineType::Article->value,
+            'hide_on_pdf'             => (bool) $quoteLine->hide_on_pdf,
+            'pdf_package'             => (int) $quoteLine->pdf_package,
         ]);
+
+        // Une ligne de présentation n'a ni détail technique, ni gamme, ni fichier.
+        if (!$quoteLine->isArticle()) {
+            return $orderLine;
+        }
 
         $detail = $quoteLine->QuoteLineDetails;
         if ($detail) {

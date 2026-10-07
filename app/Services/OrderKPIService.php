@@ -25,7 +25,7 @@ class OrderKPIService
     {
         $cacheKey = 'delivered_orders_percentage_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            $totalOrders = OrderLines::whereYear('created_at', now()->year)
+            $totalOrders = OrderLines::articles()->whereYear('created_at', now()->year)
                 ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
                 ->count();
 
@@ -33,7 +33,7 @@ class OrderKPIService
                 return 0;
             }
 
-            $deliveredOrders = OrderLines::whereYear('created_at', now()->year)
+            $deliveredOrders = OrderLines::articles()->whereYear('created_at', now()->year)
                 ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
                 ->where('delivery_status', '=', 3)
                 ->count();
@@ -54,7 +54,7 @@ class OrderKPIService
     {
         $cacheKey = 'invoiced_orders_percentage_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            $totalOrders = OrderLines::whereYear('created_at', now()->year)
+            $totalOrders = OrderLines::articles()->whereYear('created_at', now()->year)
                 ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
                 ->count();
 
@@ -62,7 +62,7 @@ class OrderKPIService
                 return 0;
             }
 
-            $invoicedOrders = OrderLines::whereYear('created_at', now()->year)
+            $invoicedOrders = OrderLines::articles()->whereYear('created_at', now()->year)
                 ->whereHas('order', fn ($q) => $q->where('statu', '!=', 0))
                 ->where('invoice_status', 3)
                 ->count();
@@ -484,9 +484,9 @@ class OrderKPIService
     {
         $cacheKey = 'service_rate_' . now()->year . '_company_' . ($companyId ?? 'all');
         return Cache::remember($cacheKey, now()->addHours(1), function () use ($companyId) {
-            $totalOrderLinesQuery = OrderLines::where('delivery_status', 3);
+            $totalOrderLinesQuery = OrderLines::articles()->where('delivery_status', 3);
 
-            $onTimeDeliveriesQuery = OrderLines::where('delivery_status', 3)
+            $onTimeDeliveriesQuery = OrderLines::articles()->where('delivery_status', 3)
                 ->whereHas('DeliveryLines', function ($query) {
                     $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
                 });

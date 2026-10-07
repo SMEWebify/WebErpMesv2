@@ -77,6 +77,7 @@ class OrderLinesController extends Controller
                 'InvoiceLines:id,order_line_id,qty,invoices_id',
                 'InvoiceLines.invoice:id,code',
             ])
+            ->articles()
             ->withCount(['Task', 'SubAssembly'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when(is_numeric($productId), fn ($q) => $q->where('product_id', $productId))
@@ -636,6 +637,9 @@ class OrderLinesController extends Controller
                 'invoice_code'=> $il->invoice?->code,
                 'invoice_url' => $il->invoices_id ? route('invoices.show', ['id' => $il->invoices_id]) : null,
             ]),
+            'line_type'            => $l->line_type ?? 'article',
+            'hide_on_pdf'          => (bool) $l->hide_on_pdf,
+            'pdf_package'          => (int) $l->pdf_package,
         ];
     }
 

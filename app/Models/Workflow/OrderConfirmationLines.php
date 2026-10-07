@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Illuminate\Support\Number;
+use App\Models\Concerns\HasSalesLineType;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class OrderConfirmationLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasSalesLineType;
 
     // Fillable attributes for mass assignment
     protected $fillable = ['order_confirmation_id',
@@ -36,7 +37,15 @@ class OrderConfirmationLines extends Model
                             'vat_rate',
                             'delivery_date',
                             'comment',
+                            'line_type',
+                            'hide_on_pdf',
+                            'pdf_package',
                         ];
+
+    protected $casts = [
+        'hide_on_pdf' => 'boolean',
+        'pdf_package' => 'integer',
+    ];
 
     // delivery_date reste une chaîne brute comme sur OrderLines : les vues PDF
     // partagées l'affichent telle quelle.

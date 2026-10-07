@@ -70,6 +70,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @if(!empty($printRows))
+                                    @foreach($printRows as $row)
+                                        @php($DocumentLine = $row['line'])
+                                        @if($row['type'] === 'section')
+                                        <tr class="table-secondary">
+                                            <td colspan="5" class="fw-bold text-uppercase">{{ $row['label'] }}</td>
+                                        </tr>
+                                        @elseif($row['type'] === 'subtotal')
+                                        <tr>
+                                            <td colspan="2" class="text-end fw-bold">{{ $row['label'] }}</td>
+                                            <td class="text-end fw-bold">{{ number_format((float) $row['amount'], 2, '.', '') }} {{ $Factory->curency }}</td>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                        @elseif($row['type'] === 'text')
+                                        <tr>
+                                            <td colspan="5" class="fst-italic">{!! nl2br(e($row['label'])) !!}</td>
+                                        </tr>
+                                        @elseif($row['type'] === 'package')
+                                        <tr>
+                                            <td><div class="fw-medium">{{ $row['label'] }}</div></td>
+                                            <td class="text-center">{{ $row['show_qty'] ? '1 ' . ($DocumentLine->Unit['label'] ?? '') : '' }}</td>
+                                            <td class="text-end">{{ number_format((float) $row['amount'], 2, '.', '') }} {{ $Factory->curency }}</td>
+                                            <td class="text-center">-</td>
+                                            <td class="text-center">-</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td>
+                                                <div class="fw-medium">{{ $DocumentLine->label }}</div>
+                                                <div class="small text-muted">{{ $DocumentLine->code }}</div>
+                                            </td>
+                                            <td class="text-center">{{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</td>
+                                            <td class="text-end">{{ number_format((float) $DocumentLine->selling_price, 2, '.', '') }} {{ $Factory->curency }}</td>
+                                            <td class="text-center">{{ $DocumentLine->discount }} %</td>
+                                            <td class="text-center">{{ $DocumentLine->VAT['rate'] }} %</td>
+                                        </tr>
+                                        @endif
+                                    @endforeach
+                                    @else
                                     @forelse($Quote->QuoteLines as $DocumentLine)
                                     <tr>
                                         <td>
@@ -86,6 +125,7 @@
                                         <td colspan="5" class="text-center text-muted py-4">{{ __('general_content.no_data_trans_key') }}</td>
                                     </tr>
                                     @endforelse
+                                    @endif
                                 </tbody>
                                 <tfoot class="table-light">
                                     <tr>

@@ -118,6 +118,44 @@
                     </tr>
                 </thead>
                 <tbody>
+@if(!empty($printRows ?? null))
+@foreach($printRows as $row)
+@if($row['type'] === 'article')
+<?php $DocumentLine = $row['line']; ?>
+<?php $lineDetails = $DocumentLine->QuoteLineDetails ?? $DocumentLine->OrderLineDetails; ?>
+                    <tr>
+                        <td align="center">
+                            {{ $DocumentLine->label }}<br>
+                            <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
+                        </td>
+                        <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
+                        <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>
+                        <td align="center">{{ $DocumentLine->qty }}</td>
+                        <td>{{ optional($DocumentLine->Unit)['label'] }}</td>
+                        <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
+                        <td align="center">{{ $DocumentLine->discount }} %</td>
+                        <td align="center">{{ $DocumentLine->delivery_date ?: '-' }}</td>
+                    </tr>
+@elseif($row['type'] === 'package')
+<?php $DocumentLine = $row['line']; ?>
+                    <tr class="line-package">
+                        <td align="center">
+                            <strong>{{ $DocumentLine->label }}</strong>
+                            @if($DocumentLine->code)<br><span style="color: #6c757d">{{ $DocumentLine->code }}</span>@endif
+                        </td>
+                        <td align="center">-</td>
+                        <td align="center">-</td>
+                        <td align="center">{{ $row['show_qty'] ? 1 : '' }}</td>
+                        <td>{{ $row['show_qty'] ? optional($DocumentLine->Unit)['label'] : '' }}</td>
+                        <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
+                        <td align="center">-</td>
+                        <td align="center">{{ $DocumentLine->delivery_date ?: '-' }}</td>
+                    </tr>
+@else
+@include('print.partials.sales-presentation-row', ['row' => $row, 'columns' => 8, 'amountColumn' => 6])
+@endif
+@endforeach
+@else
                     @forelse($Document->Lines as $DocumentLine)
                     @php
                         $lineDetails = $DocumentLine->QuoteLineDetails ?? $DocumentLine->OrderLineDetails;
@@ -143,6 +181,7 @@
                     @empty
                         <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
+@endif
                 </tbody>
             </table>
             <hr style="color: #6c757d">

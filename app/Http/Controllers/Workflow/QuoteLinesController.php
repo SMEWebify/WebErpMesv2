@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Workflow;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Enums\SalesLineType;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,7 @@ class QuoteLinesController extends Controller
 
         $query = QuoteLines::with(['quote:id,code', 'Unit:id,label', 'VAT:id,label'])
             ->excludingTemplates()
+            ->articles()
             ->withCount(['Task', 'SubAssembly'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when(is_numeric($productId), fn ($q) => $q->where('product_id', $productId))
@@ -318,6 +321,10 @@ class QuoteLinesController extends Controller
         $quote = Quotes::withTemplates()->findOrFail($quoteId);
         abort_if($quote->statu != 1, 403);
 
+        if ($request->input('line_type', SalesLineType::Article->value) !== SalesLineType::Article->value) {
+            return $this->storePresentationLine($quote, $request);
+        }
+
         $validated = $request->validate([
             'ordre'              => 'required|numeric|min:1',
             'label'              => 'required|string|max:255',
@@ -374,6 +381,16 @@ class QuoteLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
+
+        if (!$line->isArticle()) {
+            $validated = $request->validate([
+                'ordre' => 'required|numeric|min:0',
+                'label' => $line->line_type === SalesLineType::Subtotal->value ? 'nullable|string|max:255' : 'required|string|max:255',
+            ]);
+            $line->update(['ordre' => $validated['ordre'], 'label' => $validated['label'] ?? '']);
+
+            return response()->json(['line' => $this->formatLineJson($line->fresh(['Unit:id,label,code']), app('Factory')->curency ?? 'EUR', config('app.locale'))]);
+        }
 
         $validated = $request->validate([
             'ordre'              => 'required|numeric|min:0',
@@ -442,10 +459,10 @@ class QuoteLinesController extends Controller
                 ->where('ordre', '>', $line->ordre)
                 ->increment('ordre');
 
-            return $copier->copy($line, (int) $quoteId, $line->ordre + 1, [
+            return $copier->copy($line, (int) $quoteId, $line->ordre + 1, $line->isArticle() ? [
                 'code'  => $line->code . '#dup' . $line->id,
                 'label' => $line->label . '#dup' . $line->id,
-            ]);
+            ] : []);
         });
 
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
@@ -469,15 +486,18 @@ class QuoteLinesController extends Controller
 
         $sources = Quotes::withTemplates()
             ->where('id', '!=', $quoteId)
-            ->whereHas('QuoteLines')
-            ->with(['companie:id,label', 'QuoteLines:id,quotes_id,ordre,code,label,qty,selling_price,discount'])
+            ->whereHas('QuoteLines', fn ($l) => $l->articles())
+            ->with([
+                'companie:id,label',
+                'QuoteLines' => fn ($l) => $l->articles()->select(['id', 'quotes_id', 'ordre', 'code', 'label', 'qty', 'selling_price', 'discount']),
+            ])
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
                 ->where('code', 'like', '%' . $search . '%')
                 ->orWhere('label', 'like', '%' . $search . '%')
                 ->orWhereHas('companie', fn ($c) => $c->where('label', 'like', '%' . $search . '%'))
-                ->orWhereHas('QuoteLines', fn ($l) => $l
+                ->orWhereHas('QuoteLines', fn ($l) => $l->articles()->where(fn ($w) => $w
                     ->where('label', 'like', '%' . $search . '%')
-                    ->orWhere('code', 'like', '%' . $search . '%'))))
+                    ->orWhere('code', 'like', '%' . $search . '%')))))
             // Les trames d'abord, puis les devis les plus récents.
             ->orderByDesc('is_template')
             ->orderByDesc('id')
@@ -519,6 +539,7 @@ class QuoteLinesController extends Controller
         ]);
 
         $sources = QuoteLines::whereIn('id', $validated['line_ids'])
+            ->articles()
             ->where('quotes_id', '!=', $quote->id)
             ->orderBy('quotes_id')
             ->orderBy('ordre')
@@ -589,7 +610,7 @@ class QuoteLinesController extends Controller
         abort_if($quote->statu != 1, 403);
 
         $request->validate(['amount' => 'required|numeric|gt:0']);
-        $count = QuoteLines::where('quotes_id', $quoteId)->increment('selling_price', (float) $request->amount);
+        $count = QuoteLines::where('quotes_id', $quoteId)->articles()->increment('selling_price', (float) $request->amount);
 
         return response()->json(['updated' => $count]);
     }
@@ -648,7 +669,86 @@ class QuoteLinesController extends Controller
             'detail_url'           => route('quotes.lines.detail.edit', ['idQuote' => $l->quotes_id, 'id' => $l->id]),
             'order_code'           => $l->orderLine?->order?->code,
             'order_url'            => $l->orderLine?->order ? route('orders.show', ['id' => $l->orderLine->orders_id]) : null,
+            'line_type'            => $l->line_type ?? SalesLineType::Article->value,
+            'hide_on_pdf'          => (bool) $l->hide_on_pdf,
+            'pdf_package'          => (int) $l->pdf_package,
         ];
+    }
+
+    /**
+     * Section, sous-total ou texte : ni quantité, ni prix, ni TVA (voir
+     * HasSalesLineType). Insérée à la position demandée, la suite est décalée.
+     */
+    private function storePresentationLine(Quotes $quote, Request $request)
+    {
+        $validated = $request->validate([
+            'line_type' => ['required', Rule::in([SalesLineType::Section->value, SalesLineType::Subtotal->value, SalesLineType::Text->value])],
+            'ordre'     => 'required|integer|min:1',
+            'label'     => $request->input('line_type') === SalesLineType::Subtotal->value ? 'nullable|string|max:255' : 'required|string|max:255',
+        ]);
+
+        $defaultVat  = AccountingVat::getDefault();
+        $defaultUnit = MethodsUnits::getDefault();
+        if (! $defaultVat || ! $defaultUnit) {
+            return response()->json(['error' => 'No default VAT or Unit configured'], 422);
+        }
+
+        $line = DB::transaction(function () use ($quote, $validated, $defaultVat, $defaultUnit) {
+            QuoteLines::where('quotes_id', $quote->id)
+                ->where('ordre', '>=', $validated['ordre'])
+                ->increment('ordre');
+
+            // Colonnes NOT NULL héritées des articles : unité et TVA par défaut, montants à zéro.
+            return QuoteLines::create([
+                'quotes_id'          => $quote->id,
+                'ordre'              => $validated['ordre'],
+                'line_type'          => $validated['line_type'],
+                'code'               => '',
+                'label'              => $validated['label'] ?? '',
+                'qty'                => 0,
+                'selling_price'      => 0,
+                'discount'           => 0,
+                'methods_units_id'   => $defaultUnit->id,
+                'accounting_vats_id' => $defaultVat->id,
+            ]);
+        });
+
+        $line->load(['Unit:id,label,code']);
+
+        return response()->json(['line' => $this->formatLineJson($line, app('Factory')->curency ?? 'EUR', config('app.locale'))], 201);
+    }
+
+    /**
+     * Options d'impression d'une ligne : masquage d'un article, forfait d'une
+     * section (avec son unité). Aucune incidence sur les montants.
+     */
+    public function presentationJson(int $quoteId, int $id, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
+        $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
+
+        $validated = $request->validate([
+            'hide_on_pdf'      => 'sometimes|boolean',
+            'pdf_package'      => ['sometimes', 'integer', Rule::in([QuoteLines::PACKAGE_NONE, QuoteLines::PACKAGE_AMOUNT, QuoteLines::PACKAGE_UNIT])],
+            'methods_units_id' => 'sometimes|exists:methods_units,id',
+        ]);
+
+        if ($line->isArticle()) {
+            abort_if(array_key_exists('pdf_package', $validated), 422, 'Seule une section peut être imprimée au forfait.');
+            $line->update(array_intersect_key($validated, ['hide_on_pdf' => true]));
+        } elseif ($line->line_type === SalesLineType::Section->value) {
+            abort_if(array_key_exists('hide_on_pdf', $validated), 422, 'Seul un article peut être masqué.');
+            $line->update(array_intersect_key($validated, ['pdf_package' => true, 'methods_units_id' => true]));
+        } else {
+            abort(422, 'Ni masquage ni forfait sur un sous-total ou un texte.');
+        }
+
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+        $line->loadCount(['Task', 'SubAssembly']);
+
+        return response()->json(['line' => $this->formatLineJson($line, app('Factory')->curency ?? 'EUR', config('app.locale'))]);
     }
 
     public function storeOrderJson(Request $request, int $quoteId)
@@ -656,6 +756,10 @@ class QuoteLinesController extends Controller
         $lineIds = $request->input('line_ids', []);
         if (empty($lineIds)) {
             return response()->json(['error' => 'Aucune ligne sélectionnée.'], 422);
+        }
+        $presentation = $request->input('presentation', QuoteLineToOrderLineConverter::PRESENTATION_KEEP);
+        if (!in_array($presentation, [QuoteLineToOrderLineConverter::PRESENTATION_KEEP, QuoteLineToOrderLineConverter::PRESENTATION_DROP], true)) {
+            return response()->json(['error' => 'Choix de report des sections invalide.'], 422);
         }
 
         $quote = Quotes::withTemplates()->findOrFail($quoteId);
@@ -671,7 +775,7 @@ class QuoteLinesController extends Controller
 
         $converter = app(QuoteLineToOrderLineConverter::class);
 
-        $order = DB::transaction(function () use ($quote, $lineIds, $converter) {
+        $order = DB::transaction(function () use ($quote, $lineIds, $converter, $presentation) {
             $lastOrder = Orders::latest('id')->first();
             $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
 
@@ -695,11 +799,11 @@ class QuoteLinesController extends Controller
                 null
             );
 
-            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'files'])
-                ->whereIn('id', $lineIds)
-                ->where('quotes_id', $quote->id)
-                ->get()
-                ->keyBy('id');
+            $toConvert = $converter->linesToConvert(
+                QuoteLines::with(['QuoteLineDetails', 'Task', 'files'])->where('quotes_id', $quote->id)->get(),
+                $lineIds,
+                $presentation,
+            );
 
             $quote->loadMissing('files');
             $quotePivots = $quote->files->mapWithKeys(fn ($file) => [
@@ -713,13 +817,10 @@ class QuoteLinesController extends Controller
                 $newOrder->files()->attach($quotePivots);
             }
 
-            foreach ($lineIds as $lineId) {
-                $quoteLine = $quoteLineMap->get($lineId);
-                if (!$quoteLine) continue;
-
+            foreach ($toConvert as $quoteLine) {
                 $converter->convert($quoteLine, $newOrder->id, 7);
 
-                QuoteLines::where('id', $lineId)->update(['statu' => 3]);
+                QuoteLines::where('id', $quoteLine->id)->update(['statu' => 3]);
             }
 
             Quotes::where('id', $quote->id)->update(['statu' => 3]);
@@ -793,7 +894,7 @@ class QuoteLinesController extends Controller
             ->where('quotes_id', $quoteId)
             ->firstOrFail();
 
-        abort_unless($line->code && $line->label, 422);
+        abort_unless($line->isArticle() && $line->code && $line->label, 422);
 
         $service = MethodsServices::where('type', 8)->first();
         $family  = $service ? MethodsFamilies::where('methods_services_id', $service->id)->first() : null;
@@ -876,7 +977,7 @@ class QuoteLinesController extends Controller
                 ->where('quotes_id', $quoteId)
                 ->first();
 
-            if (! $line || ! $line->code || ! $line->label) continue;
+            if (! $line || ! $line->isArticle() || ! $line->code || ! $line->label) continue;
 
             if (Products::where('code', $line->code)->exists()) {
                 $skipped[] = ['line_id' => $line->id, 'code' => $line->code, 'label' => $line->label];

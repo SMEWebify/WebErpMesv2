@@ -190,6 +190,8 @@ class PortalController extends Controller
 
         return view('customer.orders.show', [
             'order' => $order,
+            // Même mise en page que le PDF de commande : rien de masqué n'est montré.
+            'lineRows' => app(\App\Services\Documents\SalesPrintLayout::class)->webRows($order->OrderLines),
             'totalPrices' => $calculator->getTotalPrice(),
             'subPrice' => $calculator->getSubTotal(),
             'vatPrice' => $calculator->getVatTotal(),

@@ -3,6 +3,8 @@
 namespace App\Models\Workflow;
 
 use App\Models\File;
+use App\Enums\SalesLineType;
+use App\Models\Concerns\HasSalesLineType;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
@@ -25,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasSalesLineType;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['orders_id',
@@ -48,8 +50,50 @@ class OrderLines extends Model
                             'internal_delay',
                             'delivery_status',
                             'invoice_status',
-                            'use_calculated_price'
+                            'use_calculated_price',
+                            'line_type',
+                            'hide_on_pdf',
+                            'pdf_package',
                         ];
+
+    protected $casts = [
+        'hide_on_pdf' => 'boolean',
+        'pdf_package' => 'integer',
+    ];
+
+    /**
+     * Verrou : une ligne de présentation (section, sous-total, texte) ne se
+     * livre ni ne se facture. Appelé à la création de toute ligne de BL et de
+     * facture, quel que soit le chemin qui la crée.
+     *
+     * @throws \DomainException
+     */
+    public static function guardArticle($orderLineId): void
+    {
+        if ($orderLineId === null) {
+            return;
+        }
+
+        $type = static::whereKey($orderLineId)->value('line_type');
+        if ($type !== null && $type !== SalesLineType::Article->value) {
+            throw new \DomainException("La ligne de commande #{$orderLineId} est une ligne de présentation : elle ne se livre ni ne se facture.");
+        }
+    }
+
+    /**
+     * Une ligne de présentation naît livrée et facturée : rien ne reste à
+     * livrer ni à facturer, et CheckOrderDeliveredStatus ne l'attend jamais.
+     */
+    protected function neutralizePresentationLine(): void
+    {
+        $this->use_calculated_price    = false;
+        $this->delivered_qty           = 0;
+        $this->delivered_remaining_qty = 0;
+        $this->invoiced_qty            = 0;
+        $this->invoiced_remaining_qty  = 0;
+        $this->delivery_status         = 3;
+        $this->invoice_status          = 3;
+    }
 
     public function order()
     {
@@ -254,11 +298,17 @@ class OrderLines extends Model
 
     public function getAveragePercentProgressDeleveryAttribute()
     {
+        if ((float) $this->qty == 0) {
+            return 0;
+        }
         return ($this->delivered_qty / $this->qty)*100;
     }
 
     public function getAveragePercentProgressInvoiceAttribute()
     {
+        if ((float) $this->qty == 0) {
+            return 0;
+        }
         return ($this->invoiced_qty / $this->qty)*100;
     }
 

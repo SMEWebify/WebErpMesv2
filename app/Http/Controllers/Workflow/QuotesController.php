@@ -483,7 +483,7 @@ class QuotesController extends Controller
         $dir      = $sortAsc ? 'asc' : 'desc';
         $totalSub = 'COALESCE((SELECT SUM(selling_price * qty * (1 - COALESCE(discount,0)/100)) FROM quote_lines WHERE quote_lines.quotes_id = quotes.id AND quote_lines.deleted_at IS NULL), 0)';
 
-        $query = Quotes::withCount('QuoteLines')
+        $query = Quotes::withCount(['QuoteLines' => fn ($q) => $q->articles()])
             ->selectRaw("quotes.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
@@ -619,7 +619,7 @@ class QuotesController extends Controller
         $search = trim((string) $request->get('search', ''));
 
         $templates = Quotes::onlyTemplates()
-            ->withCount('QuoteLines')
+            ->withCount(['QuoteLines' => fn ($q) => $q->articles()])
             ->with('UserManagement:id,name')
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
                 ->where('label', 'like', '%' . $search . '%')

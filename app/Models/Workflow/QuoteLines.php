@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use App\Models\File;
+use App\Models\Concerns\HasSalesLineType;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Quotes;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity, HasSalesLineType;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['quotes_id', 
@@ -36,8 +37,21 @@ class QuoteLines extends Model
                             'accounting_vats_id',
                             'delivery_date',
                             'statu',
-                            'use_calculated_price'
+                            'use_calculated_price',
+                            'line_type',
+                            'hide_on_pdf',
+                            'pdf_package',
                         ];
+
+    protected $casts = [
+        'hide_on_pdf' => 'boolean',
+        'pdf_package' => 'integer',
+    ];
+
+    protected function neutralizePresentationLine(): void
+    {
+        $this->use_calculated_price = false;
+    }
 
     public function quote()
     {

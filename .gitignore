@@ -37,3 +37,5 @@ dump.rdb
 WebErpMesV2.code-workspace
 /.idea
 /.vscode
+# Rendus de référence des vues PDF client (resources/views/print/custom, non diffusées)
+/tests/Fixtures/pdf-sales/*-custom.html

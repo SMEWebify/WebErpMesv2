@@ -7,6 +7,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Services\OrderCalculatorService;
 use App\Services\QuoteCalculatorService;
+use App\Services\Documents\SalesPrintLayout;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\Deliverys;
@@ -40,6 +41,8 @@ class GuestController extends Controller
         $TotalServiceSettingTime = $QuoteCalculatorService->getTotalSettingTimeByService();
         $TotalServiceCost = $QuoteCalculatorService->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculatorService->getTotalPriceByService();
+        // Même mise en page que le PDF : sections, sous-totaux, lignes masquées omises.
+        $printRows = app(SalesPrintLayout::class)->build($Quote->QuoteLines)['rows'];
         
         // Save visit information to database
         $this->logVisit(request(), $Quote->id);
@@ -53,6 +56,7 @@ class GuestController extends Controller
             'TotalServiceSettingTime'=> $TotalServiceSettingTime,
             'TotalServiceCost'=> $TotalServiceCost,
             'TotalServicePrice'=> $TotalServicePrice,
+            'printRows' => $printRows,
         ]);
     }
 
@@ -95,6 +99,8 @@ class GuestController extends Controller
         
         return view('guest/guest-order-info', [
             'Order' => $Order,
+            // Même mise en page que le PDF de commande : rien de masqué n'est montré.
+            'lineRows' => app(SalesPrintLayout::class)->webRows($Order->OrderLines),
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

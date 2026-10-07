@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
+import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -689,6 +690,43 @@ function LinesPopover({ items, badgeClass, badgeLabel }) {
 // LineRow
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Section, sous-total ou texte repris du devis — lecture seule : la mise en
+// page se prépare sur le devis, la commande la reproduit.
+// ---------------------------------------------------------------------------
+
+function OrderPresentationRow({ line, info, sectionLabel, currency }) {
+    const money = (v) => Number(v ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: currency || 'EUR' });
+    const type  = line.line_type;
+
+    return (
+        <tr className={`line-${type}`} style={{ background: type === LINE_TYPES.SECTION ? '#e9ecef' : type === LINE_TYPES.SUBTOTAL ? '#f8f9fa' : undefined }}>
+            <td><span className="text-muted small">{line.ordre}</span></td>
+            <td colSpan={13}>
+                {type === LINE_TYPES.SECTION && (
+                    <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                        <strong className="text-uppercase flex-grow-1">{line.label}</strong>
+                        {Number(line.pdf_package) !== PACKAGE.NONE && <span className="badge text-bg-light border">forfait</span>}
+                        <span className="font-weight-bold text-nowrap">{money(info?.amount)}</span>
+                    </div>
+                )}
+                {type === LINE_TYPES.SUBTOTAL && (
+                    <div className="d-flex">
+                        <span className="flex-grow-1 text-right font-weight-bold mr-2">
+                            {line.label || (sectionLabel ? `Sous-total ${sectionLabel}` : 'Sous-total')}
+                        </span>
+                        <span className="font-weight-bold text-nowrap">{money(info?.amount)}</span>
+                    </div>
+                )}
+                {type === LINE_TYPES.TEXT && (
+                    <span className="font-italic" style={{ whiteSpace: 'pre-wrap' }}>{line.label}</span>
+                )}
+            </td>
+            <td />
+        </tr>
+    );
+}
+
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
@@ -776,6 +814,9 @@ function LineRow({
 
             {/* Label */}
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {line.hide_on_pdf && (
+                    <i className="fas fa-eye-slash text-muted mr-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                )}
                 <span title={line.label}>{line.label}</span>
             </td>
 
@@ -1227,9 +1268,14 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         })
         .sort((a, b) => a.ordre - b.ordre);
 
-    const allSelected = filteredLines.length > 0 && filteredLines.every((l) => selected.has(l.id));
+    // Sections, sous-totaux et textes ne se livrent ni ne se facturent : pas de sélection.
+    const layout          = computeLayout(lines);
+    const selectableLines = filteredLines.filter(isArticle);
+    const sectionLabelOf  = (line) => lines.find((l) => l.id === layout.byId[line.id]?.sectionId)?.label;
+
+    const allSelected = selectableLines.length > 0 && selectableLines.every((l) => selected.has(l.id));
     const handleToggleAll = () => {
-        const ids = filteredLines.map((l) => l.id);
+        const ids = selectableLines.map((l) => l.id);
         if (allSelected) {
             setSelected((s) => { const ns = new Set(s); ids.forEach((id) => ns.delete(id)); return ns; });
         } else {
@@ -1391,7 +1437,15 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                     )}
                                 </td>
                             </tr>
-                        ) : filteredLines.map((line, index) => (
+                        ) : filteredLines.map((line, index) => (!isArticle(line) ? (
+                            <OrderPresentationRow
+                                key={line.id}
+                                line={line}
+                                info={layout.byId[line.id]}
+                                sectionLabel={sectionLabelOf(line)}
+                                currency={selectData.currency}
+                            />
+                        ) : (
                             <LineRow
                                 key={line.id}
                                 line={line}
@@ -1409,7 +1463,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 isDragOver={dragOver === index}
                                 isDragging={dragIndexRef.current === index}
                             />
-                        ))}
+                        )))}
                     </tbody>
                 </table>
             </div>

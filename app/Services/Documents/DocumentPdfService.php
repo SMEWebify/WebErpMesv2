@@ -41,6 +41,7 @@ class DocumentPdfService
     public function __construct(
         private readonly PdfThemeResolver $themeResolver,
         private readonly FacturXBuilder $facturXBuilder,
+        private readonly SalesPrintLayout $salesPrintLayout,
     ) {}
 
     public function fileName($document): string
@@ -75,6 +76,7 @@ class DocumentPdfService
         $normalizeCurrency   = fn ($value) => str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value);
 
         $this->exposeDocumentLines($document);
+        $printRows    = $viewKey === 'print/pdf-sales' ? $this->salesPrintLayout->apply($document) : null;
         $image        = $factory->getImageFactoryPath();
         $resolvedView = $this->themeResolver->resolveForDocument($document, $viewKey, $factory);
         $customCss    = $factory->pdf_custom_css;
@@ -92,6 +94,7 @@ class DocumentPdfService
             'image',
             'customCss',
             'normalizeCurrency',
+            'printRows',
         ));
 
         $pdf->render();

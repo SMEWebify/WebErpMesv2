@@ -34,6 +34,12 @@ class InvoiceLines extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
+    protected static function booted(): void
+    {
+        // Aucune ligne de présentation n'est facturée, donc aucune n'atteint le Factur-X.
+        static::creating(fn (self $line) => OrderLines::guardArticle($line->order_line_id));
+    }
+
     // Fillable attributes for mass assignment
     protected $fillable= ['invoices_id',
                             'order_line_id',

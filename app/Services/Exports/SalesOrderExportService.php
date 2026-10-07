@@ -45,6 +45,7 @@ class SalesOrderExportService
             $query->with([
                 'OrderLines' => function ($lineQuery) {
                     $lineQuery
+                        ->articles()
                         ->orderBy('ordre')
                         ->with([
                             'Product',

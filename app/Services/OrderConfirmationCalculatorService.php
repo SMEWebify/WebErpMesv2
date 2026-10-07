@@ -33,7 +33,7 @@ class OrderConfirmationCalculatorService
     {
         $tableauTVA = array();
 
-        foreach ($this->confirmation->OrderConfirmationLines as $line) {
+        foreach ($this->confirmation->OrderConfirmationLines->filter->isArticle() as $line) {
             $vatRate = (float) ($line->vat_rate ?? 0);
             $key = (string) $vatRate;
 
@@ -60,7 +60,7 @@ class OrderConfirmationCalculatorService
     {
         $TotalPrice = 0;
 
-        foreach ($this->confirmation->OrderConfirmationLines as $line) {
+        foreach ($this->confirmation->OrderConfirmationLines->filter->isArticle() as $line) {
             $vatRate = (float) ($line->vat_rate ?? 0);
             $TotalPriceLine = $this->lineSubTotal($line);
             $TotalPrice += $TotalPriceLine + ($TotalPriceLine * ($vatRate / 100));
@@ -78,7 +78,7 @@ class OrderConfirmationCalculatorService
     {
         $SubTotal = 0;
 
-        foreach ($this->confirmation->OrderConfirmationLines as $line) {
+        foreach ($this->confirmation->OrderConfirmationLines->filter->isArticle() as $line) {
             $SubTotal += round($this->lineSubTotal($line), 2);
         }
 

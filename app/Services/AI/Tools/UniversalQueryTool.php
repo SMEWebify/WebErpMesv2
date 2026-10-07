@@ -84,9 +84,9 @@ class UniversalQueryTool
         'order_lines' => [
             'model'       => OrderLines::class,
             'date_column' => 'created_at',
-            'label'       => 'Lignes de commande. Chaque ligne appartient à une commande via orders_id. tasks_status : 1=Aucune, 2=Créée, 3=En cours, 4=Terminée. delivery_status : 1=Non livrée, 2=Partielle, 3=Livrée, 4=Sans BL. invoice_status : 1=Non facturée, 2=Partielle, 3=Facturée. Chiffre d\'affaires ligne = qty × selling_price × (1 - discount/100).',
+            'label'       => 'Lignes de commande. Chaque ligne appartient à une commande via orders_id. tasks_status : 1=Aucune, 2=Créée, 3=En cours, 4=Terminée. delivery_status : 1=Non livrée, 2=Partielle, 3=Livrée, 4=Sans BL. invoice_status : 1=Non facturée, 2=Partielle, 3=Facturée. Chiffre d\'affaires ligne = qty × selling_price × (1 - discount/100). line_type : article (vraie ligne) ou section / subtotal / text (mise en page, sans quantité ni montant) : pour compter des lignes, filtrer line_type = article.',
             'columns'     => [
-                'id', 'orders_id', 'ordre', 'code', 'product_id', 'label',
+                'id', 'orders_id', 'ordre', 'line_type', 'code', 'product_id', 'label',
                 'qty', 'delivered_qty', 'delivered_remaining_qty',
                 'invoiced_qty', 'invoiced_remaining_qty',
                 'selling_price', 'discount', 'internal_delay', 'delivery_date',
@@ -113,9 +113,9 @@ class UniversalQueryTool
         'quote_lines' => [
             'model'       => QuoteLines::class,
             'date_column' => 'created_at',
-            'label'       => 'Lignes de devis. quotes_id = clé du devis parent. Montant ligne = qty × selling_price × (1 - discount/100).',
+            'label'       => 'Lignes de devis. quotes_id = clé du devis parent. Montant ligne = qty × selling_price × (1 - discount/100). line_type : article (vraie ligne) ou section / subtotal / text (mise en page, sans quantité ni montant) : pour compter des lignes, filtrer line_type = article. hide_on_pdf = article compté dans le total mais non imprimé.',
             'columns'     => [
-                'id', 'quotes_id', 'ordre', 'code', 'product_id', 'label',
+                'id', 'quotes_id', 'ordre', 'line_type', 'hide_on_pdf', 'code', 'product_id', 'label',
                 'qty', 'selling_price', 'discount', 'delivery_date', 'statu',
                 'created_at', 'updated_at',
             ],

@@ -38,7 +38,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($order->OrderLines as $DocumentLine)
+                                    @forelse(($lineRows ?? null) ?: $order->OrderLines as $DocumentLine)
+                                        @if(is_array($DocumentLine))
+                                            @include('partials.sales-presentation-web-row', ['row' => $DocumentLine, 'columns' => 7, 'currency' => $Factory->curency])
+                                            @continue
+                                        @endif
                                         <tr>
                                             <td>
                                                 <div class="d-flex mb-2">

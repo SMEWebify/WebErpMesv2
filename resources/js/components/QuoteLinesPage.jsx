@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { formatQty } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
+import { LINE_TYPES, PACKAGE, isArticle, computeLayout, moveLine } from '../lib/salesLineLayout';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -646,13 +647,157 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 }
 
 // ---------------------------------------------------------------------------
+// PresentationRow — section, sous-total ou texte (ni quantité, ni prix, ni TVA)
+// ---------------------------------------------------------------------------
+
+const PRESENTATION_LABELS = {
+    [LINE_TYPES.SECTION]:  'Section',
+    [LINE_TYPES.SUBTOTAL]: 'Sous-total',
+    [LINE_TYPES.TEXT]:     'Texte',
+};
+
+function PresentationRow({
+    line, info, sectionLabel, quoteStatu, units, currency, autoEdit,
+    onSaveLabel, onDelete, onPresentation,
+    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
+}) {
+    const [editing, setEditing] = useState(!!autoEdit);
+    const [label, setLabel]     = useState(line.label ?? '');
+    const editable = quoteStatu === 1;
+    const type     = line.line_type;
+
+    useEffect(() => { if (!editing) setLabel(line.label ?? ''); }, [line.label, editing]);
+
+    const money = (v) => Number(v ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: currency || 'EUR' });
+
+    const save = async () => {
+        if (await onSaveLabel(line, label)) setEditing(false);
+    };
+    const onKeyDown = (e) => {
+        if (e.key === 'Escape') { setLabel(line.label ?? ''); setEditing(false); }
+        if (e.key === 'Enter' && (type !== LINE_TYPES.TEXT || e.ctrlKey)) { e.preventDefault(); save(); }
+    };
+
+    const rowStyle = {
+        opacity:    isDragging ? 0.4 : 1,
+        borderTop:  isDragOver ? '3px solid #007bff' : undefined,
+        transition: 'border-top 0.1s, opacity 0.15s',
+        background: type === LINE_TYPES.SECTION ? '#e9ecef' : type === LINE_TYPES.SUBTOTAL ? '#f8f9fa' : undefined,
+    };
+
+    const subtotalLabel = line.label || (sectionLabel ? `Sous-total ${sectionLabel}` : 'Sous-total');
+
+    const editor = type === LINE_TYPES.TEXT ? (
+        <textarea className="form-control form-control-sm" rows={2} maxLength={255} autoFocus
+            value={label} onChange={(e) => setLabel(e.target.value)} onKeyDown={onKeyDown}
+            placeholder="Texte imprimé sur le devis (Ctrl+Entrée pour valider)" />
+    ) : (
+        <input type="text" className="form-control form-control-sm" maxLength={255} autoFocus
+            value={label} onChange={(e) => setLabel(e.target.value)} onKeyDown={onKeyDown}
+            placeholder={type === LINE_TYPES.SUBTOTAL ? subtotalLabel : 'Titre de la section'} />
+    );
+
+    return (
+        <tr
+            className={`line-${type}`}
+            draggable={canDrag}
+            onDragStart={canDrag ? onDragStart : undefined}
+            onDragEnter={canDrag ? onDragEnter : undefined}
+            onDragEnd={canDrag ? onDragEnd : undefined}
+            onDragOver={canDrag ? (e) => e.preventDefault() : undefined}
+            style={rowStyle}
+        >
+            <td style={{ width: 52, cursor: canDrag ? 'grab' : 'default', userSelect: 'none', padding: '2px 4px', verticalAlign: 'middle' }}>
+                <i className="fas fa-grip-vertical mr-1" style={{ color: '#aaa' }} />
+                <span className="text-muted small">{line.ordre}</span>
+            </td>
+            <td colSpan={11}>
+                <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                    <span className="badge text-bg-light border" title={PRESENTATION_LABELS[type]}>
+                        <i className={`fas fa-fw ${type === LINE_TYPES.SECTION ? 'fa-heading' : type === LINE_TYPES.SUBTOTAL ? 'fa-equals' : 'fa-paragraph'}`} />
+                    </span>
+
+                    {editing ? (
+                        <div className="flex-grow-1 d-flex" style={{ gap: '0.25rem' }}>
+                            {editor}
+                            <button type="button" className="btn btn-xs btn-success" onClick={save} title="Enregistrer"><i className="fas fa-check" /></button>
+                            <button type="button" className="btn btn-xs btn-default" title="Annuler"
+                                onClick={() => { setLabel(line.label ?? ''); setEditing(false); }}><i className="fas fa-times" /></button>
+                        </div>
+                    ) : type === LINE_TYPES.SECTION ? (
+                        <span className="flex-grow-1">
+                            <strong className="text-uppercase">{line.label}</strong>
+                            {info?.empty && (
+                                <span className="badge text-bg-warning ml-2"
+                                    title="Une section regroupe les lignes placées en dessous d'elle, jusqu'à la section suivante">
+                                    <i className="fas fa-exclamation-triangle mr-1" />
+                                    Section vide : placez-la au-dessus de ses lignes
+                                </span>
+                            )}
+                        </span>
+                    ) : type === LINE_TYPES.SUBTOTAL ? (
+                        <span className="flex-grow-1 text-right font-weight-bold">{subtotalLabel}</span>
+                    ) : (
+                        <span className="flex-grow-1 font-italic" style={{ whiteSpace: 'pre-wrap' }}>{line.label}</span>
+                    )}
+
+                    {type === LINE_TYPES.SECTION && (
+                        <>
+                            <select className="form-control form-control-sm" style={{ width: 'auto' }}
+                                value={Number(line.pdf_package ?? 0)} disabled={!editable}
+                                title="Impression de la section sur le devis"
+                                onChange={(e) => onPresentation(line, { pdf_package: Number(e.target.value) })}>
+                                <option value={PACKAGE.NONE}>Détail imprimé</option>
+                                <option value={PACKAGE.AMOUNT}>Forfait : montant seul</option>
+                                <option value={PACKAGE.UNIT}>Forfait : 1 × unité</option>
+                            </select>
+                            {Number(line.pdf_package) === PACKAGE.UNIT && (
+                                <select className="form-control form-control-sm" style={{ width: 'auto' }}
+                                    value={line.methods_units_id ?? ''} disabled={!editable}
+                                    title="Unité imprimée — créez une unité « Forfait » dans Méthodes > Unités si besoin"
+                                    onChange={(e) => onPresentation(line, { methods_units_id: Number(e.target.value) })}>
+                                    {(units ?? []).map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
+                                </select>
+                            )}
+                            <span className="font-weight-bold text-nowrap" title="Total HT de la section, lignes masquées comprises">
+                                {money(info?.amount)}
+                            </span>
+                        </>
+                    )}
+
+                    {type === LINE_TYPES.SUBTOTAL && (
+                        <span className={`font-weight-bold text-nowrap ${info?.inPackage ? 'text-muted' : ''}`}
+                            title={info?.inPackage ? 'Non imprimé : la section est au forfait' : 'Calculé, jamais saisi'}>
+                            {money(info?.amount)}
+                        </span>
+                    )}
+                </div>
+            </td>
+            <td>
+                {editable && !editing && (
+                    <div className="btn-group btn-group-xs">
+                        <button type="button" className="btn btn-xs btn-default" title="Modifier le libellé" onClick={() => setEditing(true)}>
+                            <i className="fas fa-edit text-warning" />
+                        </button>
+                        <button type="button" className="btn btn-xs btn-default" title="Supprimer" onClick={() => onDelete(line.id)}>
+                            <i className="fas fa-trash text-danger" />
+                        </button>
+                    </div>
+                )}
+            </td>
+        </tr>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // LineRow  — avec drag-and-drop
 // ---------------------------------------------------------------------------
 
 function LineRow({
     line, quoteStatu, onEdit, onDelete, onDuplicate, onBreakDown, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
+    info, onToggleHidden, onInsert,
     // drag props
-    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
+    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -669,7 +814,7 @@ function LineRow({
     const handleToggleMenu = () => {
         if (!menuOpen && toggleRef.current) {
             const rect    = toggleRef.current.getBoundingClientRect();
-            const menuH   = 220; // estimated height
+            const menuH   = 330; // estimated height
             const openUp  = rect.bottom + menuH > window.innerHeight;
             setMenuStyle(openUp
                 ? { position: 'fixed', bottom: window.innerHeight - rect.top, top: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 180, maxWidth: 220, zIndex: 1060 }
@@ -680,10 +825,9 @@ function LineRow({
     };
 
     const cfg      = STATUS_CONFIG[line.statu] ?? { badge: 'badge-secondary', label: '—' };
-    const canDrag  = quoteStatu === 1;
 
     const rowStyle = {
-        opacity:        isDragging  ? 0.4  : 1,
+        opacity:        isDragging  ? 0.4  : (line.hide_on_pdf ? 0.55 : 1),
         borderTop:      isDragOver  ? '3px solid #007bff' : undefined,
         transition:     'border-top 0.1s, opacity 0.15s',
         background:     selected    ? '#eef4ff' : undefined,
@@ -738,7 +882,13 @@ function LineRow({
 
             {/* Label */}
             <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {line.hide_on_pdf && (
+                    <i className="fas fa-eye-slash text-muted mr-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                )}
                 <span title={line.label}>{line.label}</span>
+                {info?.inPackage && (
+                    <span className="badge text-bg-light border ml-1" title="Section au forfait : la ligne n'est pas détaillée sur le PDF">forfait</span>
+                )}
             </td>
 
             {/* Qty */}
@@ -775,6 +925,13 @@ function LineRow({
             {/* Actions */}
             <td>
                 <div className="btn-group btn-group-xs" ref={menuRef}>
+                    {quoteStatu === 1 && (
+                        <button type="button" className="btn btn-xs btn-default"
+                            title={line.hide_on_pdf ? 'Afficher sur le PDF' : 'Masquer sur le PDF (reste comptée dans le total)'}
+                            onClick={() => onToggleHidden(line)}>
+                            <i className={`fas ${line.hide_on_pdf ? 'fa-eye-slash text-muted' : 'fa-eye'}`} />
+                        </button>
+                    )}
                     <a href={line.detail_url} className="btn btn-xs bg-teal" target="_blank" rel="noreferrer" title="Détails techniques">
                         <i className="fas fa-info-circle" />
                     </a>
@@ -813,6 +970,23 @@ function LineRow({
                                     <i className="fas fa-barcode fa-fw mr-2 text-success" />Créer un produit
                                 </button>
                             )}
+                            {quoteStatu === 1 && (
+                                <>
+                                    <div className="dropdown-divider" />
+                                    <button className="dropdown-item"
+                                        onClick={() => { onInsert(LINE_TYPES.SECTION, line.ordre); setMenuOpen(false); }}>
+                                        <i className="fas fa-heading fa-fw mr-2 text-secondary" />Insérer une section au-dessus
+                                    </button>
+                                    <button className="dropdown-item"
+                                        onClick={() => { onInsert(LINE_TYPES.TEXT, line.ordre); setMenuOpen(false); }}>
+                                        <i className="fas fa-paragraph fa-fw mr-2 text-secondary" />Insérer un texte au-dessus
+                                    </button>
+                                    <button className="dropdown-item"
+                                        onClick={() => { onInsert(LINE_TYPES.SUBTOTAL, line.ordre + 1); setMenuOpen(false); }}>
+                                        <i className="fas fa-equals fa-fw mr-2 text-secondary" />Insérer un sous-total en dessous
+                                    </button>
+                                </>
+                            )}
                             <div className="dropdown-divider" />
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
                                 <i className="fas fa-info-circle fa-fw mr-2 text-teal" />Détails techniques
@@ -832,6 +1006,59 @@ function LineRow({
                 </div>
             </td>
         </tr>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Conversion en commande d'un devis mis en page
+// ---------------------------------------------------------------------------
+
+function ConvertOrderModal({ count, onConfirm, onClose }) {
+    const [presentation, setPresentation] = useState('keep');
+
+    return (
+        <div className="modal d-block" tabIndex={-1} style={{ background: 'rgba(0,0,0,0.4)' }}>
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Créer une commande ({count} ligne{count > 1 ? 's' : ''})</h5>
+                        <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+                    </div>
+                    <div className="modal-body">
+                        <p className="mb-2">Ce devis contient des sections, sous-totaux ou textes. Sur la commande :</p>
+                        <div className="custom-control custom-radio mb-2">
+                            <input type="radio" id="presentation-keep" className="custom-control-input"
+                                checked={presentation === 'keep'} onChange={() => setPresentation('keep')} />
+                            <label className="custom-control-label" htmlFor="presentation-keep">
+                                <strong>Reporter la mise en page</strong>
+                                <div className="small text-muted">
+                                    Les sections des lignes choisies, leurs sous-totaux et textes, les forfaits et lignes masquées :
+                                    le PDF de commande ressemble au devis.
+                                </div>
+                            </label>
+                        </div>
+                        <div className="custom-control custom-radio">
+                            <input type="radio" id="presentation-drop" className="custom-control-input"
+                                checked={presentation === 'drop'} onChange={() => setPresentation('drop')} />
+                            <label className="custom-control-label" htmlFor="presentation-drop">
+                                <strong>Articles seuls</strong>
+                                <div className="small text-muted">La commande ne reprend que les lignes article.</div>
+                            </label>
+                        </div>
+                        <p className="small text-muted mt-3 mb-0">
+                            <i className="fas fa-info-circle mr-1" />
+                            Dans les deux cas, seuls les articles se livrent et se facturent.
+                        </p>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-default btn-sm" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-primary btn-sm" onClick={() => onConfirm(presentation)}>
+                            <i className="fas fa-folder mr-1" />Créer la commande
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -979,6 +1206,11 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const [flash, setFlash]               = useState(null);
     const [taskModalLine, setTaskModalLine] = useState(null);
     const [importOpen, setImportOpen]       = useState(false);
+    const [addMenuOpen, setAddMenuOpen]     = useState(false);
+    const [autoEditId, setAutoEditId]       = useState(null);   // ligne de présentation tout juste créée
+    const [convertOpen, setConvertOpen]     = useState(false);
+
+    const layout = useMemo(() => computeLayout(lines), [lines]);
 
     // Drag-and-drop state
     const dragIndexRef  = useRef(null);   // index in filteredLines
@@ -1036,31 +1268,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         setDragOver(null);
 
         if (fromIndex === null || toIndex === null || fromIndex === toIndex) return;
+        // Le glisser-déposer est coupé pendant une recherche : une liste filtrée
+        // renvoyait les lignes masquées en fin de devis, hors de leur section.
+        if (search) return;
 
-        // Reorder within filteredLines then reassign ordre 1..N
-        const sorted = [...lines].sort((a, b) => a.ordre - b.ordre);
-
-        // Apply the same search filter as the table
-        const currentSearch = search.toLowerCase();
-        const filtered = sorted.filter((l) =>
-            !currentSearch ||
-            (l.label ?? '').toLowerCase().includes(currentSearch) ||
-            (l.code  ?? '').toLowerCase().includes(currentSearch) ||
-            (l.product_code ?? '').toLowerCase().includes(currentSearch)
-        );
-
-        const [moved] = filtered.splice(fromIndex, 1);
-        filtered.splice(toIndex, 0, moved);
-
-        // Rebuild the full list preserving hidden rows (not in filter)
-        const filteredIds = new Set(filtered.map((l) => l.id));
-        const hidden      = sorted.filter((l) => !filteredIds.has(l.id));
-
-        // Merge: give filtered rows ordres 1..N, hidden rows follow after
-        const reordered = [
-            ...filtered.map((l, i) => ({ ...l, ordre: i + 1 })),
-            ...hidden.map((l, i) => ({ ...l, ordre: filtered.length + i + 1 })),
-        ];
+        // Une section emporte ses lignes ; ordre renuméroté de 1 à N.
+        const sorted    = [...lines].sort((a, b) => a.ordre - b.ordre);
+        const reordered = moveLine(lines, sorted[fromIndex]?.id, sorted[toIndex]?.id);
 
         setLines(reordered);
         refreshNextOrdre(reordered);
@@ -1134,12 +1348,74 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         }
     };
 
-    const handleStoreOrder = async () => {
+    // ---------- Lignes de présentation ----------
+
+    const replaceLine = (updated) => setLines((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
+
+    const handleInsert = async (lineType, ordre) => {
+        setAddMenuOpen(false);
+        const at = ordre ?? (lines.reduce((m, l) => Math.max(m, l.ordre), 0) + 1);
+        const defaults = { [LINE_TYPES.SECTION]: 'Nouvelle section', [LINE_TYPES.TEXT]: 'Texte', [LINE_TYPES.SUBTOTAL]: '' };
+        const res  = await apiFetch(endpoints.store, {
+            method: 'POST',
+            body: JSON.stringify({ line_type: lineType, ordre: at, label: defaults[lineType] }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            showFlash('danger', data.message ?? data.error ?? 'Erreur lors de l\'ajout');
+            return;
+        }
+        // Le serveur insère à la position demandée et décale la suite.
+        setLines((prev) => {
+            const u = [...prev.map((l) => (l.ordre >= data.line.ordre ? { ...l, ordre: l.ordre + 1 } : l)), data.line];
+            refreshNextOrdre(u);
+            return u;
+        });
+        if (lineType !== LINE_TYPES.SUBTOTAL) setAutoEditId(data.line.id);
+    };
+
+    const handleSaveLabel = async (line, label) => {
+        const res  = await apiFetch(endpoints.update.replace('__ID__', line.id), {
+            method: 'PUT',
+            body: JSON.stringify({ ordre: line.ordre, label }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            showFlash('danger', data.message ?? 'Libellé invalide');
+            return false;
+        }
+        replaceLine(data.line);
+        setAutoEditId(null);
+        return true;
+    };
+
+    const handlePresentation = async (line, patch) => {
+        if (!endpoints.presentation) return;
+        const res  = await apiFetch(endpoints.presentation.replace('__ID__', line.id), {
+            method: 'PATCH',
+            body: JSON.stringify(patch),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            replaceLine(data.line);
+        } else {
+            showFlash('danger', data.message ?? 'Erreur lors de la mise à jour');
+        }
+    };
+
+    const handleToggleHidden = (line) => handlePresentation(line, { hide_on_pdf: !line.hide_on_pdf });
+
+    // ---------- Conversion en commande ----------
+
+    const hasPresentation = lines.some((l) => !isArticle(l));
+
+    const handleStoreOrder = async (presentation = 'keep') => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        setConvertOpen(false);
         try {
-            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids }) });
+            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation }) });
             const data = await res.json();
             if (res.ok && data.redirect) {
                 window.location.href = data.redirect;
@@ -1246,9 +1522,15 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         })
         .sort((a, b) => a.ordre - b.ordre);
 
-    const allSelected = filteredLines.length > 0 && filteredLines.every((l) => selected.has(l.id));
+    // Seuls les articles se sélectionnent (commande, création de produits).
+    const selectableLines = filteredLines.filter(isArticle);
+    const articleCount    = filteredLines.length - filteredLines.filter((l) => !isArticle(l)).length;
+    const sectionLabelOf  = (line) => lines.find((l) => l.id === layout.byId[line.id]?.sectionId)?.label;
+    const canDrag         = quoteStatu === 1 && !search;
+
+    const allSelected = selectableLines.length > 0 && selectableLines.every((l) => selected.has(l.id));
     const handleToggleAll = () => {
-        const ids = filteredLines.map((l) => l.id);
+        const ids = selectableLines.map((l) => l.id);
         if (allSelected) {
             setSelected((s) => { const ns = new Set(s); ids.forEach((id) => ns.delete(id)); return ns; });
         } else {
@@ -1275,7 +1557,8 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     </button>
                 )}
                 {endpoints.storeOrder && (quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
-                    <button className="btn btn-primary btn-sm" onClick={handleStoreOrder}>
+                    <button className="btn btn-primary btn-sm"
+                        onClick={() => (hasPresentation ? setConvertOpen(true) : handleStoreOrder())}>
                         <i className="fas fa-folder mr-1" />
                         Créer une commande ({selected.size})
                     </button>
@@ -1309,8 +1592,29 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                         <i className="fas fa-file-import mr-1" />Importer d'un autre devis
                     </button>
                 )}
+                {quoteStatu === 1 && (
+                    <div className="btn-group btn-group-sm position-relative">
+                        <button type="button" className="btn btn-outline-secondary dropdown-toggle"
+                            onClick={() => setAddMenuOpen((v) => !v)}>
+                            <i className="fas fa-heading mr-1" />Mise en page
+                        </button>
+                        {addMenuOpen && (
+                            <div className="dropdown-menu show" style={{ zIndex: 1060 }}>
+                                <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.SECTION)}>
+                                    <i className="fas fa-heading fa-fw mr-2 text-secondary" />Ajouter une section
+                                </button>
+                                <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.SUBTOTAL)}>
+                                    <i className="fas fa-equals fa-fw mr-2 text-secondary" />Ajouter un sous-total
+                                </button>
+                                <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.TEXT)}>
+                                    <i className="fas fa-paragraph fa-fw mr-2 text-secondary" />Ajouter un texte
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
                 <span className="badge badge-secondary ml-auto">
-                    {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
+                    {articleCount} ligne{articleCount > 1 ? 's' : ''}
                 </span>
             </div>
 
@@ -1318,7 +1622,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             {quoteStatu === 1 && filteredLines.length > 1 && !search && (
                 <p className="text-muted small mb-2">
                     <i className="fas fa-grip-vertical mr-1" />
-                    Glissez les lignes pour modifier l'ordre.
+                    Glissez les lignes pour modifier l'ordre. Une section emporte ses lignes.
+                </p>
+            )}
+            {quoteStatu === 1 && filteredLines.length > 1 && search && (
+                <p className="text-muted small mb-2">
+                    <i className="fas fa-info-circle mr-1" />
+                    Videz la recherche pour réordonner les lignes.
                 </p>
             )}
 
@@ -1365,10 +1675,14 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                     )}
                                 </td>
                             </tr>
-                        ) : filteredLines.map((line, index) => (
+                        ) : filteredLines.map((line, index) => (isArticle(line) ? (
                             <LineRow
                                 key={line.id}
                                 line={line}
+                                info={layout.byId[line.id]}
+                                onToggleHidden={handleToggleHidden}
+                                onInsert={handleInsert}
+                                canDrag={canDrag}
                                 quoteStatu={quoteStatu}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
@@ -1384,10 +1698,49 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 isDragOver={dragOver === index}
                                 isDragging={dragIndexRef.current === index}
                             />
-                        ))}
+                        ) : (
+                            <PresentationRow
+                                key={line.id}
+                                line={line}
+                                info={layout.byId[line.id]}
+                                sectionLabel={sectionLabelOf(line)}
+                                quoteStatu={quoteStatu}
+                                units={selectData.units}
+                                currency={selectData.currency}
+                                autoEdit={autoEditId === line.id}
+                                onSaveLabel={handleSaveLabel}
+                                onDelete={handleDelete}
+                                onPresentation={handlePresentation}
+                                canDrag={canDrag}
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragEnter={(e) => handleDragEnter(e, index)}
+                                onDragEnd={handleDragEnd}
+                                isDragOver={dragOver === index}
+                                isDragging={dragIndexRef.current === index}
+                            />
+                        )))}
                     </tbody>
                 </table>
             </div>
+
+            {/* Lignes masquées hors forfait : la somme imprimée ne fera pas le total */}
+            {layout.hiddenOutsidePackage.count > 0 && (
+                <div className="alert alert-warning py-2 mt-2 mb-0 small">
+                    <i className="fas fa-eye-slash mr-1" />
+                    {layout.hiddenOutsidePackage.count} ligne{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} masquée{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} hors forfait :{' '}
+                    <strong>{layout.hiddenOutsidePackage.amount.toLocaleString('fr-FR', { style: 'currency', currency: selectData.currency || 'EUR' })} HT</strong>{' '}
+                    compté{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} dans le total mais absent{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} du PDF.
+                    La somme des lignes imprimées sera inférieure au total.
+                </div>
+            )}
+
+            {convertOpen && (
+                <ConvertOrderModal
+                    count={selected.size}
+                    onConfirm={handleStoreOrder}
+                    onClose={() => setConvertOpen(false)}
+                />
+            )}
 
             {/* CAD import dropzone */}
             <CadDropzone

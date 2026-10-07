@@ -78,6 +78,7 @@ class CalculateTaskDates implements ShouldQueue
                                     }])
                                     ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
                                     ->where('order_lines.tasks_status', '!=', 4)
+                                    ->where('order_lines.line_type', 'article')
                                     ->select('order_lines.*');
 
         // ALAP : on traite d'abord les commandes les plus urgentes (ancrage

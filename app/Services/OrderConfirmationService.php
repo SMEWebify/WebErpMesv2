@@ -271,6 +271,10 @@ class OrderConfirmationService
                 'accounting_vats_id'    => $line->accounting_vats_id,
                 'vat_rate'              => optional($line->VAT)['rate'] ?? 0,
                 'delivery_date'         => $line->delivery_date,
+                // Mise en page figée avec le reste : l'ARC se réimprime à l'identique.
+                'line_type'             => $line->line_type ?? 'article',
+                'hide_on_pdf'           => (bool) $line->hide_on_pdf,
+                'pdf_package'           => (int) $line->pdf_package,
             ]);
         }
     }

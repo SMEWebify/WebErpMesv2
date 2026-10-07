@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Devis - #QT-0001</title>
+        <style type="text/css">
+            @page {
+                margin: 350px 25px 50px 25px;
+            }
+            body {
+                margin: 0px; 
+                border: 1px solid #dddddd;
+            }
+            * {
+                font-family: Verdana, Arial, sans-serif;
+            }
+            a {
+                color: #000;
+                text-decoration: none;
+            }
+            table {
+                font-size: smaller;
+                border-collapse:collapse;
+            }
+            tfoot tr td {
+                font-weight: bold;
+                font-size: smaller;
+            }
+            table th
+            {
+                padding: 10px;
+                margin-top:30px;
+            }
+            header { position: fixed; top: -350px; left: 0px; right: 0px; ; height: 350px; }
+            footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: #dddddd; height: 50px; }
+            footer .pagenum:before {
+                content: counter(page);
+            }
+        </style>
+            </head>
+    <body>
+        <header>
+            <table width="100%; border: none; ">
+                <tr>
+                    <td align="left" style="width: 50%; background-color: #dddddd">
+                                            </td>
+                    <td colspan="2" align="center" style="width: 400%; background-color: #dddddd">
+                        <h2>Devis</h2>
+                        <h3>QT-0001</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="width: 40%;">
+                        <h3>Métallerie Dupont</h3>
+                        <pre>
+12 rue des Forges
+35000 Rennes
+Phone number : 02 99 00 00 00
+E-mail : contact@dupont.test
+<br />
+<br />
+Date : {{today}}
+                        </pre>
+                    </td>
+                    <td align="left" style="width: 50%;">
+                                                    <h3>Client Test SARL </h3>
+                            <pre>
+M. Jean Martin
+3 allée des Chênes
+44000 Nantes Loire-Atlantique
+France
+Phone number : 06 00 00 00 00
+E-mail : jean@client.test
+<br />
+Identifier: REF-CLIENT
+                            </pre>
+                                            </td>
+                </tr>
+            </table>
+        </header>
+
+        <footer>
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td align="left" style="width: 40%;">
+                            &copy; {{year}} - Métallerie Dupont
+                        </td>
+                        <td align="right" style="width: 40%;">
+                            <div class="pagenum-container">Page <span class="pagenum"></span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </footer>
+
+        <main>
+            <table style="width: 100%; " >
+                <thead >
+                    <tr style="background-color: grey;">
+                        <th align="center">Description</th>
+                        <th align="center">Material</th>
+                        <th align="center">Thickness</th>
+                        <th align="center">Qty</th>
+                        <th align="center">Unit</th>
+                        <th align="center">Unit Price</th>
+                        <th align="center">Discount</th>
+                        <th align="center">Delivery date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                                            <tr>
+                        <td align="center">
+                            Garde-corps acier<br>
+                            <span style="color: #6c757d">GC-01</span>
+                        </td>
+                        <td align="center">S235</td>
+                        <td align="center">3</td>
+                        <td align="center">12</td>
+                        <td>Mètre linéaire</td>
+                        <td>€85.00</td>
+                        <td align="center">0 %</td>
+                                                <td align="center">2026-11-30</td>
+                                                
+                    </tr>
+                                                            <tr>
+                        <td align="center">
+                            Main courante inox<br>
+                            <span style="color: #6c757d">MC-02</span>
+                        </td>
+                        <td align="center">304</td>
+                        <td align="center">2</td>
+                        <td align="center">12</td>
+                        <td>Mètre linéaire</td>
+                        <td>€42.00</td>
+                        <td align="center">5 %</td>
+                                                <td>-</td>
+                                                
+                    </tr>
+                                                            <tr>
+                        <td align="center">
+                            Thermolaquage<br>
+                            <span style="color: #6c757d">TL-03</span>
+                        </td>
+                        <td align="center">-</td>
+                        <td align="center">-</td>
+                        <td align="center">1</td>
+                        <td>Unité</td>
+                        <td>€180.00</td>
+                        <td align="center">0 %</td>
+                                                <td align="center">2026-12-15</td>
+                                                
+                    </tr>
+                                    </tbody>
+            </table>
+            <hr style="color: #6c757d">
+            <table width="100%">
+                <tr>
+                    <td align="left" style="width: 50%;">
+                                                                        <p class="lead"><strong>Comment :</strong></p>
+                        <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                            Commentaire du devis
+                        </p>
+                                                <p class="lead">
+                            <a href="http://localhost/guest/quote/00000000-0000-0000-0000-000000000001"> Public secure link</a>
+                        </p>
+                    </td>
+                    <td align="right" style="width: 50%;">
+                        <table width="80%">
+                            <tr>
+                                <th align="right" style="width:50%">Subtotal:</th> 
+                                <td align="right" style="width:30%">€1,678.80 </td>
+                            </tr>
+                                                        <tr>
+                                <td align="right" style="width:50%">Tax 10 %</td> 
+                                <td align="right" style="width:30%">18.00 EUR</td>
+                            </tr>
+                                                        <tr>
+                                <td align="right" style="width:50%">Tax 20 %</td> 
+                                <td align="right" style="width:30%">299.76 EUR</td>
+                            </tr>
+                                                        <tr  style=" background-color: #dddddd">
+                                <th align="right" style="width:50%">Total :</th> 
+                                <td align="right" style="width:30%">€1,996.56</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </main>
+    </body>
+</html>

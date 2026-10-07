@@ -31,7 +31,7 @@ class QuoteCalculatorService
     public function getVatTotal()
     {
         $tableauTVA = array();
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             $vat = $quoteLine->VAT ?? $this->defaultVat;
             $vatRate = $vat->rate ?? 0;
@@ -60,7 +60,7 @@ class QuoteCalculatorService
     public function getTotalPrice()
     {
         $TotalPrice = 0;
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             $vatRate = ($quoteLine->VAT ?? $this->defaultVat)?->rate ?? 0;
             $TotalPriceLine = ($quoteLine->qty * $quoteLine->selling_price)-($quoteLine->qty * $quoteLine->selling_price)*($quoteLine->discount/100);
@@ -83,7 +83,7 @@ class QuoteCalculatorService
     public function getSubTotal()
     {
         $SubTotal = 0;
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             $SubTotal += round($quoteLine->qty * $quoteLine->selling_price * (1 - $quoteLine->discount / 100), 2);
         }
@@ -104,7 +104,7 @@ class QuoteCalculatorService
     public function getTotalProductTimeByService()
     {
         $tableauService = array();
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceProductTimeForQuoteCurentLine =  $TechnicalCutLine->unit_time*$quoteLine->qty ;
@@ -135,7 +135,7 @@ class QuoteCalculatorService
     public function getTotalSettingTimeByService()
     {
         $tableauService = array();
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceSettingTimeForQuoteCurentLine =  $TechnicalCutLine->seting_time ;
@@ -166,7 +166,7 @@ class QuoteCalculatorService
     public function getTotalCostByService()
     {
         $tableauService = array();
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServiceCostForQuoteCurentLine =  $TechnicalCutLine->unit_cost*$quoteLine->qty ;
@@ -198,7 +198,7 @@ class QuoteCalculatorService
     public function getTotalPriceByService()
     {
         $tableauService = array();
-        $quoteLines = $this->quote->quoteLines;
+        $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
                 $TotalServicePriceForQuoteCurentLine =  $TechnicalCutLine->unit_price*$quoteLine->qty ;

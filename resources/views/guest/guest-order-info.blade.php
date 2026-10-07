@@ -71,7 +71,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($Order->OrderLines as $DocumentLine)
+                                    @forelse(($lineRows ?? null) ?: $Order->OrderLines as $DocumentLine)
+                                    @if(is_array($DocumentLine))
+                                        @include('partials.sales-presentation-web-row', ['row' => $DocumentLine, 'columns' => 7, 'currency' => $Factory->curency, 'thousands' => ''])
+                                        @continue
+                                    @endif
                                     <tr>
                                         <td>
                                             <div class="fw-medium">{{ $DocumentLine->label }}</div>

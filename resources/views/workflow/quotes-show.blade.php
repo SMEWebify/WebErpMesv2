@@ -59,7 +59,7 @@ $arrowSteps = json_encode([
   <div class="card-header p-2">
     <ul class="nav nav-pills"  id="DocumentTabs">
       <li class="nav-item"><a class="nav-link " href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ count($Quote->QuoteLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ $Quote->QuoteLines->filter->isArticle()->count() }})</a></li>
       @if($Factory->enable_construction_site)
       <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">{{ __('general_content.beta_trans_key') }}</span></a></li>
       @endif
@@ -411,6 +411,7 @@ $arrowSteps = json_encode([
             'createProducts'  => route('quotes.lines.json.create-products', ['quoteId' => $Quote->id]),
             'tasks'           => route('quotes.lines.json.tasks',           ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'presentation'    => route('quotes.lines.json.presentation',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
             'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
             'importSources'   => route('quotes.lines.json.import-sources',  ['quoteId' => $Quote->id]),

@@ -319,7 +319,7 @@ class OrdersController extends Controller
         $dir      = $sortAsc ? 'asc' : 'desc';
         $totalSub = 'COALESCE((SELECT SUM(selling_price * qty * (1 - COALESCE(discount,0)/100)) FROM order_lines WHERE order_lines.orders_id = orders.id AND order_lines.deleted_at IS NULL), 0)';
 
-        $query = Orders::withCount('OrderLines')
+        $query = Orders::withCount(['OrderLines' => fn ($q) => $q->articles()])
             ->selectRaw("orders.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))

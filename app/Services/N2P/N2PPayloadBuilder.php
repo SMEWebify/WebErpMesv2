@@ -24,7 +24,8 @@ class N2PPayloadBuilder
         $defaultPriority = (int) Arr::get($settings, 'n2p_priority_default', 3);
         $sendTasks = (bool) Arr::get($settings, 'n2p_send_tasks', true);
 
-        foreach ($order->OrderLines as $orderLine) {
+        // Un OF par article : une section ou un texte ne se fabrique pas.
+        foreach ($order->OrderLines->filter->isArticle() as $orderLine) {
             $jobs[] = $this->buildJob($order, $orderLine, $jobStatus, $defaultPriority, $sendTasks);
         }
 

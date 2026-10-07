@@ -23,6 +23,7 @@ use App\Models\Quality\QualityNonConformity;
 use App\Services\CreditNoteCalculatorService;
 use App\Services\PdfThemeResolver;
 use App\Services\Invoicing\FacturXBuilder;
+use App\Services\Documents\SalesPrintLayout;
 
 class PrintController extends Controller
 {
@@ -225,11 +226,12 @@ class PrintController extends Controller
         $normalizeCurrency = fn ($value) => $this->normalizePdfCurrency($value);
 
         $this->getDocumentLines($Document, $this->getDocumentLinesKey($Document));
+        $printRows = $viewKey === 'print/pdf-sales' ? app(SalesPrintLayout::class)->apply($Document) : null;
         $image = $Factory->getImageFactoryPath();
         $resolver = app(PdfThemeResolver::class);
         $resolvedView = $resolver->resolveForDocument($Document, $viewKey, $Factory);
         $customCss = $Factory->pdf_custom_css;
-        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency'));
+        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency', 'printRows'));
 
         // Render first so all pages exist, then add page numbers on every page
         $pdf->render();

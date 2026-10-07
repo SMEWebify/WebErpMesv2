@@ -13,6 +13,12 @@ class DeliveryLines extends Model
 {
     use HasFactory, LogsActivity;
 
+    protected static function booted(): void
+    {
+        // Aucune ligne de présentation ne part en livraison.
+        static::creating(fn (self $line) => OrderLines::guardArticle($line->order_line_id));
+    }
+
     // Fillable attributes for mass assignment
     protected $fillable= ['deliverys_id', 
                             'order_line_id', 

@@ -240,8 +240,11 @@ class QuoteController extends Controller
             }
         }
 
-        // Soft-delete lines not present in the submitted payload
+        // Soft-delete lines not present in the submitted payload. Les sections,
+        // sous-totaux et textes sont saisis dans l'écran devis : un client d'API
+        // qui ne les connaît pas ne doit pas les effacer en renvoyant ses articles.
         $quote->QuoteLines()
+            ->articles()
             ->when(!empty($submittedLineIds), fn ($q) => $q->whereNotIn('id', $submittedLineIds))
             ->each(fn (QuoteLines $line) => $line->delete());
     }

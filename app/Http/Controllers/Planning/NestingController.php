@@ -187,6 +187,7 @@ class NestingController extends Controller
         $serviceIds    = collect($request->input('service_ids', []))->map(fn ($v) => (int) $v)->filter()->values();
 
         $lines = OrderLines::query()
+            ->articles()
             ->whereHas('order', fn ($q) => $q->whereIn('statu', $allowedStatus))
             ->with([
                 'Product:id,code,label,material,thickness',

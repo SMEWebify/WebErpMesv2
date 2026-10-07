@@ -188,7 +188,7 @@ class QualityKPIService
     public function GetCalculateLitigationRate()
     {
         // Calculate the total number of order lines
-        $totalOrderLines = OrderLines::count();
+        $totalOrderLines = OrderLines::articles()->count();
         // Calculate the number of disputed order lines
         $litigationCount = QualityNonConformity::whereNotNull('order_lines_id')->count();
         // Calculate the litigation rate
