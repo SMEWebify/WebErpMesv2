@@ -11,6 +11,7 @@ use App\Services\Cad\CadImportService;
 use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
+use App\Services\Quotes\QuoteLineCopier;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Factory;
@@ -440,37 +441,23 @@ class QuoteLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
     }
 
-    public function duplicateLineJson($quoteId, $id)
+    public function duplicateLineJson($quoteId, $id, QuoteLineCopier $copier)
     {
         abort_unless(auth()->check(), 403);
+        $quote = Quotes::findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
         $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
 
-        $newLine        = $line->replicate();
-        $newLine->ordre = $line->ordre + 1;
-        $newLine->code  = $line->code . '#dup' . $line->id;
-        $newLine->label = $line->label . '#dup' . $line->id;
-        $newLine->save();
+        $newLine = DB::transaction(function () use ($line, $quoteId, $copier) {
+            // La copie s'insère juste sous l'original : on décale la suite.
+            QuoteLines::where('quotes_id', $quoteId)
+                ->where('ordre', '>', $line->ordre)
+                ->increment('ordre');
 
-        $details = QuoteLineDetails::where('quote_lines_id', $id)->first();
-        if ($details) {
-            $newDetails                  = $details->replicate();
-            $newDetails->quote_lines_id = $newLine->id;
-            $newDetails->save();
-        } else {
-            QuoteLineDetails::create(['quote_lines_id' => $newLine->id]);
-        }
-
-        Task::where('quote_lines_id', $id)->get()->each(function ($t) use ($newLine) {
-            $nt                  = $t->replicate();
-            $nt->quote_lines_id = $newLine->id;
-            $nt->origin          = '5';
-            $nt->save();
-        });
-
-        SubAssembly::where('quote_lines_id', $id)->get()->each(function ($s) use ($newLine) {
-            $ns                  = $s->replicate();
-            $ns->quote_lines_id = $newLine->id;
-            $ns->save();
+            return $copier->copy($line, (int) $quoteId, $line->ordre + 1, [
+                'code'  => $line->code . '#dup' . $line->id,
+                'label' => $line->label . '#dup' . $line->id,
+            ]);
         });
 
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
