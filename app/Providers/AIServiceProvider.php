@@ -8,6 +8,7 @@ use App\Services\AI\Modules\ERPAssistantModule;
 use App\Services\AI\Providers\ClaudeProvider;
 use App\Services\AI\Providers\PythonMLProvider;
 use App\Services\AI\Providers\ToolAwareClaudeProvider;
+use App\Services\AI\Providers\ToolAwareOpenAICompatibleProvider;
 use App\Services\AI\Tools\ERPToolRegistry;
 use App\Services\AI\Tools\InvoiceQueryTool;
 use App\Services\AI\Tools\OrderQueryTool;
@@ -51,6 +52,13 @@ class AIServiceProvider extends ServiceProvider
                 $app->make(ERPToolRegistry::class),
                 $resolver,
             ));
+            foreach (AISettingsResolver::OPENAI_COMPATIBLE as $key) {
+                $gateway->registerProvider(new ToolAwareOpenAICompatibleProvider(
+                    $key,
+                    $app->make(ERPToolRegistry::class),
+                    $resolver,
+                ));
+            }
             return $gateway;
         });
 
@@ -58,6 +66,7 @@ class AIServiceProvider extends ServiceProvider
         $this->app->singleton(ERPAssistantModule::class, fn ($app) => new ERPAssistantModule(
             $app->make(AIGateway::class),
             $app->make(ERPToolRegistry::class),
+            $app->make(AISettingsResolver::class),
         ));
     }
 

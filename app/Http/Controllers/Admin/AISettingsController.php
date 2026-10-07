@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Integrations\AISetting;
 use App\Services\AI\AISettingsResolver;
+use App\Services\AI\Providers\ToolAwareOpenAICompatibleProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,18 +16,19 @@ use Throwable;
 /**
  * Configuration de l'assistant IA — écran d'admin unique.
  *
- * Volontairement sans multi-tenant : une instance = une clé. La logique
- * multi-provider est déjà cadrée en base (colonne `provider`) mais seul
- * Claude est câblé pour l'instant.
+ * Volontairement sans multi-tenant : une instance = une clé. Deux familles
+ * de providers sont câblées : Claude (API Messages) et OVHcloud AI Endpoints
+ * (API compatible OpenAI, hébergée en France).
  */
 class AISettingsController extends Controller
 {
     /** Providers connus. Seuls ceux marqués enabled=true sont sélectionnables. */
     private const PROVIDERS = [
-        'claude'  => ['label' => 'Anthropic Claude', 'enabled' => true,  'default_model' => 'claude-haiku-4-5-20251001'],
-        'openai'  => ['label' => 'OpenAI (GPT-4o…)', 'enabled' => false, 'default_model' => 'gpt-4o-mini'],
-        'mistral' => ['label' => 'Mistral (La Plateforme)', 'enabled' => false, 'default_model' => 'mistral-small-latest'],
-        'ollama'  => ['label' => 'Ollama (auto-hébergé)', 'enabled' => false, 'default_model' => 'llama3.1:8b'],
+        'claude'  => ['label' => 'Anthropic Claude', 'enabled' => true,  'default_model' => 'claude-haiku-4-5-20251001', 'key_required' => true,  'base_url' => 'https://api.anthropic.com'],
+        'ovh'     => ['label' => 'OVHcloud AI Endpoints (hébergé en France)', 'enabled' => true, 'default_model' => 'Mistral-Small-3.2-24B-Instruct-2506', 'key_required' => false, 'base_url' => 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1'],
+        'openai'  => ['label' => 'OpenAI (GPT-4o…)', 'enabled' => false, 'default_model' => 'gpt-4o-mini', 'key_required' => true, 'base_url' => ''],
+        'mistral' => ['label' => 'Mistral (La Plateforme)', 'enabled' => false, 'default_model' => 'mistral-small-latest', 'key_required' => true, 'base_url' => ''],
+        'ollama'  => ['label' => 'Ollama (auto-hébergé)', 'enabled' => false, 'default_model' => 'llama3.1:8b', 'key_required' => false, 'base_url' => ''],
     ];
 
     public function __construct(private readonly AISettingsResolver $resolver) {}
@@ -35,13 +37,14 @@ class AISettingsController extends Controller
     {
         $setting  = AISetting::current();
         $envKey   = (string) config('ai.providers.claude.api_key', '');
-        $resolved = $this->resolver->claude();
+        $resolved = $this->resolver->active();
 
         return view('integrations.ai', [
             'setting'       => $setting,
             'providers'     => self::PROVIDERS,
             'source'        => $resolved['source'],           // 'db' | 'env'
-            'env_key_set'   => $envKey !== '',
+            'active'        => $resolved['provider'],
+            'env_key_set'   => $resolved['provider'] === 'claude' && $envKey !== '',
             'has_key'       => ! empty($resolved['api_key']),
             'default_model' => $resolved['model'],
         ]);
@@ -66,11 +69,19 @@ class AISettingsController extends Controller
         }
 
         $setting = AISetting::current() ?? new AISetting();
+
+        // Changer de provider sans saisir de clé : l'ancienne clé appartient à
+        // l'autre plateforme, on ne l'envoie pas chez le nouveau (fuite + 401).
+        $providerChanged = $setting->exists && $setting->provider !== $validated['provider'];
+        if ($providerChanged && empty($validated['api_key'])) {
+            $setting->api_key = null;
+        }
+
         $setting->provider        = $validated['provider'];
-        $setting->model           = $validated['model'] ?: null;
+        $setting->model           = ($validated['model'] ?? null) ?: null;
         $setting->max_tokens      = $validated['max_tokens'];
         $setting->timeout_seconds = $validated['timeout_seconds'];
-        $setting->base_url        = $validated['base_url'] ?: null;
+        $setting->base_url        = ($validated['base_url'] ?? null) ?: null;
         $setting->is_active       = (bool) ($validated['is_active'] ?? true);
 
         // On ne remplace la clé que si l'utilisateur en a saisi une nouvelle.
@@ -121,6 +132,10 @@ class AISettingsController extends Controller
      */
     public function test(): JsonResponse
     {
+        if ($this->resolver->activeProvider() !== 'claude') {
+            return $this->testOpenAICompatible($this->resolver->active());
+        }
+
         $config = $this->resolver->claude();
 
         if (empty($config['api_key'])) {
@@ -159,6 +174,61 @@ class AISettingsController extends Controller
                 'message' => 'Connexion réussie.',
                 'model'   => $data['model']  ?? null,
                 'reply'   => mb_substr($reply, 0, 80),
+                'source'  => $config['source'],
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'ok'      => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Test d'un endpoint compatible OpenAI. En cas d'échec, on liste les
+     * modèles exposés : un identifiant mal orthographié est l'erreur la plus
+     * fréquente (le catalogue OVH évolue et la casse compte).
+     */
+    private function testOpenAICompatible(array $config): JsonResponse
+    {
+        $http = fn () => Http::acceptJson()->timeout(15)
+            ->when(! empty($config['api_key']), fn ($h) => $h->withToken($config['api_key']));
+
+        try {
+            $response = $http()->post($config['base_url'] . '/chat/completions', [
+                'model'      => $config['model'],
+                'max_tokens' => 20,
+                'messages'   => [['role' => 'user', 'content' => 'Réponds uniquement par : OK']],
+            ]);
+
+            if ($response->failed()) {
+                $message = ToolAwareOpenAICompatibleProvider::errorMessage($response->json(), $response->body());
+
+                $models = [];
+                try {
+                    $models = collect($http()->get($config['base_url'] . '/models')->json('data') ?? [])
+                        ->pluck('id')->filter()->sort()->values()->all();
+                } catch (Throwable) {
+                    // La liste n'est qu'une aide au diagnostic.
+                }
+
+                return response()->json([
+                    'ok'      => false,
+                    'status'  => $response->status(),
+                    'message' => $message,
+                    'models'  => $models,
+                ]);
+            }
+
+            $data = $response->json();
+
+            return response()->json([
+                'ok'      => true,
+                'message' => empty($config['api_key'])
+                    ? 'Connexion réussie (accès anonyme, débit limité).'
+                    : 'Connexion réussie.',
+                'model'   => $data['model'] ?? $config['model'],
+                'reply'   => mb_substr((string) ($data['choices'][0]['message']['content'] ?? ''), 0, 80),
                 'source'  => $config['source'],
             ]);
         } catch (Throwable $e) {

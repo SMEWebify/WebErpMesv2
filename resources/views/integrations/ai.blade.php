@@ -40,6 +40,8 @@
                         @endif
                         @if($has_key)
                             <span class="badge badge-info ml-1">Clé configurée</span>
+                        @elseif(! $providers[$active]['key_required'])
+                            <span class="badge badge-secondary ml-1" title="Fonctionne sans clé, avec un débit fortement limité.">Accès anonyme</span>
                         @else
                             <span class="badge badge-danger ml-1">Clé manquante</span>
                         @endif
@@ -57,6 +59,7 @@
                                 @foreach($providers as $key => $info)
                                     <option value="{{ $key }}"
                                             data-default-model="{{ $info['default_model'] }}"
+                                            data-base-url="{{ $info['base_url'] }}"
                                             @if(! $info['enabled']) disabled @endif
                                             @selected(($setting->provider ?? 'claude') === $key)>
                                         {{ $info['label'] }}
@@ -65,8 +68,10 @@
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">
-                                Seul Claude est branché pour l'instant. Les autres providers
-                                seront ajoutés dans une prochaine version.
+                                <strong>OVHcloud AI Endpoints</strong> : modèles open source hébergés en France
+                                (données hors des États-Unis). Choisissez un modèle marqué
+                                <em>Function Calling</em> au catalogue OVH, sinon l'assistant ne peut pas interroger l'ERP.
+                                Changer de provider sans saisir de clé efface la clé précédente.
                             </small>
                         </div>
 
@@ -82,7 +87,7 @@
                                    name="api_key"
                                    class="form-control"
                                    autocomplete="off"
-                                   placeholder="{{ $has_key ? '••••••••••••••••' : 'sk-ant-...' }}">
+                                   placeholder="{{ $has_key ? '••••••••••••••••' : ($active === 'ovh' ? 'Jeton AI Endpoints (facultatif)' : 'sk-ant-...') }}">
                             <small class="form-text text-muted">
                                 Chiffrée au repos avec la clé <code>APP_KEY</code> de Laravel.
                                 Ne sera jamais renvoyée en clair dans une réponse HTTP.
@@ -98,7 +103,7 @@
                                            name="model"
                                            class="form-control"
                                            value="{{ old('model', $setting->model ?? $default_model) }}"
-                                           placeholder="claude-haiku-4-5-20251001">
+                                           placeholder="{{ $providers[$active]['default_model'] }}">
                                 </div>
                             </div>
 
@@ -128,13 +133,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="base_url">Base URL <small class="text-muted">(Ollama / endpoint auto-hébergé — laissez vide sinon)</small></label>
+                            <label for="base_url">Base URL <small class="text-muted">(laissez vide pour l'URL officielle du provider)</small></label>
                             <input type="url"
                                    id="base_url"
                                    name="base_url"
                                    class="form-control"
                                    value="{{ old('base_url', $setting->base_url ?? '') }}"
-                                   placeholder="https://api.anthropic.com">
+                                   placeholder="{{ $providers[$active]['base_url'] }}">
                         </div>
 
                         <div class="custom-control custom-switch">
@@ -188,7 +193,7 @@
                     <h3 class="card-title">Où se sert la config ?</h3>
                 </div>
                 <div class="card-body">
-                    <p class="mb-2">Cette clé est utilisée par :</p>
+                    <p class="mb-2">Ce provider est utilisé par :</p>
                     <ul class="mb-3">
                         <li><strong>ChatWidget</strong> (bulle en bas à droite) — assistant ERP.</li>
                         <li><strong>get_daily_journal</strong> — génération du journal.</li>
@@ -209,6 +214,13 @@
 @push('js')
 <script>
 (function () {
+    const providerEl = document.getElementById('provider');
+    providerEl?.addEventListener('change', () => {
+        const opt = providerEl.selectedOptions[0];
+        document.getElementById('model').placeholder    = opt.dataset.defaultModel || '';
+        document.getElementById('base_url').placeholder = opt.dataset.baseUrl || '';
+    });
+
     const btn      = document.getElementById('btn-test');
     const resultEl = document.getElementById('test-result');
     if (! btn) return;
@@ -231,12 +243,15 @@
 
             const theme = data.ok ? 'success' : 'danger';
             const icon  = data.ok ? 'check-circle' : 'times-circle';
+            const esc   = (v) => String(v ?? '').replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
             const parts = [];
-            parts.push(`<strong>${data.message}</strong>`);
+            parts.push(`<strong>${esc(data.message)}</strong>`);
             if (data.ok) {
-                if (data.model)  parts.push(`Modèle : <code>${data.model}</code>`);
-                if (data.reply)  parts.push(`Réponse : <em>${data.reply}</em>`);
+                if (data.model)  parts.push(`Modèle : <code>${esc(data.model)}</code>`);
+                if (data.reply)  parts.push(`Réponse : <em>${esc(data.reply)}</em>`);
                 if (data.source) parts.push(`Source : <code>${data.source}</code>`);
+            } else if (Array.isArray(data.models) && data.models.length) {
+                parts.push(`Modèles disponibles : ${data.models.map((m) => `<code>${esc(m)}</code>`).join(', ')}`);
             }
 
             resultEl.innerHTML = `

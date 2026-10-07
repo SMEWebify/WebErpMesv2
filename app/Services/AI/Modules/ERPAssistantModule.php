@@ -3,6 +3,7 @@
 namespace App\Services\AI\Modules;
 
 use App\Services\AI\AIGateway;
+use App\Services\AI\AISettingsResolver;
 use App\Services\AI\DTOs\AIRequest;
 use App\Services\AI\DTOs\AIResponse;
 use App\Services\AI\Tools\ERPToolRegistry;
@@ -13,14 +14,16 @@ use App\Services\AI\Tools\ERPToolRegistry;
  * Utilise le tool use Claude pour interroger l'ERP (commandes, stock,
  * factures, devis) sans jamais exposer de données brutes côté client.
  * Claude choisit lui-même quel outil appeler selon la demande.
+ *
+ * Le provider suit le choix de /admin/integrations/ai : tool_claude par
+ * défaut, tool_ovh si OVHcloud AI Endpoints est sélectionné.
  */
 class ERPAssistantModule
 {
-    private const PROVIDER = 'tool_claude';
-
     public function __construct(
-        private readonly AIGateway       $gateway,
-        private readonly ERPToolRegistry $toolRegistry,
+        private readonly AIGateway          $gateway,
+        private readonly ERPToolRegistry    $toolRegistry,
+        private readonly AISettingsResolver $settings,
     ) {}
 
     /**
@@ -39,7 +42,7 @@ class ERPAssistantModule
             ->withMaxTokens(2048)
             ->withMeta(['module' => self::class, 'locale' => $locale]);
 
-        return $this->gateway->complete($request, self::PROVIDER);
+        return $this->gateway->complete($request, 'tool_' . $this->settings->activeProvider());
     }
 
     protected function systemPrompt(?string $locale): string
