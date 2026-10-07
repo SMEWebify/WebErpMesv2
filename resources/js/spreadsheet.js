@@ -12,18 +12,19 @@ import {
     LocaleType,
     mergeLocales,
     UniverInstanceType,
-    IUniverInstanceService,
-    ICommandService,
 } from '@univerjs/core';
 
 // ─── Locales ──────────────────────────────────────────────────────────────────
-import DesignFrFR        from '@univerjs/design/lib/locale/fr-FR';
-import UIFrFR            from '@univerjs/ui/lib/locale/fr-FR';
-import DocsFrFR          from '@univerjs/docs-ui/lib/locale/fr-FR';
-import SheetsFrFR        from '@univerjs/sheets/lib/locale/fr-FR';
-import SheetsUIFrFR      from '@univerjs/sheets-ui/lib/locale/fr-FR';
-import SheetsFormulaFrFR from '@univerjs/sheets-formula-ui/lib/locale/fr-FR';
-import SheetsNumfmtFrFR  from '@univerjs/sheets-numfmt-ui/lib/locale/fr-FR';
+import DesignFrFR            from '@univerjs/design/lib/locale/fr-FR';
+import UIFrFR                from '@univerjs/ui/lib/locale/fr-FR';
+import DocsFrFR              from '@univerjs/docs-ui/lib/locale/fr-FR';
+import SheetsFrFR            from '@univerjs/sheets/lib/locale/fr-FR';
+import SheetsUIFrFR          from '@univerjs/sheets-ui/lib/locale/fr-FR';
+// Univer 1.x : les descriptions des fonctions (aide, autocomplétion) sont dans engine-formula
+import EngineFormulaFrFR     from '@univerjs/engine-formula/lib/locale/fr-FR';
+import SheetsFormulaCoreFrFR from '@univerjs/sheets-formula/lib/locale/fr-FR';
+import SheetsFormulaFrFR     from '@univerjs/sheets-formula-ui/lib/locale/fr-FR';
+import SheetsNumfmtFrFR      from '@univerjs/sheets-numfmt-ui/lib/locale/fr-FR';
 
 // ─── Plugins ──────────────────────────────────────────────────────────────────
 import { UniverRenderEnginePlugin }      from '@univerjs/engine-render';
@@ -38,7 +39,9 @@ import { UniverSheetsFormulaUIPlugin }   from '@univerjs/sheets-formula-ui';
 import { UniverSheetsNumfmtPlugin }      from '@univerjs/sheets-numfmt';
 import { UniverSheetsNumfmtUIPlugin }    from '@univerjs/sheets-numfmt-ui';
 
-// ─── Facades (optionnel mais recommandé pour l'API save/load) ─────────────────
+// ─── Facades (API publique : save, événements) ────────────────────────────────
+import { FUniver } from '@univerjs/core/facade';
+import '@univerjs/sheets/facade';
 
 import { WemFormulaPlugin } from './plugins/WemFormulaPlugin';
 
@@ -57,6 +60,8 @@ if (!config || !document.getElementById('univer-container')) {
             DocsFrFR,
             SheetsFrFR,
             SheetsUIFrFR,
+            EngineFormulaFrFR,
+            SheetsFormulaCoreFrFR,
             SheetsFormulaFrFR,
             SheetsNumfmtFrFR,
         ),
@@ -99,6 +104,7 @@ if (!config || !document.getElementById('univer-container')) {
     };
 
     univer.createUnit(UniverInstanceType.UNIVER_SHEET, workbookData);
+    const univerAPI = FUniver.newAPI(univer);
 
     // ─── Plugin formules WEM ──────────────────────────────────────────────────
     const wemPlugin = new WemFormulaPlugin({ dataApiBase: config.dataApiBase });
@@ -115,9 +121,7 @@ if (!config || !document.getElementById('univer-container')) {
     const saveWorkbook = async () => {
         setStatus('Enregistrement…');
 
-        const instanceService = univer.__getInjector().get(IUniverInstanceService);
-        const workbook = instanceService.getCurrentUnitForType(UniverInstanceType.UNIVER_SHEET);
-        const snapshot = workbook?.save() ?? null;
+        const snapshot = univerAPI.getActiveWorkbook()?.save() ?? null;
 
         const res = await fetch(config.saveUrl, {
             method: 'POST',
@@ -140,9 +144,6 @@ if (!config || !document.getElementById('univer-container')) {
         }, 2000);
     };
 
-    // Écoute des changements via ICommandService
-    const commandService = univer.__getInjector().get(ICommandService);
-    if (commandService?.onCommandExecuted) {
-        commandService.onCommandExecuted(() => debounceSave());
-    }
+    // Écoute des changements (undo/redo rejouent des mutations, qui passent ici aussi)
+    univerAPI.addEvent(univerAPI.Event.CommandExecuted, () => debounceSave());
 }

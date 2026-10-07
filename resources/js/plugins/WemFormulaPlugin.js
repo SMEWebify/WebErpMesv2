@@ -52,6 +52,9 @@ export class WemFormulaPlugin {
         }
     }
 
+    // Pas de univerAPI.getFormula().registerFunction() : la Facade repasse le résultat par
+    // ValueObjectFactory, qui convertit "2026-10" (WEM_MOIS_COURANT) en date numérique.
+    // Les exécuteurs BaseFunction gardent la main sur le type renvoyé.
     register(univer) {
         const self = this;
 
