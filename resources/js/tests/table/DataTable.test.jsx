@@ -136,6 +136,13 @@ describe('DataTable — PC', () => {
         expect(document.querySelector('tbody .fa-eye')).toBeNull();
     });
 
+    it("unsortableIcon={false} n'affiche l'icône de tri que sur les colonnes triables", () => {
+        setup({ unsortableIcon: false });
+        const th = label => screen.getAllByText(label)[0].closest('th');
+        expect(th('Statut').querySelector('.fa-sort')).toBeNull();
+        expect(th('Client').querySelector('.fa-sort')).not.toBeNull();
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();

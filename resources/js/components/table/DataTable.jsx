@@ -178,6 +178,7 @@ export default function DataTable({
     storage = {},
     colOrderMode = 'merge',
     hideable = true,
+    unsortableIcon = true,
     reorderable = true,
     colFilters: controlledFilters,
     onColFiltersChange,
@@ -295,7 +296,9 @@ export default function DataTable({
                                             <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
                                         )}
                                         {col.label}
-                                        <SortIcon field={field} sortField={sortField} sortAsc={sortAsc} size={col.sortIconSize} />
+                                        {(field || unsortableIcon) && (
+                                            <SortIcon field={field} sortField={sortField} sortAsc={sortAsc} size={col.sortIconSize} />
+                                        )}
                                         {hideable && (
                                             <span
                                                 role="button"
