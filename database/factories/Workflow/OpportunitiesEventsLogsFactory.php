@@ -28,12 +28,16 @@ class OpportunitiesEventsLogsFactory extends Factory
         $opportunity = Opportunities::query()->inRandomOrder()->first()
             ?? Opportunities::factory()->create();
 
+        // Un événement (rendez-vous, visite, réunion) tient sur une journée, rarement plus
+        $startDate = $this->faker->dateTimeBetween('-6 months', '+1 month');
+        $endDate = (clone $startDate)->modify('+' . $this->faker->randomElement([0, 0, 0, 1, 2]) . ' days');
+
         return [
             'opportunities_id' => $opportunity->id,
             'label' => $this->faker->sentence,
             'type' => $this->faker->numberBetween(1, 4), // Random type between 1 and 4
-            'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
-            'end_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'comment' => $this->faker->optional()->text, // Optional comment
             'created_at' => now(),
             'updated_at' => now(),
