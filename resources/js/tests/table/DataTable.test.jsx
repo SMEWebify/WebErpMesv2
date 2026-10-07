@@ -143,6 +143,14 @@ describe('DataTable — PC', () => {
         expect(th('Client').querySelector('.fa-sort')).not.toBeNull();
     });
 
+    it('unsortableCursor et nowrap reproduisent les variantes des écrans', () => {
+        setup({ unsortableCursor: 'default', columns: [...COLUMNS.slice(0, 4), { ...COLUMNS[4], nowrap: false }] });
+        const th = label => screen.getAllByText(label)[0].closest('th');
+        expect(th('Statut').style.cursor).toBe('default');
+        expect(th('Code').style.cursor).toBe('pointer');
+        expect(screen.getByText('100.00 €').closest('td').style.whiteSpace).toBe('');
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();

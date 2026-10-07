@@ -15,6 +15,7 @@ import { toISODate } from './dates.js';
  *     sortable:  true | 'champ_serveur',      // true = trié sur `key`
  *     align:     '' | 'center' | 'right',
  *     bold:      true,                        // gras + sans retour à la ligne
+ *     nowrap:    false,                       // défaut : vrai si aligné à droite ou en gras
  *     filter:    'text' | 'date',             // ligne de filtres (page courante)
  *     filterValue: row => string,             // texte, ou date (JJ/MM/AAAA ou ISO)
  *     total:     { value: row => number, format: sum => node },   // pied de tableau
@@ -180,6 +181,7 @@ export default function DataTable({
     colOrderMode = 'merge',
     hideable = true,
     unsortableIcon = true,
+    unsortableCursor = 'pointer',
     reorderable = true,
     colFilters: controlledFilters,
     onColFiltersChange,
@@ -277,7 +279,7 @@ export default function DataTable({
                                         className={alignClass(col.align)}
                                         draggable={reorderable || undefined}
                                         style={{
-                                            cursor:     'pointer',
+                                            cursor:     field ? 'pointer' : unsortableCursor,
                                             whiteSpace: 'nowrap',
                                             userSelect: 'none',
                                             borderLeft: dropping ? '3px solid #007bff' : undefined,
@@ -364,7 +366,7 @@ export default function DataTable({
                                     <td
                                         key={col.key}
                                         className={`${alignClass(col.align)}${col.bold ? ' font-weight-bold' : ''}`}
-                                        style={(col.align === 'right' || col.bold) ? { whiteSpace: 'nowrap' } : {}}
+                                        style={(col.nowrap ?? (col.align === 'right' || col.bold)) ? { whiteSpace: 'nowrap' } : {}}
                                     >
                                         {renderCell(col, row)}
                                     </td>
