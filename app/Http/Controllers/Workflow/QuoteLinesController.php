@@ -12,6 +12,8 @@ use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
 use App\Services\Quotes\QuoteLineCopier;
+use App\Services\Planning\BillOfMaterialsCopier;
+use App\Services\Quotes\QuoteLineToOrderLineConverter;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Factory;
@@ -21,8 +23,6 @@ use App\Models\Workflow\Quotes;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\QuoteLineDetails;
-use App\Models\Workflow\OrderLines;
-use App\Models\Workflow\OrderLineDetails;
 use App\Models\Products\Products;
 use App\Models\Products\CustomerPriceList;
 use App\Models\Methods\MethodsUnits;
@@ -418,21 +418,8 @@ class QuoteLinesController extends Controller
         $firstStatus = \App\Models\Planning\Status::select('id')->orderBy('order')->first();
         $statusId    = $firstStatus?->id;
 
-        Task::where('products_id', $line->product_id)->get()->each(function ($task) use ($id, $statusId) {
-            $new                  = $task->replicate();
-            $new->quote_lines_id  = $id;
-            $new->products_id     = null;
-            $new->status_id       = $statusId;
-            $new->origin          = '3';
-            $new->save();
-        });
-
-        SubAssembly::where('products_id', $line->product_id)->get()->each(function ($sub) use ($id) {
-            $new                  = $sub->replicate();
-            $new->quote_lines_id  = $id;
-            $new->products_id     = null;
-            $new->save();
-        });
+        app(BillOfMaterialsCopier::class)
+            ->copy('products_id', $line->product_id, 'quote_lines_id', $line->id, '3', $statusId ? ['status_id' => $statusId] : []);
 
         $line->loadCount(['Task', 'SubAssembly']);
         $factory  = app('Factory');
@@ -588,9 +575,9 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
         }
 
-        $factory = app('Factory');
+        $converter = app(QuoteLineToOrderLineConverter::class);
 
-        $order = DB::transaction(function () use ($quote, $lineIds, $factory) {
+        $order = DB::transaction(function () use ($quote, $lineIds, $converter) {
             $lastOrder = Orders::latest('id')->first();
             $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
 
@@ -614,7 +601,7 @@ class QuoteLinesController extends Controller
                 null
             );
 
-            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'SubAssembly', 'files'])
+            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'files'])
                 ->whereIn('id', $lineIds)
                 ->where('quotes_id', $quote->id)
                 ->get()
@@ -636,87 +623,7 @@ class QuoteLinesController extends Controller
                 $quoteLine = $quoteLineMap->get($lineId);
                 if (!$quoteLine) continue;
 
-                $deliveryDate = $quoteLine->delivery_date ?? now()->addDays(7)->format('Y-m-d');
-                $date = \Carbon\Carbon::parse($deliveryDate);
-                $internalDelay = $date->subDays((int) ($factory->add_delivery_delay_order ?? 0))->format('Y-m-d');
-
-                $newOrderLine = OrderLines::create([
-                    'orders_id'                 => $newOrder->id,
-                    'quote_lines_id'            => $quoteLine->id,
-                    'ordre'                     => $quoteLine->ordre,
-                    'code'                      => $quoteLine->code,
-                    'product_id'                => $quoteLine->product_id,
-                    'label'                     => $quoteLine->label,
-                    'qty'                       => $quoteLine->qty,
-                    'delivered_remaining_qty'   => $quoteLine->qty,
-                    'invoiced_remaining_qty'    => $quoteLine->qty,
-                    'methods_units_id'          => $quoteLine->methods_units_id,
-                    'selling_price'             => $quoteLine->selling_price,
-                    'discount'                  => $quoteLine->discount,
-                    'accounting_vats_id'        => $quoteLine->accounting_vats_id,
-                    'internal_delay'            => $internalDelay,
-                    'delivery_date'             => $quoteLine->delivery_date,
-                ]);
-
-                $detail = $quoteLine->QuoteLineDetails;
-                if ($detail) {
-                    OrderLineDetails::create([
-                        'order_lines_id'     => $newOrderLine->id,
-                        'x_size'             => $detail->x_size,
-                        'y_size'             => $detail->y_size,
-                        'z_size'             => $detail->z_size,
-                        'x_oversize'         => $detail->x_oversize,
-                        'y_oversize'         => $detail->y_oversize,
-                        'z_oversize'         => $detail->z_oversize,
-                        'diameter'           => $detail->diameter,
-                        'diameter_oversize'  => $detail->diameter_oversize,
-                        'material'           => $detail->material,
-                        'thickness'          => $detail->thickness,
-                        'finishing'          => $detail->finishing,
-                        'weight'             => $detail->weight,
-                        'bend_count'         => $detail->bend_count,
-                        'material_loss_rate' => $detail->material_loss_rate,
-                        'cad_file'           => $detail->cad_file,
-                        'cam_file'           => $detail->cam_file,
-                        'cad_file_path'      => $detail->cad_file_path,
-                        'cam_file_path'      => $detail->cam_file_path,
-                        'picture'             => $detail->picture,
-                        'internal_comment'    => $detail->internal_comment,
-                        'external_comment'    => $detail->external_comment,
-                        'custom_requirements' => $detail->custom_requirements,
-                    ]);
-                }
-
-                foreach ($quoteLine->Task as $task) {
-                    $newTask = $task->replicate();
-                    $newTask->order_lines_id = $newOrderLine->id;
-                    $newTask->quote_lines_id = null;
-                    $newTask->origin = '6';
-                    $newTask->save();
-                }
-
-                if ($quoteLine->Task->isNotEmpty()) {
-                    $newOrderLine->tasks_status = 2;
-                    $newOrderLine->save();
-                }
-
-                foreach ($quoteLine->SubAssembly as $sub) {
-                    $newSub = $sub->replicate();
-                    $newSub->order_lines_id = $newOrderLine->id;
-                    $newSub->quote_lines_id = null;
-                    $newSub->save();
-                }
-
-                $linePivots = $quoteLine->files->mapWithKeys(fn ($file) => [
-                    $file->id => [
-                        'role' => $file->pivot->role,
-                        'is_primary' => (bool) $file->pivot->is_primary,
-                    ],
-                ])->all();
-
-                if (!empty($linePivots)) {
-                    $newOrderLine->files()->attach($linePivots);
-                }
+                $converter->convert($quoteLine, $newOrder->id, 7);
 
                 QuoteLines::where('id', $lineId)->update(['statu' => 3]);
             }
@@ -835,22 +742,8 @@ class QuoteLinesController extends Controller
             $product->save();
         }
 
-        // Duplicate tasks
-        foreach ($line->Task as $task) {
-            $newTask = $task->replicate();
-            $newTask->products_id    = $product->id;
-            $newTask->quote_lines_id = null;
-            $newTask->origin         = '5';
-            $newTask->save();
-        }
-
-        // Duplicate sub-assemblies
-        foreach ($line->SubAssembly as $sub) {
-            $newSub = $sub->replicate();
-            $newSub->products_id    = $product->id;
-            $newSub->quote_lines_id = null;
-            $newSub->save();
-        }
+        app(BillOfMaterialsCopier::class)
+            ->copy('quote_lines_id', $line->id, 'products_id', $product->id, '5');
 
         // Link product back to the quote line
         $line->product_id = $product->id;
@@ -929,20 +822,8 @@ class QuoteLinesController extends Controller
                 $product->save();
             }
 
-            foreach ($line->Task as $task) {
-                $newTask                  = $task->replicate();
-                $newTask->products_id     = $product->id;
-                $newTask->quote_lines_id  = null;
-                $newTask->origin          = '5';
-                $newTask->save();
-            }
-
-            foreach ($line->SubAssembly as $sub) {
-                $newSub                 = $sub->replicate();
-                $newSub->products_id    = $product->id;
-                $newSub->quote_lines_id = null;
-                $newSub->save();
-            }
+            app(BillOfMaterialsCopier::class)
+                ->copy('quote_lines_id', $line->id, 'products_id', $product->id, '5');
 
             $line->product_id = $product->id;
             $line->save();

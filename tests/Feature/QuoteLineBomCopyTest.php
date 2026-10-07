@@ -14,7 +14,7 @@ use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\QuoteLineDetails;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class QuoteLineDuplicateTest extends TestCase
+class QuoteLineBomCopyTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -92,6 +92,37 @@ class QuoteLineDuplicateTest extends TestCase
 
         $response->assertCreated()->assertJsonPath('line.ordre', 2);
         $this->assertSame(3, $second->fresh()->ordre);
+    }
+
+    public function test_converting_to_order_moves_the_whole_bill_of_materials_onto_the_order_line(): void
+    {
+        $quote = Quotes::factory()->create(['statu' => 1, 'user_id' => $this->user->id]);
+        $line  = QuoteLines::factory()->create(['quotes_id' => $quote->id]);
+
+        $lineTask = Task::factory()->create(['quote_lines_id' => $line->id, 'order_lines_id' => null, 'products_id' => null]);
+        $root     = SubAssembly::create(['ordre' => 1, 'quote_lines_id' => $line->id, 'child_id' => 1, 'qty' => 2, 'unit_price' => 10]);
+        $child    = SubAssembly::create(['ordre' => 1, 'sub_assembly_id' => $root->id, 'child_id' => 1, 'qty' => 3, 'unit_price' => 5]);
+        Task::factory()->create(['sub_assembly_id' => $child->id, 'quote_lines_id' => null, 'order_lines_id' => null, 'products_id' => null]);
+
+        $this->postJson(route('quotes.lines.json.store-order', ['quoteId' => $quote->id]), ['line_ids' => [$line->id]])
+            ->assertOk();
+
+        $orderLine = \App\Models\Workflow\OrderLines::where('quote_lines_id', $line->id)->sole();
+
+        $orderTask = Task::where('order_lines_id', $orderLine->id)->sole();
+        $this->assertNull($orderTask->quote_lines_id);
+        $this->assertSame('6', (string) $orderTask->origin);
+
+        $orderRoot  = SubAssembly::where('order_lines_id', $orderLine->id)->sole();
+        $this->assertNull($orderRoot->quote_lines_id);
+        $orderChild = SubAssembly::where('sub_assembly_id', $orderRoot->id)->sole();
+        $this->assertSame(1, Task::where('sub_assembly_id', $orderChild->id)->count());
+
+        // Le devis garde sa propre nomenclature.
+        $this->assertSame(1, Task::where('quote_lines_id', $line->id)->count());
+        $this->assertSame($lineTask->id, Task::where('quote_lines_id', $line->id)->value('id'));
+        $this->assertSame(1, Task::where('sub_assembly_id', $child->id)->count());
+        $this->assertSame(1, SubAssembly::where('sub_assembly_id', $root->id)->count());
     }
 
     public function test_duplicate_is_refused_once_the_quote_left_draft(): void

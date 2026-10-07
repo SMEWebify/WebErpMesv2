@@ -1025,7 +1025,14 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         const res  = await apiFetch(endpoints.duplicate.replace('__ID__', id), { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
-            setLines((prev) => { const u = [...prev, data.line]; refreshNextOrdre(u); return u; });
+            // Le serveur insère la copie sous l'original et décale la suite.
+            setLines((prev) => {
+                const shifted = prev.map((l) => (l.ordre >= data.line.ordre ? { ...l, ordre: l.ordre + 1 } : l));
+                const at      = shifted.findIndex((l) => l.id === id);
+                const u       = at === -1 ? [...shifted, data.line] : [...shifted.slice(0, at + 1), data.line, ...shifted.slice(at + 1)];
+                refreshNextOrdre(u);
+                return u;
+            });
             showFlash('success', 'Ligne dupliquée');
         } else {
             showFlash('danger', 'Erreur lors de la duplication');

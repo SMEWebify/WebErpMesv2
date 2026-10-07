@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Products;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
@@ -12,7 +11,7 @@ use App\Services\Files\FileRole;
 use App\Services\SelectDataService;
 use App\Services\CustomFieldService;
 use App\Http\Controllers\Controller;
-use App\Models\Planning\SubAssembly;
+use App\Services\Planning\BillOfMaterialsCopier;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Purchases\PurchaseLines;
@@ -424,44 +423,9 @@ class ProductsController extends Controller
         $newProduct->label = $Product->label . "#duplicate";
         $newProduct->save();
 
-        $this->duplicateTasks($id, $newProduct->id);
-        $this->duplicateSubAssemblies($id, $newProduct->id);
+        app(BillOfMaterialsCopier::class)->copy('products_id', $Product->id, 'products_id', $newProduct->id);
 
         return redirect()->route('products.show', ['id' => $newProduct->id])->with('success', 'Successfully duplicated product');
-    }
-
-    /**
-     * Duplicate tasks for the new product.
-     *
-     * @param int $oldProductId
-     * @param int $newProductId
-     * @return void
-     */
-    private function duplicateTasks($oldProductId, $newProductId)
-    {
-        $Tasks = Task::where('products_id', $oldProductId)->get();
-        foreach ($Tasks as $Task) {
-            $newTask = $Task->replicate();
-            $newTask->products_id = $newProductId;
-            $newTask->save();
-        }
-    }
-
-    /**
-     * Duplicate sub-assemblies for the new product.
-     *
-     * @param int $oldProductId
-     * @param int $newProductId
-     * @return void
-     */
-    private function duplicateSubAssemblies($oldProductId, $newProductId)
-    {
-        $SubAssemblyLine = SubAssembly::where('products_id', $oldProductId)->get();
-        foreach ($SubAssemblyLine as $SubAssembly) {
-            $newSubAssembly = $SubAssembly->replicate();
-            $newSubAssembly->products_id = $newProductId;
-            $newSubAssembly->save();
-        }
     }
 
     /**

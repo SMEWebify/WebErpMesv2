@@ -20,6 +20,7 @@ use App\Events\InvoiceStatusChanged;
 use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
 use App\Services\OrderService;
+use App\Services\Quotes\QuoteLineToOrderLineConverter;
 use App\Services\SelectDataService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\InvoiceCalculatorService;
@@ -257,9 +258,9 @@ class ProformaController extends Controller
         ]);
 
         $quote = Quotes::with('QuoteLines')->findOrFail($validated['quote_id']);
-        $factory = app('Factory');
+        $converter = app(QuoteLineToOrderLineConverter::class);
 
-        $order = DB::transaction(function () use ($quote, $validated, $factory) {
+        $order = DB::transaction(function () use ($quote, $validated, $converter) {
             $orderCode = $this->documentCodeGenerator->generateDocumentCode('order');
 
             $newOrder = $this->orderService->createOrder(
@@ -281,7 +282,10 @@ class ProformaController extends Controller
                 null
             );
 
-            $quoteLineMap = QuoteLines::whereIn('id', $validated['lines'])
+            // La commande générée porte la partie technique (détail, gamme,
+            // nomenclature, fichiers) ; seule la proforma n'en a pas l'usage.
+            $quoteLineMap = QuoteLines::with(['QuoteLineDetails', 'Task', 'files'])
+                ->whereIn('id', $validated['lines'])
                 ->where('quotes_id', $quote->id)
                 ->get()->keyBy('id');
 
@@ -289,28 +293,7 @@ class ProformaController extends Controller
                 $quoteLine = $quoteLineMap->get($lineId);
                 if (!$quoteLine) continue;
 
-                $deliveryDate  = $quoteLine->delivery_date ?? now()->addDays(30)->format('Y-m-d');
-                $internalDelay = \Carbon\Carbon::parse($deliveryDate)
-                    ->subDays((int) ($factory->add_delivery_delay_order ?? 0))
-                    ->format('Y-m-d');
-
-                OrderLines::create([
-                    'orders_id'               => $newOrder->id,
-                    'quote_lines_id'          => $quoteLine->id,
-                    'ordre'                   => $quoteLine->ordre,
-                    'code'                    => $quoteLine->code,
-                    'product_id'              => $quoteLine->product_id,
-                    'label'                   => $quoteLine->label,
-                    'qty'                     => $quoteLine->qty,
-                    'delivered_remaining_qty' => $quoteLine->qty,
-                    'invoiced_remaining_qty'  => $quoteLine->qty,
-                    'methods_units_id'        => $quoteLine->methods_units_id,
-                    'selling_price'           => $quoteLine->selling_price,
-                    'discount'                => $quoteLine->discount,
-                    'accounting_vats_id'      => $quoteLine->accounting_vats_id,
-                    'internal_delay'          => $internalDelay,
-                    'delivery_date'           => $quoteLine->delivery_date,
-                ]);
+                $converter->convert($quoteLine, $newOrder->id, 30);
             }
 
             QuoteLines::whereIn('id', $quoteLineMap->keys()->all())->update(['statu' => 3]);

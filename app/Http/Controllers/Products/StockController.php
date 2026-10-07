@@ -15,8 +15,7 @@ use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockRequest;
 use App\Http\Requests\Products\UpdateStockRequest;
 use App\Models\Products\Products;
-use App\Models\Planning\Task;
-use App\Models\Planning\SubAssembly;
+use App\Services\Planning\BillOfMaterialsCopier;
 use App\Models\Accounting\AccountingVat;
 use App\Services\OrderService;
 use App\Services\StockValuationService;
@@ -329,19 +328,8 @@ class StockController extends Controller
             'cam_file_path'      => $product->cam_file_path,
         ]);
 
-        foreach (Task::where('products_id', $productId)->get() as $task) {
-            $newTask                 = $task->replicate();
-            $newTask->order_lines_id = $orderLine->id;
-            $newTask->products_id    = null;
-            $newTask->save();
-        }
-
-        foreach (SubAssembly::where('products_id', $productId)->get() as $sub) {
-            $newSub                 = $sub->replicate();
-            $newSub->order_lines_id = $orderLine->id;
-            $newSub->products_id    = null;
-            $newSub->save();
-        }
+        app(BillOfMaterialsCopier::class)
+            ->copy('products_id', (int) $productId, 'order_lines_id', $orderLine->id);
 
         return response()->json([
             'redirect_url' => route('orders.show', ['id' => $order->id]),

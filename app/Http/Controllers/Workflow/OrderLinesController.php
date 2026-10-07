@@ -33,7 +33,7 @@ use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Planning\Task;
-use App\Models\Planning\SubAssembly;
+use App\Services\Planning\BillOfMaterialsCopier;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -409,21 +409,8 @@ class OrderLinesController extends Controller
         $firstStatus = \App\Models\Planning\Status::select('id')->orderBy('order')->first();
         $statusId    = $firstStatus?->id;
 
-        Task::where('products_id', $line->product_id)->get()->each(function ($task) use ($id, $statusId) {
-            $new                 = $task->replicate();
-            $new->order_lines_id = $id;
-            $new->products_id    = null;
-            $new->status_id      = $statusId;
-            $new->origin         = '3';
-            $new->save();
-        });
-
-        SubAssembly::where('products_id', $line->product_id)->get()->each(function ($sub) use ($id) {
-            $new                 = $sub->replicate();
-            $new->order_lines_id = $id;
-            $new->products_id    = null;
-            $new->save();
-        });
+        app(BillOfMaterialsCopier::class)
+            ->copy('products_id', $line->product_id, 'order_lines_id', $line->id, '3', $statusId ? ['status_id' => $statusId] : []);
 
         $line->tasks_status = 2;
         $line->save();
@@ -440,40 +427,39 @@ class OrderLinesController extends Controller
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
 
-        $newLine        = $line->replicate();
-        $newLine->ordre = $line->ordre + 1;
-        $newLine->code  = $line->code . '#dup' . $line->id;
-        $newLine->label = $line->label . '#dup' . $line->id;
-        // Reset delivery/invoice tracking fields
-        $newLine->delivered_qty           = 0;
-        $newLine->delivered_remaining_qty = $line->qty;
-        $newLine->invoiced_qty            = 0;
-        $newLine->invoiced_remaining_qty  = $line->qty;
-        $newLine->delivery_status         = 1;
-        $newLine->invoice_status          = 1;
-        $newLine->tasks_status            = 1;
-        $newLine->save();
+        $newLine = DB::transaction(function () use ($line, $orderId) {
+            // La copie s'insère juste sous l'original : on décale la suite.
+            OrderLines::where('orders_id', $orderId)
+                ->where('ordre', '>', $line->ordre)
+                ->increment('ordre');
 
-        $details = OrderLineDetails::where('order_lines_id', $id)->first();
-        if ($details) {
-            $newDetails                 = $details->replicate();
-            $newDetails->order_lines_id = $newLine->id;
-            $newDetails->save();
-        } else {
-            OrderLineDetails::create(['order_lines_id' => $newLine->id]);
-        }
+            $newLine        = $line->replicate();
+            $newLine->ordre = $line->ordre + 1;
+            $newLine->code  = $line->code . '#dup' . $line->id;
+            $newLine->label = $line->label . '#dup' . $line->id;
+            // Reset delivery/invoice tracking fields
+            $newLine->delivered_qty           = 0;
+            $newLine->delivered_remaining_qty = $line->qty;
+            $newLine->invoiced_qty            = 0;
+            $newLine->invoiced_remaining_qty  = $line->qty;
+            $newLine->delivery_status         = 1;
+            $newLine->invoice_status          = 1;
+            $newLine->tasks_status            = 1;
+            $newLine->save();
 
-        Task::where('order_lines_id', $id)->get()->each(function ($t) use ($newLine) {
-            $nt                   = $t->replicate();
-            $nt->order_lines_id  = $newLine->id;
-            $nt->origin           = '5';
-            $nt->save();
-        });
+            $details = OrderLineDetails::where('order_lines_id', $line->id)->first();
+            if ($details) {
+                $newDetails                 = $details->replicate();
+                $newDetails->order_lines_id = $newLine->id;
+                $newDetails->save();
+            } else {
+                OrderLineDetails::create(['order_lines_id' => $newLine->id]);
+            }
 
-        SubAssembly::where('order_lines_id', $id)->get()->each(function ($s) use ($newLine) {
-            $ns                  = $s->replicate();
-            $ns->order_lines_id = $newLine->id;
-            $ns->save();
+            app(BillOfMaterialsCopier::class)
+                ->copy('order_lines_id', $line->id, 'order_lines_id', $newLine->id, '5');
+
+            return $newLine;
         });
 
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
@@ -952,20 +938,8 @@ class OrderLinesController extends Controller
                 $product->save();
             }
 
-            foreach ($line->Task as $task) {
-                $newTask                  = $task->replicate();
-                $newTask->products_id     = $product->id;
-                $newTask->order_lines_id  = null;
-                $newTask->origin          = '5';
-                $newTask->save();
-            }
-
-            foreach ($line->SubAssembly as $sub) {
-                $newSub                 = $sub->replicate();
-                $newSub->products_id    = $product->id;
-                $newSub->order_lines_id = null;
-                $newSub->save();
-            }
+            app(BillOfMaterialsCopier::class)
+                ->copy('order_lines_id', $line->id, 'products_id', $product->id, '5');
 
             $line->product_id = $product->id;
             $line->save();
