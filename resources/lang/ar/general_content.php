@@ -1242,4 +1242,6 @@ return [
     'theme_light_trans_key'             => 'العرض: الوضع الفاتح',
     'theme_dark_trans_key'              => 'العرض: الوضع الداكن',
     'theme_pro_trans_key'               => 'العرض: الوضع الاحترافي (محايد)',
+    'applications_trans_key' => 'التطبيقات',
+    'search_menu_trans_key' => 'ابحث في القائمة…',
 ];

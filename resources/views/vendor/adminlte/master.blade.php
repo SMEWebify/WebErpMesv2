@@ -137,6 +137,11 @@
     {{-- Body Content --}}
     @yield('body')
 
+    {{-- Lanceur d'applications mobile : pages adminlte::page uniquement --}}
+    @if(isset($adminlte) && auth()->check())
+        @include('include.mobile-app-launcher')
+    @endif
+
     {{-- Base Scripts (depends on Laravel asset bundling tool) --}}
     @if(config('adminlte.enabled_laravel_mix', false))
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>

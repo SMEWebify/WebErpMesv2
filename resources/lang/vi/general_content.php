@@ -392,4 +392,6 @@ return [
     'theme_light_trans_key'             => 'Hiển thị: chế độ sáng',
     'theme_dark_trans_key'              => 'Hiển thị: chế độ tối',
     'theme_pro_trans_key'               => 'Hiển thị: chế độ pro (trung tính)',
+    'applications_trans_key' => 'Ứng dụng',
+    'search_menu_trans_key' => 'Tìm menu…',
 ];

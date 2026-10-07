@@ -1422,4 +1422,6 @@ return [
     'theme_light_trans_key'             => '显示：浅色模式',
     'theme_dark_trans_key'              => '显示：深色模式',
     'theme_pro_trans_key'               => '显示：专业模式（中性）',
+    'applications_trans_key' => '应用',
+    'search_menu_trans_key' => '搜索菜单…',
 ];

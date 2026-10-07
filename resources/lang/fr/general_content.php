@@ -1828,4 +1828,6 @@ return [
     'start_from_template_trans_key' => 'Partir d\'une trame',
     'no_template_trans_key' => 'Aucune (devis vierge)',
     'no_templates_yet_trans_key' => 'Aucune trame pour l\'instant. Ouvrez un devis et utilisez « Enregistrer comme trame » dans le cadre Options.',
+    'applications_trans_key' => 'Applications',
+    'search_menu_trans_key' => 'Rechercher un menu…',
 ];

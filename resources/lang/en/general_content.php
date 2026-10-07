@@ -1828,4 +1828,6 @@ return [
     'start_from_template_trans_key' => 'Start from a template',
     'no_template_trans_key' => 'None (blank quote)',
     'no_templates_yet_trans_key' => 'No template yet. Open a quote and use "Save as template" in the Options box.',
+    'applications_trans_key' => 'Applications',
+    'search_menu_trans_key' => 'Search a menu…',
 ];

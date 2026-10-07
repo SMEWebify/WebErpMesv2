@@ -1243,4 +1243,6 @@ return [
     'theme_light_trans_key'             => 'Visualización: modo claro',
     'theme_dark_trans_key'              => 'Visualización: modo oscuro',
     'theme_pro_trans_key'               => 'Visualización: modo pro (neutro)',
+    'applications_trans_key' => 'Aplicaciones',
+    'search_menu_trans_key' => 'Buscar un menú…',
 ];
