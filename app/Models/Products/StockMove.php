@@ -39,6 +39,8 @@ class StockMove extends Model
                             'nest_picture_path',
                             'status',
                             'tracability',
+                            // Regularisation moves written by InventoryService::validate().
+                            'inventory_id',
                         ];
 
     public function UserManagement()

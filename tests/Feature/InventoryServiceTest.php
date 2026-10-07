@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Products\Batch;
 use App\Models\Products\Inventory;
 use App\Models\Products\InventoryDetail;
 use App\Models\Products\Products;
@@ -33,15 +34,16 @@ class InventoryServiceTest extends TestCase
         $slp = $this->makeSlp();
 
         // Two batches on the same SLP: expect two snapshot rows.
+        $batch = Batch::create(['code' => 'LOT-TEST', 'product_id' => $slp->products_id]);
         StockMove::create(['stock_location_products_id' => $slp->id, 'typ_move' => 3, 'qty' => 10, 'user_id' => 1, 'batch_id' => null]);
-        StockMove::create(['stock_location_products_id' => $slp->id, 'typ_move' => 3, 'qty' => 5, 'user_id' => 1, 'batch_id' => 42]);
+        StockMove::create(['stock_location_products_id' => $slp->id, 'typ_move' => 3, 'qty' => 5, 'user_id' => 1, 'batch_id' => $batch->id]);
 
         $inventory = $this->service->create(['scope_type' => 'all'], 1);
 
         $this->assertCount(2, $inventory->details);
 
         $noBatch = $inventory->details->firstWhere('batch_id', null);
-        $withBatch = $inventory->details->firstWhere('batch_id', 42);
+        $withBatch = $inventory->details->firstWhere('batch_id', $batch->id);
 
         $this->assertNotNull($noBatch);
         $this->assertNotNull($withBatch);
@@ -246,7 +248,6 @@ class InventoryServiceTest extends TestCase
 
     private function makeSlp(): StockLocationProducts
     {
-        StockLocation::query()->exists() || StockLocation::factory()->create();
 
         $service = MethodsServices::factory()->create(['type' => 3]);
         $family = MethodsFamilies::factory()->create(['methods_services_id' => $service->id]);
@@ -256,8 +257,10 @@ class InventoryServiceTest extends TestCase
             'methods_units_id'    => $unit->id,
         ]);
 
+        // A location of its own, so scope-by-location tests can tell SLPs apart.
         return StockLocationProducts::factory()->create([
-            'products_id' => $product->id,
+            'products_id'        => $product->id,
+            'stock_locations_id' => StockLocation::factory()->create()->id,
         ]);
     }
 }

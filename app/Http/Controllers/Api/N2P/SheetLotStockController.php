@@ -34,9 +34,9 @@ class SheetLotStockController extends Controller
 
         $move = StockMove::query()
             ->with([
-                'StockLocationProducts.product:id,code,label,material,thickness,x_size,y_size,products_families_id',
+                'StockLocationProducts.product:id,code,label,material,thickness,x_size,y_size,methods_families_id',
                 'StockLocationProducts.product.family.service',
-                'StockLocationProducts.StockLocation:id,name',
+                'StockLocationProducts.StockLocation:id,label',
             ])
             ->whereKey($moveId)
             ->first();
@@ -84,7 +84,7 @@ class SheetLotStockController extends Controller
                 'sheet_y'   => $move->y_size ?? $product->y_size,
                 'sheet_z'   => $move->z_size ?? $product->thickness,
             ] : null,
-            'location'      => $slp->StockLocation?->name,
+            'location'      => $slp->StockLocation?->label,
         ]);
     }
 }

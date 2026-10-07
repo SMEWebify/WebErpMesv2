@@ -55,7 +55,7 @@ class SheetLotStockApiTest extends TestCase
                 'sheet_y'   => '2500.000',
             ],
         ]);
-        $this->assertArrayHasKey('current_qty', $response->json());
+        $this->assertArrayHasKey('aggregate_qty', $response->json());
     }
 
     public function test_invalid_ref_prefix_returns_400(): void
