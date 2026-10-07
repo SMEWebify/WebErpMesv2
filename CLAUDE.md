@@ -20,7 +20,11 @@
   Les composants React s'appuient sur les classes **BS4** (`ml-1`, `badge-*`, `float-right`) :
   ne pas les « moderniser » en BS5 sans migrer le shell. Tailwind supprimé.
 - **Briques de tableau** : `resources/js/components/table/` (`SortIcon`, `Pagination`,
-  `StatusBadge`, `StatusFilter`) — à utiliser plutôt que d'en recopier dans un écran
+  `StatusBadge`, `StatusFilter`) — à utiliser plutôt que d'en recopier dans un écran.
+  `DataTable` : tableau d'index déclaratif (liste de colonnes `key/label/render/sortable/
+  filter/total/mobile`), colonnes masquables et réordonnables persistées sous les clés
+  localStorage **existantes** de l'écran, filtres par colonne, total de page, et rendu
+  en cartes sous `md`. L'écran garde son fetch, son tri et sa pagination serveur.
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), Vitest (frontend, `resources/js/tests`, `npm test`)
