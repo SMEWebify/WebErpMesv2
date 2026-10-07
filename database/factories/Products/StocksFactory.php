@@ -20,7 +20,7 @@ class StocksFactory extends Factory
         return [
             'code' => $this->faker->unique()->numerify('STOCK###'), // Generates a unique code of the type 'STOCK001'
             'label' => $this->faker->words(2, true),               // Génère un label aléatoire composé de 3 mots
-            'user_id' => User::inRandomOrder()->first()->id ?? null, // Selects a random user or null if none exists
+            'user_id' => User::inRandomOrder()->value('id') ?? User::factory(),
             'created_at' => now(),                                  // Creation date (now)
             'updated_at' => now(),                                  // Update date (now)
         ];

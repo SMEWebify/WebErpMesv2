@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\PushOrderToN2P;
-use App\Models\Setting;
+use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Workflow\Orders;
 use App\Observers\OrdersObserver;
 use App\Services\Settings\SettingsService;
@@ -16,9 +16,22 @@ class N2PStatusChangeTest extends TestCase
     {
         Queue::fake();
 
-        Setting::create(['key' => 'n2p_enabled', 'value' => 'true']);
-        Setting::create(['key' => 'n2p_send_on_order_status_from', 'value' => 'OPEN']);
-        Setting::create(['key' => 'n2p_send_on_order_status_to', 'value' => 'IN_PROGRESS']);
+        // The trigger now lives on the n2p/outbound endpoint (is_active is the
+        // master switch, metadata the business transition), no longer in settings.
+        IntegrationEndpoint::query()->where('system_code', 'n2p')->delete();
+        IntegrationEndpoint::create([
+            'name'        => 'N2P outbound test',
+            'system_code' => 'n2p',
+            'direction'   => IntegrationEndpoint::DIRECTION_OUTBOUND,
+            'url'         => 'https://n2p.test',
+            'auth_method' => IntegrationEndpoint::AUTH_NONE,
+            'verify_ssl'  => false,
+            'is_active'   => true,
+            'metadata'    => [
+                IntegrationEndpoint::META_STATUS_TRANSITION_FROM => 'OPEN',
+                IntegrationEndpoint::META_STATUS_TRANSITION_TO   => 'IN_PROGRESS',
+            ],
+        ]);
 
         $order = (new Orders())->newFromBuilder(['id' => 99, 'statu' => 1]);
         $order->statu = 2;

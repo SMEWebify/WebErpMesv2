@@ -49,7 +49,9 @@ class CadParsersTest extends TestCase
 
     public function test_dxf_falls_back_on_the_entity_coordinates(): void
     {
-        $withoutExtents = preg_replace('/9\n\$EXTMIN.*?9\n\$EXTMAX\n10\n110\.0\n20\n70\.0\n30\n0\.0\n/s', '', $this->dxf());
+        // Fixtures may be checked out with CRLF (core.autocrlf on Windows).
+        $dxf = str_replace("\r\n", "\n", $this->dxf());
+        $withoutExtents = preg_replace('/9\n\$EXTMIN.*?9\n\$EXTMAX\n10\n110\.0\n20\n70\.0\n30\n0\.0\n/s', '', $dxf);
 
         $result = (new DxfParser())->parse($this->upload('part.dxf', $withoutExtents));
 
@@ -151,7 +153,8 @@ class CadParsersTest extends TestCase
 
     public function test_geo_attributes_block_overrides_the_positional_fields(): void
     {
-        $geo = str_replace("#~31\n", "#~30\nIDENT@P-9999\nMAT@INOX 304\n#~TTINFO_END\n#~31\n", $this->geo());
+        // Fixtures may be checked out with CRLF (core.autocrlf on Windows).
+        $geo = str_replace("#~31\n", "#~30\nIDENT@P-9999\nMAT@INOX 304\n#~TTINFO_END\n#~31\n", str_replace("\r\n", "\n", $this->geo()));
 
         $result = (new GeoParser())->parse($this->upload('P-1234.geo', $geo));
 
