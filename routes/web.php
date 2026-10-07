@@ -1286,9 +1286,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'tool'], function () {
             Route::get('/', 'App\Http\Controllers\Methods\ToolsController@index')->name('methods.tool');
             Route::get('/punch-designer', 'App\Http\Controllers\Methods\ToolsController@punchDesigner')->name('methods.tool.punch-designer');
-            Route::get('/library/{name}', 'App\Http\Controllers\Methods\ToolsController@library')
-                ->whereIn('name', ['press-brake-punches', 'press-brake-catalog'])->name('methods.tool.library');
-            Route::get('/catalog', 'App\Http\Controllers\Methods\ToolsController@catalog')->name('methods.tool.catalog');
+            Route::get('/catalog', 'App\Http\Controllers\Methods\ToolsController@punchDesigner')->name('methods.tool.catalog');
             Route::get('/configurator', 'App\Http\Controllers\Methods\ToolsController@configurator')->name('methods.tool.configurator');
             Route::post('/configurator', 'App\Http\Controllers\Methods\ToolsController@storeConfigured')->name('methods.tool.configurator.store');
             Route::post('/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.create');

@@ -77,7 +77,6 @@ return [
     'methods_familys_trans_key'                => 'Famillys',
     'methods_tools_trans_key'                  => 'Tools',
     'methods_punch_designer_trans_key'         => 'Bending tool',
-    'methods_tool_catalog_trans_key'           => 'Tooling catalog',
     'methods_tool_configurator_trans_key'      => 'Tool configurator',
     'methods_standard_bom_trans_key'           => 'Nomenclature standard',
     'operation_transition_delays_trans_key'    => 'Inter-operation delays',

@@ -85,26 +85,6 @@ async function mountNestingPage() {
     createRoot(element).render(React.createElement(NestingPage));
 }
 
-async function mountPunchDesigner() {
-    const element = document.getElementById('punch-designer-app');
-    if (!element) return;
-
-    const { default: PunchDesigner } = await import('./components/PunchDesigner.jsx');
-    createRoot(element).render(React.createElement(PunchDesigner, {
-        brand: element.dataset.brand,
-        libraryUrl: element.dataset.libraryUrl,
-        catalogUrl: element.dataset.catalogUrl,
-    }));
-}
-
-async function mountToolCatalog() {
-    const element = document.getElementById('tool-catalog-app');
-    if (!element) return;
-
-    const { default: ToolCatalog } = await import('./components/ToolCatalog.jsx');
-    createRoot(element).render(React.createElement(ToolCatalog, { libraryUrl: element.dataset.libraryUrl }));
-}
-
 async function mountToolConfigurator() {
     const element = document.getElementById('tool-configurator-app');
     if (!element) return;
@@ -1363,8 +1343,6 @@ mountDocumentTable();
 mountCompaniesIndex();
 mountWhiteboard();
 mountNestingPage();
-mountPunchDesigner();
-mountToolCatalog();
 mountToolConfigurator();
 mountReorderPage();
 mountQuotesIndex();

@@ -100,46 +100,15 @@ class ToolsController extends Controller
     }
     
     /**
-     * Configurateur de poinçon de presse plieuse sur mesure (profil paramétrique ou
-     * bibliothèque constructeurs, simulation de la pièce pliée, export PDF).
+     * Outillage de presse plieuse (configurateur de poinçon, catalogue constructeurs) :
+     * fonctionnalités réservées à la version commerciale. Les anciennes URLs sont
+     * conservées et présentent l'offre Nest2Prod.
      *
      * @return \Illuminate\Contracts\View\View
      */
     public function punchDesigner()
     {
         return view('methods/methods-punch-designer');
-    }
-
-    /**
-     * Bibliothèques d'outillage constructeurs (profils de poinçons, catalogue). Données
-     * tierces non versionnées : déposées par instance dans storage/app/private/tool-libraries.
-     *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
-     */
-    public function library(string $name)
-    {
-        $path = storage_path("app/private/tool-libraries/{$name}.json");
-        if (!is_file($path)) {
-            return response()->json([
-                'message' => "Bibliothèque non installée sur ce serveur : déposez {$name}.json dans storage/app/private/tool-libraries/.",
-            ], 404);
-        }
-
-        return response()->file($path, [
-            'Content-Type'  => 'application/json',
-            'Cache-Control' => 'private, max-age=86400',
-        ]);
-    }
-
-    /**
-     * Catalogue d'outillage de presse plieuse (poinçons, matrices, adaptateurs des
-     * bibliothèques constructeurs), consultable et filtrable.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function catalog()
-    {
-        return view('methods/methods-tool-catalog');
     }
 
     /**
