@@ -427,6 +427,28 @@ Merci à tous ceux qui font vivre ce projet !
       <sub>Contributor</sub>
     </td>
     <td align="center">
+      <a href="https://github.com/amir13861010">
+        <img src="https://github.com/amir13861010.png" width="100px;" alt="amir13861010"/>
+        <br />
+        <sub><b>amir13861010</b></sub>
+      </a>
+      <br />
+      <sub>Contributor</sub>
+      <br />
+      <sub>1 commit</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Lumpe1975">
+        <img src="https://github.com/Lumpe1975.png" width="100px;" alt="Lumpe1975"/>
+        <br />
+        <sub><b>Lumpe1975</b></sub>
+      </a>
+      <br />
+      <sub>Contributor</sub>
+      <br />
+      <sub>7 commits</sub>
+    </td>
+    <td align="center">
       <a href="https://github.com/SMEWebify/WebErpMesv2/graphs/contributors">
         <img src="https://via.placeholder.com/100x100/4a5568/ffffff?text=%2B1" width="100px;" alt="More contributors"/>
         <br />
@@ -442,12 +464,26 @@ Merci à tous ceux qui font vivre ce projet !
 
 Check our [Contributing Guide](../CONTRIBUTING.md) and make your first contribution!
 
+### 🛡️ Chercheurs en sécurité
+
+Merci aux chercheurs qui ont signalé des vulnérabilités de manière responsable. Chaque signalement a rendu ΣEM plus sûr pour tous les ateliers qui l'utilisent.
+
+| Chercheur | Avis de sécurité |
+|---|---|
+| [@redhotchilihacker1](https://github.com/redhotchilihacker1) | [GHSA-cqq2-7c22-p2gg](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-cqq2-7c22-p2gg), [GHSA-cvm4-63hj-966j](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-cvm4-63hj-966j), [GHSA-8fp9-7236-m69r](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-8fp9-7236-m69r), [GHSA-fp5p-mpqh-7fvx](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-fp5p-mpqh-7fvx), [GHSA-rqxq-q992-xj2h](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-rqxq-q992-xj2h) |
+| [@DifficultSnow](https://github.com/DifficultSnow) | [GHSA-c2xh-26jp-56fx](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-c2xh-26jp-56fx) |
+| [@sec-reex](https://github.com/sec-reex) | [GHSA-5x85-8gmm-7v5w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-5x85-8gmm-7v5w) |
+| [@germadarangalvarez-ops](https://github.com/germadarangalvarez-ops) | [GHSA-chhq-7p67-2ff9](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-chhq-7p67-2ff9) (CVE-2026-49827) |
+| [@nedlir](https://github.com/nedlir) | [GHSA-pp68-5pc2-hv7w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-pp68-5pc2-hv7w) (CVE-2026-22788), [GHSA-64rv-f829-x6m4](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-64rv-f829-x6m4) (CVE-2026-22789) |
+
+Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SECURITY.md](../SECURITY.md).
+
 
 ## 📊 Project Stats
 
 - ⭐ **220+** Stars
 - 🍴 **99** Forks
-- 👥 **7+** Active Contributors
+- 👥 **8+** Active Contributors
 - 📝 **2 200+** Commits
 - 🎉 **21** Releases (dernière : v1.19)
 - 🧪 **85+** fichiers de tests PHPUnit

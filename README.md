@@ -436,6 +436,17 @@ Thanks to everyone who keeps this project alive!
       <sub>1 commit</sub>
     </td>
     <td align="center">
+      <a href="https://github.com/Lumpe1975">
+        <img src="https://github.com/Lumpe1975.png" width="100px;" alt="Lumpe1975"/>
+        <br />
+        <sub><b>Lumpe1975</b></sub>
+      </a>
+      <br />
+      <sub>Contributor</sub>
+      <br />
+      <sub>7 commits</sub>
+    </td>
+    <td align="center">
       <a href="https://github.com/SMEWebify/WebErpMesv2/graphs/contributors">
         <img src="https://via.placeholder.com/100x100/4a5568/ffffff?text=%2B1" width="100px;" alt="More contributors"/>
         <br />
@@ -470,7 +481,7 @@ Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md
 
 - ⭐ **220+** Stars
 - 🍴 **99** Forks
-- 👥 **7+** Active Contributors
+- 👥 **8+** Active Contributors
 - 📝 **2,200+** Commits
 - 🎉 **21** Releases (latest: v1.19)
 - 🧪 **85+** PHPUnit test files
