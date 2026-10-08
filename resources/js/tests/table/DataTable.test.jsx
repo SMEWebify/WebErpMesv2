@@ -178,6 +178,22 @@ describe('DataTable — PC', () => {
         expect(screen.getByText('Diagnostic CM-002').closest('.list-group-item')).toHaveTextContent('CM-002');
     });
 
+    it('rowClickable : la ligne ouvre rowHref, sauf clic sur un lien ou un bouton', () => {
+        const original = window.location;
+        delete window.location;
+        window.location = { href: '' };
+        try {
+            setup({ rowClickable: true, rowActions: r => <button type="button">act {r.id}</button> });
+            fireEvent.click(screen.getByText('Bolt'));
+            expect(window.location.href).toBe('/orders/2');
+            window.location.href = '';
+            fireEvent.click(screen.getByText('act 1'));
+            expect(window.location.href).toBe('');
+        } finally {
+            window.location = original;
+        }
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();

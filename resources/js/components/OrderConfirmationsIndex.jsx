@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SortIcon, Pagination } from './table';
+import { DataTable, Pagination, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -13,6 +13,14 @@ const ARC_STATUS = {
 };
 
 const STATUS_DRAFT = 1;
+
+// Même table au format attendu par StatusFilter ({ badge, label } = clé de traduction).
+const STATUS_FILTER_CONFIG = Object.fromEntries(
+    Object.entries(ARC_STATUS).map(([id, cfg]) => [id, { badge: cfg.badge, label: cfg.key }]),
+);
+
+const LS_COL_ORDER   = 'order_confirmations_table_col_order';
+const LS_HIDDEN_COLS = 'order_confirmations_table_hidden_cols';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -61,6 +69,52 @@ function Flash({ msg, type, onClose }) {
 // Main component
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Table — colonnes déclarées, rendu par le DataTable partagé
+// ---------------------------------------------------------------------------
+
+function formatAmount(amount, trans) {
+    try {
+        return new Intl.NumberFormat(trans.locale || 'fr-FR', { style: 'currency', currency: trans.currency || 'EUR' }).format(amount);
+    } catch {
+        return `${Number(amount).toFixed(2)} ${trans.currency ?? '€'}`;
+    }
+}
+
+function confirmationColumns(trans) {
+    return [
+        { key: 'code',       label: trans.code,       sortable: true,
+          render: r => <code>{r.code}</code>, filter: 'text', mobile: 'title', mobileRender: r => r.code },
+        { key: 'revision',   label: trans.revision,   sortable: true,
+          render: r => (
+              <>
+                  <span className="badge badge-dark">{r.revision}</span>
+                  {r.is_current && <i className="fas fa-check-circle text-success ml-1" title="Indice en vigueur" />}
+              </>
+          ),
+          mobile: 'title', mobileRender: r => `ind. ${r.revision}` },
+        { key: 'order',      label: trans.order,
+          render: r => (r.order ? <a href={r.order_url}>{r.order.code}</a> : '—'), filterValue: r => r.order?.code, filter: 'text' },
+        { key: 'customer',   label: trans.customer,
+          render: r => r.customer ?? '—', filterValue: r => r.customer, filter: 'text', mobile: 'subtitle', mobileOrder: 1 },
+        { key: 'label',      label: trans.label,      sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'total',      label: trans.total,      align: 'right', nowrap: false,
+          total: { value: r => Number(r.total_amount) || 0, format: sum => formatAmount(sum, trans) },
+          mobile: 'amount' },
+        { key: 'statu',      label: trans.status,     sortable: true,
+          render: r => {
+              const cfg = ARC_STATUS[r.statu] ?? { badge: 'badge-secondary', key: '' };
+              return <span className={`badge ${cfg.badge}`}>{trans[cfg.key] ?? r.statu}</span>;
+          },
+          mobile: 'badge' },
+        { key: 'created_at', label: trans.created_at, sortable: true,
+          filter: 'date' },
+        { key: 'sent_at',    label: trans.sent_at,
+          render: r => r.sent_at ?? '—', filter: 'date' },
+    ];
+}
+
 export default function OrderConfirmationsIndex({ endpoints, trans }) {
     const [rows, setRows]             = useState([]);
     const [meta, setMeta]             = useState(null);
@@ -68,7 +122,7 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
     const [fetchError, setFetchError] = useState('');
     const [page, setPage]             = useState(1);
     const [search, setSearch]         = useState('');
-    const [status, setStatus]         = useState('');
+    const [statuses, setStatuses]     = useState([]);
     const [sort, setSort]             = useState({ field: 'created_at', asc: false });
     const [flash, setFlash]           = useState({ msg: '', type: 'success' });
 
@@ -87,7 +141,8 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
         setLoading(true);
         try {
             setFetchError('');
-            const params = new URLSearchParams({ search, status, sort: sort.field, asc: sort.asc ? '1' : '0', page });
+            const params = new URLSearchParams({ search, sort: sort.field, asc: sort.asc ? '1' : '0', page });
+            statuses.forEach(s => params.append('statuses[]', s));
             const json = await apiFetch(`${endpoints.list}?${params}`);
             setRows(json.data ?? []);
             setMeta(json.meta ?? null);
@@ -98,7 +153,7 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
         } finally {
             setLoading(false);
         }
-    }, [endpoints?.list, search, status, sort, page]);
+    }, [endpoints?.list, search, statuses, sort, page]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -117,12 +172,10 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
         }
     }
 
-    const statusOptions = [
-        { value: '1', label: trans.status_draft },
-        { value: '2', label: trans.status_sent },
-        { value: '3', label: trans.status_accepted },
-        { value: '4', label: trans.status_superseded },
-    ];
+    function handleStatusToggle(id) {
+        setStatuses(prev => (prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]));
+        setPage(1);
+    }
 
     return (
         <div>
@@ -150,105 +203,50 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
                             />
                         </div>
 
-                        <select
-                            className="form-control form-control-sm"
-                            style={{ maxWidth: 180 }}
-                            value={status}
-                            onChange={e => { setStatus(e.target.value); setPage(1); }}
-                        >
-                            <option value="">{trans.all}</option>
-                            {statusOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                        </select>
+                        <StatusFilter config={STATUS_FILTER_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} buttonType="button" />
                     </div>
                 </div>
 
-                <div className="table-responsive">
-                    <table className="table table-hover table-sm mb-0">
-                        <thead>
-                            <tr>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('code')}>
-                                    {trans.code}<SortIcon field="code" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('revision')}>
-                                    {trans.revision}<SortIcon field="revision" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th>{trans.order}</th>
-                                <th>{trans.customer}</th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('label')}>
-                                    {trans.label}<SortIcon field="label" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th className="text-right">{trans.total}</th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('statu')}>
-                                    {trans.status}<SortIcon field="statu" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('created_at')}>
-                                    {trans.created_at}<SortIcon field="created_at" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th>{trans.sent_at}</th>
-                                <th>{trans.actions}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={10} className="text-center py-4">
-                                        <i className="fas fa-spinner fa-spin" /> {trans.loading}
-                                    </td>
-                                </tr>
-                            ) : rows.length === 0 ? (
-                                <tr>
-                                    <td colSpan={10} className="text-center py-4 text-muted">{trans.no_data}</td>
-                                </tr>
-                            ) : rows.map(row => {
-                                const statusCfg = ARC_STATUS[row.statu] ?? { badge: 'badge-secondary', key: '' };
-                                return (
-                                    <tr
-                                        key={row.id}
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => { window.location.href = row.url; }}
-                                    >
-                                        <td><code>{row.code}</code></td>
-                                        <td>
-                                            <span className="badge badge-dark">{row.revision}</span>
-                                            {row.is_current && <i className="fas fa-check-circle text-success ml-1" title="Indice en vigueur" />}
-                                        </td>
-                                        <td onClick={e => e.stopPropagation()}>
-                                            {row.order
-                                                ? <a href={row.order_url}>{row.order.code}</a>
-                                                : '—'}
-                                        </td>
-                                        <td>{row.customer ?? '—'}</td>
-                                        <td>{row.label}</td>
-                                        <td className="text-right">{row.total}</td>
-                                        <td>
-                                            <span className={`badge ${statusCfg.badge}`}>
-                                                {trans[statusCfg.key] ?? row.statu}
-                                            </span>
-                                        </td>
-                                        <td>{row.created_at}</td>
-                                        <td>{row.sent_at ?? '—'}</td>
-                                        <td onClick={e => e.stopPropagation()}>
-                                            <div className="d-flex flex-wrap" style={{ gap: 4 }}>
-                                                {row.statu === STATUS_DRAFT && (
-                                                    <button
-                                                        className="btn btn-xs btn-outline-success"
-                                                        title={trans.send}
-                                                        onClick={() => handleSend(row)}
-                                                    >
-                                                        <i className="fas fa-paper-plane" />
-                                                    </button>
-                                                )}
-                                                <a href={row.url} className="btn btn-xs btn-outline-primary" title={trans.view}>
-                                                    <i className="fas fa-eye" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    rows={rows}
+                    columns={confirmationColumns(trans)}
+                    loading={loading}
+                    trans={trans}
+                    sortField={sort.field}
+                    sortAsc={sort.asc}
+                    onSort={handleSort}
+                    storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+                    unsortableIcon={false}
+                    tableClassName="table table-hover table-sm mb-0"
+                    loadingContent={<><i className="fas fa-spinner fa-spin" /> {trans.loading}</>}
+                    emptyText={trans.no_data}
+                    actionsHeader={trans.actions}
+                    actionsWidth={90}
+                    actionsCellStyle={{ whiteSpace: 'nowrap' }}
+                    rowHref={r => r.url}
+                    rowClickable
+                    rowActions={row => (
+                        <div className="d-flex" style={{ gap: 4 }}>
+                            {row.statu === STATUS_DRAFT && (
+                                <button
+                                    className="btn btn-xs btn-outline-success"
+                                    title={trans.send}
+                                    onClick={() => handleSend(row)}
+                                >
+                                    <i className="fas fa-paper-plane" />
+                                </button>
+                            )}
+                            <a href={row.url} className="btn btn-xs btn-outline-primary" title={trans.view}>
+                                <i className="fas fa-eye" />
+                            </a>
+                        </div>
+                    )}
+                    mobileActions={row => row.statu === STATUS_DRAFT && (
+                        <button type="button" className="btn btn-outline-success" style={{ minHeight: 44 }} onClick={() => handleSend(row)}>
+                            <i className="fas fa-paper-plane mr-1" />{trans.send}
+                        </button>
+                    )}
+                />
 
                 <Pagination meta={meta} around={1} boundaries showTotal navClassName="d-flex justify-content-between align-items-center px-3 pb-2" ulClassName="pagination pagination-sm mb-0" onPage={p => setPage(p)} />
             </div>

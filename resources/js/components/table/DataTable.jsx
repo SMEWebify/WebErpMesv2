@@ -23,10 +23,11 @@ import { toISODate } from './dates.js';
  *     mobileRender: row => node,              // contenu sur la carte (défaut : render)
  *     mobileOrder: 1,                         // ordre sur la carte (défaut : ordre des colonnes)
  *     hideable:  false,                       // colonne déplaçable mais jamais masquée
+ *   }
  *
+ * rowClickable : sur PC, un clic sur la ligne ouvre rowHref (hors liens et boutons).
  * renderExpanded(row) : contenu déplié sous la ligne (formulaire en ligne…), sur toute la
  * largeur du tableau sur PC, sous la carte en mobile.
- *   }
  *
  * Sur PC : colonnes masquables et réordonnables (persistées), ligne de filtres, total
  * de la page. Sous `md` : une carte par ligne, entièrement cliquable vers `rowHref`.
@@ -194,6 +195,7 @@ export default function DataTable({
     colFilters: controlledFilters,
     onColFiltersChange,
     rowHref,
+    rowClickable = false,
     rowActions,
     mobileActions,
     renderExpanded,
@@ -377,7 +379,15 @@ export default function DataTable({
                             const expanded = renderExpanded?.(row);
                             return (
                                 <React.Fragment key={row[rowKey]}>
-                                    <tr>
+                                    <tr {...(rowClickable && rowHref ? {
+                                        style: { cursor: 'pointer' },
+                                        onClick: e => {
+                                            // un lien, un bouton ou un champ de la ligne garde son propre comportement
+                                            if (!e.target.closest('a, button, input, select, textarea, [role="button"]')) {
+                                                window.location.href = rowHref(row);
+                                            }
+                                        },
+                                    } : {})}>
                                         {visible.map(col => (
                                             <td
                                                 key={col.key}

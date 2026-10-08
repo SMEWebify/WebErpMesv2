@@ -126,6 +126,8 @@ class OrderConfirmationsController extends Controller
     {
         $search       = $request->get('search', '');
         $statusFilter = $request->filled('status') ? (int) $request->get('status') : null;
+        // Filtre multi-statuts de la liste ; `status` (valeur unique) reste accepté.
+        $statuses     = array_map('intval', (array) $request->input('statuses', []));
         $sortField    = in_array($request->get('sort', 'created_at'), ['code', 'label', 'created_at', 'statu', 'revision'], true)
             ? $request->get('sort', 'created_at')
             : 'created_at';
@@ -138,6 +140,7 @@ class OrderConfirmationsController extends Controller
                    ->orWhere('customer_reference', 'like', '%'.$search.'%')
             ))
             ->when($statusFilter !== null, fn ($q) => $q->where('statu', $statusFilter))
+            ->when($statuses !== [], fn ($q) => $q->whereIn('statu', $statuses))
             ->orderBy($sortField, $sortAsc ? 'asc' : 'desc')
             ->paginate(15);
 
@@ -153,6 +156,8 @@ class OrderConfirmationsController extends Controller
                 'order_url'  => $c->Order ? route('orders.show', ['id' => $c->Order->id]) : null,
                 'customer'   => $c->companie?->label,
                 'total'      => $c->formatted_total_price,
+                // Valeur numérique, pour le total de page de la liste.
+                'total_amount' => (float) $c->total_price,
                 'created_at' => $c->created_at?->format('d/m/Y'),
                 'sent_at'    => $c->sent_at?->format('d/m/Y'),
                 'url'        => route('order.confirmations.show', ['id' => $c->id]),
