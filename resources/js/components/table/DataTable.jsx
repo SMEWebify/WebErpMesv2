@@ -23,6 +23,9 @@ import { toISODate } from './dates.js';
  *     mobileRender: row => node,              // contenu sur la carte (défaut : render)
  *     mobileOrder: 1,                         // ordre sur la carte (défaut : ordre des colonnes)
  *     hideable:  false,                       // colonne déplaçable mais jamais masquée
+ *
+ * renderExpanded(row) : contenu déplié sous la ligne (formulaire en ligne…), sur toute la
+ * largeur du tableau sur PC, sous la carte en mobile.
  *   }
  *
  * Sur PC : colonnes masquables et réordonnables (persistées), ligne de filtres, total
@@ -107,7 +110,7 @@ function MobileSort({ columns, sortField, sortAsc, onSort, trans }) {
     );
 }
 
-function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, loadingContent, emptyText, totals, totalLabel }) {
+function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpanded, loading, loadingContent, emptyText, totals, totalLabel }) {
     const byRole = role => columns
         .filter(c => c.mobile === role)
         .map((c, i) => [c.mobileOrder ?? 1000 + i, c])
@@ -129,6 +132,7 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, l
                 const badges    = valuesFor('badge', row);
                 const amounts   = valuesFor('amount', row);
                 const extra     = mobileActions?.(row);
+                const expanded  = renderExpanded?.(row);
                 return (
                     <div key={row[rowKey]} className={`list-group-item position-relative py-2${href ? ' list-group-item-action' : ''}`} style={{ minHeight: 44 }}>
                         <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
@@ -151,6 +155,9 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, loading, l
                         </div>
                         {extra && (
                             <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{extra}</div>
+                        )}
+                        {expanded && (
+                            <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{expanded}</div>
                         )}
                     </div>
                 );
@@ -189,6 +196,7 @@ export default function DataTable({
     rowHref,
     rowActions,
     mobileActions,
+    renderExpanded,
     actionsColumn = true,
     actionsWidth = 36,
     actionsHeader = null,
@@ -238,6 +246,7 @@ export default function DataTable({
                     rowKey={rowKey}
                     rowHref={rowHref}
                     mobileActions={mobileActions}
+                    renderExpanded={renderExpanded}
                     loading={loading}
                     loadingContent={loadingContent}
                     emptyText={empty}
@@ -364,20 +373,26 @@ export default function DataTable({
                         ) : filtered.length === 0 ? (
                             <tr><td colSpan={colSpan} className="text-center text-muted py-3">{empty}</td></tr>
                         ) : null}
-                        {!loading && filtered.map(row => (
-                            <tr key={row[rowKey]}>
-                                {visible.map(col => (
-                                    <td
-                                        key={col.key}
-                                        className={`${alignClass(col.align)}${col.bold ? ' font-weight-bold' : ''}`}
-                                        style={(col.nowrap ?? (col.align === 'right' || col.bold)) ? { whiteSpace: 'nowrap' } : {}}
-                                    >
-                                        {renderCell(col, row)}
-                                    </td>
-                                ))}
-                                {actionsColumn && <td style={actionsCellStyle}>{actions?.(row)}</td>}
-                            </tr>
-                        ))}
+                        {!loading && filtered.map(row => {
+                            const expanded = renderExpanded?.(row);
+                            return (
+                                <React.Fragment key={row[rowKey]}>
+                                    <tr>
+                                        {visible.map(col => (
+                                            <td
+                                                key={col.key}
+                                                className={`${alignClass(col.align)}${col.bold ? ' font-weight-bold' : ''}`}
+                                                style={(col.nowrap ?? (col.align === 'right' || col.bold)) ? { whiteSpace: 'nowrap' } : {}}
+                                            >
+                                                {renderCell(col, row)}
+                                            </td>
+                                        ))}
+                                        {actionsColumn && <td style={actionsCellStyle}>{actions?.(row)}</td>}
+                                    </tr>
+                                    {expanded && <tr><td colSpan={colSpan}>{expanded}</td></tr>}
+                                </React.Fragment>
+                            );
+                        })}
                     </tbody>
                     {filtered.length > 0 && totals.length > 0 && (
                         <tfoot>

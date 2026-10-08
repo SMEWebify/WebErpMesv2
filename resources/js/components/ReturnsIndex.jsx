@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SortIcon, Pagination } from './table';
+import { DataTable, Pagination, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -11,6 +11,14 @@ const RETURN_STATUS = {
     3: { badge: 'badge-warning', key: 'status_in_rework' },
     4: { badge: 'badge-success', key: 'status_closed' },
 };
+
+// Même table au format attendu par StatusFilter ({ badge, label } = clé de traduction).
+const STATUS_FILTER_CONFIG = Object.fromEntries(
+    Object.entries(RETURN_STATUS).map(([id, cfg]) => [id, { badge: cfg.badge, label: cfg.key }]),
+);
+
+const LS_COL_ORDER   = 'returns_table_col_order';
+const LS_HIDDEN_COLS = 'returns_table_hidden_cols';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -232,29 +240,25 @@ function DiagnosisForm({ ret, endpoint, trans, onDone, onCancel }) {
     }
 
     return (
-        <tr>
-            <td colSpan={7}>
-                <form onSubmit={handleSubmit} className="p-2">
-                    <div className="form-row">
-                        <div className="form-group col-md-6">
-                            <label>{trans.diagnosis}</label>
-                            <textarea className={`form-control form-control-sm ${errors.diagnosis ? 'is-invalid' : ''}`} rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
-                            {errors.diagnosis && <div className="invalid-feedback">{errors.diagnosis[0]}</div>}
-                        </div>
-                        <div className="form-group col-md-6">
-                            <label>{trans.customer_report}</label>
-                            <textarea className="form-control form-control-sm" rows="3" value={report} onChange={e => setReport(e.target.value)} />
-                        </div>
-                    </div>
-                    <div style={{ gap: 6, display: 'flex' }}>
-                        <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
-                            <i className="fas fa-save mr-1" />{trans.save}
-                        </button>
-                        <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
-                    </div>
-                </form>
-            </td>
-        </tr>
+        <form onSubmit={handleSubmit} className="p-2">
+            <div className="form-row">
+                <div className="form-group col-md-6">
+                    <label>{trans.diagnosis}</label>
+                    <textarea className={`form-control form-control-sm ${errors.diagnosis ? 'is-invalid' : ''}`} rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
+                    {errors.diagnosis && <div className="invalid-feedback">{errors.diagnosis[0]}</div>}
+                </div>
+                <div className="form-group col-md-6">
+                    <label>{trans.customer_report}</label>
+                    <textarea className="form-control form-control-sm" rows="3" value={report} onChange={e => setReport(e.target.value)} />
+                </div>
+            </div>
+            <div style={{ gap: 6, display: 'flex' }}>
+                <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
+                    <i className="fas fa-save mr-1" />{trans.save}
+                </button>
+                <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
+            </div>
+        </form>
     );
 }
 
@@ -278,23 +282,45 @@ function ClosureForm({ ret, endpoint, trans, onDone, onCancel }) {
     }
 
     return (
-        <tr>
-            <td colSpan={7}>
-                <form onSubmit={handleSubmit} className="p-2">
-                    <div className="form-group">
-                        <label>{trans.closure_comment}</label>
-                        <textarea className="form-control form-control-sm" rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
-                    </div>
-                    <div style={{ gap: 6, display: 'flex' }}>
-                        <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
-                            <i className="fas fa-check mr-1" />{trans.close_return}
-                        </button>
-                        <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
-                    </div>
-                </form>
-            </td>
-        </tr>
+        <form onSubmit={handleSubmit} className="p-2">
+            <div className="form-group">
+                <label>{trans.closure_comment}</label>
+                <textarea className="form-control form-control-sm" rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
+            </div>
+            <div style={{ gap: 6, display: 'flex' }}>
+                <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
+                    <i className="fas fa-check mr-1" />{trans.close_return}
+                </button>
+                <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
+            </div>
+        </form>
     );
+}
+
+// ---------------------------------------------------------------------------
+// Table — colonnes déclarées, rendu par le DataTable partagé
+// ---------------------------------------------------------------------------
+
+function returnColumns(trans) {
+    return [
+        { key: 'code',           label: trans.code,           sortable: true,
+          render: r => <code>{r.code}</code>, filter: 'text', mobile: 'title', mobileRender: r => r.code },
+        { key: 'label',          label: trans.label,          sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'delivery',       label: trans.delivery,
+          render: r => r.delivery?.code ?? '—', filterValue: r => r.delivery?.code, filter: 'text',
+          mobile: 'subtitle', mobileOrder: 1, mobileRender: r => r.delivery?.code },
+        { key: 'non_conformity', label: trans.non_conformity,
+          render: r => r.non_conformity?.code ?? '—', filterValue: r => r.non_conformity?.code, filter: 'text' },
+        { key: 'statu',          label: trans.status,         sortable: true,
+          render: r => {
+              const cfg = RETURN_STATUS[r.statu] ?? { badge: 'badge-secondary', key: '' };
+              return <span className={`badge ${cfg.badge}`}>{trans[cfg.key] ?? r.status_label}</span>;
+          },
+          mobile: 'badge' },
+        { key: 'created_at',     label: trans.created_at,     sortable: true,
+          filter: 'date', mobile: 'subtitle' },
+    ];
 }
 
 // ---------------------------------------------------------------------------
@@ -308,7 +334,7 @@ const [rows, setRows]         = useState([]);
     const [fetchError, setFetchError] = useState('');
     const [page, setPage]         = useState(1);
     const [search, setSearch]     = useState('');
-    const [status, setStatus]     = useState('');
+    const [statuses, setStatuses] = useState([]);
     const [sort, setSort]         = useState({ field: 'created_at', asc: false });
 
     const [showCreate, setShowCreate]           = useState(false);
@@ -331,7 +357,8 @@ const [rows, setRows]         = useState([]);
         setLoading(true);
         try {
             setFetchError('');
-            const params = new URLSearchParams({ search, status, sort: sort.field, asc: sort.asc ? '1' : '0', page });
+            const params = new URLSearchParams({ search, sort: sort.field, asc: sort.asc ? '1' : '0', page });
+            statuses.forEach(s => params.append('statuses[]', s));
             const url = `${endpoints.list}?${params}`;
             const json = await apiFetch(url);
             setRows(json.data ?? []);
@@ -343,7 +370,7 @@ const [rows, setRows]         = useState([]);
         } finally {
             setLoading(false);
         }
-    }, [endpoints?.list, search, status, sort, page]);
+    }, [endpoints?.list, search, statuses, sort, page]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -357,8 +384,8 @@ const [rows, setRows]         = useState([]);
         setPage(1);
     }
 
-    function handleStatus(val) {
-        setStatus(val);
+    function handleStatusToggle(id) {
+        setStatuses(prev => (prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]));
         setPage(1);
     }
 
@@ -379,13 +406,6 @@ const [rows, setRows]         = useState([]);
         setShowCreate(false);
         fetchData();
     }
-
-    const statusOptions = [
-        { value: '1', label: trans.status_received },
-        { value: '2', label: trans.status_diagnosed },
-        { value: '3', label: trans.status_in_rework },
-        { value: '4', label: trans.status_closed },
-    ];
 
     return (
         <div>
@@ -425,10 +445,7 @@ const [rows, setRows]         = useState([]);
                         </div>
 
                         {/* Status filter */}
-                        <select className="form-control form-control-sm" style={{ maxWidth: 160 }} value={status} onChange={e => handleStatus(e.target.value)}>
-                            <option value="">{trans.all}</option>
-                            {statusOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                        </select>
+                        <StatusFilter config={STATUS_FILTER_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} buttonType="button" />
 
                         <div style={{ flex: 1 }} />
 
@@ -438,108 +455,92 @@ const [rows, setRows]         = useState([]);
                     </div>
                 </div>
 
-                <div className="table-responsive">
-                    <table className="table table-hover table-sm mb-0">
-                        <thead>
-                            <tr>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('code')}>
-                                    {trans.code}<SortIcon field="code" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('label')}>
-                                    {trans.label}<SortIcon field="label" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th>{trans.delivery}</th>
-                                <th>{trans.non_conformity}</th>
-                                <th>{trans.status}</th>
-                                <th style={{ cursor: 'pointer' }} onClick={() => handleSort('created_at')}>
-                                    {trans.created_at}<SortIcon field="created_at" sortField={sort.field} sortAsc={sort.asc} />
-                                </th>
-                                <th>{trans.actions}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={7} className="text-center py-4">
-                                        <i className="fas fa-spinner fa-spin" /> {trans.loading}
-                                    </td>
-                                </tr>
-                            ) : rows.length === 0 ? (
-                                <tr>
-                                    <td colSpan={7} className="text-center py-4 text-muted">{trans.no_data}</td>
-                                </tr>
-                            ) : rows.map(row => {
-                                const statusCfg = RETURN_STATUS[row.statu] ?? { badge: 'badge-secondary', key: '' };
-                                return (
-                                    <React.Fragment key={row.id}>
-                                        <tr>
-                                            <td><code>{row.code}</code></td>
-                                            <td>{row.label}</td>
-                                            <td>{row.delivery?.code ?? '—'}</td>
-                                            <td>{row.non_conformity?.code ?? '—'}</td>
-                                            <td>
-                                                <span className={`badge ${statusCfg.badge}`}>
-                                                    {trans[statusCfg.key] ?? row.status_label}
-                                                </span>
-                                            </td>
-                                            <td>{row.created_at}</td>
-                                            <td>
-                                                <div className="d-flex flex-wrap" style={{ gap: 4 }}>
-                                                    <button
-                                                        className="btn btn-xs btn-outline-info"
-                                                        title={trans.diagnosis}
-                                                        onClick={() => setDiagnosisId(v => v === row.id ? null : row.id)}
-                                                    >
-                                                        <i className="fas fa-stethoscope" />
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-xs btn-outline-secondary"
-                                                        title={trans.reopen_tasks}
-                                                        disabled={row.statu >= 4}
-                                                        onClick={() => handleReopen(row)}
-                                                    >
-                                                        <i className="fas fa-undo" />
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-xs btn-outline-success"
-                                                        title={trans.close_return}
-                                                        disabled={row.statu === 4}
-                                                        onClick={() => setClosingId(v => v === row.id ? null : row.id)}
-                                                    >
-                                                        <i className="fas fa-check" />
-                                                    </button>
-                                                    <a href={row.url} className="btn btn-xs btn-info" title={trans.view}>
-                                                        <i className="fas fa-eye" />
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        {diagnosisId === row.id && (
-                                            <DiagnosisForm
-                                                ret={row}
-                                                endpoint={endpointFor(endpoints.diagnose, row.id)}
-                                                trans={trans}
-                                                onDone={() => afterAction(trans.save)}
-                                                onCancel={() => setDiagnosisId(null)}
-                                            />
-                                        )}
-
-                                        {closingId === row.id && (
-                                            <ClosureForm
-                                                ret={row}
-                                                endpoint={endpointFor(endpoints.close, row.id)}
-                                                trans={trans}
-                                                onDone={() => afterAction(trans.close_return)}
-                                                onCancel={() => setClosingId(null)}
-                                            />
-                                        )}
-                                    </React.Fragment>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    rows={rows}
+                    columns={returnColumns(trans)}
+                    loading={loading}
+                    trans={trans}
+                    sortField={sort.field}
+                    sortAsc={sort.asc}
+                    onSort={handleSort}
+                    storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+                    unsortableIcon={false}
+                    tableClassName="table table-hover table-sm mb-0"
+                    loadingContent={<><i className="fas fa-spinner fa-spin" /> {trans.loading}</>}
+                    emptyText={trans.no_data}
+                    actionsHeader={trans.actions}
+                    actionsWidth={170}
+                    actionsCellStyle={{ whiteSpace: 'nowrap' }}
+                    rowHref={r => r.url}
+                    rowActions={row => (
+                        <div className="d-flex" style={{ gap: 4 }}>
+                            <button
+                                className="btn btn-xs btn-outline-info"
+                                title={trans.diagnosis}
+                                onClick={() => setDiagnosisId(v => v === row.id ? null : row.id)}
+                            >
+                                <i className="fas fa-stethoscope" />
+                            </button>
+                            <button
+                                className="btn btn-xs btn-outline-secondary"
+                                title={trans.reopen_tasks}
+                                disabled={row.statu >= 4}
+                                onClick={() => handleReopen(row)}
+                            >
+                                <i className="fas fa-undo" />
+                            </button>
+                            <button
+                                className="btn btn-xs btn-outline-success"
+                                title={trans.close_return}
+                                disabled={row.statu === 4}
+                                onClick={() => setClosingId(v => v === row.id ? null : row.id)}
+                            >
+                                <i className="fas fa-check" />
+                            </button>
+                            <a href={row.url} className="btn btn-xs btn-info" title={trans.view}>
+                                <i className="fas fa-eye" />
+                            </a>
+                        </div>
+                    )}
+                    mobileActions={row => (
+                        <div className="d-flex flex-wrap" style={{ gap: '0.5rem' }}>
+                            <button type="button" className="btn btn-outline-info" style={{ minHeight: 44 }}
+                                onClick={() => setDiagnosisId(v => v === row.id ? null : row.id)}>
+                                <i className="fas fa-stethoscope mr-1" />{trans.diagnosis}
+                            </button>
+                            <button type="button" className="btn btn-outline-secondary" style={{ minHeight: 44 }}
+                                disabled={row.statu >= 4} onClick={() => handleReopen(row)}>
+                                <i className="fas fa-undo mr-1" />{trans.reopen_tasks}
+                            </button>
+                            <button type="button" className="btn btn-outline-success" style={{ minHeight: 44 }}
+                                disabled={row.statu === 4} onClick={() => setClosingId(v => v === row.id ? null : row.id)}>
+                                <i className="fas fa-check mr-1" />{trans.close_return}
+                            </button>
+                        </div>
+                    )}
+                    renderExpanded={row => (diagnosisId === row.id || closingId === row.id) && (
+                        <>
+                            {diagnosisId === row.id && (
+                                <DiagnosisForm
+                                    ret={row}
+                                    endpoint={endpointFor(endpoints.diagnose, row.id)}
+                                    trans={trans}
+                                    onDone={() => afterAction(trans.save)}
+                                    onCancel={() => setDiagnosisId(null)}
+                                />
+                            )}
+                            {closingId === row.id && (
+                                <ClosureForm
+                                    ret={row}
+                                    endpoint={endpointFor(endpoints.close, row.id)}
+                                    trans={trans}
+                                    onDone={() => afterAction(trans.close_return)}
+                                    onCancel={() => setClosingId(null)}
+                                />
+                            )}
+                        </>
+                    )}
+                />
 
                 <Pagination meta={meta} around={1} boundaries showTotal navClassName="d-flex justify-content-between align-items-center px-3 pb-2" ulClassName="pagination pagination-sm mb-0" onPage={p => setPage(p)} />
             </div>

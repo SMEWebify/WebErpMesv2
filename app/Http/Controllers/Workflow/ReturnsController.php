@@ -156,6 +156,8 @@ class ReturnsController extends Controller
     {
         $search      = $request->get('search', '');
         $statusFilter = $request->filled('status') ? $request->get('status') : null;
+        // Filtre multi-statuts de la liste ; `status` (valeur unique) reste accepté.
+        $statuses     = array_map('intval', (array) $request->input('statuses', []));
         $sortField   = in_array($request->get('sort', 'created_at'), ['code', 'label', 'created_at', 'statu'])
             ? $request->get('sort', 'created_at')
             : 'created_at';
@@ -167,6 +169,7 @@ class ReturnsController extends Controller
                    ->orWhere('label', 'like', '%'.$search.'%')
             ))
             ->when($statusFilter !== null, fn ($q) => $q->where('statu', (int) $statusFilter))
+            ->when($statuses !== [], fn ($q) => $q->whereIn('statu', $statuses))
             ->orderBy($sortField, $sortAsc ? 'asc' : 'desc');
 
         $returns = $query->paginate(15);

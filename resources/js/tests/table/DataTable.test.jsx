@@ -167,6 +167,17 @@ describe('DataTable — PC', () => {
         expect(document.querySelector('tbody tr').cells).toHaveLength(6);
     });
 
+    it('renderExpanded : ligne dépliée sur toute la largeur, sous la carte en mobile', () => {
+        const renderExpanded = r => r.id === 2 && <form>Diagnostic {r.code}</form>;
+        const { unmount } = setup({ renderExpanded });
+        const cell = screen.getByText('Diagnostic CM-002').closest('td');
+        expect(cell.colSpan).toBe(6);
+        expect(cell.closest('tr').previousElementSibling.cells[0].textContent).toBe('CM-002');
+        unmount();
+        setup({ renderExpanded, forceLayout: 'cards' });
+        expect(screen.getByText('Diagnostic CM-002').closest('.list-group-item')).toHaveTextContent('CM-002');
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();
