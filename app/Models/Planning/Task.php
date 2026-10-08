@@ -535,7 +535,7 @@ class Task extends Model
             ])
             ->orderBy('timestamp')
             ->orderBy('id')
-            ->get(['type', 'timestamp']);
+            ->get(['type', 'timestamp', 'user_id', 'methods_ressources_id']);
 
         return $this->cachedLogWorkedSeconds = self::workedSecondsFrom($activities);
     }
@@ -546,32 +546,52 @@ class Task extends Model
      * agrégats multi-tâches (synthèse d'affaire) qui chargent toutes les
      * activités en une requête au lieu d'une par tâche.
      *
-     * @param iterable<object{type:int|string,timestamp:mixed}> $activities
+     * L'appariement se fait PAR COUPLE (opérateur, ressource) : deux opérateurs
+     * — ou un opérateur sur deux ressources — qui pointent la même tâche en même
+     * temps sont comptés chacun, au lieu de n'en retenir qu'un seul (l'ancienne
+     * boucle n'ouvrait qu'une session globale). Un second START d'un couple déjà
+     * ouvert est ignoré : un double « Démarrer » (double-clic, oubli de pointer
+     * la fin) ne crée pas de session fantôme qui grossirait d'heure en heure. Une
+     * FIN sans START du même couple referme la session ouverte la plus ancienne.
+     * Sans simultanéité, le résultat est identique au comportement précédent.
+     *
+     * @param iterable<object{type:int|string,timestamp:mixed,user_id?:mixed,methods_ressources_id?:mixed}> $activities
      */
     public static function workedSecondsFrom(iterable $activities): int
     {
-        $worked  = 0;
-        $openAt  = null;
+        $worked = 0;
+        $open   = [];   // couple « opérateur|ressource » => début de la session ouverte
 
         foreach ($activities as $activity) {
-            $ts = Carbon::parse($activity->timestamp);
+            $ts  = Carbon::parse($activity->timestamp);
+            $key = ($activity->user_id ?? '-') . '|' . ($activity->methods_ressources_id ?? '-');
 
             if ((int) $activity->type === TaskActivities::TYPE_START) {
-                if ($openAt === null) {
-                    $openAt = $ts;
+                // Un seul START compte par couple : un second « Démarrer » sans FIN
+                // ne rouvre pas de session (sinon elle reste ouverte et gonfle).
+                if (! isset($open[$key])) {
+                    $open[$key] = $ts;
                 }
                 continue;
             }
 
-            if ($openAt !== null) {
-                // Carbon 3 : écart signé, $debut->diffInSeconds($fin) est positif.
-                $worked += (int) max(0, $openAt->diffInSeconds($ts));
-                $openAt  = null;
+            // FIN : referme la session du même couple ; à défaut (FIN orpheline),
+            // la session ouverte la plus ancienne. Carbon 3 : écart signé,
+            // $debut->diffInSeconds($fin) est positif.
+            if (isset($open[$key])) {
+                $worked += (int) max(0, $open[$key]->diffInSeconds($ts));
+                unset($open[$key]);
+            } elseif (! empty($open)) {
+                $oldest = array_key_first($open);
+                $worked += (int) max(0, $open[$oldest]->diffInSeconds($ts));
+                unset($open[$oldest]);
             }
         }
 
-        if ($openAt !== null) {
-            $worked += (int) max(0, $openAt->diffInSeconds(Carbon::now()));
+        // Sessions jamais refermées (tâche en cours) : comptées jusqu'à maintenant.
+        $now = Carbon::now();
+        foreach ($open as $openAt) {
+            $worked += (int) max(0, $openAt->diffInSeconds($now));
         }
 
         return $worked;

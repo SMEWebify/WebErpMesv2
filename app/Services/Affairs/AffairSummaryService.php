@@ -334,7 +334,7 @@ class AffairSummaryService
             ->orderBy('timestamp')
             ->orderBy('id')
             ->toBase()
-            ->get(['task_id', 'type', 'timestamp'])
+            ->get(['task_id', 'type', 'timestamp', 'user_id', 'methods_ressources_id'])
             ->groupBy('task_id');
 
         return $tasks->map(function ($task) use ($lineById, $activities) {
