@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, Pagination } from './table';
+import { DataTable, Pagination, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -415,7 +415,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                 </div>
 
                 {/* ── Right column: table ── */}
-                <div className="col-md-9">
+                <div className="col-md-9 order-first order-md-0">
                     <div className="card">
                         <div className="card-header py-2">
                             <div className="d-flex flex-wrap align-items-center" style={{ gap: 6 }}>
@@ -433,39 +433,41 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                                     />
                                 </div>
 
-                                {/* Delivery status */}
-                                <div className="btn-group btn-group-sm">
-                                    {Object.entries(DELIVERY_STATUS).map(([val, cfg]) => (
-                                        <button
-                                            key={val}
-                                            type="button"
-                                            className={activeBtn(
-                                                filters.statuses.includes(Number(val)),
-                                                cfg.badge.replace('badge', 'btn')
-                                            )}
-                                            onClick={() => toggleStatus(Number(val))}
-                                        >
-                                            {trans[cfg.label] ?? cfg.label}
-                                        </button>
-                                    ))}
-                                </div>
+                                <MobileFilters count={filters.statuses.length + filters.invoiceStatuses.length} trans={trans}>
+                                    {/* Delivery status */}
+                                    <div className="btn-group btn-group-sm">
+                                        {Object.entries(DELIVERY_STATUS).map(([val, cfg]) => (
+                                            <button
+                                                key={val}
+                                                type="button"
+                                                className={activeBtn(
+                                                    filters.statuses.includes(Number(val)),
+                                                    cfg.badge.replace('badge', 'btn')
+                                                )}
+                                                onClick={() => toggleStatus(Number(val))}
+                                            >
+                                                {trans[cfg.label] ?? cfg.label}
+                                            </button>
+                                        ))}
+                                    </div>
 
-                                {/* Invoice status */}
-                                <div className="btn-group btn-group-sm">
-                                    {Object.entries(INVOICE_STATUS).map(([val, cfg]) => (
-                                        <button
-                                            key={val}
-                                            type="button"
-                                            className={activeBtn(
-                                                filters.invoiceStatuses.includes(Number(val)),
-                                                cfg.badge.replace('badge', 'btn')
-                                            )}
-                                            onClick={() => toggleInvoiceStatus(Number(val))}
-                                        >
-                                            {trans[cfg.label] ?? cfg.label}
-                                        </button>
-                                    ))}
-                                </div>
+                                    {/* Invoice status */}
+                                    <div className="btn-group btn-group-sm">
+                                        {Object.entries(INVOICE_STATUS).map(([val, cfg]) => (
+                                            <button
+                                                key={val}
+                                                type="button"
+                                                className={activeBtn(
+                                                    filters.invoiceStatuses.includes(Number(val)),
+                                                    cfg.badge.replace('badge', 'btn')
+                                                )}
+                                                onClick={() => toggleInvoiceStatus(Number(val))}
+                                            >
+                                                {trans[cfg.label] ?? cfg.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </MobileFilters>
 
                                 {/* Spacer */}
                                 <div style={{ flex: 1 }} />

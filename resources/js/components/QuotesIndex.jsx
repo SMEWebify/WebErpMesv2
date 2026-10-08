@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QuoteRateWidget from './dashboard/widgets/QuoteRateWidget.jsx';
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1140,7 +1140,9 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
                 </div>
 
                 {/* Status filter */}
-                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
+                <MobileFilters count={statuses.length === ALL_STATUSES.length ? 0 : statuses.length} trans={trans}>
+                    <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
+                </MobileFilters>
 
                 {/* Spacer */}
                 <div className="flex-grow-1" />

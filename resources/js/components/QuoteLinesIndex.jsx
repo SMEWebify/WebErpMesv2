@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
-import { DataTable, Pagination, StatusFilter } from './table';
+import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -240,7 +240,9 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
                         )}
                     </div>
 
-                    <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                    <MobileFilters count={statuses.length} trans={trans}>
+                        <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                    </MobileFilters>
 
                     <div className="flex-grow-1" />
 

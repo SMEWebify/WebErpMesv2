@@ -101,6 +101,12 @@
         padding-top: .6rem;
         padding-bottom: .6rem;
     }
+
+    /* ---- Filtres repliés des listes (MobileFilters) ----------------- */
+    /* Les groupes de boutons de statut passent à la ligne au lieu de déborder. */
+    .wem-mobile-filters .btn-group {
+        flex-wrap: wrap;
+    }
 }
 
 /* ---- Modales plein écran sur téléphone ------------------------------- */

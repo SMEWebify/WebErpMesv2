@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -642,8 +642,10 @@ export default function NonConformitiesIndex({
                                 </div>
                             )}
                         </div>
-                        <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={sid => { setStatuses(p => p.includes(sid) ? p.filter(s => s !== sid) : [...p, sid]); setPage(1); }} trans={trans} buttonType="button" />
-                        <TypeFilter   active={types}    onToggle={tid => { setTypes(p => p.includes(tid) ? p.filter(t => t !== tid) : [...p, tid]); setPage(1); }} trans={trans} />
+                        <MobileFilters count={statuses.length + types.length} trans={trans}>
+                            <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={sid => { setStatuses(p => p.includes(sid) ? p.filter(s => s !== sid) : [...p, sid]); setPage(1); }} trans={trans} buttonType="button" />
+                            <TypeFilter   active={types}    onToggle={tid => { setTypes(p => p.includes(tid) ? p.filter(t => t !== tid) : [...p, tid]); setPage(1); }} trans={trans} />
+                        </MobileFilters>
                         <div className="flex-grow-1" />
                         {loading && <i className="fas fa-spinner fa-spin text-muted" />}
                         {meta && <small className="text-muted">{meta.total} {t('results')}</small>}

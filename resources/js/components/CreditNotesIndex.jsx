@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, Pagination } from './table';
+import { DataTable, Pagination, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -384,7 +384,7 @@ export default function CreditNotesIndex({ chartData, endpoints, trans }) {
                 </div>
 
                 {/* ── Right column: table ── */}
-                <div className="col-md-9">
+                <div className="col-md-9 order-first order-md-0">
                     <div className="card">
                         <div className="card-header py-2">
                             <div className="d-flex flex-wrap align-items-center" style={{ gap: 6 }}>
@@ -402,22 +402,24 @@ export default function CreditNotesIndex({ chartData, endpoints, trans }) {
                                     />
                                 </div>
 
-                                {/* Status filter */}
-                                <div className="btn-group btn-group-sm">
-                                    {Object.entries(CREDIT_NOTE_STATUS).map(([val, cfg]) => (
-                                        <button
-                                            key={val}
-                                            type="button"
-                                            className={activeBtn(
-                                                filters.statuses.includes(Number(val)),
-                                                cfg.badge.replace('badge', 'btn')
-                                            )}
-                                            onClick={() => toggleStatus(Number(val))}
-                                        >
-                                            {trans[cfg.label] ?? cfg.label}
-                                        </button>
-                                    ))}
-                                </div>
+                                <MobileFilters count={filters.statuses.length} trans={trans}>
+                                    {/* Status filter */}
+                                    <div className="btn-group btn-group-sm">
+                                        {Object.entries(CREDIT_NOTE_STATUS).map(([val, cfg]) => (
+                                            <button
+                                                key={val}
+                                                type="button"
+                                                className={activeBtn(
+                                                    filters.statuses.includes(Number(val)),
+                                                    cfg.badge.replace('badge', 'btn')
+                                                )}
+                                                onClick={() => toggleStatus(Number(val))}
+                                            >
+                                                {trans[cfg.label] ?? cfg.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </MobileFilters>
 
                                 <div style={{ flex: 1 }} />
                             </div>

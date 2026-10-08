@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // useRef used by ListTab debounce
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1079,7 +1079,9 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </div>
 
                 {/* Status filter */}
-                <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                <MobileFilters count={statuses.length} trans={trans}>
+                    <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                </MobileFilters>
 
                 {/* Spacer */}
                 <div className="flex-grow-1" />

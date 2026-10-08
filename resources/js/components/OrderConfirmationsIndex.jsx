@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, Pagination, StatusFilter } from './table';
+import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -203,7 +203,9 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
                             />
                         </div>
 
-                        <StatusFilter config={STATUS_FILTER_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} buttonType="button" />
+                        <MobileFilters count={statuses.length} trans={trans}>
+                            <StatusFilter config={STATUS_FILTER_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} buttonType="button" />
+                        </MobileFilters>
                     </div>
                 </div>
 

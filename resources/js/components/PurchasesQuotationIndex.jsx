@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, StatusFilter } from './table';
+import { DataTable, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -257,7 +257,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
             </div>
 
             {/* Main list */}
-            <div className="col-md-9">
+            <div className="col-md-9 order-first order-md-0">
                 <div className="card">
                     <div className="card-body pb-1">
                         <div className="input-group">
@@ -272,15 +272,17 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                                 onChange={e => setSearch(e.target.value)}
                             />
                         </div>
-                        <div className="mt-2">
-                            <StatusFilter
-                                config={STATUS_LABELS}
-                                selected={statuses}
-                                onToggle={id => setStatuses(prev => (prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]))}
-                                trans={trans}
-                                buttonType="button"
-                            />
-                        </div>
+                        <MobileFilters count={statuses.length} trans={trans}>
+                            <div className="mt-2">
+                                <StatusFilter
+                                    config={STATUS_LABELS}
+                                    selected={statuses}
+                                    onToggle={id => setStatuses(prev => (prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]))}
+                                    trans={trans}
+                                    buttonType="button"
+                                />
+                            </div>
+                        </MobileFilters>
                     </div>
 
                     <DataTable

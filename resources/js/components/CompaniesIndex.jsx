@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination } from './table';
+import { DataTable, Pagination, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -587,7 +587,9 @@ function ListTab({ endpoints, trans }) {
                         onChange={e => handleSearch(e.target.value)}
                     />
                 </div>
-                <TypeFilter selected={status} onChange={handleStatusChange} trans={trans} />
+                <MobileFilters count={status !== 'all' ? 1 : 0} trans={trans}>
+                    <TypeFilter selected={status} onChange={handleStatusChange} trans={trans} />
+                </MobileFilters>
                 <div className="flex-grow-1" />
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
                     <i className="fas fa-plus mr-1" />{trans.new_company}

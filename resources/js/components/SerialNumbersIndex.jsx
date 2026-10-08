@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -283,7 +283,9 @@ function ListTab({ endpoints, trans, productId = null }) {
                         onChange={e => handleSearch(e.target.value)}
                     />
                 </div>
-                <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
+                <MobileFilters count={statuses.length === ALL_STATUSES.length ? 0 : statuses.length} trans={trans}>
+                    <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
+                </MobileFilters>
                 <div className="flex-grow-1" />
                 {meta && (
                     <small className="text-muted">{meta.total} {trans.total_serial_numbers}</small>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
-import { DataTable, Pagination } from './table';
+import { DataTable, Pagination, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -358,7 +358,9 @@ export default function OrderLinesIndex({ endpoints, trans }) {
                         )}
                     </div>
 
-                    <DeliveryStatusFilter active={deliveryStatuses} onToggle={handleDeliveryStatusToggle} trans={trans} />
+                    <MobileFilters count={deliveryStatuses.length} trans={trans}>
+                        <DeliveryStatusFilter active={deliveryStatuses} onToggle={handleDeliveryStatusToggle} trans={trans} />
+                    </MobileFilters>
 
                     <div className="flex-grow-1" />
 

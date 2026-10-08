@@ -6,3 +6,4 @@ export { default as DataTable, matchesFilter, MOBILE_QUERY } from './DataTable.j
 export { default as useColumnLayout, resolveOrder } from './useColumnLayout.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 export { toISODate } from './dates.js';
+export { default as MobileFilters } from './MobileFilters.jsx';

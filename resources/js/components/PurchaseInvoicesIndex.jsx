@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -435,7 +435,7 @@ export default function PurchaseInvoicesIndex({
                 </div>
 
                 {/* Table */}
-                <div className="col-md-9">
+                <div className="col-md-9 order-first order-md-0">
                     <div className="card">
                         <div className="card-body pb-2">
                             <div className="row align-items-end">
@@ -461,7 +461,9 @@ export default function PurchaseInvoicesIndex({
                                     </div>
                                 </div>
                                 <div className="col-md-7">
-                                    <StatusFilter config={STATUS_CONFIG} selected={activeStatuses} onToggle={handleStatusToggle} trans={trans} />
+                                    <MobileFilters count={activeStatuses.length === ALL_STATUSES.length ? 0 : activeStatuses.length} trans={trans}>
+                                        <StatusFilter config={STATUS_CONFIG} selected={activeStatuses} onToggle={handleStatusToggle} trans={trans} />
+                                    </MobileFilters>
                                 </div>
                             </div>
                         </div>

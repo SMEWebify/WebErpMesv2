@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -756,11 +756,13 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     />
                 </div>
 
-                {/* Status filter */}
-                <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                <MobileFilters count={statuses.length + priorities.length} trans={trans}>
+                    {/* Status filter */}
+                    <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
 
-                {/* Priority filter */}
-                <PriorityFilter active={priorities} onToggle={handlePriorityToggle} trans={trans} />
+                    {/* Priority filter */}
+                    <PriorityFilter active={priorities} onToggle={handlePriorityToggle} trans={trans} />
+                </MobileFilters>
 
                 <div className="flex-grow-1" />
 
