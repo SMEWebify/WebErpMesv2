@@ -32,9 +32,10 @@ class Products extends Model
     protected $fillable= ['code',
                             'label', 
                             'ind',
-                            'methods_services_id', 
-                            'methods_families_id', 
-                            'purchased', 
+                            'methods_services_id',
+                            'methods_families_id',
+                            'vat_nature_id',
+                            'purchased',
                             'purchased_price', 
                             'sold', 
                             'selling_price', 
@@ -88,6 +89,14 @@ class Products extends Model
     public function family()
     {
         return $this->belongsTo(MethodsFamilies::class, 'methods_families_id');
+    }
+
+    /**
+     * Nature de TVA de l'article (axe de la matrice de TVA).
+     */
+    public function vatNature()
+    {
+        return $this->belongsTo(\App\Models\Accounting\VatNature::class, 'vat_nature_id');
     }
 
     public function Unit()

@@ -58,6 +58,29 @@
                                   <option value="1" @if($VAT->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
+                            <hr>
+                            <p class="text-muted mb-2"><small>Facturation électronique (EN 16931) — laisser vide reconduit l'ancien comportement (S si taux &gt; 0, sinon Z).</small></p>
+                            <div class="form-group">
+                              <label>Catégorie EN 16931</label>
+                              <select class="form-control" name="en16931_category">
+                                <option value="" @if(!$VAT->en16931_category) selected @endif>— (repli S / Z)</option>
+                                @foreach (['S' => 'S — taux normal', 'Z' => 'Z — taux zéro', 'E' => 'E — exonéré', 'AE' => 'AE — autoliquidation', 'K' => 'K — livraison intracom.', 'G' => 'G — export hors UE'] as $code => $lib)
+                                  <option value="{{ $code }}" @if($VAT->en16931_category === $code) selected @endif>{{ $lib }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label>Motif d'exonération — code (BT-121)</label>
+                              <input type="text" class="form-control" name="exemption_reason_code" value="{{ $VAT->exemption_reason_code }}" placeholder="ex. vatex-eu-ic">
+                            </div>
+                            <div class="form-group">
+                              <label>Motif d'exonération — texte (BT-120)</label>
+                              <input type="text" class="form-control" name="exemption_reason_text" value="{{ $VAT->exemption_reason_text }}" placeholder="ex. Exonération art. 262 ter I du CGI">
+                            </div>
+                            <div class="form-group">
+                              <label>Mention légale (facture)</label>
+                              <textarea class="form-control" name="legal_mention" rows="2" placeholder="Mention imprimée sur la facture">{{ $VAT->legal_mention }}</textarea>
+                            </div>
                           </div>
                           <div class="card-footer">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -115,6 +138,27 @@
                   </div>
                   <input type="number" class="form-control" name="rate"  id="rate" placeholder="10 %" step=".01">
                 </div>
+              </div>
+              <div class="form-group">
+                <label>Catégorie EN 16931</label>
+                <select class="form-control" name="en16931_category">
+                  <option value="">— (repli S / Z)</option>
+                  @foreach (['S' => 'S — taux normal', 'Z' => 'Z — taux zéro', 'E' => 'E — exonéré', 'AE' => 'AE — autoliquidation', 'K' => 'K — livraison intracom.', 'G' => 'G — export hors UE'] as $code => $lib)
+                    <option value="{{ $code }}">{{ $lib }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Motif d'exonération — code (BT-121)</label>
+                <input type="text" class="form-control" name="exemption_reason_code" placeholder="ex. vatex-eu-ic">
+              </div>
+              <div class="form-group">
+                <label>Motif d'exonération — texte (BT-120)</label>
+                <input type="text" class="form-control" name="exemption_reason_text" placeholder="ex. Exonération art. 262 ter I du CGI">
+              </div>
+              <div class="form-group">
+                <label>Mention légale (facture)</label>
+                <textarea class="form-control" name="legal_mention" rows="2"></textarea>
               </div>
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

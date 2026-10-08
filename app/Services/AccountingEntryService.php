@@ -9,6 +9,8 @@ use App\Models\Workflow\InvoicePayment;
 use App\Models\Accounting\AccountingEntry;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Accounting\AccountingAllocation;
+use App\Services\Accounting\VatResolver;
+use App\Services\Accounting\VatRuleNotFoundException;
 
 class AccountingEntryService
 {
@@ -50,7 +52,21 @@ class AccountingEntryService
         $currency   = $factory->curency ?? 'EUR';
         $allocation = AccountingAllocation::find($invoiceLine->accounting_allocation_id);
 
-        if (!$allocation) return;
+        // La matrice de TVA (vente) prime sur l'allocation pour les comptes ;
+        // l'allocation reste le repli. Une matrice incomplète ne bloque pas le
+        // grand livre (le blocage est à l'émission) : on retombe sur l'allocation.
+        $rule = null;
+        try {
+            $rule = app(VatResolver::class)->resolveSale($invoice->companie, $invoiceLine->Product);
+        } catch (VatRuleNotFoundException $e) {
+            $rule = null;
+        }
+
+        $salesAccount = $rule?->sales_account ?: $allocation?->code_account;
+        $salesLabel   = $allocation?->label ?? 'Vente';
+        $vatAccount   = $rule?->vat_account  ?: $allocation?->vat_account;
+
+        if (!$salesAccount) return;
 
         // Montants
         $unitPrice = (float) ($invoiceLine->unit_price ?? $invoiceLine->orderLine?->selling_price ?? 0);
@@ -94,8 +110,8 @@ class AccountingEntryService
 
         // Ligne 2 — Crédit compte produit (HT)
         AccountingEntry::create($base + [
-            'account_number'           => $allocation->code_account,
-            'account_label'            => $allocation->label,
+            'account_number'           => $salesAccount,
+            'account_label'            => $salesLabel,
             'auxiliary_account_number' => null,
             'auxiliary_account_label'  => null,
             'justification_reference'  => $pieceRef,
@@ -111,7 +127,7 @@ class AccountingEntryService
         // Ligne 3 — Crédit TVA (seulement si taux > 0)
         if ($tva > 0) {
             AccountingEntry::create($base + [
-                'account_number'           => $allocation->vat_account,
+                'account_number'           => $vatAccount,
                 'account_label'            => 'TVA collectée',
                 'auxiliary_account_number' => null,
                 'auxiliary_account_label'  => null,
@@ -136,14 +152,26 @@ class AccountingEntryService
      */
     public function createPurchaseEntry(PurchaseInvoiceLines $line): void
     {
-        $invoice    = $line->purchaseInvoice;
-        $factory    = Factory::first();
-        $currency   = $factory->curency ?? 'EUR';
-        $allocation = AccountingAllocation::find($line->accounting_allocation_id);
-
-        if (!$allocation) return;
-
+        $invoice      = $line->purchaseInvoice;
+        $factory      = Factory::first();
+        $currency     = $factory->curency ?? 'EUR';
+        $allocation   = AccountingAllocation::find($line->accounting_allocation_id);
         $purchaseLine = $line->purchaseLines;
+
+        // Matrice de TVA (achat) prioritaire sur l'allocation ; repli sur elle.
+        $rule = null;
+        try {
+            $rule = app(VatResolver::class)->resolvePurchase($invoice->companie, $purchaseLine?->product);
+        } catch (VatRuleNotFoundException $e) {
+            $rule = null;
+        }
+
+        $purchaseAccount = $rule?->purchase_account ?: $allocation?->code_account;
+        $purchaseLabel   = $allocation?->label ?? 'Achat';
+        $vatAccount      = $rule?->vat_account ?: $allocation?->vat_account;
+
+        if (!$purchaseAccount) return;
+
         $unitPrice    = (float) ($purchaseLine?->selling_price ?? 0);
         $qty          = (float) ($purchaseLine?->qty ?? 1);
         $discount     = (float) ($purchaseLine?->discount ?? 0);
@@ -165,10 +193,17 @@ class AccountingEntryService
         $pieceRef = $invoice->supplier_reference ?? $invoice->code;
         $lib      = 'Achat ' . ($purchaseLine?->label ?? $invoice->code);
 
+        // Autoliquidation (acquisition UE / import) : la double écriture TVA due
+        // ↔ déductible n'est pas automatisée — on signale l'écriture, la TVA se
+        // passe à la main / se reprend sur la CA3.
+        if ($rule?->manual_vat) {
+            $lib .= ' (autoliquidation — écriture TVA à compléter)';
+        }
+
         // Ligne 1 — Débit compte achat (HT)
         AccountingEntry::create($base + [
-            'account_number'           => $allocation->code_account,
-            'account_label'            => $allocation->label,
+            'account_number'           => $purchaseAccount,
+            'account_label'            => $purchaseLabel,
             'auxiliary_account_number' => null,
             'auxiliary_account_label'  => null,
             'justification_reference'  => $pieceRef,
@@ -184,7 +219,7 @@ class AccountingEntryService
         // Ligne 2 — Débit TVA déductible (si taux > 0)
         if ($tva > 0) {
             AccountingEntry::create($base + [
-                'account_number'           => $allocation->vat_account,
+                'account_number'           => $vatAccount,
                 'account_label'            => 'TVA déductible',
                 'auxiliary_account_number' => null,
                 'auxiliary_account_label'  => null,

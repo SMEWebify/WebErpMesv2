@@ -2,10 +2,14 @@
 namespace App\Services;
 
 use App\Models\Workflow\Invoices;
+use App\Models\Accounting\AccountingVat;
 
 class InvoiceCalculatorService
 {
     private $invoices;
+
+    /** Cache des codes de TVA résolus par la ventilation (un find par code). */
+    private array $vatCache = [];
 
     public $TotalPrice;
     public $SubTotal;
@@ -14,6 +18,30 @@ class InvoiceCalculatorService
     public function __construct(Invoices $invoices)
     {
         $this->invoices = $invoices;
+    }
+
+    /**
+     * Métadonnées EN 16931 d'une ligne : catégorie UNCL5305 et motif
+     * d'exonération, portés par le code de TVA de la ligne (repli S/Z sur le
+     * taux pour les lignes libres sans code).
+     *
+     * @return array{0:string,1:?string,2:?string} [category, reasonCode, reasonText]
+     */
+    private function vatMeta($invoicesLine): array
+    {
+        $vatId = $invoicesLine->resolved_vat_id;
+        $rate  = (float) $invoicesLine->resolved_vat_rate;
+
+        $vat = null;
+        if ($vatId) {
+            $vat = $this->vatCache[$vatId] ??= AccountingVat::find($vatId);
+        }
+
+        if ($vat) {
+            return [$vat->resolvedEn16931Category(), $vat->exemption_reason_code, $vat->exemption_reason_text];
+        }
+
+        return [$rate > 0 ? 'S' : 'Z', null, null];
     }
 
     /**
@@ -103,14 +131,26 @@ class InvoiceCalculatorService
         $breakdown = [];
 
         foreach ($this->invoices->invoiceLines as $invoicesLine) {
-            [$unitPrice, $discount, $vatRate] = $this->lineSnapshot($invoicesLine);
+            [$unitPrice, $discount, $vatRate]       = $this->lineSnapshot($invoicesLine);
+            [$category, $reasonCode, $reasonText]   = $this->vatMeta($invoicesLine);
 
             $base = $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
             $vat  = $base * ($vatRate / 100);
-            $key  = number_format((float) $vatRate, 3, '.', '');
+
+            // EN 16931 (BG-23) : un groupe par (catégorie + taux), et non par
+            // taux seul — deux lignes à 0 % de catégories différentes (K, G, AE…)
+            // ne doivent pas fusionner, chacune porte son propre motif.
+            $key = $category . '|' . number_format((float) $vatRate, 3, '.', '');
 
             if (!isset($breakdown[$key])) {
-                $breakdown[$key] = ['rate' => (float) $vatRate, 'base' => 0.0, 'vat' => 0.0];
+                $breakdown[$key] = [
+                    'rate'                  => (float) $vatRate,
+                    'base'                  => 0.0,
+                    'vat'                   => 0.0,
+                    'category'              => $category,
+                    'exemption_reason_code' => $reasonCode,
+                    'exemption_reason_text' => $reasonText,
+                ];
             }
 
             $breakdown[$key]['base'] += $base;
@@ -131,7 +171,8 @@ class InvoiceCalculatorService
         $lines = [];
 
         foreach ($this->invoices->invoiceLines as $invoicesLine) {
-            [$unitPrice, $discount, $vatRate] = $this->lineSnapshot($invoicesLine);
+            [$unitPrice, $discount, $vatRate]     = $this->lineSnapshot($invoicesLine);
+            [$category, $reasonCode, $reasonText] = $this->vatMeta($invoicesLine);
 
             $netUnitPrice = $unitPrice * (1 - $discount / 100);
 
@@ -142,6 +183,9 @@ class InvoiceCalculatorService
                 'unit_price'     => (float) $unitPrice,
                 'discount'       => (float) $discount,
                 'vat_rate'       => (float) $vatRate,
+                'vat_category'           => $category,
+                'exemption_reason_code'  => $reasonCode,
+                'exemption_reason_text'  => $reasonText,
                 'net_unit_price' => $netUnitPrice,
                 'line_total'     => $invoicesLine->qty * $netUnitPrice,
                 'unit_code'      => $invoicesLine->display_unit_code,

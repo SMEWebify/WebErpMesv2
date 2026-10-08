@@ -20,7 +20,18 @@ class AccountingVat extends Model
     use HasFactory; use HasDefaultTrait;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['code',  'label',  'rate',  'default'];
+    protected $fillable= ['code',  'label',  'rate',  'default',
+                          'en16931_category', 'exemption_reason_code', 'exemption_reason_text', 'legal_mention'];
+
+    /**
+     * Catégorie EN 16931 (UNCL5305) du code de TVA, avec repli rétrocompatible :
+     * tant qu'aucune catégorie n'est renseignée, on reconduit l'ancienne règle
+     * (S si taux > 0, Z sinon). Source unique utilisée par le Factur-X.
+     */
+    public function resolvedEn16931Category(): string
+    {
+        return $this->en16931_category ?: ((float) $this->rate > 0 ? 'S' : 'Z');
+    }
 
 
     /**

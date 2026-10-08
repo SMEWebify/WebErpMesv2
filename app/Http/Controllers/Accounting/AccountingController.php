@@ -7,6 +7,10 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentConditions;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Accounting\VatRegime;
+use App\Models\Accounting\VatNature;
+use App\Models\Accounting\AccountingVatSalesRule;
+use App\Models\Accounting\AccountingVatPurchaseRule;
 use App\Models\Assets\Asset;
 use App\Services\SelectDataService;
 use App\Services\AccountingPeriodService;
@@ -73,6 +77,55 @@ class AccountingController extends Controller
             'activeTab' => 'allocations',
             'partial' => 'accounting.partials.allocations',
             'Allocations' => AccountingAllocation::all(),
+            'VATSelect' => $this->SelectDataService->getVATSelect(),
+        ]);
+    }
+
+    /**
+     * Tables de référence de la matrice de TVA : régimes et natures.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function vatReferences()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'vat-references',
+            'partial'   => 'accounting.partials.vat-references',
+            'Regimes'   => VatRegime::orderBy('code')->get(),
+            'Natures'   => VatNature::orderBy('code')->get(),
+        ]);
+    }
+
+    /**
+     * Matrice de TVA — ventes : (régime, nature) → code TVA + comptes.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function vatMatrixSales()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'vat-matrix-sales',
+            'partial'   => 'accounting.partials.vat-matrix-sales',
+            'Rules'     => AccountingVatSalesRule::with(['regime', 'nature', 'VAT'])->get(),
+            'Regimes'   => VatRegime::orderBy('code')->get(),
+            'Natures'   => VatNature::orderBy('code')->get(),
+            'VATSelect' => $this->SelectDataService->getVATSelect(),
+        ]);
+    }
+
+    /**
+     * Matrice de TVA — achats : (régime, nature) → code TVA + comptes.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function vatMatrixPurchase()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'vat-matrix-purchase',
+            'partial'   => 'accounting.partials.vat-matrix-purchase',
+            'Rules'     => AccountingVatPurchaseRule::with(['regime', 'nature', 'VAT'])->get(),
+            'Regimes'   => VatRegime::orderBy('code')->get(),
+            'Natures'   => VatNature::orderBy('code')->get(),
             'VATSelect' => $this->SelectDataService->getVATSelect(),
         ]);
     }

@@ -28,6 +28,7 @@ class UpdateProductsRequest extends FormRequest
             'ind' => 'nullable|string',
             'methods_services_id' => 'required|integer',
             'methods_families_id' => 'required|integer',
+            'vat_nature_id' => 'nullable|exists:vat_natures,id',
             'purchased_price' => 'nullable|numeric',
             'selling_price' => 'nullable|numeric',
             'methods_units_id' => 'required|integer',

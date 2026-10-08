@@ -28,6 +28,10 @@ class StoreVatRequest extends FormRequest
             'code' =>'required|unique:accounting_vats',
             'label'=>'required',
             'rate'=>'required|unique:accounting_vats',
+            'en16931_category'=>'nullable|string|max:4',
+            'exemption_reason_code'=>'nullable|string|max:255',
+            'exemption_reason_text'=>'nullable|string',
+            'legal_mention'=>'nullable|string',
         ];
     }
 }

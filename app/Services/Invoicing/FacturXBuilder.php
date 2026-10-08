@@ -206,10 +206,20 @@ class FacturXBuilder
             $zugferddatas->addDocumentPaymentTerm('Échéance le ' . $dueDate->format('d/m/Y'), $dueDate);
         }
 
-        // Ventilation de la TVA (BG-23) : une ligne par taux, base + montant.
+        // Ventilation de la TVA (BG-23) : un groupe par (catégorie + taux), base
+        // + montant. La catégorie et le motif d'exonération proviennent du code
+        // de TVA de chaque ligne (InvoiceCalculatorService::getVatBreakdown) ;
+        // obligatoire dès que la catégorie n'est ni S ni Z (BT-120/BT-121).
         foreach ($vatBreakdown as $vat) {
-            $category = $vat['rate'] > 0 ? 'S' : 'Z'; // S = taux standard, Z = taux zéro
-            $zugferddatas->addDocumentTax($category, 'VAT', round($vat['base'], 2), round($vat['vat'], 2), $vat['rate']);
+            $zugferddatas->addDocumentTax(
+                $vat['category'],
+                'VAT',
+                round($vat['base'], 2),
+                round($vat['vat'], 2),
+                $vat['rate'],
+                $vat['exemption_reason_text'] ?: null,
+                $vat['exemption_reason_code'] ?: null
+            );
         }
 
         // Totaux : grand total, dû, total lignes, charges, remises, base TVA, TVA, arrondi, payé.
@@ -243,7 +253,14 @@ class FacturXBuilder
 
             $zugferddatas->setDocumentPositionNetPrice(round($line['net_unit_price'], 2))
                 ->setDocumentPositionQuantity($line['qty'], $this->unitCode($line['unit_code']))
-                ->addDocumentPositionTax($line['vat_rate'] > 0 ? 'S' : 'Z', 'VAT', $line['vat_rate'])
+                ->addDocumentPositionTax(
+                    $line['vat_category'],
+                    'VAT',
+                    $line['vat_rate'],
+                    null,
+                    $line['exemption_reason_text'] ?: null,
+                    $line['exemption_reason_code'] ?: null
+                )
                 ->setDocumentPositionLineSummation(round($line['line_total'], 2));
         }
 
