@@ -10,6 +10,11 @@ function query(q) {
     }
 }
 
+/** Lecture ponctuelle (hors rendu réactif), fausse si matchMedia est indisponible. */
+export function matchesMedia(q) {
+    return query(q)?.matches ?? false;
+}
+
 /** Vrai tant que la media query correspond ; suit les rotations et redimensionnements. */
 export default function useMediaQuery(q) {
     const [matches, setMatches] = useState(() => query(q)?.matches ?? false);

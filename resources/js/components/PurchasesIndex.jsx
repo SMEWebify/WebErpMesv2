@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1063,7 +1063,7 @@ export default function PurchasesIndex({
     compositeIndicators, suppliersToRequalify, topProducts,
     endpoints, trans, companieId = null,
 }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('purchases_index_tab', { forced: companieId ? 'list' : null });
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 

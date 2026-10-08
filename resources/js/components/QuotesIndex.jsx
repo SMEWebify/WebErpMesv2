@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QuoteRateWidget from './dashboard/widgets/QuoteRateWidget.jsx';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1309,12 +1309,17 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
     // ?tab=templates|list ouvre directement l'onglet, ?template=ID pré-remplit « Nouveau devis ».
     const canTemplates = !companieId && !!endpoints.templates;
     const initialTemplateId = canTemplates ? readUrlParam('template') : null;
-    const [activeTab, setActiveTab] = useState(() => {
+    // Onglet imposé par l'URL ou la fiche société ; sinon le dernier utilisé.
+    const [forcedTab] = useState(() => {
         const tab = readUrlParam('tab');
         if (initialTemplateId) return 'list';
         if (tab === 'templates' && canTemplates) return 'templates';
         if (tab === 'list') return 'list';
-        return companieId ? 'list' : 'dashboard';
+        return companieId ? 'list' : null;
+    });
+    const [activeTab, setActiveTab] = useIndexTab('quotes_index_tab', {
+        tabs: canTemplates ? ['dashboard', 'list', 'templates'] : ['dashboard', 'list'],
+        forced: forcedTab,
     });
 
     return (

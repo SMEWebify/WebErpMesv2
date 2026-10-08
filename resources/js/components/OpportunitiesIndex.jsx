@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -817,7 +817,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 // ---------------------------------------------------------------------------
 
 export default function OpportunitiesIndex({ kpi, chart, activities, byCompany, byAmount, endpoints, trans, companieId = null }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('opportunities_index_tab', { forced: companieId ? 'list' : null });
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 

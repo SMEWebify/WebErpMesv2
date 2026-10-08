@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // useRef used by ListTab debounce
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1151,7 +1151,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 // ---------------------------------------------------------------------------
 
 export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, trans, companieId = null }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('orders_index_tab', { forced: companieId ? 'list' : null });
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 

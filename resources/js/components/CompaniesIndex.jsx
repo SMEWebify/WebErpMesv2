@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, MobileFilters } from './table';
+import { DataTable, Pagination, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -656,7 +656,7 @@ function DashboardTab({ kpi, chartData, trans }) {
 // ---------------------------------------------------------------------------
 
 export default function CompaniesIndex({ kpi, chartData, endpoints, trans }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('companies_index_tab');
 
     return (
         <div className="card card-outline card-info">

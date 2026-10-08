@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable, Pagination } from './table';
+import { DataTable, Pagination, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -981,7 +981,7 @@ function DuplicatesTab({ endpoints }) {
 // ---------------------------------------------------------------------------
 
 export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMerge }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('products_index_tab', { tabs: canMerge ? ['dashboard', 'list', 'duplicates'] : ['dashboard', 'list'] });
 
     return (
         <div className="card card-outline card-teal">

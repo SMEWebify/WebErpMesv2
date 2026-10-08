@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -828,7 +828,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
 // ---------------------------------------------------------------------------
 
 export default function LeadsIndex({ kpi, chart, byCompany, byPriority, byUser, endpoints, trans, companieId = null }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('leads_index_tab', { forced: companieId ? 'list' : null });
     const locale = trans.locale ?? 'fr-FR';
 
     return (

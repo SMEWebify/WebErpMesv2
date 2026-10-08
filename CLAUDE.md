@@ -31,6 +31,9 @@
   colonne `hideable: false` (actions déplaçables), `mobileActions`. Les variantes de rendu
   historiques (`unsortableIcon`, `unsortableCursor`, `nowrap`, `tableClassName`…) existent
   pour migrer un écran sans changement visible — ne pas les « nettoyer » sans le vouloir.
+  `useIndexTab(clé, { tabs, forced })` : onglet d'un index (tableau de bord / liste…)
+  mémorisé par navigateur sous `{ecran}_index_tab` ; à défaut « list » sur téléphone,
+  `forced` (fiche société, `?tab=`) prime et n'est pas mémorisé.
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), Vitest (frontend, `resources/js/tests`, `npm test`)

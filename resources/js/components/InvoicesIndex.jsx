@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -653,7 +653,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
 // ---------------------------------------------------------------------------
 
 export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, trans, companieId = null }) {
-    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('invoices_index_tab', { forced: companieId ? 'list' : null });
 
     return (
         <div className="card card-outline card-danger">

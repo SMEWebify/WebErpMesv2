@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -318,7 +318,7 @@ function ListTab({ endpoints, trans, productId = null }) {
 // ---------------------------------------------------------------------------
 
 export default function SerialNumbersIndex({ kpi, endpoints, trans, productId = null }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('serial_numbers_index_tab');
 
     if (productId) {
         return (

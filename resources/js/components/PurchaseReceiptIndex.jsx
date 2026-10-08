@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -446,7 +446,7 @@ function ListTab({ endpoints, trans }) {
 // ---------------------------------------------------------------------------
 
 export default function PurchaseReceiptIndex({ kpi, chartData, endpoints, trans }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useIndexTab('purchase_receipts_index_tab');
 
     return (
         <div className="card card-outline card-orange">
