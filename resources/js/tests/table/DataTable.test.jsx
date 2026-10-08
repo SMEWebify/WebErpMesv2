@@ -158,6 +158,15 @@ describe('DataTable — PC', () => {
         expect(document.querySelector('table').className).toBe('table table-sm mb-0');
     });
 
+    it("actionsColumn={false} et colonne non masquable (actions déplaçables)", () => {
+        setup({ actionsColumn: false, columns: [...COLUMNS, { key: 'actions', label: 'Actions', hideable: false, render: () => 'go' }] });
+        const ths = [...document.querySelectorAll('thead tr:first-child th')];
+        expect(ths).toHaveLength(6);
+        expect(ths[5].textContent).toContain('Actions');
+        expect(ths[5].querySelector('[aria-label="Masquer la colonne"]')).toBeNull();
+        expect(document.querySelector('tbody tr').cells).toHaveLength(6);
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();

@@ -22,6 +22,7 @@ import { toISODate } from './dates.js';
  *     mobile:    'title' | 'subtitle' | 'badge' | 'amount' | 'hidden',
  *     mobileRender: row => node,              // contenu sur la carte (défaut : render)
  *     mobileOrder: 1,                         // ordre sur la carte (défaut : ordre des colonnes)
+ *     hideable:  false,                       // colonne déplaçable mais jamais masquée
  *   }
  *
  * Sur PC : colonnes masquables et réordonnables (persistées), ligne de filtres, total
@@ -188,6 +189,7 @@ export default function DataTable({
     rowHref,
     rowActions,
     mobileActions,
+    actionsColumn = true,
     actionsWidth = 36,
     actionsHeader = null,
     actionsCellStyle,
@@ -247,7 +249,7 @@ export default function DataTable({
     }
 
     const firstTotalIdx = visible.findIndex(c => c.total);
-    const colSpan       = visible.length + 1;
+    const colSpan       = visible.length + (actionsColumn ? 1 : 0);
 
     return (
         <div>
@@ -304,7 +306,7 @@ export default function DataTable({
                                         {(field || unsortableIcon) && (
                                             <SortIcon field={field} sortField={sortField} sortAsc={sortAsc} size={col.sortIconSize} />
                                         )}
-                                        {hideable && (
+                                        {hideable && col.hideable !== false && (
                                             <span
                                                 role="button"
                                                 aria-label="Masquer la colonne"
@@ -318,7 +320,7 @@ export default function DataTable({
                                     </th>
                                 );
                             })}
-                            <th style={{ width: actionsWidth }}>{actionsHeader}</th>
+                            {actionsColumn && <th style={{ width: actionsWidth }}>{actionsHeader}</th>}
                         </tr>
                         {hasFilters && (
                             <tr>
@@ -352,7 +354,7 @@ export default function DataTable({
                                         )}
                                     </th>
                                 ))}
-                                <th />
+                                {actionsColumn && <th />}
                             </tr>
                         )}
                     </thead>
@@ -373,7 +375,7 @@ export default function DataTable({
                                         {renderCell(col, row)}
                                     </td>
                                 ))}
-                                <td style={actionsCellStyle}>{actions?.(row)}</td>
+                                {actionsColumn && <td style={actionsCellStyle}>{actions?.(row)}</td>}
                             </tr>
                         ))}
                     </tbody>
@@ -390,7 +392,7 @@ export default function DataTable({
                                     if (i === firstTotalIdx - 1) return <td key={col.key} className="text-right">{totalText}</td>;
                                     return <td key={col.key} />;
                                 })}
-                                <td />
+                                {actionsColumn && <td />}
                             </tr>
                         </tfoot>
                     )}
