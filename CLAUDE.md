@@ -25,6 +25,12 @@
   filter/total/mobile`), colonnes masquables et réordonnables persistées sous les clés
   localStorage **existantes** de l'écran, filtres par colonne, total de page, et rendu
   en cartes sous `md`. L'écran garde son fetch, son tri et sa pagination serveur.
+  Utilisé par les 20 index React. Cas particuliers couverts par des props plutôt que par un
+  tableau écrit à la main : `rowClickable`, `renderExpanded` (formulaire déplié sous la
+  ligne), `renderGroupHeader` / `rowStyle` (regroupement RFQ), `actionsColumn={false}` +
+  colonne `hideable: false` (actions déplaçables), `mobileActions`. Les variantes de rendu
+  historiques (`unsortableIcon`, `unsortableCursor`, `nowrap`, `tableClassName`…) existent
+  pour migrer un écran sans changement visible — ne pas les « nettoyer » sans le vouloir.
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), Vitest (frontend, `resources/js/tests`, `npm test`)
