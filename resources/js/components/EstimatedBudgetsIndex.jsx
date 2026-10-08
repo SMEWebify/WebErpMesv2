@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Pagination } from './table';
+import { DataTable, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -31,6 +31,9 @@ function buildUrl(template, id) {
 }
 
 const AMOUNTS = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+const LS_COL_ORDER   = 'estimated_budgets_table_col_order';
+const LS_HIDDEN_COLS = 'estimated_budgets_table_hidden_cols';
 const YEARS   = [2021,2022,2023,2024,2025,2026,2027,2028,2029,2030];
 
 function emptyForm() {
@@ -224,21 +227,25 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
 }
 
 // ---------------------------------------------------------------------------
-// SortTh
+// Colonnes — une par mois, total annuel ; rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
-function SortTh({ field, sortField, sortAsc, onSort, children }) {
-    const active = sortField === field;
-    return (
-        <th style={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => onSort(field)}>
-            {children}
-            {' '}
-            {active
-                ? <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'}`} />
-                : <i className="fas fa-sort text-muted" />
-            }
-        </th>
-    );
+function budgetColumns(trans) {
+    const months   = trans.months ?? [];
+    const currency = trans.currency ?? '€';
+    const money    = { format: sum => formatNum(sum) };
+    return [
+        { key: 'year',  label: trans.year, sortable: true,
+          render: b => <strong>{b.year}</strong>, filter: 'text', mobile: 'title', mobileRender: b => String(b.year) },
+        ...AMOUNTS.map(i => ({
+            key: `amount${i}`, label: months[i - 1] ?? `M${i}`, align: 'right', nowrap: false,
+            render: b => formatNum(b[`amount${i}`]), total: money,
+        })),
+        { key: 'total', label: trans.total, align: 'right',
+          render: b => <strong>{formatNum(calcTotal(b))} {currency}</strong>,
+          total: { value: calcTotal, format: sum => `${formatNum(sum)} ${currency}` },
+          mobile: 'amount', mobileRender: b => `${formatNum(calcTotal(b))} ${currency}` },
+    ];
 }
 
 // ---------------------------------------------------------------------------
@@ -246,9 +253,6 @@ function SortTh({ field, sortField, sortAsc, onSort, children }) {
 // ---------------------------------------------------------------------------
 
 function BudgetTable({ budgets, meta, sortField, sortAsc, onSort, onEdit, onDelete, page, onPageChange, search, onSearch, loading, trans }) {
-    const months  = trans.months ?? [];
-    const currency = trans.currency ?? '€';
-
     return (
         <div className="card">
             <div className="card-body">
@@ -275,59 +279,41 @@ function BudgetTable({ budgets, meta, sortField, sortAsc, onSort, onEdit, onDele
                     )}
                 </div>
 
-                <div className="table-responsive p-0">
-                    <table className="table table-hover table-sm">
-                        <thead>
-                            <tr>
-                                <SortTh field="year" sortField={sortField} sortAsc={sortAsc} onSort={onSort}>
-                                    {trans.year}
-                                </SortTh>
-                                {months.map((m, i) => <th key={i}>{m}</th>)}
-                                <th>{trans.total}</th>
-                                <th>{trans.action}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {budgets.length === 0 && (
-                                <tr>
-                                    <td colSpan={15} className="text-center text-muted">{trans.no_data}</td>
-                                </tr>
-                            )}
-                            {budgets.map(b => {
-                                const total = calcTotal(b);
-                                return (
-                                    <tr key={b.id}>
-                                        <td><strong>{b.year}</strong></td>
-                                        {AMOUNTS.map(i => (
-                                            <td key={i}>{formatNum(b[`amount${i}`])}</td>
-                                        ))}
-                                        <td>
-                                            <strong>{formatNum(total)} {currency}</strong>
-                                        </td>
-                                        <td>
-                                            <div className="btn-group btn-group-sm">
-                                                <button className="btn btn-warning" onClick={() => onEdit(b)} title={trans.update}>
-                                                    <i className="fa fa-edit" />
-                                                </button>
-                                                <button className="btn btn-danger" onClick={() => onDelete(b.id)} title="Supprimer">
-                                                    <i className="fa fa-trash" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>{trans.year}</th>
-                                {months.map((m, i) => <th key={i}>{m}</th>)}
-                                <th>{trans.total}</th>
-                                <th>{trans.action}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                <DataTable
+                    rows={budgets}
+                    columns={budgetColumns(trans)}
+                    trans={trans}
+                    sortField={sortField}
+                    sortAsc={sortAsc}
+                    onSort={onSort}
+                    storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+                    unsortableIcon={false}
+                    unsortableCursor="default"
+                    emptyText={trans.no_data}
+                    totalLabel={trans.total}
+                    actionsHeader={trans.action}
+                    actionsWidth={80}
+                    rowActions={b => (
+                        <div className="btn-group btn-group-sm">
+                            <button className="btn btn-warning" onClick={() => onEdit(b)} title={trans.update}>
+                                <i className="fa fa-edit" />
+                            </button>
+                            <button className="btn btn-danger" onClick={() => onDelete(b.id)} title="Supprimer">
+                                <i className="fa fa-trash" />
+                            </button>
+                        </div>
+                    )}
+                    mobileActions={b => (
+                        <div className="d-flex" style={{ gap: '0.5rem' }}>
+                            <button type="button" className="btn btn-outline-warning" style={{ minHeight: 44 }} onClick={() => onEdit(b)}>
+                                <i className="fa fa-edit mr-1" />{trans.update}
+                            </button>
+                            <button type="button" className="btn btn-outline-danger" style={{ minHeight: 44 }} onClick={() => onDelete(b.id)}>
+                                <i className="fa fa-trash mr-1" />Supprimer
+                            </button>
+                        </div>
+                    )}
+                />
 
                 <Pagination meta={meta} prevNext={false} ulClassName="pagination pagination-sm m-0 float-right" onPage={onPageChange} />
             </div>
