@@ -100,7 +100,13 @@ class SalesPdfLegacyRenderingTest extends TestCase
     {
         $order        = $this->makeOrder();
         $confirmation = app(OrderConfirmationService::class)->createFromOrder($order);
-        $confirmation->forceFill(['code' => 'ARC-0001', 'uuid' => '00000000-0000-0000-0000-0000000000a1'])->save();
+        // Date figée comme celles du devis et de la commande : la vue imprime la date du
+        // document, et la référence a été capturée le 07/10/2026.
+        $confirmation->forceFill([
+            'code'       => 'ARC-0001',
+            'uuid'       => '00000000-0000-0000-0000-0000000000a1',
+            'created_at' => '2026-10-07 10:00:00',
+        ])->save();
 
         $this->assertMatchesReference(
             "order-confirmation-{$suffix}.html",
