@@ -84,7 +84,7 @@ function Card({ title, theme, children }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyForm({ company: initial, users, endpoint, pdpLookupUrl, trans }) {
+export default function CompanyForm({ company: initial, users, vatRegimes = [], endpoint, pdpLookupUrl, trans }) {
     const [form, setForm]       = useState({ ...initial });
     const [errors, setErrors]   = useState({});
     const [saving, setSaving]   = useState(false);
@@ -104,6 +104,7 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
         const nullableFields = [
             'civility', 'last_name', 'website', 'fbsite', 'twittersite', 'lkdsite',
             'siren', 'naf_code', 'intra_community_vat',
+            'vat_regime_id', 'vat_attestation_ref', 'vat_attestation_valid_until',
             'electronic_address', 'electronic_address_scheme',
             'discount', 'tolerance_days',
             'account_general_customer', 'account_auxiliary_customer',
@@ -392,6 +393,47 @@ export default function CompanyForm({ company: initial, users, endpoint, pdpLook
                                 onChange={setVal('intra_community_vat')}
                                 placeholder={trans.vat_number}
                                 disabled={isIndividual}
+                            />
+                        </Field>
+                    </div>
+                </div>
+            </Card>
+
+            {/* Régime de TVA du tiers : axe de la matrice (régime × nature).
+                FRANCHISE = achat en franchise sur attestation (art. 275 CGI). */}
+            <Card title="Régime de TVA" theme="info">
+                <div className="row">
+                    <div className="col-md-4">
+                        <Field label="Régime" error={errors.vat_regime_id?.[0]}>
+                            <select
+                                className="form-control"
+                                value={form.vat_regime_id ?? ''}
+                                onChange={setVal('vat_regime_id')}
+                            >
+                                <option value="">— (code TVA par défaut)</option>
+                                {vatRegimes.map(r => (
+                                    <option key={r.id} value={r.id}>{r.code} — {r.label}</option>
+                                ))}
+                            </select>
+                        </Field>
+                    </div>
+                    <div className="col-md-4">
+                        <Field label="Réf. attestation (franchise art. 275)" error={errors.vat_attestation_ref?.[0]}>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={form.vat_attestation_ref ?? ''}
+                                onChange={setVal('vat_attestation_ref')}
+                            />
+                        </Field>
+                    </div>
+                    <div className="col-md-4">
+                        <Field label="Attestation valable jusqu'au" error={errors.vat_attestation_valid_until?.[0]}>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={form.vat_attestation_valid_until ?? ''}
+                                onChange={setVal('vat_attestation_valid_until')}
                             />
                         </Field>
                     </div>

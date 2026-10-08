@@ -587,6 +587,7 @@ async function mountCompanyForm() {
         React.createElement(CompanyForm, {
             company:      parse('company') ?? {},
             users:        parse('users')   ?? [],
+            vatRegimes:   parse('vatRegimes') ?? [],
             endpoint:     element.dataset.endpoint ?? '',
             pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
             trans:        parse('trans')   ?? {},

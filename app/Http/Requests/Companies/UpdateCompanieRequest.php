@@ -37,6 +37,10 @@ class UpdateCompanieRequest extends FormRequest
             'siren'=> 'nullable|string', 
             'naf_code'=> 'nullable|string', 
             'intra_community_vat'=> ['nullable', 'string', new ValidVatNumber(app(CompanyService::class))],
+            // Régime de TVA du tiers (axe de la matrice) + attestation de franchise (art. 275).
+            'vat_regime_id'=> 'nullable|exists:vat_regimes,id',
+            'vat_attestation_ref'=> 'nullable|string|max:255',
+            'vat_attestation_valid_until'=> 'nullable|date',
             // Adresse électronique de facturation (BT-49). Les règles DGFiP et
             // Peppol réunies n'autorisent que chiffres, lettres non accentuées
             // et le souligné — un caractère de plus et l'adresse est introuvable.

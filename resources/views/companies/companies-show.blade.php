@@ -149,6 +149,9 @@
     'siren'                     => $Companie->siren,
     'naf_code'                  => $Companie->naf_code,
     'intra_community_vat'       => $Companie->intra_community_vat,
+    'vat_regime_id'             => $Companie->vat_regime_id,
+    'vat_attestation_ref'       => $Companie->vat_attestation_ref,
+    'vat_attestation_valid_until' => optional($Companie->vat_attestation_valid_until)->format('Y-m-d'),
     'electronic_address'        => $Companie->electronic_address,
     'electronic_address_scheme' => $Companie->electronic_address_scheme ?? '0225',
     'statu_customer'            => $Companie->statu_customer,
@@ -170,6 +173,12 @@
   ];
 
   $companyFormUsers = $userSelect->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+
+  // Régimes de TVA proposés dans la fiche (axe de la matrice de TVA).
+  $companyVatRegimes = \App\Models\Accounting\VatRegime::orderBy('code')
+    ->get(['id', 'code', 'label'])
+    ->map(fn($r) => ['id' => $r->id, 'code' => $r->code, 'label' => $r->label])
+    ->values();
 
   $companyFormTrans = [
     'general_information'    => __('general_content.general_information_trans_key'),
@@ -403,6 +412,7 @@
               id="company-form-app"
               data-company='@json($companyFormData, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-users='@json($companyFormUsers, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+              data-vat-regimes='@json($companyVatRegimes, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-endpoint='{{ route('companies.json.update', $Companie->id) }}'
               data-pdp-lookup-url='{{ route('companies.pdp.lookup', $Companie->id) }}'
               data-trans='@json($companyFormTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
