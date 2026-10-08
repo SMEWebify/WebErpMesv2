@@ -26,6 +26,8 @@ import { toISODate } from './dates.js';
  *   }
  *
  * rowClickable : sur PC, un clic sur la ligne ouvre rowHref (hors liens et boutons).
+ * renderGroupHeader(row, prevRow) : en-tête de groupe inséré avant la ligne (ou null).
+ * rowStyle(row) : style propre à une ligne (et à sa carte).
  * renderExpanded(row) : contenu déplié sous la ligne (formulaire en ligne…), sur toute la
  * largeur du tableau sur PC, sous la carte en mobile.
  *
@@ -111,7 +113,7 @@ function MobileSort({ columns, sortField, sortAsc, onSort, trans }) {
     );
 }
 
-function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpanded, loading, loadingContent, emptyText, totals, totalLabel }) {
+function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpanded, renderGroupHeader, rowStyle, loading, loadingContent, emptyText, totals, totalLabel }) {
     const byRole = role => columns
         .filter(c => c.mobile === role)
         .map((c, i) => [c.mobileOrder ?? 1000 + i, c])
@@ -126,7 +128,8 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpa
 
     return (
         <div className="list-group mb-2">
-            {rows.map(row => {
+            {rows.map((row, index) => {
+                const header    = renderGroupHeader?.(row, rows[index - 1] ?? null);
                 const href      = rowHref?.(row);
                 const title     = valuesFor('title', row);
                 const subtitles = valuesFor('subtitle', row);
@@ -135,32 +138,35 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpa
                 const extra     = mobileActions?.(row);
                 const expanded  = renderExpanded?.(row);
                 return (
-                    <div key={row[rowKey]} className={`list-group-item position-relative py-2${href ? ' list-group-item-action' : ''}`} style={{ minHeight: 44 }}>
-                        <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
-                            <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                <div className="font-weight-bold text-truncate">
-                                    {href
-                                        ? <a href={href} className="stretched-link text-body text-decoration-none">{joinNodes(title, ' · ')}</a>
-                                        : joinNodes(title, ' · ')}
+                    <React.Fragment key={row[rowKey]}>
+                        {header && <div className="list-group-item list-group-item-light py-1 small">{header}</div>}
+                        <div className={`list-group-item position-relative py-2${href ? ' list-group-item-action' : ''}`} style={{ minHeight: 44, ...rowStyle?.(row) }}>
+                            <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                    <div className="font-weight-bold text-truncate">
+                                        {href
+                                            ? <a href={href} className="stretched-link text-body text-decoration-none">{joinNodes(title, ' · ')}</a>
+                                            : joinNodes(title, ' · ')}
+                                    </div>
+                                    {subtitles.length > 0 && (
+                                        <div className="small text-muted text-truncate">{joinNodes(subtitles, ' · ')}</div>
+                                    )}
                                 </div>
-                                {subtitles.length > 0 && (
-                                    <div className="small text-muted text-truncate">{joinNodes(subtitles, ' · ')}</div>
+                                {(badges.length > 0 || amounts.length > 0) && (
+                                    <div className="text-right flex-shrink-0">
+                                        {badges.map((b, i) => <div key={i}>{b}</div>)}
+                                        {amounts.map((a, i) => <div key={i} className="font-weight-bold" style={{ whiteSpace: 'nowrap' }}>{a}</div>)}
+                                    </div>
                                 )}
                             </div>
-                            {(badges.length > 0 || amounts.length > 0) && (
-                                <div className="text-right flex-shrink-0">
-                                    {badges.map((b, i) => <div key={i}>{b}</div>)}
-                                    {amounts.map((a, i) => <div key={i} className="font-weight-bold" style={{ whiteSpace: 'nowrap' }}>{a}</div>)}
-                                </div>
+                            {extra && (
+                                <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{extra}</div>
+                            )}
+                            {expanded && (
+                                <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{expanded}</div>
                             )}
                         </div>
-                        {extra && (
-                            <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{extra}</div>
-                        )}
-                        {expanded && (
-                            <div className="mt-2 position-relative" style={{ zIndex: 2 }}>{expanded}</div>
-                        )}
-                    </div>
+                    </React.Fragment>
                 );
             })}
             {totals.map(({ col, sum }) => (
@@ -199,6 +205,8 @@ export default function DataTable({
     rowActions,
     mobileActions,
     renderExpanded,
+    renderGroupHeader,
+    rowStyle,
     actionsColumn = true,
     actionsWidth = 36,
     actionsHeader = null,
@@ -249,6 +257,8 @@ export default function DataTable({
                     rowHref={rowHref}
                     mobileActions={mobileActions}
                     renderExpanded={renderExpanded}
+                    renderGroupHeader={renderGroupHeader}
+                    rowStyle={rowStyle}
                     loading={loading}
                     loadingContent={loadingContent}
                     emptyText={empty}
@@ -375,12 +385,14 @@ export default function DataTable({
                         ) : filtered.length === 0 ? (
                             <tr><td colSpan={colSpan} className="text-center text-muted py-3">{empty}</td></tr>
                         ) : null}
-                        {!loading && filtered.map(row => {
+                        {!loading && filtered.map((row, index) => {
                             const expanded = renderExpanded?.(row);
+                            const header   = renderGroupHeader?.(row, filtered[index - 1] ?? null);
                             return (
                                 <React.Fragment key={row[rowKey]}>
-                                    <tr {...(rowClickable && rowHref ? {
-                                        style: { cursor: 'pointer' },
+                                    {header && <tr className="table-active"><td colSpan={colSpan}>{header}</td></tr>}
+                                    <tr style={rowStyle?.(row)} {...(rowClickable && rowHref ? {
+                                        style: { cursor: 'pointer', ...rowStyle?.(row) },
                                         onClick: e => {
                                             // un lien, un bouton ou un champ de la ligne garde son propre comportement
                                             if (!e.target.closest('a, button, input, select, textarea, [role="button"]')) {

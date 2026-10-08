@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SortIcon } from './table';
+import { DataTable, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -34,6 +34,9 @@ const STATUS_LABELS = {
     5: { label: 'BC partiellement créé',badge: 'badge-warning' },
     6: { label: 'BC créé',              badge: 'badge-success' },
 };
+
+const LS_COL_ORDER   = 'purchases_quotation_table_col_order';
+const LS_HIDDEN_COLS = 'purchases_quotation_table_hidden_cols';
 
 const CHART_COLORS = [
     'rgba(23, 162, 184, 1)',
@@ -105,11 +108,63 @@ function DonutChart({ data }) {
 // Main component
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Table — colonnes déclarées, rendu par le DataTable partagé
+// ---------------------------------------------------------------------------
+
+function quotationColumns(trans) {
+    return [
+        { key: 'code',        label: trans.id,          sortable: true, nowrap: true,
+          filter: 'text', mobile: 'title' },
+        { key: 'label',       label: trans.label,       sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'rfq_group',   label: trans.rfq_group,
+          render: q => (q.rfq_group_code ? (
+              <>
+                  <span className="badge badge-light">{q.rfq_group_code}</span>
+                  {q.rfq_group_label && <div className="text-muted small">{q.rfq_group_label}</div>}
+              </>
+          ) : <span className="text-muted">—</span>),
+          filterValue: q => [q.rfq_group_code, q.rfq_group_label].filter(Boolean).join(' '), filter: 'text' },
+        { key: 'companie',    label: trans.supplier,    sortable: 'companies_id',
+          render: q => (q.companie_url
+              ? <a href={q.companie_url} className="btn btn-outline-secondary btn-sm">{q.companie_label}</a>
+              : q.companie_label),
+          filterValue: q => q.companie_label, filter: 'text', mobile: 'subtitle', mobileOrder: 1, mobileRender: q => q.companie_label },
+        { key: 'lines_count', label: trans.lines_count },
+        { key: 'statu',       label: trans.status,
+          render: q => STATUS_LABELS[q.statu] && (
+              <span className={`badge ${STATUS_LABELS[q.statu].badge}`}>{STATUS_LABELS[q.statu].label}</span>
+          ),
+          mobile: 'badge' },
+        { key: 'created_at',  label: trans.created_at,  sortable: true,
+          render: q => q.created_at_human, filterValue: q => q.created_date, filter: 'date' },
+    ];
+}
+
+function RfqGroupHeader({ quotation: q, trans }) {
+    return (
+        <div className="d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <strong>{trans.rfq_group}:</strong>{' '}
+                {q.rfq_group_label ?? q.rfq_group_code}
+                {q.rfq_group_code && <span className="text-muted ml-1">({q.rfq_group_code})</span>}
+            </div>
+            {q.compare_url && (
+                <a href={q.compare_url} className="btn btn-outline-primary btn-sm">
+                    <i className="fas fa-balance-scale mr-1" />{trans.compare_rfq}
+                </a>
+            )}
+        </div>
+    );
+}
+
 export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }) {
     const [quotations, setQuotations] = useState([]);
     const [meta,       setMeta]       = useState({ current_page: 1, last_page: 1, total: 0 });
     const [kpi,        setKpi]        = useState(initialKpi ?? null);
     const [search,     setSearch]     = useState('');
+    const [statuses,   setStatuses]   = useState([]);
     const [sortField,  setSortField]  = useState('created_at');
     const [sortAsc,    setSortAsc]    = useState(false);
     const [page,       setPage]       = useState(1);
@@ -124,6 +179,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
             dir: sortAsc ? 'asc' : 'desc',
             page,
         });
+        statuses.forEach(s => params.append('statuses[]', s));
         apiFetch(`${endpoints.list}?${params}`)
             .then(data => {
                 setQuotations(data.data);
@@ -131,7 +187,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
             })
             .catch(() => {})
             .finally(() => setLoading(false));
-    }, [search, sortField, sortAsc, page, endpoints.list]);
+    }, [search, statuses, sortField, sortAsc, page, endpoints.list]);
 
     // Fetch KPI once on mount (or use initialKpi passed as prop)
     useEffect(() => {
@@ -142,7 +198,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
 
     useEffect(() => {
         setPage(1);
-    }, [search, sortField, sortAsc]);
+    }, [search, statuses, sortField, sortAsc]);
 
     useEffect(() => {
         fetchList();
@@ -216,135 +272,56 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                                 onChange={e => setSearch(e.target.value)}
                             />
                         </div>
+                        <div className="mt-2">
+                            <StatusFilter
+                                config={STATUS_LABELS}
+                                selected={statuses}
+                                onToggle={id => setStatuses(prev => (prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]))}
+                                trans={trans}
+                                buttonType="button"
+                            />
+                        </div>
                     </div>
 
-                    <div className="table-responsive p-0">
-                        {loading ? (
-                            <div className="text-center p-4">
-                                <i className="fas fa-spinner fa-spin mr-2" />{trans.loading}
-                            </div>
-                        ) : (
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleSort('code')}>
-                                                {trans.id} <SortIcon field="code" sortField={sortField} sortAsc={sortAsc} />
-                                            </button>
-                                        </th>
-                                        <th>
-                                            <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleSort('label')}>
-                                                {trans.label} <SortIcon field="label" sortField={sortField} sortAsc={sortAsc} />
-                                            </button>
-                                        </th>
-                                        <th>{trans.rfq_group}</th>
-                                        <th>
-                                            <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleSort('companies_id')}>
-                                                {trans.supplier} <SortIcon field="companies_id" sortField={sortField} sortAsc={sortAsc} />
-                                            </button>
-                                        </th>
-                                        <th>{trans.lines_count}</th>
-                                        <th>{trans.status}</th>
-                                        <th>
-                                            <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleSort('created_at')}>
-                                                {trans.created_at} <SortIcon field="created_at" sortField={sortField} sortAsc={sortAsc} />
-                                            </button>
-                                        </th>
-                                        <th>{trans.action}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {quotations.length === 0 ? (
-                                        <tr>
-                                            <td colSpan="8" className="text-center text-muted py-3">{trans.no_data}</td>
-                                        </tr>
-                                    ) : (() => {
-                                        let previousGroupId = null;
-                                        return quotations.map(q => {
-                                            const groupHeader = q.rfq_group_id && q.rfq_group_id !== previousGroupId;
-                                            previousGroupId = q.rfq_group_id;
-                                            return (
-                                                <React.Fragment key={q.id}>
-                                                    {groupHeader && (
-                                                        <tr className="table-active">
-                                                            <td colSpan="8">
-                                                                <div className="d-flex align-items-center justify-content-between flex-wrap">
-                                                                    <div>
-                                                                        <strong>{trans.rfq_group}:</strong>{' '}
-                                                                        {q.rfq_group_label ?? q.rfq_group_code}
-                                                                        {q.rfq_group_code && (
-                                                                            <span className="text-muted ml-1">({q.rfq_group_code})</span>
-                                                                        )}
-                                                                    </div>
-                                                                    {q.compare_url && (
-                                                                        <a href={q.compare_url} className="btn btn-outline-primary btn-sm">
-                                                                            <i className="fas fa-balance-scale mr-1" />{trans.compare_rfq}
-                                                                        </a>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                    <tr style={q.rfq_group_id ? { borderLeft: '4px solid #6c757d' } : {}}>
-                                                        <td>{q.code}</td>
-                                                        <td>{q.label}</td>
-                                                        <td>
-                                                            {q.rfq_group_code ? (
-                                                                <>
-                                                                    <span className="badge badge-light">{q.rfq_group_code}</span>
-                                                                    {q.rfq_group_label && (
-                                                                        <div className="text-muted small">{q.rfq_group_label}</div>
-                                                                    )}
-                                                                </>
-                                                            ) : <span className="text-muted">—</span>}
-                                                        </td>
-                                                        <td>
-                                                            {q.companie_url ? (
-                                                                <a href={q.companie_url} className="btn btn-outline-secondary btn-sm">
-                                                                    {q.companie_label}
-                                                                </a>
-                                                            ) : q.companie_label}
-                                                        </td>
-                                                        <td>{q.lines_count}</td>
-                                                        <td>
-                                                            {STATUS_LABELS[q.statu] && (
-                                                                <span className={`badge ${STATUS_LABELS[q.statu].badge}`}>
-                                                                    {STATUS_LABELS[q.statu].label}
-                                                                </span>
-                                                            )}
-                                                        </td>
-                                                        <td>{q.created_at_human}</td>
-                                                        <td>
-                                                            <a href={q.show_url} className="btn btn-xs btn-info mr-1">
-                                                                <i className="fas fa-eye" />
-                                                            </a>
-                                                            {q.pdf_url && (
-                                                                <a href={q.pdf_url} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
-                                                                    <i className="fas fa-file-pdf" />
-                                                                </a>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                </React.Fragment>
-                                            );
-                                        });
-                                    })()}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>{trans.id}</th>
-                                        <th>{trans.label}</th>
-                                        <th>{trans.rfq_group}</th>
-                                        <th>{trans.supplier}</th>
-                                        <th>{trans.lines_count}</th>
-                                        <th>{trans.status}</th>
-                                        <th>{trans.created_at}</th>
-                                        <th>{trans.action}</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    <DataTable
+                        rows={quotations}
+                        columns={quotationColumns(trans)}
+                        loading={loading}
+                        trans={trans}
+                        sortField={sortField}
+                        sortAsc={sortAsc}
+                        onSort={handleSort}
+                        storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+                        unsortableIcon={false}
+                        tableClassName="table table-hover"
+                        chipsClassName="mb-2 d-flex flex-wrap px-3 pt-2"
+                        loadingContent={<><i className="fas fa-spinner fa-spin mr-2" />{trans.loading}</>}
+                        emptyText={trans.no_data}
+                        actionsHeader={trans.action}
+                        actionsWidth={90}
+                        actionsCellStyle={{ whiteSpace: 'nowrap' }}
+                        rowHref={q => q.show_url}
+                        renderGroupHeader={(q, prev) => q.rfq_group_id && q.rfq_group_id !== prev?.rfq_group_id
+                            && <RfqGroupHeader quotation={q} trans={trans} />}
+                        rowStyle={q => (q.rfq_group_id ? { borderLeft: '4px solid #6c757d' } : undefined)}
+                        rowActions={q => (
+                            <>
+                                <a href={q.show_url} className="btn btn-xs btn-info mr-1">
+                                    <i className="fas fa-eye" />
+                                </a>
+                                {q.pdf_url && (
+                                    <a href={q.pdf_url} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
+                                        <i className="fas fa-file-pdf" />
+                                    </a>
+                                )}
+                            </>
                         )}
-                    </div>
+                        mobileActions={q => q.pdf_url && (
+                            <a href={q.pdf_url} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
+                                <i className="fas fa-file-pdf text-danger mr-1" />PDF
+                            </a>
+                        )}
+                    />
 
                     {/* Pagination */}
                     {meta.last_page > 1 && (

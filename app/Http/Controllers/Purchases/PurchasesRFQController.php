@@ -637,10 +637,13 @@ class PurchasesRFQController extends Controller
         $sortField = in_array($request->get('sort'), ['code', 'label', 'companies_id', 'created_at'])
             ? $request->get('sort') : 'created_at';
         $sortAsc   = $request->get('dir', 'desc') === 'asc';
+        // Filtre multi-statuts de la liste (absent = tous les statuts, comme avant).
+        $statuses  = array_map('intval', (array) $request->input('statuses', []));
 
         $quotations = PurchasesQuotation::with(['companie', 'rfqGroup'])
             ->withCount('PurchaseQuotationLines')
             ->where('label', 'like', '%' . $search . '%')
+            ->when($statuses !== [], fn ($q) => $q->whereIn('statu', $statuses))
             ->orderBy($sortField, $sortAsc ? 'asc' : 'desc')
             ->paginate(15);
 
@@ -871,6 +874,8 @@ class PurchasesRFQController extends Controller
             'companies_contacts_id'     => $q->companies_contacts_id,
             'companies_addresses_id'    => $q->companies_addresses_id,
             'created_at_human'          => $q->GetPrettyCreatedAttribute(),
+            // Date comparable pour le filtre par plage de dates (created_at_human est relatif).
+            'created_date'              => $q->created_at?->format('Y-m-d'),
             'lines_count'               => $q->purchase_quotation_lines_count ?? 0,
             'companie_label'            => $q->companie?->label ?? '',
             'companie_url'              => $q->companies_id ? route('companies.show', ['id' => $q->companies_id]) : null,

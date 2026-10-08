@@ -194,6 +194,23 @@ describe('DataTable — PC', () => {
         }
     });
 
+    it('renderGroupHeader et rowStyle : en-tête avant la première ligne de chaque groupe', () => {
+        const group = r => (r.statu === 1 ? 'G1' : 'G2');
+        const props = {
+            renderGroupHeader: (r, prev) => (!prev || group(prev) !== group(r)) && <strong>Groupe {group(r)}</strong>,
+            rowStyle: r => (r.statu === 1 ? { borderLeft: '4px solid #6c757d' } : undefined),
+        };
+        const { unmount } = setup(props);
+        // lignes : CM-001 (G1), CM-002 (G2), CM-003 (G1) → trois en-têtes
+        expect(screen.getAllByText(/Groupe G/)).toHaveLength(3);
+        expect(screen.getAllByText('Groupe G1')[0].closest('td').colSpan).toBe(6);
+        expect(screen.getByText('CM-001').closest('tr').style.borderLeft).toBe('4px solid rgb(108, 117, 125)');
+        unmount();
+        setup({ ...props, forceLayout: 'cards' });
+        expect(screen.getAllByText(/Groupe G/)).toHaveLength(3);
+        expect(screen.getByText('CM-001').closest('.list-group-item').style.borderLeft).toBe('4px solid rgb(108, 117, 125)');
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();
