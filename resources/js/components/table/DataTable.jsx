@@ -189,6 +189,7 @@ export default function DataTable({
     rowActions,
     mobileActions,
     actionsWidth = 36,
+    actionsHeader = null,
     actionsCellStyle,
     chipsClassName = 'mb-2 d-flex flex-wrap',
     tableClassName = 'table table-hover table-sm',
@@ -317,7 +318,7 @@ export default function DataTable({
                                     </th>
                                 );
                             })}
-                            <th style={{ width: actionsWidth }} />
+                            <th style={{ width: actionsWidth }}>{actionsHeader}</th>
                         </tr>
                         {hasFilters && (
                             <tr>

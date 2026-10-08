@@ -151,6 +151,13 @@ describe('DataTable — PC', () => {
         expect(screen.getByText('100.00 €').closest('td').style.whiteSpace).toBe('');
     });
 
+    it('actionsHeader et tableClassName', () => {
+        setup({ actionsHeader: 'Action', tableClassName: 'table table-sm mb-0' });
+        const ths = document.querySelectorAll('thead tr:first-child th');
+        expect(ths[ths.length - 1].textContent).toBe('Action');
+        expect(document.querySelector('table').className).toBe('table table-sm mb-0');
+    });
+
     it('hideable et reorderable désactivables', () => {
         setup({ hideable: false, reorderable: false });
         expect(screen.queryByLabelText('Masquer la colonne')).toBeNull();
