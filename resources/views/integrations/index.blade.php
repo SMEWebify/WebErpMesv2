@@ -322,6 +322,50 @@
             </div>
         </div>
 
+        {{-- ──────────────────── Signature électronique (DocuSign) ──────────────────── --}}
+        <div class="col-md-6">
+            <div class="card card-outline {{ $esign['configured'] && $esign['is_active'] ? 'card-success' : ($esign['configured'] ? 'card-secondary' : 'card-warning') }}">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-signature mr-1"></i> {{ __('esignature.title') }}
+                    </h3>
+                    <div class="card-tools">
+                        @if(! $esign['configured'])
+                            <span class="badge badge-warning">Non configuré</span>
+                        @elseif(! $esign['is_active'])
+                            <span class="badge badge-secondary">Désactivé</span>
+                        @else
+                            <span class="badge badge-success">Actif</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">{{ __('esignature.hub_description') }}</p>
+                    <dl class="row mb-0">
+                        <dt class="col-6">{{ __('esignature.environment') }}</dt>
+                        <dd class="col-6">
+                            @if($esign['environment'])
+                                <code>{{ $esign['environment'] }}</code>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </dd>
+
+                        <dt class="col-6">{{ __('esignature.hub_pending') }}</dt>
+                        <dd class="col-6">{{ $esign['pending'] }}</dd>
+
+                        <dt class="col-6">{{ __('esignature.hub_completed') }}</dt>
+                        <dd class="col-6">{{ $esign['completed'] }}</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="{{ route('admin.integrations.esignature.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> Configurer
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }}">

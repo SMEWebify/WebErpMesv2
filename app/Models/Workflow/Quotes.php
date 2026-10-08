@@ -233,6 +233,12 @@ class Quotes extends Model
 
     }
 
+    // Enveloppes de signature électronique envoyées pour ce devis
+    public function signatures()
+    {
+        return $this->hasMany(QuoteSignature::class, 'quotes_id');
+    }
+
     public function guestVisits()
     {
         return $this->hasMany(GuestVisits::class);

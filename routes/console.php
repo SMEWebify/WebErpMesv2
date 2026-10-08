@@ -60,3 +60,16 @@ Schedule::command('wem:pdp:sync')
     ->everyFifteenMinutes()
     ->withoutOverlapping()
     ->runInBackground();
+
+/*
+|--------------------------------------------------------------------------
+| Signature électronique des devis (DocuSign)
+|--------------------------------------------------------------------------
+*/
+
+// Filet de la notification DocuSign : une instance non publiée en HTTPS ne la
+// reçoit jamais. Ne fait rien tant que la signature n'est pas configurée.
+Schedule::command('wem:esign:sync')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

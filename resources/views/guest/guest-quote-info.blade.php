@@ -50,6 +50,13 @@
             @if(6 == $Quote->statu) <span class="badge bg-secondary">{{ __('general_content.obsolete_trans_key') }}</span> @endif
         </div>
 
+        @if(session('signature_info'))
+            <div class="alert alert-success">{{ session('signature_info') }}</div>
+        @endif
+        @if(session('signature_error'))
+            <div class="alert alert-danger">{{ session('signature_error') }}</div>
+        @endif
+
         <div class="row g-4">
 
             {{-- Main column --}}
@@ -202,6 +209,50 @@
 
             {{-- Sidebar --}}
             <div class="col-lg-4">
+
+                {{-- Electronic signature --}}
+                @php($canSign = $canSign ?? false)
+                @php($signature = $signature ?? null)
+                @if($canSign || $signature)
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">
+                            <i class="fas fa-file-signature me-1"></i>{{ __('esignature.card_title') }}
+                        </h6>
+
+                        @if($signature?->isCompleted())
+                            <div class="text-success fw-semibold">
+                                <i class="fas fa-check-circle me-1"></i>
+                                {{ __('esignature.signed_on', ['date' => $signature->completed_at?->format('d/m/Y')]) }}
+                            </div>
+                            <div class="small text-muted">{{ __('esignature.signed_by', ['name' => $signature->signer_name]) }}</div>
+                        @else
+                            @if($signature && $signature->status === \App\Models\Workflow\QuoteSignature::STATUS_DECLINED)
+                                <p class="small text-danger mb-2">{{ __('esignature.declined') }}</p>
+                            @elseif($signature && $signature->isPending())
+                                <p class="small text-muted mb-2">
+                                    {{ $signature->client_user_id
+                                        ? __('esignature.pending_embedded')
+                                        : __('esignature.pending_email', ['email' => $signature->signer_email]) }}
+                                </p>
+                            @endif
+
+                            @if($canSign)
+                                <p class="small mb-3">{{ __('esignature.sign_intro') }}</p>
+                                <form method="POST" action="{{ route('guest.quote.signature.start', ['uuid' => $Quote->uuid]) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-pen-nib me-1"></i>
+                                        {{ $signature?->isPending() && ! $signature->client_user_id
+                                            ? __('esignature.sign_by_email_button')
+                                            : __('esignature.sign_button') }}
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+                @endif
 
                 {{-- Delivery & address --}}
                 <div class="card guest-card mb-4">

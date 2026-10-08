@@ -74,6 +74,7 @@
 | `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
+| `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné ». Filet de la notification DocuSign (instance non publiée en HTTPS) |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
@@ -93,6 +94,7 @@
 | Quotidien à 02h00 | `backup:run` | Sauvegarde complète DB + `storage/app` |
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
 | Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
+| Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis en attente |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
 
@@ -319,6 +321,34 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
 - Conversion en commande : `presentation=keep|drop` (`QuoteLineToOrderLineConverter::linesToConvert`) ;
   une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
   une ligne non article absente du payload.
+
+## Signature électronique des devis (DocuSign)
+
+Le client signe un devis depuis son **lien public** (`/guest/quote/{uuid}`) : bouton
+« Signer le devis » sur un devis **Envoyé** (statu 2), non expiré, hors trame, dont le
+contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
+- **Configuration en base, pas dans le .env** : écran Intégrations → Signature électronique
+  (`esignature_settings`, singleton). Clé privée RSA et clé HMAC chiffrées (`encrypted`),
+  jamais réaffichées (champ vide = conserver). Bouton de test + lien de consentement JWT
+  (à faire une fois ; l'URL de l'écran doit figurer dans les « Redirect URIs » DocuSign).
+- **Contrat** `App\Services\Integrations\Signature\Contracts\SignatureGateway`, driver
+  `DocuSignGateway` (JWT Grant signé par openssl, client HTTP Laravel, pas de SDK).
+  Un second prestataire s'ajoute par un driver dans `QuoteSignatureService::gateway()`.
+- **Enveloppe** = PDF du devis (`DocumentPdfService`, inchangé) + page « Bon pour accord »
+  (`print/esignature-acceptance`) qui porte les marqueurs en texte blanc où DocuSign
+  accroche signature / nom / date. Le PDF commercial n'est **pas** modifié.
+- **Mode** : signature intégrée depuis la page publique (défaut, toute personne ayant le
+  lien peut signer) ou e-mail DocuSign au contact (identité vérifiée par la boîte mail).
+- **Rien n'est cru sans relecture API** : le retour navigateur (`?event=signing_complete`),
+  la notification Connect (HMAC si clé saisie) et `wem:esign:sync` ne font qu'appeler
+  `QuoteSignatureService::sync()`, verrouillé par enveloppe. La notification n'est
+  demandée que si l'URL de l'instance est en HTTPS.
+- **Signé** → PDF signé + certificat dans la GED du devis (rôle `document_signe`,
+  hashtag `signature-{id}`), devis passé en Gagné (statu 3) s'il était ouvert/envoyé.
+  **Pas de conversion automatique en commande.**
+- Devis modifié après l'envoi (total TTC différent) ou mode changé → l'enveloppe en
+  attente est annulée (`voided`) et une nouvelle part au clic suivant.
+- Tests : `tests/Feature/ESignature/` (API DocuSign simulée, clé RSA jetable en fixture).
 
 ## Nesting (imbrication tôle)
 

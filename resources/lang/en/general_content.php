@@ -1602,6 +1602,7 @@ return [
     'file_role_cam_trans_key'                  => 'CAM / Machining',
     'file_role_certificat_trans_key'           => 'Material certificate',
     'file_role_controle_trans_key'             => 'Quality control',
+    'file_role_document_signe_trans_key'       => 'Signed document',
     'file_role_autre_trans_key'                => 'Other',
 
     // Load planning (services x days heat grid)

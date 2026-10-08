@@ -11,6 +11,8 @@ use App\Services\Documents\SalesPrintLayout;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\QuoteSignature;
+use App\Services\Integrations\Signature\QuoteSignatureService;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class GuestController extends Controller
@@ -44,6 +46,11 @@ class GuestController extends Controller
         // Même mise en page que le PDF : sections, sous-totaux, lignes masquées omises.
         $printRows = app(SalesPrintLayout::class)->build($Quote->QuoteLines)['rows'];
         
+        // Signature électronique : dernière enveloppe utile et possibilité de signer.
+        $signatureService = app(QuoteSignatureService::class);
+        $signatureEnabled = $signatureService->isAvailable();
+        $signature = $Quote->signatures()->where('status', '!=', QuoteSignature::STATUS_VOIDED)->latest('id')->first();
+
         // Save visit information to database
         $this->logVisit(request(), $Quote->id);
 
@@ -57,6 +64,8 @@ class GuestController extends Controller
             'TotalServiceCost'=> $TotalServiceCost,
             'TotalServicePrice'=> $TotalServicePrice,
             'printRows' => $printRows,
+            'signature' => $signature,
+            'canSign' => $signatureEnabled && $signatureService->canBeSigned($Quote),
         ]);
     }
 

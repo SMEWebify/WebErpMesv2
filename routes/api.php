@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 use App\Http\Controllers\Api\N2P\SheetLotStockController;
 use App\Http\Controllers\Files\FileApiController;
+use App\Http\Controllers\Integrations\ESignatureWebhookController;
 use App\Http\Controllers\Integrations\QontoWebhookController;
 
 /*
@@ -36,6 +37,13 @@ Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->withoutMid
     // Webhook Qonto → sans auth, signature HMAC vérifiée dans le contrôleur
     Route::post('/webhook/invoice', [QontoWebhookController::class, 'handle'])->name('webhook.invoice');
 });
+
+// Notification DocuSign Connect : HMAC vérifié par le driver, et l'enveloppe est
+// toujours relue par l'API avant d'être appliquée (voir ESignatureWebhookController).
+Route::post('integrations/esignature/webhook', [ESignatureWebhookController::class, 'handle'])
+    ->withoutMiddleware('auth:api')
+    ->middleware('throttle:120,1')
+    ->name('api.integrations.esignature.webhook');
 
 // Endpoint générique entrant : auth par HMAC/bearer via middleware integration.inbound.
 // Résout l'endpoint par system_code (ex: n2p, xxx-erp, autre partenaire futur).

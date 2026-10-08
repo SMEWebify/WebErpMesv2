@@ -54,6 +54,39 @@ class FileStorageService
     }
 
     /**
+     * Store generated content (a signed PDF fetched from a provider…) and create
+     * the matching File record — same layout on disk as an upload.
+     *
+     * @param  array{comment?: string|null, hashtags?: array<int, string>}  $meta
+     */
+    public function storeContents(string $contents, string $originalName, string $mimeType, array $meta = []): File
+    {
+        $extension = mb_strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $kind = FileKindResolver::fromExtension($extension);
+
+        $directory = trim(config('files.root'), '/') . '/' . now()->format('Y/m');
+        $storedName = Str::uuid()->toString() . ($extension !== '' ? '.' . $extension : '');
+
+        $disk = config('files.disk');
+        Storage::disk($disk)->put($directory . '/' . $storedName, $contents);
+
+        return File::create([
+            'user_id' => Auth::id(),
+            'name' => $storedName,
+            'original_file_name' => $originalName,
+            'type' => $mimeType,
+            'kind' => $kind,
+            'extension' => $extension !== '' ? $extension : null,
+            'disk' => $disk,
+            'path' => $directory . '/' . $storedName,
+            'size' => strlen($contents),
+            'comment' => $this->normalizeComment($meta['comment'] ?? null),
+            'hashtags' => $meta['hashtags'] ?? [],
+            'as_photo' => false,
+        ]);
+    }
+
+    /**
      * Attach a file to an entity with a business role.
      *
      * When the file is flagged as primary, any other file holding that role on

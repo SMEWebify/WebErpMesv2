@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\EmailLog;
 use App\Models\Integrations\AISetting;
+use App\Models\Integrations\ESignatureSetting;
 use App\Models\Integrations\IntegrationEndpoint;
 use App\Models\Integrations\MailSetting;
 use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
+use App\Models\Workflow\QuoteSignature;
 use App\Services\AI\AISettingsResolver;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Mail\MailSettingsService;
@@ -50,7 +52,24 @@ class IntegrationHubController extends Controller
             'n8n'       => $this->n8nCard(),
             'ai'        => $this->aiCard(),
             'mail'      => $this->mailCard(),
+            'esign'     => $this->esignatureCard(),
         ]);
+    }
+
+    /**
+     * Signature électronique des devis : configurée, active, et volumétrie.
+     */
+    private function esignatureCard(): array
+    {
+        $setting = ESignatureSetting::current();
+
+        return [
+            'configured'  => (bool) $setting?->isComplete(),
+            'is_active'   => (bool) $setting?->is_active,
+            'environment' => $setting?->environment,
+            'pending'     => QuoteSignature::pending()->count(),
+            'completed'   => QuoteSignature::where('status', QuoteSignature::STATUS_COMPLETED)->count(),
+        ];
     }
 
     /**

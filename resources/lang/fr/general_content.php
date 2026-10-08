@@ -1602,6 +1602,7 @@ return [
     'file_role_cam_trans_key'                  => 'FAO / Usinage',
     'file_role_certificat_trans_key'           => 'Certificat matière',
     'file_role_controle_trans_key'             => 'Contrôle qualité',
+    'file_role_document_signe_trans_key'       => 'Document signé',
     'file_role_autre_trans_key'                => 'Autre',
 
     // Plan de charge (grille services x jours)

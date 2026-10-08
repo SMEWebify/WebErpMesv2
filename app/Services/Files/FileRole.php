@@ -18,6 +18,8 @@ class FileRole
     public const CAM = 'cam';
     public const CERTIFICATE = 'certificat';
     public const CONTROL = 'controle';
+    // Document revenu signé d'un prestataire de signature électronique
+    public const SIGNED = 'document_signe';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -39,6 +41,7 @@ class FileRole
             self::CAM,
             self::CERTIFICATE,
             self::CONTROL,
+            self::SIGNED,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,
