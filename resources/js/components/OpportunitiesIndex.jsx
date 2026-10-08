@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { SortIcon, Pagination, StatusBadge, StatusFilter } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -18,9 +18,6 @@ const LS_COL_ORDER   = 'opportunities_table_col_order';
 const LS_HIDDEN_COLS = 'opportunities_table_hidden_cols';
 const LS_FILTERS     = 'opportunities_list_filters';
 
-const DEFAULT_COL_ORDER = ['label', 'companie', 'statu', 'probality', 'budget', 'user', 'created_at'];
-const TEXT_FILTER_COLS  = new Set(['label', 'companie', 'user']);
-const DATE_RANGE_COLS   = new Set(['created_at']);
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -313,243 +310,49 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
 }
 
 // ---------------------------------------------------------------------------
-// OpportunitiesTable — column drag-and-drop + hidden cols + per-col filters
+// OpportunitiesTable — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
-function colDefs(trans) {
-    return {
-        label:      { label: trans.label      ?? 'Label',       sortable: true,  align: 'left'  },
-        companie:   { label: trans.company    ?? 'Company',     sortable: true,  align: 'left'  },
-        statu:      { label: trans.status     ?? 'Status',      sortable: true,  align: 'center'},
-        probality:  { label: trans.probability ?? 'Probability', sortable: true, align: 'right' },
-        budget:     { label: trans.budget     ?? 'Budget',      sortable: true,  align: 'right' },
-        user:       { label: trans.user       ?? 'User',        sortable: false, align: 'left'  },
-        created_at: { label: trans.created_at ?? 'Created',     sortable: true,  align: 'center'},
-    };
-}
-
-function readSavedColOrder() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
-    } catch {}
-    return DEFAULT_COL_ORDER;
-}
-
-function readSavedHiddenCols() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
-        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
-    } catch {}
-    return new Set();
+function opportunityColumns(trans, currency, locale) {
+    return [
+        { key: 'label',      label: trans.label       ?? 'Label',       sortable: true,
+          render: o => <a href={o.url}>{o.label}</a>, filter: 'text', mobile: 'title', mobileRender: o => o.label },
+        { key: 'companie',   label: trans.company     ?? 'Company',     sortable: true,
+          render: o => (o.companie ? <span>{o.companie.label}</span> : '—'), filterValue: o => o.companie?.label,
+          filter: 'text', mobile: 'subtitle', mobileRender: o => o.companie?.label },
+        { key: 'statu',      label: trans.status      ?? 'Status',      sortable: true, align: 'center',
+          render: o => <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />, mobile: 'badge' },
+        { key: 'probality',  label: trans.probability ?? 'Probability', sortable: true, align: 'right', nowrap: false,
+          render: o => <span>{o.probality ?? '—'} %</span>,
+          mobile: 'subtitle', mobileRender: o => (o.probality != null ? `${o.probality} %` : null) },
+        { key: 'budget',     label: trans.budget      ?? 'Budget',      sortable: true, align: 'right', nowrap: false,
+          render: o => <span className="font-weight-bold">{formatCurrency(o.budget, currency, locale)}</span>,
+          total: { value: o => Number(o.budget) || 0, format: sum => formatCurrency(sum, currency, locale) },
+          mobile: 'amount', mobileRender: o => (Number(o.budget) > 0 ? formatCurrency(o.budget, currency, locale) : null) },
+        { key: 'user',       label: trans.user        ?? 'User',
+          render: o => <span>{o.user?.name ?? '—'}</span>, filterValue: o => o.user?.name, filter: 'text' },
+        { key: 'created_at', label: trans.created_at  ?? 'Created',     sortable: true, align: 'center',
+          render: o => (o.created_at ? formatDate(o.created_at, locale) : '—'), filter: 'date' },
+    ];
 }
 
 function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
-    const [colOrder,   setColOrder]   = useState(readSavedColOrder);
-    const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
-    const [colFilters, setColFilters] = useState({});
-    const [dragOver,   setDragOver]   = useState(null);
-    const dragCol = useRef(null);
-
-    const COLS = colDefs(trans);
-
-    const hideCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.add(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const showCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.delete(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const onDragStart = colId => { dragCol.current = colId; };
-    const onDragOver  = (e, colId) => { e.preventDefault(); setDragOver(colId); };
-    const onDragLeave = () => setDragOver(null);
-    const onDrop      = targetId => {
-        const src = dragCol.current;
-        if (!src || src === targetId) { setDragOver(null); return; }
-        const next = [...colOrder];
-        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
-        setColOrder(next);
-        localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
-        setDragOver(null);
-        dragCol.current = null;
-    };
-
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c) && COLS[c]);
-
-    const filtered = items.filter(o =>
-        visibleCols.every(colId => {
-            if (DATE_RANGE_COLS.has(colId)) {
-                const { from, to } = colFilters[colId] ?? {};
-                const iso = o.created_at ?? '';
-                if (!iso) return true;
-                if (from && iso < from) return false;
-                if (to   && iso > to)   return false;
-                return true;
-            }
-            const val = colFilters[colId] ?? '';
-            if (!val) return true;
-            const v = val.toLowerCase();
-            if (colId === 'label')    return (o.label   ?? '').toLowerCase().includes(v);
-            if (colId === 'companie') return (o.companie?.label ?? '').toLowerCase().includes(v);
-            if (colId === 'user')     return (o.user?.name ?? '').toLowerCase().includes(v);
-            return true;
-        })
-    );
-
-    const renderCell = (colId, o) => {
-        switch (colId) {
-            case 'label':      return <a href={o.url}>{o.label}</a>;
-            case 'companie':   return o.companie ? <span>{o.companie.label}</span> : '—';
-            case 'statu':      return <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />;
-            case 'probality':  return <span>{o.probality ?? '—'} %</span>;
-            case 'budget':     return <span className="font-weight-bold">{formatCurrency(o.budget, currency, locale)}</span>;
-            case 'user':       return <span>{o.user?.name ?? '—'}</span>;
-            case 'created_at': return o.created_at ? formatDate(o.created_at, locale) : '—';
-            default:           return '—';
-        }
-    };
-
-    const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
-
     return (
-        <div>
-            {/* Hidden-column restore chips */}
-            {hiddenCols.size > 0 && (
-                <div className="mb-2 d-flex flex-wrap" style={{ gap: '4px' }}>
-                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
-                        <button
-                            key={colId}
-                            type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
-                            onClick={() => showCol(colId)}
-                            title="Réafficher la colonne"
-                        >
-                            + {COLS[colId]?.label ?? colId}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            <div className="table-responsive">
-                <table className="table table-hover table-sm mb-0">
-                    <thead>
-                        <tr>
-                            {visibleCols.map(colId => {
-                                const col      = COLS[colId];
-                                const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
-                                const dropping = dragOver === colId;
-                                return (
-                                    <th key={colId}
-                                        className={alignCls}
-                                        draggable
-                                        style={{
-                                            cursor:     'pointer',
-                                            whiteSpace: 'nowrap',
-                                            userSelect: 'none',
-                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
-                                            background: dropping ? '#e8f0fe' : undefined,
-                                        }}
-                                        onDragStart={() => onDragStart(colId)}
-                                        onDragOver={e => onDragOver(e, colId)}
-                                        onDragLeave={onDragLeave}
-                                        onDrop={() => onDrop(colId)}
-                                        onClick={() => col.sortable && onSort(colId)}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {col.label}
-                                        {col.sortable && <SortIcon field={colId} sortField={sortField} sortAsc={sortAsc} />}
-                                        <span
-                                            role="button"
-                                            aria-label="Masquer la colonne"
-                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                            className="text-danger"
-                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
-                                        >
-                                            ×
-                                        </span>
-                                    </th>
-                                );
-                            })}
-                            <th style={{ width: 36 }} />
-                        </tr>
-                        {/* Per-column filters */}
-                        <tr>
-                            {visibleCols.map(colId => (
-                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
-                                    {TEXT_FILTER_COLS.has(colId) && (
-                                        <input
-                                            type="text"
-                                            className="form-control form-control-sm"
-                                            style={inputStyle}
-                                            placeholder="⌕"
-                                            value={colFilters[colId] ?? ''}
-                                            onChange={e => setColFilters(f => ({ ...f, [colId]: e.target.value }))}
-                                        />
-                                    )}
-                                    {DATE_RANGE_COLS.has(colId) && (
-                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Du"
-                                                value={(colFilters[colId] ?? {}).from ?? ''}
-                                                onChange={e => setColFilters(f => ({
-                                                    ...f,
-                                                    [colId]: { ...(f[colId] ?? {}), from: e.target.value },
-                                                }))}
-                                            />
-                                            <input
-                                                type="date"
-                                                className="form-control form-control-sm"
-                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Au"
-                                                value={(colFilters[colId] ?? {}).to ?? ''}
-                                                onChange={e => setColFilters(f => ({
-                                                    ...f,
-                                                    [colId]: { ...(f[colId] ?? {}), to: e.target.value },
-                                                }))}
-                                            />
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                            <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center py-4"><i className="fas fa-spinner fa-spin" /></td></tr>
-                        ) : filtered.length === 0 ? (
-                            <tr><td colSpan={visibleCols.length + 1} className="text-center text-muted py-3">{trans.no_data ?? '—'}</td></tr>
-                        ) : null}
-                        {!loading && filtered.map(o => (
-                            <tr key={o.id}>
-                                {visibleCols.map(colId => {
-                                    const alignCls = COLS[colId]?.align === 'right' ? 'text-right' : COLS[colId]?.align === 'center' ? 'text-center' : '';
-                                    return <td key={colId} className={alignCls}>{renderCell(colId, o)}</td>;
-                                })}
-                                <td>
-                                    <a href={o.url} className="btn btn-xs btn-info">
-                                        <i className="fas fa-eye" />
-                                    </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <DataTable
+            rows={items}
+            columns={opportunityColumns(trans, currency, locale)}
+            loading={loading}
+            trans={trans}
+            sortField={sortField}
+            sortAsc={sortAsc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            unsortableIcon={false}
+            tableClassName="table table-hover table-sm mb-0"
+            emptyText={trans.no_data ?? '—'}
+            totalLabel={trans.total ?? 'Total'}
+            rowHref={o => o.url}
+        />
     );
 }
 
