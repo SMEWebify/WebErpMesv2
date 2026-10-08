@@ -191,6 +191,7 @@ export default function DataTable({
     actionsWidth = 36,
     actionsCellStyle,
     chipsClassName = 'mb-2 d-flex flex-wrap',
+    tableClassName = 'table table-hover table-sm',
     loadingContent = <i className="fas fa-spinner fa-spin" />,
     emptyText,
     totalLabel,
@@ -267,7 +268,7 @@ export default function DataTable({
             )}
 
             <div className="table-responsive">
-                <table className="table table-hover table-sm">
+                <table className={tableClassName}>
                     <thead>
                         <tr>
                             {visible.map(col => {
