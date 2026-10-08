@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
-import { SortIcon, Pagination, StatusFilter } from './table';
+import { DataTable, Pagination, StatusFilter } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -19,9 +19,6 @@ const LS_COL_ORDER   = 'quote_lines_table_col_order';
 const LS_HIDDEN_COLS = 'quote_lines_table_hidden_cols';
 const LS_FILTERS     = 'quote_lines_list_filters';
 
-const DEFAULT_COL_ORDER = ['quote_code', 'ordre', 'code', 'product', 'label', 'qty', 'unit_label', 'selling_price', 'discount', 'vat_label', 'delivery_date', 'statu', 'actions'];
-const TEXT_FILTER_COLS  = new Set(['quote_code', 'code', 'label']);
-const DATE_RANGE_COLS   = new Set(['delivery_date']);
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -56,221 +53,108 @@ function lsSet(key, value) {
 }
 
 // ---------------------------------------------------------------------------
-// Column definitions
+// Table — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
-function colDefs(trans) {
-    return {
-        quote_code:    { label: trans.quote,        sortField: 'quotes_id' },
-        ordre:         { label: trans.ordre,         sortField: 'ordre' },
-        code:          { label: trans.code,          sortField: 'code' },
-        product:       { label: trans.product },
-        label:         { label: trans.label,         sortField: 'label',        bold: true },
-        qty:           { label: trans.qty,           sortField: 'qty',          align: 'right' },
-        unit_label:    { label: trans.unit },
-        selling_price: { label: trans.price,         sortField: 'selling_price', align: 'right' },
-        discount:      { label: trans.discount,                                  align: 'right' },
-        vat_label:     { label: trans.vat },
-        delivery_date: { label: trans.delivery_date, sortField: 'delivery_date' },
-        statu:         { label: trans.status },
-        actions:       { label: trans.action },
-    };
+const lineAmount = l => (Number(l.selling_price) || 0) * (Number(l.qty) || 0) * (1 - (Number(l.discount) || 0) / 100);
+
+function quoteLineColumns(trans, currency, locale) {
+    return [
+        { key: 'quote_code',    label: trans.quote,         sortable: 'quotes_id',
+          render: l => <strong>{l.quote_code ?? l.quotes_id}</strong>, filterValue: l => l.quote_code, filter: 'text',
+          mobile: 'subtitle', mobileOrder: 1, mobileRender: l => l.quote_code ?? l.quotes_id },
+        { key: 'ordre',         label: trans.ordre,         sortable: true },
+        { key: 'code',          label: trans.code,          sortable: true,
+          render: l => <code>{l.code}</code>, filter: 'text', mobile: 'subtitle', mobileRender: l => l.code },
+        { key: 'product',       label: trans.product,
+          render: l => (l.product_url ? <a href={l.product_url} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a> : '—') },
+        { key: 'label',         label: trans.label,         sortable: true, bold: true, nowrap: false,
+          filter: 'text', mobile: 'title' },
+        { key: 'qty',           label: trans.qty,           sortable: true, align: 'right', nowrap: false,
+          render: l => formatQty(l.qty) },
+        { key: 'unit_label',    label: trans.unit,
+          render: l => l.unit_label ?? '—' },
+        { key: 'selling_price', label: trans.price,         sortable: true, align: 'right', nowrap: false,
+          render: l => (
+              <strong>
+                  {formatCurrency(l.selling_price, currency, locale)}
+                  {l.use_calculated_price && <i className="fas fa-calculator text-warning ml-1" title={trans.calculated_price} />}
+              </strong>
+          ),
+          total: { value: lineAmount, format: sum => formatCurrency(sum, currency, locale) },
+          mobile: 'amount', mobileRender: l => formatCurrency(lineAmount(l), currency, locale) },
+        { key: 'discount',      label: trans.discount,      align: 'right', nowrap: false,
+          render: l => (l.discount ? `${l.discount}%` : '—') },
+        { key: 'vat_label',     label: trans.vat,
+          render: l => l.vat_label ?? '—' },
+        { key: 'delivery_date', label: trans.delivery_date, sortable: true,
+          render: l => formatDate(l.delivery_date, locale), filter: 'date' },
+        { key: 'statu',         label: trans.status,
+          render: l => {
+              const cfg = STATUS_CONFIG[l.statu];
+              if (!cfg) return '—';
+              return (
+                  <>
+                      <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>
+                      {l.statu === 3 && l.order_url && (
+                          <a href={l.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
+                              <i className="fas fa-file-alt" /> {l.order_code}
+                          </a>
+                      )}
+                  </>
+              );
+          },
+          mobile: 'badge', mobileRender: l => {
+              const cfg = STATUS_CONFIG[l.statu];
+              return cfg ? <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span> : null;
+          } },
+        { key: 'actions',       label: trans.action,        hideable: false,
+          render: l => (
+              <div className="btn-group btn-group-sm">
+                  <a href={l.quote_url} className="btn btn-xs btn-info" title={trans.view_quote}>
+                      <i className="fas fa-eye" />
+                  </a>
+                  <a href={l.task_url} className="btn btn-success btn-xs" title={trans.tasks}>
+                      <i className="fas fa-list" />
+                      {' '}({l.task_count}) ({l.sub_assembly_count})
+                  </a>
+              </div>
+          ) },
+    ];
 }
 
-// ---------------------------------------------------------------------------
-// Table
-// ---------------------------------------------------------------------------
+// Les filtres de colonne restent enregistrés à plat dans quote_lines_list_filters
+// ({ code, label, delivery_date_from, delivery_date_to }), comme avant la migration.
+const toTableFilters = f => ({
+    ...f,
+    delivery_date: { from: f.delivery_date_from ?? '', to: f.delivery_date_to ?? '' },
+});
+function fromTableFilters(next) {
+    const { delivery_date: range, ...rest } = next;
+    return { ...rest, delivery_date_from: range?.from ?? '', delivery_date_to: range?.to ?? '' };
+}
 
-function QuoteLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSort, onHideCol, colDef, trans, currency, locale, colFilters, onColFilter }) {
-    const [dragOver, setDragOver] = useState(null);
-    const dragCol = useRef(null);
-
-    const visibleCols = colOrder.filter(c => !hiddenCols.includes(c));
-
-    function handleDragStart(col) { dragCol.current = col; }
-    function handleDrop(col) {
-        if (!dragCol.current || dragCol.current === col) return;
-        const order = [...colOrder];
-        const from  = order.indexOf(dragCol.current);
-        const to    = order.indexOf(col);
-        order.splice(from, 1);
-        order.splice(to, 0, dragCol.current);
-        dragCol.current = null;
-        setDragOver(null);
-        onSort('__reorder__', order);
-    }
-
-    function renderCell(col, line) {
-        switch (col) {
-            case 'quote_code':
-                return <strong>{line.quote_code ?? line.quotes_id}</strong>;
-            case 'ordre':
-                return line.ordre;
-            case 'code':
-                return <code>{line.code}</code>;
-            case 'product':
-                return line.product_url
-                    ? <a href={line.product_url} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a>
-                    : '—';
-            case 'label':
-                return line.label;
-            case 'qty':
-                return formatQty(line.qty);
-            case 'unit_label':
-                return line.unit_label ?? '—';
-            case 'selling_price': {
-                const cfg = STATUS_CONFIG[line.statu];
-                return (
-                    <strong>
-                        {formatCurrency(line.selling_price, currency, locale)}
-                        {line.use_calculated_price && <i className="fas fa-calculator text-warning ml-1" title={trans.calculated_price} />}
-                    </strong>
-                );
-            }
-            case 'discount':
-                return line.discount ? `${line.discount}%` : '—';
-            case 'vat_label':
-                return line.vat_label ?? '—';
-            case 'delivery_date':
-                return formatDate(line.delivery_date, locale);
-            case 'statu': {
-                const cfg = STATUS_CONFIG[line.statu];
-                if (!cfg) return '—';
-                return (
-                    <>
-                        <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>
-                        {line.statu === 3 && line.order_url && (
-                            <a href={line.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
-                                <i className="fas fa-file-alt" /> {line.order_code}
-                            </a>
-                        )}
-                    </>
-                );
-            }
-            case 'actions':
-                return (
-                    <div className="btn-group btn-group-sm">
-                        <a href={line.quote_url} className="btn btn-xs btn-info" title={trans.view_quote}>
-                            <i className="fas fa-eye" />
-                        </a>
-                        <a href={line.task_url} className="btn btn-success btn-xs" title={trans.tasks}>
-                            <i className="fas fa-list" />
-                            {' '}({line.task_count}) ({line.sub_assembly_count})
-                        </a>
-                    </div>
-                );
-            default:
-                return null;
-        }
-    }
-
-    const totalAmount = lines.reduce((sum, l) => {
-        return sum + l.selling_price * l.qty * (1 - (l.discount ?? 0) / 100);
-    }, 0);
-
+function QuoteLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, locale, colFilters, onColFiltersChange }) {
     return (
-        <>
-            {hiddenCols.length > 0 && (
-                <div className="mb-2">
-                    {hiddenCols.map(c => (
-                        <button key={c} className="btn btn-xs btn-outline-secondary mr-1 mb-1" onClick={() => onHideCol(c, false)}>
-                            + {colDef[c]?.label ?? c}
-                        </button>
-                    ))}
-                </div>
+        <DataTable
+            rows={lines}
+            columns={quoteLineColumns(trans, currency, locale)}
+            trans={trans}
+            sortField={sortField}
+            sortAsc={sortAsc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            unsortableCursor="grab"
+            colFilters={toTableFilters(colFilters)}
+            onColFiltersChange={next => onColFiltersChange(fromTableFilters(next))}
+            actionsColumn={false}
+            rowHref={l => l.quote_url}
+            mobileActions={l => (
+                <a href={l.task_url} className="btn btn-outline-success" style={{ minHeight: 44, lineHeight: '30px' }}>
+                    <i className="fas fa-list mr-1" />{trans.tasks} ({l.task_count})
+                </a>
             )}
-            <div className="table-responsive">
-                <table className="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            {visibleCols.map(col => {
-                                const def = colDef[col] ?? {};
-                                const sf  = def.sortField;
-                                return (
-                                    <th
-                                        key={col}
-                                        draggable
-                                        onDragStart={() => handleDragStart(col)}
-                                        onDragOver={e => { e.preventDefault(); setDragOver(col); }}
-                                        onDrop={() => handleDrop(col)}
-                                        onDragEnd={() => setDragOver(null)}
-                                        onClick={() => sf && onSort(sf)}
-                                        style={{
-                                            cursor: sf ? 'pointer' : 'grab',
-                                            background: dragOver === col ? '#edf5ff' : undefined,
-                                            whiteSpace: 'nowrap',
-                                            userSelect: 'none',
-                                        }}
-                                        className={def.align === 'right' ? 'text-right' : ''}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {def.label}
-                                        <SortIcon field={sf} sortField={sortField} sortAsc={sortAsc} />
-                                        {col !== 'actions' && (
-                                            <span
-                                                role="button"
-                                                style={{ marginLeft: 6, opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                                className="text-danger"
-                                                onClick={e => { e.stopPropagation(); onHideCol(col, true); }}
-                                            >×</span>
-                                        )}
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                        <tr>
-                            {visibleCols.map(col => (
-                                <th key={col} className="p-1">
-                                    {TEXT_FILTER_COLS.has(col) && (
-                                        <input
-                                            className="form-control form-control-sm"
-                                            placeholder="⌕"
-                                            value={colFilters[col] ?? ''}
-                                            onChange={e => onColFilter(col, e.target.value)}
-                                        />
-                                    )}
-                                    {DATE_RANGE_COLS.has(col) && (
-                                        <div className="d-flex" style={{ gap: 2 }}>
-                                            <input type="date" className="form-control form-control-sm" style={{ minWidth: 0 }}
-                                                value={colFilters[col + '_from'] ?? ''}
-                                                onChange={e => onColFilter(col + '_from', e.target.value)} />
-                                            <input type="date" className="form-control form-control-sm" style={{ minWidth: 0 }}
-                                                value={colFilters[col + '_to'] ?? ''}
-                                                onChange={e => onColFilter(col + '_to', e.target.value)} />
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {lines.length === 0 && (
-                            <tr><td colSpan={visibleCols.length} className="text-center text-muted py-4">{trans.no_results}</td></tr>
-                        )}
-                        {lines.map(line => (
-                            <tr key={line.id}>
-                                {visibleCols.map(col => (
-                                    <td key={col} className={(colDef[col]?.align === 'right' ? 'text-right ' : '') + (colDef[col]?.bold ? 'font-weight-bold ' : '')}>
-                                        {renderCell(col, line)}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr className="font-weight-bold">
-                            {visibleCols.map((col, i) => (
-                                <td key={col} className={colDef[col]?.align === 'right' ? 'text-right' : ''}>
-                                    {col === 'selling_price'
-                                        ? <strong>{formatCurrency(totalAmount, currency, locale)}</strong>
-                                        : (i === 0 ? trans.total : '')}
-                                </td>
-                            ))}
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </>
+        />
     );
 }
 
@@ -292,11 +176,6 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
     const [lines,      setLines]      = useState([]);
     const [meta,       setMeta]       = useState(null);
     const [loading,    setLoading]    = useState(false);
-
-    const [colOrder,   setColOrder]   = useState(() => lsGet(LS_COL_ORDER, DEFAULT_COL_ORDER));
-    const [hiddenCols, setHiddenCols] = useState(() => lsGet(LS_HIDDEN_COLS, []));
-
-    const defs = colDefs(trans);
 
     useEffect(() => {
         lsSet(LS_FILTERS, { search, statuses, sortField, sortAsc, colFilters });
@@ -330,46 +209,17 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
         setPage(1);
     }
 
-    function handleSort(field, newOrder) {
-        if (field === '__reorder__') {
-            setColOrder(newOrder);
-            lsSet(LS_COL_ORDER, newOrder);
-            return;
-        }
+    function handleSort(field) {
         if (sortField === field) setSortAsc(a => !a);
         else { setSortField(field); setSortAsc(true); }
         setPage(1);
     }
 
-    function handleHideCol(col, hide) {
-        setHiddenCols(prev => {
-            const next = hide ? [...prev, col] : prev.filter(c => c !== col);
-            lsSet(LS_HIDDEN_COLS, next);
-            return next;
-        });
-    }
-
-    function handleColFilter(col, value) {
-        setColFilters(prev => ({ ...prev, [col]: value }));
+    function handleColFilters(next) {
+        setColFilters(next);
         setPage(1);
     }
 
-    // Client-side column filter (text + date range)
-    const filtered = lines.filter(line => {
-        for (const col of TEXT_FILTER_COLS) {
-            const f = (colFilters[col] ?? '').toLowerCase();
-            if (!f) continue;
-            const val = col === 'quote_code' ? (line.quote_code ?? '') : (line[col] ?? '');
-            if (!String(val).toLowerCase().includes(f)) return false;
-        }
-        for (const col of DATE_RANGE_COLS) {
-            const from = colFilters[col + '_from'];
-            const to   = colFilters[col + '_to'];
-            if (from && line[col] && line[col] < from) return false;
-            if (to   && line[col] && line[col] > to)   return false;
-        }
-        return true;
-    });
 
     return (
         <div className="card">
@@ -399,19 +249,15 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
                 </div>
 
                 <QuoteLinesTable
-                    lines={filtered}
-                    colOrder={colOrder}
-                    hiddenCols={hiddenCols}
+                    lines={lines}
                     sortField={sortField}
                     sortAsc={sortAsc}
                     onSort={handleSort}
-                    onHideCol={handleHideCol}
-                    colDef={defs}
                     trans={trans}
                     currency={currency}
                     locale={locale}
                     colFilters={colFilters}
-                    onColFilter={handleColFilter}
+                    onColFiltersChange={handleColFilters}
                 />
 
                 <Pagination meta={meta} navClassName="mt-2" ulClassName="pagination pagination-sm m-0 flex-wrap" onPage={setPage} />
