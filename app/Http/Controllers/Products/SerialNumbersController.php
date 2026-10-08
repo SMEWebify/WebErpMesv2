@@ -76,6 +76,8 @@ class SerialNumbersController extends Controller
                 'serial_number' => $sn->serial_number,
                 'status'        => $sn->status,
                 'created_at'    => $sn->GetPrettyCreatedAttribute(),
+                // Date comparable pour le filtre par plage de dates de la liste (created_at est en toutes lettres).
+                'created_date'  => $sn->created_at?->format('Y-m-d'),
                 'trace_url'     => route('production.trace', ['serial' => $sn->serial_number]),
                 'product'       => $sn->Product ? [
                     'label' => $sn->Product->label,
