@@ -83,6 +83,11 @@ class Companies extends Model
                             'csv_file_name',
                         ];
 
+    // La fiche lit cette date via ->format() : sans cast, une chaîne → erreur 500.
+    protected $casts = [
+        'vat_attestation_valid_until' => 'date',
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
