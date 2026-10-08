@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { SortIcon, Pagination } from './table';
+import React, { useState, useEffect, useCallback } from 'react';
+import { DataTable, Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -17,7 +17,6 @@ const LS_COL_ORDER   = 'credit_notes_col_order';
 const LS_HIDDEN_COLS = 'credit_notes_hidden_cols';
 const LS_FILTERS     = 'credit_notes_filters';
 
-const DEFAULT_COL_ORDER = ['code', 'label', 'company', 'lines_count', 'total_price', 'statu', 'user', 'created_at'];
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -202,178 +201,62 @@ function KpiCards({ kpi, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Column definitions
+// Table — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
-function colDefs(trans, currency, locale) {
-    return {
-        code:        { label: trans.code        ?? 'Code',       sortField: 'code',          render: r => <code>{r.code}</code> },
-        label:       { label: trans.label       ?? 'Libellé',    sortField: 'label',          render: r => r.label },
-        company:     { label: trans.company     ?? 'Client',     sortField: 'companies_id',   render: r => r.companie
-            ? <a href={`/fr/companies/${r.companie.id}`} className="btn btn-outline-secondary btn-xs" style={{ fontSize: 11 }}>{r.companie.label}</a>
-            : '—' },
-        lines_count: { label: trans.lines       ?? 'Lignes',     sortField: 'lines_count',    render: r => <span className="badge badge-secondary">{r.lines_count}</span> },
-        total_price: { label: trans.total_price ?? 'Montant',    sortField: null,             render: r => formatCurrency(r.total_price ?? 0, currency, locale) },
-        statu:       { label: trans.status      ?? 'Statut',     sortField: 'statu',          render: r => {
-            const cfg = CREDIT_NOTE_STATUS[r.statu] ?? { badge: 'badge-secondary', label: '?' };
-            return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
-        }},
-        user:        { label: trans.user        ?? 'Utilisateur', sortField: null,            render: r => r.user?.name ?? '—' },
-        created_at:  { label: trans.created_at  ?? 'Créé le',    sortField: 'created_at',     render: r => r.created_at },
-    };
+function creditNoteColumns(trans, currency, locale) {
+    return [
+        { key: 'code',        label: trans.code        ?? 'Code',        sortable: true,
+          render: r => <code>{r.code}</code>, filter: 'text', mobile: 'title', mobileRender: r => r.code },
+        { key: 'label',       label: trans.label       ?? 'Libellé',     sortable: true,
+          filter: 'text', mobile: 'subtitle' },
+        { key: 'company',     label: trans.company     ?? 'Client',      sortable: 'companies_id',
+          render: r => (r.companie
+              ? <a href={`/fr/companies/${r.companie.id}`} className="btn btn-outline-secondary btn-xs" style={{ fontSize: 11 }}>{r.companie.label}</a>
+              : '—'),
+          filterValue: r => r.companie?.label, filter: 'text', mobile: 'subtitle', mobileOrder: 1, mobileRender: r => r.companie?.label },
+        { key: 'lines_count', label: trans.lines       ?? 'Lignes',      sortable: true,
+          render: r => <span className="badge badge-secondary">{r.lines_count}</span> },
+        { key: 'total_price', label: trans.total_price ?? 'Montant',     align: 'right',
+          render: r => formatCurrency(r.total_price ?? 0, currency, locale),
+          total: { value: r => Number(r.total_price) || 0, format: sum => formatCurrency(sum, currency, locale) },
+          mobile: 'amount' },
+        { key: 'statu',       label: trans.status      ?? 'Statut',      sortable: true,
+          render: r => {
+              const cfg = CREDIT_NOTE_STATUS[r.statu] ?? { badge: 'badge-secondary', label: '?' };
+              return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
+          },
+          mobile: 'badge' },
+        { key: 'user',        label: trans.user        ?? 'Utilisateur',
+          render: r => r.user?.name ?? '—', filterValue: r => r.user?.name, filter: 'text' },
+        { key: 'created_at',  label: trans.created_at  ?? 'Créé le',     sortable: true,
+          filter: 'date', mobile: 'subtitle' },
+    ];
 }
-
-function readSavedColOrder() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
-    } catch {}
-    return DEFAULT_COL_ORDER;
-}
-
-function readSavedHiddenCols() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
-        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
-    } catch {}
-    return new Set();
-}
-
-// ---------------------------------------------------------------------------
-// Table
-// ---------------------------------------------------------------------------
 
 function CreditNotesTable({ rows, loading, sort, onSort, trans, currency, locale }) {
-    const [colOrder,   setColOrder]   = useState(readSavedColOrder);
-    const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
-    const [dragOver,   setDragOver]   = useState(null);
-    const dragCol = useRef(null);
-
-    const COLS        = colDefs(trans, currency, locale);
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c));
-
-    const hideCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.add(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const showCol = (colId) => {
-        const next = new Set(hiddenCols);
-        next.delete(colId);
-        setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
-    };
-
-    const onDragStart = (colId) => { dragCol.current = colId; };
-    const onDragOver  = (e, colId) => { e.preventDefault(); setDragOver(colId); };
-    const onDragLeave = () => setDragOver(null);
-    const onDrop      = (targetId) => {
-        const src = dragCol.current;
-        if (!src || src === targetId) { setDragOver(null); return; }
-        const next = [...colOrder];
-        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
-        setColOrder(next);
-        localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
-        setDragOver(null);
-        dragCol.current = null;
-    };
-
     return (
-        <div>
-            {hiddenCols.size > 0 && (
-                <div className="mb-2 d-flex flex-wrap px-3 pt-2" style={{ gap: '4px' }}>
-                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
-                        <button
-                            key={colId}
-                            type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
-                            onClick={() => showCol(colId)}
-                            title="Réafficher la colonne"
-                        >
-                            + {COLS[colId]?.label}
-                        </button>
-                    ))}
-                </div>
+        <DataTable
+            rows={rows}
+            columns={creditNoteColumns(trans, currency, locale)}
+            loading={loading}
+            trans={trans}
+            sortField={sort.field}
+            sortAsc={sort.asc}
+            onSort={onSort}
+            storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
+            unsortableIcon={false}
+            chipsClassName="mb-2 d-flex flex-wrap px-3 pt-2"
+            loadingContent={<><i className="fas fa-spinner fa-spin" /> {trans.loading ?? 'Chargement…'}</>}
+            emptyText={trans.no_results ?? 'Aucun résultat'}
+            totalLabel={trans.total ?? 'Total'}
+            rowHref={r => r.url}
+            rowActions={r => (
+                <a href={r.url} className="btn btn-xs btn-info" title={trans.view ?? 'Voir'}>
+                    <i className="fas fa-eye" />
+                </a>
             )}
-
-            <div className="table-responsive">
-                <table className="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            {visibleCols.map(colId => {
-                                const col      = COLS[colId];
-                                const dropping = dragOver === colId;
-                                return (
-                                    <th
-                                        key={colId}
-                                        draggable
-                                        style={{
-                                            cursor:     'pointer',
-                                            whiteSpace: 'nowrap',
-                                            userSelect: 'none',
-                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
-                                            background: dropping ? '#e8f0fe' : undefined,
-                                        }}
-                                        onDragStart={() => onDragStart(colId)}
-                                        onDragOver={e => onDragOver(e, colId)}
-                                        onDragLeave={onDragLeave}
-                                        onDrop={() => onDrop(colId)}
-                                        onClick={() => col.sortField && onSort(col.sortField)}
-                                    >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
-                                        {col.label}
-                                        {col.sortField && (
-                                            <SortIcon field={col.sortField} sortField={sort.field} sortAsc={sort.asc} />
-                                        )}
-                                        <span
-                                            role="button"
-                                            aria-label="Masquer la colonne"
-                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
-                                            className="text-danger"
-                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
-                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
-                                        >
-                                            ×
-                                        </span>
-                                    </th>
-                                );
-                            })}
-                            <th style={{ width: 36 }} />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr>
-                                <td colSpan={visibleCols.length + 1} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin" /> {trans.loading ?? 'Chargement…'}
-                                </td>
-                            </tr>
-                        ) : rows.length === 0 ? (
-                            <tr>
-                                <td colSpan={visibleCols.length + 1} className="text-center py-4 text-muted">
-                                    {trans.no_results ?? 'Aucun résultat'}
-                                </td>
-                            </tr>
-                        ) : rows.map(row => (
-                            <tr key={row.id}>
-                                {visibleCols.map(colId => (
-                                    <td key={colId}>{COLS[colId]?.render(row)}</td>
-                                ))}
-                                <td>
-                                    <a href={row.url} className="btn btn-xs btn-info" title={trans.view ?? 'Voir'}>
-                                        <i className="fas fa-eye" />
-                                    </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        />
     );
 }
 
