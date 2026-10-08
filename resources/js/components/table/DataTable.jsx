@@ -91,7 +91,7 @@ function MobileSort({ columns, sortField, sortAsc, onSort, trans }) {
                 value={sortField ?? ''}
                 onChange={e => onSort(e.target.value)}
             >
-                {!sortable.some(c => sortFieldOf(c) === sortField) && <option value={sortField ?? ''}>—</option>}
+                {!sortable.some(c => sortFieldOf(c) === sortField) && <option value={sortField ?? ''}>{trans.sort_default ?? 'Par défaut'}</option>}
                 {sortable.map(c => <option key={c.key} value={sortFieldOf(c)}>{c.label}</option>)}
             </select>
             <button

@@ -306,6 +306,8 @@ class QualityNonConformityController extends Controller
             'qty'                => $nc->qty,
             'resolution_date'    => $nc->resolution_date,
             'created_pretty'     => $nc->GetPrettyCreatedAttribute(),
+            // Date comparable pour le filtre par plage de dates de la liste (created_pretty est en toutes lettres).
+            'created_at'         => $nc->created_at?->format('Y-m-d'),
         ];
     }
 }
