@@ -10,12 +10,12 @@ function csrfToken() {
 
 async function apiFetch(url, options = {}) {
     const res = await fetch(url, {
+        ...options,
         headers: {
             Accept: 'application/json',
             'X-CSRF-TOKEN': csrfToken(),
             ...options.headers,
         },
-        ...options,
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {

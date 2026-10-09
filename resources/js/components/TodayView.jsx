@@ -103,9 +103,9 @@ function formatDate(dateStr) {
 
 async function apiFetch(url, opts = {}) {
     const res = await fetch(url, {
-        headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken(), ...opts.headers },
         credentials: 'same-origin',
         ...opts,
+        headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken(), ...opts.headers },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
