@@ -1,34 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-
-// ---------------------------------------------------------------------------
-// Utilities
-// ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw { status: res.status, data };
-    }
-    return res.json();
-}
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (sortField !== field) return <i className="fas fa-sort ml-1 text-muted" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-}
+import { apiFetchWithStatus as apiFetch } from '../lib/http';
+import { SortIcon } from './table';
 
 // ---------------------------------------------------------------------------
 // Main component

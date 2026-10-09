@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, Pagination, MobileFilters } from './table';
+import { formatCurrencyRounded as formatCurrency } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -24,19 +25,6 @@ const LS_FILTERS     = 'credit_notes_filters';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style:                'currency',
-            currency:             currency || 'EUR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    } catch {
-        return `${Number(amount).toFixed(0)} ${currency ?? '€'}`;
-    }
 }
 
 async function apiFetch(url) {

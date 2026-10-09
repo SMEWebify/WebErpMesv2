@@ -39,6 +39,7 @@ export function paginationItems(current, last, around = null, boundaries = false
  * - `jumpButtons` : « ‹ … › » (première / précédente / suivante / dernière) au lieu de « … »
  * - `prevNext={false}` : numéros seuls, sans flèches
  * - `showTotal` : « N résultat(s) » à gauche de la pagination
+ * - `ellipsis={false}` : pas de « … » aux bouts tronqués de la fenêtre
  */
 export default function Pagination({
     meta,
@@ -48,6 +49,7 @@ export default function Pagination({
     jumpButtons = false,
     prevNext = true,
     showTotal = false,
+    ellipsis = true,
     navClassName,
     ulClassName = 'pagination pagination-sm',
 }) {
@@ -55,7 +57,7 @@ export default function Pagination({
 
     const cur   = meta.current_page;
     const last  = meta.last_page;
-    const items = paginationItems(cur, last, around, boundaries);
+    const items = paginationItems(cur, last, around, boundaries).filter(p => ellipsis || p !== null);
 
     const edge = (disabled, label, page) => (
         <li className={`page-item ${disabled ? 'disabled' : ''}`}>

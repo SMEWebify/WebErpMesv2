@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Pagination } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -79,35 +80,6 @@ async function apiFetch(url, options = {}) {
 function StatusBadge({ status }) {
     const cfg = STATUS_CONFIG[status] ?? { badge: 'badge-secondary', label: status };
     return <span className={`badge ${cfg.badge}`}>{cfg.label}</span>;
-}
-
-// ---------------------------------------------------------------------------
-// Pagination (aligné sur les autres index)
-// ---------------------------------------------------------------------------
-
-function Pagination({ meta, onPage }) {
-    if (!meta || meta.last_page <= 1) return null;
-    const { current_page, last_page } = meta;
-    const pages = [];
-    for (let p = Math.max(1, current_page - 2); p <= Math.min(last_page, current_page + 2); p++) pages.push(p);
-
-    return (
-        <nav>
-            <ul className="pagination pagination-sm justify-content-center mb-0">
-                <li className={`page-item ${current_page === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page - 1)}>&laquo;</button>
-                </li>
-                {pages.map(p => (
-                    <li key={p} className={`page-item ${p === current_page ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPage(p)}>{p}</button>
-                    </li>
-                ))}
-                <li className={`page-item ${current_page === last_page ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPage(current_page + 1)}>&raquo;</button>
-                </li>
-            </ul>
-        </nav>
-    );
 }
 
 // ---------------------------------------------------------------------------
@@ -426,7 +398,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                 {meta && (
                     <div className="card-footer d-flex align-items-center justify-content-between">
                         <small className="text-muted">{meta.total} résultats</small>
-                        <Pagination meta={meta} onPage={handlePage} />
+                        <Pagination meta={meta} onPage={handlePage} around={2} ellipsis={false} ulClassName="pagination pagination-sm justify-content-center mb-0" />
                     </div>
                 )}
             </div>

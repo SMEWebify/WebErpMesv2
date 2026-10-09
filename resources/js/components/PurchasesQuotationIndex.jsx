@@ -1,30 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, StatusFilter, MobileFilters } from './table';
+import { apiFetchWithStatus as apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw { status: res.status, data };
-    }
-    return res.json();
-}
 
 const STATUS_LABELS = {
     1: { label: 'En cours',              badge: 'badge-info' },

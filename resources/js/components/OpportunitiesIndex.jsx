@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { apiFetchOrThrow as apiFetch } from '../lib/http';
+import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -18,57 +20,6 @@ const LS_COL_ORDER   = 'opportunities_table_col_order';
 const LS_HIDDEN_COLS = 'opportunities_table_hidden_cols';
 const LS_FILTERS     = 'opportunities_list_filters';
 
-
-// ---------------------------------------------------------------------------
-// Utilities
-// ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatDate(dateStr, locale) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
-    } catch {
-        return dateStr;
-    }
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style:                'currency',
-            currency:             currency || 'EUR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    } catch {
-        return `${Number(amount).toFixed(0)} ${currency ?? '€'}`;
-    }
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        const err  = new Error(body.message || `HTTP ${res.status}`);
-        err.errors = body.errors ?? {};
-        err.status = res.status;
-        throw err;
-    }
-    return res.json();
-}
 
 // ---------------------------------------------------------------------------
 // DonutChart — pure SVG

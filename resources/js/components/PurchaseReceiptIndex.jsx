@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { apiFetch } from '../lib/http';
+import { formatDate } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -19,37 +21,6 @@ const LS_HIDDEN_COLS = 'purchase_receipts_table_hidden_cols';
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatDate(dateStr, locale) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
-    } catch {
-        return dateStr;
-    }
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw err;
-    }
-    return res.json();
-}
 
 function loadFilters() {
     try {

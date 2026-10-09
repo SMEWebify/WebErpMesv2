@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-function apiFetch(url, options = {}) {
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-    return fetch(url, {
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
-        ...options,
-    });
-}
+import { apiRequest as apiFetch } from '../lib/http';
 
 function NotificationItem({ n, onRead, showReadAction }) {
     return (

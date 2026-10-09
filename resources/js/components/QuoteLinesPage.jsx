@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { formatQty } from '../utils';
+import { formatQty, formatDate } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout, moveLine } from '../lib/salesLineLayout';
+import { apiRequest as apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -30,34 +31,6 @@ const EMPTY_FORM = {
     delivery_date: '',
     statu: 1,
 };
-
-// ---------------------------------------------------------------------------
-// Utilities
-// ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function apiFetch(url, options = {}) {
-    return fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...(options.headers ?? {}),
-        },
-        ...options,
-    });
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat('fr-FR').format(new Date(y, m - 1, d));
-    } catch { return dateStr; }
-}
 
 // ---------------------------------------------------------------------------
 // PriceGrid

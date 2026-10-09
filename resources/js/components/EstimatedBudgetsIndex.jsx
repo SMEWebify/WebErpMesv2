@@ -1,30 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, Pagination } from './table';
+import { apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw err;
-    }
-    return res.json();
-}
 
 function buildUrl(template, id) {
     return template.replace('__ID__', id);

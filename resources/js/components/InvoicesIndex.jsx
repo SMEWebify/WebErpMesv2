@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { apiFetch } from '../lib/http';
+import { formatDate, formatCurrency } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -22,50 +24,6 @@ const STATUS_COLORS = {
 };
 
 const ALL_STATUSES = [1, 2, 3, 4, 5];
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatDate(dateStr, locale) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
-    } catch {
-        return dateStr;
-    }
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style:    'currency',
-            currency: currency || 'EUR',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(amount);
-    } catch {
-        return `${Number(amount).toFixed(2)} ${currency ?? '€'}`;
-    }
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw err;
-    }
-    return res.json();
-}
 
 // ---------------------------------------------------------------------------
 // KPI Cards — 3 small-box AdminLTE avec mini top-clients dessous

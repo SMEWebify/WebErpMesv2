@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { formatQty } from '../utils';
+import { formatQty, formatDate, formatCurrency } from '../utils';
 import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 
 // ---------------------------------------------------------------------------
@@ -26,23 +26,6 @@ const LS_FILTERS     = 'quote_lines_list_filters';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatDate(dateStr, locale) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
-    } catch { return dateStr; }
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style: 'currency', currency: currency || 'EUR',
-            minimumFractionDigits: 2, maximumFractionDigits: 2,
-        }).format(amount);
-    } catch { return `${Number(amount).toFixed(2)} ${currency ?? '€'}`; }
 }
 
 function lsGet(key, fallback) {

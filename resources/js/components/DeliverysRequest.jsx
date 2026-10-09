@@ -1,29 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetchWithStatus as apiFetch } from '../lib/http';
+import { SortIcon } from './table';
 
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':           'application/json',
-            'X-CSRF-TOKEN':     csrfToken(),
-            'Content-Type':     'application/json',
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw { status: res.status, data };
-    }
-    return res.json();
-}
 
 const TASKS_STATUS = {
     1: { badge: 'badge-info',    key: 'no_task' },
@@ -31,15 +12,6 @@ const TASKS_STATUS = {
     3: { badge: 'badge-success', key: 'in_progress' },
     4: { badge: 'badge-danger',  key: 'finished' },
 };
-
-// ---------------------------------------------------------------------------
-// SortIcon
-// ---------------------------------------------------------------------------
-
-function SortIcon({ field, sortField, sortAsc }) {
-    if (sortField !== field) return <i className="fas fa-sort ml-1 text-muted" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
-}
 
 // ---------------------------------------------------------------------------
 // Main component

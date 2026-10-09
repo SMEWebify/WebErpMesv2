@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { apiFetchOrThrow as apiFetch } from '../lib/http';
+import { formatDate, formatCurrency } from '../utils';
+import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -23,51 +26,6 @@ const LS_FILTERS     = 'purchases_list_filters';
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function formatDate(dateStr, locale) {
-    if (!dateStr) return '—';
-    try {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
-    } catch {
-        return dateStr;
-    }
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style: 'currency', currency: currency || 'EUR',
-            minimumFractionDigits: 2, maximumFractionDigits: 2,
-        }).format(amount);
-    } catch {
-        return `${Number(amount).toFixed(2)} ${currency ?? '€'}`;
-    }
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        const err  = new Error(body.message || `HTTP ${res.status}`);
-        err.errors = body.errors ?? {};
-        err.status = res.status;
-        throw err;
-    }
-    return res.json();
-}
 
 function shortAmount(v) {
     if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
@@ -611,130 +569,6 @@ function PurchasesTable({ purchases, loading, trans, onSort, sortField, sortAsc,
 }
 
 // ---------------------------------------------------------------------------
-// CreateAddressSubModal
-// ---------------------------------------------------------------------------
-
-function CreateAddressSubModal({ companyId, endpoints, trans, onCreated, onClose }) {
-    const [form, setForm]     = useState({ ordre: '1', label: '', adress: '', zipcode: '', city: '', country: '', number: '', mail: '' });
-    const [errors, setErrors] = useState({});
-    const [saving, setSaving] = useState(false);
-
-    const set  = (k, v) => setForm(f => ({ ...f, [k]: v }));
-    const save = async () => {
-        setSaving(true); setErrors({});
-        try {
-            const data = await apiFetch(endpoints.storeAddress, { method: 'POST', body: JSON.stringify({ ...form, companies_id: companyId }) });
-            onCreated(data);
-        } catch (e) { setErrors(e.errors ?? {}); }
-        finally { setSaving(false); }
-    };
-
-    const fields = [
-        { k: 'ordre',   label: trans.ordre      ?? 'Ordre',       type: 'number' },
-        { k: 'label',   label: trans.adress_label ?? 'Label'                      },
-        { k: 'adress',  label: trans.adress      ?? 'Adresse'                     },
-        { k: 'zipcode', label: trans.postal_code ?? 'Code postal'                 },
-        { k: 'city',    label: trans.city        ?? 'Ville'                       },
-        { k: 'country', label: trans.country     ?? 'Pays'                        },
-        { k: 'number',  label: trans.phone       ?? 'Téléphone'                   },
-        { k: 'mail',    label: trans.email       ?? 'Email',       type: 'email'  },
-    ];
-
-    return (
-        <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1060 }}>
-            <div className="modal-dialog modal-lg">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">{trans.new_address ?? 'Nouvelle adresse'}</h5>
-                        <button className="close" onClick={onClose}><span>×</span></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row">
-                            {fields.map(({ k, label, type }) => (
-                                <div className="col-md-6 mb-2" key={k}>
-                                    <label className="mb-0 small">{label}</label>
-                                    <input className={`form-control form-control-sm ${errors[k] ? 'is-invalid' : ''}`}
-                                        type={type ?? 'text'} value={form[k]} onChange={e => set(k, e.target.value)} />
-                                    {errors[k] && <div className="invalid-feedback">{errors[k][0]}</div>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button className="btn btn-secondary btn-sm" onClick={onClose}>{trans.cancel ?? 'Annuler'}</button>
-                        <button className="btn btn-primary btn-sm" onClick={save} disabled={saving}>
-                            {saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// CreateContactSubModal
-// ---------------------------------------------------------------------------
-
-function CreateContactSubModal({ companyId, endpoints, trans, onCreated, onClose }) {
-    const [form, setForm]     = useState({ ordre: '1', civility: '', first_name: '', name: '', function: '', number: '', mobile: '', mail: '' });
-    const [errors, setErrors] = useState({});
-    const [saving, setSaving] = useState(false);
-
-    const set  = (k, v) => setForm(f => ({ ...f, [k]: v }));
-    const save = async () => {
-        setSaving(true); setErrors({});
-        try {
-            const data = await apiFetch(endpoints.storeContact, { method: 'POST', body: JSON.stringify({ ...form, companies_id: companyId }) });
-            onCreated(data);
-        } catch (e) { setErrors(e.errors ?? {}); }
-        finally { setSaving(false); }
-    };
-
-    const fields = [
-        { k: 'ordre',      label: trans.ordre      ?? 'Ordre',      type: 'number' },
-        { k: 'civility',   label: trans.civility   ?? 'Civilité'                   },
-        { k: 'first_name', label: trans.first_name ?? 'Prénom'                     },
-        { k: 'name',       label: trans.name       ?? 'Nom'                        },
-        { k: 'function',   label: trans.function   ?? 'Fonction'                   },
-        { k: 'number',     label: trans.phone      ?? 'Téléphone'                  },
-        { k: 'mobile',     label: trans.mobile     ?? 'Mobile'                     },
-        { k: 'mail',       label: trans.email      ?? 'Email',      type: 'email'  },
-    ];
-
-    return (
-        <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1060 }}>
-            <div className="modal-dialog modal-lg">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">{trans.new_contact ?? 'Nouveau contact'}</h5>
-                        <button className="close" onClick={onClose}><span>×</span></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row">
-                            {fields.map(({ k, label, type }) => (
-                                <div className="col-md-6 mb-2" key={k}>
-                                    <label className="mb-0 small">{label}</label>
-                                    <input className={`form-control form-control-sm ${errors[k] ? 'is-invalid' : ''}`}
-                                        type={type ?? 'text'} value={form[k]} onChange={e => set(k, e.target.value)} />
-                                    {errors[k] && <div className="invalid-feedback">{errors[k][0]}</div>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button className="btn btn-secondary btn-sm" onClick={onClose}>{trans.cancel ?? 'Annuler'}</button>
-                        <button className="btn btn-primary btn-sm" onClick={save} disabled={saving}>
-                            {saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
 // CreateModal
 // ---------------------------------------------------------------------------
 
@@ -891,8 +725,9 @@ function CreateModal({ endpoints, trans, onClose }) {
 
             {showAddressModal && (
                 <CreateAddressSubModal
-                    companyId={form.companies_id}
-                    endpoints={endpoints}
+                    show
+                    companiesId={form.companies_id}
+                    storeUrl={endpoints.storeAddress}
                     trans={trans}
                     onCreated={addr => {
                         setAddressOptions(a => [...a, addr]);
@@ -904,8 +739,9 @@ function CreateModal({ endpoints, trans, onClose }) {
             )}
             {showContactModal && (
                 <CreateContactSubModal
-                    companyId={form.companies_id}
-                    endpoints={endpoints}
+                    show
+                    companiesId={form.companies_id}
+                    storeUrl={endpoints.storeContact}
                     trans={trans}
                     onCreated={contact => {
                         setContactOptions(c => [...c, contact]);

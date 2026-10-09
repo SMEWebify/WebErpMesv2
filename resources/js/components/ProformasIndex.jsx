@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { SortIcon } from './table';
 
 const STATUSES = [
     { value: 1, label: 'Brouillon',  badge: 'secondary' },
@@ -47,11 +48,6 @@ export default function ProformasIndex({ endpoints }) {
         else { setSort(field); setAsc(true); }
     }
 
-    function SortIcon({ field }) {
-        if (sort !== field) return <i className="fas fa-sort ml-1 text-muted" />;
-        return <i className={`fas fa-sort-${asc ? 'up' : 'down'} ml-1`} />;
-    }
-
     return (
         <div>
             {/* Header */}
@@ -88,11 +84,11 @@ export default function ProformasIndex({ endpoints }) {
                 <table className="table table-hover table-sm">
                     <thead>
                         <tr>
-                            <th style={{cursor:'pointer'}} onClick={() => handleSort('code')}>Code <SortIcon field="code" /></th>
-                            <th style={{cursor:'pointer'}} onClick={() => handleSort('label')}>Libellé <SortIcon field="label" /></th>
-                            <th style={{cursor:'pointer'}} onClick={() => handleSort('companie')}>Client <SortIcon field="companie" /></th>
+                            <th style={{cursor:'pointer'}} onClick={() => handleSort('code')}>Code <SortIcon field="code" sortField={sort} sortAsc={asc} /></th>
+                            <th style={{cursor:'pointer'}} onClick={() => handleSort('label')}>Libellé <SortIcon field="label" sortField={sort} sortAsc={asc} /></th>
+                            <th style={{cursor:'pointer'}} onClick={() => handleSort('companie')}>Client <SortIcon field="companie" sortField={sort} sortAsc={asc} /></th>
                             <th>Contact</th>
-                            <th style={{cursor:'pointer'}} onClick={() => handleSort('created_at')}>Date <SortIcon field="created_at" /></th>
+                            <th style={{cursor:'pointer'}} onClick={() => handleSort('created_at')}>Date <SortIcon field="created_at" sortField={sort} sortAsc={asc} /></th>
                             <th>Lignes</th>
                             <th>Montant HT</th>
                             <th>Statut</th>

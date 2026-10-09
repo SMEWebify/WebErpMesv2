@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
+import { apiRequest as apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -35,22 +36,6 @@ const EMPTY_FORM = {
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-function apiFetch(url, options = {}) {
-    return fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...(options.headers ?? {}),
-        },
-        ...options,
-    });
-}
 
 function formatDate(dateStr) {
     if (!dateStr) return null;

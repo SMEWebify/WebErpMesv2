@@ -1,30 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable, Pagination, useIndexTab } from './table';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw err;
-    }
-    return res.json();
-}
+import { apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // KPI Cards

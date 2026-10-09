@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -17,27 +18,6 @@ const ALL_STATUSES = [1, 2, 3, 4, 5];
 
 const LS_COL_ORDER   = 'serial_numbers_table_col_order';
 const LS_HIDDEN_COLS = 'serial_numbers_table_hidden_cols';
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
-
-async function apiFetch(url, options = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'Accept':       'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            ...options.headers,
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: res.statusText }));
-        throw err;
-    }
-    return res.json();
-}
 
 // ---------------------------------------------------------------------------
 // KPI Cards

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import { formatCurrency } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -38,17 +39,6 @@ function formatDate(dateStr, locale) {
         return new Intl.DateTimeFormat(locale || 'fr-FR').format(new Date(y, m - 1, d));
     } catch {
         return dateStr;
-    }
-}
-
-function formatCurrency(amount, currency, locale) {
-    try {
-        return new Intl.NumberFormat(locale || 'fr-FR', {
-            style: 'currency', currency: currency || 'EUR',
-            minimumFractionDigits: 2, maximumFractionDigits: 2,
-        }).format(amount);
-    } catch {
-        return `${Number(amount).toFixed(2)} ${currency ?? '€'}`;
     }
 }
 
