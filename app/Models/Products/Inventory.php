@@ -115,6 +115,6 @@ class Inventory extends Model
 
     public function getPrettyCreatedAttribute(): string
     {
-        return $this->created_at?->format('d F Y') ?? '';
+        return $this->created_at?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '';
     }
 }

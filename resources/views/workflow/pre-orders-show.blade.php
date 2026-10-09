@@ -170,7 +170,7 @@
 
                         <x-adminlte-input name="validity_date" type="date" label="Date de livraison" value="{{ old('validity_date') }}" />
 
-                        <x-adminlte-select name="accounting_payment_conditions_id" label="Condition de paiement">
+                        <x-adminlte-select name="accounting_payment_conditions_id" label="Conditions de paiement">
                             <option value="">--</option>
                             @foreach($paymentConditions as $item)
                                 <option value="{{ $item->id }}" @selected(old('accounting_payment_conditions_id', optional($defaultPaymentCondition)->id) == $item->id)>{{ $item->code }} - {{ $item->label }}</option>

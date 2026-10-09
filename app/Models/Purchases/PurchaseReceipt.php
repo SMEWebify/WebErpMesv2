@@ -73,7 +73,7 @@ class PurchaseReceipt extends Model
 
     public function GetshortCreatedAttribute()
     {
-        return date('d F Y', strtotime($this->created_at));
+        return \Illuminate\Support\Carbon::parse($this->created_at)->locale(app()->getLocale())->translatedFormat('d F Y');
     }
 
     /**
@@ -91,7 +91,7 @@ class PurchaseReceipt extends Model
 
     public function GetPrettyControlDateAttribute()
     {
-        return date('d F Y', strtotime($this->reception_control_date));
+        return \Illuminate\Support\Carbon::parse($this->reception_control_date)->locale(app()->getLocale())->translatedFormat('d F Y');
     }
 
     public function getActivitylogOptions(): LogOptions

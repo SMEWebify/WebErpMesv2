@@ -81,7 +81,7 @@ return [
     'methods_standard_bom_trans_key'           => 'Nomenclature standard',
     'operation_transition_delays_trans_key'    => 'Délais inter-opérations',
     'accounting_trans_key'                     => 'Comptabilité',
-    'payment_conditions_trans_key'             => 'Condition de paiement',
+    'payment_conditions_trans_key'             => 'Conditions de paiement',
     'payment_methods_trans_key'                => 'Méthode de paiement',
     'vat_trans_key'                            => 'TVA',
     'accounting_allocations_trans_key'         => 'Allocation comptable',

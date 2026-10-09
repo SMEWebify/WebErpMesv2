@@ -258,7 +258,7 @@ function StepPaymentCondition({ data, onChange }) {
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">Condition de paiement par défaut.</p>
+            <p className="text-muted mb-3">Conditions de paiement par défaut.</p>
             <div className="row">
                 <div className="col-md-3">
                     <Field label="Code" required>

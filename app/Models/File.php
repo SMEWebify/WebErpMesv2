@@ -246,7 +246,7 @@ class File extends Model
      */
     public function GetPrettyCreatedAttribute()
     {
-        return date('d F Y', strtotime($this->created_at));
+        return \Illuminate\Support\Carbon::parse($this->created_at)->locale(app()->getLocale())->translatedFormat('d F Y');
     }
 
 }
