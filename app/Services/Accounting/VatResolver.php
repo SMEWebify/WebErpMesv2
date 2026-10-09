@@ -34,8 +34,7 @@ class VatResolver
 
         if (! $rule) {
             throw new VatRuleNotFoundException(
-                "Aucune règle de TVA (vente) pour le couple régime #{$regimeId} × nature #{$natureId}. "
-                . 'Complétez la matrice dans Comptabilité → Matrice TVA.'
+                __('vat.rule_not_found_sale', ['regime' => $regimeId, 'nature' => $natureId])
             );
         }
 
@@ -55,8 +54,7 @@ class VatResolver
 
         if (! $rule) {
             throw new VatRuleNotFoundException(
-                "Aucune règle de TVA (achat) pour le couple régime #{$regimeId} × nature #{$natureId}. "
-                . 'Complétez la matrice dans Comptabilité → Matrice TVA.'
+                __('vat.rule_not_found_purchase', ['regime' => $regimeId, 'nature' => $natureId])
             );
         }
 

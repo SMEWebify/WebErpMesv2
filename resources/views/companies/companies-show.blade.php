@@ -220,6 +220,11 @@
     'update'                 => __('general_content.update_trans_key'),
     'saving'                 => __('general_content.saving_trans_key'),
     'save_success'           => __('general_content.success_update_trans_key'),
+    'vat_regime_card'        => __('vat.company_card'),
+    'vat_regime'             => __('vat.regime'),
+    'vat_regime_default'     => __('vat.default_option'),
+    'vat_attestation_ref'    => __('vat.attestation_ref'),
+    'vat_attestation_valid_until' => __('vat.attestation_valid_until'),
   ];
 
   $reactInvoicesEndpoints = [

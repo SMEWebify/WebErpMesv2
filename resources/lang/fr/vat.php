@@ -1,0 +1,98 @@
+<?php
+
+return [
+    // Onglets de la comptabilité
+    'tab_references'      => 'Régimes / Natures',
+    'tab_matrix_sales'    => 'Matrice TVA ventes',
+    'tab_matrix_purchase' => 'Matrice TVA achats',
+
+    // Champs communs
+    'code'             => 'Code',
+    'label'            => 'Libellé',
+    'regime'           => 'Régime',
+    'nature'           => 'Nature',
+    'regime_customer'  => 'Régime (client)',
+    'regime_supplier'  => 'Régime (fournisseur)',
+    'nature_product'   => 'Nature (article)',
+    'vat_code'         => 'Code TVA',
+    'save'             => 'Enregistrer',
+    'add'              => 'Ajouter',
+    'edit_title'       => 'Modifier :code',
+    'edit_rule'        => 'Modifier la règle',
+    'default_option'   => '— (code TVA par défaut)',
+
+    // Régimes et natures
+    'regimes_title'         => 'Régimes de TVA (fiche client)',
+    'natures_title'         => "Natures de TVA (fiche article / levier d'imputation)",
+    'no_regime'             => 'Aucun régime',
+    'no_nature'             => 'Aucune nature',
+    'regime_code_example'   => 'Code (ex. UE)',
+    'nature_code_example'   => 'Code (ex. outillage)',
+    'confirm_delete_regime' => 'Supprimer ce régime ?',
+    'confirm_delete_nature' => 'Supprimer cette nature ?',
+    'regime_created'        => 'Régime de TVA créé.',
+    'regime_updated'        => 'Régime de TVA mis à jour.',
+    'regime_deleted'        => 'Régime de TVA supprimé.',
+    'nature_created'        => 'Nature de TVA créée.',
+    'nature_updated'        => 'Nature de TVA mise à jour.',
+    'nature_deleted'        => 'Nature de TVA supprimée.',
+    'reference_in_use'      => 'Suppression impossible : cette valeur est encore utilisée par une règle de la matrice. Retirez d\'abord les règles concernées.',
+
+    // Matrices
+    'matrix_sales_title'    => 'Matrice TVA — ventes',
+    'matrix_purchase_title' => 'Matrice TVA — achats',
+    'new_sales_rule'        => 'Nouvelle règle (vente)',
+    'new_purchase_rule'     => 'Nouvelle règle (achat)',
+    'no_rule'               => 'Aucune règle — sans règle, la ligne retombe sur le code TVA par défaut.',
+    'confirm_delete_rule'   => 'Supprimer cette règle ?',
+    'sales_account'         => 'Compte de vente',
+    'sales_account_short'   => 'Compte vente',
+    'vat_collected_account' => 'Compte TVA collectée',
+    'vat_account_short'     => 'Compte TVA',
+    'vat_collected_hint'    => 'ex. 445710 (vide si exonéré)',
+    'purchase_account'      => "Compte d'achat",
+    'purchase_account_short'=> 'Compte achat',
+    'vat_deductible_account'=> 'Compte TVA déductible',
+    'vat_deductible_short'  => 'TVA déductible',
+    'vat_autoliq_account'   => 'Compte TVA due (autoliquidation)',
+    'vat_autoliq_hint'      => 'ex. 445200 (repère, écriture manuelle)',
+    'autoliq_short'         => 'Autoliq.',
+    'manual_vat'            => 'Autoliquidation — écriture TVA à la main',
+    'manual_badge'          => 'manuelle',
+    'pair_exists_sales'     => 'Une règle existe déjà pour ce couple régime × nature (ventes).',
+    'pair_exists_purchase'  => 'Une règle existe déjà pour ce couple régime × nature (achats).',
+    'sales_rule_created'    => 'Règle de vente créée.',
+    'sales_rule_updated'    => 'Règle de vente mise à jour.',
+    'sales_rule_deleted'    => 'Règle de vente supprimée.',
+    'purchase_rule_created' => "Règle d'achat créée.",
+    'purchase_rule_updated' => "Règle d'achat mise à jour.",
+    'purchase_rule_deleted' => "Règle d'achat supprimée.",
+    'rule_not_found_sale'     => 'Aucune règle de TVA (vente) pour le couple régime #:regime × nature #:nature. Complétez la matrice dans Comptabilité → Matrice TVA.',
+    'rule_not_found_purchase' => 'Aucune règle de TVA (achat) pour le couple régime #:regime × nature #:nature. Complétez la matrice dans Comptabilité → Matrice TVA.',
+
+    // Code TVA : champs EN 16931
+    'en16931_help'          => "Facturation électronique (EN 16931) — laisser vide reconduit l'ancien comportement (S si taux > 0, sinon Z).",
+    'en16931_category'      => 'Catégorie EN 16931',
+    'category_fallback'     => '— (repli S / Z)',
+    'categories' => [
+        'S'  => 'S — taux normal',
+        'Z'  => 'Z — taux zéro',
+        'E'  => 'E — exonéré',
+        'AE' => 'AE — autoliquidation',
+        'K'  => 'K — livraison intracom.',
+        'G'  => 'G — export hors UE',
+    ],
+    'exemption_reason_code' => "Motif d'exonération — code (BT-121)",
+    'exemption_reason_text' => "Motif d'exonération — texte (BT-120)",
+    'exemption_text_example'=> 'ex. Exonération art. 262 ter I du CGI',
+    'legal_mention'         => 'Mention légale (facture)',
+    'legal_mention_hint'    => 'Mention imprimée sur la facture',
+
+    // Fiche article
+    'product_nature'        => 'Nature de TVA',
+
+    // Fiche société
+    'company_card'          => 'Régime de TVA',
+    'attestation_ref'       => 'Réf. attestation (franchise art. 275)',
+    'attestation_valid_until' => "Attestation valable jusqu'au",
+];

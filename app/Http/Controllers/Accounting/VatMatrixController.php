@@ -17,11 +17,11 @@ class VatMatrixController extends Controller
     {
         $data = $this->validateSales($request);
         if ($this->pairExists(AccountingVatSalesRule::class, $data)) {
-            return back()->with('error', 'Une règle existe déjà pour ce couple régime × nature (ventes).');
+            return back()->with('error', __('vat.pair_exists_sales'));
         }
         AccountingVatSalesRule::create($data);
 
-        return redirect()->route('accounting.vatMatrixSales')->with('success', 'Règle de vente créée.');
+        return redirect()->route('accounting.vatMatrixSales')->with('success', __('vat.sales_rule_created'));
     }
 
     public function salesUpdate(Request $request, int $id)
@@ -29,29 +29,29 @@ class VatMatrixController extends Controller
         $rule = AccountingVatSalesRule::findOrFail($id);
         $data = $this->validateSales($request);
         if ($this->pairExists(AccountingVatSalesRule::class, $data, $rule->id)) {
-            return back()->with('error', 'Une règle existe déjà pour ce couple régime × nature (ventes).');
+            return back()->with('error', __('vat.pair_exists_sales'));
         }
         $rule->update($data);
 
-        return redirect()->route('accounting.vatMatrixSales')->with('success', 'Règle de vente mise à jour.');
+        return redirect()->route('accounting.vatMatrixSales')->with('success', __('vat.sales_rule_updated'));
     }
 
     public function salesDestroy(int $id)
     {
         AccountingVatSalesRule::findOrFail($id)->delete();
 
-        return redirect()->route('accounting.vatMatrixSales')->with('success', 'Règle de vente supprimée.');
+        return redirect()->route('accounting.vatMatrixSales')->with('success', __('vat.sales_rule_deleted'));
     }
 
     public function purchaseStore(Request $request)
     {
         $data = $this->validatePurchase($request);
         if ($this->pairExists(AccountingVatPurchaseRule::class, $data)) {
-            return back()->with('error', 'Une règle existe déjà pour ce couple régime × nature (achats).');
+            return back()->with('error', __('vat.pair_exists_purchase'));
         }
         AccountingVatPurchaseRule::create($data);
 
-        return redirect()->route('accounting.vatMatrixPurchase')->with('success', 'Règle d\'achat créée.');
+        return redirect()->route('accounting.vatMatrixPurchase')->with('success', __('vat.purchase_rule_created'));
     }
 
     public function purchaseUpdate(Request $request, int $id)
@@ -59,18 +59,18 @@ class VatMatrixController extends Controller
         $rule = AccountingVatPurchaseRule::findOrFail($id);
         $data = $this->validatePurchase($request);
         if ($this->pairExists(AccountingVatPurchaseRule::class, $data, $rule->id)) {
-            return back()->with('error', 'Une règle existe déjà pour ce couple régime × nature (achats).');
+            return back()->with('error', __('vat.pair_exists_purchase'));
         }
         $rule->update($data);
 
-        return redirect()->route('accounting.vatMatrixPurchase')->with('success', 'Règle d\'achat mise à jour.');
+        return redirect()->route('accounting.vatMatrixPurchase')->with('success', __('vat.purchase_rule_updated'));
     }
 
     public function purchaseDestroy(int $id)
     {
         AccountingVatPurchaseRule::findOrFail($id)->delete();
 
-        return redirect()->route('accounting.vatMatrixPurchase')->with('success', 'Règle d\'achat supprimée.');
+        return redirect()->route('accounting.vatMatrixPurchase')->with('success', __('vat.purchase_rule_deleted'));
     }
 
     private function validateSales(Request $request): array

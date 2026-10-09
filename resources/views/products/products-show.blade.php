@@ -87,13 +87,13 @@
                     </div>
                     {{-- Nature de TVA (axe de la matrice + levier d'imputation : usinage / outillage…). --}}
                     <div class="form-group col-md-4">
-                        <label for="vat_nature_id">Nature de TVA</label>
+                        <label for="vat_nature_id">{{ __('vat.product_nature') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                             </div>
                             <select class="form-control" name="vat_nature_id" id="vat_nature_id">
-                                <option value="">— (code TVA par défaut)</option>
+                                <option value="">{{ __('vat.default_option') }}</option>
                                 @foreach (\App\Models\Accounting\VatNature::orderBy('code')->get() as $nature)
                                 <option value="{{ $nature->id }}" @if($Product->vat_nature_id == $nature->id) Selected @endif>{{ $nature->code }} — {{ $nature->label }}</option>
                                 @endforeach

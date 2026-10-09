@@ -1,13 +1,13 @@
 {{-- Matrice de TVA — ACHATS : (régime × nature) → code TVA + comptes. --}}
 <div class="row">
   <div class="col-md-8">
-    <x-adminlte-card title="Matrice TVA — achats" theme="primary" maximizable>
+    <x-adminlte-card title="{{ __('vat.matrix_purchase_title') }}" theme="primary" maximizable>
       <div class="table-responsive p-0">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Régime</th><th>Nature</th><th>Code TVA</th>
-              <th>Compte achat</th><th>TVA déductible</th><th>Autoliq.</th><th></th>
+              <th>{{ __('vat.regime') }}</th><th>{{ __('vat.nature') }}</th><th>{{ __('vat.vat_code') }}</th>
+              <th>{{ __('vat.purchase_account_short') }}</th><th>{{ __('vat.vat_deductible_short') }}</th><th>{{ __('vat.autoliq_short') }}</th><th></th>
             </tr>
           </thead>
           <tbody>
@@ -18,26 +18,26 @@
               <td>{{ $rule->VAT?->label }}</td>
               <td>{{ $rule->purchase_account }}</td>
               <td>{{ $rule->vat_account }}</td>
-              <td>@if($rule->manual_vat)<span class="badge badge-warning">manuelle</span>@endif</td>
+              <td>@if($rule->manual_vat)<span class="badge badge-warning">{{ __('vat.manual_badge') }}</span>@endif</td>
               <td class="py-0 align-middle text-right">
                 <x-ButtonTextEdit :modalTarget="'PurchaseRule' . $rule->id" />
-                <form method="POST" action="{{ route('accounting.vatMatrixPurchase.destroy', ['id' => $rule->id]) }}" class="d-inline" onsubmit="return confirm('Supprimer cette règle ?')">
+                <form method="POST" action="{{ route('accounting.vatMatrixPurchase.destroy', ['id' => $rule->id]) }}" class="d-inline" onsubmit="return confirm(@js(__('vat.confirm_delete_rule')))">
                   @csrf @method('DELETE')
                   <button type="submit" class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
                 </form>
                 <form method="POST" action="{{ route('accounting.vatMatrixPurchase.update', ['id' => $rule->id]) }}">
-                  <x-adminlte-modal id="PurchaseRule{{ $rule->id }}" title="Modifier la règle" theme="teal" icon="fa fa-pen" size="lg" disable-animations>
+                  <x-adminlte-modal id="PurchaseRule{{ $rule->id }}" title="{{ __('vat.edit_rule') }}" theme="teal" icon="fa fa-pen" size="lg" disable-animations>
                     @csrf
                     @include('accounting.partials.vat-matrix-purchase-fields', ['rule' => $rule])
                     <x-slot name="footerSlot">
-                      <x-adminlte-button class="btn-flat" type="submit" label="Enregistrer" theme="info" icon="fas fa-save"/>
+                      <x-adminlte-button class="btn-flat" type="submit" label="{{ __('vat.save') }}" theme="info" icon="fas fa-save"/>
                     </x-slot>
                   </x-adminlte-modal>
                 </form>
               </td>
             </tr>
             @empty
-              <x-EmptyDataLine col="7" text="Aucune règle — sans règle, la ligne retombe sur le code TVA par défaut." />
+              <x-EmptyDataLine col="7" text="{{ __('vat.no_rule') }}" />
             @endforelse
           </tbody>
         </table>
@@ -47,11 +47,11 @@
 
   <div class="col-md-4">
     <form method="POST" action="{{ route('accounting.vatMatrixPurchase.create') }}">
-      <x-adminlte-card title="Nouvelle règle (achat)" theme="secondary" maximizable>
+      <x-adminlte-card title="{{ __('vat.new_purchase_rule') }}" theme="secondary" maximizable>
         @csrf
         @include('accounting.partials.vat-matrix-purchase-fields', ['rule' => null])
         <x-slot name="footerSlot">
-          <x-adminlte-button class="btn-flat" type="submit" label="Ajouter" theme="danger" icon="fas fa-save"/>
+          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('vat.add') }}" theme="danger" icon="fas fa-save"/>
         </x-slot>
       </x-adminlte-card>
     </form>

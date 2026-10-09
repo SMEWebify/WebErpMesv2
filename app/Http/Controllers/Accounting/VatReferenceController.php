@@ -22,7 +22,7 @@ class VatReferenceController extends Controller
         ]);
         VatRegime::create($data);
 
-        return redirect()->route('accounting.vatReferences')->with('success', 'Régime de TVA créé.');
+        return redirect()->route('accounting.vatReferences')->with('success', __('vat.regime_created'));
     }
 
     public function regimeUpdate(Request $request, int $id)
@@ -34,12 +34,12 @@ class VatReferenceController extends Controller
         ]);
         $regime->update($data);
 
-        return redirect()->route('accounting.vatReferences')->with('success', 'Régime de TVA mis à jour.');
+        return redirect()->route('accounting.vatReferences')->with('success', __('vat.regime_updated'));
     }
 
     public function regimeDestroy(int $id)
     {
-        return $this->destroyGuarded(VatRegime::findOrFail($id), 'Régime de TVA supprimé.');
+        return $this->destroyGuarded(VatRegime::findOrFail($id), __('vat.regime_deleted'));
     }
 
     public function natureStore(Request $request)
@@ -50,7 +50,7 @@ class VatReferenceController extends Controller
         ]);
         VatNature::create($data);
 
-        return redirect()->route('accounting.vatReferences')->with('success', 'Nature de TVA créée.');
+        return redirect()->route('accounting.vatReferences')->with('success', __('vat.nature_created'));
     }
 
     public function natureUpdate(Request $request, int $id)
@@ -62,12 +62,12 @@ class VatReferenceController extends Controller
         ]);
         $nature->update($data);
 
-        return redirect()->route('accounting.vatReferences')->with('success', 'Nature de TVA mise à jour.');
+        return redirect()->route('accounting.vatReferences')->with('success', __('vat.nature_updated'));
     }
 
     public function natureDestroy(int $id)
     {
-        return $this->destroyGuarded(VatNature::findOrFail($id), 'Nature de TVA supprimée.');
+        return $this->destroyGuarded(VatNature::findOrFail($id), __('vat.nature_deleted'));
     }
 
     /**
@@ -80,7 +80,7 @@ class VatReferenceController extends Controller
             $model->delete();
         } catch (QueryException $e) {
             return redirect()->route('accounting.vatReferences')
-                ->with('error', "Suppression impossible : cette valeur est encore utilisée par une règle de la matrice. Retirez d'abord les règles concernées.");
+                ->with('error', __('vat.reference_in_use'));
         }
 
         return redirect()->route('accounting.vatReferences')->with('success', $okMessage);

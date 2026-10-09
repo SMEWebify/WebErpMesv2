@@ -401,16 +401,16 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
 
             {/* Régime de TVA du tiers : axe de la matrice (régime × nature).
                 FRANCHISE = achat en franchise sur attestation (art. 275 CGI). */}
-            <Card title="Régime de TVA" theme="info">
+            <Card title={trans.vat_regime_card} theme="info">
                 <div className="row">
                     <div className="col-md-4">
-                        <Field label="Régime" error={errors.vat_regime_id?.[0]}>
+                        <Field label={trans.vat_regime} error={errors.vat_regime_id?.[0]}>
                             <select
                                 className="form-control"
                                 value={form.vat_regime_id ?? ''}
                                 onChange={setVal('vat_regime_id')}
                             >
-                                <option value="">— (code TVA par défaut)</option>
+                                <option value="">{trans.vat_regime_default}</option>
                                 {vatRegimes.map(r => (
                                     <option key={r.id} value={r.id}>{r.code} — {r.label}</option>
                                 ))}
@@ -418,7 +418,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                         </Field>
                     </div>
                     <div className="col-md-4">
-                        <Field label="Réf. attestation (franchise art. 275)" error={errors.vat_attestation_ref?.[0]}>
+                        <Field label={trans.vat_attestation_ref} error={errors.vat_attestation_ref?.[0]}>
                             <input
                                 type="text"
                                 className="form-control"
@@ -428,7 +428,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                         </Field>
                     </div>
                     <div className="col-md-4">
-                        <Field label="Attestation valable jusqu'au" error={errors.vat_attestation_valid_until?.[0]}>
+                        <Field label={trans.vat_attestation_valid_until} error={errors.vat_attestation_valid_until?.[0]}>
                             <input
                                 type="date"
                                 className="form-control"

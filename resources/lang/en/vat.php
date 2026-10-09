@@ -1,0 +1,98 @@
+<?php
+
+return [
+    // Accounting tabs
+    'tab_references'      => 'Regimes / Natures',
+    'tab_matrix_sales'    => 'Sales VAT matrix',
+    'tab_matrix_purchase' => 'Purchase VAT matrix',
+
+    // Common fields
+    'code'             => 'Code',
+    'label'            => 'Label',
+    'regime'           => 'Regime',
+    'nature'           => 'Nature',
+    'regime_customer'  => 'Regime (customer)',
+    'regime_supplier'  => 'Regime (supplier)',
+    'nature_product'   => 'Nature (product)',
+    'vat_code'         => 'VAT code',
+    'save'             => 'Save',
+    'add'              => 'Add',
+    'edit_title'       => 'Edit :code',
+    'edit_rule'        => 'Edit rule',
+    'default_option'   => '— (default VAT code)',
+
+    // Regimes and natures
+    'regimes_title'         => 'VAT regimes (company record)',
+    'natures_title'         => 'VAT natures (product record / account allocation)',
+    'no_regime'             => 'No regime',
+    'no_nature'             => 'No nature',
+    'regime_code_example'   => 'Code (e.g. EU)',
+    'nature_code_example'   => 'Code (e.g. tooling)',
+    'confirm_delete_regime' => 'Delete this regime?',
+    'confirm_delete_nature' => 'Delete this nature?',
+    'regime_created'        => 'VAT regime created.',
+    'regime_updated'        => 'VAT regime updated.',
+    'regime_deleted'        => 'VAT regime deleted.',
+    'nature_created'        => 'VAT nature created.',
+    'nature_updated'        => 'VAT nature updated.',
+    'nature_deleted'        => 'VAT nature deleted.',
+    'reference_in_use'      => 'Cannot delete: this value is still used by a matrix rule. Remove those rules first.',
+
+    // Matrices
+    'matrix_sales_title'    => 'VAT matrix — sales',
+    'matrix_purchase_title' => 'VAT matrix — purchases',
+    'new_sales_rule'        => 'New rule (sales)',
+    'new_purchase_rule'     => 'New rule (purchases)',
+    'no_rule'               => 'No rule — without a rule, the line falls back to the default VAT code.',
+    'confirm_delete_rule'   => 'Delete this rule?',
+    'sales_account'         => 'Sales account',
+    'sales_account_short'   => 'Sales account',
+    'vat_collected_account' => 'Output VAT account',
+    'vat_account_short'     => 'VAT account',
+    'vat_collected_hint'    => 'e.g. 445710 (empty if exempt)',
+    'purchase_account'      => 'Purchase account',
+    'purchase_account_short'=> 'Purchase account',
+    'vat_deductible_account'=> 'Input VAT account',
+    'vat_deductible_short'  => 'Input VAT',
+    'vat_autoliq_account'   => 'VAT due account (reverse charge)',
+    'vat_autoliq_hint'      => 'e.g. 445200 (reference, manual entry)',
+    'autoliq_short'         => 'Rev. charge',
+    'manual_vat'            => 'Reverse charge — VAT entry posted manually',
+    'manual_badge'          => 'manual',
+    'pair_exists_sales'     => 'A rule already exists for this regime × nature pair (sales).',
+    'pair_exists_purchase'  => 'A rule already exists for this regime × nature pair (purchases).',
+    'sales_rule_created'    => 'Sales rule created.',
+    'sales_rule_updated'    => 'Sales rule updated.',
+    'sales_rule_deleted'    => 'Sales rule deleted.',
+    'purchase_rule_created' => 'Purchase rule created.',
+    'purchase_rule_updated' => 'Purchase rule updated.',
+    'purchase_rule_deleted' => 'Purchase rule deleted.',
+    'rule_not_found_sale'     => 'No VAT rule (sales) for regime #:regime × nature #:nature. Complete the matrix in Accounting → VAT matrix.',
+    'rule_not_found_purchase' => 'No VAT rule (purchases) for regime #:regime × nature #:nature. Complete the matrix in Accounting → VAT matrix.',
+
+    // VAT code: EN 16931 fields
+    'en16931_help'          => 'E-invoicing (EN 16931) — leave empty to keep the previous behaviour (S if rate > 0, otherwise Z).',
+    'en16931_category'      => 'EN 16931 category',
+    'category_fallback'     => '— (fallback S / Z)',
+    'categories' => [
+        'S'  => 'S — standard rate',
+        'Z'  => 'Z — zero rate',
+        'E'  => 'E — exempt',
+        'AE' => 'AE — reverse charge',
+        'K'  => 'K — intra-EU supply',
+        'G'  => 'G — export outside EU',
+    ],
+    'exemption_reason_code' => 'Exemption reason — code (BT-121)',
+    'exemption_reason_text' => 'Exemption reason — text (BT-120)',
+    'exemption_text_example'=> 'e.g. VAT exempt, art. 262 ter I CGI',
+    'legal_mention'         => 'Legal notice (invoice)',
+    'legal_mention_hint'    => 'Notice printed on the invoice',
+
+    // Product record
+    'product_nature'        => 'VAT nature',
+
+    // Company record
+    'company_card'          => 'VAT regime',
+    'attestation_ref'       => 'Certificate ref. (art. 275 exemption)',
+    'attestation_valid_until' => 'Certificate valid until',
+];
