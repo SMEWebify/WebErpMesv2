@@ -352,16 +352,18 @@ contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
 
 ## Nesting (imbrication tôle)
 
-Deux moteurs coexistent derrière la même interface `/nesting`. Le back décide,
-le front s'adapte — pas de bouton séparé, l'utilisateur ne sait même pas quel
-moteur tourne.
+L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul
+local (l'ancien shelf packer `nestSheets()` et le parsing DXF/SVG navigateur ont été
+retirés de `NestingPage.jsx`).
 
 ### Sélection du moteur
-- **Shelf packing local** (défaut, open source) — algorithme rectangulaire
-  côté navigateur (`resources/js/components/NestingPage.jsx nestSheets()`).
-  Chaque pièce est placée sur sa bounding box ; le rendu SVG en forme exacte
-  (contour reconstruit à partir des LINE, cercles creusés en evenodd)
-  n'améliore que le visuel, pas le calcul.
+- **Open source** (`services.nestengine.enabled` faux) — l'écran garde ses
+  paramètres et son bouton « Calculer le besoin », mais le clic affiche l'écran
+  « disponible dans la version commerciale » (même présentation que l'outillage
+  presse plieuse : `include/commercial-feature-styles.blade.php`, textes
+  `commercial.nesting`). `POST /nesting/compute` répond 403.
+- **Barres / tubes** : le débit 1D (`nestBars()`, First-Fit Decreasing) reste
+  calculé dans le navigateur, mais seulement en version commerciale.
 - **NestEngine** (payant, forme exacte) — moteur NFP + algorithme génétique
   déployé localement à côté de Laravel. Actif si :
   ```
@@ -410,9 +412,14 @@ Sanity check : `curl http://127.0.0.1:8000/healthz` retourne `{"status":"ok"}`.
 | `NESTENGINE_INPUTS_DIR` | `storage/app/nesting-inputs` | Dossier de travail partagé Laravel↔NestEngine |
 
 ### Retour arrière et diagnostic
-- Si NestEngine est injoignable au moment du POST /compute, `dispatchNestEngineJobs()`
-  loggue un warning et retombe silencieusement sur le shelf packer — l'utilisateur
-  voit toujours un résultat.
+- Si NestEngine est injoignable au moment du POST /compute, la route loggue un
+  warning et répond 503 : **plus de repli local**, l'utilisateur voit l'erreur.
+- Un groupe tôle qui n'a pas pu partir porte `engine_skipped`
+  (`no_cad_file` : aucune pièce avec DXF/SVG — les cotes de ligne ne suffisent pas ;
+  `files_unreadable` ; `job_failed`) et s'affiche « Non imbriqué » avec la raison.
+- Le tableau « Besoin tôles » est alimenté par le nombre de tôles des jobs terminés
+  (format = `sheet_format` du job), puis croisé avec le stock comme avant.
+- Tests : `tests/Feature/NestingComputeTest.php`.
 - Le format tôle envoyé à NestEngine est résolu par `resolveSheetFormat()` :
   produit stock exact → même matière → plus grande dispo → 3000×1500 en dernier
   recours. À affiner via l'écran stock quand le multi-format (`/v2/jobs`) sera

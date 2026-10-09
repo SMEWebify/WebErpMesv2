@@ -1,14 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { geometryFor } from '../lib/nesting/geometry';
 import { formatQty } from '../utils';
-
-// ─── Formats standards proposés ─────────────────────────────────────────────
-const DEFAULT_FORMATS = [
-    { id: 'f1', label: '4000 × 2000', x: 4000, y: 2000, selected: true },
-    { id: 'f2', label: '3000 × 1500', x: 3000, y: 1500, selected: true },
-    { id: 'f3', label: '2500 × 1250', x: 2500, y: 1250, selected: true },
-    { id: 'f4', label: '2000 × 1000', x: 2000, y: 1000, selected: true },
-];
 
 const DEFAULT_BAR_LENGTHS = [
     { id: 'b1', label: '3000 mm', length: 3000, selected: true },
@@ -29,67 +20,6 @@ const COLORS = [
     '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ac',
 ];
 const pieceColor = i => COLORS[i % COLORS.length];
-
-// ─── Shelf packing 2D multi-formats ─────────────────────────────────────────
-// Same algorithm as the previous incarnation, kept local so nothing else in the
-// project depends on the internal shape of a "sheet".
-function nestSheets(pieces, formats) {
-    const rects = [];
-    pieces.forEach((p, pi) => {
-        for (let i = 0; i < p.qty; i++) {
-            rects.push({
-                id: p.line_id,
-                pieceIndex: pi,
-                label: p.label,
-                code: p.product_code,
-                w: p.bb.x,
-                h: p.bb.y,
-                colorIdx: pi,
-                geometry: p.geometry,
-            });
-        }
-    });
-    rects.sort((a, b) => b.h - a.h || b.w - a.w);
-
-    const sheets = [];
-
-    for (const rect of rects) {
-        let placed = false;
-
-        for (const sheet of sheets) {
-            const { format } = sheet;
-            if (rect.w > format.x || rect.h > format.y) continue;
-            if (sheet.rowX + rect.w <= format.x) {
-                sheet.placements.push({ ...rect, px: sheet.rowX, py: sheet.rowY });
-                sheet.rowX += rect.w;
-                sheet.rowH = Math.max(sheet.rowH, rect.h);
-                placed = true; break;
-            } else if (sheet.rowY + sheet.rowH + rect.h <= format.y) {
-                sheet.rowY += sheet.rowH; sheet.rowH = rect.h; sheet.rowX = rect.w;
-                sheet.placements.push({ ...rect, px: 0, py: sheet.rowY });
-                placed = true; break;
-            }
-        }
-
-        if (!placed) {
-            const fitting = formats.filter(f => rect.w <= f.x && rect.h <= f.y);
-            if (!fitting.length) continue;
-            const best = fitting.reduce((a, b) => a.x * a.y <= b.x * b.y ? a : b);
-            sheets.push({
-                format: best,
-                placements: [{ ...rect, px: 0, py: 0 }],
-                rowY: 0, rowH: rect.h, rowX: rect.w,
-            });
-        }
-    }
-
-    return sheets.map(s => ({
-        format: s.format,
-        placements: s.placements,
-        usedArea: s.placements.reduce((sum, p) => sum + p.w * p.h, 0),
-        totalArea: s.format.x * s.format.y,
-    }));
-}
 
 // ─── 1D packing (barres / tubes) — First-Fit Decreasing avec kerf ──────────
 // Pour chaque nouvelle barre, on choisit la longueur standard la plus courte
@@ -151,140 +81,16 @@ function nestBars(pieces, barLengths, kerf) {
     }));
 }
 
-// ─── Rendu d'une pièce placée (forme reconstruite si dispo, sinon BB) ───────
-function PieceShape({ placement, scale }) {
-    const { px, py, w, h, colorIdx, code, label, geometry } = placement;
-    const fill  = pieceColor(colorIdx);
-    const wPx   = w * scale;
-    const hPx   = h * scale;
-    const showLabel = wPx > 30 && hPx > 14;
-    const hasShape  = geometry?.pathD;
-
-    return (
-        <g>
-            {!hasShape && (
-                <rect
-                    x={px * scale}
-                    y={py * scale}
-                    width={wPx}
-                    height={hPx}
-                    fill={fill}
-                    fillOpacity="0.55"
-                    stroke="#222"
-                    strokeWidth="0.5"
-                />
-            )}
-
-            {geometry && (
-                <svg
-                    x={px * scale}
-                    y={py * scale}
-                    width={wPx}
-                    height={hPx}
-                    viewBox={`${geometry.minX} ${geometry.minY} ${geometry.bb.x} ${geometry.bb.y}`}
-                    preserveAspectRatio="none"
-                    style={{ overflow: 'hidden' }}
-                >
-                    {/* DXF's Y axis points up; flip for a natural on-screen preview. */}
-                    <g transform={geometry.source === 'dxf'
-                        ? `translate(0, ${geometry.bb.y + 2 * geometry.minY}) scale(1, -1)`
-                        : undefined}>
-                        {hasShape && (
-                            <path
-                                d={geometry.pathD}
-                                fill={fill}
-                                fillOpacity="0.55"
-                                fillRule="evenodd"
-                                stroke="#222"
-                                strokeWidth={0.6}
-                                vectorEffect="non-scaling-stroke"
-                            />
-                        )}
-                        {/* Open segments and non-closed primitives on top for visual context */}
-                        {hasShape
-                            ? (geometry.openLines || []).map((prim, i) => renderPrimitive(prim, `o${i}`))
-                            : geometry.primitives.map((prim, i) => renderPrimitive(prim, i))}
-                    </g>
-                </svg>
-            )}
-
-            {showLabel && (
-                <text
-                    x={px * scale + 3}
-                    y={py * scale + 12}
-                    fontSize="9"
-                    fill="#111"
-                    style={{ pointerEvents: 'none' }}
-                >
-                    {code || label}
-                </text>
-            )}
-        </g>
-    );
-}
-
-function renderPrimitive(p, key) {
-    const stroke = '#111';
-    const sw = 'max(0.5, 1)';
-
-    switch (p.kind) {
-        case 'line':
-            return <line key={key} x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}
-                stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />;
-        case 'polyline': {
-            const pts = p.points.map(pt => `${pt.x},${pt.y}`).join(' ');
-            return p.closed
-                ? <polygon key={key} points={pts} fill="none" stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />
-                : <polyline key={key} points={pts} fill="none" stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />;
-        }
-        case 'circle':
-            return <circle key={key} cx={p.cx} cy={p.cy} r={p.r}
-                fill="none" stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />;
-        case 'arc': {
-            const largeArc = Math.abs(p.a1 - p.a0) > Math.PI ? 1 : 0;
-            const x0 = p.cx + p.r * Math.cos(p.a0);
-            const y0 = p.cy + p.r * Math.sin(p.a0);
-            const x1 = p.cx + p.r * Math.cos(p.a1);
-            const y1 = p.cy + p.r * Math.sin(p.a1);
-            return <path key={key}
-                d={`M ${x0} ${y0} A ${p.r} ${p.r} 0 ${largeArc} 1 ${x1} ${y1}`}
-                fill="none" stroke={stroke} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />;
-        }
-        default:
-            return null;
-    }
-}
-
-// ─── SVG tôle ───────────────────────────────────────────────────────────────
-function SheetSvg({ sheet, index }) {
-    const { format, placements, usedArea, totalArea } = sheet;
-    const displayW = 520;
-    const scale = displayW / format.x;
-    const displayH = format.y * scale;
-    const usage = Math.round(usedArea / totalArea * 100);
-
-    return (
-        <div className="mb-2 border p-1 bg-white">
-            <div className="d-flex justify-content-between align-items-center px-1 mb-1">
-                <small><strong>Tôle {index + 1}</strong> - {format.label}</small>
-                <small className={usage < 40 ? 'text-warning' : 'text-success'}>
-                    Utilisation {usage}%
-                </small>
-            </div>
-            <svg width={displayW} height={displayH} style={{ background: '#f6f6f6', border: '1px solid #999' }}>
-                {placements.map((p, i) => (
-                    <PieceShape key={i} placement={p} scale={scale} />
-                ))}
-            </svg>
-        </div>
-    );
-}
-
 // ─── Groupe rendu par NestEngine (forme exacte, calcul serveur asynchrone) ──
-function NestEngineGroupPanel({ group, service }) {
+function NestEngineGroupPanel({ group, service, onResult }) {
     const [expanded, setExpanded] = useState(false);
     const [meta, setMeta] = useState({ status: 'pending', files: [] });
     const jobId = group.job_id;
+
+    // Le nombre de tôles alimente le tableau « Besoin tôles » de la page.
+    useEffect(() => {
+        if (meta.status === 'done') onResult(jobId, meta.files?.length || 0);
+    }, [meta.status, meta.files, jobId, onResult]);
 
     useEffect(() => {
         if (!jobId) return;
@@ -402,26 +208,21 @@ function NestEngineGroupPanel({ group, service }) {
     );
 }
 
-// ─── Groupe (matière + épaisseur) ───────────────────────────────────────────
-function GroupPanel({ group, formats, service }) {
-    const [expanded, setExpanded] = useState(false);
-    const pieces = group.piecesWithBB;
-    const results = useMemo(
-        () => (pieces.length && formats.length) ? nestSheets(pieces, formats) : [],
-        [pieces, formats]
-    );
+// ─── Groupe tôle non envoyé à NestEngine ────────────────────────────────────
+// Plus de calcul local de repli : le groupe est listé avec la raison.
+const SKIPPED_REASONS = {
+    no_cad_file:      'Aucun fichier DXF / SVG attaché à ces pièces : NestEngine imbrique sur le contour réel, les cotes de la ligne ne suffisent pas.',
+    files_unreadable: 'Les fichiers DXF / SVG n\'ont pas pu être transmis au moteur d\'imbrication.',
+    job_failed:       'Le moteur d\'imbrication a refusé le calcul de ce groupe (voir le journal Laravel).',
+};
 
+function SkippedGroupPanel({ group, service }) {
+    const [expanded, setExpanded] = useState(false);
+    const pieces = group.pieces;
     const totalPieces = pieces.reduce((s, p) => s + p.qty, 0);
-    const byFormat = results.reduce((acc, r) => {
-        acc[r.format.label] = (acc[r.format.label] || 0) + 1;
-        return acc;
-    }, {});
-    const avgUsage = results.length
-        ? Math.round(results.reduce((s, r) => s + r.usedArea / r.totalArea, 0) / results.length * 100)
-        : 0;
 
     return (
-        <div className="mb-3 border rounded">
+        <div className="mb-3 border rounded border-warning">
             <div
                 className="d-flex align-items-center p-2 bg-light"
                 style={{ cursor: 'pointer' }}
@@ -442,20 +243,15 @@ function GroupPanel({ group, formats, service }) {
                     </span>
                 )}
                 <span className="badge badge-info mr-2">{formatQty(totalPieces)} pièce(s)</span>
-                <span className="badge badge-primary mr-2">{results.length} tôle(s)</span>
-                {results.length > 0 && (
-                    <span className={`badge mr-2 ${avgUsage < 40 ? 'badge-warning' : 'badge-success'}`}>
-                        {avgUsage}%
-                    </span>
-                )}
-                <span className="ml-auto text-muted small">
-                    {Object.entries(byFormat).map(([f, n]) => `${n}× ${f}`).join('  |  ')}
-                </span>
+                <span className="badge badge-warning mr-2">Non imbriqué</span>
             </div>
 
             {expanded && (
                 <div className="p-2">
-                    <table className="table table-sm table-striped mb-2" style={{ fontSize: '0.82em' }}>
+                    <div className="alert alert-warning py-1 px-2 small">
+                        {SKIPPED_REASONS[group.engine_skipped] || SKIPPED_REASONS.files_unreadable}
+                    </div>
+                    <table className="table table-sm table-striped mb-0" style={{ fontSize: '0.82em' }}>
                         <thead className="thead-light">
                             <tr>
                                 <th>Article</th>
@@ -463,45 +259,67 @@ function GroupPanel({ group, formats, service }) {
                                 <th className="text-right">X mm</th>
                                 <th className="text-right">Y mm</th>
                                 <th className="text-right">Qté</th>
-                                <th className="text-center">Src</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {pieces.map((p, i) => (
+                            {pieces.map(p => (
                                 <tr key={p.line_id}>
-                                    <td>
-                                        <span style={{
-                                            display: 'inline-block',
-                                            width: 8, height: 8,
-                                            background: pieceColor(i),
-                                            borderRadius: 2,
-                                            marginRight: 4,
-                                        }} />
-                                        <code>{p.product_code}</code> - {p.label}
-                                    </td>
+                                    <td><code>{p.product_code}</code> - {p.label}</td>
                                     <td><a href={`/orders/${p.order_id}`} target="_blank" rel="noreferrer">{p.order_code}</a></td>
-                                    <td className="text-right">{Math.round(p.bb.x)}</td>
-                                    <td className="text-right">{Math.round(p.bb.y)}</td>
+                                    <td className="text-right">{p.x_line > 0 ? Math.round(p.x_line) : '—'}</td>
+                                    <td className="text-right">{p.y_line > 0 ? Math.round(p.y_line) : '—'}</td>
                                     <td className="text-right">{formatQty(p.qty)}</td>
-                                    <td className="text-center">
-                                        <small className="text-muted" title={p.bb.source}>
-                                            {p.bb.source === 'line' ? '📐' : '📄'}
-                                        </small>
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-                    {results.length === 0 && (
-                        <div className="alert alert-warning py-1 px-2 small">
-                            Aucun format sélectionné ne peut accueillir ces pièces.
-                        </div>
-                    )}
-
-                    {results.map((s, i) => <SheetSvg key={i} sheet={s} index={i} />)}
                 </div>
             )}
+        </div>
+    );
+}
+
+// ─── Écran « disponible dans la version commerciale » ──────────────────────
+// Même présentation que l'outillage presse plieuse (styles partagés :
+// include/commercial-feature-styles.blade.php), textes fournis par la vue.
+function CommercialFeature({ t }) {
+    const points = [
+        { icon: 'fa-shapes',         key: 'shape' },
+        { icon: 'fa-th-large',       key: 'sheets' },
+        { icon: 'fa-shopping-cart',  key: 'stock' },
+    ];
+
+    return (
+        <div className="commercial-feature mt-0">
+            <div className="commercial-feature__hero">
+                <span className="commercial-feature__badge"><i className="fas fa-star mr-1" />{t.badge}</span>
+                <div className="commercial-feature__icon"><i className="fas fa-th" /></div>
+                <h2 className="commercial-feature__title">{t.title}</h2>
+                <p className="commercial-feature__lead">{t.lead}</p>
+            </div>
+
+            <div className="commercial-feature__body">
+                <div className="row">
+                    {points.map(p => (
+                        <div key={p.key} className="col-md-4 mb-3">
+                            <div className="commercial-feature__point">
+                                <i className={`fas ${p.icon}`} />
+                                <h5>{t[`${p.key}_title`]}</h5>
+                                <p>{t[`${p.key}_text`]}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="text-center mt-2">
+                    <a href="https://nest2prod.com/" target="_blank" rel="noopener" className="btn btn-primary btn-lg commercial-feature__cta">
+                        <i className="fas fa-envelope mr-2" />{t.contact}
+                    </a>
+                    <div className="text-muted small mt-2">
+                        <i className="fas fa-external-link-alt mr-1" />nest2prod.com
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
@@ -770,8 +588,7 @@ function NestingAnimation() {
 }
 
 // ─── Composant principal ────────────────────────────────────────────────────
-export default function NestingPage() {
-    const [formats, setFormats]       = useState(DEFAULT_FORMATS);
+export default function NestingPage({ engineEnabled = false, commercial = {} }) {
     const [barLengths, setBarLengths] = useState(DEFAULT_BAR_LENGTHS);
     const [kerf, setKerf]             = useState(DEFAULT_KERF_MM);
     const [includeOpen, setIncludeOpen] = useState(false);
@@ -782,15 +599,15 @@ export default function NestingPage() {
     const [data, setData]             = useState(null);
     const [loading, setLoading]       = useState(false);
     const [error, setError]           = useState(null);
-    const [resolvingBBs, setResolvingBBs] = useState(false);
-    const [progress, setProgress]     = useState({ current: 0, total: 0, label: '' });
+    const [showCommercial, setShowCommercial] = useState(false);
+    // Nombre de tôles rendu par chaque job NestEngine terminé, par job_id.
+    const [engineResults, setEngineResults] = useState({});
 
-    const activeFormats    = formats.filter(f => f.selected);
     const activeBarLengths = barLengths.filter(b => b.selected);
 
-    const toggleFormat = id => setFormats(fs =>
-        fs.map(f => f.id === id ? { ...f, selected: !f.selected } : f)
-    );
+    const handleEngineResult = useCallback((jobId, sheets) => {
+        setEngineResults(prev => prev[jobId] === sheets ? prev : { ...prev, [jobId]: sheets });
+    }, []);
 
     const toggleBarLength = id => setBarLengths(bs =>
         bs.map(b => b.id === id ? { ...b, selected: !b.selected } : b)
@@ -817,6 +634,9 @@ export default function NestingPage() {
                 setServices([]);
             });
 
+        // Sans moteur d'imbrication il n'y a pas de besoin à croiser avec le stock.
+        if (!engineEnabled) return;
+
         window.axios.get('/nesting/sheet-stock')
             .then(r => setSheetStock(r.data))
             .catch(err => {
@@ -830,7 +650,7 @@ export default function NestingPage() {
                 console.warn('Chargement stock barres échoué', err);
                 setBarStock([]);
             });
-    }, []);
+    }, [engineEnabled]);
 
     // Index the raw material stock by (material|thickness|format) for O(1) lookup.
     // Format matching is non-oriented: 3000×1500 also matches 1500×3000.
@@ -861,132 +681,61 @@ export default function NestingPage() {
     }, [stockIndex]);
 
     const handleCompute = useCallback(async () => {
+        // Version open source : pas de calcul, le bouton présente l'offre.
+        if (!engineEnabled) {
+            setShowCommercial(true);
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setData(null);
-        setProgress({ current: 0, total: 0, label: 'Analyse des commandes…' });
+        setEngineResults({});
 
         try {
+            // Le serveur regroupe les pièces et envoie chaque groupe tôle à
+            // NestEngine ; la géométrie est lue côté moteur, pas ici.
             const res = await window.axios.post('/nesting/compute', {
                 include_open: includeOpen,
                 service_ids: Array.from(serviceIds),
             });
-
-            setResolvingBBs(true);
-
-            // Count total pieces for the progress bar
-            const totalPieces = res.data.services.reduce(
-                (s, svc) => s + svc.groups.reduce((ss, g) => ss + g.pieces.length, 0), 0
-            );
-            setProgress({ current: 0, total: totalPieces, label: 'Analyse des géométries…' });
-
-            let done = 0;
-            const debugRows = [];
-
-            // Resolve BB — DXF/SVG geometry is the source of truth when a file is
-            // attached (drawings age better than the numbers typed on the line).
-            // Line details are used as fallback, then a tiny placeholder rectangle.
-            // Bar groups skip the geometry pass: 1D packing only needs `length`.
-            for (const svc of res.data.services) {
-                for (const group of svc.groups) {
-                    if (group.nest_type === 'bar') {
-                        done += group.pieces.length;
-                        setProgress(p => ({ ...p, current: done }));
-                        continue;
-                    }
-                    // NestEngine handles the geometry server-side and returns
-                    // its own SVG previews — no need to parse anything here.
-                    if (group.job_id) {
-                        done += group.pieces.length;
-                        setProgress(p => ({ ...p, current: done }));
-                        continue;
-                    }
-                    for (const piece of group.pieces) {
-                        let bb = null;
-                        const candidates = piece.files || [];
-                        const tried = [];
-
-                        // Try each attached CAD file in order (DXF first, SVG fallback).
-                        // Full geometry parse also gives us the BB — one fetch, two uses.
-                        for (const f of candidates) {
-                            const geo = await geometryFor(f);
-                            tried.push(`${f.file_kind}#${f.file_id}${geo ? '✓' : '✗'}`);
-                            if (geo) {
-                                bb = { x: geo.bb.x, y: geo.bb.y, source: geo.source };
-                                piece.geometry = geo;
-                                piece.file_used = f;
-                                break;
-                            }
-                        }
-
-                        if (!bb && piece.x_line > 0 && piece.y_line > 0) {
-                            bb = { x: piece.x_line, y: piece.y_line, source: 'line' };
-                        }
-
-                        piece.bb = bb || { x: 100, y: 100, source: 'fallback' };
-
-                        debugRows.push({
-                            line: piece.line_id,
-                            order: piece.order_code,
-                            label: piece.label,
-                            files: candidates.length,
-                            tried: tried.join(' '),
-                            used: piece.file_used ? `#${piece.file_used.file_id} ${piece.file_used.file_kind}` : null,
-                            bb_source: piece.bb.source,
-                            bb: `${Math.round(piece.bb.x)}x${Math.round(piece.bb.y)}`,
-                            primitives: piece.geometry?.primitives?.length ?? 0,
-                        });
-
-                        done++;
-                        if (done % 5 === 0 || done === totalPieces) {
-                            setProgress(p => ({ ...p, current: done }));
-                        }
-                    }
-                    group.piecesWithBB = group.pieces;
-                }
-            }
-
-            console.groupCollapsed(`[nest] BB resolution summary — ${debugRows.length} pieces`);
-            console.table(debugRows);
-            console.groupEnd();
-
-            setProgress({ current: totalPieces, total: totalPieces, label: 'Imbrication…' });
             setData(res.data);
         } catch (e) {
             setError(e.response?.data?.message || 'Erreur serveur.');
         } finally {
             setLoading(false);
-            setResolvingBBs(false);
-            setProgress({ current: 0, total: 0, label: '' });
         }
-    }, [includeOpen, serviceIds]);
+    }, [engineEnabled, includeOpen, serviceIds]);
 
-    // Compute summary — total sheets per format across every service/group
-    const summary = useMemo(() => {
-        if (!data) return null;
+    // Sheet summary — sheets returned by NestEngine per (material, thickness,
+    // sheet format). Groups still computing are counted apart.
+    const { summary, pendingJobs } = useMemo(() => {
+        if (!data) return { summary: null, pendingJobs: 0 };
         const counter = new Map();
+        let pending = 0;
         for (const svc of data.services) {
             for (const g of svc.groups) {
-                if (g.nest_type === 'bar') continue;
-                if (!g.piecesWithBB?.length) continue;
-                const results = nestSheets(g.piecesWithBB, activeFormats);
-                for (const r of results) {
-                    const key = `${g.material}|${g.thickness}|${r.format.label}`;
-                    const cur = counter.get(key) || {
-                        material: g.material, thickness: g.thickness,
-                        format: r.format.label, count: 0,
-                    };
-                    cur.count += 1;
-                    counter.set(key, cur);
-                }
+                if (!g.job_id) continue;
+                const count = engineResults[g.job_id];
+                if (count === undefined) { pending++; continue; }
+                if (!count) continue;
+                const format = `${g.sheet_format.x} × ${g.sheet_format.y}`;
+                const key = `${g.material}|${g.thickness}|${format}`;
+                const cur = counter.get(key) || {
+                    material: g.material, thickness: g.thickness,
+                    format, count: 0,
+                };
+                cur.count += count;
+                counter.set(key, cur);
             }
         }
-        return Array.from(counter.values()).sort((a, b) =>
+        const rows = Array.from(counter.values()).sort((a, b) =>
             a.material.localeCompare(b.material)
             || a.thickness - b.thickness
             || a.format.localeCompare(b.format)
         );
-    }, [data, activeFormats]);
+        return { summary: rows, pendingJobs: pending };
+    }, [data, engineResults]);
 
     // Bar summary — total bars per (material, profile, standard length)
     const barSummary = useMemo(() => {
@@ -1061,23 +810,10 @@ export default function NestingPage() {
                     </div>
                     <div className="card-body">
 
-                        <label className="small font-weight-bold mb-1">Formats tôle</label>
-                        <div className="mb-3">
-                            {formats.map(f => (
-                                <div key={f.id} className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        id={`fmt-${f.id}`}
-                                        checked={f.selected}
-                                        onChange={() => toggleFormat(f.id)}
-                                    />
-                                    <label className="form-check-label" htmlFor={`fmt-${f.id}`}>
-                                        {f.label} mm
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
+                        <p className="small text-muted mb-3">
+                            <i className="fas fa-info-circle mr-1" />
+                            Le format tôle est choisi d'après les articles matière en stock.
+                        </p>
 
                         <label className="small font-weight-bold mb-1">Longueurs de barre</label>
                         <div className="mb-3">
@@ -1162,21 +898,15 @@ export default function NestingPage() {
                         <button
                             className="btn btn-primary btn-block"
                             onClick={handleCompute}
-                            disabled={loading || (!activeFormats.length && !activeBarLengths.length) || !serviceIds.size}
+                            disabled={loading || (engineEnabled && !serviceIds.size)}
                         >
                             {loading
-                                ? <><i className="fas fa-spinner fa-spin mr-1" />
-                                    {resolvingBBs ? 'Analyse géométries…' : 'Calcul…'}</>
+                                ? <><i className="fas fa-spinner fa-spin mr-1" />Calcul…</>
                                 : <><i className="fas fa-calculator mr-1" />Calculer le besoin</>
                             }
                         </button>
 
-                        {!activeFormats.length && !activeBarLengths.length && (
-                            <small className="text-dark d-block mt-2">
-                                <i className="fas fa-info-circle mr-1" />Sélectionne au moins un format tôle ou une longueur de barre.
-                            </small>
-                        )}
-                        {(activeFormats.length || activeBarLengths.length) && !serviceIds.size && (
+                        {engineEnabled && !serviceIds.size && (
                             <small className="text-dark d-block mt-2">
                                 <i className="fas fa-info-circle mr-1" />Sélectionne au moins un moyen de débit.
                             </small>
@@ -1202,10 +932,12 @@ export default function NestingPage() {
                     </div>
                 )}
 
-                {!data && !loading && (
+                {showCommercial && <CommercialFeature t={commercial} />}
+
+                {!data && !loading && !showCommercial && (
                     <div className="text-center text-muted mt-5 pt-5">
                         <i className="fas fa-th" style={{ fontSize: 48, opacity: 0.2 }} />
-                        <p className="mt-3">Sélectionne les formats et lance le calcul.</p>
+                        <p className="mt-3">Sélectionne les moyens de débit et lance le calcul.</p>
                     </div>
                 )}
 
@@ -1213,43 +945,19 @@ export default function NestingPage() {
                     <div className="card">
                         <div className="card-body text-center py-4">
                             <NestingAnimation />
-                            <h5 className="mb-3 mt-3">{progress.label || 'Calcul en cours…'}</h5>
-
-                            {progress.total > 0 ? (
-                                <>
-                                    <div className="progress mx-auto" style={{ maxWidth: 480, height: 20 }}>
-                                        <div
-                                            className="progress-bar progress-bar-striped progress-bar-animated bg-primary"
-                                            role="progressbar"
-                                            style={{
-                                                width: `${Math.round(progress.current / progress.total * 100)}%`,
-                                                transition: 'width 0.2s ease',
-                                            }}
-                                            aria-valuenow={progress.current}
-                                            aria-valuemin="0"
-                                            aria-valuemax={progress.total}
-                                        >
-                                            {Math.round(progress.current / progress.total * 100)}%
-                                        </div>
-                                    </div>
-                                    <small className="text-muted mt-2 d-block">
-                                        {progress.current} / {progress.total} pièce(s)
-                                    </small>
-                                </>
-                            ) : (
-                                <div className="progress mx-auto" style={{ maxWidth: 480, height: 20 }}>
-                                    <div
-                                        className="progress-bar progress-bar-striped progress-bar-animated bg-primary"
-                                        role="progressbar"
-                                        style={{ width: '100%' }}
-                                    />
-                                </div>
-                            )}
+                            <h5 className="mb-3 mt-3">Envoi au moteur d'imbrication…</h5>
+                            <div className="progress mx-auto" style={{ maxWidth: 480, height: 20 }}>
+                                <div
+                                    className="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                    role="progressbar"
+                                    style={{ width: '100%' }}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
 
-                {data && summary && summary.length > 0 && (
+                {data && (summary?.length > 0 || pendingJobs > 0) && (
                     <div className="card mb-3">
                         <div className="card-header py-2">
                             <h3 className="card-title h5 mb-0">
@@ -1258,6 +966,11 @@ export default function NestingPage() {
                                 {sheetStock.length > 0 && (
                                     <small className="text-muted ml-2">
                                         (croisement stock — {sheetStock.length} article(s) tôle matière)
+                                    </small>
+                                )}
+                                {pendingJobs > 0 && (
+                                    <small className="text-muted ml-2">
+                                        <i className="fas fa-spinner fa-spin mr-1" />{pendingJobs} imbrication(s) en cours
                                     </small>
                                 )}
                             </h3>
@@ -1482,12 +1195,12 @@ export default function NestingPage() {
                                     key={`ne|${g.material}|${g.thickness}|${g.job_id}`}
                                     group={g}
                                     service={svc}
+                                    onResult={handleEngineResult}
                                 />
                             ) : (
-                                <GroupPanel
+                                <SkippedGroupPanel
                                     key={`sheet|${g.material}|${g.thickness}`}
                                     group={g}
-                                    formats={activeFormats}
                                     service={svc}
                                 />
                             ))}

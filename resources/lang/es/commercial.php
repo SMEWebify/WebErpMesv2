@@ -14,4 +14,14 @@ return [
         'catalog_title' => 'Catálogo de fabricantes',
         'catalog_text'  => 'Punzones, matrices y adaptadores consultables y filtrables.',
     ],
+    'nesting' => [
+        'title' => 'Anidado de piezas en chapa',
+        'lead'  => 'El anidado en forma real y la necesidad de material resultante están disponibles en la versión comercial del ERP, editada por Nest2Prod.',
+        'shape_title' => 'Forma real',
+        'shape_text'  => 'Colocación sobre el contorno real de las piezas DXF / SVG, con rotaciones y separación de corte.',
+        'sheets_title' => 'Chapas listas para cortar',
+        'sheets_text'  => 'Vista previa de cada chapa y exportación DXF de la colocación.',
+        'stock_title' => 'Necesidad de material',
+        'stock_text'  => 'Número de chapas y barras cruzado con el stock y las compras pendientes.',
+    ],
 ];

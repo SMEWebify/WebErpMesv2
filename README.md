@@ -101,7 +101,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - **Andon alerts**: real-time escalation from the shop floor
 - **Shop reports**: booked vs. estimated time, scrap, machine load
 - **Kanban and GTD boards**, Gantt chart, machine load planning
-- **Nesting**: sheet layout grouped by material and thickness, parts placed by their bounding rectangle
+- **Nesting**: preparation screen by cutting resource, material and thickness — nesting computation available in the commercial edition
 - **Attendance and energy consumption tracking**
 
 ### ✅ Quality, EHS & compliance

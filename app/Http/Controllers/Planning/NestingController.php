@@ -182,6 +182,26 @@ class NestingController extends Controller
             'service_ids.*' => 'integer',
         ]);
 
+        // L'imbrication repose entièrement sur NestEngine : sans lui (version
+        // open source) il n'y a pas de calcul, l'écran présente l'offre commerciale.
+        if (!config('services.nestengine.enabled')) {
+            return response()->json(['message' => __('commercial.nesting.lead')], 403);
+        }
+
+        try {
+            $client = NestEngineClient::fromConfig();
+            $reachable = $client->isReachable();
+        } catch (\Throwable $e) {
+            Log::warning('NestEngine — configuration invalide', ['error' => $e->getMessage()]);
+            $reachable = false;
+        }
+        if (!$reachable) {
+            Log::warning('NestEngine injoignable', ['url' => config('services.nestengine.url')]);
+            return response()->json([
+                'message' => 'Le moteur d\'imbrication est injoignable. Réessayez dans un instant ou prévenez votre administrateur.',
+            ], 503);
+        }
+
         $includeOpen   = filter_var($request->input('include_open', false), FILTER_VALIDATE_BOOL);
         $allowedStatus = $includeOpen ? [1, 2] : [2];
         $serviceIds    = collect($request->input('service_ids', []))->map(fn ($v) => (int) $v)->filter()->values();
@@ -397,20 +417,13 @@ class NestingController extends Controller
             return $svc;
         }, $servicesMap));
 
-        // If NestEngine is enabled and reachable, dispatch one nesting job per
-        // sheet group. Each group carries back its `job_id` and the sheet size
-        // used; the front polls those jobs and displays SVG previews instead
-        // of running its local shelf packer.
-        $engine = 'shelf';
-        if (config('services.nestengine.enabled')) {
-            $dispatched = $this->dispatchNestEngineJobs($services);
-            if ($dispatched) {
-                $engine = 'nestengine';
-            }
-        }
+        // One NestEngine job per sheet group. Each group carries back its
+        // `job_id` and the sheet size used (the front polls the jobs and shows
+        // the SVG previews), or `engine_skipped` when it could not be sent.
+        $this->dispatchNestEngineJobs($client, $services);
 
         return response()->json([
-            'engine'           => $engine,
+            'engine'           => 'nestengine',
             'services'         => $services,
             'missing_geometry' => $missingGeometry,
             'missing_material' => $missingMaterial,
@@ -426,37 +439,21 @@ class NestingController extends Controller
     /**
      * For each sheet group, copy the DXF files of every piece into a shared
      * inputs directory and POST a NestEngine v1 job. Enriches each group with
-     * `job_id`, `sheet_format` and `parts_prepared`.
-     *
-     * Returns true if at least one job was dispatched; false if NestEngine is
-     * unreachable or nothing had a usable DXF (in that case we let the front
-     * fall back to the shelf packer).
+     * `job_id`, `sheet_format` and `parts_prepared`, or with `engine_skipped`
+     * (no_cad_file | files_unreadable | job_failed) when the group could not be
+     * sent — there is no local fallback, the front shows the reason instead.
      */
-    private function dispatchNestEngineJobs(array &$services): bool
+    private function dispatchNestEngineJobs(NestEngineClient $client, array &$services): void
     {
-        try {
-            $client = NestEngineClient::fromConfig();
-        } catch (\Throwable $e) {
-            Log::warning('NestEngine désactivé (config)', ['error' => $e->getMessage()]);
-            return false;
-        }
-
-        if (!$client->isReachable()) {
-            Log::warning('NestEngine injoignable — bascule shelf', ['url' => config('services.nestengine.url')]);
-            return false;
-        }
-
         $inputsRoot = $this->nestEngineInputsRoot();
-        if (!is_dir($inputsRoot) && !mkdir($inputsRoot, 0775, true) && !is_dir($inputsRoot)) {
+        $inputsReady = is_dir($inputsRoot) || mkdir($inputsRoot, 0775, true) || is_dir($inputsRoot);
+        if (!$inputsReady) {
             Log::warning('NestEngine — impossible de créer inputs dir', ['path' => $inputsRoot]);
-            return false;
         }
 
         $rotations = (int) config('services.nestengine.rotations', 36);
         $spacing   = (float) config('services.nestengine.spacing', 5);
         $maxSheets = (int) config('services.nestengine.max_sheets', 50);
-
-        $anyDispatched = false;
 
         foreach ($services as &$svc) {
             foreach ($svc['groups'] as &$group) {
@@ -466,14 +463,23 @@ class NestingController extends Controller
                     $group['pieces'] ?? [],
                     fn ($p) => !empty($p['files'])
                 ));
-                if (empty($piecesWithFile)) continue;
+                if (empty($piecesWithFile)) {
+                    $group['engine_skipped'] = 'no_cad_file';
+                    continue;
+                }
+                if (!$inputsReady) {
+                    $group['engine_skipped'] = 'files_unreadable';
+                    continue;
+                }
 
                 $sheetFormat = $this->resolveSheetFormat($group['material'] ?? '', (float) ($group['thickness'] ?? 0));
-                if (!$sheetFormat) continue;
 
                 $jobFolder = Str::uuid()->toString();
                 $jobInputs = $inputsRoot.DIRECTORY_SEPARATOR.$jobFolder;
-                if (!mkdir($jobInputs, 0775, true) && !is_dir($jobInputs)) continue;
+                if (!mkdir($jobInputs, 0775, true) && !is_dir($jobInputs)) {
+                    $group['engine_skipped'] = 'files_unreadable';
+                    continue;
+                }
 
                 $parts = [];
                 foreach ($piecesWithFile as $piece) {
@@ -503,6 +509,7 @@ class NestingController extends Controller
 
                 if (empty($parts)) {
                     @rmdir($jobInputs);
+                    $group['engine_skipped'] = 'files_unreadable';
                     continue;
                 }
 
@@ -522,8 +529,8 @@ class NestingController extends Controller
                     $group['job_id']         = $jobId;
                     $group['sheet_format']   = $sheetFormat;
                     $group['parts_prepared'] = count($parts);
-                    $anyDispatched = true;
                 } catch (\Throwable $e) {
+                    $group['engine_skipped'] = 'job_failed';
                     Log::warning('NestEngine — createJob failed', [
                         'material'  => $group['material'] ?? null,
                         'thickness' => $group['thickness'] ?? null,
@@ -533,8 +540,6 @@ class NestingController extends Controller
             }
         }
         unset($svc, $group);
-
-        return $anyDispatched;
     }
 
     /** DXF preferred (ezdxf resolves everything). Falls back to SVG. */

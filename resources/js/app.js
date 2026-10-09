@@ -82,7 +82,10 @@ async function mountNestingPage() {
     if (!element) return;
 
     const { default: NestingPage } = await import('./components/NestingPage.jsx');
-    createRoot(element).render(React.createElement(NestingPage));
+    createRoot(element).render(React.createElement(NestingPage, {
+        engineEnabled: element.dataset.engineEnabled === '1',
+        commercial: parseJsonAttribute(element.dataset.commercial) || {},
+    }));
 }
 
 async function mountToolConfigurator() {

@@ -101,7 +101,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - **Alertes Andon** : escalade temps réel depuis l'atelier
 - **Rapports atelier** : temps pointé vs estimé, rebuts, charge machine
 - **Tableaux Kanban et GTD**, diagramme de Gantt, planning de charge
-- **Imbrication (nesting)** : placement sur tôle par matière et épaisseur, pièces placées sur leur rectangle capable
+- **Imbrication (nesting)** : écran de préparation par moyen de débit, matière et épaisseur — calcul d'imbrication disponible dans la version commerciale
 - **Suivi des présences** et de la consommation énergétique
 
 ### ✅ Qualité, QHSE & conformité
