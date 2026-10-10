@@ -228,7 +228,8 @@ return [
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => '/',
-    'register_url' => 'register',
+    // Same switch as routes/auth.php: no link to a /register route that does not exist.
+    'register_url' => env('REGISTRATION_ENABLED', false) ? 'register' : false,
     'password_reset_url' => 'forgot/password',
     'password_email_url' => 'password/email',
     'profile_url' => false,
