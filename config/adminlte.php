@@ -1063,6 +1063,22 @@ return [
                 ],
             ],
         ],
+        // Barres d'onglets en tête de carte : ce qui ne tient pas passe dans « Plus ▾ ».
+        'TabsOverflow' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/tabs-overflow.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/tabs-overflow.js',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [

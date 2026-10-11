@@ -54,6 +54,13 @@
 }
 @media (max-width: 575.98px) {
     .doc-header__title { white-space: normal; font-size: 1.2rem; }
+    /* Sur mobile les flèches prennent la largeur de leur libellé : la pointe de la
+       flèche précédente recouvre 14px à gauche, il faut donc la compenser pour que
+       le texte ne colle pas au chevron. La barre défile si elle dépasse. */
+    .doc-header__steps .as-btn { padding: 8px 18px 8px 26px; }
+    .doc-header__steps .as-btn:first-child { padding-left: 12px; }
+    .doc-header__steps .as-btn:last-child  { padding-right: 12px; }
+    .doc-header__steps .as-btn.as-current  { font-size: 11.5px; }
 }
 </style>
 @endpush

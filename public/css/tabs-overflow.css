@@ -1,0 +1,36 @@
+/* ==========================================================================
+   ONGLETS — menu « Plus ▾ » (voir public/js/tabs-overflow.js)
+   --------------------------------------------------------------------------
+   La classe nav-overflow n'est posée que par le script : sans lui, la barre
+   garde le comportement de mobile.css (défilement sous 768 px).
+   ========================================================================== */
+
+/* Une seule ligne, sans défilement : le menu déroulant ne doit pas être
+   rogné par un overflow, c'est le script qui garantit que tout tient.
+   (:not(.flex-column) pour primer sur la règle de défilement de mobile.css.) */
+.card-header > .nav.nav-overflow:not(.flex-column) {
+    flex-wrap: nowrap;
+    overflow: visible;
+}
+
+.card-header > .nav.nav-overflow > .nav-item {
+    flex: 0 0 auto;
+}
+
+.card-header > .nav.nav-overflow > .nav-item > .nav-link {
+    white-space: nowrap;
+}
+
+/* Onglets logés dans le menu : rendu d'entrée de menu, pas de pastille */
+.nav-overflow .dropdown-menu .nav-link {
+    padding: .4rem 1.25rem;
+    border-radius: 0;
+    white-space: nowrap;
+}
+
+.nav-overflow__more .dropdown-toggle {
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
