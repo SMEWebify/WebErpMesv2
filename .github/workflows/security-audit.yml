@@ -1,0 +1,52 @@
+name: Security audit (CVE)
+permissions:
+  contents: read
+
+# Le CI n'audite les dependances qu'au push : une CVE publiee sur une
+# dependance inchangee passait inapercue tant que personne ne poussait.
+# Ce job relit chaque jour les lockfiles contre les bases d'avis
+# (GitHub Advisory / Packagist pour Composer, registre npm) et echoue des
+# qu'un avis tombe : GitHub previent alors par mail du run en echec.
+#
+# Un "schedule" ne se declenche que depuis la branche par defaut : ce fichier
+# doit etre present sur main. Il audite ensuite chaque branche de la matrice.
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 05h00 UTC, tous les jours
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [main, WEM-2.0]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.branch }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+
+      # --locked lit composer.lock sans rien installer. Toutes severites :
+      # c'est une alerte, pas une porte de merge (le seuil du CI reste a part).
+      - name: Composer audit
+        if: always()
+        run: composer audit --locked --abandoned=report
+
+      # Lit package-lock.json tel quel : pas besoin d'installer, donc pas de
+      # souci avec le lock genere sous Windows (cf. ci.yml).
+      - name: npm audit (production)
+        if: always()
+        run: npm audit --omit=dev --package-lock-only --registry=https://registry.npmjs.org
