@@ -3,6 +3,7 @@ import { ResponsiveGridLayout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import REGISTRY, { WIDGET_MAP, DEFAULT_LAYOUT } from './WidgetRegistry.js';
+import { useMediaQuery, MOBILE_QUERY } from '../table';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,40 @@ async function saveLayout(endpoint, layout) {
         body: JSON.stringify({ layout }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
+// ─── Agencement sauvegardé ───────────────────────────────────────────────────
+
+const COLS = 12;
+const ROW_HEIGHT = 80;
+const MARGIN = 12;
+
+/**
+ * Remet à l'échelle 12 colonnes un agencement enregistré par erreur dans les
+ * unités d'un petit écran.
+ *
+ * La grille recalcule l'agencement par point de rupture (6 colonnes en sm, 4 en
+ * xs) et la sauvegarde partait à chaque recalcul, même hors personnalisation :
+ * ouvrir l'accueil sur un écran étroit écrasait l'agencement PC. Un agencement
+ * dont rien ne dépasse la colonne 6 (ou 4) en porte la trace ; x et w sont
+ * multipliés d'un même facteur, ce qui conserve les positions relatives sans
+ * créer de chevauchement.
+ */
+export function normalizeSavedLayout(layout) {
+    if (!Array.isArray(layout) || layout.length === 0) return layout;
+    const right = Math.max(...layout.map(item => item.x + item.w));
+    const factor = right <= 4 ? 3 : right <= 6 ? 2 : 1;
+    if (factor === 1) return layout;
+    return layout.map(item => ({
+        ...item,
+        x: item.x * factor,
+        w: Math.min(item.w * factor, COLS),
+    }));
+}
+
+/** Ordre de lecture de l'agencement (haut en bas, puis gauche à droite). */
+export function readingOrder(layout) {
+    return [...layout].sort((a, b) => a.y - b.y || a.x - b.x);
 }
 
 // ─── Permission check ────────────────────────────────────────────────────────
@@ -137,6 +172,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
     const saveTimer    = useRef(null);
     const containerRef = useRef(null);
     const containerWidth = useContainerWidth(containerRef);
+    const isMobile = useMediaQuery(MOBILE_QUERY);
 
     // ── Fermer le panel Ajouter quand on quitte le mode édition ─────────────
     useEffect(() => {
@@ -150,7 +186,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
             credentials: 'same-origin',
         })
             .then(r => r.ok ? r.json() : null)
-            .then(data => setLayout(Array.isArray(data) && data.length ? data : DEFAULT_LAYOUT))
+            .then(data => setLayout(Array.isArray(data) && data.length ? normalizeSavedLayout(data) : DEFAULT_LAYOUT))
             .catch(() => setLayout(DEFAULT_LAYOUT));
     }, [configEndpoint]);
 
@@ -165,10 +201,13 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
         }, 1000);
     }, [configEndpoint]);
 
+    // Hors personnalisation, la grille ne fait que recompacter l'affichage :
+    // rien à enregistrer.
     const handleLayoutChange = useCallback((newLayout) => {
+        if (!editMode) return;
         setLayout(newLayout);
         persistLayout(newLayout);
-    }, [persistLayout]);
+    }, [editMode, persistLayout]);
 
     // ── Supprimer un widget ───────────────────────────────────────────────────
     const removeWidget = useCallback((id) => {
@@ -235,6 +274,33 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
         );
     }
 
+    // ── Téléphone : widgets empilés pleine largeur, sans grille ni édition ────
+    if (isMobile) {
+        return (
+            <div className="wem-dashboard-stack">
+                {readingOrder(layout).map(item => {
+                    const def = WIDGET_MAP[item.i];
+                    if (!def || !canSeeWidget(def, permissions)) return null;
+                    const WidgetComponent = def.component;
+                    return (
+                        // Hauteur naturelle : la hauteur de grille tronquait les tuiles
+                        // une fois passées sur une seule colonne. Seuls les widgets qui
+                        // remplissent leur case (fillsHeight) gardent la hauteur de grille.
+                        <div
+                            key={item.i}
+                            style={{
+                                marginBottom: MARGIN,
+                                height: def.fillsHeight ? item.h * ROW_HEIGHT + (item.h - 1) * MARGIN : undefined,
+                            }}
+                        >
+                            <WidgetComponent {...def.getProps(dashProps)} />
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    }
+
     // ── Rendu ─────────────────────────────────────────────────────────────────
     return (
         <div ref={containerRef} style={{ width: '100%' }}>
@@ -277,10 +343,12 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
             {/* Grille */}
             <ResponsiveGridLayout
                 width={containerWidth}
-                layouts={{ lg: layout, md: layout, sm: layout }}
-                breakpoints={{ lg: 1200, md: 992, sm: 768, xs: 480 }}
-                cols={{ lg: 12, md: 12, sm: 6, xs: 4 }}
-                rowHeight={80}
+                layouts={{ lg: layout }}
+                // Toujours 12 colonnes : l'agencement enregistré reste dans une
+                // seule unité, quelle que soit la largeur de l'écran qui l'édite.
+                breakpoints={{ lg: 0 }}
+                cols={{ lg: COLS }}
+                rowHeight={ROW_HEIGHT}
                 isDraggable={editMode}
                 isResizable={editMode}
                 isDroppable={editMode}
@@ -292,7 +360,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
                 onLayoutChange={(current) => handleLayoutChange(current)}
                 onDrop={handleDrop}
                 draggableHandle=".widget-drag-handle"
-                margin={[12, 12]}
+                margin={[MARGIN, MARGIN]}
             >
                 {layout.map(item => {
                     const def = WIDGET_MAP[item.i];

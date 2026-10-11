@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DashboardGrid from './dashboard/DashboardGrid.jsx';
 import TodayView from './TodayView.jsx';
+import { useMediaQuery, MOBILE_QUERY } from './table';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -49,6 +50,7 @@ export default function HomeDashboard({
 }) {
     const [activeView, setActiveView] = useState(null); // null = loading
     const [editMode,   setEditMode]   = useState(false);
+    const isMobile = useMediaQuery(MOBILE_QUERY);
 
     // Charge la préférence sauvegardée
     useEffect(() => {
@@ -94,7 +96,29 @@ export default function HomeDashboard({
 
     return (
         <div>
+            {/* Téléphone : bascule en haut de page. Les boutons latéraux masquaient
+                le contenu et la personnalisation de la grille n'a pas de sens au doigt. */}
+            {isMobile && (
+                <div className="btn-group btn-group-toggle d-flex mb-3" role="group">
+                    <button
+                        type="button"
+                        className={`btn w-50 ${activeView === 'today' ? 'btn-info' : 'btn-outline-info'}`}
+                        onClick={() => switchView('today')}
+                    >
+                        <i className="fas fa-sun mr-1" />Vue du jour
+                    </button>
+                    <button
+                        type="button"
+                        className={`btn w-50 ${activeView === 'kpi' ? 'btn-primary' : 'btn-outline-primary'}`}
+                        onClick={() => switchView('kpi')}
+                    >
+                        <i className="fas fa-chart-bar mr-1" />Dashboard KPI
+                    </button>
+                </div>
+            )}
+
             {/* Boutons latéraux fixes à droite */}
+            {!isMobile && (
             <div style={{
                 position: 'fixed',
                 right: 0,
@@ -134,6 +158,7 @@ export default function HomeDashboard({
                     </button>
                 )}
             </div>
+            )}
 
             {/* Contenu */}
             {activeView === 'today' ? (

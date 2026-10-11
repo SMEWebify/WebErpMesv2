@@ -46,6 +46,8 @@ const REGISTRY = [
         icon: 'fa-chart-line',
         defaultW: 8, defaultH: 5,
         minW: 4,     minH: 3,
+        // Le graphique occupe la hauteur de la case : il la garde sur téléphone
+        fillsHeight: true,
         component: OrdersMonthlyWidget,
         getProps: (p) => ({
             data:                 p.charts,
