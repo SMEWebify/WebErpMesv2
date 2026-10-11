@@ -586,6 +586,20 @@ orpheline sont comptés en anomalies plutôt qu'ignorés.
 > `$fin->diffInSeconds($debut)` — l'écran présence cumulait donc des secondes négatives.
 > Régression couverte par `AttendanceReportTest`.
 
+## Versions et nommage des releases
+
+Chaque release GitHub porte le nom d'un **papillon de jour menacé**, pris **dans l'ordre**
+de la Liste rouge UICN France des papillons de jour de métropole
+(https://uicn.fr/wp-content/uploads/2012/03/Liste_rouge_France_Papillons_de_jour_de_metropole.pdf),
+en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
+- Titre : `vX.Y.Z - Genre espèce` (nom latin seul), ex. `v2.0.1 - Parnassius mnemosyne`.
+- Dernier utilisé : *Parnassius mnemosyne* (v2.0.1). Suivants : *Iberochloe tagis*
+  (v2.1.0), *Iolana iolas*, *Lycaena helle*, *Maculinea alcon*, *Polyommatus dorylas*.
+- Mettre à jour cette ligne à chaque release.
+- Numérotation : correctif seul → Z (2.0.1) ; nouvelles fonctionnalités → Y (2.1.0).
+- Note de version en anglais, sur le modèle de v2.0.1 : avertissements de mise à jour
+  (migrations, permissions, suppressions) en tête, tableau des avis GHSA, puis nouveautés.
+
 ## Dette technique
 
 ### 🔴 Exploitation (client 1 en ligne)
