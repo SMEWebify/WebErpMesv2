@@ -78,4 +78,19 @@ class Factory extends Model
             return null;
         }
     }
+
+    /**
+     * The PDF custom CSS is printed raw inside a <style> element. CSS itself
+     * never needs "<" (the child combinator is ">"), so dropping it keeps any
+     * stylesheet intact while making it impossible to close the element and
+     * inject markup — which, with a PHP-enabled DomPDF, was code execution.
+     */
+    public static function sanitizePdfCss(?string $css): ?string
+    {
+        if ($css === null) {
+            return null;
+        }
+
+        return str_replace('<', '', $css);
+    }
 }

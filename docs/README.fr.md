@@ -475,6 +475,7 @@ Merci aux chercheurs qui ont signalé des vulnérabilités de manière responsab
 | [@sec-reex](https://github.com/sec-reex) | [GHSA-5x85-8gmm-7v5w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-5x85-8gmm-7v5w) |
 | [@germadarangalvarez-ops](https://github.com/germadarangalvarez-ops) | [GHSA-chhq-7p67-2ff9](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-chhq-7p67-2ff9) (CVE-2026-49827) |
 | [@nedlir](https://github.com/nedlir) | [GHSA-pp68-5pc2-hv7w](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-pp68-5pc2-hv7w) (CVE-2026-22788), [GHSA-64rv-f829-x6m4](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-64rv-f829-x6m4) (CVE-2026-22789) |
+| [@Lumpe1975](https://github.com/Lumpe1975) | [GHSA-9r9x-268j-qjwv](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-9r9x-268j-qjwv), [GHSA-4424-c6rm-xgq2](https://github.com/SMEWebify/WebErpMesv2/security/advisories/GHSA-4424-c6rm-xgq2) |
 
 Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SECURITY.md](../SECURITY.md).
 

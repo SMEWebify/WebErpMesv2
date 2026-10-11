@@ -8,6 +8,7 @@ use App\Models\UserExpense;
 use App\Models\UserExpenseCategory;
 use App\Models\UserExpenseReport;
 use App\Models\Admin\UserEmploymentContracts;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,6 +23,11 @@ class HumanResourcesControllerTest extends TestCase
         parent::setUp();
         // Créer un utilisateur authentifié
         $this->user = User::factory()->create();
+        // Fiche salarié, contrats et rôles : réservés aux RH et à l'administration.
+        $this->user->givePermissionTo([
+            Permission::findOrCreate('human-resources-menu'),
+            Permission::findOrCreate('your-company-menu'),
+        ]);
         $this->actingAs($this->user); // Authentification utilisateur
     }
 

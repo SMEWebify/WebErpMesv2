@@ -970,8 +970,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/engine/download/{jobId}/{sheet}', 'App\Http\Controllers\Planning\NestingController@engineDownload')->name('nesting.engine.download');
     });
 
-    Route::group(['prefix' => 'admin'], function () {
-        
+    // Every route of this group used to require authentication only: any
+    // account could edit the company settings (PDF custom CSS included), roles
+    // and permissions, integrations credentials, or issue an all-abilities API
+    // token. They now require the permission that already gates the
+    // "Administration" menu. The few routes called from regular screens opt out
+    // below with withoutMiddleware().
+    Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permission:your-company-menu']], function () {
+
         Route::post('/factory/announcement/create', 'App\Http\Controllers\Admin\FactoryController@storeAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.create');
         Route::get('/factory/announcement/delete/{id}', 'App\Http\Controllers\Admin\FactoryController@deleteAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.delete');
         Route::post('/factory/update', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory.update');
@@ -1038,7 +1044,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
 
         Route::post('/factory/custom-field/store', 'App\Http\Controllers\Admin\FactoryController@storeCustomField')->middleware(['auth'])->name('admin.factory.custom.field.store');
-        Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
+        Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->withoutMiddleware('permission:your-company-menu')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
         
         Route::post('/document-code-template/store', 'App\Http\Controllers\Admin\DocumentCodeTemplateController@store')->middleware(['auth'])->name('admin.document.code.template.store');
         Route::post('/document-code-template/update/{id}', 'App\Http\Controllers\Admin\DocumentCodeTemplateController@update')->middleware(['auth'])->name('admin.document.code.template.update');
@@ -1057,20 +1063,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/kanban-settings/json/{id}',        'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonDestroy')->middleware(['auth'])->name('admin.kanban.settings.json.destroy');
 
         Route::get('/imports-exports', 'App\Http\Controllers\Admin\ImportsExportsController@index')->middleware(['auth'])->name('admin.imports.exports');
-        Route::get('/invoice-export/json/list',        'App\Http\Controllers\Admin\ImportsExportsController@invoiceExportJsonList')->middleware(['auth'])->name('admin.invoice.export.json.list');
-        Route::post('/invoice-export/export/{ext}',    'App\Http\Controllers\Admin\ImportsExportsController@invoiceExport')->middleware(['auth'])->name('admin.invoice.export');
-        Route::get('/fec-export/json/list',            'App\Http\Controllers\Admin\ImportsExportsController@fecExportJsonList')->middleware(['auth'])->name('admin.fec.export.json.list');
-        Route::post('/fec-export/export/{ext}',        'App\Http\Controllers\Admin\ImportsExportsController@fecExport')->middleware(['auth'])->name('admin.fec.export');
+        Route::get('/invoice-export/json/list',        'App\Http\Controllers\Admin\ImportsExportsController@invoiceExportJsonList')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.invoice.export.json.list');
+        Route::post('/invoice-export/export/{ext}',    'App\Http\Controllers\Admin\ImportsExportsController@invoiceExport')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.invoice.export');
+        Route::get('/fec-export/json/list',            'App\Http\Controllers\Admin\ImportsExportsController@fecExportJsonList')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.fec.export.json.list');
+        Route::post('/fec-export/export/{ext}',        'App\Http\Controllers\Admin\ImportsExportsController@fecExport')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.fec.export');
 
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
-        Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
+        Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->withoutMiddleware('permission:your-company-menu')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
 
         Route::middleware(['auth'])->prefix('api-tokens')->name('admin.api-tokens.')->group(function () {
             Route::get('/',           [\App\Http\Controllers\Admin\ApiTokenController::class, 'index'])->name('index');
             Route::post('/',          [\App\Http\Controllers\Admin\ApiTokenController::class, 'store'])->name('store');
             Route::delete('/{token}', [\App\Http\Controllers\Admin\ApiTokenController::class, 'destroy'])->name('destroy');
         });
-        Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->middleware(['auth'])->name('admin.logs-viewer.json.list');
+        Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->withoutMiddleware('permission:your-company-menu')->middleware(['auth'])->name('admin.logs-viewer.json.list');
     
         // Were declared without any middleware: update/delete answered anonymous
         // requests, which made the template XSS (GHSA-fp5p-mpqh-7fvx) injectable
@@ -1097,13 +1103,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->name('human.resources.show.user');
     
         // Update User
-        Route::match(['post', 'put'], '/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->name('human.resources.update.user');
+        Route::match(['post', 'put'], '/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware('permission:human-resources-menu')->name('human.resources.update.user');
 
         //lock User
-        Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->name('human.resources.lock.user');
+        Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->middleware('permission:human-resources-menu')->name('human.resources.lock.user');
 
         // Employment Contract
-        Route::group(['prefix' => 'contract'], function () {
+        Route::group(['prefix' => 'contract', 'middleware' => ['permission:human-resources-menu']], function () {
             // Create Employment Contract
             Route::post('/create', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->name('human.resources.create.contract');
             Route::post('/store', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->name('human.resources.store.user.contract');

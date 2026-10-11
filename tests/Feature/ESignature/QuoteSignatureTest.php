@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Schema\Blueprint;
@@ -42,6 +43,15 @@ class QuoteSignatureTest extends TestCase
     private int $envelopesCreated = 0;
 
     private bool $consentRequired = false;
+
+    /** The integration settings live under admin/*, which needs the administration permission. */
+    private function administrator(): User
+    {
+        $user = User::factory()->create();
+        $user->givePermissionTo(Permission::findOrCreate('your-company-menu'));
+
+        return $user;
+    }
 
     protected function setUp(): void
     {
@@ -213,7 +223,7 @@ class QuoteSignatureTest extends TestCase
         $this->configure();
         $this->consentRequired = true;
 
-        $this->actingAs(User::factory()->create());
+        $this->actingAs($this->administrator());
         $this->withoutMiddleware([\App\Http\Middleware\CheckUserRole::class]);
 
         $this->postJson(route('admin.integrations.esignature.test'))
@@ -333,7 +343,7 @@ class QuoteSignatureTest extends TestCase
     public function test_settings_are_stored_encrypted_and_secrets_kept_when_left_blank(): void
     {
         $this->withoutMiddleware([\App\Http\Middleware\CheckUserRole::class]);
-        $this->actingAs(User::factory()->create());
+        $this->actingAs($this->administrator());
 
         $payload = [
             'environment'     => 'demo',

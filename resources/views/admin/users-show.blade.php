@@ -112,6 +112,8 @@
                                     </div>
                                 </div>
                                 <!-- /.form-group -->
+                                @can('your-company-menu')
+                                @if(auth()->id() !== $User->id)
                                 <div class="form-group">
                                     <label for="role">{{__('general_content.role_trans_key') }} :</label>
                                     <div class="input-group">
@@ -120,7 +122,7 @@
                                         </div>
                                         <select class="form-control" name="role" id="role">
                                             @forelse ($Roles as $Role)
-                                            <option value="{{ $Role->name }}" @if($User->getRoleNames() == $Role->name  ) Selected @endif>{{ $Role->name }}</option>
+                                            <option value="{{ $Role->name }}" @if($User->hasRole($Role->name)) Selected @endif>{{ $Role->name }}</option>
                                             @empty
                                             <option value="">{{__('general_content.no_role_trans_key') }}</option>
                                             @endforelse
@@ -128,6 +130,8 @@
                                     </div>
                                 </div>
                                 <!-- /.form-group -->
+                                @endif
+                                @endcan
                                 <div class="form-group">
                                     <label for="pay_grade">{{ __('general_content.pay_grade_trans_key') }} :</label>
                                     <div class="input-group">
@@ -629,6 +633,8 @@
 @stop
 
 @section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

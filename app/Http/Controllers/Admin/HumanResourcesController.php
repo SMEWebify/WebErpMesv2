@@ -122,10 +122,18 @@ class HumanResourcesController extends Controller
         $UserUpdate->section_id = $request->section_id;
         $UserUpdate->statu = $request->statu;
 
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
         $UserUpdate->save();
 
-        $UserUpdate->assignRole($request->role);
+        // Roles used to be replaced from the submitted value for any caller,
+        // so any account could grant itself Admin. Changing a role now takes
+        // the administration permission (the one that already manages roles),
+        // never applies to one's own account, and only to an existing role.
+        if ($request->filled('role')
+            && $request->user()->can('your-company-menu')
+            && $request->user()->id !== $UserUpdate->id
+            && Role::where('name', $request->role)->exists()) {
+            $UserUpdate->syncRoles([$request->role]);
+        }
 
         return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', __('general_content.user_info_updated_success_trans_key'));
     }
