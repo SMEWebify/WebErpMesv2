@@ -9,7 +9,7 @@
                                                                                                                                 "guzzlehttp/guzzle": "^7.0.1",
                                                                                                                                 "horstoeko/zugferd": "^1",
                                                                                                                                 "jenssegers/agent": "^2.6",
-                                                                                                                                "jeroennoten/laravel-adminlte": "^3.9.2",
+                                                                                                                                "jeroennoten/laravel-adminlte": "^4.0.1",
                                                                                                                                 "laravel/framework": "^12.61",
                                                                                                                                 "laravel/pulse": "^1.7",
                                                                                                                                 "laravel/sanctum": "^4.3",

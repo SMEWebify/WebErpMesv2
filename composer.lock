@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd1a8c8161e7aa30c244e24a1c6a01f2",
+    "content-hash": "10152d78e0ae4cc6d3c086916396fea6",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
-            "version": "v3.2.0",
+            "version": "v4.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ColorlibHQ/AdminLTE.git",
-                "reference": "bd4d9c72931f1dd28601b6bfb387554a381ad540"
+                "reference": "e13df78a4d0c287e5fa57308e293f63e44e9dd0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ColorlibHQ/AdminLTE/zipball/bd4d9c72931f1dd28601b6bfb387554a381ad540",
-                "reference": "bd4d9c72931f1dd28601b6bfb387554a381ad540",
+                "url": "https://api.github.com/repos/ColorlibHQ/AdminLTE/zipball/e13df78a4d0c287e5fa57308e293f63e44e9dd0f",
+                "reference": "e13df78a4d0c287e5fa57308e293f63e44e9dd0f",
                 "shasum": ""
             },
             "type": "library",
@@ -45,9 +45,19 @@
             ],
             "support": {
                 "issues": "https://github.com/ColorlibHQ/AdminLTE/issues",
-                "source": "https://github.com/ColorlibHQ/AdminLTE/tree/v3.2.0"
+                "source": "https://github.com/ColorlibHQ/AdminLTE/tree/v4.10.1"
             },
-            "time": "2022-02-07T20:33:09+00:00"
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/daniel007in",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/danny007in",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-10-08T06:14:22+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
@@ -2661,26 +2671,28 @@
         },
         {
             "name": "jeroennoten/laravel-adminlte",
-            "version": "v3.16.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeroennoten/Laravel-AdminLTE.git",
-                "reference": "dc92e92a9c8ac7443a82c97310e347ad62d971e4"
+                "reference": "2ea728885df5f5a86faf1088b5901b5ccfbc569a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeroennoten/Laravel-AdminLTE/zipball/dc92e92a9c8ac7443a82c97310e347ad62d971e4",
-                "reference": "dc92e92a9c8ac7443a82c97310e347ad62d971e4",
+                "url": "https://api.github.com/repos/jeroennoten/Laravel-AdminLTE/zipball/2ea728885df5f5a86faf1088b5901b5ccfbc569a",
+                "reference": "2ea728885df5f5a86faf1088b5901b5ccfbc569a",
                 "shasum": ""
             },
             "require": {
-                "almasaeed2010/adminlte": "3.2.*",
-                "laravel/framework": ">=8.0",
-                "php": ">=7.3"
+                "almasaeed2010/adminlte": "^4.9",
+                "laravel/framework": "^12.0|^13.0",
+                "php": "^8.2"
             },
             "require-dev": {
-                "orchestra/testbench": ">=6.0",
-                "phpunit/phpunit": ">=9.1"
+                "larastan/larastan": "^3.0",
+                "laravel/ui": "^4.6",
+                "orchestra/testbench": "^10.0|^11.0",
+                "phpunit/phpunit": "^11.0|^12.0"
             },
             "type": "library",
             "extra": {
@@ -2702,21 +2714,37 @@
             "authors": [
                 {
                     "name": "Jeroen Noten",
-                    "email": "jeroennoten@me.com"
+                    "email": "jeroennoten@me.com",
+                    "role": "Creator"
+                },
+                {
+                    "name": "Diego Smania",
+                    "email": "diego.smania@gmail.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Florian Ressel",
+                    "email": "florian@genxtreme.de",
+                    "role": "Maintainer"
                 }
             ],
-            "description": "Easy AdminLTE integration with Laravel",
+            "description": "Easy AdminLTE v4 integration with Laravel",
+            "homepage": "https://jeroennoten.github.io/Laravel-AdminLTE",
             "keywords": [
                 "AdminLTE",
                 "admin",
                 "administrator",
+                "blade",
+                "bootstrap5",
+                "dashboard",
                 "laravel"
             ],
             "support": {
+                "docs": "https://jeroennoten.github.io/Laravel-AdminLTE",
                 "issues": "https://github.com/jeroennoten/Laravel-AdminLTE/issues",
-                "source": "https://github.com/jeroennoten/Laravel-AdminLTE/tree/v3.16.0"
+                "source": "https://github.com/jeroennoten/Laravel-AdminLTE"
             },
-            "time": "2026-04-30T07:28:25+00:00"
+            "time": "2026-09-28T07:10:01+00:00"
         },
         {
             "name": "jms/metadata",
@@ -10572,12 +10600,12 @@
             "version": "v5.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
+                "url": "https://github.com/phpdotenv/phpdotenv.git",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
+                "url": "https://api.github.com/repos/phpdotenv/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40",
                 "shasum": ""
             },
