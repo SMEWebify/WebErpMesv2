@@ -182,7 +182,8 @@ return [
         App\Providers\MailSettingsServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
+        // TelescopeServiceProvider : enregistré par AppServiceProvider seulement si
+        // laravel/telescope (require-dev) est installé — `composer install --no-dev`.
         FactoryServiceProvider::class,
     ],
 
