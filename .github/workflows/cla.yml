@@ -6,7 +6,7 @@ name: CLA Assistant
 # protection de WEM-2.0.
 #
 # Un workflow déclenché par issue_comment ne tourne que depuis la branche par
-# défaut : ce fichier doit être présent sur main, sinon le commentaire de
+# défaut du dépôt (WEM-2.0) : si elle change, ce fichier doit y être, sinon le commentaire de
 # signature n'est jamais traité.
 on:
   issue_comment:
