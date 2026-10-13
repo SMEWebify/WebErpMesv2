@@ -33,13 +33,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Déterminer la redirection basée sur le modeView
-        $redirectTo = match ($request->input('modeView')) {
-            'workshop' => RouteServiceProvider::WORKSHOP,
-            default => RouteServiceProvider::HOME,
-        };
+        // Mode atelier choisi explicitement au login : il l'emporte sur la page
+        // mémorisée avant la connexion (url.intended), sinon une page de bureau
+        // rechargée après une déconnexion renverrait l'opérateur hors de l'atelier.
+        if ($request->input('modeView') === 'workshop') {
+            $request->session()->forget('url.intended');
 
-        return redirect()->intended($redirectTo);
+            return redirect()->to(RouteServiceProvider::WORKSHOP);
+        }
+
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**
