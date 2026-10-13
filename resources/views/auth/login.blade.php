@@ -140,5 +140,5 @@
     @endif
 
 
-    <p class="my-2 text-muted">v1.19</p>
+    <p class="my-2 text-muted">v{{ config('app.version') }}</p>
 @stop

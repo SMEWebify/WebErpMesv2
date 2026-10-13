@@ -17,6 +17,9 @@ return [
 
     'name' => env('APP_NAME', 'WEM'),
 
+    // Version affichée sur les écrans de connexion : à aligner sur le tag de chaque release.
+    'version' => '2.2.0',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
