@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd1a8c8161e7aa30c244e24a1c6a01f2",
+    "content-hash": "deca834561b6edb9757f68929256240c",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -10572,12 +10572,12 @@
             "version": "v5.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
+                "url": "https://github.com/phpdotenv/phpdotenv.git",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
+                "url": "https://api.github.com/repos/phpdotenv/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40",
                 "shasum": ""
             },
@@ -14569,7 +14569,7 @@
     },
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.2.15"
+        "php": "8.4.26"
     },
     "plugin-api-version": "2.9.0"
 }

@@ -310,7 +310,7 @@ class PurchasesRFQController extends Controller
                 'ExternalId', 'OF', 'Designation', 'Material', 'Thickness',
                 'Quantity', 'Orientation', 'CutDeadline', 'DeliveryDeadline',
                 'SymPath', 'DxfPath', 'Client', 'NextOperation',
-            ], ';');
+            ], ';', escape: '\\');
 
             foreach ($orderLines as $orderLine) {
                 $order           = $orderLine->order;
@@ -336,7 +336,7 @@ class PurchasesRFQController extends Controller
                     $orderLineDetails?->cad_file_path ?? '',
                     $order?->companie?->label ?? '',
                     $service?->label ?? '',
-                ], ';');
+                ], ';', escape: '\\');
             }
 
             fclose($handle);

@@ -74,7 +74,7 @@ class InvoiceReportInterpreter
         }
 
         try {
-            $header = fgetcsv($handle);
+            $header = fgetcsv($handle, escape: '\\');
 
             if ($header === false) {
                 return collect();
@@ -84,7 +84,7 @@ class InvoiceReportInterpreter
 
             $rows = collect();
 
-            while (($row = fgetcsv($handle)) !== false) {
+            while (($row = fgetcsv($handle, escape: '\\')) !== false) {
                 if ($row === [null] || $row === []) {
                     continue;
                 }

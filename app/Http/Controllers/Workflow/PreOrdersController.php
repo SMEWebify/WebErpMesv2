@@ -495,7 +495,7 @@ class PreOrdersController extends Controller
         return response()->streamDownload(function () use ($lines) {
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF");
-            fputcsv($handle, ['article', 'nom', 'qté', 'nuance', 'épaisseur'], ';');
+            fputcsv($handle, ['article', 'nom', 'qté', 'nuance', 'épaisseur'], ';', escape: '\\');
 
             foreach ($lines as $line) {
                 $product = $line->linkedProduct ?? $line->suggestedProduct;
@@ -505,7 +505,7 @@ class PreOrdersController extends Controller
                     $line->quantity,
                     $product?->material ?? '',
                     $product?->thickness ?? '',
-                ], ';');
+                ], ';', escape: '\\');
             }
 
             fclose($handle);
