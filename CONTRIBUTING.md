@@ -120,7 +120,7 @@ Translation files live in `resources/lang/{locale}`. Fixing a wording, completin
 
 Since v2.2.0, the project is licensed under the **GNU LGPL v3 or later** (see [LICENSE](LICENSE), [COPYING](COPYING) and [NOTICE](NOTICE)).
 
-By submitting a contribution, you agree that it is licensed under the same terms, and you confirm that you have the right to submit it (it is your own work, or you are allowed to contribute it under this license).
+Before your first pull request can be merged, you will be asked to sign the [Contributor License Agreement](CLA.md), once, by posting a comment on the pull request. You keep the copyright of your work: the agreement grants the maintainer a license on it, so that the project can keep evolving, and commits to keeping every accepted contribution available under an open source license.
 
 The Nest2Prod name and logos are trademarks and are not covered by the code license; see [TRADEMARKS.md](TRADEMARKS.md).
 
