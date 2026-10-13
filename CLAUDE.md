@@ -15,10 +15,10 @@
 - **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Vue.js** : SUPPRIMÉ
 - **Livewire** : SUPPRIMÉ ✅ (reste en vendor uniquement comme dépendance transitive de laravel/pulse)
-- **CSS** : le shell (jeroennoten/laravel-adminlte) charge **AdminLTE 3.2 / Bootstrap 4.6**
-  depuis `public/vendor/adminlte` ; Vite compile en plus Bootstrap 5.3 (`resources/sass/app.scss`).
-  Les composants React s'appuient sur les classes **BS4** (`ml-1`, `badge-*`, `float-right`) :
-  ne pas les « moderniser » en BS5 sans migrer le shell. Tailwind supprimé.
+- **CSS** : **AdminLTE 4 / Bootstrap 5.3** (jeroennoten/laravel-adminlte 4, depuis la v3.0.0),
+  Bootstrap fourni **une seule fois** par `public/vendor/adminlte`. Classes **Bootstrap 5
+  uniquement** (`ms-1`, `text-bg-success`, `float-end`, `form-select`…). Voir la section
+  « Shell AdminLTE 4 ». Tailwind supprimé.
 - **Briques de tableau** : `resources/js/components/table/` (`SortIcon`, `Pagination`,
   `StatusBadge`, `StatusFilter`) — à utiliser plutôt que d'en recopier dans un écran.
   `DataTable` : tableau d'index déclaratif (liste de colonnes `key/label/render/sortable/
@@ -62,6 +62,65 @@
 4. ✅ Migrer QuoteLine vers React
 5. ✅ Migrer OrderLine vers React
 6. ✅ Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
+7. ✅ AdminLTE 3 / Bootstrap 4 → AdminLTE 4 / Bootstrap 5.3 (v3.0.0)
+8. ⬜ Select2 → Tom Select (`<x-adminlte-select-bs>`), puis retrait de jQuery
+
+## Shell AdminLTE 4 (v3.0.0)
+
+Principe : **s'aligner sur la v4**, ne pas reproduire le rendu d'AdminLTE 3. Aucune couche
+de compatibilité Bootstrap 4 n'est chargée.
+
+### Assets
+- **Bootstrap 5.3** (CSS et JS) vient d'AdminLTE (`public/vendor/adminlte`, `public/vendor/bootstrap`,
+  ressources publiées et **suivies par git**). `resources/sass/app.scss` (pages AdminLTE) ne
+  contient **que nos styles** ; ne jamais y réimporter `bootstrap/scss/bootstrap` : un second
+  Bootstrap, compilé avec d'autres couleurs, écraserait les règles d'AdminLTE (`.btn-teal`…).
+  Les pages **hors** gabarit AdminLTE (liens publics, portail client, installation, visite sur
+  site, pointage) chargent `resources/sass/standalone.scss`, qui compile Bootstrap.
+- **Bootstrap JS** : uniquement le bundle chargé par AdminLTE (`window.bootstrap`). Ne jamais
+  `import 'bootstrap'` ni `import { Tooltip } from 'bootstrap'` dans Vite (le paquet n'a pas de
+  `sideEffects` : tout le module serait embarqué, avec des écouteurs globaux en double).
+- **jQuery** n'est plus chargé par AdminLTE ; il l'est par le plugin `JQuery` de
+  `config/adminlte.php`, **uniquement pour Select2**. Pas de nouveau code jQuery : les blocs
+  qui écoutent un Select2 (société → adresse/contact sur proforma, facture, BL) restent en
+  jQuery car Select2 ne déclenche `change` que via jQuery.
+- **Font Awesome** reste la bibliothèque d'icônes (plugin `FontAwesome`) ; les vues du paquet
+  utilisent Bootstrap Icons, chargées par AdminLTE.
+
+### Balisage
+- Classes **Bootstrap 5** uniquement ; `tools/bs5-codemod.cjs` convertit une vue Bootstrap 4
+  (`node tools/bs5-codemod.cjs [--write]`, utile pour une vue `print/custom` ou un fork).
+- Couleurs : palette **AdminLTE 4** (`violet`, `sky`, `teal`, `orange`, `indigo`…). Un bouton
+  coloré s'écrit `btn-teal` (généré par le paquet), jamais `btn bg-teal` ; un fond coloré avec
+  texte contrasté s'écrit `text-bg-*`.
+- **Mode sombre** : aucune couleur neutre en dur (`#fff`, `#f8f9fa`, `#495057`…) dans les styles
+  inline ou SCSS → variables `var(--bs-body-bg)`, `var(--bs-tertiary-bg)`, `var(--bs-border-color)`,
+  `var(--bs-secondary-color)` ; classes `bg-body` / `bg-body-tertiary` plutôt que `bg-white` /
+  `bg-light` (qui restent clairs en sombre).
+- **Cartes écrites à la main** : AdminLTE 4 ne donne plus de marge basse à `.card` (le
+  composant `<x-adminlte-card>` pose `mb-4`) → `mb-3` explicite.
+- `<select>` → `form-select` ; pas d'enveloppe `input-group-prepend/append` ; champ fichier =
+  `<input type="file" class="form-control">`.
+- Cartes de tableau de bord `small-box` : balisage v4 (`small-box-icon`, `text-bg-*`).
+
+### Fichiers propres au projet
+- `public/css/wem-shell.css` : ajustements assumés (élément actif de sidebar neutre en couleur
+  primaire, place réservée aux badges du menu, `sidebar-hidden` des écrans atelier, onglets du
+  mode IFrame, `table-light` en mode sombre, `profile-user-img`).
+- Vues surchargées (`resources/views/vendor/adminlte`, 4) : `master` (permissions JS, favicons
+  et fond de la marque, lanceur mobile, détection d'onglet IFrame), widget clair/sombre/pro,
+  préchargeur WEM/N2P, bouton de menu + lanceur mobile.
+- `App\Menu\Filters\LocalizedHrefFilter` : préfixe de langue sur les liens du menu (sans lui,
+  l'entrée courante n'est jamais active).
+
+### Apparence par utilisateur
+`App\Support\UiTheme` : 17 habillages d'AdminLTE 4 repris de
+`vendor/almasaeed2010/adminlte/src/utils/palette.mjs` + « nest2prod » (défaut tant que
+`WEBERP_COLOR_THEME=nest2prod`), et une couleur principale (`data-lte-primary`). Choix stocké
+dans `users.ui_preset` / `users.ui_primary` (null = défaut), réglé dans Profil → Apparence,
+appliqué par `View::composer('adminlte::page')`. Le thème Nest2Prod (`theme-nest2prod.css`)
+n'est chargé que si l'utilisateur garde cet habillage sans autre couleur principale.
+Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 
 ## Commandes Artisan
 
@@ -169,6 +228,9 @@ php artisan optimize:clear && php artisan config:cache && php artisan view:cache
 php artisan queue:restart        # les workers rechargent le nouveau code
 php artisan up
 ```
+
+Passage de la v2.x à la **v3.0.0** (AdminLTE 4) : même procédure, plus les points de
+`docs/upgrade-3.0.md` (vues surchargées et `print/custom`, cache navigateur).
 
 ### Phase 2 — Docker (5+ clients)
 - Portainer + Nginx Proxy Manager
@@ -616,6 +678,20 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - **`companies.siren` non obligatoire à la saisie** : `FacturXBuilder::assertPartiesAreIdentifiable()` bloque désormais l'émission si SIREN/TVA sont absents ou malformés, mais rien n'empêche encore de créer une société sans ces champs
 
 ### 📋 Roadmap
+
+#### Frontend — suite AdminLTE 4
+- **Select2 → Tom Select** (`<x-adminlte-select-bs>`, recommandé par la v4) : dernière
+  dépendance à jQuery. Les blocs société → adresse/contact (proforma, facture, BL) pourront
+  alors passer en JS natif, et le plugin `JQuery` disparaître.
+- **Éditeur riche jamais chargé** : Summernote n'est inclus nulle part, donc
+  `<x-adminlte-text-editor>` (e-mail, commentaires article / lead / opportunité) et l'éditeur
+  des modèles d'e-mail (`admin/templates-index`, appel `$('.summernote')` en erreur) sont de
+  simples zones de texte. La v4 propose Quill (`@section('plugins.Quill', true)`).
+- **Sauvegarde de la disposition du tableau de bord** à revérifier après le passage de
+  `react-grid-layout` en 2.3.0 (Dependabot) : l'enregistrement serveur fonctionne, le
+  comportement du glisser-redimensionner reste à observer en navigateur.
+- **Fichiers morts** : `public/js/{app,bootstrap,node_modules_vue…,three*,OrbitControls,STLLoader}.js`
+  et `public/css/app.css` (anciens builds Laravel Mix), composant `components/header-print`.
 
 #### RH — reste à faire
 - **Notification d'absence** : le workflow de validation existe (voir plus haut), mais aucune

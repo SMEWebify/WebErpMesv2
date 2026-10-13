@@ -248,7 +248,7 @@ WebErpMesv2/
 - **Backend**: Laravel 12, PHP 8.2+
 - **Frontend**: React 19 (rich components), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Bundler**: Vite
-- **CSS**: Bootstrap 5 / AdminLTE 4
+- **UI**: AdminLTE 4 / Bootstrap 5.3 — light, dark and "pro" modes, 18 themes and a primary colour chosen by each user (Profile → Appearance)
 - **Database**: MySQL/PostgreSQL
 - **Cache & queues**: Redis
 - **Real-time**: Laravel Echo
