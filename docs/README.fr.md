@@ -244,7 +244,7 @@ WebErpMesv2/
 ```
 
 **Technologies clés** :
-- **Backend** : Laravel 12, PHP 8.2+
+- **Backend** : Laravel 13, PHP 8.4+
 - **Frontend** : React 19 (composants riches), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Bundler** : Vite
 - **Interface** : AdminLTE 4 / Bootstrap 5.3 — modes clair, sombre et « pro », 18 habillages et une couleur principale au choix de chaque utilisateur (Profil → Apparence)
@@ -486,9 +486,9 @@ Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SE
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
 - 📝 **2 200+** Commits
-- 🎉 **21** Releases (dernière : v1.19)
+- 🎉 **25** Releases (dernière : v2.2.0)
 - 🧪 **85+** fichiers de tests PHPUnit
-- 📦 **Open Source** sous licence MIT
+- 📦 **Open Source** sous licence LGPL v3
 
 ## 📚 Documentation
 
@@ -504,7 +504,7 @@ Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SE
 Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 
 **Priorités actuelles :**
-- 🧪 Amélioration de la couverture de tests (règles métier backend ; pas encore de tests front)
+- 🧪 Amélioration de la couverture de tests (règles métier backend avec PHPUnit, écrans React avec Vitest)
 - 📚 Documentation complète de l'API ([docs/API.md](API.md))
 - 📦 Stock : courbe de stock projeté, notifications de stock bas
 - 👥 RH : notifications d'absence, prise en compte des congés dans la capacité du planning
@@ -519,13 +519,15 @@ Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 
 ## 📄 Licence
 
-Projet sous licence **MIT** - Voir [LICENSE](../LICENSE)
+Depuis la **v2.2.0**, le projet est sous licence **GNU LGPL v3 ou ultérieure** - Voir [LICENSE](../LICENSE), [COPYING](../COPYING) et [NOTICE](../NOTICE).
+Les versions jusqu'à la v2.1.0 ont été publiées sous licence MIT et le restent.
+Le nom et les logos Nest2Prod sont des marques et ne sont pas couverts par la licence du code - Voir [TRADEMARKS.md](../TRADEMARKS.md).
 
 Vous êtes libre de :
-- ✅ Utiliser commercialement
+- ✅ L'utiliser commercialement, en interne comme pour vos clients
 - ✅ Modifier le code
-- ✅ Distribuer
-- ✅ Utiliser en privé
+- ✅ Le distribuer, à condition de fournir le code source de vos modifications du code lui-même
+- ✅ Développer des extensions séparées sous la licence de votre choix
 
 ## 🙏 Remerciements
 

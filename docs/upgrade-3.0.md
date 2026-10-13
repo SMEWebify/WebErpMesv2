@@ -9,7 +9,8 @@ If you customised views, scripts or `config/adminlte.php`, read
 
 ## Before you start
 
-- PHP 8.2+ and Laravel 12 (already required by v2.x).
+- v2.2 or later already installed: PHP 8.4 and Laravel 13 are required since v2.2.0. Upgrade
+  from an older release to v2.2 first.
 - Node.js and npm on the server, to rebuild the front-end bundle.
 - A fresh backup: `php artisan backup:run`.
 

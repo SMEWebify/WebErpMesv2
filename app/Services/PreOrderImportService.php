@@ -112,7 +112,7 @@ class PreOrderImportService
         $delimiter = substr_count($firstLine, ';') > substr_count($firstLine, ',') ? ';' : ',';
         rewind($handle);
 
-        $headers = fgetcsv($handle, 0, $delimiter);
+        $headers = fgetcsv($handle, 0, $delimiter, escape: '\\');
         if (!$headers) {
             fclose($handle);
             return [];
@@ -130,7 +130,7 @@ class PreOrderImportService
         }
 
         $rows = [];
-        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+        while (($data = fgetcsv($handle, 0, $delimiter, escape: '\\')) !== false) {
             if (count(array_filter($data, fn ($value) => trim((string) $value) !== '')) === 0) {
                 continue;
             }

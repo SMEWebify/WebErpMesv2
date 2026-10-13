@@ -33,6 +33,11 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // laravel/telescope est en require-dev : absent après `composer install --no-dev`.
+        if (class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)) {
+            $this->app->register(TelescopeServiceProvider::class);
+        }
+
         $this->app->singleton(SelectDataService::class, function () {
             return new SelectDataService();
         });

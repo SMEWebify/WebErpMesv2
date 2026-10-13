@@ -92,7 +92,7 @@ class ImportCsvService
         $importData = [];
         $file = fopen($filepath, "r");
 
-        while (($filedata = fgetcsv($file, 1000, ";")) !== FALSE) {
+        while (($filedata = fgetcsv($file, 1000, ";", escape: '\\')) !== FALSE) {
             $importData[] = $filedata;
         }
 
@@ -112,7 +112,7 @@ class ImportCsvService
      * 
      * @return bool Returns true if the header row is detected or if the required fields are missing.
      */
-    private function validateCompaniesImportData($data, $request = null, Int $importedLines)
+    private function validateCompaniesImportData($data, $request, Int $importedLines)
     {
         // Skip the header row (more robust check)
         if (empty($data[$request->code]) || empty($data[$request->label])) { 
@@ -131,7 +131,7 @@ class ImportCsvService
      * @param int $importedLines The number of imported lines.
      * @return bool Returns true if the data is valid, otherwise false.
      */
-    private function validateQuoteLinesImportData($data, $request = null, Int $importedLines)
+    private function validateQuoteLinesImportData($data, $request, Int $importedLines)
     {
         // Skip the header row (more robust check)
         if (empty($data[$request->code]) || empty($data[$request->label]) || empty($data[$request->qty]) || empty($data[$request->selling_price])) { 
