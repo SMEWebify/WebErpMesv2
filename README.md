@@ -245,10 +245,10 @@ WebErpMesv2/
 ```
 
 **Key Technologies**:
-- **Backend**: Laravel 12, PHP 8.2+
+- **Backend**: Laravel 13, PHP 8.4+
 - **Frontend**: React 19 (rich components), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Bundler**: Vite
-- **CSS**: Bootstrap 5 / AdminLTE 4
+- **CSS**: AdminLTE 3 / Bootstrap 4.6 (move to AdminLTE 4 / Bootstrap 5 planned for v3.0.0)
 - **Database**: MySQL/PostgreSQL
 - **Cache & queues**: Redis
 - **Real-time**: Laravel Echo
@@ -484,7 +484,7 @@ Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
 - 📝 **2,200+** Commits
-- 🎉 **24** Releases (latest: v2.1.0)
+- 🎉 **25** Releases (latest: v2.2.0)
 - 🧪 **85+** PHPUnit test files
 - 📦 **Open Source** under the LGPL v3 License
 
@@ -502,7 +502,7 @@ Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md
 Check our [roadmap](ROADMAP.md) to see what's coming next and how you can help!
 
 **Current priorities:**
-- 🧪 Test coverage improvement (backend business rules; no frontend tests yet)
+- 🧪 Test coverage improvement (backend business rules with PHPUnit, React screens with Vitest)
 - 📚 Complete API documentation ([docs/API.md](docs/API.md))
 - 📦 Stock: projected-stock curve, low-stock notifications
 - 👥 HR: absence notifications, absences taken into account in planning capacity

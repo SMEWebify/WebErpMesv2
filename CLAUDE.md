@@ -11,7 +11,7 @@
 > - **Toute régression est visible client** : privilégier le correctif ciblé au refactor large.
 
 ## Stack technique actuelle
-- **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
+- **Backend** : Laravel 13 (PHP 8.4+), architecture MVC classique
 - **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Vue.js** : SUPPRIMÉ
 - **Livewire** : SUPPRIMÉ ✅ (reste en vendor uniquement comme dépendance transitive de laravel/pulse)
@@ -593,9 +593,10 @@ de la Liste rouge UICN France des papillons de jour de métropole
 (https://uicn.fr/wp-content/uploads/2012/03/Liste_rouge_France_Papillons_de_jour_de_metropole.pdf),
 en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - Titre : `vX.Y.Z - Genre espèce` (nom latin seul), ex. `v2.0.1 - Parnassius mnemosyne`.
-- Dernier utilisé : *Parnassius mnemosyne* (v2.0.1). Suivants : *Iberochloe tagis*
-  (v2.1.0), *Iolana iolas*, *Lycaena helle*, *Maculinea alcon*, *Polyommatus dorylas*.
-- Mettre à jour cette ligne à chaque release.
+- Dernier utilisé : *Iolana iolas* (v2.2.0). Suivants : *Lycaena helle*, *Maculinea alcon*,
+  *Polyommatus dorylas*.
+- Mettre à jour cette ligne à chaque release, ainsi que `config/app.php` → `version`
+  (affichée sur les écrans de connexion).
 - Numérotation : correctif seul → Z (2.0.1) ; nouvelles fonctionnalités → Y (2.1.0).
 - Note de version en anglais, sur le modèle de v2.0.1 : avertissements de mise à jour
   (migrations, permissions, suppressions) en tête, tableau des avis GHSA, puis nouveautés.
@@ -610,8 +611,7 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   backup, pas de purge RGPD, pas de rapports email auto)
 - Restauration de backup jamais testée en réel → à faire une fois sur une copie
 
-### 🔴 Facturation électronique — avant le 1er sept. 2026
-- **Ligne d'annuaire** : son ouverture se fait **dans l'interface de la plateforme**, pas dans WEM — c'est l'identité du client vis-à-vis de sa PDP, et l'y dupliquer n'apporterait rien. WEM se contente de constater son absence et d'alerter. La commande `wem:pdp:directory --open=` reste disponible pour un déploiement en masse.
+### 🔴 Facturation électronique
 - **`factory.electronic_address` sans UI** : éditable en base uniquement, contrairement à celui des sociétés clientes
 - **`companies.siren` non obligatoire à la saisie** : `FacturXBuilder::assertPartiesAreIdentifiable()` bloque désormais l'émission si SIREN/TVA sont absents ou malformés, mais rien n'empêche encore de créer une société sans ces champs
 
@@ -641,6 +641,31 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
 - Try/catch sans logging
 - Tests métier manquants
+
+#### Devis — import DPGF (appels d'offres bâtiment)
+Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
+- **Import Excel → devis** : lecture PhpSpreadsheet sur le patron `InventoryXlsxImporter`
+  (parse → aperçu sans écriture → application en transaction). Détection de la ligne
+  d'en-tête et des colonnes N° / Désignation / Unité / Qté / PU HT / Montant, corrigeables
+  dans l'aperçu. Classement des lignes : titre de lot → `section`, poste → `article`,
+  « Total lot » → `subtotal`, « PM / Inclus / Sans objet » → `text`. N° de poste dans
+  `code`. Correspondance d'unités (m², ml, u, ens, ft…) : le seeder ne crée que KG/MM/UNIT.
+  DPGF d'origine rangé dans la GED du devis. Classeur multi-onglets : un onglet par lot ou
+  onglet choisi.
+- **Renvoi du DPGF chiffré au format du maître d'œuvre** (la vraie valeur : l'AO exige son
+  fichier, pas notre PDF) : colonne additive nullable `quote_lines.source_ref` (cellule
+  d'origine), puis réécriture des PU (et quantités corrigées) dans le classeur d'origine
+  sans casser formules ni mise en page. Aucun export XLSX de devis n'existe aujourd'hui.
+- **Plus tard** : rapprochement désignation → article / trame avec prix des devis passés,
+  classement assisté par IA (`AIGateway`) des structures irrégulières, alerte sur les
+  quantités (l'entreprise est responsable de ses quantités dans un DPGF).
+- **Contrainte** : sections non imbriquables (pas de parent/niveau sur `quote_lines`) →
+  aplatir l'arborescence en sections numérotées + sous-total par lot ; ne pas introduire
+  d'imbrication (impact PDF / Factur-X).
+- **Bugs de l'import de lignes existant à corriger au passage** (`ImportCsvService`) :
+  un `.xlsx` est accepté mais lu par `fgetcsv` (l. 95) ; `array_key_exists($request->x,
+  $importData)` teste le n° de colonne contre la liste des lignes au lieu de la ligne
+  courante (lignes de devis l. 658-664, commandes l. 734, sociétés l. 378-386).
 
 #### Stock — suite de la refonte
 - **Stock projeté** (courbe temporelle physique + PO en attente − réservations) : algo `projectionForProduct(daysHorizon)`, colonne "Rupture prévue à J+X" sur écran Statut du stock, courbe chart.js sur fiche produit
