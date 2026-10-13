@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use App\Models\Accounting\AccountingVat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -69,14 +70,27 @@ class Factory extends Model
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
     }
 
+    /**
+     * Le logo référencé en base est-il présent sur le disque ? Un fichier perdu
+     * (restauration partielle, copie d'instance, dépôt interrompu) ne doit pas
+     * empêcher d'afficher une page publique ni de générer un PDF ou un Factur-X.
+     */
+    public function hasPictureFile(): bool
+    {
+        return $this->picture && is_file(public_path('images/factory/'.$this->picture));
+    }
+
     public function getImageFactoryPath(){
         // Example image is located at `public/images/factory`
-        if($this->picture){
-            return base64_encode(file_get_contents(public_path('images/factory/'.$this->picture)));
-        }
-        else{
+        if (! $this->hasPictureFile()) {
+            if ($this->picture) {
+                Log::warning('Logo de la société introuvable : public/images/factory/'.$this->picture);
+            }
+
             return null;
         }
+
+        return base64_encode(file_get_contents(public_path('images/factory/'.$this->picture)));
     }
 
     /**

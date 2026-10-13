@@ -25,7 +25,7 @@
         <div class="container">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-3">
-                    @if($Factory->picture)
+                    @if($Factory->hasPictureFile())
                         <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="{{ $Factory->name }}" height="36">
                     @endif
                     <span class="fw-semibold text-dark">{{ $Factory->name ?? config('app.name') }}</span>
@@ -171,7 +171,7 @@
                         <h6 class="card-title text-uppercase text-muted small fw-bold mb-3">{{ $Factory->name }}</h6>
                         <div class="row">
                             <div class="col-sm-6">
-                                @if($Factory->picture)
+                                @if($Factory->hasPictureFile())
                                     <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" height="48" class="mb-2">
                                 @endif
                             </div>

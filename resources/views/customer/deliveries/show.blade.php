@@ -107,7 +107,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <h3 class="h6">{{ $Factory->name }}</h3>
-                            @if($Factory->picture)
+                            @if($Factory->hasPictureFile())
                                 <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" width="64" class="logo"/>
                             @endif
                         </div>
