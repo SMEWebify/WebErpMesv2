@@ -486,7 +486,7 @@ Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SE
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
 - 📝 **2 200+** Commits
-- 🎉 **25** Releases (dernière : v2.2.0)
+- 🎉 **26** Releases (dernière : v3.0.0)
 - 🧪 **85+** fichiers de tests PHPUnit
 - 📦 **Open Source** sous licence LGPL v3
 

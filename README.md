@@ -484,7 +484,7 @@ Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
 - 📝 **2,200+** Commits
-- 🎉 **25** Releases (latest: v2.2.0)
+- 🎉 **26** Releases (latest: v3.0.0)
 - 🧪 **85+** PHPUnit test files
 - 📦 **Open Source** under the LGPL v3 License
 

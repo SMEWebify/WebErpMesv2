@@ -655,7 +655,7 @@ de la Liste rouge UICN France des papillons de jour de métropole
 (https://uicn.fr/wp-content/uploads/2012/03/Liste_rouge_France_Papillons_de_jour_de_metropole.pdf),
 en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - Titre : `vX.Y.Z - Genre espèce` (nom latin seul), ex. `v2.0.1 - Parnassius mnemosyne`.
-- Dernier utilisé : *Iolana iolas* (v2.2.0). Suivants : *Lycaena helle*, *Maculinea alcon*,
+- Dernier utilisé : *Lycaena helle* (v3.0.0). Suivants : *Maculinea alcon*,
   *Polyommatus dorylas*.
 - Mettre à jour cette ligne à chaque release, ainsi que `config/app.php` → `version`
   (affichée sur les écrans de connexion).
