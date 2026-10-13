@@ -11,7 +11,7 @@ function Skeleton({ lines = 3 }) {
                     style={{
                         height: i === 0 ? 36 : 14,
                         borderRadius: 4,
-                        background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                        background: 'linear-gradient(90deg, var(--bs-secondary-bg) 25%, var(--bs-tertiary-bg) 50%, var(--bs-secondary-bg) 75%)',
                         backgroundSize: '400% 100%',
                         animation: 'wem-shimmer 1.4s infinite',
                         marginBottom: 10,
@@ -37,7 +37,7 @@ function Skeleton({ lines = 3 }) {
  * Props:
  *   title      string        — titre de la card
  *   icon       string        — classe FontAwesome (ex: "fa-chart-bar")
- *   theme      string        — couleur AdminLTE (info|primary|success|warning|danger|purple|teal|orange|lime)
+ *   theme      string        — couleur AdminLTE 4 (primary|info|success|warning|danger|teal|orange|violet|sky…)
  *   loading    bool          — affiche le skeleton
  *   error      string|null   — affiche un message d'erreur
  *   empty      bool          — affiche un état vide
@@ -70,11 +70,13 @@ export default function WidgetCard({
     currentType,
 }) {
     return (
-        <div className={`card card-outline card-${theme}`} style={{ height: '100%', marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
+        // Même balisage que <x-adminlte-card theme="…"> (en-tête coloré), pour que
+        // les widgets ressemblent aux cartes des autres écrans.
+        <div className={`card card-${theme}`} style={{ height: '100%', marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
-            <div className="card-header d-flex align-items-center" style={{ minHeight: 42, padding: '0.4rem 0.75rem' }}>
-                <h3 className="card-title" style={{ fontSize: '0.9rem', flex: 1, margin: 0 }}>
-                    {icon && <i className={`fas ${icon} mr-1`} style={{ opacity: 0.7 }} />}
+            <div className="card-header">
+                <h3 className="card-title">
+                    {icon && <i className={`fas ${icon} me-1`} aria-hidden="true" />}
                     {title}
                 </h3>
 
@@ -84,7 +86,7 @@ export default function WidgetCard({
                         {/* Type switcher */}
                         {availableTypes.length > 1 && onTypeChange && (
                             <select
-                                className="form-control form-control-sm"
+                                className="form-select form-select-sm"
                                 style={{ height: 26, padding: '0 0.4rem', fontSize: '0.75rem', width: 'auto' }}
                                 value={currentType}
                                 onChange={e => onTypeChange(e.target.value)}
@@ -111,7 +113,7 @@ export default function WidgetCard({
                         <span
                             className="wem-drag-handle"
                             title="Déplacer"
-                            style={{ cursor: 'grab', color: '#aaa', padding: '0 2px' }}
+                            style={{ cursor: 'grab', color: 'inherit', opacity: 0.7, padding: '0 2px' }}
                         >
                             <i className="fas fa-grip-vertical" style={{ fontSize: '0.75rem' }} />
                         </span>
@@ -131,13 +133,13 @@ export default function WidgetCard({
                 {loading && <Skeleton />}
                 {!loading && error && (
                     <div className="alert alert-danger mb-0 py-2" style={{ fontSize: '0.82rem' }}>
-                        <i className="fas fa-exclamation-triangle mr-1" />
+                        <i className="fas fa-exclamation-triangle me-1" />
                         {error}
                     </div>
                 )}
                 {!loading && !error && empty && (
                     <p className="text-muted text-center small my-3">
-                        <i className="fas fa-inbox mr-1" />
+                        <i className="fas fa-inbox me-1" />
                         {emptyText}
                     </p>
                 )}

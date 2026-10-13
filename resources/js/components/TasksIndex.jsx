@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Tooltip } from 'bootstrap';
 import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
@@ -25,7 +24,7 @@ function endDateClass(task) {
     const date = task.formatted_end_date;
     if (!date || date === 'NULL') return '';
     if (today > date) return 'bg-danger';
-    if (today === date) return 'bg-orange';
+    if (today === date) return 'text-bg-orange';
     return 'bg-primary';
 }
 
@@ -56,14 +55,14 @@ function colDefs(t) {
                 if (task.sub_assembly?.order_lines_id) {
                     const id   = task.sub_assembly.order_lines?.orders_id;
                     const code = task.sub_assembly.order_lines?.order?.code;
-                    return <a href={`/orders/${id}`} className="btn btn-xs btn-default">{code}</a>;
+                    return <a href={`/orders/${id}`} className="btn btn-sm btn-outline-secondary">{code}</a>;
                 }
                 if (task.order_lines) {
                     const id   = task.order_lines.orders_id;
                     const code = task.order_lines.order?.code;
-                    return <a href={`/orders/${id}`} className="btn btn-xs btn-default">{code}</a>;
+                    return <a href={`/orders/${id}`} className="btn btn-sm btn-outline-secondary">{code}</a>;
                 }
-                return <span className="badge badge-secondary">{t('generic_trans_key')}</span>;
+                return <span className="badge text-bg-secondary">{t('generic_trans_key')}</span>;
             },
         },
         qty: {
@@ -81,7 +80,7 @@ function colDefs(t) {
             sortField: null,
             align:     '',
             render:    (task) => {
-                if (task.sub_assembly) return <><i className="fas fa-code-branch mr-1" />{task.sub_assembly.child?.label}</>;
+                if (task.sub_assembly) return <><i className="fas fa-code-branch me-1" />{task.sub_assembly.child?.label}</>;
                 if (task.order_lines)  return task.order_lines.label;
                 return '';
             },
@@ -92,7 +91,7 @@ function colDefs(t) {
             align:     '',
             render:    (task) => (
                 <>
-                    <a href={`/production/Task/Statu/Id/${task.id}`} className="btn btn-xs btn-success mr-1">
+                    <a href={`/production/Task/Statu/Id/${task.id}`} className="btn btn-sm btn-success me-1">
                         {t('view_trans_key')}
                     </a>
                     <span className="text-muted small">#{task.id}</span>
@@ -108,7 +107,7 @@ function colDefs(t) {
             align:     'center',
             render:    (task) =>
                 task.component_id
-                    ? <a href={`/products/${task.component_id}`} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a>
+                    ? <a href={`/products/${task.component_id}`} className="btn btn-sm btn-info"><i className="fas fa-eye" /></a>
                     : null,
             cellClass: (task) => task.component_id ? `bg-${task.component?.stock_color} color-palette` : '',
         },
@@ -125,7 +124,7 @@ function colDefs(t) {
                             <span
                                 data-bs-toggle="tooltip"
                                 data-bs-html="true"
-                                title={`<img alt='Service' class='profile-user-img img-fluid img-circle' src='/storage/images/methods/${task.service.picture}'>`}
+                                title={`<img alt='Service' class='profile-user-img img-fluid rounded-circle' src='/storage/images/methods/${task.service.picture}'>`}
                             >
                                 {task.service.label}
                             </span>
@@ -193,7 +192,7 @@ function colDefs(t) {
             sortField: 'status_id',
             align:     '',
             render:    (task) => (
-                <span className={`badge badge-${statusColor(task.status?.title ?? '')}`}>
+                <span className={`badge text-bg-${statusColor(task.status?.title ?? '')}`}>
                     {task.status?.title}
                 </span>
             ),
@@ -269,7 +268,7 @@ function ProgressBar({ value }) {
     return (
         <div className="progress progress-sm" style={{ minWidth: 60 }}>
             <div
-                className="progress-bar bg-teal progress-bar-striped progress-bar-animated"
+                className="progress-bar text-bg-teal progress-bar-striped progress-bar-animated"
                 role="progressbar"
                 style={{ width: `${pct}%` }}
             >
@@ -280,8 +279,8 @@ function ProgressBar({ value }) {
 }
 
 function SortIcon({ field, sortField, sortAsc }) {
-    if (sortField !== field) return <i className="fas fa-sort text-muted ml-1" style={{ fontSize: '0.7rem', opacity: 0.5 }} />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} style={{ fontSize: '0.7rem' }} />;
+    if (sortField !== field) return <i className="fas fa-sort text-muted ms-1" style={{ fontSize: '0.7rem', opacity: 0.5 }} />;
+    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ms-1`} style={{ fontSize: '0.7rem' }} />;
 }
 
 function StatusFilter({ statuses, selected, onChange }) {
@@ -363,7 +362,10 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
     const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
 
     useEffect(() => {
-        if (!tableRef.current) return;
+        // Bootstrap vient du bundle chargé par AdminLTE (window.bootstrap) : l'importer
+        // depuis npm embarquerait un second exemplaire et ses écouteurs globaux.
+        const Tooltip = window.bootstrap?.Tooltip;
+        if (!tableRef.current || !Tooltip) return;
         const instances = [];
         tableRef.current.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
             Tooltip.getInstance(el)?.dispose();
@@ -399,14 +401,14 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                         <tr>
                             {visibleCols.map((colId) => {
                                 const col      = COLS[colId];
-                                const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
+                                const alignCls = col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : '';
                                 const dropping = dragOver === colId;
                                 return (
                                     <th
                                         key={colId}
                                         className={alignCls}
-                                        draggable
-                                        style={{
+ draggable
+ style={{
                                             cursor:     col.sortField ? 'pointer' : 'grab',
                                             whiteSpace: 'nowrap',
                                             userSelect: 'none',
@@ -419,7 +421,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                                         onDrop={() => onDrop(colId)}
                                         onClick={() => col.sortField && onSort(col.sortField)}
                                     >
-                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
+                                        <i className="fas fa-grip-vertical text-muted me-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
                                         {col.label}
                                         {col.sortField && (
                                             <SortIcon field={col.sortField} sortField={sortField} sortAsc={sortAsc} />
@@ -501,7 +503,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                             <tr key={task.id}>
                                 {visibleCols.map((colId) => {
                                     const col      = COLS[colId];
-                                    const alignCls = col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : '';
+                                    const alignCls = col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : '';
                                     const extraCls = col.cellClass ? col.cellClass(task) : '';
                                     const extraSty = col.cellStyle ? col.cellStyle(task) : {};
                                     return (
@@ -591,14 +593,14 @@ export default function TasksIndex({
     }, [initialTasks, serviceId, selectedStatuses, resourceId, showGeneric, sortField, sortAsc]);
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             {/* ── Toolbar ── */}
             <div className="card-body pb-2 pt-3">
                 <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
 
                     {/* Service */}
                     <select
-                        className="form-control form-control-sm flex-shrink-0"
+                        className="form-select form-select-sm flex-shrink-0"
                         style={{ width: 160 }}
                         value={serviceId}
                         onChange={(e) => setServiceId(e.target.value)}
@@ -611,7 +613,7 @@ export default function TasksIndex({
 
                     {/* Resource */}
                     <select
-                        className="form-control form-control-sm flex-shrink-0"
+                        className="form-select form-select-sm flex-shrink-0"
                         style={{ width: 160 }}
                         value={resourceId}
                         onChange={(e) => setResourceId(e.target.value)}
@@ -638,12 +640,12 @@ export default function TasksIndex({
                         className={`btn btn-sm flex-shrink-0 ${showGeneric ? 'btn-warning' : 'btn-outline-secondary'}`}
                         onClick={() => setShowGeneric(!showGeneric)}
                     >
-                        <i className="fas fa-layer-group mr-1" />
+                        <i className="fas fa-layer-group me-1" />
                         {t('show_generic_task_trans_key')}
                     </button>
 
                     {/* Result count */}
-                    <span className="badge badge-secondary flex-shrink-0">{filtered.length}</span>
+                    <span className="badge text-bg-secondary flex-shrink-0">{filtered.length}</span>
                 </div>
             </div>
 

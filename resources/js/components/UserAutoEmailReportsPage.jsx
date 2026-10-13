@@ -30,11 +30,11 @@ export default function UserAutoEmailReportsPage({ initialReports, reportTypes, 
     }
 
     return (
-        <div className="card card-info">
+        <div className="card card-info mb-3">
                 <div className="card-header">
                     <h3 className="card-title">{trans.automatic_email_reports ?? 'Automatic Email Reports'}</h3>
                     <div className="card-tools">
-                        <button type="button" className="btn btn-tool" data-card-widget="maximize"><i className="fas fa-expand"></i></button>
+                        <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize"><i className="fas fa-expand"></i></button>
                     </div>
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -43,7 +43,7 @@ export default function UserAutoEmailReportsPage({ initialReports, reportTypes, 
 
                         {success && (
                             <div className="alert alert-success alert-dismissible">
-                                <button type="button" className="close" onClick={() => setSuccess('')}><span>&times;</span></button>
+                                <button type="button" onClick={() => setSuccess('')} aria-label="Close" className="btn-close float-end"></button>
                                 {success}
                             </div>
                         )}
@@ -87,8 +87,8 @@ export default function UserAutoEmailReportsPage({ initialReports, reportTypes, 
                         </div>
                     </div>
                     <div className="card-footer">
-                        <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                            <i className="fas fa-save fa-lg mr-1"></i>
+                        <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                            <i className="fas fa-save fa-lg me-1"></i>
                             {saving ? (trans.saving ?? 'Saving…') : (trans.update ?? 'Update')}
                         </button>
                     </div>

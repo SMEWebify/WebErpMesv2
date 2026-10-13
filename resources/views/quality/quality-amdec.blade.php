@@ -45,7 +45,7 @@
                         <td>{{ $QualityAmdec->severity }}</td>
                         <td>{{ $QualityAmdec->occurrence }}</td>
                         <td class="
-                            @if ($QualityAmdec->categorizeCriticality() === 'High')
+ @if ($QualityAmdec->categorizeCriticality() === 'High')
                                 bg-danger
                             @elseif ($QualityAmdec->categorizeCriticality() === 'Medium')
                                 bg-warning
@@ -100,7 +100,7 @@
                             </x-adminlte-modal>
         
                             <!-- Button Modal -->
-                            <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#QualityAmdec{{ $QualityAmdec->id }}">
+                            <button type="button" class="btn btn-teal" data-bs-toggle="modal" data-bs-target="#QualityAmdec{{ $QualityAmdec->id }}">
                                 <i class="fa fa-lg fa-fw fa-edit"></i>
                             </button>
                             <!-- Modal {{ $QualityAmdec->id }} -->
@@ -108,81 +108,65 @@
                                 <form method="POST" action="{{ route('quality.amdec.update', ['id' => $QualityAmdec->id]) }}" enctype="multipart/form-data">
                                     @csrf
                                     <div class="card-body">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="failure_mode">{{ __('general_content.failure_mode_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <input type="text" class="form-control" name="failure_mode" id="failure_mode" placeholder="{{ __('general_content.failure_mode_trans_key') }}" value="{{ $QualityAmdec->failure_mode }}">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="effect">{{ __('general_content.effect_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <input type="text" class="form-control" name="effect" id="effect" placeholder="{{ __('general_content.effect_trans_key') }}" value="{{ $QualityAmdec->effect }}">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="cause">{{ __('general_content.cause_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <input type="text" class="form-control" name="cause" id="cause" placeholder="{{ __('general_content.cause_trans_key') }}" value="{{ $QualityAmdec->cause }}">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="severity">{{ __('general_content.severity_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                                 <input type="number" class="form-control" name="severity" id="severity" placeholder="{{ __('general_content.severity_trans_key') }}" value="{{ $QualityAmdec->severity }}" min="1" max="10">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="occurrence">{{ __('general_content.occurrence_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                                 <input type="number" class="form-control" name="occurrence" id="occurrence" placeholder="{{ __('general_content.occurrence_trans_key') }}" value="{{ $QualityAmdec->occurrence }}" min="1" max="10">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="detection">{{ __('general_content.detection_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                                 <input type="number" class="form-control" name="detection" id="detection" placeholder="{{ __('general_content.detection_trans_key') }}" value="{{ $QualityAmdec->detection }}" min="1" max="10">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="current_control">{{ __('general_content.current_control_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <input type="text" class="form-control" name="current_control" id="current_control" placeholder="{{ __('general_content.current_control_trans_key') }}" value="{{ $QualityAmdec->current_control }}">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <label for="recommended_action">{{ __('general_content.recommended_action_trans_key') }}</label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                </div>
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <input type="text" class="form-control" name="recommended_action" id="recommended_action" placeholder="{{ __('general_content.recommended_action_trans_key') }}" value="{{ $QualityAmdec->recommended_action }}">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                     </div>
                                 </form>
                             </x-adminlte-modal>
@@ -215,7 +199,7 @@
             <!-- /.row -->
         </div>
         <div class="row">
-            <div class="form-group col-md-5">
+            <div class="mb-3 col-md-5">
                 {{ $QualityAmdecs->links() }}
             </div>
             <!-- /.row -->
@@ -227,91 +211,77 @@
             @csrf
 
             
-            <div class="form-row">
-                <div class="form-group col-md-4">
+            <div class="row gx-2">
+                <div class="mb-3 col-md-4">
                     <x-product-autocomplete name="product_id" label="{{ __('general_content.product_trans_key') }}" />
                 </div>
-                <div class="form-group col-md-4">
+                <div class="mb-3 col-md-4">
                     @include('include.form.form-select-user',['userId' =>   null])
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-md-4">
+            <div class="row gx-2">
+                <div class="mb-3 col-md-4">
                     <label for="failure_mode">{{ __('general_content.failure_mode_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-exclamation-circle"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-exclamation-circle"></i></span>
                         <input type="text" class="form-control" name="failure_mode" id="failure_mode" placeholder="{{ __('general_content.failure_mode_trans_key') }}">
                     </div>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="mb-3 col-md-4">
                     <label for="effect">{{ __('general_content.effect_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
                         <input type="text" class="form-control" name="effect" id="effect" placeholder="{{ __('general_content.effect_trans_key') }}">
                     </div>
                 </div>
                 
-                <div class="form-group col-md-4">
+                <div class="mb-3 col-md-4">
                     <label for="cause">{{ __('general_content.cause_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-question-circle"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-question-circle"></i></span>
                         <input type="text" class="form-control" name="cause" id="cause" placeholder="{{ __('general_content.cause_trans_key') }}">
                     </div>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-4">
+            <div class="row gx-2">
+                <div class="mb-3 col-md-4">
                     <label for="severity">{{ __('general_content.severity_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-exclamation-triangle"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-exclamation-triangle"></i></span>
                         <input type="number" class="form-control" name="severity" id="severity" placeholder="{{ __('general_content.severity_trans_key') }}" min="1" max="10">
                     </div>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="mb-3 col-md-4">
                     <label for="occurrence">{{ __('general_content.occurrence_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                         <input type="number" class="form-control" name="occurrence" id="occurrence" placeholder="{{ __('general_content.occurrence_trans_key') }}" min="1" max="10">
                     </div>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="mb-3 col-md-4">
                     <label for="detection">{{ __('general_content.detection_trans_key') }}</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-eye"></i></span>
-                        </div>
+                        <span class="input-group-text"><i class="fas fa-eye"></i></span>
                         <input type="number" class="form-control" name="detection" id="detection" placeholder="{{ __('general_content.detection_trans_key') }}" min="1" max="10">
                     </div>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-4">
+            <div class="row gx-2">
+                <div class="mb-3 col-md-4">
                 <label for="current_control">{{ __('general_content.current_control_trans_key') }}</label>
                 <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
                     <input type="text" class="form-control" name="current_control" id="current_control" placeholder="{{ __('general_content.current_control_trans_key') }}">
                 </div>
             </div>
-                <div class="form-group col-md-8">
+                <div class="mb-3 col-md-8">
                     <label for="recommended_action">{{ __('general_content.recommended_action_trans_key') }}</label>
                     <textarea class="form-control" rows="3" name="recommended_action" id="recommended_action" placeholder="{{ __('general_content.recommended_action_trans_key') }}"></textarea>
                 </div>
             </div>
             <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </x-slot>
         </x-adminlte-card>
     </form>

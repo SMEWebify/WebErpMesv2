@@ -7,6 +7,6 @@ import React from 'react';
  */
 export default function SortIcon({ field, sortField, sortAsc, size }) {
     const style = size === 'sm' ? { fontSize: '0.7rem' } : undefined;
-    if (!field || field !== sortField) return <i className="fas fa-sort text-muted ml-1" style={style} />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} style={style} />;
+    if (!field || field !== sortField) return <i className="fas fa-sort text-muted ms-1" style={style} />;
+    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ms-1`} style={style} />;
 }

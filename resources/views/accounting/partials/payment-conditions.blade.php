@@ -26,9 +26,9 @@
                       @if($PaymentCondition->month_end  == 2) No @endif
                     </td>
                     <td>
-                      <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="customRadioPaymentCondition{{ $PaymentCondition->id }}" name="customRadioPaymentCondition"  @if( $PaymentCondition->default == 1 ) checked @endif disabled>
-                        <label for="customRadioPaymentCondition{{ $PaymentCondition->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                      <div class="form-check ">
+                        <input class="form-check-input" type="radio" id="customRadioPaymentCondition{{ $PaymentCondition->id }}" name="customRadioPaymentCondition"  @if( $PaymentCondition->default == 1 ) checked @endif disabled>
+                        <label for="customRadioPaymentCondition{{ $PaymentCondition->id }}" class="form-check-label">{{__('general_content.by_default_trans_key') }}</label>
                       </div>
                     </td>
                     <td class=" py-0 align-middle">
@@ -39,44 +39,42 @@
                         <x-adminlte-modal id="PaymentCondition{{ $PaymentCondition->id }}" title="Update {{ $PaymentCondition->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                         @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $PaymentCondition->label }}">
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="number_of_month">{{__('general_content.number_of_month_trans_key') }}</label>
                               <input type="number" class="form-control" name="number_of_month"  id="number_of_month" placeholder="{{__('general_content.number_of_month_trans_key') }}" value="{{ $PaymentCondition->number_of_month }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="number_of_day">{{__('general_content.number_of_day_trans_key') }}</label>
                               <input type="number" class="form-control" name="number_of_day"  id="number_of_day" placeholder="{{__('general_content.number_of_day_trans_key') }}" value="{{ $PaymentCondition->number_of_day }}">
                             </div>
-                            <div class="form-group">
-                              <div class="col-4 text-left"><label for="month_end_update{{ $PaymentCondition->id }}" class="col-form-label">{{ __('general_content.end_of_month_trans_key') }}</label></div>
+                            <div class="mb-3">
+                              <div class="col-4 text-start"><label for="month_end_update{{ $PaymentCondition->id }}" class="col-form-label">{{ __('general_content.end_of_month_trans_key') }}</label></div>
                               <div class="col-8">
                                                           
                                   @if($PaymentCondition->month_end == 1)  
-                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true"/>
+                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" is-checked="true"/>
                                   @else
-                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" />
                                   @endif
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="default">{{__('general_content.by_default_trans_key') }}</label>
-                              <select class="form-control" name="default" id="default">
+                              <select class="form-select" name="default" id="default">
                                   <option value="0" @if($PaymentCondition->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                   <option value="1" @if($PaymentCondition->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                           <x-slot name="footerSlot">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </x-slot>
                         </x-adminlte-modal>
                       </form>
@@ -107,39 +105,34 @@
           <form  method="POST" action="{{ route('accounting.paymentCondition.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_payment_conditions_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="number_of_month">{{__('general_content.number_of_month_trans_key') }}</label>
                 <input type="number" class="form-control" name="number_of_month"  id="number_of_month" placeholder="{{__('general_content.number_of_month_trans_key') }}">
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="number_of_day">{{__('general_content.number_of_day_trans_key') }}</label>
                 <input type="number" class="form-control" name="number_of_day"  id="number_of_day" placeholder="{{__('general_content.number_of_day_trans_key') }}">
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="month_end" class="col-form-label">{{ __('general_content.end_of_month_trans_key') }}</label>
-                <x-adminlte-input-switch name="month_end" id="month_end" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
-                data-on-color="teal" is-checked="true"/>
+                <x-adminlte-input-switch name="month_end" id="month_end" is-checked="true"/>
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>

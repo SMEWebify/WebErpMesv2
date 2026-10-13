@@ -12,7 +12,7 @@
   @include('include.alert-result')
   <div class="row">
     <div class="col-md-6">
-      <x-adminlte-card title="{{ __('general_content.standard_bom_trans_key') }}" theme="purple" maximizable>
+      <x-adminlte-card title="{{ __('general_content.standard_bom_trans_key') }}" theme="violet" maximizable>
         <div class="table-responsive p-0">
           <table class="table table-hover">
             <thead>
@@ -44,21 +44,19 @@
                     <form method="POST" action="{{ route('methods.standard.nomenclature.update', ['id' => $MethodsStandardNomenclature->id]) }}" enctype="multipart/form-data">
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="label">{{__('general_content.label_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsStandardNomenclature->label }}">
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <x-FormTextareaComment  comment="{{ $MethodsStandardNomenclature->comment }}" />
                         </div>
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -85,29 +83,25 @@
       <form  method="POST" action="{{ route('methods.standard.nomenclature.create') }}" class="form-horizontal" enctype="multipart/form-data">
         <x-adminlte-card title="{{ __('general_content.new_standard_bom_trans_key') }}" theme="secondary" maximizable>
         @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
               <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="label">{{__('general_content.label_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-tags"></i></span>
               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <x-FormTextareaComment  comment="" />
           </div>
           <div class="card-footer">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </div>
         </x-adminlte-card>
       </form>

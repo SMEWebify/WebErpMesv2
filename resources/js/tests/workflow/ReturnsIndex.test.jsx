@@ -40,7 +40,7 @@ describe('ReturnsIndex', () => {
         renderIndex();
         await waitFor(() => expect(screen.getByText('RET-002')).toBeInTheDocument());
         expect(screen.getByText('BL-1')).toBeInTheDocument();
-        expect(document.querySelector('tbody .badge-success')).toHaveTextContent('Clos');
+        expect(document.querySelector('tbody .text-bg-success')).toHaveTextContent('Clos');
     });
 
     it('ouvre le diagnostic sous la ligne, sur toute la largeur', async () => {

@@ -34,23 +34,23 @@ function formatDate(d) {
 // ─── STATUS CONFIG ────────────────────────────────────────────────────────────
 
 const PLAN_STATUS = {
-    draft:  { label: 'Brouillon', badge: 'badge-secondary' },
-    active: { label: 'Actif',     badge: 'badge-primary' },
-    closed: { label: 'Clôturé',   badge: 'badge-dark' },
+    draft:  { label: 'Brouillon', badge: 'text-bg-secondary' },
+    active: { label: 'Actif',     badge: 'text-bg-primary' },
+    closed: { label: 'Clôturé',   badge: 'text-bg-dark' },
 };
 
 const SCHEDULE_STATUS = {
-    planned:     { label: 'Planifié',  badge: 'badge-info',      icon: 'fa-calendar',      btn: 'btn-info' },
-    in_progress: { label: 'En cours',  badge: 'badge-warning',   icon: 'fa-spinner',       btn: 'btn-warning' },
-    completed:   { label: 'Réalisé',   badge: 'badge-success',   icon: 'fa-check-circle',  btn: 'btn-success' },
-    cancelled:   { label: 'Annulé',    badge: 'badge-secondary', icon: 'fa-times-circle',  btn: 'btn-secondary' },
+    planned:     { label: 'Planifié',  badge: 'text-bg-info',      icon: 'fa-calendar',      btn: 'btn-info' },
+    in_progress: { label: 'En cours',  badge: 'text-bg-warning',   icon: 'fa-spinner',       btn: 'btn-warning' },
+    completed:   { label: 'Réalisé',   badge: 'text-bg-success',   icon: 'fa-check-circle',  btn: 'btn-success' },
+    cancelled:   { label: 'Annulé',    badge: 'text-bg-secondary', icon: 'fa-times-circle',  btn: 'btn-secondary' },
 };
 
 const FINDING_TYPES = {
-    major_nc:       { label: 'NC Majeure',    badge: 'badge-danger',  icon: 'fa-exclamation-circle' },
-    minor_nc:       { label: 'NC Mineure',    badge: 'badge-warning', icon: 'fa-exclamation-triangle' },
-    observation:    { label: 'Observation',   badge: 'badge-info',    icon: 'fa-eye' },
-    positive_point: { label: 'Point positif', badge: 'badge-success', icon: 'fa-thumbs-up' },
+    major_nc:       { label: 'NC Majeure',    badge: 'text-bg-danger',  icon: 'fa-exclamation-circle' },
+    minor_nc:       { label: 'NC Mineure',    badge: 'text-bg-warning', icon: 'fa-exclamation-triangle' },
+    observation:    { label: 'Observation',   badge: 'text-bg-info',    icon: 'fa-eye' },
+    positive_point: { label: 'Point positif', badge: 'text-bg-success', icon: 'fa-thumbs-up' },
 };
 
 const MONTHS_FR = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
@@ -68,7 +68,7 @@ function Modal({ show, onClose, title, size = 'lg', children, footer }) {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">{title}</h5>
-                        <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">{children}</div>
                     {footer && <div className="modal-footer">{footer}</div>}
@@ -91,7 +91,7 @@ function Alert({ type, msg, onClose }) {
     return (
         <div className={`alert alert-${type} alert-dismissible`}>
             {msg}
-            {onClose && <button type="button" className="close" onClick={onClose}><span>&times;</span></button>}
+            {onClose && <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>}
         </div>
     );
 }
@@ -241,49 +241,49 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
             {/* KPI small-boxes */}
             <div className="row">
                 <div className="col-lg-3 col-md-6">
-                    <div className="small-box bg-info">
+                    <div className="small-box text-bg-info">
                         <div className="inner">
                             <h3>{totalSchedules}</h3>
                             <p>Audits planifiés {year}</p>
                         </div>
-                        <div className="icon"><i className="fas fa-calendar-alt" /></div>
-                        <a href="#" className="small-box-footer" onClick={e => e.preventDefault()}>
+                        <i className="small-box-icon fas fa-calendar-alt" aria-hidden="true" />
+                        <a href="#" className="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover" onClick={e => e.preventDefault()}>
                             Voir le calendrier <i className="fas fa-arrow-circle-right" />
                         </a>
                     </div>
                 </div>
                 <div className="col-lg-3 col-md-6">
-                    <div className="small-box bg-success">
+                    <div className="small-box text-bg-success">
                         <div className="inner">
                             <h3>{completionRate} <sup style={{ fontSize: '0.5em' }}>%</sup></h3>
                             <p>Taux de réalisation</p>
                         </div>
-                        <div className="icon"><i className="fas fa-check-circle" /></div>
-                        <a href="#" className="small-box-footer" onClick={e => e.preventDefault()}>
+                        <i className="small-box-icon fas fa-check-circle" aria-hidden="true" />
+                        <a href="#" className="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover" onClick={e => e.preventDefault()}>
                             {completedSchedules} / {totalSchedules} réalisés <i className="fas fa-arrow-circle-right" />
                         </a>
                     </div>
                 </div>
                 <div className="col-lg-3 col-md-6">
-                    <div className="small-box bg-danger">
+                    <div className="small-box text-bg-danger">
                         <div className="inner">
                             <h3>{majorNc}</h3>
                             <p>NC Majeures</p>
                         </div>
-                        <div className="icon"><i className="fas fa-exclamation-circle" /></div>
-                        <a href="#" className="small-box-footer" onClick={e => e.preventDefault()}>
+                        <i className="small-box-icon fas fa-exclamation-circle" aria-hidden="true" />
+                        <a href="#" className="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover" onClick={e => e.preventDefault()}>
                             {minorNc} NC mineures <i className="fas fa-arrow-circle-right" />
                         </a>
                     </div>
                 </div>
                 <div className="col-lg-3 col-md-6">
-                    <div className="small-box bg-warning">
+                    <div className="small-box text-bg-warning">
                         <div className="inner">
                             <h3>{observations}</h3>
                             <p>Observations</p>
                         </div>
-                        <div className="icon"><i className="fas fa-eye" /></div>
-                        <a href="#" className="small-box-footer" onClick={refresh}>
+                        <i className="small-box-icon fas fa-eye" aria-hidden="true" />
+                        <a href="#" className="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover" onClick={refresh}>
                             Actualiser <i className="fas fa-sync-alt" />
                         </a>
                     </div>
@@ -294,10 +294,10 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
             <div className="row">
                 {/* Donut constats */}
                 <div className="col-md-3">
-                    <div className="card card-success">
+                    <div className="card card-success mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />Répartition des constats
+                                <i className="fas fa-chart-pie me-1" />Répartition des constats
                             </h3>
                         </div>
                         <div className="card-body">
@@ -306,7 +306,7 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
                                 {donutSlices.filter(s => s.value > 0).map(s => (
                                     <div key={s.label} className="d-flex justify-content-between align-items-center mb-1">
                                         <div className="d-flex align-items-center">
-                                            <span className="mr-2" style={{
+                                            <span className="me-2" style={{
                                                 display: 'inline-block', width: 12, height: 12,
                                                 borderRadius: 2, background: s.color, flexShrink: 0,
                                             }} />
@@ -322,10 +322,10 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
 
                 {/* Monthly bar chart */}
                 <div className="col-md-6">
-                    <div className="card card-purple">
+                    <div className="card card-violet mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />Audits par mois — {year}
+                                <i className="fas fa-chart-bar me-1" />Audits par mois — {year}
                             </h3>
                         </div>
                         <div className="card-body">
@@ -336,10 +336,10 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
 
                 {/* Top findings by clause */}
                 <div className="col-md-3">
-                    <div className="card card-orange">
+                    <div className="card card-orange mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-list-ol mr-1" />Constats par clause
+                                <i className="fas fa-list-ol me-1" />Constats par clause
                             </h3>
                         </div>
                         <div className="card-body p-0">
@@ -350,14 +350,14 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
                                     <tbody>
                                         {findingsByClause.map(row => (
                                             <tr key={row.iso_clause}>
-                                                <td><span className="badge badge-secondary">§{row.iso_clause}</span></td>
+                                                <td><span className="badge text-bg-secondary">§{row.iso_clause}</span></td>
                                                 <td>
                                                     <div className="progress" style={{ height: 8 }}>
                                                         <div className="progress-bar bg-danger"
                                                             style={{ width: `${(row.count / (findingsByClause[0]?.count || 1)) * 100}%` }} />
                                                     </div>
                                                 </td>
-                                                <td className="text-right"><strong>{row.count}</strong></td>
+                                                <td className="text-end"><strong>{row.count}</strong></td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -370,7 +370,7 @@ function DashboardTab({ kpi: initialKpi, endpoints }) {
 
             {/* ISO 9001 reminder */}
             <div className="callout callout-info">
-                <h5><i className="fas fa-award mr-2"></i>ISO 9001:2015 — §9.2 Audits internes</h5>
+                <h5><i className="fas fa-award me-2"></i>ISO 9001:2015 — §9.2 Audits internes</h5>
                 <p className="mb-0 small">
                     L'organisme doit réaliser des <strong>audits internes à intervalles planifiés</strong>.
                     Les auditeurs doivent être <strong>indépendants</strong> des activités auditées.
@@ -437,31 +437,31 @@ function PlansTab({ endpoints, canAdmin }) {
     const planForm = (
         <>
             <Alert type="danger" msg={error} onClose={() => setError(null)} />
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-md-8">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>Titre <span className="text-danger">*</span></label>
                         <input className="form-control" value={form.title}
                             onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>Année <span className="text-danger">*</span></label>
                         <input type="number" className="form-control" value={form.year} min={2020} max={2099}
                             onChange={e => setForm(f => ({ ...f, year: parseInt(e.target.value) }))} />
                     </div>
                 </div>
             </div>
-            <div className="form-group">
+            <div className="mb-3">
                 <label>Périmètre</label>
                 <textarea className="form-control" rows={3} value={form.scope}
                     placeholder="Ex: Tous les processus du SMQ, site de production..."
                     onChange={e => setForm(f => ({ ...f, scope: e.target.value }))} />
             </div>
-            <div className="form-group">
+            <div className="mb-3">
                 <label>Statut</label>
-                <select className="form-control" value={form.status}
+                <select className="form-select" value={form.status}
                     onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                     <option value="draft">Brouillon</option>
                     <option value="active">Actif</option>
@@ -477,7 +477,7 @@ function PlansTab({ endpoints, canAdmin }) {
                 <h5 className="mb-0">Plans d'audit annuels</h5>
                 {canAdmin && (
                     <button className="btn btn-primary btn-sm" onClick={openCreate}>
-                        <i className="fas fa-plus mr-1" />Nouveau plan
+                        <i className="fas fa-plus me-1" />Nouveau plan
                     </button>
                 )}
             </div>
@@ -495,7 +495,7 @@ function PlansTab({ endpoints, canAdmin }) {
                         const colorClass = rate >= 80 ? 'success' : rate >= 50 ? 'warning' : 'danger';
                         return (
                             <div key={plan.id} className="col-md-6 col-xl-4 mb-3">
-                                <div className="card">
+                                <div className="card mb-3">
                                     <div className="card-header">
                                         <h3 className="card-title">{plan.title}</h3>
                                         <div className="card-tools">
@@ -505,7 +505,7 @@ function PlansTab({ endpoints, canAdmin }) {
                                     <div className="card-body">
                                         <div className="d-flex justify-content-between align-items-center mb-2">
                                             <span className="text-muted small">
-                                                <i className="fas fa-calendar mr-1" />Année {plan.year}
+                                                <i className="fas fa-calendar me-1" />Année {plan.year}
                                             </span>
                                             <span className="text-muted small">
                                                 {plan.completed_count ?? 0} / {plan.schedules_count ?? 0} audits
@@ -520,16 +520,16 @@ function PlansTab({ endpoints, canAdmin }) {
                                         {plan.scope && <p className="text-muted small mt-2 mb-0">{plan.scope}</p>}
                                         {plan.creator && (
                                             <p className="text-muted small mt-1 mb-0">
-                                                <i className="fas fa-user mr-1" />{plan.creator.name}
+                                                <i className="fas fa-user me-1" />{plan.creator.name}
                                             </p>
                                         )}
                                     </div>
                                     {canAdmin && (
                                         <div className="card-footer">
-                                            <button className="btn btn-default btn-sm mr-2" onClick={() => openEdit(plan)}>
-                                                <i className="fas fa-edit mr-1" />Modifier
+                                            <button className="btn btn-outline-secondary btn-sm me-2" onClick={() => openEdit(plan)}>
+                                                <i className="fas fa-edit me-1" />Modifier
                                             </button>
-                                            <button className="btn btn-default btn-sm text-danger" onClick={() => handleDelete(plan.id)}>
+                                            <button className="btn btn-outline-secondary btn-sm text-danger" onClick={() => handleDelete(plan.id)}>
                                                 <i className="fas fa-trash" />
                                             </button>
                                         </div>
@@ -545,9 +545,9 @@ function PlansTab({ endpoints, canAdmin }) {
                 title={modal === 'create' ? "Nouveau plan d'audit" : 'Modifier le plan'}
                 footer={
                     <>
-                        <button className="btn btn-default" onClick={() => setModal(null)}>Annuler</button>
+                        <button className="btn btn-outline-secondary" onClick={() => setModal(null)}>Annuler</button>
                         <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
-                            {saving && <i className="fas fa-spinner fa-spin mr-1" />}Enregistrer
+                            {saving && <i className="fas fa-spinner fa-spin me-1" />}Enregistrer
                         </button>
                     </>
                 }>
@@ -675,24 +675,24 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                     <button key={s.key}
                         className={`btn btn-sm ${filterStatus === s.key ? s.btn : 'btn-outline-secondary'}`}
                         onClick={() => setFilterStatus(filterStatus === s.key ? '' : s.key)}>
-                        <i className={`fas ${s.icon} mr-1`} />{s.label}
-                        <span className="badge badge-light ml-1">{s.count}</span>
+                        <i className={`fas ${s.icon} me-1`} />{s.label}
+                        <span className="badge text-bg-light ms-1">{s.count}</span>
                     </button>
                 ))}
-                <div className="ml-auto d-flex" style={{ gap: '0.4rem' }}>
-                    <select className="form-control form-control-sm" style={{ width: 160 }}
+                <div className="ms-auto d-flex" style={{ gap: '0.4rem' }}>
+                    <select className="form-select form-select-sm" style={{ width: 160 }}
                         value={filterPlan} onChange={e => setFilterPlan(e.target.value)}>
                         <option value="">Tous les plans</option>
                         {plans.map(p => <option key={p.id} value={p.id}>{p.title} ({p.year})</option>)}
                     </select>
-                    <select className="form-control form-control-sm" style={{ width: 130 }}
+                    <select className="form-select form-select-sm" style={{ width: 130 }}
                         value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
                         <option value="">Tous les mois</option>
                         {MONTHS_FULL.slice(1).map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
                     </select>
                     {canAdmin && (
                         <button className="btn btn-primary btn-sm" onClick={openCreate} disabled={plans.length === 0}>
-                            <i className="fas fa-plus mr-1" />Planifier
+                            <i className="fas fa-plus me-1" />Planifier
                         </button>
                     )}
                 </div>
@@ -713,7 +713,7 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                 Object.entries(byMonth).sort(([a], [b]) => a.localeCompare(b)).map(([key, group]) => (
                     <div key={key} className="mb-4">
                         <h6 className="text-muted mb-2">
-                            <i className="fas fa-calendar-week mr-1" />{group.label}
+                            <i className="fas fa-calendar-week me-1" />{group.label}
                         </h6>
                         {group.items.map(s => {
                             const st = SCHEDULE_STATUS[s.status] ?? SCHEDULE_STATUS.planned;
@@ -726,39 +726,39 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                                     <div className="card-body py-2 px-3">
                                         <div className="d-flex align-items-center">
                                             {/* Date badge */}
-                                            <div className="text-center mr-3" style={{ minWidth: 42 }}>
-                                                <div className="font-weight-bold" style={{ fontSize: 20, lineHeight: 1 }}>
+                                            <div className="text-center me-3" style={{ minWidth: 42 }}>
+                                                <div className="fw-bold" style={{ fontSize: 20, lineHeight: 1 }}>
                                                     {new Date(s.planned_date).getDate()}
                                                 </div>
                                                 <div className="text-muted" style={{ fontSize: 11 }}>
                                                     {MONTHS_FR[new Date(s.planned_date).getMonth() + 1]}
                                                 </div>
                                             </div>
-                                            <div className="border-right mr-3" style={{ height: 36 }} />
+                                            <div className="border-end me-3" style={{ height: 36 }} />
                                             {/* Content */}
                                             <div className="flex-grow-1">
                                                 <div className="d-flex align-items-center flex-wrap" style={{ gap: '0.3rem' }}>
                                                     <strong>{s.process?.name ?? '—'}</strong>
                                                     <span className={`badge ${st.badge}`}>{st.label}</span>
-                                                    {s.plan && <span className="badge badge-secondary">{s.plan.year}</span>}
+                                                    {s.plan && <span className="badge text-bg-secondary">{s.plan.year}</span>}
                                                     {s.checklist && (
-                                                        <span className="badge badge-light border">
-                                                            <i className="fas fa-list-check mr-1" />{s.checklist.title}
+                                                        <span className="badge text-bg-light border">
+                                                            <i className="fas fa-list-check me-1" />{s.checklist.title}
                                                         </span>
                                                     )}
                                                 </div>
                                                 <div className="small text-muted mt-1">
-                                                    <i className="fas fa-clock mr-1" />{s.planned_duration_hours}h
+                                                    <i className="fas fa-clock me-1" />{s.planned_duration_hours}h
                                                     {s.lead_auditor && (
-                                                        <span className="ml-2">
-                                                            <i className="fas fa-user mr-1" />{s.lead_auditor.name}
+                                                        <span className="ms-2">
+                                                            <i className="fas fa-user me-1" />{s.lead_auditor.name}
                                                         </span>
                                                     )}
-                                                    {s.notes && <span className="ml-2 font-italic">{s.notes}</span>}
+                                                    {s.notes && <span className="ms-2 fst-italic">{s.notes}</span>}
                                                 </div>
                                             </div>
                                             {/* Actions */}
-                                            <div className="d-flex align-items-center ml-2" style={{ gap: '0.3rem' }}>
+                                            <div className="d-flex align-items-center ms-2" style={{ gap: '0.3rem' }}>
                                                 {(s.status === 'planned' || s.status === 'in_progress') && (
                                                     <button className="btn btn-sm btn-success" onClick={() => setExecModal(s)}
                                                         title={s.status === 'planned' ? "Lancer l'audit" : "Continuer l'audit"}>
@@ -767,10 +767,10 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                                                 )}
                                                 {canAdmin && (
                                                     <>
-                                                        <button className="btn btn-sm btn-default" onClick={() => openEdit(s)}>
+                                                        <button className="btn btn-sm btn-outline-secondary" onClick={() => openEdit(s)}>
                                                             <i className="fas fa-edit" />
                                                         </button>
-                                                        <button className="btn btn-sm btn-default text-danger" onClick={() => handleDelete(s.id)}>
+                                                        <button className="btn btn-sm btn-outline-secondary text-danger" onClick={() => handleDelete(s.id)}>
                                                             <i className="fas fa-trash" />
                                                         </button>
                                                     </>
@@ -790,18 +790,18 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                 title={modal === 'create' ? 'Planifier un audit' : 'Modifier la planification'}
                 footer={
                     <>
-                        <button className="btn btn-default" onClick={() => setModal(null)}>Annuler</button>
+                        <button className="btn btn-outline-secondary" onClick={() => setModal(null)}>Annuler</button>
                         <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
-                            {saving && <i className="fas fa-spinner fa-spin mr-1" />}Enregistrer
+                            {saving && <i className="fas fa-spinner fa-spin me-1" />}Enregistrer
                         </button>
                     </>
                 }>
                 <Alert type="danger" msg={error} onClose={() => setError(null)} />
-                <div className="form-row">
+                <div className="row gx-2">
                     <div className="col-md-6">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Plan d'audit <span className="text-danger">*</span></label>
-                            <select className="form-control" value={form.audit_plan_id}
+                            <select className="form-select" value={form.audit_plan_id}
                                 onChange={e => setForm(f => ({ ...f, audit_plan_id: parseInt(e.target.value) }))}>
                                 <option value="">— Sélectionner —</option>
                                 {plans.map(p => <option key={p.id} value={p.id}>{p.title} ({p.year})</option>)}
@@ -809,9 +809,9 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                         </div>
                     </div>
                     <div className="col-md-6">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Processus audité <span className="text-danger">*</span></label>
-                            <select className="form-control" value={form.audit_process_id}
+                            <select className="form-select" value={form.audit_process_id}
                                 onChange={e => setForm(f => ({ ...f, audit_process_id: parseInt(e.target.value) }))}>
                                 <option value="">— Sélectionner —</option>
                                 {initialProcesses.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -819,25 +819,25 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                         </div>
                     </div>
                 </div>
-                <div className="form-row">
+                <div className="row gx-2">
                     <div className="col-md-4">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Date planifiée <span className="text-danger">*</span></label>
                             <input type="date" className="form-control" value={form.planned_date}
                                 onChange={e => setForm(f => ({ ...f, planned_date: e.target.value }))} />
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Durée (heures)</label>
                             <input type="number" className="form-control" min={1} max={40} value={form.planned_duration_hours}
                                 onChange={e => setForm(f => ({ ...f, planned_duration_hours: parseInt(e.target.value) }))} />
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Auditeur pilote</label>
-                            <select className="form-control" value={form.lead_auditor_id}
+                            <select className="form-select" value={form.lead_auditor_id}
                                 onChange={e => setForm(f => ({ ...f, lead_auditor_id: e.target.value }))}>
                                 <option value="">— Aucun —</option>
                                 {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
@@ -845,9 +845,9 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                         </div>
                     </div>
                 </div>
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Checklist ISO 9001</label>
-                    <select className="form-control" value={form.audit_checklist_id}
+                    <select className="form-select" value={form.audit_checklist_id}
                         onChange={e => setForm(f => ({ ...f, audit_checklist_id: e.target.value }))}>
                         <option value="">— Aucune —</option>
                         {checklists.map(c => (
@@ -858,9 +858,9 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                     </select>
                 </div>
                 {modal !== 'create' && (
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>Statut</label>
-                        <select className="form-control" value={form.status}
+                        <select className="form-select" value={form.status}
                             onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
                             {Object.entries(SCHEDULE_STATUS).map(([v, c]) =>
                                 <option key={v} value={v}>{c.label}</option>
@@ -868,7 +868,7 @@ function CalendarTab({ endpoints, users, processes: initialProcesses, checklists
                         </select>
                     </div>
                 )}
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Notes</label>
                     <textarea className="form-control" rows={2} value={form.notes}
                         onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
@@ -981,32 +981,32 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
         <Modal show onClose={onClose} size="xl"
             title={
                 <span>
-                    <i className="fas fa-clipboard-check mr-2" />
+                    <i className="fas fa-clipboard-check me-2" />
                     Audit : {schedule.process?.name}
-                    <small className="text-muted ml-2">{formatDate(schedule.planned_date)}</small>
+                    <small className="text-muted ms-2">{formatDate(schedule.planned_date)}</small>
                 </span>
             }
             footer={
                 execution ? (
                     <>
-                        <button className="btn btn-default" onClick={onClose}>Fermer</button>
+                        <button className="btn btn-outline-secondary" onClick={onClose}>Fermer</button>
                         {!closed && (
                             <button className="btn btn-info" onClick={saveExecution} disabled={saving}>
-                                <i className="fas fa-save mr-1" />Sauvegarder
+                                <i className="fas fa-save me-1" />Sauvegarder
                             </button>
                         )}
                         {!closed && (
-                            <button className="btn btn-success ml-auto" onClick={closeExecution} disabled={saving}>
-                                <i className="fas fa-lock mr-1" />Clôturer l'audit
+                            <button className="btn btn-success ms-auto" onClick={closeExecution} disabled={saving}>
+                                <i className="fas fa-lock me-1" />Clôturer l'audit
                             </button>
                         )}
                     </>
                 ) : (
                     <>
-                        <button className="btn btn-default" onClick={onClose}>Annuler</button>
+                        <button className="btn btn-outline-secondary" onClick={onClose}>Annuler</button>
                         <button className="btn btn-success" onClick={startExecution} disabled={saving}>
-                            {saving && <i className="fas fa-spinner fa-spin mr-1" />}
-                            <i className="fas fa-play mr-1" />Démarrer l'audit
+                            {saving && <i className="fas fa-spinner fa-spin me-1" />}
+                            <i className="fas fa-play me-1" />Démarrer l'audit
                         </button>
                     </>
                 )
@@ -1018,21 +1018,21 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                 <>
                     {closed && (
                         <div className="callout callout-success">
-                            <i className="fas fa-check-circle mr-2" />Audit clôturé
+                            <i className="fas fa-check-circle me-2" />Audit clôturé
                         </div>
                     )}
 
                     {/* Header form */}
-                    <div className="form-row">
+                    <div className="row gx-2">
                         <div className="col-md-3">
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>Date réelle</label>
                                 <input type="date" className="form-control" value={form.actual_date} disabled={closed}
                                     onChange={e => setForm(f => ({ ...f, actual_date: e.target.value }))} />
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>Durée (h)</label>
                                 <input type="number" className="form-control" min={1} max={40} disabled={closed}
                                     value={form.actual_duration_hours}
@@ -1040,7 +1040,7 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                             </div>
                         </div>
                         <div className="col-md-7">
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>Résumé</label>
                                 <input className="form-control" value={form.summary} disabled={closed}
                                     onChange={e => setForm(f => ({ ...f, summary: e.target.value }))} />
@@ -1052,19 +1052,19 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                         <>
                             {/* Checklist */}
                             {checklistItems.length > 0 && (
-                                <div className="card">
+                                <div className="card mb-3">
                                     <div className="card-header">
                                         <h3 className="card-title">
-                                            <i className="fas fa-list-check mr-2" />
+                                            <i className="fas fa-list-check me-2" />
                                             Checklist — {execution.schedule?.checklist?.title}
                                         </h3>
                                         <div className="card-tools">
-                                            <span className="badge badge-primary">{checklistItems.length} questions</span>
+                                            <span className="badge text-bg-primary">{checklistItems.length} questions</span>
                                         </div>
                                     </div>
                                     <div className="card-body p-0">
                                         <table className="table table-sm mb-0">
-                                            <thead className="thead-light">
+                                            <thead className="table-light">
                                                 <tr>
                                                     <th style={{ width: 70 }}>Clause</th>
                                                     <th>Question</th>
@@ -1077,13 +1077,13 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                                     return (
                                                         <tr key={item.id}>
                                                             <td>
-                                                                <span className="badge badge-secondary">§{item.iso_clause}</span>
+                                                                <span className="badge text-bg-secondary">§{item.iso_clause}</span>
                                                             </td>
                                                             <td className="small">{item.question}</td>
                                                             <td>
                                                                 {iFindings.map(f => (
                                                                     <span key={f.id}
-                                                                        className={`badge ${FINDING_TYPES[f.type]?.badge} mr-1`}
+                                                                        className={`badge ${FINDING_TYPES[f.type]?.badge} me-1`}
                                                                         title={f.description}>
                                                                         {FINDING_TYPES[f.type]?.label}
                                                                     </span>
@@ -1099,16 +1099,16 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                             )}
 
                             {/* Findings */}
-                            <div className="card">
+                            <div className="card mb-3">
                                 <div className="card-header">
                                     <h3 className="card-title">
-                                        <i className="fas fa-flag mr-2" />Constats enregistrés
+                                        <i className="fas fa-flag me-2" />Constats enregistrés
                                     </h3>
                                     <div className="card-tools">
                                         {Object.entries(FINDING_TYPES).map(([k, v]) => {
                                             const count = findings.filter(f => f.type === k).length;
                                             if (!count) return null;
-                                            return <span key={k} className={`badge ${v.badge} mr-1`}>{v.label}: {count}</span>;
+                                            return <span key={k} className={`badge ${v.badge} me-1`}>{v.label}: {count}</span>;
                                         })}
                                     </div>
                                 </div>
@@ -1117,7 +1117,7 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                 ) : (
                                     <div className="card-body p-0">
                                         <table className="table table-sm mb-0">
-                                            <thead className="thead-light">
+                                            <thead className="table-light">
                                                 <tr>
                                                     <th>Type</th>
                                                     <th>Clause</th>
@@ -1133,15 +1133,15 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                                         <tr key={f.id}>
                                                             <td>
                                                                 <span className={`badge ${ft?.badge}`}>
-                                                                    <i className={`fas ${ft?.icon} mr-1`} />{ft?.label}
+                                                                    <i className={`fas ${ft?.icon} me-1`} />{ft?.label}
                                                                 </span>
                                                             </td>
-                                                            <td><span className="badge badge-secondary">§{f.iso_clause || '—'}</span></td>
+                                                            <td><span className="badge text-bg-secondary">§{f.iso_clause || '—'}</span></td>
                                                             <td className="small">{f.description}</td>
                                                             <td className="small text-muted">{f.evidence || '—'}</td>
                                                             {!closed && (
                                                                 <td>
-                                                                    <button className="btn btn-xs btn-outline-danger"
+                                                                    <button className="btn btn-sm btn-outline-danger"
                                                                         onClick={() => deleteFinding(f.id)}>
                                                                         <i className="fas fa-times" />
                                                                     </button>
@@ -1158,18 +1158,18 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
 
                             {/* Add finding */}
                             {!closed && (
-                                <div className="card card-primary card-outline">
+                                <div className="card card-primary card-outline mb-3">
                                     <div className="card-header">
                                         <h3 className="card-title">
-                                            <i className="fas fa-plus mr-2" />Ajouter un constat
+                                            <i className="fas fa-plus me-2" />Ajouter un constat
                                         </h3>
                                     </div>
                                     <div className="card-body">
-                                        <div className="form-row">
+                                        <div className="row gx-2">
                                             <div className="col-md-3">
-                                                <div className="form-group mb-2">
+                                                <div className="mb-3 mb-2">
                                                     <label className="small">Type <span className="text-danger">*</span></label>
-                                                    <select className="form-control form-control-sm" value={newFinding.type}
+                                                    <select className="form-select form-select-sm" value={newFinding.type}
                                                         onChange={e => setNewFinding(f => ({ ...f, type: e.target.value }))}>
                                                         {Object.entries(FINDING_TYPES).map(([v, c]) =>
                                                             <option key={v} value={v}>{c.label}</option>
@@ -1178,7 +1178,7 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                                 </div>
                                             </div>
                                             <div className="col-md-2">
-                                                <div className="form-group mb-2">
+                                                <div className="mb-3 mb-2">
                                                     <label className="small">Clause ISO</label>
                                                     <input className="form-control form-control-sm" placeholder="ex: 8.5.1"
                                                         value={newFinding.iso_clause}
@@ -1187,9 +1187,9 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                             </div>
                                             {checklistItems.length > 0 && (
                                                 <div className="col-md-4">
-                                                    <div className="form-group mb-2">
+                                                    <div className="mb-3 mb-2">
                                                         <label className="small">Question associée</label>
-                                                        <select className="form-control form-control-sm"
+                                                        <select className="form-select form-select-sm"
                                                             value={newFinding.audit_checklist_item_id}
                                                             onChange={e => setNewFinding(f => ({ ...f, audit_checklist_item_id: e.target.value }))}>
                                                             <option value="">— Aucune —</option>
@@ -1203,9 +1203,9 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="form-row">
+                                        <div className="row gx-2">
                                             <div className="col-md-6">
-                                                <div className="form-group mb-2">
+                                                <div className="mb-3 mb-2">
                                                     <label className="small">Description <span className="text-danger">*</span></label>
                                                     <textarea className="form-control form-control-sm" rows={2}
                                                         placeholder="Décrivez le constat..."
@@ -1214,7 +1214,7 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
-                                                <div className="form-group mb-2">
+                                                <div className="mb-3 mb-2">
                                                     <label className="small">Preuve / référence</label>
                                                     <textarea className="form-control form-control-sm" rows={2}
                                                         placeholder="Documents vus, observations..."
@@ -1226,8 +1226,8 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                                         <button className="btn btn-sm btn-primary" onClick={addFinding}
                                             disabled={addingFinding || !newFinding.description}>
                                             {addingFinding
-                                                ? <i className="fas fa-spinner fa-spin mr-1" />
-                                                : <i className="fas fa-plus mr-1" />}
+                                                ? <i className="fas fa-spinner fa-spin me-1" />
+                                                : <i className="fas fa-plus me-1" />}
                                             Ajouter le constat
                                         </button>
                                     </div>
@@ -1235,7 +1235,7 @@ function ExecutionModal({ schedule, endpoints, onClose, onUpdated }) {
                             )}
 
                             {/* Conclusion */}
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label><strong>Conclusion de l'audit</strong></label>
                                 <textarea className="form-control" rows={3} disabled={closed}
                                     placeholder="Synthèse générale, points forts, axes d'amélioration..."
@@ -1279,8 +1279,8 @@ function ChecklistsTab({ checklists: initial, endpoints }) {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="mb-0">Checklists ISO 9001:2015</h5>
-                <button className="btn btn-default btn-sm" onClick={refresh} disabled={loading}>
-                    <i className={`fas fa-sync-alt mr-1 ${loading ? 'fa-spin' : ''}`} />Actualiser
+                <button className="btn btn-outline-secondary btn-sm" onClick={refresh} disabled={loading}>
+                    <i className={`fas fa-sync-alt me-1 ${loading ? 'fa-spin' : ''}`} />Actualiser
                 </button>
             </div>
 
@@ -1296,11 +1296,11 @@ function ChecklistsTab({ checklists: initial, endpoints }) {
                 <div key={prefix} className="card card-outline card-secondary mb-2">
                     <div className="card-header">
                         <h3 className="card-title">
-                            <span className="badge badge-dark mr-2">§{prefix}</span>
+                            <span className="badge text-bg-dark me-2">§{prefix}</span>
                             {clauseTitles[prefix] ?? `Clause ${prefix}`}
                         </h3>
                         <div className="card-tools">
-                            <span className="badge badge-secondary">
+                            <span className="badge text-bg-secondary">
                                 {cls.reduce((s, c) => s + (c.items?.length ?? 0), 0)} questions
                             </span>
                         </div>
@@ -1313,9 +1313,9 @@ function ChecklistsTab({ checklists: initial, endpoints }) {
                                     onClick={() => setExpanded(expanded === cl.id ? null : cl.id)}>
                                     <div>
                                         <strong>{cl.title}</strong>
-                                        {cl.iso_clause && <span className="badge badge-secondary ml-2">§{cl.iso_clause}</span>}
-                                        {cl.is_default && <span className="badge badge-primary ml-1">ISO 9001</span>}
-                                        <span className="text-muted small ml-2">
+                                        {cl.iso_clause && <span className="badge text-bg-secondary ms-2">§{cl.iso_clause}</span>}
+                                        {cl.is_default && <span className="badge text-bg-primary ms-1">ISO 9001</span>}
+                                        <span className="text-muted small ms-2">
                                             {cl.items?.length ?? 0} question(s)
                                         </span>
                                     </div>
@@ -1323,7 +1323,7 @@ function ChecklistsTab({ checklists: initial, endpoints }) {
                                 </div>
                                 {expanded === cl.id && cl.items?.length > 0 && (
                                     <table className="table table-sm mb-0">
-                                        <thead className="thead-light">
+                                        <thead className="table-light">
                                             <tr>
                                                 <th style={{ width: 70 }}>Clause</th>
                                                 <th>#</th>
@@ -1333,7 +1333,7 @@ function ChecklistsTab({ checklists: initial, endpoints }) {
                                         <tbody>
                                             {cl.items.map((item, i) => (
                                                 <tr key={item.id}>
-                                                    <td><span className="badge badge-secondary">§{item.iso_clause}</span></td>
+                                                    <td><span className="badge text-bg-secondary">§{item.iso_clause}</span></td>
                                                     <td className="text-muted small">{i + 1}</td>
                                                     <td className="small">{item.question}</td>
                                                 </tr>
@@ -1397,7 +1397,7 @@ function ProcessesTab({ processes: initial, endpoints, users, canAdmin }) {
                 <h5 className="mb-0">Processus auditables</h5>
                 {canAdmin && (
                     <button className="btn btn-primary btn-sm" onClick={openCreate}>
-                        <i className="fas fa-plus mr-1" />Nouveau processus
+                        <i className="fas fa-plus me-1" />Nouveau processus
                     </button>
                 )}
             </div>
@@ -1405,7 +1405,7 @@ function ProcessesTab({ processes: initial, endpoints, users, canAdmin }) {
             <div className="row">
                 {processes.map(p => (
                     <div key={p.id} className="col-md-4 mb-3">
-                        <div className="card card-outline card-primary">
+                        <div className="card card-outline card-primary mb-3">
                             <div className="card-header">
                                 <h3 className="card-title">{p.name}</h3>
                                 {canAdmin && (
@@ -1423,7 +1423,7 @@ function ProcessesTab({ processes: initial, endpoints, users, canAdmin }) {
                                 {p.description && <p className="small text-muted mb-2">{p.description}</p>}
                                 {p.responsible_user && (
                                     <p className="small mb-0">
-                                        <i className="fas fa-user mr-1 text-muted" />
+                                        <i className="fas fa-user me-1 text-muted" />
                                         <strong>Responsable :</strong> {p.responsible_user.name}
                                     </p>
                                 )}
@@ -1437,26 +1437,26 @@ function ProcessesTab({ processes: initial, endpoints, users, canAdmin }) {
                 title={modal === 'create' ? 'Nouveau processus' : 'Modifier le processus'} size="md"
                 footer={
                     <>
-                        <button className="btn btn-default" onClick={() => setModal(null)}>Annuler</button>
+                        <button className="btn btn-outline-secondary" onClick={() => setModal(null)}>Annuler</button>
                         <button className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
-                            {saving && <i className="fas fa-spinner fa-spin mr-1" />}Enregistrer
+                            {saving && <i className="fas fa-spinner fa-spin me-1" />}Enregistrer
                         </button>
                     </>
                 }>
                 <Alert type="danger" msg={error} onClose={() => setError(null)} />
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Nom <span className="text-danger">*</span></label>
                     <input className="form-control" value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Description</label>
                     <textarea className="form-control" rows={3} value={form.description}
                         onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
                 </div>
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Responsable</label>
-                    <select className="form-control" value={form.responsible_user_id}
+                    <select className="form-select" value={form.responsible_user_id}
                         onChange={e => setForm(f => ({ ...f, responsible_user_id: e.target.value }))}>
                         <option value="">— Aucun —</option>
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
@@ -1488,7 +1488,7 @@ export default function AuditPlannerApp({ endpoints, users, processes, checklist
                         <a href="#"
                             className={`nav-link ${activeTab === tab.id ? 'active' : ''}`}
                             onClick={e => { e.preventDefault(); setActiveTab(tab.id); }}>
-                            <i className={`fas ${tab.icon} mr-1`} />{tab.label}
+                            <i className={`fas ${tab.icon} me-1`} />{tab.label}
                         </a>
                     </li>
                 ))}

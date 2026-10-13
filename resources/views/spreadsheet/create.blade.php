@@ -11,7 +11,7 @@
         <form method="POST" action="{{ route('spreadsheet.store') }}">
             @csrf
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="name">Nom</label>
                 <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
                 @error('name')
@@ -19,7 +19,7 @@
                 @enderror
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="description">Description</label>
                 <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror" rows="4">{{ old('description') }}</textarea>
                 @error('description')
@@ -28,7 +28,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Créer</button>
-            <a href="{{ route('spreadsheet.index') }}" class="btn btn-default">Annuler</a>
+            <a href="{{ route('spreadsheet.index') }}" class="btn btn-outline-secondary">Annuler</a>
         </form>
     </x-adminlte-card>
 @stop

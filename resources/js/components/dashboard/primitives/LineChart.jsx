@@ -205,7 +205,7 @@ export default function LineChart({
                                     borderBottom: s.dashed ? '2px dashed ' + (s.color ?? '#888') : undefined,
                                 }}
                             />
-                            <span style={{ fontSize: '0.75rem', color: '#495057' }}>{s.label}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--bs-body-color)' }}>{s.label}</span>
                         </div>
                     ))}
                 </div>

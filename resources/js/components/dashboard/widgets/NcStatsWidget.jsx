@@ -8,7 +8,7 @@ function StatPill({ value, label, color }) {
             borderRadius: 8, background: color + '18', border: `1px solid ${color}33`,
         }}>
             <div style={{ fontSize: '1.6rem', fontWeight: 700, color, lineHeight: 1 }}>{value ?? 0}</div>
-            <div style={{ fontSize: '0.72rem', color: '#6c757d', marginTop: 4 }}>{label}</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--bs-secondary-color)', marginTop: 4 }}>{label}</div>
         </div>
     );
 }

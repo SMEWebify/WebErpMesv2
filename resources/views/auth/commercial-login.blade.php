@@ -1,9 +1,5 @@
 @extends('auth.n2p-layout')
 
-@section('adminlte_css_pre')
-    <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-@stop
-
 @php( $login_url = View::getSection('login_url') ?? config('adminlte.login_url', '/login/store') )
 @php( $register_url = View::getSection('register_url') ?? config('adminlte.register_url', 'register') )
 @php( $password_reset_url = View::getSection('password_reset_url') ?? config('adminlte.password_reset_url', 'password/reset') )
@@ -35,11 +31,9 @@
                 <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                     value="{{ old('username') }}" placeholder="{{ __('adminlte::adminlte.username') }}" autofocus>
 
-                <div class="input-group-append">
-                    <div class="input-group-text">
+                <div class="input-group-text">
                         <span class="fas fa-user {{ config('adminlte.classes_auth_icon', '') }}"></span>
                     </div>
-                </div>
 
                 @error('username')
                     <span class="invalid-feedback" role="alert">
@@ -51,11 +45,9 @@
                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                     value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
-                <div class="input-group-append">
-                    <div class="input-group-text">
+                <div class="input-group-text">
                         <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                     </div>
-                </div>
 
                 @error('email')
                     <span class="invalid-feedback" role="alert">
@@ -70,11 +62,9 @@
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                 placeholder="{{ __('adminlte::adminlte.password') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
-            </div>
 
             @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -86,16 +76,14 @@
         {{-- Mode field --}}
         @if(config('auth.login_mode_selector_enabled'))
             <div class="input-group mb-3">
-                <select name="modeView" id="modeView" class="form-control">
+                <select name="modeView" id="modeView" class="form-select">
                     <option value="desktop">Desktop</option>
                     <option value="workshop">Workshop (Beta)</option>
                 </select>
 
-                <div class="input-group-append">
-                    <div class="input-group-text">
+                <div class="input-group-text">
                         <span class="fa fa-window-maximize {{ config('adminlte.classes_auth_icon', '') }}"></span>
                     </div>
-                </div>
             </div>
         @else
             <input type="hidden" name="modeView" value="desktop">
@@ -103,9 +91,9 @@
 
         {{-- Remember me + forgot --}}
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
-                <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                <label for="remember">
+            <div class="form-check" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
+                <input type="checkbox" class="form-check-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                <label class="form-check-label" for="remember">
                     {{ __('adminlte::adminlte.remember_me') }}
                 </label>
             </div>
@@ -118,7 +106,7 @@
         </div>
 
         {{-- Submit --}}
-        <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+        <button type="submit" class="btn w-100 {{ config('adminlte.classes_auth_btn', 'rounded-0 btn-primary') }}">
             <span class="fas fa-sign-in-alt"></span>
             {{ __('adminlte::adminlte.sign_in') }}
         </button>

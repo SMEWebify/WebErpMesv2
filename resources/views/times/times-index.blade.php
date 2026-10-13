@@ -10,14 +10,14 @@
 
 @section('content')
 
-<div class="card">
+<div class="card mb-3">
   @include('include.alert-result')
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Absence" data-toggle="tab">{{ __('general_content.absence_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#BanckHoliday" data-toggle="tab">{{ __('general_content.banck_holiday_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#ImproductTime" data-toggle="tab">{{ __('general_content.improduct_time_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#MachineEvent" data-toggle="tab">{{ __('general_content.machine_event_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Absence" data-bs-toggle="tab">{{ __('general_content.absence_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#BanckHoliday" data-bs-toggle="tab">{{ __('general_content.banck_holiday_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#ImproductTime" data-bs-toggle="tab">{{ __('general_content.improduct_time_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#MachineEvent" data-bs-toggle="tab">{{ __('general_content.machine_event_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -37,7 +37,7 @@
                     <th>{{__('general_content.status_trans_key') }}</th>
                     <th>{{ __('general_content.start_date_trans_key') }}</th>
                     <th>{{ __('general_content.end_date_trans_key') }}</th>
-                    <th class="text-right">{{ __('general_content.leave_days_trans_key') }}</th>
+                    <th class="text-end">{{ __('general_content.leave_days_trans_key') }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -71,7 +71,7 @@
                     </td>
                     <td>{{ $TimesAbsence->start_date }}</td>
                     <td>{{ $TimesAbsence->end_date }}</td>
-                    <td class="text-right">{{ number_format((float) $TimesAbsence->days_count, 2, ',', ' ') }}</td>
+                    <td class="text-end">{{ number_format((float) $TimesAbsence->days_count, 2, ',', ' ') }}</td>
                     <td class=" py-0 align-middle">
                       <!-- Button Modal -->
                       <x-ButtonTextEdit :modalTarget="'TimesAbsence' . $TimesAbsence->id" />
@@ -80,72 +80,70 @@
                         <form method="POST" action="{{ route('times.absence.update', ['id' => $TimesAbsence->id]) }}" enctype="multipart/form-data">
                           @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                </div>
-                                <select class="form-control" name="user_id" id="user_id">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <select class="form-select" name="user_id" id="user_id">
                                   @foreach ($userSelect as $item)
                                   <option value="{{ $item->id }}" @if($TimesAbsence->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                   @endforeach
                                 </select>
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label>{{ __('general_content.leave_type_trans_key') }}</label>
-                              <select class="form-control" name="leave_type_id">
+                              <select class="form-select" name="leave_type_id">
                                   <option value="">--</option>
                                   @foreach($LeaveTypes as $LeaveType)
                                       <option value="{{ $LeaveType->id }}" @if($TimesAbsence->leave_type_id == $LeaveType->id) Selected @endif>{{ $LeaveType->label }}</option>
                                   @endforeach
                               </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
-                              <select class="form-control" name="absence_type" id="absence_type">
+                              <select class="form-select" name="absence_type" id="absence_type">
                                   <option value="1" @if($TimesAbsence->absence_type == 1  ) Selected @endif>{{ __('general_content.full_day_absence_trans_key') }}</option>
                                   <option value="2" @if($TimesAbsence->absence_type == 2  ) Selected @endif>{{ __('general_content.1_half_day_absence_trans_key') }}</option>
                                   <option value="3" @if($TimesAbsence->absence_type == 3  ) Selected @endif>{{ __('general_content.2_half_day_absence_trans_key') }}</option>
                                   <option value="4" @if($TimesAbsence->absence_type == 4  ) Selected @endif>{{ __('general_content.absence_in_hours_trans_key') }}</option>
                               </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="absence_type_day">{{ __('general_content.absence_type_day_trans_key') }}</label>
-                              <select class="form-control" name="absence_type_day" id="absence_type_day">
+                              <select class="form-select" name="absence_type_day" id="absence_type_day">
                                   <option value="1" @if($TimesAbsence->absence_type_day == 1  ) Selected @endif>{{ __('general_content.calendar_trans_key') }}</option>
                                   <option value="2" @if($TimesAbsence->absence_type_day == 2  ) Selected @endif>{{ __('general_content.workable_day_trans_key') }}</option>
                                   <option value="3" @if($TimesAbsence->absence_type_day == 3  ) Selected @endif>{{ __('general_content.worked_day_trans_key') }}</option>
                               </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                              <select class="form-control" name="statu" id="statu">
+                              <select class="form-select" name="statu" id="statu">
                                   <option value="1" @if($TimesAbsence->statu == 1  ) Selected @endif>{{ __('general_content.to_validate_trans_key') }}</option>
                                   <option value="2" @if($TimesAbsence->statu == 2  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
                                   <option value="3" @if($TimesAbsence->statu == 3  ) Selected @endif>{{ __('general_content.unvalidate_trans_key') }}</option>
                               </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                               <input type="date" class="form-control" name="start_date"  id="start_date" value="{{ $TimesAbsence->start_date }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                               <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $TimesAbsence->end_date }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label>{{ __('general_content.absence_in_hours_trans_key') }}</label>
                               <input type="number" step="0.25" min="0" max="24" class="form-control" name="hours_count" value="{{ $TimesAbsence->hours_count }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label>{{ __('general_content.comment_trans_key') }}</label>
                               <input type="text" class="form-control" name="comment" value="{{ $TimesAbsence->comment }}">
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
@@ -164,7 +162,7 @@
                     <th>{{__('general_content.status_trans_key') }}</th>
                     <th>{{ __('general_content.start_date_trans_key') }}</th>
                     <th>{{ __('general_content.end_date_trans_key') }}</th>
-                    <th class="text-right">{{ __('general_content.leave_days_trans_key') }}</th>
+                    <th class="text-end">{{ __('general_content.leave_days_trans_key') }}</th>
                     <th></th>
                   </tr>
                 </tfoot>
@@ -177,63 +175,61 @@
           <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_absence_request_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                  </div>
-                  <select class="form-control" name="user_id" id="user_id">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <select class="form-select" name="user_id" id="user_id">
                     @foreach ($userSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="leave_type_id">{{ __('general_content.leave_type_trans_key') }}</label>
-                <select class="form-control" name="leave_type_id" id="leave_type_id">
+                <select class="form-select" name="leave_type_id" id="leave_type_id">
                     <option value="">--</option>
                     @foreach($LeaveTypes as $LeaveType)
                         <option value="{{ $LeaveType->id }}">{{ $LeaveType->label }}</option>
                     @endforeach
                 </select>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
-                <select class="form-control" name="absence_type" id="absence_type">
+                <select class="form-select" name="absence_type" id="absence_type">
                     <option value="1">{{ __('general_content.full_day_absence_trans_key') }}</option>
                     <option value="2">{{ __('general_content.1_half_day_absence_trans_key') }}</option>
                     <option value="3">{{ __('general_content.2_half_day_absence_trans_key') }}</option>
                     <option value="4">{{ __('general_content.absence_in_hours_trans_key') }}</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="absence_type_day">{{ __('general_content.absence_type_day_trans_key') }}</label>
-                <select class="form-control" name="absence_type_day" id="absence_type_day">
+                <select class="form-select" name="absence_type_day" id="absence_type_day">
                     <option value="1">{{ __('general_content.calendar_trans_key') }}</option>
                     <option value="2">{{ __('general_content.workable_day_trans_key') }}</option>
                     <option value="3">{{ __('general_content.worked_day_trans_key') }}</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                 <input type="date" class="form-control" name="start_date"  id="start_date" >
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                 <input type="date" class="form-control" name="end_date"  id="end_date" >
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="hours_count">{{ __('general_content.absence_in_hours_trans_key') }}</label>
                 <input type="number" step="0.25" min="0" max="24" class="form-control" name="hours_count" id="hours_count">
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                 <input type="text" class="form-control" name="comment" id="comment">
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>
@@ -274,32 +270,30 @@
                         <form method="POST" action="{{ route('times.banckholiday.update', ['id' => $TimesBanckHoliday->id]) }}" enctype="multipart/form-data">
                           @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesBanckHoliday->label }}">
                               </div>
                             </div>
-                            <div class="form-group">
-                              <div class="col-4 text-left"><label for="fixed_update{{ $TimesBanckHoliday->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
+                            <div class="mb-3">
+                              <div class="col-4 text-start"><label for="fixed_update{{ $TimesBanckHoliday->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
                               <div class="col-8">
                                   @if($TimesBanckHoliday->fixed == 1)  
-                                  <x-adminlte-input-switch id="fixed_update{{ $TimesBanckHoliday->id }}" name="fixed_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                                  <x-adminlte-input-switch id="fixed_update{{ $TimesBanckHoliday->id }}" name="fixed_update" is-checked="true" />
                                   @else
-                                  <x-adminlte-input-switch id="fixed_update{{ $TimesBanckHoliday->id }}" name="fixed_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  <x-adminlte-input-switch id="fixed_update{{ $TimesBanckHoliday->id }}" name="fixed_update" />
                                   @endif
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="date">{{__('general_content.date_trans_key') }}</label>
                               <input type="date" class="form-control" name="date"  id="date" value="{{ $TimesBanckHoliday->date }}">
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
@@ -326,26 +320,23 @@
           <form  method="POST" action="{{ route('times.banckholiday.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_banck_holiday_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="fixed" class="col-form-label">{{ __('general_content.fixed_trans_key') }}</label>
-                <x-adminlte-input-switch name="fixed" id="fixed" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
-                data-on-color="teal" is-checked="true" />
+                <x-adminlte-input-switch name="fixed" id="fixed" is-checked="true" />
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="date">{{__('general_content.date_trans_key') }}</label>
                 <input type="date" class="form-control" name="date"  id="date" >
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>
@@ -391,47 +382,45 @@
                         <form method="POST" action="{{ route('times.improducttime.update', ['id' => $TimesImproductTime->id]) }}" enctype="multipart/form-data">
                           @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesImproductTime->label }}">
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="times_machine_events_id">{{__('general_content.machine_statu_trans_key') }}</label>
-                              <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
+                              <select class="form-select" name="times_machine_events_id" id="times_machine_events_id">
                                   @foreach ($TimesMachineEventsSelect as $item)
                                   <option value="{{ $item->id }}" @if($TimesImproductTime->times_machine_events_id == $item->id ) Selected @endif>{{ $item->label }}</option>
                                   @endforeach
                                 </select>
                               </select>
                             </div>
-                            <div class="form-group">
-                              <div class="col-4 text-left"><label for="resources_required_update{{ $TimesImproductTime->id }}" class="col-form-label">{{ __('general_content.resource_required_trans_key') }}</label></div>
+                            <div class="mb-3">
+                              <div class="col-4 text-start"><label for="resources_required_update{{ $TimesImproductTime->id }}" class="col-form-label">{{ __('general_content.resource_required_trans_key') }}</label></div>
                               <div class="col-8">
                                   @if($TimesImproductTime->resources_required == 1)  
-                                  <x-adminlte-input-switch id="resources_required_update{{ $TimesImproductTime->id }}" name="resources_required_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                                  <x-adminlte-input-switch id="resources_required_update{{ $TimesImproductTime->id }}" name="resources_required_update" is-checked="true" />
                                   @else
-                                  <x-adminlte-input-switch id="resources_required_update{{ $TimesImproductTime->id }}" name="resources_required_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  <x-adminlte-input-switch id="resources_required_update{{ $TimesImproductTime->id }}" name="resources_required_update" />
                                   @endif
                               </div>
                             </div>
-                            <div class="form-group">
-                              <div class="col-4 text-left"><label for="mask_time_non_product_update{{ $TimesImproductTime->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
+                            <div class="mb-3">
+                              <div class="col-4 text-start"><label for="mask_time_non_product_update{{ $TimesImproductTime->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
                               <div class="col-8">
                                   @if($TimesImproductTime->mask_time == 1)  
-                                  <x-adminlte-input-switch id="mask_time_non_product_update{{ $TimesImproductTime->id }}" name="mask_time_non_product_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                                  <x-adminlte-input-switch id="mask_time_non_product_update{{ $TimesImproductTime->id }}" name="mask_time_non_product_update" is-checked="true" />
                                   @else
-                                  <x-adminlte-input-switch id="mask_time_non_product_update{{ $TimesImproductTime->id }}" name="mask_time_non_product_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  <x-adminlte-input-switch id="mask_time_non_product_update{{ $TimesImproductTime->id }}" name="mask_time_non_product_update" />
                                   @endif
                               </div>
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
@@ -459,36 +448,32 @@
           <form  method="POST" action="{{ route('times.improducttime.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_improduct_time_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="times_machine_events_id">{{__('general_content.machine_statu_trans_key') }}</label>
-                <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
+                <select class="form-select" name="times_machine_events_id" id="times_machine_events_id">
                     @foreach ($TimesMachineEventsSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                   </select>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="resources_required" class="col-form-label">{{ __('general_content.resource_required_trans_key') }}</label>
-                <x-adminlte-input-switch name="resources_required" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
-                data-on-color="teal" is-checked="true" />
+                <x-adminlte-input-switch name="resources_required" is-checked="true" />
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                   <label for="mask_time" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label>
-                  <x-adminlte-input-switch name="mask_time" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
-                  data-on-color="teal" is-checked="true" />
+                  <x-adminlte-input-switch name="mask_time" is-checked="true" />
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>
@@ -540,41 +525,37 @@
                         <form method="POST" action="{{ route('times.machineevent.update', ['id' => $TimesMachineEvent->id]) }}" enctype="multipart/form-data">
                           @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                                 <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10" value="{{ $TimesMachineEvent->ordre }}">
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesMachineEvent->label }}">
                               </div>
                             </div>
-                            <div class="form-group">
-                              <div class="col-4 text-left"><label for="mask_time_event_update{{ $TimesMachineEvent->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
+                            <div class="mb-3">
+                              <div class="col-4 text-start"><label for="mask_time_event_update{{ $TimesMachineEvent->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
                               <div class="col-8">
                                   @if($TimesMachineEvent->mask_time == 1)  
-                                  <x-adminlte-input-switch id="mask_time_event_update{{ $TimesMachineEvent->id }}" name="mask_time_event_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                                  <x-adminlte-input-switch id="mask_time_event_update{{ $TimesMachineEvent->id }}" name="mask_time_event_update" is-checked="true" />
                                   @else
-                                  <x-adminlte-input-switch id="mask_time_event_update{{ $TimesMachineEvent->id }}" name="mask_time_event_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  <x-adminlte-input-switch id="mask_time_event_update{{ $TimesMachineEvent->id }}" name="mask_time_event_update" />
                                   @endif
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="color">{{ __('general_content.color_trans_key') }}</label>
                               <input type="color" class="form-control"  name="color" id="color" value="{{ $TimesMachineEvent->color }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="etat">{{ __('general_content.status_trans_key') }}</label>
-                              <select class="form-control" name="etat" id="etat">
+                              <select class="form-select" name="etat" id="etat">
                                   <option value="1" @if($TimesMachineEvent->etat == 1 ) Selected @endif>{{ __('general_content.stop_trans_key') }}</option>
                                   <option value="2" @if($TimesMachineEvent->etat == 2 ) Selected @endif>{{ __('general_content.setup_trans_key') }}</option>
                                   <option value="3" @if($TimesMachineEvent->etat == 3 ) Selected @endif>{{ __('general_content.run_trans_key') }}</option>
@@ -583,7 +564,7 @@
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
@@ -613,45 +594,38 @@
           <form  method="POST" action="{{ route('times.machineevent.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_machine_event_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                   <label for="mask_time_event" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label>
-                  <x-adminlte-input-switch name="mask_time" id="mask_time_event" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
-                  data-on-color="teal" is-checked="true" />
+                  <x-adminlte-input-switch name="mask_time" id="mask_time_event" is-checked="true" />
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="color">{{ __('general_content.color_trans_key') }}</label>
                 <input type="color" class="form-control"  name="color" id="color" >
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="etat">{{ __('general_content.status_trans_key') }}</label>
-                <select class="form-control" name="etat" id="etat">
+                <select class="form-select" name="etat" id="etat">
                     <option value="1">{{ __('general_content.stop_trans_key') }}</option>
                     <option value="2">{{ __('general_content.setup_trans_key') }}</option>
                     <option value="3">{{ __('general_content.run_trans_key') }}</option>
@@ -659,7 +633,7 @@
                 </select>
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>

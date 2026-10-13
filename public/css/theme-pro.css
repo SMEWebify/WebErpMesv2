@@ -57,7 +57,7 @@ body.theme-pro {
     color: var(--pro-ink) !important;
 }
 
-body.theme-pro .content-wrapper {
+body.theme-pro .app-main {
     background-color: var(--pro-bg) !important;
     /* Neutralise le fond quadrillé ambiant du mode commercial (master.blade.php) */
     background-image: none !important;
@@ -81,8 +81,7 @@ body.theme-pro {
 }
 
 body.theme-pro .form-control:focus,
-body.theme-pro .form-select:focus,
-body.theme-pro .custom-select:focus {
+body.theme-pro .form-select:focus {
     border-color: var(--pro-border-strong);
     box-shadow: 0 0 0 0.2rem rgba(71, 85, 105, 0.15);
 }
@@ -91,18 +90,18 @@ body.theme-pro .custom-select:focus {
    2. Navbar
    -------------------------------------------------------------------------- */
 
-body.theme-pro .main-header.navbar {
+body.theme-pro .app-header.navbar {
     background-color: var(--pro-surface) !important;
     border-bottom: 1px solid var(--pro-border) !important;
     box-shadow: none !important;
 }
 
-body.theme-pro .main-header .nav-link,
-body.theme-pro .main-header .navbar-nav .nav-link {
+body.theme-pro .app-header .nav-link,
+body.theme-pro .app-header .navbar-nav .nav-link {
     color: var(--pro-ink-2) !important;
 }
 
-body.theme-pro .main-header .nav-link:hover {
+body.theme-pro .app-header .nav-link:hover {
     color: var(--pro-ink) !important;
 }
 
@@ -116,35 +115,35 @@ body.theme-pro .navbar-badge {
    3. Sidebar
    -------------------------------------------------------------------------- */
 
-body.theme-pro .main-sidebar {
+body.theme-pro .app-sidebar {
     background-color: var(--pro-surface) !important;
     border-right: 1px solid var(--pro-border);
     box-shadow: none !important;
 }
 
-body.theme-pro .brand-link {
+body.theme-pro .sidebar-brand {
     background-color: var(--pro-surface) !important;
     border-bottom: 1px solid var(--pro-border) !important;
     color: var(--pro-ink) !important;
 }
 
-body.theme-pro .nav-sidebar .nav-link {
+body.theme-pro .sidebar-menu .nav-link {
     color: var(--pro-ink-2) !important;
 }
 
-body.theme-pro .nav-sidebar .nav-link i,
-body.theme-pro .nav-sidebar .nav-link .nav-icon {
+body.theme-pro .sidebar-menu .nav-link i,
+body.theme-pro .sidebar-menu .nav-link .nav-icon {
     color: var(--pro-muted) !important;
 }
 
-body.theme-pro .nav-sidebar .nav-link:hover {
+body.theme-pro .sidebar-menu .nav-link:hover {
     background-color: var(--pro-surface-alt) !important;
     color: var(--pro-ink) !important;
 }
 
 /* Élément actif : aplat gris + filet d'accent, au lieu du bleu plein */
-body.theme-pro .nav-sidebar .nav-link.active,
-body.theme-pro .nav-sidebar > .nav-item > .nav-link.active,
+body.theme-pro .sidebar-menu .nav-link.active,
+body.theme-pro .sidebar-menu > .nav-item > .nav-link.active,
 body.theme-pro .nav-treeview > .nav-item > .nav-link.active {
     background-color: var(--pro-accent-soft) !important;
     color: var(--pro-ink) !important;
@@ -152,12 +151,12 @@ body.theme-pro .nav-treeview > .nav-item > .nav-link.active {
     font-weight: 600;
 }
 
-body.theme-pro .nav-sidebar .nav-link.active i,
-body.theme-pro .nav-sidebar .nav-link.active .nav-icon {
+body.theme-pro .sidebar-menu .nav-link.active i,
+body.theme-pro .sidebar-menu .nav-link.active .nav-icon {
     color: var(--pro-accent) !important;
 }
 
-body.theme-pro .nav-sidebar .nav-header {
+body.theme-pro .sidebar-menu .nav-header {
     color: var(--pro-muted) !important;
     text-transform: uppercase;
     font-size: 0.72rem;
@@ -281,7 +280,8 @@ body.theme-pro .btn-primary,
 body.theme-pro .btn-info,
 body.theme-pro .btn-navy,
 body.theme-pro .btn-teal,
-body.theme-pro .btn-purple,
+body.theme-pro .btn-violet,
+body.theme-pro .btn-sky,
 body.theme-pro .btn-indigo {
     background-color: var(--pro-accent) !important;
     border-color: var(--pro-accent) !important;
@@ -361,38 +361,38 @@ body.theme-pro .badge {
 }
 
 body.theme-pro .badge.bg-primary,
-body.theme-pro .badge-primary,
+body.theme-pro .badge.text-bg-primary,
 body.theme-pro .badge.bg-secondary,
-body.theme-pro .badge-secondary,
+body.theme-pro .badge.text-bg-secondary,
 body.theme-pro .badge.bg-dark,
-body.theme-pro .badge-dark,
+body.theme-pro .badge.text-bg-dark,
 body.theme-pro .badge.bg-light,
-body.theme-pro .badge-light {
+body.theme-pro .badge.text-bg-light {
     background-color: var(--pro-accent-soft) !important;
     border-color: var(--pro-border) !important;
     color: var(--pro-ink-2) !important;
 }
 
 body.theme-pro .badge.bg-success,
-body.theme-pro .badge-success {
+body.theme-pro .badge.text-bg-success {
     background-color: var(--pro-ok-soft) !important;
     color: var(--pro-ok) !important;
 }
 
 body.theme-pro .badge.bg-info,
-body.theme-pro .badge-info {
+body.theme-pro .badge.text-bg-info {
     background-color: var(--pro-info-soft) !important;
     color: var(--pro-info) !important;
 }
 
 body.theme-pro .badge.bg-warning,
-body.theme-pro .badge-warning {
+body.theme-pro .badge.text-bg-warning {
     background-color: var(--pro-warn-soft) !important;
     color: var(--pro-warn) !important;
 }
 
 body.theme-pro .badge.bg-danger,
-body.theme-pro .badge-danger {
+body.theme-pro .badge.text-bg-danger {
     background-color: var(--pro-danger-soft) !important;
     color: var(--pro-danger) !important;
 }
@@ -507,15 +507,13 @@ body.theme-pro .nav-tabs .nav-link.active {
     border-color: var(--pro-border) !important;
 }
 
-body.theme-pro .form-check-input:checked,
-body.theme-pro .custom-control-input:checked ~ .custom-control-label::before {
+body.theme-pro .form-check-input:checked {
     background-color: var(--pro-accent) !important;
     border-color: var(--pro-accent) !important;
 }
 
 body.theme-pro .form-control,
 body.theme-pro .form-select,
-body.theme-pro .custom-select,
 body.theme-pro .input-group-text {
     background-color: var(--pro-surface) !important;
     border-color: var(--pro-border-strong) !important;
@@ -580,7 +578,7 @@ body.theme-pro #task-statu-app {
    -------------------------------------------------------------------------- */
 
 @media print {
-    body.theme-pro .content-wrapper {
+    body.theme-pro .app-main {
         background: #fff !important;
     }
 }

@@ -23,11 +23,11 @@ function HorizontalBar({ label, value, max, currency, locale, url, companieId })
                         ? <a href={`${url}${companieId}`} style={{ color: 'inherit' }}>{label}</a>
                         : label}
                 </span>
-                <span style={{ color: '#6c757d', whiteSpace: 'nowrap', marginLeft: '0.5rem' }}>
+                <span style={{ color: 'var(--bs-secondary-color)', whiteSpace: 'nowrap', marginLeft: '0.5rem' }}>
                     {formatCurrency(value, currency, locale)}
                 </span>
             </div>
-            <div style={{ height: 8, background: '#e9ecef', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ height: 8, background: 'var(--bs-secondary-bg)', borderRadius: 4, overflow: 'hidden' }}>
                 <div style={{
                     height: '100%',
                     width: `${pct}%`,

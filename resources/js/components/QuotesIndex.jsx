@@ -10,12 +10,12 @@ import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanyS
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',      label: 'open' },
-    2: { badge: 'badge-warning',   label: 'send' },
-    3: { badge: 'badge-success',   label: 'win' },
-    4: { badge: 'badge-danger',    label: 'lost' },
-    5: { badge: 'badge-secondary', label: 'closed' },
-    6: { badge: 'badge-dark',      label: 'obsolete' },
+    1: { badge: 'text-bg-info',      label: 'open' },
+    2: { badge: 'text-bg-warning',   label: 'send' },
+    3: { badge: 'text-bg-success',   label: 'win' },
+    4: { badge: 'text-bg-danger',    label: 'lost' },
+    5: { badge: 'text-bg-secondary', label: 'closed' },
+    6: { badge: 'text-bg-dark',      label: 'obsolete' },
 };
 
 // ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ function CustomerMini({ customer, rank, trans }) {
             <span style={{ fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }} title={name}>
                 {name}
             </span>
-            <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>{customer.quote_count}</span>
+            <span className="badge text-bg-secondary" style={{ fontSize: '0.72rem' }}>{customer.quote_count}</span>
         </div>
     );
 }
@@ -54,32 +54,32 @@ function KPICards({ kpi, topCustomers, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3>{kpi.averageAmount}</h3>
                         <p>{trans.average_quote_amount}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-shipping-fast" /></div>
+                    <i className="small-box-icon fas fa-shipping-fast" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[0]} rank={0} trans={trans} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.conversionRate} %</h3>
                         <p>{trans.quote_conversion_rate}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-file-invoice-dollar" /></div>
+                    <i className="small-box-icon fas fa-file-invoice-dollar" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[1]} rank={1} trans={trans} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-primary">
+                <div className="small-box text-bg-primary">
                     <div className="inner">
                         <h3>{kpi.responseRate} %</h3>
                         <p>{trans.quote_response_rate}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-chart-line" /></div>
+                    <i className="small-box-icon fas fa-chart-line" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[2]} rank={2} trans={trans} />
             </div>
@@ -233,7 +233,7 @@ function LineChart({ chartData, trans }) {
                     { color: CHART_BLUE,   dash: false, label: trans.quote_forecast },
                     { color: CHART_ORANGE, dash: true,  label: trans.quote_last_year },
                 ].map(({ color, dash, label }) => (
-                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: '#555' }}>
+                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: 'var(--bs-body-color)' }}>
                         <svg width="22" height="10">
                             <line x1="0" y1="5" x2="22" y2="5"
                                 stroke={color} strokeWidth="2"
@@ -259,14 +259,14 @@ function QuotesByUser({ quotesByUser, trans }) {
                 const getSum  = (statu) => quotes.filter(q => q.statu === statu).reduce((s, q) => s + (q.total ?? 0), 0);
                 return (
                     <div key={userId} className="quote-kpi-item border rounded p-2 mb-2">
-                        <div className="font-weight-bold mb-2 text-truncate">{name}</div>
+                        <div className="fw-bold mb-2 text-truncate">{name}</div>
                         <div className="d-flex flex-wrap">
-                            <span className="badge badge-info m-1">{trans.open}: {getSum(1)}</span>
-                            <span className="badge badge-warning m-1">{trans.send}: {getSum(2)}</span>
-                            <span className="badge badge-success m-1">{trans.win}: {getSum(3)}</span>
-                            <span className="badge badge-danger m-1">{trans.lost}: {getSum(4)}</span>
-                            <span className="badge badge-secondary m-1">{trans.closed}: {getSum(5)}</span>
-                            <span className="badge badge-dark m-1">{trans.obsolete}: {getSum(6)}</span>
+                            <span className="badge text-bg-info m-1">{trans.open}: {getSum(1)}</span>
+                            <span className="badge text-bg-warning m-1">{trans.send}: {getSum(2)}</span>
+                            <span className="badge text-bg-success m-1">{trans.win}: {getSum(3)}</span>
+                            <span className="badge text-bg-danger m-1">{trans.lost}: {getSum(4)}</span>
+                            <span className="badge text-bg-secondary m-1">{trans.closed}: {getSum(5)}</span>
+                            <span className="badge text-bg-dark m-1">{trans.obsolete}: {getSum(6)}</span>
                         </div>
                     </div>
                 );
@@ -291,9 +291,9 @@ function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
                     />
                 </div>
                 <div className="col-lg-6">
-                    <div className="card card-purple">
+                    <div className="card card-violet mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-chart-bar mr-1" />{trans.monthly_recap}</h3>
+                            <h3 className="card-title"><i className="fas fa-chart-bar me-1" />{trans.monthly_recap}</h3>
                         </div>
                         <div className="card-body">
                             <LineChart chartData={chartData} trans={trans} />
@@ -301,9 +301,9 @@ function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="card card-orange">
+                    <div className="card card-orange mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-users mr-1" />{trans.statistiques}</h3>
+                            <h3 className="card-title"><i className="fas fa-users me-1" />{trans.statistiques}</h3>
                         </div>
                         <div className="card-body">
                             <QuotesByUser quotesByUser={quotesByUser} trans={trans} />
@@ -347,7 +347,7 @@ function quoteColumns(trans) {
         { key: 'status',        label: trans.status,        sortable: 'statu',
           render: q => <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />, mobile: 'badge' },
         { key: 'lines',         label: trans.lines,         sortable: 'quote_lines_count', align: 'center',
-          render: q => <span className="badge badge-secondary">{q.quote_lines_count}</span> },
+          render: q => <span className="badge text-bg-secondary">{q.quote_lines_count}</span> },
         { key: 'created_at',    label: trans.created_at,    sortable: true,
           filter: 'date' },
         { key: 'total',         label: trans.total,         sortable: 'total_amount', align: 'right', bold: true,
@@ -389,19 +389,19 @@ function QuoteCards({ quotes, loading, trans }) {
             ) : null}
             {!loading && quotes.map(q => (
                 <div key={q.id} className="col-md-4 col-lg-3 mb-3">
-                    <div className="card h-100">
+                    <div className="card h-100 mb-3">
                         <div className="card-header py-1 px-2 d-flex justify-content-between align-items-center">
                             <code className="small">{q.code}</code>
                             <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />
                         </div>
                         <div className="card-body py-2 px-2">
-                            <p className="mb-1 font-weight-bold">{q.label}</p>
+                            <p className="mb-1 fw-bold">{q.label}</p>
                             <p className="mb-0 small text-muted">{q.companie?.label ?? '—'}</p>
                             <p className="mb-0 small text-muted">{q.contact?.name ?? '—'}</p>
                         </div>
                         <div className="card-footer py-1 px-2 d-flex justify-content-between align-items-center">
                             <small className="text-muted">{q.created_at}</small>
-                            <a href={q.url} className="btn btn-xs btn-info">
+                            <a href={q.url} className="btn btn-sm btn-info">
                                 <i className="fas fa-eye" />
                             </a>
                         </div>
@@ -427,18 +427,18 @@ function KanbanBoard({ quotes, trans }) {
                 const cfg   = STATUS_CONFIG[statu];
                 const items = byStatus[statu];
                 return (
-                    <div key={statu} className="card" style={{ minWidth: 220, flex: '0 0 220px' }}>
-                        <div className={`card-header py-1 px-2 ${cfg.badge.replace('badge-', 'bg-')} text-white`}>
+                    <div key={statu} className="card mb-3" style={{ minWidth: 220, flex: '0 0 220px' }}>
+                        <div className={`card-header py-1 px-2 ${cfg.badge.replace(/^(badge|text-bg)-/, 'bg-')} text-white`}>
                             <strong>{trans[cfg.label]}</strong>
-                            <span className="badge badge-light ml-1">{items.length}</span>
+                            <span className="badge text-bg-light ms-1">{items.length}</span>
                         </div>
                         <div className="card-body p-1" style={{ maxHeight: 500, overflowY: 'auto' }}>
                             {items.map(q => (
                                 <div key={q.id} className="card mb-1 shadow-sm">
                                     <div className="card-body py-1 px-2">
-                                        <p className="mb-0 small font-weight-bold">{q.label}</p>
+                                        <p className="mb-0 small fw-bold">{q.label}</p>
                                         <p className="mb-0 small text-muted">{q.companie?.label ?? '—'}</p>
-                                        <a href={q.url} className="btn btn-xs btn-info mt-1">
+                                        <a href={q.url} className="btn btn-sm btn-info mt-1">
                                             <i className="fas fa-eye" />
                                         </a>
                                     </div>
@@ -622,18 +622,18 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                     <div className="modal-content">
                         <div className="modal-header bg-success">
                             <h5 className="modal-title text-white">{trans.new_quote}</h5>
-                            <button type="button" className="close text-white" onClick={onClose}>&times;</button>
+                            <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="modal-body">
                                 {!selectData && <div className="text-center py-4"><i className="fas fa-spinner fa-spin fa-2x" /></div>}
                                 {selectData && (
-                                    <div className="card card-body">
+                                    <div className="card card-body mb-3">
                                         {templates.length > 0 && (
-                                            <div className="form-row">
-                                                <div className="form-group col-md-12">
-                                                    <label><i className="fas fa-layer-group mr-1 text-info" />{trans.start_from_template}</label>
-                                                    <select className="form-control" value={form.template_id} onChange={e => handleTemplateChange(e.target.value)}>
+                                            <div className="row gx-2">
+                                                <div className="mb-3 col-md-12">
+                                                    <label><i className="fas fa-layer-group me-1 text-info" />{trans.start_from_template}</label>
+                                                    <select className="form-select" value={form.template_id} onChange={e => handleTemplateChange(e.target.value)}>
                                                         <option value="">{trans.no_template}</option>
                                                         {templates.map(t => (
                                                             <option key={t.id} value={t.id}>
@@ -645,27 +645,27 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 </div>
                                             </div>
                                         )}
-                                        <div className="form-row">
-                                            <div className="form-group col-md-4">
+                                        <div className="row gx-2">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.code}</label>
                                                 <input className="form-control" value={form.code} onChange={set('code')} />
                                                 {fieldError('code')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.label}</label>
                                                 <input className="form-control" value={form.label} onChange={set('label')} />
                                                 {fieldError('label')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.customer_reference}</label>
                                                 <input className="form-control" value={form.customer_reference} onChange={set('customer_reference')} />
                                             </div>
                                         </div>
-                                        <div className="form-row">
+                                        <div className="row gx-2">
                                             {/* Company */}
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.company} *</label>
-                                                <select className="form-control" value={form.companies_id} onChange={e => handleCompanyChange(e.target.value)}>
+                                                <select className="form-select" value={form.companies_id} onChange={e => handleCompanyChange(e.target.value)}>
                                                     <option value="">—</option>
                                                     {selectData.companies.map(c => (
                                                         <option key={c.id} value={c.id}>{c.label}</option>
@@ -674,16 +674,16 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 {fieldError('companies_id')}
                                             </div>
                                             {/* Address + button */}
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label className="d-flex justify-content-between align-items-center">
                                                     <span>{trans.address} *</span>
                                                     {hasCompany && (
-                                                        <button type="button" className="btn btn-xs btn-outline-primary py-0 px-1" onClick={() => setShowAddrModal(true)}>
+                                                        <button type="button" className="btn btn-sm btn-outline-primary py-0 px-1" onClick={() => setShowAddrModal(true)}>
                                                             <i className="fas fa-plus" />
                                                         </button>
                                                     )}
                                                 </label>
-                                                <select className="form-control" value={form.companies_addresses_id} onChange={set('companies_addresses_id')} disabled={!hasCompany}>
+                                                <select className="form-select" value={form.companies_addresses_id} onChange={set('companies_addresses_id')} disabled={!hasCompany}>
                                                     <option value="">—</option>
                                                     {addresses.map(a => (
                                                         <option key={a.id} value={a.id}>{a.label} — {a.adress}</option>
@@ -692,16 +692,16 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 {fieldError('companies_addresses_id')}
                                             </div>
                                             {/* Contact + button */}
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label className="d-flex justify-content-between align-items-center">
                                                     <span>{trans.contact} *</span>
                                                     {hasCompany && (
-                                                        <button type="button" className="btn btn-xs btn-outline-info py-0 px-1" onClick={() => setShowCtctModal(true)}>
+                                                        <button type="button" className="btn btn-sm btn-outline-info py-0 px-1" onClick={() => setShowCtctModal(true)}>
                                                             <i className="fas fa-plus" />
                                                         </button>
                                                     )}
                                                 </label>
-                                                <select className="form-control" value={form.companies_contacts_id} onChange={set('companies_contacts_id')} disabled={!hasCompany}>
+                                                <select className="form-select" value={form.companies_contacts_id} onChange={set('companies_contacts_id')} disabled={!hasCompany}>
                                                     <option value="">—</option>
                                                     {contacts.map(c => (
                                                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -710,10 +710,10 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 {fieldError('companies_contacts_id')}
                                             </div>
                                         </div>
-                                        <div className="form-row">
-                                            <div className="form-group col-md-4">
+                                        <div className="row gx-2">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.payment_condition} *</label>
-                                                <select className="form-control" value={form.accounting_payment_conditions_id} onChange={set('accounting_payment_conditions_id')}>
+                                                <select className="form-select" value={form.accounting_payment_conditions_id} onChange={set('accounting_payment_conditions_id')}>
                                                     <option value="">—</option>
                                                     {selectData.payment_conditions.map(x => (
                                                         <option key={x.id} value={x.id}>{x.label}</option>
@@ -721,9 +721,9 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 </select>
                                                 {fieldError('accounting_payment_conditions_id')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.payment_method} *</label>
-                                                <select className="form-control" value={form.accounting_payment_methods_id} onChange={set('accounting_payment_methods_id')}>
+                                                <select className="form-select" value={form.accounting_payment_methods_id} onChange={set('accounting_payment_methods_id')}>
                                                     <option value="">—</option>
                                                     {selectData.payment_methods.map(x => (
                                                         <option key={x.id} value={x.id}>{x.label}</option>
@@ -731,9 +731,9 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 </select>
                                                 {fieldError('accounting_payment_methods_id')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.delivery} *</label>
-                                                <select className="form-control" value={form.accounting_deliveries_id} onChange={set('accounting_deliveries_id')}>
+                                                <select className="form-select" value={form.accounting_deliveries_id} onChange={set('accounting_deliveries_id')}>
                                                     <option value="">—</option>
                                                     {selectData.deliveries.map(x => (
                                                         <option key={x.id} value={x.id}>{x.label}</option>
@@ -742,10 +742,10 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 {fieldError('accounting_deliveries_id')}
                                             </div>
                                         </div>
-                                        <div className="form-row">
-                                            <div className="form-group col-md-4">
+                                        <div className="row gx-2">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.assignee} *</label>
-                                                <select className="form-control" value={form.user_id} onChange={set('user_id')}>
+                                                <select className="form-select" value={form.user_id} onChange={set('user_id')}>
                                                     <option value="">—</option>
                                                     {selectData.users.map(u => (
                                                         <option key={u.id} value={u.id}>{u.name}</option>
@@ -753,12 +753,12 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 </select>
                                                 {fieldError('user_id')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.validity_date}</label>
                                                 <input type="date" className="form-control" value={form.validity_date} onChange={set('validity_date')} />
                                             </div>
                                         </div>
-                                        <div className="form-group">
+                                        <div className="mb-3">
                                             <label>{trans.comment}</label>
                                             <textarea className="form-control" rows="2" value={form.comment} onChange={set('comment')} />
                                         </div>
@@ -768,7 +768,7 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={onClose}>{trans.cancel}</button>
                                 <button type="submit" className="btn btn-success" disabled={saving || !selectData}>
-                                    {saving ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.saving}</> : trans.save}
+                                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />{trans.saving}</> : trans.save}
                                 </button>
                             </div>
                         </form>
@@ -886,9 +886,7 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input
                         type="text"
                         className="form-control"
@@ -926,7 +924,7 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
 
                 {/* New quote */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_quote}
+                    <i className="fas fa-plus me-1" />{trans.new_quote}
                 </button>
             </div>
 
@@ -989,9 +987,7 @@ function TemplatesTab({ endpoints, trans }) {
         <div>
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 240 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control" placeholder={trans.search}
                         value={search} onChange={e => setSearch(e.target.value)} />
                 </div>
@@ -1004,35 +1000,35 @@ function TemplatesTab({ endpoints, trans }) {
             ) : (
                 <div className="table-responsive">
                     <table className="table table-hover table-sm mb-0">
-                        <thead className="thead-light">
+                        <thead className="table-light">
                             <tr>
                                 <th>{trans.label}</th>
                                 <th>{trans.code}</th>
-                                <th className="text-right">{trans.lines}</th>
+                                <th className="text-end">{trans.lines}</th>
                                 <th>{trans.author}</th>
                                 <th>{trans.updated_at}</th>
-                                <th className="text-right" />
+                                <th className="text-end" />
                             </tr>
                         </thead>
                         <tbody>
                             {templates.map(t => (
                                 <tr key={t.id}>
                                     <td>
-                                        <a href={t.url}><i className="fas fa-layer-group mr-1 text-info" />{t.label}</a>
+                                        <a href={t.url}><i className="fas fa-layer-group me-1 text-info" />{t.label}</a>
                                         {t.comment && <div className="small text-muted text-truncate" style={{ maxWidth: 420 }}>{t.comment}</div>}
                                     </td>
                                     <td className="text-muted small">{t.code}</td>
-                                    <td className="text-right">{t.quote_lines_count}</td>
+                                    <td className="text-end">{t.quote_lines_count}</td>
                                     <td>{t.author ?? '—'}</td>
                                     <td>{t.updated_at}</td>
-                                    <td className="text-right text-nowrap">
-                                        <button className="btn btn-xs btn-success mr-1" onClick={() => setStartFrom(t.id)}>
-                                            <i className="fas fa-plus mr-1" />{trans.new_quote}
+                                    <td className="text-end text-nowrap">
+                                        <button className="btn btn-sm btn-success me-1" onClick={() => setStartFrom(t.id)}>
+                                            <i className="fas fa-plus me-1" />{trans.new_quote}
                                         </button>
-                                        <a href={t.url} className="btn btn-xs btn-outline-secondary mr-1" title={trans.open_template}>
+                                        <a href={t.url} className="btn btn-sm btn-outline-secondary me-1" title={trans.open_template}>
                                             <i className="fas fa-pen" />
                                         </a>
-                                        <button className="btn btn-xs btn-outline-danger" title={trans.delete_template} onClick={() => handleDelete(t)}>
+                                        <button className="btn btn-sm btn-outline-danger" title={trans.delete_template} onClick={() => handleDelete(t)}>
                                             <i className="fas fa-trash" />
                                         </button>
                                     </td>
@@ -1082,7 +1078,7 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
     });
 
     return (
-        <div className="card card-outline card-teal">
+        <div className="card card-outline card-teal mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">
@@ -1110,7 +1106,7 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
                                 href="#"
                                 onClick={e => { e.preventDefault(); setActiveTab('templates'); }}
                             >
-                                <i className="fas fa-layer-group mr-1" />{trans.quote_templates}
+                                <i className="fas fa-layer-group me-1" />{trans.quote_templates}
                             </a>
                         </li>
                     )}

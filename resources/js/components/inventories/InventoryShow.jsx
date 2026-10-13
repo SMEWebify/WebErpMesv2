@@ -12,10 +12,10 @@ const STATUS = {
 };
 
 const STATUS_META = {
-    1: { key: 'status_draft',     badge: 'badge-secondary' },
-    2: { key: 'status_exported',  badge: 'badge-info' },
-    3: { key: 'status_validated', badge: 'badge-success' },
-    4: { key: 'status_cancelled', badge: 'badge-danger' },
+    1: { key: 'status_draft',     badge: 'text-bg-secondary' },
+    2: { key: 'status_exported',  badge: 'text-bg-info' },
+    3: { key: 'status_validated', badge: 'text-bg-success' },
+    4: { key: 'status_cancelled', badge: 'text-bg-danger' },
 };
 
 export default function InventoryShow({ endpoints, trans }) {
@@ -231,12 +231,12 @@ function Stepper({ statu, trans }) {
                         <React.Fragment key={s.id}>
                             <div className="text-center flex-shrink-0" style={{ minWidth: 100 }}>
                                 <div
-                                    className={`rounded-circle d-inline-flex align-items-center justify-content-center ${s.id <= current ? 'bg-primary text-white' : 'bg-light text-muted'}`}
+                                    className={`rounded-circle d-inline-flex align-items-center justify-content-center ${s.id <= current ? 'bg-primary text-white' : 'bg-body-tertiary text-muted'}`}
                                     style={{ width: 40, height: 40 }}
                                 >
                                     <i className={s.icon}></i>
-                                </div>
-                                <div className={`small mt-1 ${s.id <= current ? 'font-weight-bold' : 'text-muted'}`}>
+ </div>
+ <div className={`small mt-1 ${s.id <= current ? 'fw-bold' : 'text-muted'}`}>
                                     {trans[s.key]}
                                 </div>
                             </div>
@@ -253,17 +253,17 @@ function Stepper({ statu, trans }) {
 
 function ContextCard({ inventory, statusMeta, trans, endpoints }) {
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-body d-flex align-items-center justify-content-between flex-wrap">
                 <div>
-                    <span className={`badge ${statusMeta.badge} mr-2`}>{trans[statusMeta.key]}</span>
+                    <span className={`badge ${statusMeta.badge} me-2`}>{trans[statusMeta.key]}</span>
                     <span className="text-muted">
                         {inventory.creator?.name} · {trans.created_at}: {inventory.start_date}
                         {inventory.validated_at && ` · ${trans.validated_at}: ${new Date(inventory.validated_at).toLocaleDateString(trans.locale)}`}
                     </span>
                 </div>
                 <a href={endpoints.index} className="btn btn-sm btn-outline-secondary">
-                    <i className="fas fa-arrow-left mr-1"></i>{trans.back}
+                    <i className="fas fa-arrow-left me-1"></i>{trans.back}
                 </a>
             </div>
         </div>
@@ -272,9 +272,9 @@ function ContextCard({ inventory, statusMeta, trans, endpoints }) {
 
 function ExportStep({ endpoints, trans, compact }) {
     return (
-        <div className="card mt-3">
+        <div className="card mt-3 mb-3">
             <div className="card-header">
-                <strong><i className="fas fa-file-download mr-1"></i>{trans.export_step}</strong>
+                <strong><i className="fas fa-file-download me-1"></i>{trans.export_step}</strong>
             </div>
             <div className="card-body">
                 {!compact && (
@@ -291,16 +291,16 @@ function ExportStep({ endpoints, trans, compact }) {
                     </>
                 )}
 
-                <a href={endpoints.export} className="btn btn-primary mr-2">
-                    <i className="fas fa-file-download mr-1"></i>{trans.export_normal}
+                <a href={endpoints.export} className="btn btn-primary me-2">
+                    <i className="fas fa-file-download me-1"></i>{trans.export_normal}
                 </a>
                 <a href={endpoints.exportBlind} className="btn btn-outline-danger" title={trans.export_blind_tooltip}>
-                    <i className="fas fa-eye-slash mr-1"></i>{trans.export_blind}
+                    <i className="fas fa-eye-slash me-1"></i>{trans.export_blind}
                 </a>
 
                 {!compact && (
                     <div className="text-muted small mt-2">
-                        <i className="fas fa-info-circle mr-1"></i>{trans.export_blind_tooltip}
+                        <i className="fas fa-info-circle me-1"></i>{trans.export_blind_tooltip}
                     </div>
                 )}
             </div>
@@ -310,17 +310,17 @@ function ExportStep({ endpoints, trans, compact }) {
 
 function ImportStep({ fileInputRef, busy, trans, onFileChosen, alreadyImported }) {
     return (
-        <div className="card mt-3">
+        <div className="card mt-3 mb-3">
             <div className="card-header">
-                <strong><i className="fas fa-file-upload mr-1"></i>{trans.import_step}</strong>
+                <strong><i className="fas fa-file-upload me-1"></i>{trans.import_step}</strong>
                 {alreadyImported && (
-                    <span className="badge badge-info ml-2">{trans.reimport_hint ?? 'Réimport possible'}</span>
+                    <span className="badge text-bg-info ms-2">{trans.reimport_hint ?? 'Réimport possible'}</span>
                 )}
             </div>
             <div className="card-body">
                 <p className="mb-2">{trans.import_hint}</p>
                 <div className="alert alert-warning py-2 small mb-3">
-                    <i className="fas fa-exclamation-triangle mr-1"></i>
+                    <i className="fas fa-exclamation-triangle me-1"></i>
                     {trans.import_stock_change_warning}
                 </div>
 
@@ -328,15 +328,15 @@ function ImportStep({ fileInputRef, busy, trans, onFileChosen, alreadyImported }
                     ref={fileInputRef}
                     type="file"
                     accept=".xlsx,.xls"
-                    className="form-control-file"
+                    className="form-control"
                     onChange={onFileChosen}
                     disabled={busy !== null}
                 />
                 {busy === 'preview' && (
-                    <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin mr-1"></i>{trans.analysing}</div>
+                    <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin me-1"></i>{trans.analysing}</div>
                 )}
                 {busy === 'import' && (
-                    <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin mr-1"></i>{trans.importing ?? 'Import en cours…'}</div>
+                    <div className="mt-2 text-muted"><i className="fas fa-spinner fa-spin me-1"></i>{trans.importing ?? 'Import en cours…'}</div>
                 )}
             </div>
         </div>
@@ -345,9 +345,9 @@ function ImportStep({ fileInputRef, busy, trans, onFileChosen, alreadyImported }
 
 function ErrorsCard({ errors, trans }) {
     return (
-        <div className="card mt-3 border-danger">
+        <div className="card mt-3 border-danger mb-3">
             <div className="card-header bg-danger text-white">
-                <strong><i className="fas fa-times-circle mr-1"></i>{trans.errors_found} ({errors.length})</strong>
+                <strong><i className="fas fa-times-circle me-1"></i>{trans.errors_found} ({errors.length})</strong>
             </div>
             <div className="card-body">
                 <p className="text-muted small mb-2">{trans.errors_hint}</p>
@@ -371,9 +371,9 @@ function ErrorsCard({ errors, trans }) {
 
 function PreviewOkCard({ summary, trans, busy, onImport }) {
     return (
-        <div className="card mt-3 border-success">
+        <div className="card mt-3 border-success mb-3">
             <div className="card-header bg-success text-white">
-                <strong><i className="fas fa-check-circle mr-1"></i>{trans.preview_ok_title}</strong>
+                <strong><i className="fas fa-check-circle me-1"></i>{trans.preview_ok_title}</strong>
             </div>
             <div className="card-body">
                 <div className="row mb-2">
@@ -384,7 +384,7 @@ function PreviewOkCard({ summary, trans, busy, onImport }) {
                 </div>
                 <p className="text-muted small">{trans.preview_ok_hint}</p>
                 <button className="btn btn-primary" disabled={busy !== null} onClick={onImport}>
-                    <i className="fas fa-upload mr-1"></i>{trans.confirm_import}
+                    <i className="fas fa-upload me-1"></i>{trans.confirm_import}
                 </button>
             </div>
         </div>
@@ -393,9 +393,9 @@ function PreviewOkCard({ summary, trans, busy, onImport }) {
 
 function BilanCard({ summary, inventory, endpoints, trans, locked, busy, onValidate, onCancel }) {
     return (
-        <div className="card mt-3">
+        <div className="card mt-3 mb-3">
             <div className="card-header">
-                <strong><i className="fas fa-clipboard-check mr-1"></i>{trans.summary_step}</strong>
+                <strong><i className="fas fa-clipboard-check me-1"></i>{trans.summary_step}</strong>
             </div>
             <div className="card-body">
                 <div className="row mb-3">
@@ -409,14 +409,14 @@ function BilanCard({ summary, inventory, endpoints, trans, locked, busy, onValid
                 {!locked && (
                     <>
                         <div className="alert alert-warning py-2 small">
-                            <i className="fas fa-exclamation-triangle mr-1"></i>
+                            <i className="fas fa-exclamation-triangle me-1"></i>
                             {trans.validate_incidence_hint}
                         </div>
-                        <button className="btn btn-success mr-2" disabled={busy !== null} onClick={onValidate}>
-                            <i className="fas fa-check mr-1"></i>{trans.validate}
+                        <button className="btn btn-success me-2" disabled={busy !== null} onClick={onValidate}>
+                            <i className="fas fa-check me-1"></i>{trans.validate}
                         </button>
                         <button className="btn btn-outline-danger" disabled={busy !== null} onClick={onCancel}>
-                            <i className="fas fa-times mr-1"></i>{trans.cancel}
+                            <i className="fas fa-times me-1"></i>{trans.cancel}
                         </button>
                     </>
                 )}
@@ -424,12 +424,12 @@ function BilanCard({ summary, inventory, endpoints, trans, locked, busy, onValid
                 {locked && inventory.statu === 3 && (
                     <div>
                         <div className="alert alert-success py-2">
-                            <i className="fas fa-check-circle mr-1"></i>
+                            <i className="fas fa-check-circle me-1"></i>
                             {trans.validated_summary}
                         </div>
                         {endpoints.fileRaw && (
                             <a href={endpoints.fileRaw} className="btn btn-sm btn-outline-secondary" target="_blank" rel="noreferrer">
-                                <i className="fas fa-file-download mr-1"></i>{trans.download_counting_file}
+                                <i className="fas fa-file-download me-1"></i>{trans.download_counting_file}
                             </a>
                         )}
                     </div>
@@ -437,7 +437,7 @@ function BilanCard({ summary, inventory, endpoints, trans, locked, busy, onValid
 
                 {locked && inventory.statu === 4 && (
                     <div className="alert alert-secondary py-2">
-                        <i className="fas fa-info-circle mr-1"></i>
+                        <i className="fas fa-info-circle me-1"></i>
                         {trans.cancelled_summary}
                     </div>
                 )}
@@ -457,22 +457,22 @@ function DetailsTable({ details, trans, varianceOnly, setVarianceOnly }) {
     }, [details, varianceOnly]);
 
     return (
-        <div className="card mt-3">
+        <div className="card mt-3 mb-3">
             <div className="card-header d-flex align-items-center justify-content-between">
-                <strong><i className="fas fa-list mr-1"></i>{trans.details_step} ({rows.length}/{details.length})</strong>
+                <strong><i className="fas fa-list me-1"></i>{trans.details_step} ({rows.length}/{details.length})</strong>
                 <label className="mb-0 small">
                     <input
                         type="checkbox"
                         checked={varianceOnly}
                         onChange={e => setVarianceOnly(e.target.checked)}
-                        className="mr-1"
+                        className="me-1"
                     />
                     {trans.filter_variance_only}
                 </label>
             </div>
             <div className="table-responsive" style={{ maxHeight: 500 }}>
                 <table className="table table-sm table-hover mb-0">
-                    <thead className="thead-light sticky-top">
+                    <thead className="table-light sticky-top">
                         <tr>
                             <th>{trans.code}</th>
                             <th>{trans.location}</th>
@@ -480,10 +480,10 @@ function DetailsTable({ details, trans, varianceOnly, setVarianceOnly }) {
                             <th>X</th>
                             <th>Y</th>
                             <th>Z</th>
-                            <th className="text-right">{trans.theoretical_qty}</th>
-                            <th className="text-right">{trans.counted_qty}</th>
-                            <th className="text-right">{trans.variance_qty}</th>
-                            <th className="text-right">{trans.variance_value}</th>
+                            <th className="text-end">{trans.theoretical_qty}</th>
+                            <th className="text-end">{trans.counted_qty}</th>
+                            <th className="text-end">{trans.variance_qty}</th>
+                            <th className="text-end">{trans.variance_value}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -500,12 +500,12 @@ function DetailsTable({ details, trans, varianceOnly, setVarianceOnly }) {
                                     <td>{d.x_size ?? ''}</td>
                                     <td>{d.y_size ?? ''}</td>
                                     <td>{d.z_size ?? ''}</td>
-                                    <td className="text-right">{Number(d.theoretical_qty).toFixed(2)}</td>
-                                    <td className="text-right">{d.counted_qty !== null ? Number(d.counted_qty).toFixed(2) : '—'}</td>
-                                    <td className={`text-right ${d._variance > 0 ? 'text-success' : d._variance < 0 ? 'text-danger' : ''}`}>
+                                    <td className="text-end">{Number(d.theoretical_qty).toFixed(2)}</td>
+                                    <td className="text-end">{d.counted_qty !== null ? Number(d.counted_qty).toFixed(2) : '—'}</td>
+                                    <td className={`text-end ${d._variance > 0 ? 'text-success' : d._variance < 0 ? 'text-danger' : ''}`}>
                                         {d._variance !== null ? (d._variance > 0 ? '+' : '') + d._variance.toFixed(2) : '—'}
                                     </td>
-                                    <td className="text-right">{varianceValue !== null ? formatMoney(varianceValue, trans.locale) : '—'}</td>
+                                    <td className="text-end">{varianceValue !== null ? formatMoney(varianceValue, trans.locale) : '—'}</td>
                                 </tr>
                             );
                         })}

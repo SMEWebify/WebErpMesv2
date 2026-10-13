@@ -16,13 +16,13 @@
     </title>
 
     {{-- Base Stylesheets --}}
-    @vite('resources/sass/app.scss')
+    @vite('resources/sass/standalone.scss')
 
     @stack('styles')
 </head>
-<body class="bg-light">
+<body class="bg-body-tertiary">
     @php($customer = auth('customer')->user())
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-body shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-semibold" href="{{ route('customer.dashboard') }}">
                 {{ $Factory->name ?? config('app.name', 'WebErpMesv2') }}

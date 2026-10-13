@@ -18,7 +18,7 @@ function Alert({ type, msg, onClose }) {
     return (
         <div className={`alert alert-${type} alert-dismissible fade show`}>
             {msg}
-            <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+            <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
         </div>
     );
 }
@@ -79,8 +79,8 @@ export default function ReturnShow({ initial, endpoints, trans }) {
             {alert && <Alert type={alert.type} msg={alert.msg} onClose={() => setAlert(null)} />}
 
             {/* Infos générales */}
-            <div className="card card-primary">
-                <div className="card-header"><h3 className="card-title"><i className="fas fa-undo mr-2"></i>{data.code}</h3></div>
+            <div className="card card-primary mb-3">
+                <div className="card-header"><h3 className="card-title"><i className="fas fa-undo me-2"></i>{data.code}</h3></div>
                 <div className="card-body">
                     <dl className="row mb-0">
                         <dt className="col-sm-3">{trans.label}</dt>
@@ -101,7 +101,7 @@ export default function ReturnShow({ initial, endpoints, trans }) {
                         </dd>
 
                         <dt className="col-sm-3">{trans.status}</dt>
-                        <dd className="col-sm-9"><span className="badge badge-info">{data.status_label}</span></dd>
+                        <dd className="col-sm-9"><span className="badge text-bg-info">{data.status_label}</span></dd>
 
                         <dt className="col-sm-3">{trans.created_at}</dt>
                         <dd className="col-sm-9">{data.created_at}</dd>
@@ -110,7 +110,7 @@ export default function ReturnShow({ initial, endpoints, trans }) {
             </div>
 
             {/* Lignes */}
-            <div className="card card-info">
+            <div className="card card-info mb-3">
                 <div className="card-header"><h3 className="card-title">{trans.lines}</h3></div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -133,15 +133,15 @@ export default function ReturnShow({ initial, endpoints, trans }) {
                                         <td>{line.delivery_line_label ?? '-'}</td>
                                         <td>
                                             {line.original_task_id ?? '-'}
-                                            {line.rework_task_id && <span className="badge badge-success ml-2">{line.rework_task_id}</span>}
+                                            {line.rework_task_id && <span className="badge text-bg-success ms-2">{line.rework_task_id}</span>}
                                         </td>
                                         <td>{line.issue_description}</td>
                                         <td>{line.rework_instructions}</td>
                                         <td>{formatQty(line.qty)}</td>
                                         <td>
                                             {line.rework_task_id
-                                                ? <span className="badge badge-success">{trans.in_rework}</span>
-                                                : <span className="badge badge-secondary">{trans.received}</span>}
+                                                ? <span className="badge text-bg-success">{trans.in_rework}</span>
+                                                : <span className="badge text-bg-secondary">{trans.received}</span>}
                                         </td>
                                     </tr>
                                 ))}
@@ -154,15 +154,15 @@ export default function ReturnShow({ initial, endpoints, trans }) {
             {/* Diagnostic + Actions */}
             <div className="row">
                 <div className="col-md-6">
-                    <div className="card card-warning">
+                    <div className="card card-warning mb-3">
                         <div className="card-header"><h3 className="card-title">{trans.diagnosis}</h3></div>
                         <div className="card-body">
                             <form onSubmit={handleDiagnose}>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{trans.diagnosis}</label>
                                     <textarea className="form-control" rows={4} value={diagnosisNotes} onChange={e => setDiagnosisNotes(e.target.value)} />
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{trans.customer_report}</label>
                                     <textarea className="form-control" rows={3} value={customerReport} onChange={e => setCustomerReport(e.target.value)} />
                                 </div>
@@ -175,7 +175,7 @@ export default function ReturnShow({ initial, endpoints, trans }) {
                 </div>
 
                 <div className="col-md-6">
-                    <div className="card card-secondary">
+                    <div className="card card-secondary mb-3">
                         <div className="card-header"><h3 className="card-title">{trans.actions}</h3></div>
                         <div className="card-body">
                             <div className="mb-3">
@@ -184,7 +184,7 @@ export default function ReturnShow({ initial, endpoints, trans }) {
                                 </button>
                             </div>
                             <form onSubmit={handleClose}>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{trans.closure_comment}</label>
                                     <textarea className="form-control" rows={3} value={closureNotes} onChange={e => setClosureNotes(e.target.value)} />
                                 </div>

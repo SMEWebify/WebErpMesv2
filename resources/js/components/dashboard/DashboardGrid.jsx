@@ -121,7 +121,7 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions, onDragStart, o
         <div
             style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0, width: 280,
-                background: '#fff', boxShadow: '-4px 0 16px rgba(0,0,0,0.15)',
+                background: 'var(--bs-body-bg)', boxShadow: '-4px 0 16px rgba(0,0,0,0.15)',
                 zIndex: 1050, padding: '1rem', overflowY: 'auto',
             }}
         >
@@ -135,7 +135,7 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions, onDragStart, o
                 <p className="text-muted" style={{ fontSize: '0.85rem' }}>Tous les widgets sont déjà affichés.</p>
             )}
             <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.75rem' }}>
-                <i className="fas fa-hand-pointer mr-1" />Cliquez ou <i className="fas fa-arrows-alt mr-1" />glissez dans la grille
+                <i className="fas fa-hand-pointer me-1" />Cliquez ou <i className="fas fa-arrows-alt me-1" />glissez dans la grille
             </p>
             {available.map(w => (
                 <div
@@ -269,7 +269,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
     if (!layout) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />Chargement…
             </div>
         );
     }
@@ -309,20 +309,20 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
                 <div className="d-flex justify-content-end align-items-center mb-2" style={{ gap: '0.5rem' }}>
                     {saving && (
                         <small className="text-muted">
-                            <i className="fas fa-spinner fa-spin mr-1" />Sauvegarde…
+                            <i className="fas fa-spinner fa-spin me-1" />Sauvegarde…
                         </small>
                     )}
                     <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(s => !s)}>
-                        <i className="fas fa-plus mr-1" />Ajouter
+                        <i className="fas fa-plus me-1" />Ajouter
                     </button>
                     <button className="btn btn-sm btn-outline-secondary" onClick={resetLayout}>
-                        <i className="fas fa-undo mr-1" />Réinitialiser
+                        <i className="fas fa-undo me-1" />Réinitialiser
                     </button>
                     <button
                         className="btn btn-sm btn-success"
                         onClick={() => { onEditModeChange?.(false); setShowAdd(false); setDraggingWidget(null); }}
                     >
-                        <i className="fas fa-check mr-1" />Terminer
+                        <i className="fas fa-check me-1" />Terminer
                     </button>
                 </div>
             )}
@@ -373,13 +373,13 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
                             {editMode && (
                                 <div
                                     className="d-flex justify-content-between align-items-center px-2 py-1 mb-1"
-                                    style={{ background: '#f8f9fa', borderRadius: 4, fontSize: '0.8rem' }}
+                                    style={{ background: 'var(--bs-tertiary-bg)', borderRadius: 4, fontSize: '0.8rem' }}
                                 >
-                                    <span className="widget-drag-handle" style={{ cursor: 'grab', color: '#6c757d' }}>
-                                        <i className="fas fa-grip-vertical mr-1" />{def.label}
+                                    <span className="widget-drag-handle" style={{ cursor: 'grab', color: 'var(--bs-secondary-color)' }}>
+                                        <i className="fas fa-grip-vertical me-1" />{def.label}
                                     </span>
                                     <button
-                                        className="btn btn-xs btn-outline-danger"
+                                        className="btn btn-sm btn-outline-danger"
                                         style={{ padding: '0 6px', fontSize: '0.75rem' }}
                                         onClick={() => removeWidget(item.i)}
                                         title="Supprimer ce widget"

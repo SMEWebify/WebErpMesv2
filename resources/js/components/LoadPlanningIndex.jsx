@@ -226,25 +226,23 @@ function CalcModal({ id, title, status, trans, onCalculate, onRebalance }) {
         <div className="modal fade" id={id} tabIndex="-1" role="dialog" aria-hidden="true">
             <div className="modal-dialog modal-lg" role="document">
                 <div className="modal-content">
-                    <div className="modal-header bg-teal">
+                    <div className="modal-header text-bg-teal">
                         <h5 className="modal-title text-white">
-                            <i className="fas fa-cogs mr-2"></i>{title}
+                            <i className="fas fa-cogs me-2"></i>{title}
                         </h5>
-                        <button type="button" className="close text-white" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <div className="modal-body">
                         {isIdle && (
                             <>
-                                <button className="btn btn-success btn-block" onClick={onCalculate}>
-                                    <i className="fas fa-play mr-1"></i>
+                                <button className="btn btn-success w-100" onClick={onCalculate}>
+                                    <i className="fas fa-play me-1"></i>
                                     {trans.calculate ?? 'Calculer'}
                                 </button>
                                 {onRebalance && (
                                     <>
-                                        <button className="btn btn-outline-secondary btn-block" onClick={onRebalance}>
-                                            <i className="fas fa-random mr-1"></i>
+                                        <button className="btn btn-outline-secondary w-100" onClick={onRebalance}>
+                                            <i className="fas fa-random me-1"></i>
                                             {trans.rebalance ?? 'Rééquilibrer les affectations automatiques'}
                                         </button>
                                         <small className="text-muted d-block">
@@ -260,29 +258,29 @@ function CalcModal({ id, title, status, trans, onCalculate, onRebalance }) {
                                 <p className="text-muted mb-3">
                                     {fmt(trans.tasks_processed ?? ':count tâche(s) traitée(s)', { count })}
                                     {isRunning && (
-                                        <span className="ml-2 badge badge-warning">
-                                            <i className="fas fa-spinner fa-spin mr-1"></i>
+                                        <span className="ms-2 badge text-bg-warning">
+                                            <i className="fas fa-spinner fa-spin me-1"></i>
                                             {trans.running ?? 'En cours…'}
                                         </span>
                                     )}
                                     {isDone && (
-                                        <span className="ml-2 badge badge-success">
-                                            <i className="fas fa-check mr-1"></i>
+                                        <span className="ms-2 badge text-bg-success">
+                                            <i className="fas fa-check me-1"></i>
                                             {trans.finished ?? 'Terminé'}
                                         </span>
                                     )}
                                 </p>
                                 {isDone && (
-                                    <button className="btn btn-primary btn-block mb-3" onClick={() => window.location.reload()}>
-                                        <i className="fas fa-sync mr-1"></i>
+                                    <button className="btn btn-primary w-100 mb-3" onClick={() => window.location.reload()}>
+                                        <i className="fas fa-sync me-1"></i>
                                         {trans.refresh ?? 'Actualiser'}
                                     </button>
                                 )}
                                 {messages.length > 0 && (
-                                    <div className="bg-light rounded p-2" style={{ maxHeight: 220, overflowY: 'auto', fontSize: '0.82rem' }}>
+                                    <div className="bg-body-tertiary rounded p-2" style={{ maxHeight: 220, overflowY: 'auto', fontSize: '0.82rem' }}>
                                         <ul className="list-unstyled mb-0">
                                             {messages.map((msg, i) => (
-                                                <li key={i} className="text-muted"><i className="fas fa-angle-right mr-1"></i>{msg}</li>
+                                                <li key={i} className="text-muted"><i className="fas fa-angle-right me-1"></i>{msg}</li>
                                             ))}
                                         </ul>
                                     </div>
@@ -387,7 +385,7 @@ function Toolbar({
                     onClick={() => onViewMode('heatmap')}
                     title="Charge par service et par jour"
                 >
-                    <i className="fas fa-th-large mr-1"></i>Heatmap
+                    <i className="fas fa-th-large me-1"></i>Heatmap
                 </button>
                 <button
                     type="button"
@@ -395,7 +393,7 @@ function Toolbar({
                     disabled
                     title="Bientôt disponible"
                 >
-                    <i className="fas fa-stream mr-1"></i>Timeline
+                    <i className="fas fa-stream me-1"></i>Timeline
                 </button>
             </div>
 
@@ -490,7 +488,7 @@ function ScenarioCard({
                 <div className="lp-field">
                     <label>Vue</label>
                     <select
-                        className="form-control form-control-sm"
+                        className="form-select form-select-sm"
                         value={granularity}
                         onChange={(e) => onGranularity(e.target.value)}
                     >
@@ -504,7 +502,7 @@ function ScenarioCard({
                 <div className="lp-field">
                     <label>Sens</label>
                     <select
-                        className="form-control form-control-sm"
+                        className="form-select form-select-sm"
                         value={direction}
                         onChange={(e) => onDirection(e.target.value)}
                         title="ALAP : rétro-planifié depuis la date d'engagement client. ASAP : planifié au plus tôt depuis la date de démarrage prévue."
@@ -517,7 +515,7 @@ function ScenarioCard({
                 <div className="lp-field">
                     <label>Capacité</label>
                     <select
-                        className="form-control form-control-sm"
+                        className="form-select form-select-sm"
                         value={capacityMode}
                         onChange={(e) => onCapacityMode(e.target.value)}
                         title="Infinie : les tâches concurrentes ne se voient pas (comportement historique). Finie : chaque tâche vérifie la capacité déjà consommée sur sa ressource et se décale si nécessaire."
@@ -549,7 +547,7 @@ function ScenarioCard({
                         + ' · ' + (capacityMode === 'finite' ? 'capacité finie partagée' : 'capacité infinie')
                     }
                 >
-                    <i className="fas fa-play mr-1"></i>
+                    <i className="fas fa-play me-1"></i>
                     {running ? 'Calcul…' : 'Simuler'}
                 </button>
             </div>
@@ -560,10 +558,10 @@ function ScenarioCard({
                         <button
                             type="button"
                             className="lp-chip lp-chip--warn"
-                            data-toggle="modal"
-                            data-target="#taskCalculationRessource"
+                            data-bs-toggle="modal"
+                            data-bs-target="#taskCalculationRessource"
                         >
-                            <i className="fas fa-user-cog mr-1"></i>
+                            <i className="fas fa-user-cog me-1"></i>
                             {trans.null_resource ?? 'Ressources manquantes'} · {calc.counts.resource}
                         </button>
                     )}
@@ -571,10 +569,10 @@ function ScenarioCard({
                         <button
                             type="button"
                             className="lp-chip lp-chip--warn"
-                            data-toggle="modal"
-                            data-target="#taskCalculationDate"
+                            data-bs-toggle="modal"
+                            data-bs-target="#taskCalculationDate"
                         >
-                            <i className="fas fa-calendar-times mr-1"></i>
+                            <i className="fas fa-calendar-times me-1"></i>
                             {trans.null_date ?? 'Dates manquantes'} · {calc.counts.date}
                         </button>
                     )}
@@ -598,18 +596,16 @@ function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChan
     return (
         <div className="lp-custom-capacity">
             <div className="lp-custom-capacity__title">
-                <i className="fas fa-sliders-h mr-1"></i>
+                <i className="fas fa-sliders-h me-1"></i>
                 {trans.default_capacity ?? 'Capacité journalière par défaut'}
-                <small className="text-muted ml-2">
+                <small className="text-muted ms-2">
                     ({trans.default_capacity_hint ?? 'services sans ressources configurées'})
                 </small>
             </div>
             <div className="lp-custom-capacity__grid">
                 {unconfigured.map(service => (
                     <div key={service.id} className="input-group input-group-sm lp-custom-capacity__field">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text bg-white">{service.label}</span>
-                        </div>
+                        <span className="input-group-text bg-body">{service.label}</span>
                         <input
                             type="number"
                             className="form-control"
@@ -620,9 +616,7 @@ function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChan
                             placeholder="8"
                             onChange={e => onCustomCapacityChange(service.id, e.target.value)}
                         />
-                        <div className="input-group-append">
-                            <span className="input-group-text">h/j</span>
-                        </div>
+                        <span className="input-group-text">h/j</span>
                     </div>
                 ))}
             </div>
@@ -720,7 +714,7 @@ function RowLabel({ row, stats, byResource, customCapacities, onCustomCapacityCh
                 )}
                 {stats.overloadedDays > 0 && (
                     <span className="lp-row-head__over">
-                        <i className="fas fa-exclamation-triangle mr-1"></i>
+                        <i className="fas fa-exclamation-triangle me-1"></i>
                         {stats.overloadedDays} j en surcharge
                     </span>
                 )}
@@ -878,7 +872,7 @@ function Heatmap({
                         {filteredRows.length === 0 && (
                             <tr>
                                 <td colSpan={days.length + 1} className="lp-empty">
-                                    <i className="fas fa-inbox mr-2"></i>
+                                    <i className="fas fa-inbox me-2"></i>
                                     Aucun {byResource ? 'ressource' : 'service'} ne correspond à la recherche.
                                 </td>
                             </tr>
@@ -1094,7 +1088,7 @@ export default function LoadPlanningIndex({
 
             {error && (
                 <div className="alert alert-danger mt-3">
-                    <i className="fas fa-exclamation-triangle mr-1"></i>
+                    <i className="fas fa-exclamation-triangle me-1"></i>
                     {error}
                 </div>
             )}
@@ -1102,7 +1096,7 @@ export default function LoadPlanningIndex({
             {loading && !data && (
                 <div className="lp-loading">
                     <div className="spinner-border text-warning" role="status"></div>
-                    <span className="ml-2">Chargement du planning…</span>
+                    <span className="ms-2">Chargement du planning…</span>
                 </div>
             )}
 

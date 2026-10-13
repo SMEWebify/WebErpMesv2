@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
+          <ol class="breadcrumb float-sm-end">
               <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">{{ __('general_content.stock_list_trans_key') }}</a></li>
               <li class="breadcrumb-item"><a href="{{ route('products.stock.show', ['id' => $StockLocation->stocks_id]) }}">{{ __('general_content.stock_trans_key') }} {{ $Stock->label }}</a></li>
               <li class="breadcrumb-item"><a href="{{ route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id]) }}">{{ __('general_content.stock_location_trans_key') }} {{ $StockLocation->label }}</a></li>
@@ -143,13 +143,11 @@
       <form  method="POST" action="{{ route('products.stockline.manual.entry') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_entry_stock_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-list"></i></span>
-              </div>
-              <select class="form-control" name="typ_move" id="typ_move">
+              <span class="input-group-text"><i class="fas fa-list"></i></span>
+              <select class="form-select" name="typ_move" id="typ_move">
                 <option value="5" >{{__('general_content.manual_stock_recep_trans_key') }}</option>
                 <option value="1" >{{__('general_content.inventories_trans_key') }}</option>
                 <option value="3" >{{__('general_content.purchase_order_reception_trans_key') }}</option>
@@ -157,66 +155,54 @@
               </select>
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="qty">{{__('general_content.qty_trans_key') }} :</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-times"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-times"></i></span>
               <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" min="1" step=".001">
               <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
               <input type="hidden" name="user_id" id="user_id" value="{{ Auth::id() }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="batch_id">{{ __('Batch') }} :</label>
             <div class="input-group">
               <input type="text" class="form-control" name="batch_id" id="batch_id" placeholder="{{ __('Batch ID') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">X</span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">X</span>
                 <input type="number" class="form-control"  name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Y</span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Y</span>
                 <input type="number" class="form-control"   name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Z</span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Z</span>
                 <input type="number" class="form-control"  name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">M²</span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">M²</span>
                     <input type="number" class="form-control"  name="surface_perc" id="surface_perc"  placeholder="M²" step=".001">
                 </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                 <input type="text" class="form-control"  name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
             </div>
           </div>
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
         </x-adminlte-card>
       </form>
@@ -224,40 +210,36 @@
       <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_sorting_stock_trans_key') }}" theme="warning" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-list"></i></span>
-              </div>
-              <select class="form-control" name="typ_move" id="typ_move">
+              <span class="input-group-text"><i class="fas fa-list"></i></span>
+              <select class="form-select" name="typ_move" id="typ_move">
                 <option value="6" >{{__('general_content.manual_stock_dispatching_trans_key') }}</option>
                 <option value="9" >{{__('general_content.part_delivery_trans_key') }}</option>
               </select>
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="qty">{{__('general_content.qty_trans_key') }} :</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-times"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-times"></i></span>
               <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" min="1" step=".001">
               <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
               <input type="hidden" name="user_id" id="user_id" value="{{ Auth::id() }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="batch_id">{{ __('Batch') }} :</label>
             <div class="input-group">
               <input type="text" class="form-control" name="batch_id" id="batch_id" placeholder="{{ __('Batch ID') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
               <x-adminlte-select2 name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
                 igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                 <x-slot name="prependSlot">
-                    <div class="input-group-text bg-gradient-secondary">
+                    <div class="input-group-text text-bg-secondary bg-gradient">
                         <i class="fas fa-list"></i>
                     </div>
                 </x-slot>
@@ -267,11 +249,11 @@
                 @endforeach
               </x-adminlte-select2>
           </div>
-          <div class="form-group">
-              <x-adminlte-select2 name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-lightblue"
+          <div class="mb-3">
+              <x-adminlte-select2 name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-sky"
                 igroup-size="s" data-placeholder="{{ __('general_content.select_task_trans_key') }}">
                 <x-slot name="prependSlot">
-                    <div class="input-group-text bg-gradient-info">
+                    <div class="input-group-text text-bg-info bg-gradient">
                         <i class="fas fa-list"></i>
                     </div>
                 </x-slot>
@@ -281,17 +263,15 @@
                 @endforeach
               </x-adminlte-select2>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                 <input type="text" class="form-control"  name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
             </div>
           </div>
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
         </x-adminlte-card>
       </form>
@@ -303,12 +283,12 @@
           <input type="hidden" name="source_stock_location_products_id" value="{{ $StockLocationProduct->id }}">
           <input type="hidden" name="user_id" value="{{ Auth::id() }}">
 
-          <div class="form-group">
+          <div class="mb-3">
             <x-adminlte-select2 name="destination_stock_locations_id" id="destination_stock_locations_id"
               label="{{ __('general_content.transfer_destination_trans_key') }}" label-class="text-info"
               igroup-size="s" data-placeholder="{{ __('general_content.transfer_select_destination_trans_key') }}">
               <x-slot name="prependSlot">
-                <div class="input-group-text bg-gradient-info">
+                <div class="input-group-text text-bg-info bg-gradient">
                   <i class="fas fa-map-marker-alt"></i>
                 </div>
               </x-slot>
@@ -319,29 +299,25 @@
             </x-adminlte-select2>
           </div>
 
-          <div class="form-group">
+          <div class="mb-3">
             <label for="transfer_qty">{{ __('general_content.qty_trans_key') }} :</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
               <input type="number" class="form-control" name="qty" id="transfer_qty" placeholder="Ex: 10" min="0.001" step=".001">
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="mb-3">
             <label for="transfer_tracability">{{ __('general_content.tracability_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
               <input type="text" class="form-control" name="tracability" id="transfer_tracability"
                 placeholder="{{ __('general_content.tracability_trans_key') }}">
             </div>
           </div>
 
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="info" icon="fas fa-lg fa-exchange-alt"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="info" icon="fas fa-lg fa-exchange-alt"/>
           </x-slot>
         </x-adminlte-card>
       </form>

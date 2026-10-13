@@ -78,10 +78,10 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
         upload(event.dataTransfer.files);
     };
 
-    const borderColor = dragging  ? '#007bff'
-        : status === 'done'       ? '#28a745'
-        : status === 'error'      ? '#dc3545'
-        : '#adb5bd';
+    const borderColor = dragging  ? 'var(--bs-primary)'
+        : status === 'done'       ? 'var(--bs-success)'
+        : status === 'error'      ? 'var(--bs-danger)'
+        : 'var(--bs-border-color)';
 
     return (
         <div className="mt-3">
@@ -96,7 +96,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                     padding: '1.25rem',
                     textAlign: 'center',
                     cursor: 'pointer',
-                    background: dragging ? '#e8f0fe' : '#f8f9fa',
+                    background: dragging ? 'rgba(var(--bs-primary-rgb), .08)' : 'var(--bs-tertiary-bg)',
                     transition: 'border-color .2s, background .2s',
                     userSelect: 'none',
                 }}
@@ -111,13 +111,13 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                 />
                 {status === 'uploading' ? (
                     <span className="text-muted">
-                        <i className="fas fa-spinner fa-spin mr-2" />
+                        <i className="fas fa-spinner fa-spin me-2" />
                         Import en cours…
                     </span>
                 ) : (
                     <>
                         <div className="text-muted small">
-                            <i className="fas fa-file-import mr-2 text-primary" />
+                            <i className="fas fa-file-import me-2 text-primary" />
                             Déposer des fichiers <strong>{ACCEPT_ATTRIBUTE.replace(/,/g, ' ')}</strong> ici
                             pour créer les lignes automatiquement
                             &nbsp;—&nbsp;ou cliquer pour sélectionner
@@ -137,7 +137,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                             key={index}
                             className={`list-group-item py-1 px-2 ${result.ok ? 'list-group-item-success' : 'list-group-item-danger'}`}
                         >
-                            <i className={`fas ${result.ok ? 'fa-check' : 'fa-times'} mr-2`} />
+                            <i className={`fas ${result.ok ? 'fa-check' : 'fa-times'} me-2`} />
                             {result.msg}
                         </li>
                     ))}

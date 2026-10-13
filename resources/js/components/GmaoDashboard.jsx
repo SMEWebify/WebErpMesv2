@@ -33,7 +33,7 @@ function KpiCard({ name, description, value }) {
             display: 'flex', alignItems: 'stretch',
             borderRadius: 6, overflow: 'hidden',
             boxShadow: '0 1px 4px rgba(0,0,0,0.14)',
-            background: '#fff', minHeight: 80,
+            background: 'var(--bs-body-bg)', minHeight: 80,
         }}>
             <div style={{
                 width: 72, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -42,13 +42,13 @@ function KpiCard({ name, description, value }) {
                 <i className={meta.icon} style={{ fontSize: 26, color: '#fff' }} />
             </div>
             <div style={{ flex: 1, padding: '0.6rem 0.9rem', overflow: 'hidden' }}>
-                <span style={{ fontSize: 11, color: '#6c757d', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+                <span style={{ fontSize: 11, color: 'var(--bs-secondary-color)', textTransform: 'uppercase', letterSpacing: 0.4 }}>
                     {name}
                 </span>
-                <div style={{ fontSize: 22, fontWeight: 700, color: '#343a40', lineHeight: 1.2 }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--bs-emphasis-color)', lineHeight: 1.2 }}>
                     {fmt(value)}
                 </div>
-                <div style={{ fontSize: 12, color: '#6c757d', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 12, color: 'var(--bs-secondary-color)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {description}
                 </div>
             </div>
@@ -126,7 +126,7 @@ function StatusBar({ byStatus }) {
                     const n = byStatus[key] ?? 0;
                     if (!n) return null;
                     return (
-                        <span key={key} style={{ fontSize: 12, color: '#495057', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span key={key} style={{ fontSize: 12, color: 'var(--bs-body-color)', display: 'flex', alignItems: 'center', gap: 4 }}>
                             <span style={{ width: 10, height: 10, borderRadius: 2, background: bg, display: 'inline-block' }} />
                             {label} ({n})
                         </span>
@@ -144,7 +144,7 @@ function StatusBar({ byStatus }) {
 function Card({ title, icon, color = '#007bff', children }) {
     return (
         <div style={{
-            background: '#fff', borderRadius: 6,
+            background: 'var(--bs-body-bg)', borderRadius: 6,
             boxShadow: '0 1px 4px rgba(0,0,0,0.14)',
             overflow: 'hidden', marginBottom: '1.5rem',
         }}>
@@ -176,12 +176,12 @@ function StatRow({ label, value, color }) {
             display: 'flex', justifyContent: 'space-between',
             alignItems: 'center',
             padding: '0.45rem 0',
-            borderBottom: '1px solid #f0f0f0',
+            borderBottom: '1px solid var(--bs-border-color)',
         }}>
-            <span style={{ fontSize: 13, color: '#495057' }}>{label}</span>
+            <span style={{ fontSize: 13, color: 'var(--bs-body-color)' }}>{label}</span>
             <span style={{
                 fontWeight: 700, fontSize: 15,
-                color: color ?? '#343a40',
+                color: color ?? 'var(--bs-emphasis-color)',
             }}>{value}</span>
         </div>
     );
@@ -196,7 +196,7 @@ function RecentWorkOrders({ workOrders, endpoints }) {
     const rows = expanded ? workOrders : workOrders.slice(0, 5);
 
     if (!workOrders.length) {
-        return <p style={{ color: '#6c757d', margin: 0, fontSize: 13 }}>Aucun bon de travail.</p>;
+        return <p style={{ color: 'var(--bs-secondary-color)', margin: 0, fontSize: 13 }}>Aucun bon de travail.</p>;
     }
 
     return (
@@ -204,9 +204,9 @@ function RecentWorkOrders({ workOrders, endpoints }) {
             <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
-                        <tr style={{ background: '#f8f9fa' }}>
+                        <tr style={{ background: 'var(--bs-tertiary-bg)' }}>
                             {['Titre', 'Équipement', 'Type', 'Priorité', 'Statut', 'Date prévue', ''].map(h => (
-                                <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: '#495057', whiteSpace: 'nowrap', borderBottom: '2px solid #dee2e6' }}>
+                                <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: 'var(--bs-body-color)', whiteSpace: 'nowrap', borderBottom: '2px solid var(--bs-border-color)' }}>
                                     {h}
                                 </th>
                             ))}
@@ -214,7 +214,7 @@ function RecentWorkOrders({ workOrders, endpoints }) {
                     </thead>
                     <tbody>
                         {rows.map((wo, i) => (
-                            <tr key={wo.id} style={{ background: i % 2 ? '#f8f9fa' : '#fff' }}>
+                            <tr key={wo.id} style={{ background: i % 2 ? 'var(--bs-tertiary-bg)' : 'var(--bs-body-bg)' }}>
                                 <td style={{ padding: '6px 10px', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {wo.title}
                                 </td>
@@ -361,22 +361,22 @@ export default function GmaoDashboard({
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead>
                             <tr>
-                                <th style={{ padding: '5px 8px', textAlign: 'left', color: '#495057', borderBottom: '2px solid #dee2e6' }}>
+                                <th style={{ padding: '5px 8px', textAlign: 'left', color: 'var(--bs-body-color)', borderBottom: '2px solid var(--bs-border-color)' }}>
                                     KPI
                                 </th>
-                                <th style={{ padding: '5px 8px', textAlign: 'left', color: '#495057', borderBottom: '2px solid #dee2e6' }}>
+                                <th style={{ padding: '5px 8px', textAlign: 'left', color: 'var(--bs-body-color)', borderBottom: '2px solid var(--bs-border-color)' }}>
                                     Description
                                 </th>
-                                <th style={{ padding: '5px 8px', textAlign: 'right', color: '#495057', borderBottom: '2px solid #dee2e6' }}>
+                                <th style={{ padding: '5px 8px', textAlign: 'right', color: 'var(--bs-body-color)', borderBottom: '2px solid var(--bs-border-color)' }}>
                                     Valeur
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             {kpis.map((kpi, i) => (
-                                <tr key={kpi.name} style={{ background: i % 2 ? '#f8f9fa' : '#fff' }}>
+                                <tr key={kpi.name} style={{ background: i % 2 ? 'var(--bs-tertiary-bg)' : 'var(--bs-body-bg)' }}>
                                     <td style={{ padding: '5px 8px', fontWeight: 600 }}>{kpi.name}</td>
-                                    <td style={{ padding: '5px 8px', color: '#6c757d' }}>{kpi.description}</td>
+                                    <td style={{ padding: '5px 8px', color: 'var(--bs-secondary-color)' }}>{kpi.description}</td>
                                     <td style={{ padding: '5px 8px', textAlign: 'right', fontWeight: 700 }}>{fmt(kpi.value)}</td>
                                 </tr>
                             ))}

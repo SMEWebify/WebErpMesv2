@@ -26,7 +26,7 @@ function ChartCard({ title, data, unit }) {
 
     return (
         <div className="col-md-6 mb-4">
-            <div className="card card-secondary">
+            <div className="card card-secondary mb-3">
                 <div className="card-header">
                     <h3 className="card-title">{title}</h3>
                 </div>

@@ -130,7 +130,7 @@ function TotalsContent({ series, trans, currency, locale }) {
     return (
         <div className="row text-center">
                 <div className="col-sm-3 col-6">
-                    <div className="description-block border-right">
+                    <div className="description-block border-end">
                         <h5 className="description-header" style={{ fontSize: '0.85rem' }}>
                             {formatCurrency(forecastTotal, currency, locale)}
                         </h5>
@@ -140,7 +140,7 @@ function TotalsContent({ series, trans, currency, locale }) {
                     </div>
                 </div>
                 <div className="col-sm-3 col-6">
-                    <div className="description-block border-right">
+                    <div className="description-block border-end">
                         <h5 className="description-header" style={{ fontSize: '0.85rem' }}>
                             {formatCurrency(deliveredTotal, currency, locale)}
                         </h5>
@@ -150,7 +150,7 @@ function TotalsContent({ series, trans, currency, locale }) {
                     </div>
                 </div>
                 <div className="col-sm-3 col-6">
-                    <div className="description-block border-right">
+                    <div className="description-block border-end">
                         <h5 className="description-header" style={{ fontSize: '0.85rem' }}>
                             {formatCurrency(invoicedTotal, currency, locale)}
                         </h5>
@@ -280,7 +280,7 @@ export default function OrdersMonthlyWidget({
         <WidgetCard
             title={trans.monthly_recap_title ?? `CA mensuel ${currentYear}`}
             icon="fa-chart-bar"
-            theme="purple"
+            theme="violet"
             loading={loading}
             error={error}
             empty={isEmpty}

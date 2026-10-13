@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <i class="fas fa-envelope mr-1"></i> {{ __('mail_settings.title') }}
+        <i class="fas fa-envelope me-1"></i> {{ __('mail_settings.title') }}
         <small class="text-muted">{{ __('mail_settings.subtitle') }}</small>
     </h1>
 @stop
@@ -27,14 +27,14 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-primary mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('mail_settings.config') }}</h3>
                     <div class="card-tools">
                         @if($source === 'db')
-                            <span class="badge badge-success" title="{{ __('mail_settings.source_db_hint') }}">DB</span>
+                            <span class="badge text-bg-success" title="{{ __('mail_settings.source_db_hint') }}">DB</span>
                         @else
-                            <span class="badge badge-warning" title="{{ __('mail_settings.source_env_hint') }}">.env</span>
+                            <span class="badge text-bg-warning" title="{{ __('mail_settings.source_env_hint') }}">.env</span>
                         @endif
                     </div>
                 </div>
@@ -44,9 +44,9 @@
                     @method('PUT')
 
                     <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="driver">{{ __('mail_settings.driver') }}</label>
-                            <select id="driver" name="driver" class="form-control" required>
+                            <select id="driver" name="driver" class="form-select" required>
                                 <option value="smtp" selected>SMTP</option>
                             </select>
                             <small class="form-text text-muted">
@@ -56,7 +56,7 @@
 
                         <div class="row">
                             <div class="col-md-8">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="host">{{ __('mail_settings.host') }}</label>
                                     <input type="text" id="host" name="host" class="form-control" required
                                            value="{{ old('host', $setting->host ?? $resolved['host']) }}"
@@ -64,7 +64,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="port">{{ __('mail_settings.port') }}</label>
                                     <input type="number" id="port" name="port" class="form-control" required
                                            min="1" max="65535"
@@ -72,9 +72,9 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="encryption">{{ __('mail_settings.encryption') }}</label>
-                                    <select id="encryption" name="encryption" class="form-control">
+                                    <select id="encryption" name="encryption" class="form-select">
                                         <option value="">—</option>
                                         <option value="tls" @selected(old('encryption', $setting->encryption ?? $resolved['encryption']) === 'tls')>TLS</option>
                                         <option value="ssl" @selected(old('encryption', $setting->encryption ?? $resolved['encryption']) === 'ssl')>SSL</option>
@@ -85,7 +85,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="username">{{ __('mail_settings.username') }}</label>
                                     <input type="text" id="username" name="username" class="form-control"
                                            autocomplete="off"
@@ -93,7 +93,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="password">
                                         {{ __('mail_settings.password') }}
                                         @if($has_password)
@@ -114,14 +114,14 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="from_address">{{ __('mail_settings.from_address') }}</label>
                                     <input type="email" id="from_address" name="from_address" class="form-control" required
                                            value="{{ old('from_address', $setting->from_address ?? $resolved['from_address']) }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="from_name">{{ __('mail_settings.from_name') }}</label>
                                     <input type="text" id="from_name" name="from_name" class="form-control" required
                                            value="{{ old('from_name', $setting->from_name ?? $resolved['from_name']) }}">
@@ -131,7 +131,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="timeout">{{ __('mail_settings.timeout') }}</label>
                                     <input type="number" id="timeout" name="timeout" class="form-control" required
                                            min="5" max="300"
@@ -139,13 +139,13 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="custom-control custom-switch mt-4">
+                                <div class="mb-3">
+                                    <div class="form-check form-switch mt-4">
                                         <input type="hidden" name="reply_to_use_user" value="0">
                                         <input type="checkbox" id="reply_to_use_user" name="reply_to_use_user" value="1"
-                                               class="custom-control-input"
+                                               class="form-check-input"
                                                @checked(old('reply_to_use_user', $setting->reply_to_use_user ?? true))>
-                                        <label class="custom-control-label" for="reply_to_use_user">
+                                        <label class="form-check-label" for="reply_to_use_user">
                                             {{ __('mail_settings.reply_to_use_user') }}
                                         </label>
                                     </div>
@@ -156,12 +156,12 @@
                             </div>
                         </div>
 
-                        <div class="custom-control custom-switch">
+                        <div class="form-check form-switch">
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" id="is_active" name="is_active" value="1"
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    @checked(old('is_active', $setting->is_active ?? true))>
-                            <label class="custom-control-label" for="is_active">{{ __('mail_settings.is_active') }}</label>
+                            <label class="form-check-label" for="is_active">{{ __('mail_settings.is_active') }}</label>
                         </div>
                     </div>
 
@@ -178,7 +178,7 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card card-outline card-info">
+            <div class="card card-outline card-info mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('mail_settings.what_uses_it') }}</h3>
                 </div>
@@ -197,7 +197,7 @@
 
             <div id="test-result" class="mt-3"></div>
 
-            <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary btn-block mt-3">
+            <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary w-100 mt-3">
                 <i class="fas fa-history"></i> {{ __('mail_settings.see_logs') }}
             </a>
         </div>

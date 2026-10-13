@@ -9,13 +9,13 @@ import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanyS
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    0: { badge: 'badge-secondary', label: 'awaiting_payment' },
-    1: { badge: 'badge-info',      label: 'open' },
-    2: { badge: 'badge-warning',   label: 'in_progress' },
-    3: { badge: 'badge-success',   label: 'delivered' },
-    4: { badge: 'badge-primary',   label: 'partly_delivered' },
-    5: { badge: 'badge-danger',    label: 'stopped' },
-    6: { badge: 'badge-dark',      label: 'canceled' },
+    0: { badge: 'text-bg-secondary', label: 'awaiting_payment' },
+    1: { badge: 'text-bg-info',      label: 'open' },
+    2: { badge: 'text-bg-warning',   label: 'in_progress' },
+    3: { badge: 'text-bg-success',   label: 'delivered' },
+    4: { badge: 'text-bg-primary',   label: 'partly_delivered' },
+    5: { badge: 'text-bg-danger',    label: 'stopped' },
+    6: { badge: 'text-bg-dark',      label: 'canceled' },
 };
 
 const LS_COL_ORDER   = 'orders_table_col_order';
@@ -49,7 +49,7 @@ function CustomerMini({ customer, rank }) {
             <span style={{ fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }} title={name}>
                 {name}
             </span>
-            <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>{customer.order_count}</span>
+            <span className="badge text-bg-secondary" style={{ fontSize: '0.72rem' }}>{customer.order_count}</span>
         </div>
     );
 }
@@ -63,32 +63,32 @@ function KPICards({ kpi, topCustomers, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3>{kpi.deliveredOrdersPercentage ?? 0}%</h3>
                         <p>{trans.order_delivered ?? 'Delivered'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-shipping-fast" /></div>
+                    <i className="small-box-icon fas fa-shipping-fast" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[0]} rank={0} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.invoicedOrdersPercentage ?? 0}%</h3>
                         <p>{trans.order_invoiced ?? 'Invoiced'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-file-invoice-dollar" /></div>
+                    <i className="small-box-icon fas fa-file-invoice-dollar" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[1]} rank={1} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-primary">
+                <div className="small-box text-bg-primary">
                     <div className="inner">
                         <h3>{kpi.serviceRate ?? 0}%</h3>
                         <p>{trans.service_rate ?? 'Service rate'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-chart-line" /></div>
+                    <i className="small-box-icon fas fa-chart-line" aria-hidden="true" />
                 </div>
                 <CustomerMini customer={customers[2]} rank={2} />
             </div>
@@ -293,7 +293,7 @@ function LineChart({ data, trans }) {
                     { color: CHART_BLUE,   dash: false, label: trans.order_forecast  ?? 'Order forecast' },
                     { color: CHART_ORANGE, dash: true,  label: trans.order_last_year ?? 'Last year' },
                 ].map(({ color, dash, label }) => (
-                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: '#555' }}>
+                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: 'var(--bs-body-color)' }}>
                         <svg width="22" height="10">
                             <line x1="0" y1="5" x2="22" y2="5" stroke={color} strokeWidth="2" strokeDasharray={dash ? '5,3' : undefined} />
                         </svg>
@@ -318,10 +318,10 @@ function DashboardTab({ kpi, chartData, topCustomers, trans }) {
             {/* Row 2 : camembert | graphique ligne | KPIs secondaires */}
             <div className="row">
                 <div className="col-md-3">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.orders_by_status ?? 'By status'}
                             </h3>
                         </div>
@@ -332,10 +332,10 @@ function DashboardTab({ kpi, chartData, topCustomers, trans }) {
                 </div>
 
                 <div className="col-lg-6">
-                    <div className="card card-purple">
+                    <div className="card card-violet mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.monthly_recap ?? 'Monthly recap'}
                             </h3>
                         </div>
@@ -346,10 +346,10 @@ function DashboardTab({ kpi, chartData, topCustomers, trans }) {
                 </div>
 
                 <div className="col-md-3">
-                    <div className="card card-orange">
+                    <div className="card card-orange mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-info-circle mr-1" />
+                                <i className="fas fa-info-circle me-1" />
                                 {trans.orders ?? 'Orders'}
                             </h3>
                         </div>
@@ -361,10 +361,10 @@ function DashboardTab({ kpi, chartData, topCustomers, trans }) {
                                 { value: kpi.pendingDeliveries,       label: trans.order_waiting              ?? 'Waiting orders',         icon: 'fas fa-hourglass-half',       color: 'warning' },
                                 { value: `${kpi.averageProcessingTime ?? 0} ${trans.day ?? 'j'}`, label: trans.average_order_processing_time ?? 'Avg time', icon: 'fas fa-clock', color: 'info' },
                             ].map(({ value, label, icon, color }) => (
-                                <div key={label} className={`d-flex align-items-center border-left border-${color} pl-2 mb-2`} style={{ borderLeftWidth: '3px !important' }}>
-                                    <i className={`${icon} text-${color} mr-2`} style={{ width: 16 }} />
+                                <div key={label} className={`d-flex align-items-center border-start border-${color} ps-2 mb-2`} style={{ borderLeftWidth: '3px !important' }}>
+                                    <i className={`${icon} text-${color} me-2`} style={{ width: 16 }} />
                                     <div style={{ flex: 1, fontSize: '0.78rem' }}>
-                                        <div className="font-weight-bold">{value ?? '—'}</div>
+                                        <div className="fw-bold">{value ?? '—'}</div>
                                         <div className="text-muted" style={{ fontSize: '0.7rem' }}>{label}</div>
                                     </div>
                                 </div>
@@ -400,7 +400,7 @@ function orderColumns(trans, currency, locale) {
         { key: 'created_at',         label: trans.created_at         ?? 'Created',  sortable: true,                align: 'center',
           filter: 'date' },
         { key: 'order_lines_count',  label: trans.lines              ?? 'Lines',    sortable: true,                align: 'center',
-          render: o => <span className="badge badge-secondary">{o.order_lines_count}</span> },
+          render: o => <span className="badge text-bg-secondary">{o.order_lines_count}</span> },
         { key: 'total_amount',       label: trans.total_amount       ?? 'Total',    sortable: true,                align: 'right', bold: true,
           render: o => (o.total_amount > 0 ? formatCurrency(o.total_amount, currency, locale) : <span className="text-muted">—</span>),
           total: { value: o => o.total_amount ?? 0, format: sum => formatCurrency(sum, currency, locale) },
@@ -441,10 +441,10 @@ function OrderCards({ orders, loading, trans, currency, locale }) {
         <div className="row">
             {orders.map(o => (
                 <div key={o.id} className="col-md-3 mb-3">
-                    <div className="card h-100">
+                    <div className="card h-100 mb-3">
                         <div className="card-body p-2">
                             <div className="d-flex justify-content-between align-items-start mb-1">
-                                <a href={o.url} className="font-weight-bold text-primary"><code>{o.code}</code></a>
+                                <a href={o.url} className="fw-bold text-primary"><code>{o.code}</code></a>
                                 <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />
                             </div>
                             <div className="text-truncate small" title={o.label}>{o.label}</div>
@@ -452,7 +452,7 @@ function OrderCards({ orders, loading, trans, currency, locale }) {
                             {o.contact  && <div className="text-muted" style={{ fontSize: '0.72rem' }}>{o.contact.name}</div>}
                             <div className="mt-2 d-flex justify-content-between">
                                 <span className="text-muted small">{formatDate(o.validity_date, locale)}</span>
-                                <span className="font-weight-bold small">{formatCurrency(o.total_amount, currency, locale)}</span>
+                                <span className="fw-bold small">{formatCurrency(o.total_amount, currency, locale)}</span>
                             </div>
                         </div>
                     </div>
@@ -471,27 +471,27 @@ function KanbanBoard({ statuses, trans, currency, locale }) {
         <div className="d-flex" style={{ overflowX: 'auto', gap: '0.75rem', paddingBottom: '0.5rem' }}>
             {statuses.map(col => {
                 const cfg = STATUS_CONFIG[col.id] ?? {};
-                const bg  = cfg.badge?.replace('badge-', 'bg-') ?? 'bg-secondary';
+                const bg  = cfg.badge?.replace(/^(badge|text-bg)-/, 'bg-') ?? 'bg-secondary';
                 return (
-                    <div key={col.id} className="card flex-shrink-0" style={{ minWidth: 220, maxWidth: 260, width: '100%' }}>
+                    <div key={col.id} className="card flex-shrink-0 mb-3" style={{ minWidth: 220, maxWidth: 260, width: '100%' }}>
                         <div className={`card-header py-1 d-flex justify-content-between align-items-center ${bg}`}>
-                            <span className="text-white font-weight-bold" style={{ fontSize: '0.82rem' }}>
+                            <span className="text-white fw-bold" style={{ fontSize: '0.82rem' }}>
                                 {trans[cfg.label] ?? col.id}
                             </span>
-                            <span className="badge badge-light">{col.items?.length ?? 0}</span>
+                            <span className="badge text-bg-light">{col.items?.length ?? 0}</span>
                         </div>
                         <div className="card-body p-2" style={{ maxHeight: 420, overflowY: 'auto' }}>
                             {(col.items ?? []).map(o => (
                                 <div key={o.id} className="card mb-2 shadow-sm">
                                     <div className="card-body p-2">
-                                        <a href={o.url} className="font-weight-bold text-primary d-block mb-1" style={{ fontSize: '0.8rem' }}>
+                                        <a href={o.url} className="fw-bold text-primary d-block mb-1" style={{ fontSize: '0.8rem' }}>
                                             <code>{o.code}</code>
                                         </a>
                                         <div className="text-truncate" style={{ fontSize: '0.75rem' }} title={o.label}>{o.label}</div>
                                         {o.companie && <div className="text-muted" style={{ fontSize: '0.68rem' }}>{o.companie.label}</div>}
                                         <div className="d-flex justify-content-between mt-1">
                                             <span className="text-muted" style={{ fontSize: '0.68rem' }}>{formatDate(o.validity_date, locale)}</span>
-                                            <span className="font-weight-bold" style={{ fontSize: '0.68rem' }}>{formatCurrency(o.total_amount, currency, locale)}</span>
+                                            <span className="fw-bold" style={{ fontSize: '0.68rem' }}>{formatCurrency(o.total_amount, currency, locale)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -607,13 +607,13 @@ function CreateModal({ endpoints, trans, onClose }) {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">{trans.new_order ?? 'New order'}</h5>
-                            <button className="close" onClick={onClose}><span>×</span></button>
+                            <button onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                         </div>
                         <div className="modal-body">
 
                             {/* Type selector */}
-                            <div className="form-group mb-3">
-                                <label className="d-block mb-1 small font-weight-bold">{trans.order_type ?? 'Order type'}</label>
+                            <div className="mb-3 mb-3">
+                                <label className="d-block mb-1 small fw-bold">{trans.order_type ?? 'Order type'}</label>
                                 <div className="btn-group btn-group-sm">
                                     <button type="button" className={`btn ${type === 1 ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setType(1)}>
                                         {trans.customer_type ?? 'Customer order'}
@@ -649,7 +649,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Assignee */}
                                 <div className="col-md-4 mb-2">
                                     <label className="mb-0 small">{trans.assignee ?? 'Assignee'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.user_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.user_id ? 'is-invalid' : ''}`}
                                         value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                                         <option value="">—</option>
                                         {(selectData?.users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
@@ -668,7 +668,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {isExternal && (
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.company ?? 'Company'} *</label>
-                                        <select className={`form-control form-control-sm ${errors.companies_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.companies_id ? 'is-invalid' : ''}`}
                                             value={form.companies_id} onChange={e => set('companies_id', e.target.value)}>
                                             <option value="">—</option>
                                             {(selectData?.companies ?? []).map(c => (
@@ -683,7 +683,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.contact ?? 'Contact'} *</label>
                                         <div className="input-group input-group-sm">
-                                            <select className={`form-control form-control-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
+                                            <select className={`form-select form-select-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
                                                 value={form.companies_contacts_id}
                                                 onChange={e => set('companies_contacts_id', e.target.value)}
                                                 disabled={!form.companies_id}>
@@ -691,9 +691,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                                 {contactOptions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
                                             {form.companies_id && (
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowContactModal(true)}>+</button>
-                                                </div>
+                                                <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowContactModal(true)}>+</button>
                                             )}
                                         </div>
                                         {errors.companies_contacts_id && <div className="invalid-feedback d-block">{errors.companies_contacts_id[0]}</div>}
@@ -704,7 +702,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.address ?? 'Address'} *</label>
                                         <div className="input-group input-group-sm">
-                                            <select className={`form-control form-control-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
+                                            <select className={`form-select form-select-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
                                                 value={form.companies_addresses_id}
                                                 onChange={e => set('companies_addresses_id', e.target.value)}
                                                 disabled={!form.companies_id}>
@@ -712,9 +710,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                                 {addressOptions.map(a => <option key={a.id} value={a.id}>{a.label} — {a.adress}</option>)}
                                             </select>
                                             {form.companies_id && (
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowAddressModal(true)}>+</button>
-                                                </div>
+                                                <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowAddressModal(true)}>+</button>
                                             )}
                                         </div>
                                         {errors.companies_addresses_id && <div className="invalid-feedback d-block">{errors.companies_addresses_id[0]}</div>}
@@ -724,7 +720,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {isExternal && (
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.payment_condition ?? 'Payment condition'} *</label>
-                                        <select className={`form-control form-control-sm ${errors.accounting_payment_conditions_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.accounting_payment_conditions_id ? 'is-invalid' : ''}`}
                                             value={form.accounting_payment_conditions_id}
                                             onChange={e => set('accounting_payment_conditions_id', e.target.value)}>
                                             <option value="">—</option>
@@ -737,7 +733,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {isExternal && (
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.payment_method ?? 'Payment method'} *</label>
-                                        <select className={`form-control form-control-sm ${errors.accounting_payment_methods_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.accounting_payment_methods_id ? 'is-invalid' : ''}`}
                                             value={form.accounting_payment_methods_id}
                                             onChange={e => set('accounting_payment_methods_id', e.target.value)}>
                                             <option value="">—</option>
@@ -750,7 +746,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {isExternal && (
                                     <div className="col-md-6 mb-2">
                                         <label className="mb-0 small">{trans.delivery ?? 'Delivery'} *</label>
-                                        <select className={`form-control form-control-sm ${errors.accounting_deliveries_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.accounting_deliveries_id ? 'is-invalid' : ''}`}
                                             value={form.accounting_deliveries_id}
                                             onChange={e => set('accounting_deliveries_id', e.target.value)}>
                                             <option value="">—</option>
@@ -898,9 +894,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control"
                         placeholder={trans.search ?? 'Search…'}
                         value={search}
@@ -931,7 +925,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 
                 {/* New order */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_order ?? 'New order'}
+                    <i className="fas fa-plus me-1" />{trans.new_order ?? 'New order'}
                 </button>
             </div>
 
@@ -986,7 +980,7 @@ export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, t
     const locale   = trans.locale   ?? 'fr-FR';
 
     return (
-        <div className="card card-outline card-warning">
+        <div className="card card-outline card-warning mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

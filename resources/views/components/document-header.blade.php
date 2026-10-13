@@ -68,7 +68,7 @@
 
 <div class="doc-header">
     <h1 class="doc-header__title">
-        @if($badge)<span class="badge badge-warning mr-2">{{ $badge }}</span>@endif
+        @if($badge)<span class="badge text-bg-warning me-2">{{ $badge }}</span>@endif
         {{ $h1 }}
     </h1>
 

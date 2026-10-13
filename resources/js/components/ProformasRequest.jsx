@@ -142,12 +142,12 @@ function FromQuoteForm({ users, companies, endpoints, initialCode, userId }) {
                 contactId={contactId} setContactId={setContactId} contacts={contacts} />
 
             {companyId && (
-                <div className="form-group">
+                <div className="mb-3">
                     <label>Devis source</label>
                     {loading
                         ? <p><i className="fas fa-spinner fa-spin" /> Chargement…</p>
                         : (
-                            <select className="form-control" value={quoteId} onChange={e => setQuoteId(e.target.value)} required>
+                            <select className="form-select" value={quoteId} onChange={e => setQuoteId(e.target.value)} required>
                                 <option value="">-- Choisir un devis --</option>
                                 {quotes.map(q => <option key={q.id} value={q.id}>{q.code} — {q.label}</option>)}
                             </select>
@@ -173,40 +173,40 @@ function CommonHeader({ code, setCode, label, setLabel, selectedUser, setSelecte
     return (
         <>
             <div className="row">
-                <div className="col-md-3 form-group">
+                <div className="col-md-3 mb-3">
                     <label>Code proforma</label>
                     <input className="form-control" value={code} onChange={e => setCode(e.target.value)} required />
                 </div>
-                <div className="col-md-5 form-group">
+                <div className="col-md-5 mb-3">
                     <label>Libellé</label>
                     <input className="form-control" value={label} onChange={e => setLabel(e.target.value)} required />
                 </div>
-                <div className="col-md-4 form-group">
+                <div className="col-md-4 mb-3">
                     <label>Responsable</label>
-                    <select className="form-control" value={selectedUser} onChange={e => setSelectedUser(e.target.value)} required>
+                    <select className="form-select" value={selectedUser} onChange={e => setSelectedUser(e.target.value)} required>
                         <option value="">-- Choisir --</option>
                         {(users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
             </div>
             <div className="row">
-                <div className="col-md-4 form-group">
+                <div className="col-md-4 mb-3">
                     <label>Client</label>
-                    <select className="form-control" value={companyId} onChange={e => setCompanyId(e.target.value)} required>
+                    <select className="form-select" value={companyId} onChange={e => setCompanyId(e.target.value)} required>
                         <option value="">-- Choisir un client --</option>
                         {(companies ?? []).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                     </select>
                 </div>
-                <div className="col-md-4 form-group">
+                <div className="col-md-4 mb-3">
                     <label>Adresse</label>
-                    <select className="form-control" value={addressId} onChange={e => setAddressId(e.target.value)} required>
+                    <select className="form-select" value={addressId} onChange={e => setAddressId(e.target.value)} required>
                         <option value="">-- Adresse --</option>
                         {addresses.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
                     </select>
                 </div>
-                <div className="col-md-4 form-group">
+                <div className="col-md-4 mb-3">
                     <label>Contact</label>
-                    <select className="form-control" value={contactId} onChange={e => setContactId(e.target.value)} required>
+                    <select className="form-select" value={contactId} onChange={e => setContactId(e.target.value)} required>
                         <option value="">-- Contact --</option>
                         {contacts.map(c => <option key={c.id} value={c.id}>{c.first_name} {c.name}</option>)}
                     </select>
@@ -247,9 +247,9 @@ function SubmitFooter({ submitting, count, label }) {
     return (
         <div className="card-footer">
             <button type="submit" className="btn btn-success" disabled={submitting || count === 0}>
-                {submitting ? <><i className="fas fa-spinner fa-spin mr-1" />Création…</> : <><i className="fas fa-file-invoice mr-1" />{label}</>}
+                {submitting ? <><i className="fas fa-spinner fa-spin me-1" />Création…</> : <><i className="fas fa-file-invoice me-1" />{label}</>}
             </button>
-            <span className="ml-3 text-muted">{count} ligne(s) sélectionnée(s)</span>
+            <span className="ms-3 text-muted">{count} ligne(s) sélectionnée(s)</span>
         </div>
     );
 }
@@ -259,7 +259,7 @@ export default function ProformasRequest({ initialCode, userId, users, companies
     const [mode, setMode] = useState('quote'); // 'quote' | 'order'
 
     return (
-        <div className="card card-primary">
+        <div className="card card-primary mb-3">
             <div className="card-header">
                 <h3 className="card-title">Nouvelle facture proforma</h3>
             </div>
@@ -269,13 +269,13 @@ export default function ProformasRequest({ initialCode, userId, users, companies
                         <button type="button"
                             className={`btn ${mode === 'quote' ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => setMode('quote')}>
-                            <i className="fas fa-file-alt mr-1" /> Depuis un devis
+                            <i className="fas fa-file-alt me-1" /> Depuis un devis
                             <small className="d-block text-muted" style={{fontSize:'0.75em'}}>Crée une commande brouillon (statu 0)</small>
                         </button>
                         <button type="button"
                             className={`btn ${mode === 'order' ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => setMode('order')}>
-                            <i className="fas fa-shopping-cart mr-1" /> Depuis une commande existante
+                            <i className="fas fa-shopping-cart me-1" /> Depuis une commande existante
                         </button>
                     </div>
                 </div>

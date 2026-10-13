@@ -22,15 +22,14 @@
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Info" data-toggle="tab">Informations</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Lignes ({{ count($Proforma->invoiceLines) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Proforma->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Info" data-bs-toggle="tab">Informations</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-bs-toggle="tab">Lignes ({{ count($Proforma->invoiceLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Proforma->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">Logs</a></li>
     </ul>
   </div>
 
@@ -48,45 +47,45 @@
               <x-adminlte-card title="Informations" theme="info" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <p><label class="text-success">Code</label>  {{ $Proforma->code }}</p>
                     <p><label class="text-success">Date</label>  {{ $Proforma->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label', ['label' => 'Libellé', 'Value' => $Proforma->label])
                     @include('include.form.form-input-customerInfo', ['customerReference' => $Proforma->customer_reference])
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label>Échéance</label>
                     <input type="date" class="form-control" name="due_date" value="{{ $Proforma->due_date }}">
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label>Incoterm</label>
                     <input type="text" class="form-control" name="incoterm" value="{{ $Proforma->incoterm }}">
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_id" id="proforma_company_id" label="Client" label-class="text-info" igroup-size="s">
-                      <x-slot name="prependSlot"><div class="input-group-text bg-gradient-info"><i class="fas fa-building"></i></div></x-slot>
+                      <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-building"></i></div></x-slot>
                       @foreach($companies as $company)
                         <option value="{{ $company->id }}" {{ $company->id == $Proforma->companies_id ? 'selected' : '' }}>{{ $company->label }}</option>
                       @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_addresses_id" id="proforma_address_id" label="Adresse" label-class="text-info" igroup-size="s">
-                      <x-slot name="prependSlot"><div class="input-group-text bg-gradient-info"><i class="fas fa-map-marked-alt"></i></div></x-slot>
+                      <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-map-marked-alt"></i></div></x-slot>
                       @foreach($addresses as $address)
                         <option value="{{ $address->id }}" {{ $address->id == $Proforma->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}</option>
                       @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_contacts_id" id="proforma_contact_id" label="Contact" label-class="text-info" igroup-size="s">
-                      <x-slot name="prependSlot"><div class="input-group-text bg-gradient-info"><i class="fas fa-user"></i></div></x-slot>
+                      <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-user"></i></div></x-slot>
                       @foreach($contacts as $contact)
                         <option value="{{ $contact->id }}" {{ $contact->id == $Proforma->companies_contacts_id ? 'selected' : '' }}>{{ $contact->first_name }} {{ $contact->name }}</option>
                       @endforeach
@@ -97,7 +96,7 @@
                   <x-FormTextareaComment comment="{{ $Proforma->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Mettre à jour" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="Mettre à jour" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -121,7 +120,7 @@
                   <tr>
                     <td>
                       Commande liée
-                      <span class="badge badge-secondary ml-1">En attente paiement</span>
+                      <span class="badge text-bg-secondary ms-1">En attente paiement</span>
                     </td>
                     <td>
                       <button class="btn btn-sm btn-warning" id="btn-activate-order">

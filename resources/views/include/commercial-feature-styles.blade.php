@@ -73,7 +73,7 @@
         padding-right: 2rem;
         border-radius: 2rem;
     }
-    .dark-mode .commercial-feature { background: #343a40; }
-    .dark-mode .commercial-feature__point { border-color: #4b545c; }
-    .dark-mode .commercial-feature__point p { color: #adb5bd; }
+    [data-bs-theme="dark"] .commercial-feature { background: #343a40; }
+    [data-bs-theme="dark"] .commercial-feature__point { border-color: #4b545c; }
+    [data-bs-theme="dark"] .commercial-feature__point p { color: #adb5bd; }
 </style>

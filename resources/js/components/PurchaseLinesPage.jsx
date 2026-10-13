@@ -8,15 +8,15 @@ import { apiRequest as apiFetch } from '../lib/http';
 // ---------------------------------------------------------------------------
 
 const RECEIPT_STATUS_CONFIG = {
-    none:    { badge: 'badge-secondary', label: 'Non reçu' },
-    partial: { badge: 'badge-warning',   label: 'Partiel' },
-    full:    { badge: 'badge-success',   label: 'Reçu' },
+    none:    { badge: 'text-bg-secondary', label: 'Non reçu' },
+    partial: { badge: 'text-bg-warning',   label: 'Partiel' },
+    full:    { badge: 'text-bg-success',   label: 'Reçu' },
 };
 
 const INVOICE_STATUS_CONFIG = {
-    none:    { badge: 'badge-secondary', label: 'Non facturé' },
-    partial: { badge: 'badge-warning',   label: 'Partiel' },
-    full:    { badge: 'badge-success',   label: 'Facturé' },
+    none:    { badge: 'text-bg-secondary', label: 'Non facturé' },
+    partial: { badge: 'text-bg-warning',   label: 'Partiel' },
+    full:    { badge: 'text-bg-success',   label: 'Facturé' },
 };
 
 const EMPTY_FORM = {
@@ -85,18 +85,18 @@ function ReceiptPopover({ items, badgeClass, badgeLabel }) {
                 style={{ cursor: 'pointer' }}
                 onClick={() => setOpen((o) => !o)}
             >
-                {badgeLabel} <i className="fas fa-external-link-alt ml-1" style={{ fontSize: 9 }} />
+                {badgeLabel} <i className="fas fa-external-link-alt ms-1" style={{ fontSize: 9 }} />
             </span>
             {open && (
                 <div style={{
                     position: 'absolute', zIndex: 1050, top: '100%', left: 0, minWidth: 200,
-                    background: '#fff', border: '1px solid #dee2e6', borderRadius: 4,
+                    background: 'var(--bs-body-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 4,
                     boxShadow: '0 4px 12px rgba(0,0,0,.15)', padding: '0.5rem',
                 }}>
                     <ul className="list-unstyled mb-0">
                         {items.map((item) => (
                             <li key={item.id} className="mb-1">
-                                <a href={item.receipt_url} className="text-primary font-weight-bold"
+                                <a href={item.receipt_url} className="text-primary fw-bold"
                                     target="_blank" rel="noreferrer">
                                     {item.receipt_code}
                                 </a>
@@ -125,8 +125,8 @@ function DeliveryDateBadge({ dateStr }) {
     const isPast = date < now;
 
     return (
-        <span className={`badge ${isPast ? 'badge-danger' : 'badge-success'}`} title="Date de livraison prévue">
-            {isPast && <i className="fas fa-exclamation-triangle mr-1" style={{ fontSize: 9 }} />}
+        <span className={`badge ${isPast ? 'text-bg-danger' : 'text-bg-success'}`} title="Date de livraison prévue">
+            {isPast && <i className="fas fa-exclamation-triangle me-1" style={{ fontSize: 9 }} />}
             {formatted}
         </span>
     );
@@ -287,7 +287,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             <div style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0,
                 width: 480, maxWidth: '95vw',
-                background: '#fff', zIndex: 1050,
+                background: 'var(--bs-body-bg)', zIndex: 1050,
                 display: 'flex', flexDirection: 'column',
                 transform: open ? 'translateX(0)' : 'translateX(100%)',
                 transition: 'transform 0.25s ease',
@@ -295,11 +295,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             }}>
 
                 {/* Header */}
-                <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-light">
+                <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-body-tertiary">
                     <strong>
                         {editingLine
-                            ? <><i className="fas fa-edit mr-2 text-warning" />Modifier la ligne</>
-                            : <><i className="fas fa-plus-circle mr-2 text-info" />Nouvelle ligne d'achat</>}
+                            ? <><i className="fas fa-edit me-2 text-warning" />Modifier la ligne</>
+                            : <><i className="fas fa-plus-circle me-2 text-info" />Nouvelle ligne d'achat</>}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -313,12 +313,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                     <form id="purchase-line-drawer-form" onSubmit={handleSubmit}>
 
                         {/* Product */}
-                        <div className="form-group mb-2 position-relative">
-                            <label className="mb-1 small font-weight-bold">Produit fournisseur</label>
+                        <div className="mb-3 mb-2 position-relative">
+                            <label className="mb-1 small fw-bold">Produit fournisseur</label>
                             <div className="input-group input-group-sm">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-barcode" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-barcode" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -330,17 +328,15 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     disabled={isReadOnly}
                                 />
                                 {form.product_id && (
-                                    <div className="input-group-append">
-                                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={handleProductClear}>
+                                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={handleProductClear}>
                                             <i className="fas fa-times" />
                                         </button>
-                                    </div>
                                 )}
                             </div>
                             {showProductList && filteredProducts.length > 0 && (
                                 <div style={{
                                     position: 'absolute', zIndex: 1060, left: 0, right: 0,
-                                    background: '#fff', border: '1px solid #ccc',
+                                    background: 'var(--bs-body-bg)', border: '1px solid #ccc',
                                     borderRadius: '0 0 4px 4px', maxHeight: 200, overflowY: 'auto',
                                     boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
                                 }}>
@@ -351,7 +347,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                             onMouseEnter={(e) => e.currentTarget.style.background = '#f0f4ff'}
                                             onMouseLeave={(e) => e.currentTarget.style.background = ''}>
                                             <strong>{p.code}</strong>
-                                            <span className="text-muted ml-2">{p.label}</span>
+                                            <span className="text-muted ms-2">{p.label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -359,27 +355,27 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Code externe + Réf fournisseur + Ordre */}
-                        <div className="form-row">
-                            <div className="form-group col-5 mb-2">
-                                <label className="mb-1 small font-weight-bold">Réf. interne</label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-5 mb-2">
+                                <label className="mb-1 small fw-bold">Réf. interne</label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-tag" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-tag" /></span>
                                     <input type="text" className="form-control"
                                         placeholder="Code interne" value={form.code}
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
-                            <div className="form-group col-5 mb-2">
-                                <label className="mb-1 small font-weight-bold">Réf. fournisseur</label>
+                            <div className="mb-3 col-5 mb-2">
+                                <label className="mb-1 small fw-bold">Réf. fournisseur</label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                     <input type="text" className="form-control"
                                         placeholder="Réf. fournisseur" value={form.supplier_ref}
                                         onChange={(e) => set('supplier_ref', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
-                            <div className="form-group col-2 mb-2">
-                                <label className="mb-1 small font-weight-bold">Ordre</label>
+                            <div className="mb-3 col-2 mb-2">
+                                <label className="mb-1 small fw-bold">Ordre</label>
                                 <input type="number" className={`form-control form-control-sm ${errors.ordre ? 'is-invalid' : ''}`}
                                     min="1" value={form.ordre}
                                     onChange={(e) => set('ordre', e.target.value)} disabled={isReadOnly} />
@@ -387,10 +383,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Label */}
-                        <div className="form-group mb-2">
-                            <label className="mb-1 small font-weight-bold">Description <span className="text-danger">*</span></label>
+                        <div className="mb-3 mb-2">
+                            <label className="mb-1 small fw-bold">Description <span className="text-danger">*</span></label>
                             <div className="input-group input-group-sm">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-tags" /></span></div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`}
                                     placeholder="Description de la ligne" value={form.label}
                                     onChange={(e) => set('label', e.target.value)} disabled={isReadOnly} />
@@ -399,20 +395,20 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Qty + Unit */}
-                        <div className="form-row">
-                            <div className="form-group col-5 mb-2">
-                                <label className="mb-1 small font-weight-bold">Quantité <span className="text-danger">*</span></label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-5 mb-2">
+                                <label className="mb-1 small fw-bold">Quantité <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-times" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-times" /></span>
                                     <input type="number" className={`form-control ${errors.qty ? 'is-invalid' : ''}`}
                                         min="0" step="0.001" value={form.qty}
                                         onChange={(e) => set('qty', e.target.value)} disabled={isReadOnly} />
                                 </div>
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
-                            <div className="form-group col-7 mb-2">
-                                <label className="mb-1 small font-weight-bold">Unité</label>
-                                <select className="form-control form-control-sm" value={form.methods_units_id}
+                            <div className="mb-3 col-7 mb-2">
+                                <label className="mb-1 small fw-bold">Unité</label>
+                                <select className="form-select form-select-sm" value={form.methods_units_id}
                                     onChange={(e) => set('methods_units_id', e.target.value)} disabled={isReadOnly}>
                                     <option value="">— Unité —</option>
                                     {(selectData.units ?? []).map((u) => (
@@ -423,21 +419,21 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Price + Discount */}
-                        <div className="form-row">
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Prix unitaire <span className="text-danger">*</span></label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Prix unitaire <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text">{selectData.currency ?? '€'}</span></div>
+                                    <span className="input-group-text">{selectData.currency ?? '€'}</span>
                                     <input type="number" className={`form-control ${errors.selling_price ? 'is-invalid' : ''}`}
                                         min="0" step="0.001" value={form.selling_price}
                                         onChange={(e) => set('selling_price', e.target.value)} disabled={isReadOnly} />
                                 </div>
                                 {errors.selling_price && <div className="invalid-feedback d-block">{errors.selling_price[0]}</div>}
                             </div>
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Remise %</label>
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Remise %</label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-percentage" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-percentage" /></span>
                                     <input type="number" className="form-control"
                                         min="0" max="100" step="0.01" value={form.discount}
                                         onChange={(e) => set('discount', e.target.value)} disabled={isReadOnly} />
@@ -446,10 +442,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* VAT + Delivery date */}
-                        <div className="form-row">
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">TVA</label>
-                                <select className="form-control form-control-sm" value={form.accounting_vats_id}
+                        <div className="row gx-2">
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">TVA</label>
+                                <select className="form-select form-select-sm" value={form.accounting_vats_id}
                                     onChange={(e) => set('accounting_vats_id', e.target.value)} disabled={isReadOnly}>
                                     <option value="">— TVA —</option>
                                     {(selectData.vats ?? []).map((v) => (
@@ -457,8 +453,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Date livraison prévue</label>
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Date livraison prévue</label>
                                 <input type="date" className="form-control form-control-sm" value={form.delivery_date}
                                     onChange={(e) => set('delivery_date', e.target.value)} disabled={isReadOnly} />
                             </div>
@@ -467,21 +463,21 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 </div>
 
                 {/* Footer */}
-                <div className="border-top px-3 py-2 d-flex justify-content-between align-items-center bg-light">
+                <div className="border-top px-3 py-2 d-flex justify-content-between align-items-center bg-body-tertiary">
                     <span />
                     <div>
-                        <button type="button" className="btn btn-sm btn-outline-secondary mr-2" onClick={onClose}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary me-2" onClick={onClose}>
                             Annuler
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="purchase-line-drawer-form" className="btn btn-sm btn-info" disabled={saving}>
                                 {editingLine
                                     ? saving
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
-                                        : <><i className="fas fa-save mr-1" />Enregistrer</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
+                                        : <><i className="fas fa-save me-1" />Enregistrer</>
                                     : saving
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Ajout…</>
-                                        : <><i className="fas fa-plus mr-1" />Ajouter</>}
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Ajout…</>
+                                        : <><i className="fas fa-plus me-1" />Ajouter</>}
                             </button>
                         )}
                     </div>
@@ -550,7 +546,7 @@ function LineRow({
         >
             {/* Drag handle + ordre */}
             <td style={{ width: 48, cursor: !isReadOnly ? 'grab' : 'default', userSelect: 'none', padding: '2px 4px', verticalAlign: 'middle' }}>
-                <i className="fas fa-grip-vertical mr-1" style={{ color: '#aaa' }} />
+                <i className="fas fa-grip-vertical me-1" style={{ color: '#aaa' }} />
                 <span className="text-muted small">{line.ordre}</span>
             </td>
 
@@ -570,7 +566,7 @@ function LineRow({
             {/* Produit */}
             <td style={{ width: 36 }}>
                 {line.product_id && line.product_url
-                    ? <a href={line.product_url} className="btn btn-xs btn-outline-secondary" target="_blank" rel="noreferrer" title={line.product_code}>
+                    ? <a href={line.product_url} className="btn btn-sm btn-outline-secondary" target="_blank" rel="noreferrer" title={line.product_code}>
                         <i className="fas fa-cube" />
                       </a>
                     : null}
@@ -582,10 +578,10 @@ function LineRow({
             </td>
 
             {/* Qté commandée */}
-            <td className="text-right">{formatQty(line.qty)}</td>
+            <td className="text-end">{formatQty(line.qty)}</td>
 
             {/* Reçu */}
-            <td className="text-right">
+            <td className="text-end">
                 <ReceiptPopover
                     items={line.receipt_lines ?? []}
                     badgeClass={receiptCfg.badge}
@@ -594,7 +590,7 @@ function LineRow({
             </td>
 
             {/* Facturé */}
-            <td className="text-right">
+            <td className="text-end">
                 <span className={`badge ${invoiceCfg.badge}`}>
                     {line.invoiced_qty > 0 ? formatQty(line.invoiced_qty) : invoiceCfg.label}
                 </span>
@@ -609,23 +605,23 @@ function LineRow({
             </td>
 
             {/* Prix */}
-            <td className="text-right font-weight-bold">{line.formatted_price}</td>
+            <td className="text-end fw-bold">{line.formatted_price}</td>
 
             {/* Remise */}
-            <td className="text-right small">{line.discount} %</td>
+            <td className="text-end small">{line.discount} %</td>
 
             {/* TVA */}
             <td className="small">{line.vat_rate != null ? `${line.vat_rate} %` : '—'}</td>
 
             {/* Total */}
-            <td className="text-right text-muted small">{line.formatted_total}</td>
+            <td className="text-end text-muted small">{line.formatted_total}</td>
 
             {/* Actions */}
             <td>
                 <div className="btn-group btn-group-xs" ref={menuRef}>
                     {!isReadOnly && (
                         <button
-                            className="btn btn-xs btn-warning"
+                            className="btn btn-sm btn-warning"
                             title="Modifier"
                             onClick={() => onEdit(line)}
                         >
@@ -634,7 +630,7 @@ function LineRow({
                     )}
                     <button
                         ref={toggleRef}
-                        className="btn btn-xs btn-default dropdown-toggle dropdown-toggle-split"
+                        className="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                         onClick={handleToggleMenu}
                     />
                     {menuOpen && (
@@ -642,19 +638,19 @@ function LineRow({
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onEdit(line); setMenuOpen(false); }}>
-                                    <i className="fas fa-edit fa-fw mr-2 text-warning" />Modifier
+                                    <i className="fas fa-edit fa-fw me-2 text-warning" />Modifier
                                 </button>
                             )}
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onDuplicate(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-copy fa-fw mr-2 text-info" />Dupliquer
+                                    <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
                                 </button>
                             )}
                             {!isReadOnly && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-trash fa-fw mr-2" />Supprimer
+                                    <i className="fas fa-trash fa-fw me-2" />Supprimer
                                 </button>
                             )}
                         </div>
@@ -869,14 +865,14 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
             {flash && (
                 <div className={`alert alert-${flash.type} alert-dismissible py-2 mb-2`}>
                     {flash.msg}
-                    <button type="button" className="close" onClick={() => setFlash(null)}><span>&times;</span></button>
+                    <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
             {/* Statut lecture seule */}
             {isReadOnly && (
                 <div className="alert alert-info py-2 mb-3">
-                    <i className="fas fa-lock mr-2" />
+                    <i className="fas fa-lock me-2" />
                     Commande verrouillée — les lignes sont en lecture seule.
                 </div>
             )}
@@ -884,16 +880,14 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm" style={{ maxWidth: 280 }}>
-                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-search" /></span></div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control" placeholder="Rechercher (libellé, code, réf)…"
                         value={search} onChange={(e) => setSearch(e.target.value)} />
                     {search && (
-                        <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
-                        </div>
+                        <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
                     )}
                 </div>
-                <span className="badge badge-secondary ml-auto">
+                <span className="badge text-bg-secondary ms-auto">
                     {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
                 </span>
             </div>
@@ -903,12 +897,12 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                 <div className="card card-outline card-info mb-3">
                     <div className="card-body py-2 px-3">
                         <div className="d-flex flex-wrap align-items-center" style={{ gap: '0.75rem' }}>
-                            <span className="text-info font-weight-bold small">
-                                <i className="fas fa-check-square mr-1" />
+                            <span className="text-info fw-bold small">
+                                <i className="fas fa-check-square me-1" />
                                 {selected.size} ligne{selected.size > 1 ? 's' : ''} sélectionnée{selected.size > 1 ? 's' : ''}
                             </span>
                             <button className="btn btn-info btn-sm" onClick={handleStoreReceipt}>
-                                <i className="fas fa-folder mr-1" />
+                                <i className="fas fa-folder me-1" />
                                 Nouveau bon de réception ({selected.size})
                             </button>
                         </div>
@@ -919,7 +913,7 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
             {/* Hint drag */}
             {!isReadOnly && filteredLines.length > 1 && !search && (
                 <p className="text-muted small mb-2">
-                    <i className="fas fa-grip-vertical mr-1" />
+                    <i className="fas fa-grip-vertical me-1" />
                     Glissez les lignes pour modifier l'ordre.
                 </p>
             )}
@@ -927,7 +921,7 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
             {/* Table */}
             <div className="table-responsive p-0">
                 <table className="table table-hover table-sm mb-0">
-                    <thead className="thead-light">
+                    <thead className="table-light">
                         <tr>
                             <th style={{ width: 48 }} title="Glisser pour réordonner">
                                 <i className="fas fa-grip-vertical text-muted" />
@@ -941,15 +935,15 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                             <th>Réf. fourn.</th>
                             <th style={{ width: 36 }} />
                             <th>Description</th>
-                            <th className="text-right">Qté</th>
-                            <th className="text-right">Reçu</th>
-                            <th className="text-right">Facturé</th>
+                            <th className="text-end">Qté</th>
+                            <th className="text-end">Reçu</th>
+                            <th className="text-end">Facturé</th>
                             <th>Unité</th>
                             <th>Livraison</th>
-                            <th className="text-right">Prix u.</th>
-                            <th className="text-right">Remise</th>
+                            <th className="text-end">Prix u.</th>
+                            <th className="text-end">Remise</th>
                             <th>TVA</th>
-                            <th className="text-right">Total HT</th>
+                            <th className="text-end">Total HT</th>
                             <th style={{ width: 90 }}>Actions</th>
                         </tr>
                     </thead>
@@ -957,7 +951,7 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                         {loading ? (
                             <tr>
                                 <td colSpan={16} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
                                 </td>
                             </tr>
                         ) : filteredLines.length === 0 ? (
@@ -965,7 +959,7 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                                 <td colSpan={16} className="text-center py-4 text-muted">
                                     {search ? 'Aucune ligne ne correspond.' : 'Aucune ligne dans cette commande achat.'}
                                     {!search && !isReadOnly && (
-                                        <button className="btn btn-link p-0 ml-2" onClick={handleOpenCreate}>
+                                        <button className="btn btn-link p-0 ms-2" onClick={handleOpenCreate}>
                                             Ajouter la première ligne
                                         </button>
                                     )}
@@ -991,8 +985,8 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                     </tbody>
                     {filteredLines.length > 0 && (
                         <tfoot>
-                            <tr className="font-weight-bold bg-light">
-                                <td colSpan={14} className="text-right pr-3 small text-muted">
+                            <tr className="fw-bold bg-body-tertiary">
+                                <td colSpan={14} className="text-end pe-3 small text-muted">
                                     {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
                                 </td>
                                 <td colSpan={2} />

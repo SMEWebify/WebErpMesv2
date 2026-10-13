@@ -41,15 +41,15 @@ $leadSteps = json_encode([
             <label for="CutomerInfo" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
           </div>
           <div class="row">
-            <div class="form-group col-md-12">
+            <div class="mb-3 col-md-12">
               @include('include.form.form-select-companie',['companiesId' =>  $Lead->companies_id])
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-6">
+            <div class="mb-3 col-md-6">
               @include('include.form.form-select-adress',['adressId' =>   $Lead->companies_addresses_id])
             </div>
-            <div class="form-group col-md-6">
+            <div class="mb-3 col-md-6">
               @include('include.form.form-select-contact',['contactId' =>   $Lead->companies_contacts_id])
             </div>
           </div>
@@ -66,27 +66,23 @@ $leadSteps = json_encode([
             <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
           </div>
           <div class="row">
-            <div class="form-group col-md-6">
+            <div class="mb-3 col-md-6">
               <x-adminlte-input type="text" name="source" label="{{ __('general_content.source_trans_key') }}"  value="{{  $Lead->source }}" label-class="text-success">
                 <x-slot name="prependSlot">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                    </div>
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </x-slot>
               </x-adminlte-input>
             </div>
-            <div class="form-group col-md-6">
+            <div class="mb-3 col-md-6">
               <x-adminlte-input  type="text" name="campaign" label="{{ __('general_content.campaign_trans_key') }}"  value="{{  $Lead->campaign }}" label-class="text-success">
                 <x-slot name="prependSlot">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                    </div>
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </x-slot>
               </x-adminlte-input>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
+          <div class="row gx-2">
+            <div class="mb-3 col-md-6">
               @include('include.form.form-select-user',['userId' =>   $Lead->user_id])
             </div>
         </div>
@@ -116,7 +112,7 @@ $leadSteps = json_encode([
           </div>
         </div>
         <x-slot name="footerSlot">
-          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+          <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
         </x-slot>
       </x-adminlte-card>
     </form>

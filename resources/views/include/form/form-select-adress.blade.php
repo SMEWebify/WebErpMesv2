@@ -2,7 +2,7 @@
 <x-adminlte-select2 name="companies_addresses_id" id="companies_addresses_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
     igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
     <x-slot name="prependSlot">
-        <div class="input-group-text bg-gradient-info">
+        <div class="input-group-text text-bg-info bg-gradient">
             <i class="fas fa-map-marked-alt"></i>
         </div>
     </x-slot>

@@ -18,7 +18,7 @@ function SmallBox({ value, label, icon, theme }) {
 function InvoicesCard({ paid, unpaid, trans }) {
     return (
         <div className="col-lg-3 col-md-4 col-sm-6 mb-3">
-            <div className="card card-outline card-primary" style={{ minHeight: '88px' }}>
+            <div className="card card-outline card-primary mb-3" style={{ minHeight: '88px' }}>
                 <div className="card-body d-flex flex-column justify-content-center">
                     <p className="card-text mb-1">{trans.bills_paid} : <strong>{paid}</strong></p>
                     <p className="card-text mb-0">{trans.bills_unpaid} : <strong>{unpaid}</strong></p>
@@ -37,7 +37,7 @@ const QUOTE_STATUS_CONFIG = {
     2: { color: '#ffc107', key: 'send' },
     3: { color: '#28a745', key: 'win' },
     4: { color: '#dc3545', key: 'lost' },
-    5: { color: '#6c757d', key: 'closed' },
+    5: { color: 'var(--bs-secondary-color)', key: 'closed' },
     6: { color: '#007bff', key: 'obsolete' },
 };
 
@@ -62,10 +62,10 @@ export default function CompanyDashboard({ kpi, charts, trans, fiscalYearStartMo
             {/* Charts */}
             <div className="row mt-2">
                 <div className="col-lg-3 col-md-12 mb-3">
-                    <div className="card card-outline card-teal">
+                    <div className="card card-outline card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar text-teal mr-1" />
+                                <i className="fas fa-chart-bar text-teal me-1" />
                                 {trans.quote_transformation}
                             </h3>
                         </div>

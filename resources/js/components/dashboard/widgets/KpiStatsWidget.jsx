@@ -53,7 +53,7 @@ export default function KpiStatsWidget({ kpi, canPurchases, trans = {}, urls = {
                     value={kpi.orders_count}
                     label={t.orders_open}
                     icon="fa-shopping-cart"
-                    theme="yellow"
+                    theme="warning"
                     url={u.orders_index}
                     urlText={t.view_details}
                 />

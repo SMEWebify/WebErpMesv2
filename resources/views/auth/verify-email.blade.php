@@ -63,7 +63,7 @@
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-header">
             <div class="logo">⚙️</div>
             <h1>{{ \App\Models\Admin\Factory::value('name') ?? config('branding.app_name') }}</h1>

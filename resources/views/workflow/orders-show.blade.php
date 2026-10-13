@@ -69,28 +69,27 @@ if (!$orderHasInvoicedLines) {
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills" id="DocumentTabs">
-      <li class="nav-item"><a class="nav-link" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Lignes ({{ $Order->OrderLines->filter->isArticle()->count() }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Site" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Order" data-bs-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-bs-toggle="tab">Lignes ({{ $Order->OrderLines->filter->isArticle()->count() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Site" data-bs-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Charts" data-bs-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Bilan" data-bs-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
       @can('purchases-menu')
-      <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#purchase" data-bs-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
       @endcan
-      <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
+      <!--<a class="nav-link" href="#Views" data-bs-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
-      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
       @if($Order->type == 1)
-      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-bs-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Order->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Order->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">Logs</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -102,14 +101,14 @@ if (!$orderHasInvoicedLines) {
         @if($Order->statu === 0)
           @php $linkedProforma = $Order->invoices()->where('invoice_type', 3)->first(); @endphp
           <div class="alert alert-warning alert-dismissible mb-3">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <h5><i class="fas fa-hourglass-half mr-2"></i>Commande en attente de paiement</h5>
+            <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close float-end"></button>
+            <h5><i class="fas fa-hourglass-half me-2"></i>Commande en attente de paiement</h5>
             Cette commande est en statut <strong>brouillon</strong> - elle ne sera activée qu'après confirmation du paiement client.
             Elle n'apparaît pas dans la production ni dans les KPI.
             @if($linkedProforma)
               <div class="mt-2">
                 <a href="{{ route('proformas.show', $linkedProforma->id) }}" class="btn btn-sm btn-light">
-                  <i class="fas fa-file-invoice mr-1"></i> Voir la proforma {{ $linkedProforma->code }}
+                  <i class="fas fa-file-invoice me-1"></i> Voir la proforma {{ $linkedProforma->code }}
                 </a>
               </div>
             @endif
@@ -123,13 +122,13 @@ if (!$orderHasInvoicedLines) {
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <input type="hidden" name="type" value="{{ $Order->type }}">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Order->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Order->GetshortCreatedAttribute() }}</p>
                     <p><label class="text-success">{{ __('general_content.total_weight_trans_key') }}</label>  {{ number_format($Order->total_weight, 3, '.', ' ') }} kg</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Order->label])
                   </div>
                 </div>
@@ -139,7 +138,7 @@ if (!$orderHasInvoicedLines) {
                     <label for="companies_id" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @if($Order->quotes_id  or $Order->statu != 1)
                       {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Order->companie['id'] }}" label="{{ $Order->companie['label'] }}"  />
                       <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}">
@@ -147,12 +146,12 @@ if (!$orderHasInvoicedLines) {
                         @include('include.form.form-select-companie',['companiesId' =>  $Order->companies_id])
                       @endif
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-input-customerInfo',['customerReference' =>  $Order->customer_reference])
                     </div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-adress',['adressId' =>   $Order->companies_addresses_id])
                     </div>
                     <div class="col-6">
@@ -172,21 +171,21 @@ if (!$orderHasInvoicedLines) {
                     <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Order->accounting_payment_conditions_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Order->accounting_payment_methods_id])
                     </div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <label for="validity_date">{{ __('general_content.delivery_date_trans_key') }}</label>
                       <div class="input-group">
-                        <div class="input-group-text bg-gradient-secondary">
+                        <div class="input-group-text text-bg-secondary bg-gradient">
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
@@ -202,10 +201,10 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 @else
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <label for="validity_date">{{ __('general_content.delivery_date_trans_key') }}</label>
                       <div class="input-group">
-                        <div class="input-group-text bg-gradient-secondary">
+                        <div class="input-group-text text-bg-secondary bg-gradient">
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
@@ -221,7 +220,7 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 @endif
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form-select-methods-location',[
                         'methodsLocationId' => $Order->methods_locations_id,
                         'MethodsLocationsSelect' => $MethodsLocationsSelect])
@@ -236,9 +235,9 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="reviewed_by">{{ __('general_content.reviewed_by_trans_key') }}</label>
-                    <select class="form-control" name="reviewed_by" id="reviewed_by">
+                    <select class="form-select" name="reviewed_by" id="reviewed_by">
                       <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('reviewed_by', $Order->reviewed_by) == $user->id)>{{ $user->name }}</option>
@@ -248,7 +247,7 @@ if (!$orderHasInvoicedLines) {
                       <span class="text-danger">{{ $message }}</span>
                     @enderror
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="reviewed_at">{{ __('general_content.review_date_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="reviewed_at" id="reviewed_at" value="{{ old('reviewed_at', optional($Order->reviewed_at)->format('Y-m-d\\TH:i')) }}">
                     @error('reviewed_at')
@@ -257,9 +256,9 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="review_decision">{{ __('general_content.decision_trans_key') }}</label>
-                    <select class="form-control" name="review_decision" id="review_decision">
+                    <select class="form-select" name="review_decision" id="review_decision">
                       <option value="">{{ __('general_content.undefined_trans_key') }}</option>
                       <option value="pending" @selected(old('review_decision', $Order->review_decision) === 'pending')>{{ __('general_content.pending_trans_key') }}</option>
                       <option value="approved" @selected(old('review_decision', $Order->review_decision) === 'approved')>{{ __('general_content.approved_trans_key') }}</option>
@@ -269,9 +268,9 @@ if (!$orderHasInvoicedLines) {
                       <span class="text-danger">{{ $message }}</span>
                     @enderror
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="change_requested_by">{{ __('general_content.change_requested_by_trans_key') }}</label>
-                    <select class="form-control" name="change_requested_by" id="change_requested_by">
+                    <select class="form-select" name="change_requested_by" id="change_requested_by">
                       <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('change_requested_by', $Order->change_requested_by) == $user->id)>{{ $user->name }}</option>
@@ -283,7 +282,7 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="mb-3 col-md-12">
                     <label for="change_reason">{{ __('general_content.change_reason_trans_key') }}</label>
                     <textarea class="form-control" name="change_reason" id="change_reason" rows="3">{{ old('change_reason', $Order->change_reason) }}</textarea>
                     @error('change_reason')
@@ -292,7 +291,7 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="change_approved_at">{{ __('general_content.change_approved_at_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="change_approved_at" id="change_approved_at" value="{{ old('change_approved_at', optional($Order->change_approved_at)->format('Y-m-d\\TH:i')) }}">
                     @error('change_approved_at')
@@ -301,7 +300,7 @@ if (!$orderHasInvoicedLines) {
                   </div>
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -321,9 +320,9 @@ if (!$orderHasInvoicedLines) {
                       <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
                       @for ($i = 1; $i <= 5; $i++)
                           @if ($i <= $Rating[0]['rating'])
-                              <span class="badge badge-warning">&#9733;</span>
+                              <span class="badge text-bg-warning">&#9733;</span>
                           @else
-                              <span class="badge badge-info">&#9734;</span>
+                              <span class="badge text-bg-info">&#9734;</span>
                           @endif
                       @endfor
                     </td>
@@ -456,7 +455,7 @@ if (!$orderHasInvoicedLines) {
         }
       @endphp
       <div class="tab-pane " id="Lines">
-        <div class="card">
+        <div class="card mb-3">
           <div class="card-body">
             <div
               id="order-lines-page-app"
@@ -467,7 +466,7 @@ if (!$orderHasInvoicedLines) {
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
             >
               <div class="text-center py-4 text-muted">
-                <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des lignes...
+                <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...
               </div>
             </div>
           </div>
@@ -675,7 +674,7 @@ if (!$orderHasInvoicedLines) {
           data-endpoint="{{ route('orders.json.purchase-history', ['id' => $Order->id]) }}"
         >
           <div class="text-center py-4 text-muted">
-            <i class="fas fa-spinner fa-spin mr-2"></i> Chargement…
+            <i class="fas fa-spinner fa-spin me-2"></i> Chargement…
           </div>
         </div>
       </div>
@@ -697,7 +696,7 @@ if (!$orderHasInvoicedLines) {
                 {{-- Placeholder, sm size and prepend icon --}}
                 <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
                     <x-slot name="prependSlot">
-                        <div class="input-group-text bg-lightblue">
+                        <div class="input-group-text text-bg-sky">
                             <i class="fas fa-upload"></i>
                         </div>
                     </x-slot>
@@ -707,18 +706,18 @@ if (!$orderHasInvoicedLines) {
                 <div class="row">
                     <div class="col-4 text-end"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                     <div class="col-8">
-                        <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                        <x-adminlte-input-switch name="header" is-checked="true" />
                     </div>
                 </div>
                 
                 @php
                   $fields = [
-                      ['name' => 'code', 'label' => __('general_content.external_id_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
-                      ['name' => 'label', 'label' => __('general_content.label_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
-                      ['name' => 'qty', 'label' => __('general_content.qty_trans_key'), 'icon' => 'fas fa-circle', 'color' => 'bg-blue', 'type' => 'number', 'required' => false],
-                      ['name' => 'selling_price', 'label' => __('general_content.price_trans_key'), 'icon' => 'fas fa-cash-register', 'color' => 'bg-purple', 'required' => true],
-                      ['name' => 'discount', 'label' => __('general_content.discount_trans_key'), 'icon' => 'fas fa-percentage', 'color' => 'bg-yellow', 'required' => false],
-                      ['name' => 'delivery_date', 'label' => __('general_content.delivery_date_trans_key'), 'icon' => 'fas fa-calendar-alt', 'color' => 'bg-gray', 'required' => false],
+                      ['name' => 'code', 'label' => __('general_content.external_id_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'text-bg-danger', 'required' => true],
+                      ['name' => 'label', 'label' => __('general_content.label_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'text-bg-danger', 'required' => true],
+                      ['name' => 'qty', 'label' => __('general_content.qty_trans_key'), 'icon' => 'fas fa-circle', 'color' => 'text-bg-primary', 'type' => 'number', 'required' => false],
+                      ['name' => 'selling_price', 'label' => __('general_content.price_trans_key'), 'icon' => 'fas fa-cash-register', 'color' => 'text-bg-violet', 'required' => true],
+                      ['name' => 'discount', 'label' => __('general_content.discount_trans_key'), 'icon' => 'fas fa-percentage', 'color' => 'text-bg-warning', 'required' => false],
+                      ['name' => 'delivery_date', 'label' => __('general_content.delivery_date_trans_key'), 'icon' => 'fas fa-calendar-alt', 'color' => 'text-bg-secondary', 'required' => false],
                   ];
                 @endphp
 
@@ -751,7 +750,7 @@ if (!$orderHasInvoicedLines) {
 
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
           </x-adminlte-card>
         </form>
@@ -871,17 +870,11 @@ if (!$orderHasInvoicedLines) {
 
 @section('js')
   <script type="text/javascript">
-    $('.custom-file-input').on('change',function(){
-      // Obtient le nom du fichier sélectionné
-      var fileName = $(this).val().split('\\').pop(); 
-      // Sélectionne le label correspondant et met à jour son contenu
-      $(this).next('.custom-file-label').addClass("selected").html(fileName);
-    });
-  </script>
-  
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
+    document.addEventListener('DOMContentLoaded', function () {
+      // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-bs-toggle="tooltip"
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+        bootstrap.Tooltip.getOrCreateInstance(el);
+      });
     });
   </script>
 

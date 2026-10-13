@@ -29,19 +29,18 @@ $oppSteps = json_encode([
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Summary" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{ __('affairs.summary_tab') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab"><i class="fas fa-stream"></i> {{ __('affairs.timeline_tab') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Visits" data-toggle="tab"><i class="fas fa-mobile-alt"></i> {{ __('visits.visits') }} ({{ count($VisitsList) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Opportunity->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Summary" data-bs-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{ __('affairs.summary_tab') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Opportunity" data-bs-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TimeLine" data-bs-toggle="tab"><i class="fas fa-stream"></i> {{ __('affairs.timeline_tab') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Activities" data-bs-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Events" data-bs-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Visits" data-bs-toggle="tab"><i class="fas fa-mobile-alt"></i> {{ __('visits.visits') }} ({{ count($VisitsList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Opportunity->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">Logs</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -63,7 +62,7 @@ $oppSteps = json_encode([
               @csrf 
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="danger" theme-mode="outline" maximizable>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])
                   </div>
                 </div>
@@ -72,7 +71,7 @@ $oppSteps = json_encode([
                     <label for="CutomerInfo" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-12">
+                    <div class="mb-3 col-md-12">
                       @if($Opportunity->opportunities_id or $Opportunity->statu != 1)
                           {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" label="{{ $Opportunity->companie['label'] }}"  />
                           <input type="hidden" name="companies_id" value="{{ $Opportunity->companies_id }}">
@@ -82,10 +81,10 @@ $oppSteps = json_encode([
                     </div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-adress',['adressId' =>   $Opportunity->companies_addresses_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-contact',['contactId' =>   $Opportunity->companies_contacts_id])
                     </div>
                   </div>
@@ -102,21 +101,19 @@ $oppSteps = json_encode([
                     <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <x-adminlte-input type="number" name="probality" label="{{ __('general_content.probality_trans_key') }}" placeholder="50" value="{{  $Opportunity->probality }}" label-class="text-success">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-success">
+                            <div class="input-group-text text-bg-success bg-gradient">
                                 <i class="fas fa-percentage"></i>
                             </div>
                         </x-slot>
                       </x-adminlte-input>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <x-adminlte-input  type="number" name="budget" label="{{ __('general_content.budget_trans_key') }}" placeholder="0" value="{{  $Opportunity->budget }}" label-class="text-success">
                         <x-slot name="prependSlot">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text">{{ $Factory->curency }}</span>
-                            </div>
+                          <span class="input-group-text">{{ $Factory->curency }}</span>
                         </x-slot>
                       </x-adminlte-input>
                     </div>
@@ -147,7 +144,7 @@ $oppSteps = json_encode([
                     </div>
                   </div>
                   <x-slot name="footerSlot">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </x-slot>
               </x-adminlte-card>
             </form>
@@ -200,23 +197,23 @@ $oppSteps = json_encode([
                     <tr>
                       <td>{{ $Activity->label }}</td>
                       <td>
-                        @if($Activity->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
-                        @if($Activity->type  == 2) <span class="badge badge-warning">{{ __('general_content.email_send_trans_key') }}</span> @endif
-                        @if($Activity->type  == 3) <span class="badge badge-primary">{{ __('general_content.pre_sakes_aactivity_trans_key') }}</span> @endif
-                        @if($Activity->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_activity_trans_key') }}</span> @endif
-                        @if($Activity->type  == 5) <span class="badge badge-danger">{{ __('general_content.sales_telephone_call_trans_key') }}</span> @endif
+                        @if($Activity->type  == 1) <span class="badge text-bg-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
+                        @if($Activity->type  == 2) <span class="badge text-bg-warning">{{ __('general_content.email_send_trans_key') }}</span> @endif
+                        @if($Activity->type  == 3) <span class="badge text-bg-primary">{{ __('general_content.pre_sakes_aactivity_trans_key') }}</span> @endif
+                        @if($Activity->type  == 4) <span class="badge text-bg-success">{{ __('general_content.sales_activity_trans_key') }}</span> @endif
+                        @if($Activity->type  == 5) <span class="badge text-bg-danger">{{ __('general_content.sales_telephone_call_trans_key') }}</span> @endif
                       </td>
                       <td>
-                        @if($Activity->statu  == 1) <span class="badge badge-info">{{ __('general_content.no_start_trans_key') }}</span> @endif
-                        @if($Activity->statu  == 2) <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span> @endif
-                        @if($Activity->statu  == 3) <span class="badge badge-success">{{ __('general_content.closed_trans_key') }}</span> @endif
-                        @if($Activity->statu  == 4) <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 1) <span class="badge text-bg-info">{{ __('general_content.no_start_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 2) <span class="badge text-bg-success">{{ __('general_content.in_progress_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 3) <span class="badge text-bg-success">{{ __('general_content.closed_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 4) <span class="badge text-bg-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
                       </td>
                       <td>
-                        @if(1 == $Activity->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
-                        @if(2 == $Activity->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
-                        @if(3 == $Activity->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
-                        @if(4 == $Activity->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
+                        @if(1 == $Activity->priority )  <span class="badge text-bg-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
+                        @if(2 == $Activity->priority )  <span class="badge text-bg-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
+                        @if(3 == $Activity->priority )  <span class="badge text-bg-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
+                        @if(4 == $Activity->priority )  <span class="badge text-bg-success">{{ __('general_content.cold_trans_key') }}</span>@endif
                       </td>
                       <td>{{ $Activity->due_date }}</td>
                       <td>{{ $Activity->user->name ?? '' }}</td>
@@ -228,23 +225,19 @@ $oppSteps = json_encode([
                           @csrf
                           <x-adminlte-modal id="Activity{{ $Activity->id }}" title="Update {{ $Activity->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                             <div class="card-body">
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                                 <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                  </div>
+                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Activity->label }}">
                                   <input type="hidden"  name="id"  id="id" value="{{ $Activity->id }}" >
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                                 <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                  </div>
-                                  <select class="form-control" name="type" id="type">
+                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  <select class="form-select" name="type" id="type">
                                     <option value="1" @if($Activity->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
                                     <option value="2" @if($Activity->type == 2  ) Selected @endif>{{ __('general_content.email_send_trans_key') }}</option>
                                     <option value="3" @if($Activity->type == 3 ) Selected @endif>{{ __('general_content.pre_sakes_aactivity_trans_key') }}</option>
@@ -253,13 +246,11 @@ $oppSteps = json_encode([
                                   </select>
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                                 <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                  </div>
-                                  <select class="form-control" name="statu" id="statu">
+                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  <select class="form-select" name="statu" id="statu">
                                     <option value="1" @if($Activity->statu == 1 ) Selected @endif>{{ __('general_content.no_start_trans_key') }}</option>
                                     <option value="2" @if($Activity->statu == 2  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
                                     <option value="3" @if($Activity->statu == 3 ) Selected @endif>{{ __('general_content.closed_trans_key') }}</option>
@@ -267,13 +258,13 @@ $oppSteps = json_encode([
                                   </select>
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-text bg-gradient-success">
+                                    <div class="input-group-text text-bg-success bg-gradient">
                                         <i class="fas fa-exclamation"></i>
                                     </div>
-                                    <select class="form-control"  name="priority" id="priority">
+                                    <select class="form-select"  name="priority" id="priority">
                                         <option value="1"  @if($Activity->priority == 1 ) Selected @endif>{{ __('general_content.burning_trans_key') }}</option>
                                         <option value="2"  @if($Activity->priority == 2 ) Selected @endif>{{ __('general_content.hot_trans_key') }}</option>
                                         <option value="3"  @if($Activity->priority == 3 ) Selected @endif>{{ __('general_content.lukewarm_trans_key') }}</option>
@@ -281,17 +272,17 @@ $oppSteps = json_encode([
                                     </select>
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
                                 <input type="date" class="form-control" name="due_date"  id="due_date"  value="{{ $Activity->due_date }}" >
                               </div>
                               @include('include.opportunity-user-select', ['selected' => $Activity->user_id])
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <x-FormTextareaComment  comment="{{ $Activity->comment }}" />
                               </div>
                             </div>
                             <x-slot name="footerSlot">
-                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                              <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </x-slot>
                           </x-adminlte-modal>
                         </form>
@@ -320,23 +311,19 @@ $oppSteps = json_encode([
             <form  method="POST" action="{{ route('opportunities.store.activity', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.new_activity_trans_key') }}" theme="secondary" maximizable>
               @csrf
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
                     <input type="hidden"  name="opportunities_id"  id="opportunities_id" value="{{ $Opportunity->id }}" >
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                    </div>
-                    <select class="form-control" name="type" id="type">
+                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                    <select class="form-select" name="type" id="type">
                       <option value="1" >{{ __('general_content.activity_maketing_trans_key') }}</option>
                       <option value="2" >{{ __('general_content.email_send_trans_key') }}</option>
                       <option value="3" >{{ __('general_content.pre_sakes_aactivity_trans_key') }}</option>
@@ -345,13 +332,13 @@ $oppSteps = json_encode([
                     </select>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
                   <div class="input-group">
-                      <div class="input-group-text bg-gradient-success">
+                      <div class="input-group-text text-bg-success bg-gradient">
                           <i class="fas fa-exclamation"></i>
                       </div>
-                      <select class="form-control"  name="priority" id="priority">
+                      <select class="form-select"  name="priority" id="priority">
                           <option value="1" >{{ __('general_content.burning_trans_key') }}</option>
                           <option value="2" >{{ __('general_content.hot_trans_key') }}</option>
                           <option value="3" >{{ __('general_content.lukewarm_trans_key') }}</option>
@@ -359,17 +346,17 @@ $oppSteps = json_encode([
                       </select>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
                   <input type="date" class="form-control" name="due_date"  id="due_date"  >
                 </div>
                 @include('include.opportunity-user-select', ['selected' => auth()->id()])
-                <div class="form-group">
+                <div class="mb-3">
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -397,10 +384,10 @@ $oppSteps = json_encode([
                     <tr>
                       <td>{{ $Event->label }}</td>
                       <td>
-                        @if($Event->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
-                        @if($Event->type  == 2) <span class="badge badge-warning">{{ __('general_content.internal_meeting_trans_key') }}</span> @endif
-                        @if($Event->type  == 3) <span class="badge badge-primary">{{ __('general_content.onsite_visite_trans_key') }}</span> @endif
-                        @if($Event->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_meeting_trans_key') }}</span> @endif
+                        @if($Event->type  == 1) <span class="badge text-bg-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
+                        @if($Event->type  == 2) <span class="badge text-bg-warning">{{ __('general_content.internal_meeting_trans_key') }}</span> @endif
+                        @if($Event->type  == 3) <span class="badge text-bg-primary">{{ __('general_content.onsite_visite_trans_key') }}</span> @endif
+                        @if($Event->type  == 4) <span class="badge text-bg-success">{{ __('general_content.sales_meeting_trans_key') }}</span> @endif
                       </td>
                       <td>{{ $Event->start_date }}</td>
                       <td>{{ $Event->end_date }}</td>
@@ -413,23 +400,19 @@ $oppSteps = json_encode([
                           @csrf
                           <x-adminlte-modal id="Event{{ $Event->id }}" title="Update {{ $Event->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                             <div class="card-body">
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                                 <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                  </div>
+                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Event->label }}">
                                   <input type="hidden"  name="id"  id="id" value="{{ $Event->id }}" >
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                                 <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                  </div>
-                                  <select class="form-control" name="type" id="type">
+                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  <select class="form-select" name="type" id="type">
                                     <option value="1" @if($Event->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
                                     <option value="2" @if($Event->type == 2  ) Selected @endif>{{ __('general_content.internal_meeting_trans_key') }}</option>
                                     <option value="3" @if($Event->type == 3 ) Selected @endif>{{ __('general_content.onsite_visite_trans_key') }}</option>
@@ -437,21 +420,21 @@ $oppSteps = json_encode([
                                   </select>
                                 </div>
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                                 <input type="date" class="form-control" name="start_date"  id="start_date"  value="{{ $Event->start_date }}" >
                               </div>
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                                 <input type="date" class="form-control" name="end_date"  id="end_date"  value="{{ $Event->end_date }}" >
                               </div>
                               @include('include.opportunity-user-select', ['selected' => $Event->user_id])
-                              <div class="form-group">
+                              <div class="mb-3">
                                 <x-FormTextareaComment  comment="{{ $Event->comment }}" />
                               </div>
                             </div>
                             <x-slot name="footerSlot">
-                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                              <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </x-slot>
                           </x-adminlte-modal>
                         </form>
@@ -479,23 +462,19 @@ $oppSteps = json_encode([
             <form  method="POST" action="{{ route('opportunities.store.event', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.new_event_trans_key') }}" theme="secondary" maximizable>
                 @csrf
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
                     <input type="hidden"  name="opportunities_id"  id="opportunities_id" value="{{ $Opportunity->id }}" >
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                    </div>
-                    <select class="form-control" name="type" id="type">
+                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                    <select class="form-select" name="type" id="type">
                       <option value="1" >{{ __('general_content.activity_maketing_trans_key') }}</option>
                       <option value="2" >{{ __('general_content.internal_meeting_trans_key') }}</option>
                       <option value="3" >{{ __('general_content.onsite_visite_trans_key') }}</option>
@@ -503,21 +482,21 @@ $oppSteps = json_encode([
                     </select>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                   <input type="date" class="form-control" name="start_date"  id="start_date"  >
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                   <input type="date" class="form-control" name="end_date"  id="end_date"  >
                 </div>
                 @include('include.opportunity-user-select', ['selected' => auth()->id()])
-                <div class="form-group">
+                <div class="mb-3">
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -547,9 +526,9 @@ $oppSteps = json_encode([
                 <td>{{ count($Visit->measurements ?? []) }}</td>
                 <td>
                   @if($Visit->isDraft())
-                    <span class="badge badge-secondary">{{ __('visits.draft') }}</span>
+                    <span class="badge text-bg-secondary">{{ __('visits.draft') }}</span>
                   @else
-                    <span class="badge badge-success">{{ __('visits.validated') }}</span>
+                    <span class="badge text-bg-success">{{ __('visits.validated') }}</span>
                   @endif
                 </td>
                 <td>
@@ -591,11 +570,9 @@ $oppSteps = json_encode([
     // Ouvre l'onglet ciblé par l'ancre (liens du calendrier commercial : #Activities, #Events)
     (function () {
         var hash = window.location.hash;
-        if (hash && $('a[data-toggle="tab"][href="' + hash + '"]').length) {
-            $('a[data-toggle="tab"]').removeClass('active');
-            $('.tab-pane').removeClass('active show');
-            $('a[data-toggle="tab"][href="' + hash + '"]').addClass('active');
-            $(hash).addClass('active show');
+        var link = hash ? document.querySelector('a[data-bs-toggle="tab"][href="' + CSS.escape(hash) + '"]') : null;
+        if (link) {
+            bootstrap.Tab.getOrCreateInstance(link).show();
         }
     })();
 </script>

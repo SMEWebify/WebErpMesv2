@@ -11,21 +11,21 @@
 
 <div class="row">
     <div class="col-md-8">
-        <form method="GET" action="{{ route('human.resources.leave.balances') }}" class="form-inline mb-3">
-            <label class="mr-2" for="period">{{ __('general_content.leave_period_trans_key') }}</label>
-            <select class="form-control mr-2" name="period" id="period" onchange="this.form.submit()">
+        <form method="GET" action="{{ route('human.resources.leave.balances') }}" class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <label class="me-2 mb-0" for="period">{{ __('general_content.leave_period_trans_key') }}</label>
+            <select class="form-select me-2 w-auto" name="period" id="period" onchange="this.form.submit()">
                 @foreach($PeriodOptions as $value => $label)
                     <option value="{{ $value }}" @if($value === $SelectedPeriod) selected @endif>{{ $label }}</option>
                 @endforeach
             </select>
-            <noscript><button type="submit" class="btn btn-secondary btn-flat">{{ __('general_content.search_trans_key') }}</button></noscript>
+            <noscript><button type="submit" class="btn btn-secondary rounded-0">{{ __('general_content.search_trans_key') }}</button></noscript>
         </form>
     </div>
-    <div class="col-md-4 text-right">
+    <div class="col-md-4 text-end">
         <form method="POST" action="{{ route('human.resources.leave.balance.generate') }}">
             @csrf
             <input type="hidden" name="period_start" value="{{ $SelectedPeriod }}">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.leave_generate_balances_trans_key') }}" theme="secondary" icon="fas fa-lg fa-magic"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.leave_generate_balances_trans_key') }}" theme="secondary" icon="fas fa-lg fa-magic"/>
         </form>
     </div>
 </div>
@@ -37,7 +37,7 @@
                 <tr>
                     <th rowspan="2" class="align-middle">{{ __('general_content.user_trans_key') }}</th>
                     @foreach($LeaveTypes as $type)
-                        <th colspan="3" class="text-center border-left">
+                        <th colspan="3" class="text-center border-start">
                             <span class="badge" style="background-color: {{ $type->color ?? '#6c757d' }}">&nbsp;</span>
                             {{ $type->label }}
                         </th>
@@ -45,9 +45,9 @@
                 </tr>
                 <tr>
                     @foreach($LeaveTypes as $type)
-                        <th class="text-right border-left"><small>{{ __('general_content.leave_acquired_trans_key') }}</small></th>
-                        <th class="text-right"><small>{{ __('general_content.leave_taken_trans_key') }}</small></th>
-                        <th class="text-right"><small>{{ __('general_content.leave_remaining_trans_key') }}</small></th>
+                        <th class="text-end border-start"><small>{{ __('general_content.leave_acquired_trans_key') }}</small></th>
+                        <th class="text-end"><small>{{ __('general_content.leave_taken_trans_key') }}</small></th>
+                        <th class="text-end"><small>{{ __('general_content.leave_remaining_trans_key') }}</small></th>
                     @endforeach
                 </tr>
             </thead>
@@ -61,9 +61,9 @@
                         @endif
                     </td>
                     @foreach($row['summary']['lines'] as $line)
-                        <td class="text-right border-left">{{ number_format($line['acquired'], 2, ',', ' ') }}</td>
-                        <td class="text-right">{{ number_format($line['taken'], 2, ',', ' ') }}</td>
-                        <td class="text-right">
+                        <td class="text-end border-start">{{ number_format($line['acquired'], 2, ',', ' ') }}</td>
+                        <td class="text-end">{{ number_format($line['taken'], 2, ',', ' ') }}</td>
+                        <td class="text-end">
                             @if($line['remaining'] === null)
                                 <span class="text-muted">—</span>
                             @else

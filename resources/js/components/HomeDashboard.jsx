@@ -89,7 +89,7 @@ export default function HomeDashboard({
     if (activeView === null) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />Chargement…
             </div>
         );
     }
@@ -99,20 +99,20 @@ export default function HomeDashboard({
             {/* Téléphone : bascule en haut de page. Les boutons latéraux masquaient
                 le contenu et la personnalisation de la grille n'a pas de sens au doigt. */}
             {isMobile && (
-                <div className="btn-group btn-group-toggle d-flex mb-3" role="group">
+                <div className="btn-group d-flex mb-3" role="group">
                     <button
                         type="button"
                         className={`btn w-50 ${activeView === 'today' ? 'btn-info' : 'btn-outline-info'}`}
                         onClick={() => switchView('today')}
                     >
-                        <i className="fas fa-sun mr-1" />Vue du jour
+                        <i className="fas fa-sun me-1" />Vue du jour
                     </button>
                     <button
                         type="button"
                         className={`btn w-50 ${activeView === 'kpi' ? 'btn-primary' : 'btn-outline-primary'}`}
                         onClick={() => switchView('kpi')}
                     >
-                        <i className="fas fa-chart-bar mr-1" />Dashboard KPI
+                        <i className="fas fa-chart-bar me-1" />Dashboard KPI
                     </button>
                 </div>
             )}

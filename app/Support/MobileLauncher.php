@@ -22,10 +22,8 @@ class MobileLauncher
         'warning'   => '#f59e0b',
         'danger'    => '#ef4444',
         'teal'      => '#14b8a6',
-        'cyan'      => '#06b6d4',
         'orange'    => '#f97316',
-        'purple'    => '#8b5cf6',
-        'lime'      => '#84cc16',
+        'violet'    => '#8b5cf6',
         'secondary' => '#64748b',
     ];
 

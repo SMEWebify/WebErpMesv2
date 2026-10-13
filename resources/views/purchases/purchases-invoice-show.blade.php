@@ -10,13 +10,12 @@
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{ __('general_content.purchase_invoice_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{ __('general_content.purchase_invoice_lines_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-bs-toggle="tab">{{ __('general_content.purchase_invoice_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-bs-toggle="tab">{{ __('general_content.purchase_invoice_lines_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -36,7 +35,7 @@
                   <div class="col-6">
                     <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                       <x-slot name="prependSlot">
-                          <div class="input-group-text bg-gradient-success">
+                          <div class="input-group-text text-bg-success bg-gradient">
                               <i class="fas fa-exclamation"></i>
                           </div>
                       </x-slot>
@@ -51,7 +50,7 @@
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_invoice_trans_key'), 'Value' =>  $PurchaseInvoice->label])
                   </div>
                   <div class="col-6">
-                    <div class="form-group">
+                    <div class="mb-3">
                       <label class="text-success">{{ __('general_content.supplier_reference_trans_key', [], null) ?? 'Référence facture fournisseur' }}</label>
                       <input type="text" name="supplier_reference" class="form-control form-control-sm"
                              value="{{ old('supplier_reference', $PurchaseInvoice->supplier_reference) }}"
@@ -63,7 +62,7 @@
                   <x-FormTextareaComment  comment="{{ $PurchaseInvoice->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>

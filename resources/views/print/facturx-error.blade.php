@@ -7,10 +7,10 @@
 @stop
 
 @section('content')
-<div class="card card-outline card-danger">
+<div class="card card-outline card-danger mb-3">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
+            <i class="fas fa-exclamation-triangle text-danger me-1"></i>
             {{ $title }}
         </h3>
     </div>
@@ -26,11 +26,11 @@
     <div class="card-footer">
         @if($invoice->companies_id)
             <a href="{{ route('companies.show', ['id' => $invoice->companies_id]) }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-building mr-1"></i> Ouvrir la fiche client
+                <i class="fas fa-building me-1"></i> Ouvrir la fiche client
             </a>
         @endif
         <a href="{{ route('invoices.show', ['id' => $invoice->id]) }}" class="btn btn-sm btn-outline-secondary">
-            <i class="fas fa-file-invoice mr-1"></i> Retour à la facture
+            <i class="fas fa-file-invoice me-1"></i> Retour à la facture
         </a>
     </div>
 </div>

@@ -9,6 +9,7 @@
         "test:coverage": "vitest run --coverage"
     },
     "devDependencies": {
+        "@fontsource/source-sans-3": "^5.3.1",
         "@testing-library/jest-dom": "^7.0.1",
         "@testing-library/react": "^16.3.3",
         "@testing-library/user-event": "^14.6.7",
@@ -18,11 +19,12 @@
         "autoprefixer": "^10.6.1",
         "axios": "^1.16.1",
         "bootstrap": "^5.3.3",
-        "jquery": "^3.7.1",
+        "bootstrap-icons": "^1.13.2",
         "jsdom": "^29.1.1",
         "laravel-echo": "^2.6.1",
         "laravel-vite-plugin": "^3.2.0",
         "lodash": "^4.18.1",
+        "overlayscrollbars": "^2.16.0",
         "postcss": "^8.5.29",
         "postcss-import": "^16.1.0",
         "pusher-js": "^8.6.0",

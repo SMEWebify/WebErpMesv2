@@ -9,7 +9,7 @@ function ProgressBar({ value }) {
     return (
         <div className="progress progress-sm" style={{ minWidth: 60 }}>
             <div
-                className="progress-bar bg-teal progress-bar-striped progress-bar-animated"
+                className="progress-bar text-bg-teal progress-bar-striped progress-bar-animated"
                 role="progressbar"
                 style={{ width: `${pct}%` }}
             >
@@ -29,7 +29,7 @@ function ServiceCard({ service, t }) {
             <div className="border rounded p-3 h-100">
                 <div className="d-flex justify-content-between align-items-start">
                     <div>
-                        <div className="font-weight-bold">{service.label}</div>
+                        <div className="fw-bold">{service.label}</div>
                         <small className="text-muted">{service.code}</small>
                     </div>
                     <span
@@ -61,10 +61,10 @@ function TaskCard({ task, t }) {
         <div className="border rounded p-2 mb-2">
             <div className="d-flex justify-content-between align-items-start">
                 <div>
-                    <div className="font-weight-bold">
+                    <div className="fw-bold">
                         <a
                             href={`/production/Task/Statu/Id/${task.id}`}
-                            className="btn btn-xs btn-success mr-1"
+                            className="btn btn-sm btn-success me-1"
                         >
                             {t('view_trans_key')}
                         </a>
@@ -74,7 +74,7 @@ function TaskCard({ task, t }) {
                         <small className="text-muted">{task.Products.label}</small>
                     )}
                 </div>
-                <span className="badge badge-info">
+                <span className="badge text-bg-info">
                     {task.status?.title ?? t('in_progress_trans_key')}
                 </span>
             </div>
@@ -101,7 +101,7 @@ function ResourceCard({ resource, t }) {
                             {resource.service?.label ?? t('no_data_trans_key')}
                         </small>
                     </div>
-                    <span className="badge badge-light">
+                    <span className="badge text-bg-light">
                         {t('location_trans_key')} : {resource.locations?.length ?? 0}
                     </span>
                 </div>
@@ -114,7 +114,7 @@ function ResourceCard({ resource, t }) {
                             resource.locations.map((loc) => (
                                 <span
                                     key={loc.id}
-                                    className="badge badge-pill text-white mr-2 mb-2"
+                                    className="badge rounded-pill text-white me-2 mb-2"
                                     style={{ backgroundColor: loc.color ?? '#6c757d' }}
                                 >
                                     {loc.label}
@@ -155,7 +155,7 @@ function SectionPanel({ section, t }) {
 
     return (
         <div className="col-12 mb-3">
-            <div className="card card-primary card-outline">
+            <div className="card card-primary card-outline mb-3">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <h3 className="card-title mb-0">{section.label}</h3>
                     <button
@@ -220,11 +220,11 @@ export default function MethodsOverview({ sections, services, trans }) {
             {/* ── Services summary ── */}
             <div className="row">
                 <div className="col-12">
-                    <div className="card card-info card-outline">
+                    <div className="card card-info card-outline mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
                                 {t('service_trans_key')}
-                                <span className="badge badge-info ml-2">{totalInProgress} {t('in_progress_trans_key')}</span>
+                                <span className="badge text-bg-info ms-2">{totalInProgress} {t('in_progress_trans_key')}</span>
                             </h3>
                         </div>
                         <div className="card-body">
@@ -247,7 +247,7 @@ export default function MethodsOverview({ sections, services, trans }) {
                 <div className="col-12">
                     <div className="d-flex flex-wrap align-items-center" style={{ gap: '0.5rem' }}>
                         <select
-                            className="form-control form-control-sm flex-shrink-0"
+                            className="form-select form-select-sm flex-shrink-0"
                             style={{ width: 180 }}
                             value={serviceFilter}
                             onChange={(e) => setServiceFilter(e.target.value)}
@@ -275,7 +275,7 @@ export default function MethodsOverview({ sections, services, trans }) {
                                 className="btn btn-sm btn-outline-secondary"
                                 onClick={() => { setServiceFilter(''); setSearch(''); }}
                             >
-                                <i className="fas fa-times mr-1" />
+                                <i className="fas fa-times me-1" />
                                 Reset
                             </button>
                         )}

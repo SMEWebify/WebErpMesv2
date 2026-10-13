@@ -1,79 +1,258 @@
+@inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
+@inject('assetHelper', 'JeroenNoten\LaravelAdminLte\Helpers\AssetHelper')
+
+@php
+    // Resolve the Laravel asset bundling mode.
+
+    $bundling = config('adminlte.laravel_asset_bundling', false);
+
+    // When the user bundles the assets on its own, the AdminLTE core stylesheet
+    // and script are expected to be part of the generated bundle.
+
+    $bundlesAdminlte = in_array($bundling, ['mix', 'vite', 'vite_js_only'], true);
+
+    // Resolve the location of every base asset. A null value means the asset
+    // is disabled on the configuration file.
+
+    $fontsCss = $assetHelper->fontsCss();
+    $overlayScrollbarsCss = $assetHelper->overlayScrollbarsCss();
+    $bootstrapIconsCss = $assetHelper->bootstrapIconsCss();
+    $adminlteCss = $bundlesAdminlte ? null : $assetHelper->adminlteCss();
+    $colorsCss = $bundlesAdminlte ? null : $assetHelper->colorsCss();
+
+    $overlayScrollbarsJs = $assetHelper->overlayScrollbarsJs();
+    $bootstrapJs = $assetHelper->bootstrapJs();
+    $adminlteJs = $bundlesAdminlte ? null : $assetHelper->adminlteJs();
+
+    // Bridge the Livewire navigation events to the AdminLTE lifecycle. The
+    // template binds Turbo on its own, but it knows nothing about Livewire.
+
+    $spaNavigation = config('adminlte.spa_navigation', true) !== false;
+
+    // Resolve the color mode setup. The 'authored' color mode is the one the
+    // page declares by itself, the 'auto' mode declares nothing and lets the
+    // client resolve the mode from the OS preference.
+
+    $colorMode = $layoutHelper->getColorMode();
+    $authoredColorMode = $colorMode === 'auto' ? null : $colorMode;
+    $rememberColorMode = (bool) config('adminlte.color_mode.remember', true);
+
+    // The OverlayScrollbars setup only makes sense when there is a sidebar.
+
+    $setupScrollbars = $overlayScrollbarsJs && ! $layoutHelper->isLayoutTopnavEnabled();
+
+    // Extra options for the OverlayScrollbars instance of the sidebar. They
+    // are merged into the 'scrollbars' object of its setup, so they may also
+    // override the ones the dedicated options above resolve.
+
+    $scrollbarOptions = config('adminlte.sidebar_scrollbar_options', []);
+
+    $scrollbarExtraOptions = is_array($scrollbarOptions) && ! empty($scrollbarOptions)
+        ? "\n".str_repeat(' ', 32).'...'.json_encode(
+            $scrollbarOptions,
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+        ).','
+        : '';
+
+    // The viewport width (in pixels) at or below which the OverlayScrollbars
+    // instance is not created, so touch scrolling is not disturbed.
+
+    $scrollbarDisableBelow = config('adminlte.sidebar_scrollbar_disable_below', 992);
+
+    $scrollbarDisableBelow = is_numeric($scrollbarDisableBelow)
+        ? 0 + $scrollbarDisableBelow
+        : 992;
+
+    // The theme (a class name) of the sidebar scrollbars. OverlayScrollbars
+    // expects a string here, anything else would be dropped by the plugin
+    // together with the rest of its 'scrollbars' options.
+
+    $scrollbarTheme = config('adminlte.sidebar_scrollbar_theme', 'os-theme-light');
+
+    $scrollbarTheme = is_string($scrollbarTheme) && trim($scrollbarTheme) !== ''
+        ? trim($scrollbarTheme)
+        : 'os-theme-light';
+
+    // The event that hides the sidebar scrollbars again. Only the tokens of
+    // the OverlayScrollbars plugin are accepted, so an unsupported one does
+    // not end up rejected (and reported on the console) by the plugin.
+
+    $scrollbarAutoHide = config('adminlte.sidebar_scrollbar_auto_hide', 'leave');
+
+    $scrollbarAutoHide = in_array($scrollbarAutoHide, ['never', 'scroll', 'leave', 'move'], true)
+        ? $scrollbarAutoHide
+        : 'leave';
+
+    // The 'crossorigin' attribute is only required on the assets served from
+    // an external origin (usually a CDN).
+
+    $crossOrigin = static function ($url) {
+        return preg_match('#^(https?:)?//#', (string) $url) ? ' crossorigin="anonymous"' : '';
+    };
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! $layoutHelper->makeHtmlData() !!}>
 
 <head>
 
     {{-- Base Meta Tags --}}
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Custom Meta Tags --}}
-    @yield('meta_tags')
+    {{-- Page ouverte dans un onglet du mode IFrame : AdminLTE 3 masquait alors son --}}
+    {{-- shell, la v4 ne le fait plus. La classe est posée avant le premier rendu --}}
+    {{-- (voir public/css/wem-shell.css) pour que le shell n'apparaisse pas. --}}
+    <script>
+        (() => {
+            try {
+                if (window.frameElement && window.frameElement.closest('.iframe-mode')) {
+                    document.documentElement.classList.add('wem-iframe-tab');
+                }
+            } catch (e) {
+                // Cadre d'une autre origine : frameElement est inaccessible.
+            }
+        })();
+    </script>
+
+    @if(config('adminlte.color_mode.no_flash_script', true))
+        {{-- Theme Init (prevents a flash of the incorrect color mode on load) --}}
+        <script>
+            (() => {
+                'use strict';
+                const root = document.documentElement;
+
+                // Applications with their own theming opt out of AdminLTE's
+                // color mode entirely, here as well as in the bundle.
+                if (root.getAttribute('data-lte-color-mode') === 'off') {
+                    return;
+                }
+
+                const STORAGE_KEY = 'lte-theme';
+                const authored = @json($authoredColorMode);
+                let stored = null;
+
+                @if($rememberColorMode)
+                    try {
+                        stored = localStorage.getItem(STORAGE_KEY);
+                    } catch (e) {
+                        // localStorage may be unavailable (private mode, sandboxed iframe).
+                    }
+                @endif
+
+                // Mirror the precedence in color-mode.ts: the visitor's stored
+                // choice wins, then a theme this page declared itself, then the
+                // OS preference.
+                let resolved = 'light';
+
+                if (stored === 'dark' || stored === 'light') {
+                    resolved = stored;
+                } else if (authored === 'dark' || authored === 'light') {
+                    resolved = authored;
+                } else if (globalThis.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    resolved = 'dark';
+                }
+
+                root.setAttribute('data-bs-theme', resolved);
+                root.style.colorScheme = resolved;
+
+                // Flag values computed here, so the bundle does not mistake
+                // them for a theme the page declared and stop following the OS
+                // preference.
+                if (resolved !== authored) {
+                    root.setAttribute('data-lte-theme-resolved', '');
+                }
+            })();
+        </script>
+    @endif
+
+    {{-- Accessibility Meta Tags --}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    @php($lightThemeColor = config('adminlte.color_mode.theme_color.light'))
+    @php($darkThemeColor = config('adminlte.color_mode.theme_color.dark'))
+
+    @if($lightThemeColor)
+        <meta name="theme-color" content="{{ $lightThemeColor }}" media="(prefers-color-scheme: light)">
+    @endif
+
+    @if($darkThemeColor)
+        <meta name="theme-color" content="{{ $darkThemeColor }}" media="(prefers-color-scheme: dark)">
+    @endif
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- User permissions for JS components --}}
     @auth
     <meta name="user-permissions" content="{{ json_encode(auth()->user()->getAllPermissions()->pluck('name')->values()) }}">
     @endauth
 
+    {{-- Custom Meta Tags --}}
+    @yield('meta_tags')
+
     {{-- Title --}}
     <title>
         @yield('title_prefix', config('adminlte.title_prefix', ''))
-        @yield('title', config('adminlte.title', 'AdminLTE 3'))
+        @yield('title', config('adminlte.title', 'AdminLTE 4'))
         @yield('title_postfix', config('adminlte.title_postfix', ''))
     </title>
-
-    {{-- IFrame Preloader Removal Workaround --}}
-    <!-- IFrame Preloader Removal Workaround -->
-    <style type="text/css">
-        body.iframe-mode .preloader {
-            display: none !important;
-        }
-    </style>
 
     {{-- Custom stylesheets (pre AdminLTE) --}}
     @yield('adminlte_css_pre')
 
-    {{-- Base Stylesheets (depends on Laravel asset bundling tool) --}}
-    @if(config('adminlte.enabled_laravel_mix', false))
-        <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_mix_css_path', 'css/app.css')) }}">
-    @else
-        @switch(config('adminlte.laravel_asset_bundling', false))
-            @case('mix')
-                <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_css_path', 'css/app.css')) }}">
-            @break
+    {{-- Web Fonts --}}
+    @isset($fontsCss)
+        <link rel="stylesheet" href="{{ $fontsCss }}"{!! $crossOrigin($fontsCss) !!}>
+    @endisset
 
-            @case('vite')
-                @vite([config('adminlte.laravel_css_path', 'resources/css/app.css'), config('adminlte.laravel_js_path', 'resources/js/app.js')])
-            @break
+    {{-- Third Party Plugin (OverlayScrollbars) --}}
+    @isset($overlayScrollbarsCss)
+        <link rel="stylesheet" href="{{ $overlayScrollbarsCss }}"{!! $crossOrigin($overlayScrollbarsCss) !!}>
+    @endisset
 
-            @case('vite_js_only')
-                @vite(config('adminlte.laravel_js_path', 'resources/js/app.js'))
-            @break
+    {{-- Third Party Plugin (Bootstrap Icons) --}}
+    @isset($bootstrapIconsCss)
+        <link rel="stylesheet" href="{{ $bootstrapIconsCss }}"{!! $crossOrigin($bootstrapIconsCss) !!}>
+    @endisset
 
-            @default
-                <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-                <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-                <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
+    {{-- Base Stylesheets (depends on the Laravel asset bundling tool) --}}
+    @switch($bundling)
+        @case('mix')
+            <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_css_path', 'css/app.css')) }}">
+        @break
 
-                @if(config('adminlte.google_fonts.allowed', true))
-                    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-                @endif
-        @endswitch
-    @endif
+        @case('vite')
+            @vite([config('adminlte.laravel_css_path', 'resources/css/app.css'), config('adminlte.laravel_js_path', 'resources/js/app.js')])
+        @break
+
+        @case('vite_js_only')
+            @vite(config('adminlte.laravel_js_path', 'resources/js/app.js'))
+        @break
+
+        @default
+            {{-- Required Plugin (AdminLTE) --}}
+            @isset($adminlteCss)
+                <link rel="stylesheet" href="{{ $adminlteCss }}">
+            @endisset
+
+            {{-- Optional AdminLTE extended colors --}}
+            @isset($colorsCss)
+                <link rel="stylesheet" href="{{ $colorsCss }}">
+
+                {{-- The palette stylesheet provides no alert and no button
+                     families, so they are generated from its own tokens. --}}
+                @include('adminlte::partials.common.extended-colors')
+            @endisset
+    @endswitch
 
     {{-- Extra Configured Plugins Stylesheets --}}
     @include('adminlte::plugins', ['type' => 'css'])
 
     {{-- Livewire Styles --}}
     @if(config('adminlte.livewire'))
-        @if(intval(app()->version()) >= 7)
-            @livewireStyles
-        @else
-            <livewire:styles />
-        @endif
+        @livewireStyles
     @endif
+
+    {{-- Custom CSS variables --}}
+    @include('adminlte::partials.common.css-variables')
 
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
@@ -81,7 +260,7 @@
     {{-- Fond quadrillé ambiant — mode commercial (Nest2Prod) uniquement --}}
     @if(config('branding.commercial'))
     <style type="text/css">
-        .content-wrapper {
+        .app-main {
             background-image:
                 linear-gradient(rgba(56, 189, 248, 0.09) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(56, 189, 248, 0.09) 1px, transparent 1px);
@@ -89,14 +268,14 @@
             background-attachment: fixed;
         }
 
-        body.dark-mode .content-wrapper {
+        [data-bs-theme="dark"] .app-main {
             background-image:
                 linear-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
         }
 
         @media print {
-            .content-wrapper { background-image: none; }
+            .app-main { background-image: none; }
         }
     </style>
     @endif
@@ -142,25 +321,81 @@
         @include('include.mobile-app-launcher')
     @endif
 
-    {{-- Base Scripts (depends on Laravel asset bundling tool) --}}
-    @if(config('adminlte.enabled_laravel_mix', false))
-        <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
-    @else
-        @switch(config('adminlte.laravel_asset_bundling', false))
-            @case('mix')
-                <script src="{{ mix(config('adminlte.laravel_js_path', 'js/app.js')) }}"></script>
-            @break
+    {{-- The vendored bundles carry 'data-navigate-once' so a single page
+         navigation does not run them again. They register their delegated
+         listeners on the document at module scope and without an abort signal,
+         so a second execution leaves the listeners of the previous one behind,
+         orphaned and impossible to remove. The attribute is inert without
+         Livewire, and the inline scripts the package pushes are deliberately
+         left unmarked: those have to run again to reinitialize the plugins of
+         the new body. --}}
 
-            @case('vite')
-            @case('vite_js_only')
-            @break
+    {{-- Third Party Plugin (OverlayScrollbars) --}}
+    @isset($overlayScrollbarsJs)
+        <script src="{{ $overlayScrollbarsJs }}"{!! $crossOrigin($overlayScrollbarsJs) !!} data-navigate-once></script>
+    @endisset
 
-            @default
-                <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-                <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-                <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-                <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
-        @endswitch
+    {{-- Required Plugin (Bootstrap 5) --}}
+    @isset($bootstrapJs)
+        <script src="{{ $bootstrapJs }}"{!! $crossOrigin($bootstrapJs) !!} data-navigate-once></script>
+    @endisset
+
+    {{-- Base Scripts (depends on the Laravel asset bundling tool) --}}
+    @switch($bundling)
+        @case('mix')
+            <script src="{{ mix(config('adminlte.laravel_js_path', 'js/app.js')) }}"></script>
+        @break
+
+        @case('vite')
+        @case('vite_js_only')
+        @break
+
+        @default
+            {{-- Required Plugin (AdminLTE) --}}
+            @isset($adminlteJs)
+                <script src="{{ $adminlteJs }}" data-navigate-once></script>
+            @endisset
+    @endswitch
+
+    {{-- Lifecycle helpers used by the inline scripts of the package --}}
+    @include('adminlte::partials.common.lifecycle')
+
+    @if($setupScrollbars)
+        {{-- OverlayScrollbars Configuration (main sidebar) --}}
+        <script>
+            (() => {
+                'use strict';
+                const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+                const Default = {
+                    scrollbarTheme: @json($scrollbarTheme),
+                    scrollbarAutoHide: @json($scrollbarAutoHide),
+                    scrollbarClickScroll: @json((bool) config('adminlte.sidebar_scrollbar_click_scroll', true)),
+                };
+
+                window._AdminLTE_Ready(function () {
+                    const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+
+                    // Disable OverlayScrollbars on mobile devices to prevent
+                    // touch interference.
+                    const isMobile = window.innerWidth <= @json($scrollbarDisableBelow);
+
+                    if (
+                        sidebarWrapper &&
+                        typeof OverlayScrollbarsGlobal !== 'undefined' &&
+                        OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
+                        !isMobile
+                    ) {
+                        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+                            scrollbars: {
+                                theme: Default.scrollbarTheme,
+                                autoHide: Default.scrollbarAutoHide,
+                                clickScroll: Default.scrollbarClickScroll,{!! $scrollbarExtraOptions !!}
+                            },
+                        });
+                    }
+                });
+            })();
+        </script>
     @endif
 
     {{-- Extra Configured Plugins Scripts --}}
@@ -168,40 +403,11 @@
 
     {{-- Livewire Script --}}
     @if(config('adminlte.livewire'))
-        @if(intval(app()->version()) >= 7)
-            @livewireScripts
-        @else
-            <livewire:scripts />
-        @endif
+        @livewireScripts
     @endif
 
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
-
-    {{-- Sidebar : suit le widget dark mode de la navbar, qui ne bascule que --}}
-    {{-- la classe "dark-mode" du body et laisse la sidebar sur sa variante figée --}}
-    <script>
-        (function () {
-            const sidebar = document.querySelector('aside.main-sidebar');
-
-            if (! sidebar) {
-                return;
-            }
-
-            const syncSidebarVariant = () => {
-                const isDark = document.body.classList.contains('dark-mode');
-                sidebar.classList.toggle('sidebar-dark-primary', isDark);
-                sidebar.classList.toggle('sidebar-light-primary', ! isDark);
-            };
-
-            syncSidebarVariant();
-
-            new MutationObserver(syncSidebarVariant).observe(document.body, {
-                attributes: true,
-                attributeFilter: ['class'],
-            });
-        })();
-    </script>
 
 </body>
 

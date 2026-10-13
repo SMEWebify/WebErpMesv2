@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use JeroenNoten\LaravelAdminLte\Http\Controllers\DarkModeController;
+use App\Support\UiTheme;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,23 +71,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('Admin');
         });
 
-        $this->syncSidebarWithDarkMode();
-    }
-
-    /**
-     * AdminLTE ne lie pas le widget dark mode à la variante de sidebar : celle-ci
-     * est figée dans 'adminlte.classes_sidebar'. On l'aligne ici sur la préférence
-     * stockée en session, pour que la sidebar soit déjà à la bonne couleur au
-     * chargement (la bascule sans rechargement est gérée en JS dans master.blade.php).
-     */
-    private function syncSidebarWithDarkMode(): void
-    {
-        View::composer('adminlte::partials.sidebar.left-sidebar', function () {
-            $variant = (new DarkModeController())->isEnabled()
-                ? 'sidebar-dark-primary'
-                : 'sidebar-light-primary';
-
-            Config::set('adminlte.classes_sidebar', $variant . ' elevation-4');
+        // Apparence choisie par l'utilisateur (habillage, couleur primaire),
+        // appliquée avant le rendu du layout AdminLTE.
+        View::composer('adminlte::page', function () {
+            UiTheme::apply(auth()->user());
         });
     }
 

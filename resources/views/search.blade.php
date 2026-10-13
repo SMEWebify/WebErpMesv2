@@ -9,7 +9,7 @@
 
 
 @section('content')
-    <div class="card">
+    <div class="card mb-3">
         <div class="table-responsive p-0">
             <table class="table table-hover">
                 <thead>

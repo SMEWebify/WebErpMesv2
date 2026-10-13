@@ -7,8 +7,8 @@
    de ligne, recalculé à chaque changement de largeur.
 
    Les liens sont DÉPLACÉS, pas recopiés : les gestionnaires posés par les vues
-   (clic, data-toggle="tab", switchtabNav.js) continuent de fonctionner, et la
-   classe nav-link est conservée pour les scripts qui la cherchent. Bootstrap 4
+   (clic, data-bs-toggle="tab", switchtabNav.js) continuent de fonctionner, et la
+   classe nav-link est conservée pour les scripts qui la cherchent. Bootstrap 5
    gère nativement un onglet logé dans un .dropdown-menu.
 
    Sans JavaScript, la barre retombe sur le comportement de mobile.css
@@ -40,9 +40,9 @@
         var more = document.createElement('li');
         more.className = 'nav-item dropdown nav-overflow__more';
         more.innerHTML =
-            '<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button"' +
+            '<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button"' +
             ' aria-haspopup="true" aria-expanded="false"></a>' +
-            '<div class="dropdown-menu dropdown-menu-right"></div>';
+            '<div class="dropdown-menu dropdown-menu-end"></div>';
         nav.appendChild(more);
 
         var toggle = more.firstElementChild;
@@ -110,9 +110,8 @@
             if (toggle.contains(event.target)) return; // simple ouverture du menu
             setTimeout(schedule, 0);
         });
-        if (window.jQuery) {
-            window.jQuery(nav).on('shown.bs.tab', schedule);
-        }
+        // Bootstrap 5 émet l'événement en natif ; il remonte depuis le lien.
+        nav.addEventListener('shown.bs.tab', schedule);
 
         if ('ResizeObserver' in window) {
             new ResizeObserver(schedule).observe(nav);

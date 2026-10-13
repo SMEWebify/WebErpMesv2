@@ -219,7 +219,7 @@ function SuggestionPanel({ onSelect, locale, permissions }) {
         padding: '5px 12px',
         borderRadius: 20,
         border: '1px solid #d1d5db',
-        background: 'white',
+        background: 'var(--bs-body-bg)',
         fontSize: 12,
         cursor: 'pointer',
         whiteSpace: 'nowrap',
@@ -227,7 +227,7 @@ function SuggestionPanel({ onSelect, locale, permissions }) {
     };
 
     return (
-        <div style={{ padding: '8px 12px 4px', background: '#fafafa', borderTop: '1px solid #f0f0f0' }}>
+        <div style={{ padding: '8px 12px 4px', background: 'var(--bs-tertiary-bg)', borderTop: '1px solid var(--bs-border-color-translucent)' }}>
             {/* Niveau 1 — catégories */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: cat ? 6 : 0 }}>
                 {categories.map(c => (
@@ -397,7 +397,7 @@ export default function ChatWidget({ locale = 'fr', permissions = [] }) {
                         right: 0,
                         width: 360,
                         maxHeight: 520,
-                        background: '#ffffff',
+                        background: 'var(--bs-body-bg)',
                         borderRadius: 16,
                         boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
                         display: 'flex',
@@ -448,7 +448,7 @@ export default function ChatWidget({ locale = 'fr', permissions = [] }) {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 8,
-                            background: '#fafafa',
+                            background: 'var(--bs-tertiary-bg)',
                         }}>
                             {messages.map((msg, idx) => (
                                 <Message key={idx} role={msg.role} content={msg.content} />
@@ -481,7 +481,7 @@ export default function ChatWidget({ locale = 'fr', permissions = [] }) {
                             display: 'flex',
                             gap: 8,
                             alignItems: 'flex-end',
-                            background: '#fff',
+                            background: 'var(--bs-body-bg)',
                         }}>
                             <textarea
                                 ref={inputRef}

@@ -21,22 +21,21 @@ $deliverySteps = [
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Delivery" data-toggle="tab">{{ __('general_content.delivery_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#DeliveryLines" data-toggle="tab">{{ __('general_content.delivery_lines_trans_key') }} ({{ count($Delivery->DeliveryLines) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Photos" data-toggle="tab">{{ __('general_content.photos_trans_key') }} ({{ count($Delivery->photos) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Packaging" data-toggle="tab">{{ __('general_content.packaging_trans_key') }} ({{ count($Delivery->packaging) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Returns" data-toggle="tab">{{ __('general_content.returns_trans_key') }} ({{ count($Delivery->returns) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#NonConformities" data-toggle="tab">{{ __('general_content.non_conformities_trans_key') }} ({{ count($Delivery->QualityNonConformity) }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Delivery" data-bs-toggle="tab">{{ __('general_content.delivery_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#DeliveryLines" data-bs-toggle="tab">{{ __('general_content.delivery_lines_trans_key') }} ({{ count($Delivery->DeliveryLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Photos" data-bs-toggle="tab">{{ __('general_content.photos_trans_key') }} ({{ count($Delivery->photos) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Packaging" data-bs-toggle="tab">{{ __('general_content.packaging_trans_key') }} ({{ count($Delivery->packaging) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Returns" data-bs-toggle="tab">{{ __('general_content.returns_trans_key') }} ({{ count($Delivery->returns) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#NonConformities" data-bs-toggle="tab">{{ __('general_content.non_conformities_trans_key') }} ({{ count($Delivery->QualityNonConformity) }})</a></li>
       @if(count($CustomFields)> 0)
-      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Delivery->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Delivery->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">Logs</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -51,21 +50,21 @@ $deliverySteps = [
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Delivery->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Delivery->label])
                     @include('include.form.form-input-customerInfo',['customerReference' =>  $Delivery->customer_reference])
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_id" id="delivery_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.companie_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-building"></i>
                             </div>
                         </x-slot>
@@ -74,11 +73,11 @@ $deliverySteps = [
                         @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_addresses_id" id="delivery_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-map-marked-alt"></i>
                             </div>
                         </x-slot>
@@ -87,11 +86,11 @@ $deliverySteps = [
                         @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_contacts_id" id="delivery_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.contact_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-user"></i>
                             </div>
                         </x-slot>
@@ -102,11 +101,11 @@ $deliverySteps = [
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <x-adminlte-select2 name="purchases_id" id="purchases_id" label="{{ __('general_content.name_purchase_trans_key') }}" label-class="text-secondary"
                       igroup-size="s" data-placeholder="{{ __('general_content.name_purchase_trans_key') }}">
                       <x-slot name="prependSlot">
-                          <div class="input-group-text bg-gradient-secondary">
+                          <div class="input-group-text text-bg-secondary bg-gradient">
                               <i class="fas fa-list"></i>
                           </div>
                       </x-slot>
@@ -116,7 +115,7 @@ $deliverySteps = [
                         @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="tracking_number">{{ __('general_content.tracking_number_note_trans_key') }}</label>
                     <input type="text" class="form-control" name="tracking_number"  id="tracking_number" value="{{  $Delivery->tracking_number }}">
                   </div>
@@ -125,7 +124,7 @@ $deliverySteps = [
                   <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -235,19 +234,15 @@ $deliverySteps = [
               <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="far fa-file"></i></span>
-                  </div>
-                  <div class="custom-file">
+                  <span class="input-group-text"><i class="far fa-file"></i></span>
+                  <div>
                     <input type="hidden" name="deliverys_id" value="{{ $Delivery->id }}" >
-                    <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
-                    <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
+                    <label class="form-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
+                    <input type="file" name="file" accept="image/*" capture="camera" class="form-control" id="chooseFile">
                   </div>
-                  <div class="input-group-append">
-                    <button type="submit" name="submit" class="btn btn-success">
+                  <button type="submit" name="submit" class="btn btn-success">
                       {{ __('general_content.upload_trans_key') }} 
                     </button>
-                  </div>
                 </div>
               </form>
             </x-adminlte-card>
@@ -256,7 +251,7 @@ $deliverySteps = [
         <div class="row">
           @foreach($Delivery->photos as $photo)
               <div class="col-md-4 mb-4">
-                  <div class="card">
+                  <div class="card mb-3">
                       <img src="{{ asset('photo/' . $photo->name) }}" class="card-img-top" alt="Photo" width="100">
                       <div class="card-body">
                           <p class="card-text">{{ $photo->original_file_name }}</p>
@@ -300,7 +295,7 @@ $deliverySteps = [
                                 <td>{{ $Packaging->loaded_date }}</td>
                                 <td class="py-0 align-middle">
                                     <!-- Button Modal -->
-                                    <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Packaging{{ $Packaging->id }}">
+                                    <button type="button" class="btn btn-teal" data-bs-toggle="modal" data-bs-target="#Packaging{{ $Packaging->id }}">
                                         <i class="fa fa-lg fa-fw fa-edit"></i>
                                     </button>
                                     <!-- Modal {{ $Packaging->id }} -->
@@ -310,105 +305,87 @@ $deliverySteps = [
                                             <div class="card-body">
 
                                               @csrf
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="code">{{ __('general_content.code_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                      <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                                                   <input type="text" class="form-control" name="code" id="code" value="{{ $Packaging->code }}" placeholder="{{ __('general_content.code_trans_key') }}">
                                                   <input type="hidden" name="id" id="id" value="{{ $Packaging->id }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-box-open"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-box-open"></i></span>
                                                   <input type="text" class="form-control" name="type" id="type" value="{{ $Packaging->type }}" placeholder="{{ __('general_content.type_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="gross_weight">{{ __('general_content.gross_weight_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
                                                   <input type="number" class="form-control" name="gross_weight" id="gross_weight" step="0.01" value="{{ $Packaging->gross_weight }}"  placeholder="{{ __('general_content.gross_weight_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="net_weight">{{ __('general_content.weight_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-weight"></i></span>
                                                   <input type="number" class="form-control" name="net_weight" id="net_weight" step="0.01" value="{{ $Packaging->net_weight }}"  placeholder="{{ __('general_content.weight_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="length">{{ __('general_content.x_size_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-ruler-horizontal"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-ruler-horizontal"></i></span>
                                                   <input type="number" class="form-control" name="length" id="length" step="0.01" value="{{ $Packaging->length }}"  placeholder="{{ __('general_content.x_size_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="width">{{ __('general_content.y_size_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                                   <input type="number" class="form-control" name="width" id="width" step="0.01" value="{{ $Packaging->width }}"  placeholder="{{ __('general_content.y_size_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="height">{{ __('general_content.z_size_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
                                                   <input type="number" class="form-control" name="height" id="height" step="0.01" value="{{ $Packaging->height }}"  placeholder="{{ __('general_content.z_size_trans_key') }}">
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                                                 <textarea class="form-control" name="comment" id="comment" value="{{ $Packaging->comment }}"  placeholder="{{ __('general_content.comment_trans_key') }}"></textarea>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="packing_date">{{ __('general_content.packing_date_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
                                                   <input type="datetime-local" class="form-control" name="packing_date" id="packing_date" value="{{ $Packaging->packing_date }}" >
                                                 </div>
                                               </div>
                                         
-                                              <div class="form-group">
+                                              <div class="mb-3">
                                                 <label for="loaded_date">{{ __('general_content.loaded_date_trans_key') }}</label>
                                                 <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
-                                                  </div>
+                                                  <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
                                                   <input type="datetime-local" class="form-control" name="loaded_date" id="loaded_date" value="{{ $Packaging->loaded_date }}">
                                                 </div>
                                               </div>
 
                                             </div>
                                             <div class="card-footer">
-                                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                             </div>
                                         </form>
                                     </x-adminlte-modal>
@@ -440,104 +417,86 @@ $deliverySteps = [
             <form method="POST" action="{{ route('deliverys.packagings.store', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.new_packaging_trans_key') }}" theme="secondary" maximizable>
                 @csrf
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="code">{{ __('general_content.code_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                     <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.code_trans_key') }}">
                     <input type="hidden" name="deliverys_id" id="deliverys_id" value="{{ $Delivery->id }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-box-open"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-box-open"></i></span>
                     <input type="text" class="form-control" name="type" id="type" placeholder="{{ __('general_content.type_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="gross_weight">{{ __('general_content.gross_weight_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
                     <input type="number" class="form-control" name="gross_weight" id="gross_weight" step="0.01" placeholder="{{ __('general_content.gross_weight_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="net_weight">{{ __('general_content.weight_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-weight"></i></span>
                     <input type="number" class="form-control" name="net_weight" id="net_weight" step="0.01" placeholder="{{ __('general_content.weight_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="length">{{ __('general_content.x_size_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-ruler-horizontal"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-ruler-horizontal"></i></span>
                     <input type="number" class="form-control" name="length" id="length" step="0.01" placeholder="{{ __('general_content.x_size_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="width">{{ __('general_content.y_size_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                     <input type="number" class="form-control" name="width" id="width" step="0.01" placeholder="{{ __('general_content.y_size_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="height">{{ __('general_content.z_size_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
                     <input type="number" class="form-control" name="height" id="height" step="0.01" placeholder="{{ __('general_content.z_size_trans_key') }}">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" name="comment" id="comment" placeholder="{{ __('general_content.comment_trans_key') }}"></textarea>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="packing_date">{{ __('general_content.packing_date_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
                     <input type="datetime-local" class="form-control" name="packing_date" id="packing_date">
                   </div>
                 </div>
           
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="loaded_date">{{ __('general_content.loaded_date_trans_key') }}</label>
                   <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
                     <input type="datetime-local" class="form-control" name="loaded_date" id="loaded_date">
                   </div>
                 </div>
                 
                 <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
               </x-adminlte-card>
             </form>
@@ -566,20 +525,20 @@ $deliverySteps = [
                   <td>{{ $ret->label }}</td>
                   <td>
                     @php
-                      $badge = match($ret->statu) { 1 => 'badge-info', 2 => 'badge-primary', 3 => 'badge-warning', 4 => 'badge-success', default => 'badge-secondary' };
+                      $badge = match($ret->statu) { 1 => 'text-bg-info', 2 => 'text-bg-primary', 3 => 'text-bg-warning', 4 => 'text-bg-success', default => 'text-bg-secondary' };
                     @endphp
                     <span class="badge {{ $badge }}">{{ $ret->status_label }}</span>
                   </td>
                   <td>
                     @if($ret->qualityNonConformity)
-                      <span class="badge badge-light border">{{ $ret->qualityNonConformity->code }}</span>
+                      <span class="badge text-bg-light border">{{ $ret->qualityNonConformity->code }}</span>
                     @else
                       <span class="text-muted">-</span>
                     @endif
                   </td>
                   <td><small>{{ $ret->created_at?->format('d/m/Y') }}</small></td>
                   <td>
-                    <a href="{{ route('returns.show', ['id' => $ret->id]) }}" class="btn btn-xs btn-outline-secondary">
+                    <a href="{{ route('returns.show', ['id' => $ret->id]) }}" class="btn btn-sm btn-outline-secondary">
                       <i class="fas fa-folder-open"></i>
                     </a>
                   </td>
@@ -617,7 +576,7 @@ $deliverySteps = [
                   <td>{{ format_qty($nc->qty) }}</td>
                   <td>
                     @php
-                      $ncBadge = match($nc->statu) { 1 => 'badge-danger', 3 => 'badge-success', default => 'badge-secondary' };
+                      $ncBadge = match($nc->statu) { 1 => 'text-bg-danger', 3 => 'text-bg-success', default => 'text-bg-secondary' };
                       $ncLabel = match($nc->statu) { 1 => __('general_content.in_progress_trans_key'), 3 => __('general_content.finished_task_trans_key'), default => '-' };
                     @endphp
                     <span class="badge {{ $ncBadge }}">{{ $ncLabel }}</span>
@@ -663,7 +622,7 @@ $deliverySteps = [
   <script>
   // Tab switching - vanilla JS fallback (Bootstrap 4/5 coexistence)
   document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.nav-pills a[data-toggle="tab"]').forEach(function (link) {
+      document.querySelectorAll('.nav-pills a[data-bs-toggle="tab"]').forEach(function (link) {
           link.addEventListener('click', function (e) {
               e.preventDefault();
               var targetId = this.getAttribute('href');

@@ -32,45 +32,44 @@ $arrowSteps = json_encode([
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 @if($Quote->is_template)
 <div class="callout callout-info d-flex flex-wrap align-items-center justify-content-between" style="gap:.5rem">
   <div>
-    <i class="fas fa-layer-group mr-2 text-info"></i>{{ __('general_content.quote_template_banner_trans_key') }}
+    <i class="fas fa-layer-group me-2 text-info"></i>{{ __('general_content.quote_template_banner_trans_key') }}
   </div>
   <div class="d-flex flex-wrap" style="gap:.5rem">
     <a href="{{ route('quotes', ['tab' => 'list', 'template' => $Quote->id]) }}" class="btn btn-sm btn-success">
-      <i class="fas fa-plus mr-1"></i>{{ __('general_content.new_quote_from_template_trans_key') }}
+      <i class="fas fa-plus me-1"></i>{{ __('general_content.new_quote_from_template_trans_key') }}
     </a>
     <form method="POST" action="{{ route('quotes.template.destroy', ['id' => $Quote->id]) }}"
           onsubmit="return confirm(@js(__('general_content.delete_template_confirm_trans_key')))">
       @csrf
       @method('DELETE')
       <button type="submit" class="btn btn-sm btn-outline-danger">
-        <i class="fas fa-trash mr-1"></i>{{ __('general_content.delete_template_trans_key') }}
+        <i class="fas fa-trash me-1"></i>{{ __('general_content.delete_template_trans_key') }}
       </button>
     </form>
   </div>
 </div>
 @endif
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills"  id="DocumentTabs">
-      <li class="nav-item"><a class="nav-link " href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ $Quote->QuoteLines->filter->isArticle()->count() }})</a></li>
+      <li class="nav-item"><a class="nav-link " href="#Quote" data-bs-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-bs-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ $Quote->QuoteLines->filter->isArticle()->count() }})</a></li>
       @if($Factory->enable_construction_site)
-      <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">{{ __('general_content.beta_trans_key') }}</span></a></li>
+      <li class="nav-item"><a class="nav-link" href="#Construction" data-bs-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge text-bg-danger right">{{ __('general_content.beta_trans_key') }}</span></a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Charts" data-bs-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Views" data-bs-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
       @if(count($CustomFields)> 0)
-      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Quote->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">{{ __('general_content.logs_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-bs-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Quote->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">{{ __('general_content.logs_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -85,11 +84,11 @@ $arrowSteps = json_encode([
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
                 @csrf 
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Quote->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Quote->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Quote->label])
                   </div>
                 </div>
@@ -98,7 +97,7 @@ $arrowSteps = json_encode([
                     <label for="companies_id" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         @if($Quote->opportunities_id or $Quote->statu != 1)
                         {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  />
                           <input type="hidden" name="companies_id" value="{{ $Quote->companies_id }}">
@@ -106,15 +105,15 @@ $arrowSteps = json_encode([
                               @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
                         @endif
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-input-customerInfo',['customerReference' =>  $Quote->customer_reference])
                     </div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-adress',['adressId' =>   $Quote->companies_addresses_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-contact',['contactId' =>   $Quote->companies_contacts_id])
                     </div>
                   </div>
@@ -137,21 +136,21 @@ $arrowSteps = json_encode([
                     <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Quote->accounting_payment_conditions_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Quote->accounting_payment_methods_id])
                     </div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Quote->accounting_deliveries_id])
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <label for="validity_date">{{ __('general_content.validity_date_trans_key') }}</label>
                       <div class="input-group">
-                        <div class="input-group-text bg-gradient-secondary">
+                        <div class="input-group-text text-bg-secondary bg-gradient">
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Quote->validity_date }}">
@@ -167,9 +166,9 @@ $arrowSteps = json_encode([
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="reviewed_by">{{ __('general_content.reviewed_by_trans_key') }}</label>
-                    <select class="form-control" name="reviewed_by" id="reviewed_by">
+                    <select class="form-select" name="reviewed_by" id="reviewed_by">
                       <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('reviewed_by', $Quote->reviewed_by) == $user->id)>{{ $user->name }}</option>
@@ -179,7 +178,7 @@ $arrowSteps = json_encode([
                       <span class="text-danger">{{ $message }}</span>
                     @enderror
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="reviewed_at">{{ __('general_content.review_date_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="reviewed_at" id="reviewed_at" value="{{ old('reviewed_at', optional($Quote->reviewed_at)->format('Y-m-d\\TH:i')) }}">
                     @error('reviewed_at')
@@ -188,9 +187,9 @@ $arrowSteps = json_encode([
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="review_decision">{{ __('general_content.decision_trans_key') }}</label>
-                    <select class="form-control" name="review_decision" id="review_decision">
+                    <select class="form-select" name="review_decision" id="review_decision">
                       <option value="">{{ __('general_content.undefined_trans_key') }}</option>
                       <option value="pending" @selected(old('review_decision', $Quote->review_decision) === 'pending')>{{ __('general_content.pending_trans_key') }}</option>
                       <option value="approved" @selected(old('review_decision', $Quote->review_decision) === 'approved')>{{ __('general_content.approved_trans_key') }}</option>
@@ -200,9 +199,9 @@ $arrowSteps = json_encode([
                       <span class="text-danger">{{ $message }}</span>
                     @enderror
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="change_requested_by">{{ __('general_content.change_requested_by_trans_key') }}</label>
-                    <select class="form-control" name="change_requested_by" id="change_requested_by">
+                    <select class="form-select" name="change_requested_by" id="change_requested_by">
                       <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('change_requested_by', $Quote->change_requested_by) == $user->id)>{{ $user->name }}</option>
@@ -214,7 +213,7 @@ $arrowSteps = json_encode([
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="mb-3 col-md-12">
                     <label for="change_reason">{{ __('general_content.change_reason_trans_key') }}</label>
                     <textarea class="form-control" name="change_reason" id="change_reason" rows="3">{{ old('change_reason', $Quote->change_reason) }}</textarea>
                     @error('change_reason')
@@ -223,7 +222,7 @@ $arrowSteps = json_encode([
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="change_approved_at">{{ __('general_content.change_approved_at_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="change_approved_at" id="change_approved_at" value="{{ old('change_approved_at', optional($Quote->change_approved_at)->format('Y-m-d\\TH:i')) }}">
                     @error('change_approved_at')
@@ -232,7 +231,7 @@ $arrowSteps = json_encode([
                   </div>
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -246,7 +245,7 @@ $arrowSteps = json_encode([
             <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" theme-mode="outline" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
-                <div class="form-group">
+                <div class="mb-3">
                   <label for="requested_delivery_date">{{ __('general_content.requested_delivery_date_trans_key') }}</label>
                   <input type="date" class="form-control" id="requested_delivery_date" name="requested_delivery_date" value="{{ old('requested_delivery_date') }}" required>
                 </div>
@@ -262,9 +261,9 @@ $arrowSteps = json_encode([
                 <div class="mt-3">
                   <h6 class="text-muted mb-2">{{ __('general_content.simulation_results_trans_key') }}</h6>
                   @if($simulation['is_possible'])
-                    <span class="badge badge-success">{{ __('general_content.simulation_possible_trans_key') }}</span>
+                    <span class="badge text-bg-success">{{ __('general_content.simulation_possible_trans_key') }}</span>
                   @else
-                    <span class="badge badge-danger">{{ __('general_content.simulation_not_possible_trans_key') }}</span>
+                    <span class="badge text-bg-danger">{{ __('general_content.simulation_not_possible_trans_key') }}</span>
                   @endif
 
                   <p class="mt-2 mb-1">
@@ -338,7 +337,7 @@ $arrowSteps = json_encode([
                     <form method="POST" action="{{ route('quotes.duplicate', ['id' => $Quote->id]) }}">
                       @csrf
                       <button type="submit" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-copy mr-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
+                        <i class="fas fa-copy me-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
                       </button>
                     </form>
                   </td>
@@ -352,7 +351,7 @@ $arrowSteps = json_encode([
                              title="{{ __('general_content.template_label_trans_key') }}"
                              placeholder="{{ __('general_content.template_label_trans_key') }}" value="{{ $Quote->label }}">
                       <button type="submit" class="btn btn-sm btn-outline-info">
-                        <i class="fas fa-layer-group mr-1"></i>{{ __('general_content.save_as_template_trans_key') }}
+                        <i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}
                       </button>
                     </form>
                   </td>
@@ -425,7 +424,7 @@ $arrowSteps = json_encode([
             $quoteLineEndpoints['importCad'] = route('quotes.lines.json.import-cad', ['quoteId' => $Quote->id]);
           }
         @endphp
-        <div class="card">
+        <div class="card mb-3">
           <div class="card-body">
             <div
               id="quote-lines-page-app"
@@ -434,7 +433,7 @@ $arrowSteps = json_encode([
               data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
             >
               <div class="text-center py-4 text-muted">
-                <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des lignes...
+                <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...
               </div>
             </div>
           </div>
@@ -506,7 +505,7 @@ $arrowSteps = json_encode([
                   {{-- Placeholder, sm size and prepend icon --}}
                   <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
                       <x-slot name="prependSlot">
-                          <div class="input-group-text bg-lightblue">
+                          <div class="input-group-text text-bg-sky">
                               <i class="fas fa-upload"></i>
                           </div>
                       </x-slot>
@@ -516,18 +515,18 @@ $arrowSteps = json_encode([
                   <div class="row">
                       <div class="col-4 text-end"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                       <div class="col-8">
-                          <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
+                          <x-adminlte-input-switch name="header" is-checked="true" />
                       </div>
                   </div>
                   
                   @php
                     $fields = [
-                        ['name' => 'code', 'label' => __('general_content.external_id_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
-                        ['name' => 'label', 'label' => __('general_content.label_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
-                        ['name' => 'qty', 'label' => __('general_content.qty_trans_key'), 'icon' => 'fas fa-circle', 'color' => 'bg-blue', 'type' => 'number', 'required' => false],
-                        ['name' => 'selling_price', 'label' => __('general_content.price_trans_key'), 'icon' => 'fas fa-cash-register', 'color' => 'bg-purple', 'required' => true],
-                        ['name' => 'discount', 'label' => __('general_content.discount_trans_key'), 'icon' => 'fas fa-percentage', 'color' => 'bg-yellow', 'required' => false],
-                        ['name' => 'delivery_date', 'label' => __('general_content.delivery_date_trans_key'), 'icon' => 'fas fa-calendar-alt', 'color' => 'bg-gray', 'required' => false],
+                        ['name' => 'code', 'label' => __('general_content.external_id_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'text-bg-danger', 'required' => true],
+                        ['name' => 'label', 'label' => __('general_content.label_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'text-bg-danger', 'required' => true],
+                        ['name' => 'qty', 'label' => __('general_content.qty_trans_key'), 'icon' => 'fas fa-circle', 'color' => 'text-bg-primary', 'type' => 'number', 'required' => false],
+                        ['name' => 'selling_price', 'label' => __('general_content.price_trans_key'), 'icon' => 'fas fa-cash-register', 'color' => 'text-bg-violet', 'required' => true],
+                        ['name' => 'discount', 'label' => __('general_content.discount_trans_key'), 'icon' => 'fas fa-percentage', 'color' => 'text-bg-warning', 'required' => false],
+                        ['name' => 'delivery_date', 'label' => __('general_content.delivery_date_trans_key'), 'icon' => 'fas fa-calendar-alt', 'color' => 'text-bg-secondary', 'required' => false],
                     ];
                   @endphp
 
@@ -560,7 +559,7 @@ $arrowSteps = json_encode([
 
               </div>
               <x-slot name="footerSlot">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
           </x-adminlte-card>
         </form>
@@ -678,15 +677,6 @@ $arrowSteps = json_encode([
 @stop
 
 @section('js')
-
-  <script type="text/javascript">
-    $('.custom-file-input').on('change',function(){
-      // Obtient le nom du fichier sélectionné
-      var fileName = $(this).val().split('\\').pop(); 
-      // Sélectionne le label correspondant et met à jour son contenu
-      $(this).next('.custom-file-label').addClass("selected").html(fileName);
-    });
-  </script>
 
   <script>
     function copyToClipboard(text) {

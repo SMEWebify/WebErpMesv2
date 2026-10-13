@@ -7,12 +7,12 @@ import { apiFetchWithStatus as apiFetch } from '../lib/http';
 // ---------------------------------------------------------------------------
 
 const STATUS_LABELS = {
-    1: { label: 'En cours',              badge: 'badge-info' },
-    2: { label: 'Envoyé',               badge: 'badge-primary' },
-    3: { label: 'Partiellement reçu',   badge: 'badge-secondary' },
-    4: { label: 'Reçu',                 badge: 'badge-info' },
-    5: { label: 'BC partiellement créé',badge: 'badge-warning' },
-    6: { label: 'BC créé',              badge: 'badge-success' },
+    1: { label: 'En cours',              badge: 'text-bg-info' },
+    2: { label: 'Envoyé',               badge: 'text-bg-primary' },
+    3: { label: 'Partiellement reçu',   badge: 'text-bg-secondary' },
+    4: { label: 'Reçu',                 badge: 'text-bg-info' },
+    5: { label: 'BC partiellement créé',badge: 'text-bg-warning' },
+    6: { label: 'BC créé',              badge: 'text-bg-success' },
 };
 
 const LS_COL_ORDER   = 'purchases_quotation_table_col_order';
@@ -101,7 +101,7 @@ function quotationColumns(trans) {
         { key: 'rfq_group',   label: trans.rfq_group,
           render: q => (q.rfq_group_code ? (
               <>
-                  <span className="badge badge-light">{q.rfq_group_code}</span>
+                  <span className="badge text-bg-light">{q.rfq_group_code}</span>
                   {q.rfq_group_label && <div className="text-muted small">{q.rfq_group_label}</div>}
               </>
           ) : <span className="text-muted">—</span>),
@@ -128,11 +128,11 @@ function RfqGroupHeader({ quotation: q, trans }) {
             <div>
                 <strong>{trans.rfq_group}:</strong>{' '}
                 {q.rfq_group_label ?? q.rfq_group_code}
-                {q.rfq_group_code && <span className="text-muted ml-1">({q.rfq_group_code})</span>}
+                {q.rfq_group_code && <span className="text-muted ms-1">({q.rfq_group_code})</span>}
             </div>
             {q.compare_url && (
                 <a href={q.compare_url} className="btn btn-outline-primary btn-sm">
-                    <i className="fas fa-balance-scale mr-1" />{trans.compare_rfq}
+                    <i className="fas fa-balance-scale me-1" />{trans.compare_rfq}
                 </a>
             )}
         </div>
@@ -198,10 +198,10 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
         <div className="row">
             {/* Left sidebar */}
             <div className="col-md-3">
-                <div className="card card-teal">
+                <div className="card card-teal mb-3">
                     <div className="card-header">
                         <h3 className="card-title">
-                            <i className="fas fa-chart-bar mr-1" />{trans.statistics}
+                            <i className="fas fa-chart-bar me-1" />{trans.statistics}
                         </h3>
                     </div>
                     <div className="card-body">
@@ -211,39 +211,37 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                     </div>
                 </div>
 
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi?.total_count ?? '—'}</h3>
                         <p>{trans.purchase_quotation}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-file-signature" /></div>
+                    <i className="small-box-icon fas fa-file-signature" aria-hidden="true" />
                 </div>
 
-                <div className="small-box bg-purple">
+                <div className="small-box text-bg-violet">
                     <div className="inner">
                         <h3>{kpi?.total_lines ?? '—'}</h3>
                         <p>{trans.lines_count}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-stream" /></div>
+                    <i className="small-box-icon fas fa-stream" aria-hidden="true" />
                 </div>
 
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3 style={{ fontSize: '1.3rem' }}>{kpi?.total_amount ?? '—'}</h3>
                         <p>{trans.total_price}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-coins" /></div>
+                    <i className="small-box-icon fas fa-coins" aria-hidden="true" />
                 </div>
             </div>
 
             {/* Main list */}
             <div className="col-md-9 order-first order-md-0">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-body pb-1">
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-search" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-search" /></span>
                             <input
                                 type="text"
                                 className="form-control"
@@ -277,7 +275,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                         unsortableIcon={false}
                         tableClassName="table table-hover"
                         chipsClassName="mb-2 d-flex flex-wrap px-3 pt-2"
-                        loadingContent={<><i className="fas fa-spinner fa-spin mr-2" />{trans.loading}</>}
+                        loadingContent={<><i className="fas fa-spinner fa-spin me-2" />{trans.loading}</>}
                         emptyText={trans.no_data}
                         actionsHeader={trans.action}
                         actionsWidth={90}
@@ -288,7 +286,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                         rowStyle={q => (q.rfq_group_id ? { borderLeft: '4px solid #6c757d' } : undefined)}
                         rowActions={q => (
                             <>
-                                <a href={q.show_url} className="btn btn-xs btn-info mr-1">
+                                <a href={q.show_url} className="btn btn-sm btn-info me-1">
                                     <i className="fas fa-eye" />
                                 </a>
                                 {q.pdf_url && (
@@ -300,7 +298,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                         )}
                         mobileActions={q => q.pdf_url && (
                             <a href={q.pdf_url} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
-                                <i className="fas fa-file-pdf text-danger mr-1" />PDF
+                                <i className="fas fa-file-pdf text-danger me-1" />PDF
                             </a>
                         )}
                     />
@@ -311,7 +309,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                             <small className="text-muted">{trans.total}: {meta.total}</small>
                             <div>
                                 <button
-                                    className="btn btn-sm btn-outline-secondary mr-1"
+                                    className="btn btn-sm btn-outline-secondary me-1"
                                     disabled={meta.current_page <= 1}
                                     onClick={() => setPage(p => p - 1)}
                                 >
@@ -319,7 +317,7 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                                 </button>
                                 <span className="mx-2">{meta.current_page} / {meta.last_page}</span>
                                 <button
-                                    className="btn btn-sm btn-outline-secondary ml-1"
+                                    className="btn btn-sm btn-outline-secondary ms-1"
                                     disabled={meta.current_page >= meta.last_page}
                                     onClick={() => setPage(p => p + 1)}
                                 >

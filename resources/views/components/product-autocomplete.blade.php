@@ -10,19 +10,17 @@
 
 <div class="product-autocomplete" data-search-url="{{ route('products.json.search') }}" style="position: relative;">
     @if ($label)
-        <label for="{{ $inputId }}_search" class="text-lightblue">{{ $label }}</label>
+        <label for="{{ $inputId }}_search" class="text-sky">{{ $label }}</label>
     @endif
     <div class="input-group input-group-sm">
-        <div class="input-group-prepend">
-            <div class="input-group-text bg-gradient-info"><i class="fas fa-barcode"></i></div>
-        </div>
+        <div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-barcode"></i></div>
         <input type="text" id="{{ $inputId }}_search" data-role="search" autocomplete="off"
                class="form-control @error($name) is-invalid @enderror"
                placeholder="{{ __('general_content.select_product_trans_key') }}…"
                value="{{ $selected ? $selected->code . ' — ' . $selected->label : '' }}">
     </div>
     <input type="hidden" name="{{ $name }}" id="{{ $inputId }}" data-role="value" value="{{ $selected?->id }}">
-    <div data-role="results" class="border bg-white shadow-sm" hidden
+    <div data-role="results" class="border bg-body shadow-sm" hidden
          style="position: absolute; z-index: 1060; left: 0; right: 0; max-height: 200px; overflow-y: auto;"></div>
     @error($name)
         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -59,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const code = document.createElement('strong');
                 code.textContent = product.code;
                 const label = document.createElement('span');
-                label.className = 'text-muted ml-2';
+                label.className = 'text-muted ms-2';
                 label.textContent = product.label;
                 item.append(code, label);
                 item.addEventListener('mouseenter', () => { item.style.background = '#f0f4ff'; });

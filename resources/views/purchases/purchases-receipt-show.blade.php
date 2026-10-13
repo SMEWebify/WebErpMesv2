@@ -10,12 +10,12 @@
 
 @section('content')
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{ __('general_content.purchase_receipt_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{ __('general_content.purchase_receipt_lines_trans_key') }} ({{ count($PurchaseReceipt->PurchaseReceiptLines) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($PurchaseReceipt->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-bs-toggle="tab">{{ __('general_content.purchase_receipt_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-bs-toggle="tab">{{ __('general_content.purchase_receipt_lines_trans_key') }} ({{ count($PurchaseReceipt->PurchaseReceiptLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($PurchaseReceipt->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -38,14 +38,14 @@
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="orange" theme-mode="outline" maximizable>
                 @csrf
                     <div class="row">
-                      <div class="form-group col-md-6">
+                      <div class="mb-3 col-md-6">
                         <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseReceipt->code }}</p>
                         <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $PurchaseReceipt->GetshortCreatedAttribute() }}</p>
                       </div>
-                      <div class="form-group col-md-6">
+                      <div class="mb-3 col-md-6">
                         <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
+                              <div class="input-group-text text-bg-success bg-gradient">
                                   <i class="fas fa-exclamation"></i>
                               </div>
                           </x-slot>
@@ -55,14 +55,14 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="form-group col-md-6">
+                      <div class="mb-3 col-md-6">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_reciept_trans_key'), 'Value' =>  $PurchaseReceipt->label])
                       </div>
 
-                      <div class="form-group col-md-6">
+                      <div class="mb-3 col-md-6">
                         <x-adminlte-input name="delivery_note_number" label="{{ __('general_content.delivery_note_number_trans_key') }}" placeholder="{{ __('general_content.delivery_note_number_trans_key') }}" value="{{  $PurchaseReceipt->delivery_note_number }}" label-class="text-success">
                           <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-success">
+                            <div class="input-group-text text-bg-success bg-gradient">
                                   <i class="fas fa-tags"></i>
                               </div>
                           </x-slot>
@@ -73,7 +73,7 @@
                       <x-FormTextareaComment  comment="{{ $PurchaseReceipt->comment }}" />
                     </div>
                   <div class="modal-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </x-adminlte-card>
             </form>

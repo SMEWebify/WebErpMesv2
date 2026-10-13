@@ -13,9 +13,9 @@
 
     <!-- Formulaire de sélection du service -->
     <form method="GET" action="{{ route('production.kanban') }}" class="mb-4">
-        <div class="form-group">
+        <div class="mb-3">
             <label for="methods_services_id">Select Service:</label>
-            <select name="methods_services_id" id="methods_services_id" class="form-control">
+            <select name="methods_services_id" id="methods_services_id" class="form-select">
                 <option value="">All Services</option>
                 @foreach($services as $service)
                     <option value="{{ $service->id }}" {{ request()->input('methods_services_id') == $service->id ? 'selected' : '' }}>

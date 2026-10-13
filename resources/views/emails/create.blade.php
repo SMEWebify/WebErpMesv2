@@ -34,13 +34,13 @@
     <form action="{{ route('email.send', ['type' => $type, 'id' => $model->id]) }}" method="POST" enctype="multipart/form-data">
         <x-adminlte-card title="{{ __('general_content.new_mail_trans_key') }}" theme="primary" maximizable>
             @csrf
-            <div class="form-group">
+            <div class="mb-3">
                 <input type="email" name="to" class="form-control" placeholder="" value="{{ old('to', $contactMail) }}" required>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <input type="text" name="subject" class="form-control" placeholder="{{ __('general_content.object_trans_key') }} :" value="{{ old('subject', $object) }}" required>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 @php
                 $config = [
                     "height" => "200",
@@ -62,13 +62,13 @@
                 </x-adminlte-text-editor>
             </div>
 
-            <div class="form-group">
-                <div class="custom-control custom-switch">
+            <div class="mb-3">
+                <div class="form-check form-switch">
                     <input type="hidden" name="attach_pdf" value="0">
                     <input type="checkbox" id="attach_pdf" name="attach_pdf" value="1"
-                           class="custom-control-input"
+                           class="form-check-input"
                            @checked(old('attach_pdf', true))>
-                    <label class="custom-control-label" for="attach_pdf">
+                    <label class="form-check-label" for="attach_pdf">
                         <i class="fas fa-file-pdf text-danger"></i>
                         {{ __('general_content.attach_document_pdf_trans_key') }}
                         <small class="text-muted">({{ $model->code }}.pdf)</small>
@@ -81,18 +81,13 @@
                 @endif
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="attachment">{{ __('general_content.attachment_trans_key') }}
                     <small class="text-muted">({{ __('general_content.optional_trans_key') }})</small>
                 </label>
                 <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-file"></i></span>
-                    </div>
-                    <div class="custom-file">
-                        <input type="file" name="attachment" class="custom-file-input" id="chooseFile">
-                        <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
-                    </div>
+                    <span class="input-group-text"><i class="far fa-file"></i></span>
+                    <input type="file" name="attachment" class="form-control" id="chooseFile">
                 </div>
             </div>
 
@@ -140,17 +135,17 @@
                             <td>
                                 @switch($log->status)
                                     @case('sent')
-                                        <span class="badge badge-success" title="{{ $log->sent_at?->format('d/m/Y H:i') }}">
+                                        <span class="badge text-bg-success" title="{{ $log->sent_at?->format('d/m/Y H:i') }}">
                                             <i class="fas fa-check"></i> {{ __('general_content.email_status_sent_trans_key') }}
                                         </span>
                                         @break
                                     @case('failed')
-                                        <span class="badge badge-danger" title="{{ $log->error }}">
+                                        <span class="badge text-bg-danger" title="{{ $log->error }}">
                                             <i class="fas fa-times"></i> {{ __('general_content.email_status_failed_trans_key') }}
                                         </span>
                                         @break
                                     @default
-                                        <span class="badge badge-secondary">
+                                        <span class="badge text-bg-secondary">
                                             <i class="fas fa-clock"></i> {{ __('general_content.email_status_pending_trans_key') }}
                                         </span>
                                 @endswitch
@@ -162,16 +157,4 @@
         </x-adminlte-card>
     @endif
 
-@stop
-
-@section('js')
-<script>
-    // Affiche le nom du fichier choisi dans le label (custom-file AdminLTE).
-    document.getElementById('chooseFile')?.addEventListener('change', function (e) {
-        const label = this.nextElementSibling;
-        if (label && e.target.files.length) {
-            label.textContent = e.target.files[0].name;
-        }
-    });
-</script>
 @stop

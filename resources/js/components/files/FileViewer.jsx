@@ -48,7 +48,7 @@ export default function FileViewer({ file, t }) {
                 <i className={`${file.icon} fa-3x mb-3`} />
                 <div className="mb-3">{t('no_inline_preview')}</div>
                 <a className="btn btn-primary" href={file.download_url}>
-                    <i className="fas fa-download mr-1" />
+                    <i className="fas fa-download me-1" />
                     {t('download')}
                 </a>
             </div>

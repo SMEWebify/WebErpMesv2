@@ -6,18 +6,18 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from 
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'in_progress' },
-    2: { badge: 'badge-warning', label: 'waiting_customer_data' },
-    3: { badge: 'badge-success', label: 'solved' },
-    4: { badge: 'badge-danger',  label: 'canceled' },
+    1: { badge: 'text-bg-info',    label: 'in_progress' },
+    2: { badge: 'text-bg-warning', label: 'waiting_customer_data' },
+    3: { badge: 'text-bg-success', label: 'solved' },
+    4: { badge: 'text-bg-danger',  label: 'canceled' },
 };
 
 const LS_COL_ORDER   = 'non_conformities_table_col_order';
 const LS_HIDDEN_COLS = 'non_conformities_table_hidden_cols';
 
 const TYPE_CONFIG = {
-    1: { badge: 'badge-warning', label: 'internal' },
-    2: { badge: 'badge-danger',  label: 'external' },
+    1: { badge: 'text-bg-warning', label: 'internal' },
+    2: { badge: 'text-bg-danger',  label: 'external' },
 };
 
 // ---------------------------------------------------------------------------
@@ -48,7 +48,7 @@ function Avatar({ name }) {
 }
 
 function TypeBadge({ type, trans }) {
-    const cfg = TYPE_CONFIG[type] ?? { badge: 'badge-secondary', label: String(type) };
+    const cfg = TYPE_CONFIG[type] ?? { badge: 'text-bg-secondary', label: String(type) };
     return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
 }
 
@@ -71,7 +71,7 @@ function Modal({ id, title, show, onClose, size, children }) {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">{title}</h5>
-                        <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">{children}</div>
                 </div>
@@ -86,9 +86,9 @@ function Modal({ id, title, show, onClose, size, children }) {
 
 function SelectField({ label, name, value, onChange, options, nullable, disabled }) {
     return (
-        <div className="form-group">
+        <div className="mb-3">
             {label && <label>{label}</label>}
-            <select className="form-control form-control-sm" name={name} value={value ?? ''} onChange={e => onChange(e.target.value || null)} disabled={disabled}>
+            <select className="form-select form-select-sm" name={name} value={value ?? ''} onChange={e => onChange(e.target.value || null)} disabled={disabled}>
                 {nullable !== false && <option value="">N/A</option>}
                 {options.map(o => <option key={o.id} value={o.id}>{o.label ?? o.name ?? o.code}</option>)}
             </select>
@@ -124,7 +124,7 @@ function ViewModal({ nc, trans, onClose }) {
             <p><strong>{t('service')} :</strong> {nc.service_label ?? 'N/A'}</p>
             <p><strong>{t('qty')} :</strong> {nc.qty ?? '—'}</p>
             <p><strong>{t('resolution_date')} :</strong> {nc.resolution_date ?? '—'}</p>
-            <div className="text-right">
+            <div className="text-end">
                 <button className="btn btn-secondary btn-sm" onClick={onClose}>{t('close')}</button>
             </div>
         </Modal>
@@ -245,54 +245,54 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
             <form onSubmit={handleSave}>
                 {error && <div className="alert alert-danger py-1">{error}</div>}
 
-                <div className="form-row">
-                    <div className="form-group col-md-8">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-8">
                         <label>{t('label')}</label>
                         <input className="form-control form-control-sm" value={form.label} onChange={e => set('label', e.target.value)} required />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>{t('qty')}</label>
                         <input type="number" className="form-control form-control-sm" value={form.qty} onChange={e => set('qty', e.target.value)} min="1" />
                     </div>
                 </div>
 
-                <div className="form-row">
-                    <div className="form-group col-md-4">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-4">
                         <label>{t('status')}</label>
-                        <select className="form-control form-control-sm" value={form.statu} onChange={e => set('statu', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.statu} onChange={e => set('statu', e.target.value)}>
                             <option value="1">{t('in_progress')}</option>
                             <option value="2">{t('waiting_customer_data')}</option>
                             <option value="3">{t('solved')}</option>
                             <option value="4">{t('canceled')}</option>
                         </select>
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>{t('type')}</label>
-                        <select className="form-control form-control-sm" value={form.type} onChange={e => set('type', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.type} onChange={e => set('type', e.target.value)}>
                             <option value="1">{t('internal')}</option>
                             <option value="2">{t('external')}</option>
                         </select>
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>{t('user')}</label>
-                        <select className="form-control form-control-sm" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                             <option value="">—</option>
                             {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                         </select>
                     </div>
                 </div>
 
-                <div className="form-row">
-                    <div className="form-group col-md-6">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-6">
                         <label>{t('service')}</label>
-                        <select className="form-control form-control-sm" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
                             <option value="">N/A</option>
                             {services.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                         </select>
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{t('company')}</label>
-                        <select className="form-control form-control-sm" value={form.companie_id} onChange={e => set('companie_id', e.target.value)} disabled={locked}>
+                        <select className="form-select form-select-sm" value={form.companie_id} onChange={e => set('companie_id', e.target.value)} disabled={locked}>
                             <option value="">N/A</option>
                             {companies.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                         </select>
@@ -300,26 +300,26 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
                     </div>
                 </div>
 
-                <div className="form-row">
-                    <div className="form-group col-md-4">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-4">
                         <label>{t('failure_type')}</label>
-                        <select className="form-control form-control-sm" value={form.failure_id} onChange={e => set('failure_id', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.failure_id} onChange={e => set('failure_id', e.target.value)}>
                             <option value="">N/A</option>
                             {failures.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}
                         </select>
                         <textarea className="form-control form-control-sm mt-1" rows="2" placeholder="..." value={form.failure_comment} onChange={e => set('failure_comment', e.target.value)} />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>{t('cause_type')}</label>
-                        <select className="form-control form-control-sm" value={form.causes_id} onChange={e => set('causes_id', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.causes_id} onChange={e => set('causes_id', e.target.value)}>
                             <option value="">N/A</option>
                             {causes.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                         </select>
                         <textarea className="form-control form-control-sm mt-1" rows="2" placeholder="..." value={form.causes_comment} onChange={e => set('causes_comment', e.target.value)} />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>{t('correction_type')}</label>
-                        <select className="form-control form-control-sm" value={form.correction_id} onChange={e => set('correction_id', e.target.value)}>
+                        <select className="form-select form-select-sm" value={form.correction_id} onChange={e => set('correction_id', e.target.value)}>
                             <option value="">N/A</option>
                             {corrections.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                         </select>
@@ -330,14 +330,14 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
                 <div className="d-flex justify-content-between align-items-center mt-2">
                     <div>
                         {nc.statu !== 3
-                            ? <button type="button" className="btn btn-sm btn-danger mr-2" onClick={handleClose} disabled={saving}>{t('solved')}</button>
-                            : <button type="button" className="btn btn-sm btn-success mr-2" onClick={handleReopen} disabled={saving}>{t('reopen')}</button>
+                            ? <button type="button" className="btn btn-sm btn-danger me-2" onClick={handleClose} disabled={saving}>{t('solved')}</button>
+                            : <button type="button" className="btn btn-sm btn-success me-2" onClick={handleReopen} disabled={saving}>{t('reopen')}</button>
                         }
                     </div>
                     <div>
-                        <button type="button" className="btn btn-sm btn-secondary mr-2" onClick={onClose}>{t('cancel')}</button>
+                        <button type="button" className="btn btn-sm btn-secondary me-2" onClick={onClose}>{t('cancel')}</button>
                         <button type="submit" className="btn btn-sm btn-info" disabled={saving}>
-                            {saving ? <><i className="fas fa-spinner fa-spin mr-1" />{t('saving')}</> : <><i className="fas fa-save mr-1" />{t('update')}</>}
+                            {saving ? <><i className="fas fa-spinner fa-spin me-1" />{t('saving')}</> : <><i className="fas fa-save me-1" />{t('update')}</>}
                         </button>
                     </div>
                 </div>
@@ -407,33 +407,33 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
     }
 
     return (
-        <div className="card card-outline card-secondary mt-3">
+        <div className="card card-outline card-secondary mt-3 mb-3">
             <div className="card-header" style={{ cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
-                <h3 className="card-title"><i className={`fas fa-chevron-${open ? 'up' : 'down'} mr-2`} />{t('new_non_conformity')}</h3>
+                <h3 className="card-title"><i className={`fas fa-chevron-${open ? 'up' : 'down'} me-2`} />{t('new_non_conformity')}</h3>
             </div>
             {open && (
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
                         {error && <div className="alert alert-danger py-1">{error}</div>}
-                        <div className="form-row">
-                            <div className="form-group col-md-3">
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-3">
                                 <label>{t('external_id')}</label>
                                 <input className="form-control form-control-sm" value={form.code} onChange={e => set('code', e.target.value)} required />
                             </div>
-                            <div className="form-group col-md-5">
+                            <div className="mb-3 col-md-5">
                                 <label>{t('label')}</label>
                                 <input className="form-control form-control-sm" value={form.label} onChange={e => set('label', e.target.value)} required />
                             </div>
-                            <div className="form-group col-md-2">
+                            <div className="mb-3 col-md-2">
                                 <label>{t('type')}</label>
-                                <select className="form-control form-control-sm" value={form.type} onChange={e => set('type', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.type} onChange={e => set('type', e.target.value)}>
                                     <option value="1">{t('internal')}</option>
                                     <option value="2">{t('external')}</option>
                                 </select>
                             </div>
-                            <div className="form-group col-md-2">
+                            <div className="mb-3 col-md-2">
                                 <label>{t('status')}</label>
-                                <select className="form-control form-control-sm" value={form.statu} onChange={e => set('statu', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.statu} onChange={e => set('statu', e.target.value)}>
                                     <option value="1">{t('in_progress')}</option>
                                     <option value="2">{t('waiting_customer_data')}</option>
                                     <option value="3">{t('solved')}</option>
@@ -441,63 +441,63 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
                                 </select>
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group col-md-4">
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('user')}</label>
-                                <select className="form-control form-control-sm" value={form.user_id} onChange={e => set('user_id', e.target.value)} required>
+                                <select className="form-select form-select-sm" value={form.user_id} onChange={e => set('user_id', e.target.value)} required>
                                     <option value="">—</option>
                                     {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                                 </select>
                             </div>
-                            <div className="form-group col-md-4">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('service')}</label>
-                                <select className="form-control form-control-sm" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
                                     <option value="">N/A</option>
                                     {services.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                                 </select>
                             </div>
-                            <div className="form-group col-md-4">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('company')}</label>
-                                <select className="form-control form-control-sm" value={form.companie_id} onChange={e => set('companie_id', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.companie_id} onChange={e => set('companie_id', e.target.value)}>
                                     <option value="">N/A</option>
                                     {companies.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                 </select>
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group col-md-4">
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('failure_type')}</label>
-                                <select className="form-control form-control-sm" value={form.failure_id} onChange={e => set('failure_id', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.failure_id} onChange={e => set('failure_id', e.target.value)}>
                                     <option value="">N/A</option>
                                     {failures.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}
                                 </select>
                                 <textarea className="form-control form-control-sm mt-1" rows="2" placeholder="..." value={form.failure_comment} onChange={e => set('failure_comment', e.target.value)} />
                             </div>
-                            <div className="form-group col-md-4">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('cause_type')}</label>
-                                <select className="form-control form-control-sm" value={form.causes_id} onChange={e => set('causes_id', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.causes_id} onChange={e => set('causes_id', e.target.value)}>
                                     <option value="">N/A</option>
                                     {causes.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                 </select>
                                 <textarea className="form-control form-control-sm mt-1" rows="2" placeholder="..." value={form.causes_comment} onChange={e => set('causes_comment', e.target.value)} />
                             </div>
-                            <div className="form-group col-md-4">
+                            <div className="mb-3 col-md-4">
                                 <label>{t('correction_type')}</label>
-                                <select className="form-control form-control-sm" value={form.correction_id} onChange={e => set('correction_id', e.target.value)}>
+                                <select className="form-select form-select-sm" value={form.correction_id} onChange={e => set('correction_id', e.target.value)}>
                                     <option value="">N/A</option>
                                     {corrections.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                 </select>
                                 <textarea className="form-control form-control-sm mt-1" rows="2" placeholder="..." value={form.correction_comment} onChange={e => set('correction_comment', e.target.value)} />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group col-md-3">
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-3">
                                 <label>{t('qty')}</label>
                                 <input type="number" className="form-control form-control-sm" value={form.qty} onChange={e => set('qty', e.target.value)} min="1" />
                             </div>
                         </div>
                         <button type="submit" className="btn btn-danger btn-sm" disabled={saving}>
-                            {saving ? <><i className="fas fa-spinner fa-spin mr-1" />{t('saving')}</> : <><i className="fas fa-save mr-1" />{t('submit')}</>}
+                            {saving ? <><i className="fas fa-spinner fa-spin me-1" />{t('saving')}</> : <><i className="fas fa-save me-1" />{t('submit')}</>}
                         </button>
                     </form>
                 </div>
@@ -514,7 +514,7 @@ function TypeFilter({ active, onToggle, trans }) {
                 const isActive = active.includes(tid);
                 return (
                     <button key={tid} type="button"
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${isActive ? cfg.badge.replace(/^(badge|text-bg)-/, 'btn-') : 'btn-outline-secondary'}`}
                         onClick={() => onToggle(tid)}
                     >
                         {trans[cfg.label] ?? cfg.label}
@@ -534,7 +534,7 @@ function TypeFilter({ active, onToggle, trans }) {
 // ---------------------------------------------------------------------------
 
 const linkOrNa = (url, label, className) => (url
-    ? <a href={url} className={`btn btn-xs ${className}`}>{label}</a>
+    ? <a href={url} className={`btn btn-sm ${className}`}>{label}</a>
     : <span className="text-muted">N/A</span>);
 
 function ncColumns(trans, endpoints) {
@@ -625,7 +625,7 @@ export default function NonConformitiesIndex({
     return (
         <div>
             {/* Filters */}
-            <div className="card card-outline card-primary">
+            <div className="card card-outline card-primary mb-3">
                 <div className="card-body">
                     <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                         {/* Search */}
@@ -637,9 +637,7 @@ export default function NonConformitiesIndex({
                                 onChange={e => handleSearch(e.target.value)}
                             />
                             {search && (
-                                <div className="input-group-append">
-                                    <button className="btn btn-sm btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
-                                </div>
+                                <button className="btn btn-sm btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
                             )}
                         </div>
                         <MobileFilters count={statuses.length + types.length} trans={trans}>
@@ -668,13 +666,13 @@ export default function NonConformitiesIndex({
                         actionsCellStyle={{ whiteSpace: 'nowrap' }}
                         rowActions={nc => (
                             <>
-                                <button className="btn btn-xs btn-info mr-1" onClick={() => setViewNc(nc)} title={t('view')}>
+                                <button className="btn btn-sm btn-info me-1" onClick={() => setViewNc(nc)} title={t('view')}>
                                     <i className="fas fa-eye" />
                                 </button>
-                                <button className="btn btn-xs btn-teal mr-1" onClick={() => setEditNc(nc)} title={t('edit')}>
+                                <button className="btn btn-sm btn-teal me-1" onClick={() => setEditNc(nc)} title={t('edit')}>
                                     <i className="fas fa-edit" />
                                 </button>
-                                <a href={`${endpoints.pdfBase}/${nc.id}`} className="btn btn-xs btn-danger" title="PDF" target="_blank" rel="noopener noreferrer">
+                                <a href={`${endpoints.pdfBase}/${nc.id}`} className="btn btn-sm btn-danger" title="PDF" target="_blank" rel="noopener noreferrer">
                                     <i className="fas fa-file-pdf" />
                                 </a>
                             </>
@@ -686,11 +684,11 @@ export default function NonConformitiesIndex({
                                     ['fa-edit', t('edit'), () => setEditNc(nc)],
                                 ].map(([icon, label, onClick]) => (
                                     <button key={icon} type="button" className="btn btn-outline-secondary" style={{ minHeight: 44 }} onClick={onClick}>
-                                        <i className={`fas ${icon} mr-1`} />{label}
+                                        <i className={`fas ${icon} me-1`} />{label}
                                     </button>
                                 ))}
                                 <a href={`${endpoints.pdfBase}/${nc.id}`} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noopener noreferrer">
-                                    <i className="fas fa-file-pdf text-danger mr-1" />PDF
+                                    <i className="fas fa-file-pdf text-danger me-1" />PDF
                                 </a>
                             </div>
                         )}

@@ -14,7 +14,7 @@
       
       <x-adminlte-card theme="info" theme-mode="outline">
         <div class=" table-responsive p-0">
-          <table class="table  table-striped table-hover">
+          <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th>{{ __('general_content.external_id_trans_key') }}</th>
@@ -34,14 +34,14 @@
                 <td>{{ $QualityDerogation->label }}</td>
                 <td><img src="{{ Avatar::create($QualityDerogation->UserManagement['name'])->toBase64() }}" /></td>
                 <td>
-                  @if($QualityDerogation->type  == 1) <span class="badge badge-warning">{{ __('general_content.internal_trans_key') }}</span> @endif
-                  @if($QualityDerogation->type  == 2) <span class="badge badge-danger">{{ __('general_content.external_trans_key') }}</span> @endif
+                  @if($QualityDerogation->type  == 1) <span class="badge text-bg-warning">{{ __('general_content.internal_trans_key') }}</span> @endif
+                  @if($QualityDerogation->type  == 2) <span class="badge text-bg-danger">{{ __('general_content.external_trans_key') }}</span> @endif
                 </td>
                 <td>
-                  @if($QualityDerogation->statu  == 1) <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span> @endif
-                  @if($QualityDerogation->statu  == 2) <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
-                  @if($QualityDerogation->statu  == 3) <span class="badge badge-success">{{ __('general_content.validate_trans_key') }}</span> @endif
-                  @if($QualityDerogation->statu  == 4) <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span> @endif
+                  @if($QualityDerogation->statu  == 1) <span class="badge text-bg-info">{{ __('general_content.in_progress_trans_key') }}</span> @endif
+                  @if($QualityDerogation->statu  == 2) <span class="badge text-bg-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
+                  @if($QualityDerogation->statu  == 3) <span class="badge text-bg-success">{{ __('general_content.validate_trans_key') }}</span> @endif
+                  @if($QualityDerogation->statu  == 4) <span class="badge text-bg-danger">{{ __('general_content.canceled_trans_key') }}</span> @endif
                 </td>
                 <td>
                   @if($QualityDerogation->quality_non_conformitie_id) 
@@ -81,22 +81,18 @@
                     <form method="POST" action="{{ route('quality.derogation.update', ['id' => $QualityDerogation->id]) }}" enctype="multipart/form-data">
                       @csrf
                       <div class="card-body">
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                              </div>
+                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $QualityDerogation->label }}">
                             </div>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                              </div>
-                              <select class="form-control" name="statu" id="statu">
+                              <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                              <select class="form-select" name="statu" id="statu">
                                 <option value="1"  @if($QualityDerogation->statu == 1  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
                                 <option value="2"  @if($QualityDerogation->statu == 2  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
                                 <option value="3"  @if($QualityDerogation->statu == 3  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
@@ -104,57 +100,55 @@
                               </select>
                             </div>
                           </div>
-                          <div class="form-group">
-                            <div class="col-4 text-left"><label for="type_update{{ $QualityDerogation->id }}" class="col-form-label">{{ __('general_content.type_trans_key') }}</label></div>
+                          <div class="mb-3">
+                            <div class="col-4 text-start"><label for="type_update{{ $QualityDerogation->id }}" class="col-form-label">{{ __('general_content.type_trans_key') }}</label></div>
                             <div class="col-8">
                                 @if($QualityDerogation->type == 1)  
-                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}" data-on-color="teal" is-checked="true" />
+                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" is-checked="true" />
                                 @else
-                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}" data-on-color="teal" />
+                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" />
                                 @endif
                             </div>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="user_id_{{ $QualityDerogation->id }}">{{ __('general_content.user_trans_key') }}</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                              </div>
-                              <select class="form-control" name="user_id" id="user_id_{{ $QualityDerogation->id }}">
+                              <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              <select class="form-select" name="user_id" id="user_id_{{ $QualityDerogation->id }}">
                                 @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}"  @if($QualityDerogation->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                 @endforeach
                               </select>
                             </div>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="quality_non_conformitie_id_{{ $QualityDerogation->id }}">{{ __('general_content.non_conformitie_trans_key') }}</label>
-                            <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id_{{ $QualityDerogation->id }}">
+                            <select class="form-select" name="quality_non_conformitie_id" id="quality_non_conformitie_id_{{ $QualityDerogation->id }}">
                               <option value="null">-</option>
                               @foreach ($NonConformitysSelect as $item)
                               <option value="{{ $item->id }}"  @if($QualityDerogation->quality_non_conformitie_id == $item->id  ) Selected @endif>{{ $item->code }}</option>
                               @endforeach
                             </select>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label>{{ __('general_content.problem_description_trans_key') }}</label>
                             <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required>{{ $QualityDerogation->pb_descp }}</textarea>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label>{{ __('general_content.proposal_description_trans_key') }}</label>
                             <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required>{{ $QualityDerogation->proposal }}</textarea>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
                             <textarea class="form-control" rows="3" name="reply"  placeholder="..." required>{{ $QualityDerogation->reply }}</textarea>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label>{{ __('general_content.decision_description_trans_key') }}</label>
                             <textarea class="form-control" rows="3" name="decision"  placeholder="..." required>{{ $QualityDerogation->decision }}</textarea>
                           </div>
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -180,7 +174,7 @@
         <!-- /.row -->
         </div>
         <div class="row">
-          <div class="form-group col-md-5">
+          <div class="mb-3 col-md-5">
           {{ $QualityDerogations->links() }}
           </div>
         <!-- /.row -->
@@ -190,37 +184,30 @@
       <form method="POST" action="{{ route('quality.derogation.create')}}" >  
         <x-adminlte-card title="{{ __('general_content.new_derogation_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-row">
-            <div class="form-group col-md-2">
+          <div class="row gx-2">
+            <div class="mb-3 col-md-2">
               <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="{{ $codeDerogation }}">
               </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label for="label">{{__('general_content.label_trans_key') }}</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $codeDerogation }}" required>
               </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label for="type" class="col-form-label">{{ __('general_content.type_trans_key') }}</label>
-              <x-adminlte-input-switch name="type" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}"
-              data-on-color="teal" is-checked="true" />
+              <x-adminlte-input-switch name="type" is-checked="true" />
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                </div>
-                <select class="form-control" name="statu" id="statu">
+                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                <select class="form-select" name="statu" id="statu">
                   <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
                   <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
                   <option value="3">{{ __('general_content.validate_trans_key') }}</option>
@@ -228,25 +215,25 @@
                 </select>
               </div>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               @include('include.form.form-select-user',['userId' =>  null])
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               @include('include.form.form-select-nc',['ncId' =>  null])
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label>{{ __('general_content.problem_description_trans_key') }}</label>
               <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required></textarea>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label>{{ __('general_content.proposal_description_trans_key') }}</label>
               <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required></textarea>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
               <textarea class="form-control" rows="3" name="reply"  placeholder="..." required></textarea>
             </div>
-            <div class="form-group col-md-2">
+            <div class="mb-3 col-md-2">
               <label>{{ __('general_content.decision_description_trans_key') }}</label>
               <textarea class="form-control" rows="3" name="decision"  placeholder="..." required></textarea>
             </div>
@@ -254,7 +241,7 @@
           <!-- /.row -->
           </div>
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
         </x-adminlte-card>
       </form>

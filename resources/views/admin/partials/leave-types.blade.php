@@ -7,7 +7,7 @@
                         <tr>
                             <th>{{ __('general_content.code_trans_key') }}</th>
                             <th>{{ __('general_content.label_trans_key') }}</th>
-                            <th class="text-right">{{ __('general_content.leave_default_quota_trans_key') }}</th>
+                            <th class="text-end">{{ __('general_content.leave_default_quota_trans_key') }}</th>
                             <th>{{ __('general_content.leave_counts_against_balance_trans_key') }}</th>
                             <th>{{ __('general_content.status_trans_key') }}</th>
                             <th></th>
@@ -21,7 +21,7 @@
                                 {{ $LeaveType->code }}
                             </td>
                             <td>{{ $LeaveType->label }}</td>
-                            <td class="text-right">{{ number_format((float) $LeaveType->default_annual_quota, 2, ',', ' ') }}</td>
+                            <td class="text-end">{{ number_format((float) $LeaveType->default_annual_quota, 2, ',', ' ') }}</td>
                             <td>
                                 @if($LeaveType->counts_against_balance)
                                     <i class="fas fa-check text-success"></i>
@@ -42,23 +42,23 @@
                                     <form method="POST" action="{{ route('human.resources.leave.type.update', ['id' => $LeaveType->id]) }}">
                                         @csrf
                                         <div class="card-body">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.code_trans_key') }}</label>
                                                 <input type="text" class="form-control" name="code" maxlength="20" value="{{ $LeaveType->code }}" required>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.label_trans_key') }}</label>
                                                 <input type="text" class="form-control" name="label" value="{{ $LeaveType->label }}" required>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.color_trans_key') }}</label>
                                                 <input type="color" class="form-control" name="color" value="{{ $LeaveType->color ?? '#6c757d' }}">
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.leave_default_quota_trans_key') }}</label>
                                                 <input type="number" step="0.5" min="0" class="form-control" name="default_annual_quota" value="{{ $LeaveType->default_annual_quota }}">
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.ordre_trans_key') }}</label>
                                                 <input type="number" min="0" class="form-control" name="ordre" value="{{ $LeaveType->ordre }}">
                                             </div>
@@ -74,7 +74,7 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                         </div>
                                     </form>
                                 </x-adminlte-modal>
@@ -86,7 +86,7 @@
                     </tbody>
                 </table>
             </div>
-            <a href="{{ route('human.resources.leave.balances') }}" class="btn btn-flat btn-primary">
+            <a href="{{ route('human.resources.leave.balances') }}" class="btn rounded-0 btn-primary">
                 <i class="fas fa-calendar-check"></i> {{ __('general_content.leave_balances_trans_key') }}
             </a>
         </x-adminlte-card>
@@ -95,19 +95,19 @@
         <x-adminlte-card title="{{ __('general_content.leave_new_type_trans_key') }}" theme="secondary" maximizable>
             <form method="POST" action="{{ route('human.resources.leave.type.store') }}">
                 @csrf
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="code">{{ __('general_content.code_trans_key') }}</label>
                     <input type="text" class="form-control" name="code" id="code" maxlength="20" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="label">{{ __('general_content.label_trans_key') }}</label>
                     <input type="text" class="form-control" name="label" id="label" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="color">{{ __('general_content.color_trans_key') }}</label>
                     <input type="color" class="form-control" name="color" id="color" value="#6c757d">
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="default_annual_quota">{{ __('general_content.leave_default_quota_trans_key') }}</label>
                     <input type="number" step="0.5" min="0" class="form-control" name="default_annual_quota" id="default_annual_quota" value="0">
                 </div>
@@ -117,7 +117,7 @@
                     <label class="form-check-label" for="counts_new">{{ __('general_content.leave_counts_against_balance_trans_key') }}</label>
                 </div>
                 <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
             </form>
         </x-adminlte-card>

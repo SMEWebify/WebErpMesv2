@@ -45,39 +45,35 @@
                     <x-adminlte-modal id="StockLocationsProduct{{ $StockLocationsProduct->id }}" title="Update {{ $StockLocationsProduct->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                     <form method="POST" action="{{ route('products.stockline.update', ['id' => $StockLocationsProduct->id]) }}" >
                         @csrf
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="service_id">{{ __('general_content.user_management_trans_key') }}</label>
                             <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-list"></i></span>
-                            </div>
-                            <select class="form-control" name="user_id" id="user_id">
+                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            <select class="form-select" name="user_id" id="user_id">
                                 @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}" @if($StockLocationsProduct->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="mini_qty">{{ __('general_content.qty_mini_trans_key') }} :</label>
                             <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-times"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-times"></i></span>
                             <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1" step="1" value="{{ $StockLocationsProduct->mini_qty }}">
                             <input type="hidden" name="stock_locations_id"  id="stock_locations_id"  value="{{ $StockLocationsProduct->stock_locations_id }}">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                             <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $StockLocationsProduct->end_date }}">
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="addressing">{{ __('general_content.addressing_trans_key') }}</label>
                             <input type="text" class="form-control" name="addressing" id="addressing" placeholder="{{ __('general_content.addressing_trans_key') }}" value="{{ $StockLocationsProduct->addressing }}">
                         </div>
                         <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                     </form>
                     </x-adminlte-modal>

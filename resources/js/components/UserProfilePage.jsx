@@ -9,9 +9,7 @@ function Alert({ type, message, onDismiss }) {
     if (!message) return null;
     return (
         <div className={`alert alert-${type} alert-dismissible`}>
-            <button type="button" className="close" onClick={onDismiss}>
-                <span>&times;</span>
-            </button>
+            <button type="button" onClick={onDismiss} aria-label="Close" className="btn-close float-end"></button>
             {message}
         </div>
     );
@@ -45,35 +43,33 @@ function AccountCard({ initial, updateUrl, trans }) {
     }
 
     return (
-        <div className="card card-primary">
+        <div className="card card-primary mb-3">
             <div className="card-header">
                 <h3 className="card-title">{trans.about_setup ?? 'Account'}</h3>
                 <div className="card-tools">
-                    <button type="button" className="btn btn-tool" data-card-widget="maximize"><i className="fas fa-expand"></i></button>
+                    <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize"><i className="fas fa-expand"></i></button>
                 </div>
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
                     <Alert type="success" message={success} onDismiss={() => setSuccess('')} />
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.name ?? 'Name'}</label>
                         <input type="text" className="form-control" value={form.name} onChange={set('name')} />
                         {errors.name && <span className="text-danger">{errors.name[0]}</span>}
                     </div>
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.email ?? 'Email'}</label>
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-envelope"></i></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-envelope"></i></span>
                             <input type="email" className="form-control" value={form.email} onChange={set('email')} />
                         </div>
                         {errors.email && <span className="text-danger">{errors.email[0]}</span>}
                     </div>
                 </div>
                 <div className="card-footer">
-                    <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                        <i className="fas fa-save fa-lg mr-1"></i>
+                    <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                        <i className="fas fa-save fa-lg me-1"></i>
                         {saving ? (trans.saving ?? 'Saving…') : (trans.update ?? 'Update')}
                     </button>
                 </div>
@@ -121,11 +117,11 @@ function InformationCard({ initial, updateUrl, trans }) {
     }
 
     return (
-        <div className="card card-warning">
+        <div className="card card-warning mb-3">
             <div className="card-header">
                 <h3 className="card-title">{trans.personnal_information ?? 'Personal Information'}</h3>
                 <div className="card-tools">
-                    <button type="button" className="btn btn-tool" data-card-widget="maximize"><i className="fas fa-expand"></i></button>
+                    <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize"><i className="fas fa-expand"></i></button>
                 </div>
             </div>
             <form onSubmit={handleSubmit}>
@@ -133,31 +129,31 @@ function InformationCard({ initial, updateUrl, trans }) {
                     <Alert type="success" message={success} onDismiss={() => setSuccess('')} />
 
                     <div className="row">
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.personnal_phone ?? 'Personal Phone'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-phone"></i></span></div>
+                                <span className="input-group-text"><i className="fas fa-phone"></i></span>
                                 <input type="text" className="form-control" value={form.personnal_phone_number} onChange={set('personnal_phone_number')} />
                             </div>
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.personnal_email ?? 'Personal Email'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-envelope"></i></span></div>
+                                <span className="input-group-text"><i className="fas fa-envelope"></i></span>
                                 <input type="text" className="form-control" value={form.private_email} onChange={set('private_email')} />
                             </div>
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.born_date ?? 'Date of Birth'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="far fa-calendar-alt"></i></span></div>
+                                <span className="input-group-text"><i className="far fa-calendar-alt"></i></span>
                                 <input type="date" className="form-control" value={form.born_date} onChange={set('born_date')} />
                             </div>
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.nationality ?? 'Nationality'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-flag"></i></span></div>
+                                <span className="input-group-text"><i className="fas fa-flag"></i></span>
                                 <input type="text" className="form-control" value={form.nationality} onChange={set('nationality')} />
                             </div>
                         </div>
@@ -166,11 +162,11 @@ function InformationCard({ initial, updateUrl, trans }) {
                     <hr />
 
                     <div className="row">
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.gender ?? 'Gender'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-tags"></i></span></div>
-                                <select className="form-control" value={form.gender} onChange={set('gender')}>
+                                <span className="input-group-text"><i className="fas fa-tags"></i></span>
+                                <select className="form-select" value={form.gender} onChange={set('gender')}>
                                     <option value="">{trans.select_gender ?? '— Select —'}</option>
                                     <option value="1">{trans.male ?? 'Male'}</option>
                                     <option value="2">{trans.female ?? 'Female'}</option>
@@ -178,11 +174,11 @@ function InformationCard({ initial, updateUrl, trans }) {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.marital_status ?? 'Marital Status'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-tags"></i></span></div>
-                                <select className="form-control" value={form.marital_status} onChange={set('marital_status')}>
+                                <span className="input-group-text"><i className="fas fa-tags"></i></span>
+                                <select className="form-select" value={form.marital_status} onChange={set('marital_status')}>
                                     <option value="">{trans.select_marital_status ?? '— Select —'}</option>
                                     <option value="1">{trans.married ?? 'Married'}</option>
                                     <option value="2">{trans.single ?? 'Single'}</option>
@@ -197,22 +193,22 @@ function InformationCard({ initial, updateUrl, trans }) {
                     <hr />
 
                     <div className="row">
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.driving_license ?? 'Driving License'}</label>
                             <input type="text" className="form-control" value={form.driving_license} onChange={set('driving_license')} />
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.driving_license_exp_date ?? 'License Expiry'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="far fa-calendar-alt"></i></span></div>
+                                <span className="input-group-text"><i className="far fa-calendar-alt"></i></span>
                                 <input type="date" className="form-control" value={form.driving_license_exp_date} onChange={set('driving_license_exp_date')} />
                             </div>
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.ssn_num ?? 'SSN'}</label>
                             <input type="text" className="form-control" value={form.ssn_num} onChange={set('ssn_num')} />
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.nic_num ?? 'NIC'}</label>
                             <input type="text" className="form-control" value={form.nic_num} onChange={set('nic_num')} />
                         </div>
@@ -223,29 +219,29 @@ function InformationCard({ initial, updateUrl, trans }) {
                     <hr />
 
                     <div className="row">
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.adress ?? 'Address'} 1</label>
                             <input type="text" className="form-control" value={form.address1} onChange={set('address1')} />
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.adress ?? 'Address'} 2</label>
                             <input type="text" className="form-control" value={form.address2} onChange={set('address2')} />
                         </div>
                     </div>
                     <div className="row">
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.city ?? 'City'}</label>
                             <input type="text" className="form-control" value={form.city} onChange={set('city')} />
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.postal_code ?? 'Postal Code'}</label>
                             <input type="text" className="form-control" value={form.postal_code} onChange={set('postal_code')} />
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.province ?? 'Province'}</label>
                             <input type="text" className="form-control" value={form.province} onChange={set('province')} />
                         </div>
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.country ?? 'Country'}</label>
                             <input type="text" className="form-control" value={form.country} onChange={set('country')} />
                         </div>
@@ -257,7 +253,7 @@ function InformationCard({ initial, updateUrl, trans }) {
 
                     <div className="row">
                         {['custom1', 'custom2', 'custom3', 'custom4'].map((f, i) => (
-                            <div key={f} className="form-group col-md-3">
+                            <div key={f} className="mb-3 col-md-3">
                                 <label>{trans.custom ?? 'Custom'} {i + 1}</label>
                                 <input type="text" className="form-control" value={form[f]} onChange={set(f)} />
                             </div>
@@ -273,8 +269,8 @@ function InformationCard({ initial, updateUrl, trans }) {
                     </div>
                 </div>
                 <div className="card-footer">
-                    <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                        <i className="fas fa-save fa-lg mr-1"></i>
+                    <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                        <i className="fas fa-save fa-lg me-1"></i>
                         {saving ? (trans.saving ?? 'Saving…') : (trans.update ?? 'Update')}
                     </button>
                 </div>

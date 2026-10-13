@@ -20,7 +20,7 @@
                                     <span class="me-3">#{{ $order->code }}</span>
                                     @php($status = $order->statu)
                                     @if(isset($orderStatusBadges[$status]))
-                                        <span class="badge badge-{{ $orderStatusBadges[$status] }}">{{ __($orderStatusLabels[$status]) }}</span>
+                                        <span class="badge text-bg-{{ $orderStatusBadges[$status] }}">{{ __($orderStatusLabels[$status]) }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -71,20 +71,20 @@
                                             <td>{{ $DocumentLine->VAT['rate'] }} %</td>
                                             <td>
                                                 @if(1 == $DocumentLine->delivery_status)
-                                                    <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>
+                                                    <span class="badge text-bg-info">{{ __('general_content.not_delivered_trans_key') }}</span>
                                                 @endif
                                                 @if(2 == $DocumentLine->delivery_status)
-                                                    <a href="#" data-toggle="modal" data-target="#modalDeliveryFor{{ $DocumentLine->id }}">
-                                                        <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modalDeliveryFor{{ $DocumentLine->id }}">
+                                                        <span class="badge text-bg-warning">{{ __('general_content.partly_delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
                                                     </a>
                                                 @endif
                                                 @if(3 == $DocumentLine->delivery_status)
-                                                    <a href="#" data-toggle="modal" data-target="#modalDeliveryFor{{ $DocumentLine->id }}">
-                                                        <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modalDeliveryFor{{ $DocumentLine->id }}">
+                                                        <span class="badge text-bg-success">{{ __('general_content.delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
                                                     </a>
                                                 @endif
                                                 @if(4 == $DocumentLine->delivery_status)
-                                                    <span class="badge badge-primary">{{ __('general_content.delivered_without_dn_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
+                                                    <span class="badge text-bg-primary">{{ __('general_content.delivered_without_dn_trans_key') }} ({{ $DocumentLine->delivered_qty }})</span>
                                                 @endif
 
                                                 <x-adminlte-modal id="modalDeliveryFor{{ $DocumentLine->id }}" title="{{ __('general_content.deliverys_notes_list_trans_key') }}" theme="info" icon="fas fa-bolt" size="lg" disable-animations>
@@ -102,13 +102,13 @@
                                             </td>
                                             <td>
                                                 @if(1 == $DocumentLine->invoice_status)
-                                                    <span class="badge badge-info">{{ __('general_content.not_invoiced_trans_key') }}</span>
+                                                    <span class="badge text-bg-info">{{ __('general_content.not_invoiced_trans_key') }}</span>
                                                 @endif
                                                 @if(2 == $DocumentLine->invoice_status)
-                                                    <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>
+                                                    <span class="badge text-bg-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>
                                                 @endif
                                                 @if(3 == $DocumentLine->invoice_status)
-                                                    <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>
+                                                    <span class="badge text-bg-success">{{ __('general_content.invoiced_trans_key') }}</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -165,7 +165,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <h3 class="h6">{{ $Factory->name }}</h3>
-                                    @if($Factory->picture)
+                                    @if($Factory->hasPictureFile())
                                         <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" width="64" class="logo"/>
                                     @endif
                                 </div>
@@ -218,30 +218,28 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card mb-3">
                         @if($order->Rating->isEmpty())
                             <form action="{{ route('order.ratings.store') }}" method="POST">
                                 @csrf
                                 <div class="card-body">
                                     <input type="hidden" name="orders_id" value="{{ $order->id }}">
                                     <input type="hidden" name="companies_id" value="{{ $order->companies_id }}">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
                                         <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
-                                            </div>
-                                            <select name="rating" id="rating" class="form-control">
+                                            <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
+                                            <select name="rating" id="rating" class="form-select">
                                                 @for ($i = 1; $i <= 5; $i++)
                                                     <option value="{{ $i }}">{{ $i }}</option>
                                                 @endfor
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <x-FormTextareaComment comment="" />
                                     </div>
-                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
+                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
                                 </div>
                             </form>
                         @else
@@ -251,9 +249,9 @@
                                 <div>
                                     @for ($i = 1; $i <= 5; $i++)
                                         @if ($i <= ($Rating->rating ?? 0))
-                                            <span class="badge badge-warning">&#9733;</span>
+                                            <span class="badge text-bg-warning">&#9733;</span>
                                         @else
-                                            <span class="badge badge-info">&#9734;</span>
+                                            <span class="badge text-bg-info">&#9734;</span>
                                         @endif
                                     @endfor
                                 </div>

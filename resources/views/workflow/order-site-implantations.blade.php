@@ -3,10 +3,10 @@
         <form method="POST" action="{{ route('orders.site.implantation.store', ['order' => $Order->id, 'site' => $OrderSite->id]) }}">
             @csrf
             <div class="row">
-                <div class="form-group col-md-5">
+                <div class="mb-3 col-md-5">
                     <input type="text" name="name" class="form-control" placeholder="{{ __('general_content.name_trans_key') }}">
                 </div>
-                <div class="form-group col-md-5">
+                <div class="mb-3 col-md-5">
                     <input type="text" name="description" class="form-control" placeholder="{{ __('general_content.description_trans_key') }}">
                 </div>
                 <div class="col-md-2">

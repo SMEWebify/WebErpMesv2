@@ -8,18 +8,18 @@ import { formatDate } from '../utils';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',     label: 'new' },
-    2: { badge: 'badge-warning',  label: 'assigned' },
-    3: { badge: 'badge-primary',  label: 'in_progress' },
-    4: { badge: 'badge-success',  label: 'converted' },
-    5: { badge: 'badge-danger',   label: 'lost' },
+    1: { badge: 'text-bg-info',     label: 'new' },
+    2: { badge: 'text-bg-warning',  label: 'assigned' },
+    3: { badge: 'text-bg-primary',  label: 'in_progress' },
+    4: { badge: 'text-bg-success',  label: 'converted' },
+    5: { badge: 'text-bg-danger',   label: 'lost' },
 };
 
 const PRIORITY_CONFIG = {
-    1: { badge: 'badge-danger',   label: 'burning' },
-    2: { badge: 'badge-warning',  label: 'hot' },
-    3: { badge: 'badge-primary',  label: 'lukewarm' },
-    4: { badge: 'badge-success',  label: 'cold' },
+    1: { badge: 'text-bg-danger',   label: 'burning' },
+    2: { badge: 'text-bg-warning',  label: 'hot' },
+    3: { badge: 'text-bg-primary',  label: 'lukewarm' },
+    4: { badge: 'text-bg-success',  label: 'cold' },
 };
 
 const STATUS_COLORS = {
@@ -111,7 +111,7 @@ function DonutChart({ data, trans }) {
             </svg>
             <div className="mt-1" style={{ fontSize: '0.72rem' }}>
                 {slices.map((s, i) => (
-                    <span key={i} className="mr-2" style={{ color: s.color, fontWeight: hovered === i ? 700 : 400 }}>
+                    <span key={i} className="me-2" style={{ color: s.color, fontWeight: hovered === i ? 700 : 400 }}>
                         ● {trans[STATUS_CONFIG[s.statu]?.label] ?? s.statu}
                     </span>
                 ))}
@@ -121,7 +121,7 @@ function DonutChart({ data, trans }) {
 }
 
 function PriorityBadge({ priority, trans }) {
-    const cfg   = PRIORITY_CONFIG[priority] ?? { badge: 'badge-secondary', label: String(priority) };
+    const cfg   = PRIORITY_CONFIG[priority] ?? { badge: 'text-bg-secondary', label: String(priority) };
     const label = trans[cfg.label] ?? cfg.label;
     return <span className={`badge ${cfg.badge}`}>{label}</span>;
 }
@@ -134,7 +134,7 @@ function PriorityFilter({ active, onToggle, trans }) {
                 const isActive = active.includes(pid);
                 return (
                     <button key={pid}
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${isActive ? cfg.badge.replace(/^(badge|text-bg)-/, 'btn-') : 'btn-outline-secondary'}`}
                         onClick={() => onToggle(pid)}
                     >
                         {trans[cfg.label] ?? cfg.label}
@@ -154,10 +154,10 @@ function DashboardTab({ kpi, chart, byCompany, byPriority, byUser, trans }) {
         <div className="row">
             {/* Donut chart by status */}
             <div className="col-md-3">
-                <div className="card card-teal">
-                    <div className="card-header bg-teal">
+                <div className="card card-teal mb-3">
+                    <div className="card-header text-bg-teal">
                         <h3 className="card-title text-white">
-                            <i className="fas fa-chart-pie mr-1" />{trans.statistics ?? 'Statistics'}
+                            <i className="fas fa-chart-pie me-1" />{trans.statistics ?? 'Statistics'}
                         </h3>
                     </div>
                     <div className="card-body d-flex justify-content-center">
@@ -165,18 +165,18 @@ function DashboardTab({ kpi, chart, byCompany, byPriority, byUser, trans }) {
                     </div>
                 </div>
 
-                <div className="small-box bg-purple" style={{ overflow: 'hidden' }}>
+                <div className="small-box text-bg-violet" style={{ overflow: 'hidden' }}>
                     <div className="inner">
                         <h3>{kpi.count}</h3>
                         <p style={{ fontSize: '0.78rem' }}>{trans.lead_count ?? 'Leads'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-chart-bar" /></div>
+                    <i className="small-box-icon fas fa-chart-bar" aria-hidden="true" />
                 </div>
             </div>
 
             {/* By company */}
             <div className="col-md-3">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header bg-secondary">
                         <h3 className="card-title text-white" style={{ fontSize: '0.82rem' }}>
                             {trans.by_company ?? 'By company'}
@@ -210,7 +210,7 @@ function DashboardTab({ kpi, chart, byCompany, byPriority, byUser, trans }) {
 
             {/* By priority */}
             <div className="col-md-2">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header bg-warning">
                         <h3 className="card-title text-white" style={{ fontSize: '0.82rem' }}>
                             {trans.by_priority ?? 'By priority'}
@@ -238,8 +238,8 @@ function DashboardTab({ kpi, chart, byCompany, byPriority, byUser, trans }) {
 
             {/* By user */}
             <div className="col-md-4">
-                <div className="card">
-                    <div className="card-header bg-orange">
+                <div className="card mb-3">
+                    <div className="card-header text-bg-orange">
                         <h3 className="card-title text-white" style={{ fontSize: '0.82rem' }}>
                             {trans.by_user ?? 'By user'}
                         </h3>
@@ -341,13 +341,13 @@ function LeadCards({ items, loading, trans }) {
             {items.map(l => {
                 const sCfg = STATUS_CONFIG[l.statu]   ?? {};
                 const pCfg = PRIORITY_CONFIG[l.priority] ?? {};
-                const bg   = sCfg.badge?.replace('badge-', 'bg-') ?? 'bg-secondary';
+                const bg   = sCfg.badge?.replace(/^(badge|text-bg)-/, 'bg-') ?? 'bg-secondary';
                 return (
                     <div key={l.id} className="col-md-3 mb-3">
-                        <div className="card h-100">
+                        <div className="card h-100 mb-3">
                             <div className={`card-header ${bg} py-2`}>
                                 <div className="d-flex align-items-center justify-content-between">
-                                    <span className="text-white font-weight-bold text-truncate" style={{ fontSize: '0.82rem' }}>
+                                    <span className="text-white fw-bold text-truncate" style={{ fontSize: '0.82rem' }}>
                                         {l.companie?.label ?? '—'}
                                     </span>
                                     <span className={`badge ${pCfg.badge}`} style={{ fontSize: '0.65rem' }}>
@@ -375,7 +375,7 @@ function LeadCards({ items, loading, trans }) {
                                 <span className="text-white" style={{ fontSize: '0.72rem' }}>
                                     {l.user?.name ?? '—'}
                                 </span>
-                                <a href={l.url} className="btn btn-xs btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
+                                <a href={l.url} className="btn btn-sm btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
                                     <i className="fas fa-eye" />
                                 </a>
                             </div>
@@ -425,22 +425,22 @@ function KanbanBoard({ endpoints, trans }) {
         <div className="d-flex" style={{ overflowX: 'auto', gap: '0.75rem', paddingBottom: '0.5rem' }}>
             {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
                 const statusId     = Number(id);
-                const bg           = cfg.badge.replace('badge-', 'bg-');
+                const bg           = cfg.badge.replace(/^(badge|text-bg)-/, 'bg-');
                 const colItems     = items.filter(l => l.statu === statusId);
                 const isDropTarget = dragOver === statusId;
                 return (
                     <div key={statusId}
-                        className="card flex-shrink-0"
+                        className="card flex-shrink-0 mb-3"
                         style={{ minWidth: 200, maxWidth: 240, width: '100%', border: isDropTarget ? '2px dashed #007bff' : undefined }}
                         onDragOver={e => handleDragOver(e, statusId)}
                         onDrop={() => handleDrop(statusId)}
                         onDragLeave={() => setDragOver(null)}
                     >
                         <div className={`card-header py-1 d-flex justify-content-between align-items-center ${bg}`}>
-                            <span className="text-white font-weight-bold" style={{ fontSize: '0.82rem' }}>
+                            <span className="text-white fw-bold" style={{ fontSize: '0.82rem' }}>
                                 {trans[cfg.label] ?? cfg.label}
                             </span>
-                            <span className="badge badge-light">{colItems.length}</span>
+                            <span className="badge text-bg-light">{colItems.length}</span>
                         </div>
                         <div className="card-body p-2" style={{ maxHeight: 440, overflowY: 'auto' }}>
                             {colItems.map(l => (
@@ -451,7 +451,7 @@ function KanbanBoard({ endpoints, trans }) {
                                     style={{ cursor: 'grab', opacity: dragItem?.id === l.id ? 0.4 : 1 }}
                                 >
                                     <div className="card-body p-2">
-                                        <a href={l.url} className="font-weight-bold text-primary d-block mb-1"
+                                        <a href={l.url} className="fw-bold text-primary d-block mb-1"
                                             style={{ fontSize: '0.8rem' }}
                                             onClick={e => e.stopPropagation()}>
                                             {l.companie?.label ?? `#${l.id}`}
@@ -524,14 +524,14 @@ function CreateModal({ endpoints, trans, onClose }) {
                     <div className="modal-content">
                         <div className="modal-header bg-success">
                             <h5 className="modal-title text-white">{trans.new_lead ?? 'New lead'}</h5>
-                            <button className="close text-white" onClick={onClose}><span>×</span></button>
+                            <button onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <div className="modal-body">
                             <div className="row">
                                 {/* Company */}
                                 <div className="col-12 mb-2">
                                     <label className="mb-0 small">{trans.company ?? 'Company'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_id ? 'is-invalid' : ''}`}
                                         value={form.companies_id} onChange={e => {
                                             set('companies_id', e.target.value);
                                             set('companies_addresses_id', '');
@@ -547,7 +547,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Address */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.address_select ?? 'Address'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
                                         value={form.companies_addresses_id}
                                         onChange={e => set('companies_addresses_id', e.target.value)}
                                         disabled={!form.companies_id}>
@@ -559,7 +559,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Contact */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.contact_select ?? 'Contact'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
                                         value={form.companies_contacts_id}
                                         onChange={e => set('companies_contacts_id', e.target.value)}
                                         disabled={!form.companies_id}>
@@ -571,7 +571,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* User */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.user ?? 'User'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.user_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.user_id ? 'is-invalid' : ''}`}
                                         value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                                         <option value="">—</option>
                                         {(selectData?.users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
@@ -581,7 +581,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Priority */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.priority ?? 'Priority'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.priority ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.priority ? 'is-invalid' : ''}`}
                                         value={form.priority} onChange={e => set('priority', e.target.value)}>
                                         {Object.entries(PRIORITY_CONFIG).map(([id, cfg]) => (
                                             <option key={id} value={id}>{trans[cfg.label] ?? cfg.label}</option>
@@ -615,7 +615,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {trans.close ?? 'Close'}
                             </button>
                             <button className="btn btn-success btn-sm" onClick={save} disabled={saving}>
-                                <i className="fas fa-save mr-1" />
+                                <i className="fas fa-save me-1" />
                                 {saving ? '…' : (trans.submit ?? 'Submit')}
                             </button>
                         </div>
@@ -710,9 +710,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control"
                         placeholder={trans.search ?? 'Search…'}
                         value={search}
@@ -745,7 +743,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
 
                 {/* New lead */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_lead ?? 'New lead'}
+                    <i className="fas fa-plus me-1" />{trans.new_lead ?? 'New lead'}
                 </button>
             </div>
 
@@ -796,7 +794,7 @@ export default function LeadsIndex({ kpi, chart, byCompany, byPriority, byUser, 
     const locale = trans.locale ?? 'fr-FR';
 
     return (
-        <div className="card card-outline card-primary">
+        <div className="card card-outline card-primary mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

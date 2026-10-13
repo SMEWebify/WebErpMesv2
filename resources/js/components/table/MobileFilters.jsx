@@ -26,10 +26,10 @@ export default function MobileFilters({ count = 0, trans = {}, children }) {
                 aria-expanded={open}
                 onClick={() => setOpen(o => !o)}
             >
-                <i className="fas fa-filter mr-1" />
+                <i className="fas fa-filter me-1" />
                 {trans.filters ?? 'Filtres'}
-                {count > 0 && <span className="badge badge-primary ml-1">{count}</span>}
-                <i className={`fas fa-chevron-${open ? 'up' : 'down'} ml-1`} />
+                {count > 0 && <span className="badge text-bg-primary ms-1">{count}</span>}
+                <i className={`fas fa-chevron-${open ? 'up' : 'down'} ms-1`} />
             </button>
             {open && (
                 <div className="wem-mobile-filters w-100 d-flex flex-column" style={{ gap: '0.5rem' }}>

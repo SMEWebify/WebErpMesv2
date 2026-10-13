@@ -89,30 +89,30 @@ export default function AccountingPeriodsApp({ endpoints }) {
         <div className="row">
             {/* Formulaire de verrouillage */}
             <div className="col-md-4">
-                <div className="card card-secondary">
+                <div className="card card-secondary mb-3">
                     <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-lock mr-2"></i>Verrouiller une période</h3>
+                        <h3 className="card-title"><i className="fas fa-lock me-2"></i>Verrouiller une période</h3>
                     </div>
                     <div className="card-body">
                         {error && <div className="alert alert-danger alert-dismissible">
                             {error}
-                            <button type="button" className="close" onClick={() => setError(null)}><span>&times;</span></button>
+                            <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                         </div>}
                         <form onSubmit={handleLock}>
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>Année</label>
-                                <select className="form-control" value={year} onChange={e => setYear(+e.target.value)}>
+                                <select className="form-select" value={year} onChange={e => setYear(+e.target.value)}>
                                     {years.map(y => <option key={y} value={y}>{y}</option>)}
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>Mois</label>
-                                <select className="form-control" value={month} onChange={e => setMonth(+e.target.value)}>
+                                <select className="form-select" value={month} onChange={e => setMonth(+e.target.value)}>
                                     {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
                                 </select>
                             </div>
-                            <button type="submit" className="btn btn-danger btn-block" disabled={working}>
-                                <i className="fas fa-lock mr-2"></i>
+                            <button type="submit" className="btn btn-danger w-100" disabled={working}>
+                                <i className="fas fa-lock me-2"></i>
                                 {working ? 'En cours…' : 'Verrouiller'}
                             </button>
                         </form>
@@ -122,14 +122,14 @@ export default function AccountingPeriodsApp({ endpoints }) {
 
             {/* Liste des périodes verrouillées */}
             <div className="col-md-8">
-                <div className="card card-primary">
+                <div className="card card-primary mb-3">
                     <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-calendar-times mr-2"></i>Périodes verrouillées</h3>
+                        <h3 className="card-title"><i className="fas fa-calendar-times me-2"></i>Périodes verrouillées</h3>
                     </div>
                     <div className="card-body p-0">
                         {loading ? (
                             <div className="text-center py-4">
-                                <i className="fas fa-spinner fa-spin mr-2"></i>Chargement…
+                                <i className="fas fa-spinner fa-spin me-2"></i>Chargement…
                             </div>
                         ) : periods.length === 0 ? (
                             <div className="text-center text-muted py-4">
@@ -138,26 +138,26 @@ export default function AccountingPeriodsApp({ endpoints }) {
                             </div>
                         ) : (
                             <table className="table table-hover mb-0">
-                                <thead className="thead-light">
+                                <thead className="table-light">
                                     <tr>
                                         <th>Période</th>
                                         <th>Verrouillé par</th>
                                         <th>Le</th>
-                                        <th className="text-right">Action</th>
+                                        <th className="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {periods.map(p => (
                                         <tr key={`${p.year}-${p.month}`}>
                                             <td>
-                                                <span className="badge badge-danger p-2" style={{ fontSize: '0.9em' }}>
-                                                    <i className="fas fa-lock mr-1"></i>
+                                                <span className="badge text-bg-danger p-2" style={{ fontSize: '0.9em' }}>
+                                                    <i className="fas fa-lock me-1"></i>
                                                     {monthLabel(p.month, p.year)}
                                                 </span>
                                             </td>
                                             <td>{p.locked_by_name ?? '—'}</td>
                                             <td>{p.locked_at}</td>
-                                            <td className="text-right">
+                                            <td className="text-end">
                                                 <button
                                                     className="btn btn-sm btn-outline-secondary"
                                                     onClick={() => handleUnlock(p)}

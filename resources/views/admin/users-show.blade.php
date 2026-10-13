@@ -11,47 +11,47 @@
     <div class="col-md-3">
         <x-adminlte-card theme="primary" theme-mode="outline">
             <div class="text-center">
-                <img class="profile-user-img img-fluid img-circle" src="{{ $User->adminlte_image() }}" alt="User profile picture">
+                <img class="profile-user-img img-fluid rounded-circle" src="{{ $User->adminlte_image() }}" alt="User profile picture">
             </div>
-            <h3 class="profile-username text-center">{{ $User->name }}</h3>
+            <h3 class="fs-4 mt-1 text-center">{{ $User->name }}</h3>
             <p class="text-muted text-center">
                 @if(!empty($User->getRoleNames()))
                 @foreach($User->getRoleNames() as $v)
-                    <label class="badge badge-success">{{ $v }}</label>
+                    <label class="badge text-bg-success">{{ $v }}</label>
                 @endforeach
                 @endif
             </p>
             <p class="text-muted text-center">{{ $User->email }}</p>
-            <ul class="list-group list-group-unbordered mb-3">
-                <li class="list-group-item"><b>{{ __('general_content.leads_trans_key') }}</b> <a class="float-right">{{ $User->getLeadsCountAttribute() }}</a></li> 
-                <li class="list-group-item"><b>{{ __('general_content.quotes_list_trans_key') }}</b> <a class="float-right">{{ $User->getQuotesCountAttribute() }}</a></li>
-                <li class="list-group-item"><b>{{ __('general_content.orders_list_trans_key') }}</b> <a class="float-right">{{ $User->getOrdersCountAttribute() }}</a></li>
-                <li class="list-group-item"><b>{{ __('general_content.non_conformities_trans_key') }}</b> <a class="float-right">{{ $User->getNcCountAttribute() }}</a></li> 
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item"><b>{{ __('general_content.leads_trans_key') }}</b> <a class="float-end">{{ $User->getLeadsCountAttribute() }}</a></li> 
+                <li class="list-group-item"><b>{{ __('general_content.quotes_list_trans_key') }}</b> <a class="float-end">{{ $User->getQuotesCountAttribute() }}</a></li>
+                <li class="list-group-item"><b>{{ __('general_content.orders_list_trans_key') }}</b> <a class="float-end">{{ $User->getOrdersCountAttribute() }}</a></li>
+                <li class="list-group-item"><b>{{ __('general_content.non_conformities_trans_key') }}</b> <a class="float-end">{{ $User->getNcCountAttribute() }}</a></li> 
             </ul>
         </x-adminlte-card>
 
         <x-adminlte-card title="{{ __('general_content.about_trans_key') }} {{ $User->name }}" theme="primary" maximizable>
             @if($User->private_email)
-            <strong><i class="fas fa-envelope  mr-1"></i>{{__('general_content.personnal_mail_trans_key') }}</strong>
+            <strong><i class="fas fa-envelope me-1"></i>{{__('general_content.personnal_mail_trans_key') }}</strong>
             <p class="text-muted">{{ $User->private_email }}</p>
             <hr>
             @endif
             @if($User->personnal_phone_number)
-            <strong><i class="fas fa-phone  mr-1"></i>{{__('general_content.personnal_phone_trans_key') }}</strong>
+            <strong><i class="fas fa-phone me-1"></i>{{__('general_content.personnal_phone_trans_key') }}</strong>
             <p class="text-muted">{{ $User->personnal_phone_number }}</p>
             <hr>
             @endif
             @if($User->born_date)
-            <strong><i class="far fa-calendar-alt  mr-1"></i>{{ __('general_content.born_date_trans_key') }}</strong>
+            <strong><i class="far fa-calendar-alt me-1"></i>{{ __('general_content.born_date_trans_key') }}</strong>
             <p class="text-muted">{{ $User->born_date }}</p>
             <hr>
             @endif
             @if($User->nationality)
-            <strong><i class="fas fa-flag mr-1"></i>{{__('general_content.nationality_trans_key') }}</strong>
+            <strong><i class="fas fa-flag me-1"></i>{{__('general_content.nationality_trans_key') }}</strong>
             <p class="text-muted">{{ $User->nationality }}</p>
             <hr>
             @endif
-            <strong><i class="fas fa-map-marker-alt mr-1"></i>{{__('general_content.user_location_trans_key') }}</strong>
+            <strong><i class="fas fa-map-marker-alt me-1"></i>{{__('general_content.user_location_trans_key') }}</strong>
             <p class="text-muted">{{ $User->address1 }}</p>
             <p class="text-muted">{{ $User->address2 }}</p>
             <p class="text-muted">{{ $User->postal_code }} {{ $User->city }} </p>
@@ -62,12 +62,10 @@
             <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                    </div>
+                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     <input type="date" class="form-control" name="banned_until" id="banned_until" value="{{ $User->banned_until }}">
                 </div>
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
             </form>
         </x-adminlte-card>
         @endif
@@ -77,13 +75,13 @@
     <div class="col-md-9">
         
         @include('include.alert-result')
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">{{__('general_content.hr_information_trans_key') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contract" data-toggle="tab">{{__('general_content.contract_trans_key') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#leave" data-toggle="tab">{{__('general_content.leave_balances_trans_key') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#documents" data-toggle="tab">{{__('general_content.documents_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#activity" data-bs-toggle="tab">{{__('general_content.hr_information_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contract" data-bs-toggle="tab">{{__('general_content.contract_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#leave" data-bs-toggle="tab">{{__('general_content.leave_balances_trans_key') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#documents" data-bs-toggle="tab">{{__('general_content.documents_trans_key') }}</a></li>
                 </ul>
             </div>
             <div class="card-body">
@@ -92,35 +90,29 @@
                         <form method="POST" action="{{ route('human.resources.update.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="job_title">{{ __('general_content.job_title_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         <input type="text" class="form-control"  name="job_title" id="job_title" placeholder="{{ __('general_content.job_title_trans_key') }}" value="{{ $User->job_title }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="payroll_number">{{ __('general_content.payroll_matricule_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                         <input type="text" class="form-control" name="payroll_number" id="payroll_number" maxlength="50" placeholder="{{ __('general_content.payroll_matricule_trans_key') }}" value="{{ $User->payroll_number }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
+                                <!-- /.mb-3 -->
                                 @can('your-company-menu')
                                 @if(auth()->id() !== $User->id)
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="role">{{__('general_content.role_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
-                                        <select class="form-control" name="role" id="role">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        <select class="form-select" name="role" id="role">
                                             @forelse ($Roles as $Role)
                                             <option value="{{ $Role->name }}" @if($User->hasRole($Role->name)) Selected @endif>{{ $Role->name }}</option>
                                             @empty
@@ -129,66 +121,54 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
+                                <!-- /.mb-3 -->
                                 @endif
                                 @endcan
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="pay_grade">{{ __('general_content.pay_grade_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                        </div>
+                                        <span class="input-group-text">{{ $Factory->curency }}</span>
                                         <input type="number" class="form-control"  name="pay_grade" id="pay_grade" placeholder="{{ __('general_content.pay_grade_trans_key') }}" value="{{ $User->pay_grade }}" min="0">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="work_station_id">{{ __('general_content.work_station_id_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         <input type="text" class="form-control"  name="work_station_id" id="work_station_id" placeholder="{{ __('general_content.work_station_id_trans_key') }}" value="{{ $User->work_station_id }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="joined_date">{{ __('general_content.joined_date_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                         <input type="date" class="form-control"   name="joined_date"  id="joined_date" value="{{ $User->joined_date }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="confirmation_date">{{ __('general_content.confirmation_date_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                         <input type="date" class="form-control"   name="confirmation_date"  id="confirmation_date" value="{{ $User->confirmation_date }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="termination_date">{{__('general_content.termination_date_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                         <input type="date" class="form-control"   name="termination_date"  id="termination_date" value="{{ $User->termination_date }}">
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="employment_status">{{ __('general_content.employment_statu_trans_key') }}</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
-                                        <select class="form-control" name="employment_status" id="employment_status">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        <select class="form-select" name="employment_status" id="employment_status">
                                             <option value="1" @if($User->employment_status == 1) Selected @endif>{{__('general_content.undefined_trans_key') }}</option>
                                             <option value="2" @if($User->employment_status == 2) Selected @endif>{{__('general_content.worker_trans_key') }}</option>
                                             <option value="3" @if($User->employment_status == 3) Selected @endif>{{__('general_content.employee_trans_key') }}</option>
@@ -196,28 +176,24 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="supervisor_id">{{__('general_content.supervisor_trans_key') }}</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                        </div>
-                                        <select class="form-control" name="supervisor_id" id="supervisor_id">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <select class="form-select" name="supervisor_id" id="supervisor_id">
                                             @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}" @if($User->supervisor_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-industry"></i></span>
-                                        </div>
-                                        <select class="form-control" name="section_id" id="section_id">
+                                        <span class="input-group-text"><i class="fas fa-industry"></i></span>
+                                        <select class="form-select" name="section_id" id="section_id">
                                             @forelse ($SectionsSelect as $item)
                                             <option value="{{ $item->id }}" @if($User->section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                             @empty
@@ -226,23 +202,21 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
+                                <!-- /.mb-3 -->
+                                <div class="mb-3">
                                     <label for="statu">{{__('general_content.active_trans_key') }}</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
-                                        <select class="form-control" name="statu" id="statu">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        <select class="form-select" name="statu" id="statu">
                                             <option value="1" @if($User->statu == 1) Selected @endif>{{__('general_content.active_trans_key') }}</option>
                                             <option value="2" @if($User->statu == 2) Selected @endif>{{__('general_content.inactive_trans_key') }}</option>
                                         </select>
                                     </div>
                                 </div>
-                                <!-- /.form-group -->
+                                <!-- /.mb-3 -->
                             </div>
                             <div class="card-footer">
-                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </div>
                         </form>
                     </div>
@@ -264,9 +238,9 @@
                                             @forelse ($UserEmploymentContracts as $UserEmploymentContract)
                                             <tr>
                                                 <td>
-                                                    @if($UserEmploymentContract->statu == 1) <span class="badge badge-warning">{{__('general_content.on_trial_trans_key') }}</span> @endif
-                                                    @if($UserEmploymentContract->statu == 2)<span class="badge badge-success">{{__('general_content.asset_trans_key') }}</span> @endif
-                                                    @if($UserEmploymentContract->statu == 3)<span class="badge badge-danger">{{__('general_content.closed_trans_key') }}</span> @endif
+                                                    @if($UserEmploymentContract->statu == 1) <span class="badge text-bg-warning">{{__('general_content.on_trial_trans_key') }}</span> @endif
+                                                    @if($UserEmploymentContract->statu == 2)<span class="badge text-bg-success">{{__('general_content.asset_trans_key') }}</span> @endif
+                                                    @if($UserEmploymentContract->statu == 3)<span class="badge text-bg-danger">{{__('general_content.closed_trans_key') }}</span> @endif
                                                 </td>
                                                 <td>{{ $UserEmploymentContract->type_of_contract }}</td>
                                                 <td>{{ $UserEmploymentContract->start_date }}</td>
@@ -280,27 +254,23 @@
                                                             @csrf
                                                             <div class="card-body">
                                                                 <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
-                                                                <div class="form-group">
+                                                                <div class="mb-3">
                                                                     <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                        </div>
-                                                                        <select class="form-control" name="statu" id="statu">
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        <select class="form-select" name="statu" id="statu">
                                                                             <option value="1" @if($UserEmploymentContract->statu == 1  ) Selected @endif>{{__('general_content.on_trial_trans_key') }}</option>
                                                                             <option value="2" @if($UserEmploymentContract->statu == 2  ) Selected @endif>{{__('general_content.asset_trans_key') }}</option>
                                                                             <option value="3" @if($UserEmploymentContract->statu == 3  ) Selected @endif>{{__('general_content.closed_trans_key') }}</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="methods_section_id">{{__('general_content.section_concern_trans_key') }}:</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                        </div>
-                                                                        <select class="form-control" name="methods_section_id" id="methods_section_id">
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        <select class="form-select" name="methods_section_id" id="methods_section_id">
                                                                             @forelse ($SectionsSelect as $item)
                                                                             <option value="{{ $item->id }}" @if($UserEmploymentContract->methods_section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                                                             @empty
@@ -309,120 +279,98 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="signature_date">{{__('general_content.signature_date_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                                         <input type="date" class="form-control"   name="signature_date"  id="signature_date" value="{{ $UserEmploymentContract->signature_date }}">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="type_of_contract">{{__('general_content.type_of_contract_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                                         <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" value="{{ $UserEmploymentContract->type_of_contract }}" placeholder="{{__('general_content.type_of_contract_trans_key') }}">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="start_date">{{ __('general_content.start_date_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                                         <input type="date" class="form-control"   name="start_date"  id="start_date" value="{{ $UserEmploymentContract->start_date }}">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
                                                                         <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" value="{{ $UserEmploymentContract->duration_trial_period }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="start_date">{{ __('general_content.end_date_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                                         <input type="date" class="form-control"   name="end_date"  id="end_date" value="{{ $UserEmploymentContract->end_date }}" >
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="weekly_duration">{{__('general_content.weekly_duration_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-stopwatch">{{__('general_content.hour_trans_key') }}</i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-stopwatch">{{__('general_content.hour_trans_key') }}</i></span>
                                                                         <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="{{__('general_content.weekly_duration_trans_key') }}" value="{{ $UserEmploymentContract->weekly_duration }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="position">{{__('general_content.position_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                                         <input type="text" class="form-control"  name="position" id="position" placeholder="{{__('general_content.position_trans_key') }}" value="{{ $UserEmploymentContract->position }}">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="coefficient">{{__('general_content.coefficient_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                                         <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="{{__('general_content.coefficient_trans_key') }}"  value="{{ $UserEmploymentContract->coefficient }}">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="hourly_gross_salary">{{__('general_content.hourly_gross_salary_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                                        </div>
+                                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
                                                                         <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="{{__('general_content.hourly_gross_salary_trans_key') }}"  value="{{ $UserEmploymentContract->hourly_gross_salary }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="minimum_monthly_salary">{{__('general_content.minimum_monthly_salary_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                                        </div>
+                                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
                                                                         <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="{{__('general_content.minimum_monthly_salary_trans_key') }}"  value="{{ $UserEmploymentContract->minimum_monthly_salary }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
-                                                                <div class="form-group">
+                                                                <!-- /.mb-3 -->
+                                                                <div class="mb-3">
                                                                     <label for="annual_gross_salary">{{__('general_content.annual_gross_salary_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                                        </div>
+                                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
                                                                         <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="{{__('general_content.annual_gross_salary_trans_key') }}"  value="{{ $UserEmploymentContract->annual_gross_salary }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
-                                                                <!-- /.form-group -->
+                                                                <!-- /.mb-3 -->
                                                             </div>
                                                             <div class="card-footer">
-                                                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                             </div>
                                                         </form>
                                                     </x-adminlte-modal>
@@ -453,27 +401,23 @@
                                         @csrf
                                         <div class="card-body">
                                             <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                    </div>
-                                                    <select class="form-control" name="statu" id="statu">
+                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    <select class="form-select" name="statu" id="statu">
                                                         <option value="1">{{__('general_content.on_trial_trans_key') }}</option>
                                                         <option value="2">{{__('general_content.asset_trans_key') }}</option>
                                                         <option value="3">{{__('general_content.closed_trans_key') }}</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="methods_section_id">{{__('general_content.section_concern_trans_key') }}:</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                    </div>
-                                                    <select class="form-control" name="methods_section_id" id="methods_section_id">
+                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    <select class="form-select" name="methods_section_id" id="methods_section_id">
                                                         @forelse ($SectionsSelect as $item)
                                                         <option value="{{ $item->id }}">{{ $item->label }}</option>
                                                         @empty
@@ -482,120 +426,98 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="signature_date">{{__('general_content.signature_date_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                     <input type="date" class="form-control"   name="signature_date"  id="signature_date">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="type_of_contract">{{__('general_content.type_of_contract_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                     <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" placeholder="{{__('general_content.type_of_contract_trans_key') }}">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="start_date">{{ __('general_content.start_date_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                     <input type="date" class="form-control"   name="start_date"  id="start_date">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
                                                     <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" step="1" min="0">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="start_date">{{ __('general_content.end_date_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                                     <input type="date" class="form-control"   name="end_date"  id="end_date">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="weekly_duration">{{__('general_content.weekly_duration_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
                                                     <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="{{__('general_content.weekly_duration_trans_key') }}" step="1" min="0">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="position">{{__('general_content.position_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                     <input type="text" class="form-control"  name="position" id="position" placeholder="{{__('general_content.position_trans_key') }}">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="coefficient">{{__('general_content.coefficient_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                    </div>
+                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                     <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="{{__('general_content.coefficient_trans_key') }}">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="hourly_gross_salary">{{__('general_content.hourly_gross_salary_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                    </div>
+                                                    <span class="input-group-text">{{ $Factory->curency }}</span>
                                                     <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="{{__('general_content.hourly_gross_salary_trans_key') }}" step="1" min="0">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="minimum_monthly_salary">{{__('general_content.minimum_monthly_salary_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                    </div>
+                                                    <span class="input-group-text">{{ $Factory->curency }}</span>
                                                     <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="{{__('general_content.minimum_monthly_salary_trans_key') }}" step="1" min="0">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
-                                            <div class="form-group">
+                                            <!-- /.mb-3 -->
+                                            <div class="mb-3">
                                                 <label for="annual_gross_salary">{{__('general_content.annual_gross_salary_trans_key') }} :</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                    </div>
+                                                    <span class="input-group-text">{{ $Factory->curency }}</span>
                                                     <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="{{__('general_content.annual_gross_salary_trans_key') }}" step="1" min="0">
                                                 </div>
                                             </div>
-                                            <!-- /.form-group -->
+                                            <!-- /.mb-3 -->
                                         </div>
                                         <div class="card-footer">
-                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                         </div>
                                     </form>
                                 </x-adminlte-card>

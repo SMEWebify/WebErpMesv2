@@ -441,7 +441,7 @@ function Cell({ on, onClick, code, sub, children, w = 76 }) {
         <button type="button" onClick={onClick} title={`${code}${sub ? ' - ' + sub : ''}`} aria-pressed={on}
             className={`btn btn-sm p-1 d-flex flex-column align-items-center ${on ? 'btn-primary' : 'btn-light border'}`}
             style={{ width: w }}>
-            <div className="rounded bg-white w-100" style={{ height: 40 }}>{children}</div>
+            <div className="rounded bg-body w-100" style={{ height: 40 }}>{children}</div>
             <div className="fw-bold" style={{ letterSpacing: 1 }}>{code}</div>
             {sub && <div className="lh-1" style={{ fontSize: 9, opacity: 0.85 }}>{sub}</div>}
         </button>
@@ -449,7 +449,7 @@ function Cell({ on, onClick, code, sub, children, w = 76 }) {
 }
 function DimCard({ illu, label, children }) {
     return (
-        <div className="border rounded bg-light p-2 d-flex flex-column align-items-center gap-1" style={{ width: 136 }}>
+        <div className="border rounded bg-body-tertiary p-2 d-flex flex-column align-items-center gap-1" style={{ width: 136 }}>
             {illu && <div className="w-100" style={{ height: 40 }}>{illu}</div>}
             <div className="small text-muted text-center lh-sm">{label}</div>
             {children}
@@ -751,7 +751,7 @@ export default function ToolConfigurator({ storeUrl, indexUrl, currency = '€',
         <div className="row g-3">
             {/* ── Planches ── */}
             <div className="col-xl-8">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header py-2">
                         <div className="btn-group btn-group-sm" role="group">
                             {KINDS.map(([k, l, norm]) => (
@@ -836,7 +836,7 @@ export default function ToolConfigurator({ storeUrl, indexUrl, currency = '€',
 
             {/* ── Récapitulatif et création ── */}
             <div className="col-xl-4">
-                <div className="card" style={{ position: 'sticky', top: '0.5rem' }}>
+                <div className="card mb-3" style={{ position: 'sticky', top: '0.5rem' }}>
                     <div className="card-header py-2 d-flex align-items-center">
                         <h3 className="card-title mb-0">Nouvel outil</h3>
                         <button type="button" className="btn btn-sm btn-link ms-auto" onClick={reset}><i className="fas fa-undo me-1" />Vider</button>
@@ -913,7 +913,7 @@ export default function ToolConfigurator({ storeUrl, indexUrl, currency = '€',
                         {complete && (
                             <details className="small mb-3">
                                 <summary className="text-muted">Décodage enregistré en commentaire</summary>
-                                <pre className="small bg-light border rounded p-2 mt-1 mb-0" style={{ whiteSpace: 'pre-wrap' }}>{desc.lines.join('\n')}</pre>
+                                <pre className="small bg-body-tertiary border rounded p-2 mt-1 mb-0" style={{ whiteSpace: 'pre-wrap' }}>{desc.lines.join('\n')}</pre>
                             </details>
                         )}
 

@@ -39,7 +39,7 @@
     }
 }
 
-body.dark-mode #task-statu-app {
+[data-bs-theme="dark"] #task-statu-app {
     --ts-surface: #1f2637;
     --ts-surface-alt: #232b3d;
     --ts-border: #333c52;
@@ -589,7 +589,7 @@ body.dark-mode #task-statu-app {
     }
 }
 
-body.dark-mode #task-statu-app .ts-stage__canvas .wem-viewer-overlay {
+[data-bs-theme="dark"] #task-statu-app .ts-stage__canvas .wem-viewer-overlay {
     background-color: rgba(31, 38, 55, 0.88);
     color: var(--ts-ink-2);
 }

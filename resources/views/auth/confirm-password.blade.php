@@ -12,11 +12,9 @@
                    placeholder="{{ __('adminlte::adminlte.password') }}"
                    required autocomplete="current-password">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
-            </div>
 
             @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -25,7 +23,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+        <button type="submit" class="btn w-100 {{ config('adminlte.classes_auth_btn', 'rounded-0 btn-primary') }}">
             <span class="fas fa-sign-in-alt"></span>
             {{ __('Confirmer le mot de passe') }}
         </button>

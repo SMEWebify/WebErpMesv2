@@ -8,11 +8,11 @@ import { formatDate, formatCurrency } from '../utils';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-secondary',  label: 'draft' },
-    2: { badge: 'badge-primary',    label: 'send' },
-    3: { badge: 'badge-warning',    label: 'pending' },
-    4: { badge: 'badge-danger',     label: 'unpaid' },
-    5: { badge: 'badge-success',    label: 'paid' },
+    1: { badge: 'text-bg-secondary',  label: 'draft' },
+    2: { badge: 'text-bg-primary',    label: 'send' },
+    3: { badge: 'text-bg-warning',    label: 'pending' },
+    4: { badge: 'text-bg-danger',     label: 'unpaid' },
+    5: { badge: 'text-bg-success',    label: 'paid' },
 };
 
 const STATUS_COLORS = {
@@ -51,7 +51,7 @@ function ClientMini({ client, rank, trans }) {
             <span style={{ fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }} title={name}>
                 {name}
             </span>
-            <span className="badge badge-secondary" style={{ fontSize: '0.72rem' }}>
+            <span className="badge text-bg-secondary" style={{ fontSize: '0.72rem' }}>
                 {formatCurrency(client.total_amount, trans.currency, trans.locale)}
             </span>
         </div>
@@ -63,32 +63,32 @@ function KPICards({ kpi, topClients, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3 style={{ fontSize: '1.6rem' }}>{kpi.totalAmountFormatted}</h3>
                         <p>{trans.total_invoiced}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-file-invoice-dollar" /></div>
+                    <i className="small-box-icon fas fa-file-invoice-dollar" aria-hidden="true" />
                 </div>
                 <ClientMini client={clients[0]} rank={0} trans={trans} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.paymentRate} <sup style={{ fontSize: '1.2rem' }}>%</sup></h3>
                         <p>{trans.payment_rate}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-check-circle" /></div>
+                    <i className="small-box-icon fas fa-check-circle" aria-hidden="true" />
                 </div>
                 <ClientMini client={clients[1]} rank={1} trans={trans} />
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-danger">
+                <div className="small-box text-bg-danger">
                     <div className="inner">
                         <h3>{kpi.unpaidCount}</h3>
                         <p>{trans.unpaid_invoices} / {kpi.latePaymentRate}% {trans.late}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-exclamation-triangle" /></div>
+                    <i className="small-box-icon fas fa-exclamation-triangle" aria-hidden="true" />
                 </div>
                 <ClientMini client={clients[2]} rank={2} trans={trans} />
             </div>
@@ -319,7 +319,7 @@ function LineChart({ chartData, trans }) {
                     { color: CHART_BLUE,   dash: false, label: trans.invoice_forecast },
                     { color: CHART_ORANGE, dash: true,  label: trans.invoice_last_year },
                 ].map(({ color, dash, label }) => (
-                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: '#555' }}>
+                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: 'var(--bs-body-color)' }}>
                         <svg width="22" height="10">
                             <line x1="0" y1="5" x2="22" y2="5"
                                 stroke={color} strokeWidth="2"
@@ -343,9 +343,9 @@ function DashboardTab({ kpi, chartData, topClients, trans }) {
             <KPICards kpi={kpi} topClients={topClients} trans={trans} />
             <div className="row">
                 <div className="col-md-3">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-chart-pie mr-1" />{trans.statistiques}</h3>
+                            <h3 className="card-title"><i className="fas fa-chart-pie me-1" />{trans.statistiques}</h3>
                         </div>
                         <div className="card-body">
                             <PieChart chartData={chartData} trans={trans} />
@@ -353,9 +353,9 @@ function DashboardTab({ kpi, chartData, topClients, trans }) {
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <div className="card card-success">
+                    <div className="card card-success mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-chart-line mr-1" />{trans.monthly_recap}</h3>
+                            <h3 className="card-title"><i className="fas fa-chart-line me-1" />{trans.monthly_recap}</h3>
                         </div>
                         <div className="card-body">
                             <LineChart chartData={chartData} trans={trans} />
@@ -380,19 +380,19 @@ const LS_HIDDEN_COLS  = 'invoices_table_hidden_cols';
 const PDP_COLUMN_VISIBLE = false;
 
 const QONTO_LIFECYCLE_CONFIG = {
-    pending:      { badge: 'badge-secondary', label: 'Non déposée' },
-    submitted:    { badge: 'badge-info',      label: 'Émise (à payer)' },
-    acknowledged: { badge: 'badge-primary',   label: 'Accusé reçu' },
-    rejected:     { badge: 'badge-danger',    label: 'Rejetée' },
-    refused:      { badge: 'badge-danger',    label: 'Refusée' },
-    accepted:     { badge: 'badge-success',   label: 'Acceptée' },
-    paid:         { badge: 'badge-success',   label: 'Payée' },
-    canceled:     { badge: 'badge-warning',   label: 'Annulée chez Qonto' },
+    pending:      { badge: 'text-bg-secondary', label: 'Non déposée' },
+    submitted:    { badge: 'text-bg-info',      label: 'Émise (à payer)' },
+    acknowledged: { badge: 'text-bg-primary',   label: 'Accusé reçu' },
+    rejected:     { badge: 'text-bg-danger',    label: 'Rejetée' },
+    refused:      { badge: 'text-bg-danger',    label: 'Refusée' },
+    accepted:     { badge: 'text-bg-success',   label: 'Acceptée' },
+    paid:         { badge: 'text-bg-success',   label: 'Payée' },
+    canceled:     { badge: 'text-bg-warning',   label: 'Annulée chez Qonto' },
 };
 
 function QontoStatusBadge({ status }) {
     if (!status) return <span className="text-muted small">—</span>;
-    const cfg = QONTO_LIFECYCLE_CONFIG[status] ?? { badge: 'badge-secondary', label: status };
+    const cfg = QONTO_LIFECYCLE_CONFIG[status] ?? { badge: 'text-bg-secondary', label: status };
     return <span className={`badge ${cfg.badge}`} title="Statut de la facture chez Qonto">{cfg.label}</span>;
 }
 
@@ -411,7 +411,7 @@ function invoiceColumns(trans, pdpEnabled) {
         { key: 'status',     label: trans.status,     sortable: 'statu',
           render: inv => <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />, mobile: 'badge' },
         { key: 'lines',      label: trans.lines,      sortable: 'invoice_lines_count', align: 'center',
-          render: inv => <span className="badge badge-secondary">{inv.invoice_lines_count}</span> },
+          render: inv => <span className="badge text-bg-secondary">{inv.invoice_lines_count}</span> },
         { key: 'created_at', label: trans.created_at, sortable: true,
           filter: 'date' },
         { key: 'total',      label: trans.total,      sortable: 'total_amount', align: 'right', bold: true,
@@ -430,7 +430,7 @@ function invoiceColumns(trans, pdpEnabled) {
 function InvoiceActions({ inv, trans }) {
     return (
         <>
-            <a href={inv.url} className="btn btn-xs btn-info mr-1" title={trans.view}>
+            <a href={inv.url} className="btn btn-sm btn-info me-1" title={trans.view}>
                 <i className="fas fa-eye" />
             </a>
             {/* Un brouillon n'est pas émis : ni PDF légal ni Factur-X.
@@ -438,10 +438,10 @@ function InvoiceActions({ inv, trans }) {
                 des boutons qui mènent à une page d'erreur. */}
             {Number(inv.statu) !== 1 && (
                 <>
-                    <a href={inv.url_pdf} className="btn btn-xs btn-secondary mr-1" title="PDF" target="_blank" rel="noreferrer">
+                    <a href={inv.url_pdf} className="btn btn-sm btn-secondary me-1" title="PDF" target="_blank" rel="noreferrer">
                         <i className="fas fa-file-pdf" />
                     </a>
-                    <a href={inv.url_facturex} className="btn btn-xs btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
+                    <a href={inv.url_facturex} className="btn btn-sm btn-warning" title="Factur-X" target="_blank" rel="noreferrer">
                         <i className="fas fa-file-invoice" />
                     </a>
                 </>
@@ -468,10 +468,10 @@ function InvoicesTable({ invoices, loading, sortField, sortAsc, onSort, trans, q
             mobileActions={inv => Number(inv.statu) !== 1 && (
                 <div className="d-flex" style={{ gap: '0.5rem' }}>
                     <a href={inv.url_pdf} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
-                        <i className="fas fa-file-pdf mr-1" />PDF
+                        <i className="fas fa-file-pdf me-1" />PDF
                     </a>
                     <a href={inv.url_facturex} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
-                        <i className="fas fa-file-invoice mr-1" />Factur-X
+                        <i className="fas fa-file-invoice me-1" />Factur-X
                     </a>
                 </div>
             )}
@@ -575,9 +575,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.75rem' }}>
                 <div className="input-group" style={{ maxWidth: 280 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input
                         type="text"
                         className="form-control"
@@ -614,7 +612,7 @@ export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, t
     const [activeTab, setActiveTab] = useIndexTab('invoices_index_tab', { forced: companieId ? 'list' : null });
 
     return (
-        <div className="card card-outline card-danger">
+        <div className="card card-outline card-danger mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     {!companieId && (

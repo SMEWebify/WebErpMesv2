@@ -46,13 +46,13 @@ function DeliveryDateCell({ date }) {
     if (!parsed) return <span className="text-muted">-</span>;
     if (parsed.isPast) {
         return (
-            <span className="badge badge-danger">
-                <i className="fas fa-exclamation-triangle mr-1" />
+            <span className="badge text-bg-danger">
+                <i className="fas fa-exclamation-triangle me-1" />
                 {parsed.formatted}
             </span>
         );
     }
-    return <span className="badge badge-success">{parsed.formatted}</span>;
+    return <span className="badge text-bg-success">{parsed.formatted}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,8 +75,8 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             {/* Order */}
             <td>
                 {line.order_url ? (
-                    <a href={line.order_url} className="btn btn-xs btn-secondary">
-                        <i className="fas fa-folder mr-1" />
+                    <a href={line.order_url} className="btn btn-sm btn-secondary">
+                        <i className="fas fa-folder me-1" />
                         {line.order_code}
                     </a>
                 ) : (
@@ -99,7 +99,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
                 {line.tasks_id ? (
                     <>
                         {line.task_url && (
-                            <a href={line.task_url} className="btn btn-sm btn-success mr-1">
+                            <a href={line.task_url} className="btn btn-sm btn-success me-1">
                                 {trans.view ?? 'Voir'}
                             </a>
                         )}
@@ -113,7 +113,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             {/* Product */}
             <td>
                 {line.product_url && (
-                    <a href={line.product_url} className="btn btn-xs btn-info">
+                    <a href={line.product_url} className="btn btn-sm btn-info">
                         <i className="fas fa-eye" />
                     </a>
                 )}
@@ -122,7 +122,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             <td>
                 {line.purchase_url ? (
                     <a href={line.purchase_url} className="btn btn-primary btn-sm">
-                        <i className="fas fa-folder mr-1" />
+                        <i className="fas fa-folder me-1" />
                         {line.purchase_code}
                     </a>
                 ) : '—'}
@@ -137,15 +137,15 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             <td><DeliveryDateCell date={line.delivery_date} /></td>
             {/* Checkbox */}
             <td>
-                <div className="custom-control custom-checkbox">
+                <div className="form-check ">
                     <input
-                        className="custom-control-input"
+                        className="form-check-input"
                         type="checkbox"
                         id={`line-${line.id}`}
                         checked={selectedIds.includes(line.id)}
                         onChange={() => onToggle(line.id)}
                     />
-                    <label className="custom-control-label" htmlFor={`line-${line.id}`}>
+                    <label className="form-check-label" htmlFor={`line-${line.id}`}>
                         {trans.add_to_document ?? 'Ajouter au document'}
                     </label>
                 </div>
@@ -270,29 +270,25 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
     }
 
     return (
-        <div className="card card-outline card-orange">
+        <div className="card card-outline card-orange mb-3">
             {flashError && (
                 <div className="alert alert-danger alert-dismissible mx-3 mt-3 mb-0">
                     {flashError}
-                    <button type="button" className="close" onClick={() => setFlashError(null)}>
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" onClick={() => setFlashError(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
             {/* Form */}
             <div className="card-body">
                 <form onSubmit={handleStore}>
-                    <div className="form-row">
+                    <div className="row gx-2">
                         {/* Company filter */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.sort_company ?? 'Trier par tiers'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
                                 <select
-                                    className={`form-control ${errors.companies_id ? 'is-invalid' : ''}`}
+                                    className={`form-select ${errors.companies_id ? 'is-invalid' : ''}`}
                                     value={companiesId}
                                     onChange={e => handleCompanyChange(e.target.value)}
                                 >
@@ -311,12 +307,10 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                         </div>
 
                         {/* Code */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.external_id ?? 'ID externe'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className={`form-control ${errors.code ? 'is-invalid' : ''}`}
@@ -331,12 +325,10 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                         </div>
 
                         {/* Delivery note */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.delivery_note_number ?? 'N° bon de livraison'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -348,14 +340,12 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                         </div>
 
                         {/* User */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.user ?? 'Utilisateur'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className={`form-control ${errors.user_id ? 'is-invalid' : ''}`}
+                                    className={`form-select ${errors.user_id ? 'is-invalid' : ''}`}
                                     value={userId}
                                     onChange={e => setUserId(e.target.value)}
                                 >
@@ -381,13 +371,13 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                                     disabled={submitting}
                                 >
                                     {submitting
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.loading ?? 'Chargement…'}</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{trans.loading ?? 'Chargement…'}</>
                                         : trans.new_receipt ?? 'Nouveau reçu'
                                     }
                                 </button>
                                 <button
                                     type="button"
-                                    className="btn btn-outline-secondary ml-2"
+                                    className="btn btn-outline-secondary ms-2"
                                     disabled={submitting}
                                     onClick={handleStoreEmpty}
                                 >

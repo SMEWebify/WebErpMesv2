@@ -12,25 +12,25 @@
     justify-content: center;
     min-height: 170px;
     padding: 1.25rem 1rem;
-    border: 2px dashed #adb5bd;
+    border: 2px dashed var(--bs-border-color);
     border-radius: .5rem;
-    background-color: #fafbfc;
-    color: #6c757d;
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-secondary-color);
     text-align: center;
     cursor: pointer;
     transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
 
     &:hover,
     &:focus {
-        border-color: #007bff;
-        background-color: rgba(0, 123, 255, .04);
+        border-color: var(--bs-primary);
+        background-color: rgba(var(--bs-primary-rgb), .06);
         outline: none;
     }
 
     &.is-over {
-        border-color: #28a745;
-        background-color: rgba(40, 167, 69, .08);
-        color: #28a745;
+        border-color: var(--bs-success);
+        background-color: rgba(var(--bs-success-rgb), .1);
+        color: var(--bs-success-text-emphasis);
     }
 
     &.is-busy {
@@ -42,7 +42,7 @@
 .wem-dropzone-form {
     label {
         font-weight: 600;
-        color: #495057;
+        color: var(--bs-body-color);
         margin-bottom: .15rem;
     }
 }
@@ -53,16 +53,16 @@
         border-radius: .25rem;
         margin-bottom: .25rem;
         border: 1px solid transparent;
-        background-color: #f8f9fa;
+        background-color: var(--bs-tertiary-bg);
 
         &:hover {
-            background-color: #eef2f6;
+            background-color: var(--bs-secondary-bg);
         }
 
         &.active-file {
-            background-color: rgba(0, 123, 255, .08);
-            border-color: rgba(0, 123, 255, .35);
-            border-left: 3px solid #007bff;
+            background-color: rgba(var(--bs-primary-rgb), .1);
+            border-color: rgba(var(--bs-primary-rgb), .35);
+            border-left: 3px solid var(--bs-primary);
         }
     }
 
@@ -87,15 +87,15 @@
     justify-content: center;
     min-height: 320px;
     padding: 2rem 1rem;
-    background-color: #f8f9fa;
-    border: 1px dashed #dee2e6;
+    background-color: var(--bs-tertiary-bg);
+    border: 1px dashed var(--bs-border-color);
     border-radius: .5rem;
 }
 
 .wem-viewer {
     // Couleur de fond du canevas 3D, relue par Viewer3D. Chaque écran peut la
     // redéfinir pour que la scène se fonde dans la carte qui l'accueille.
-    --wem-viewer-bg: #f7f8fa;
+    --wem-viewer-bg: var(--bs-tertiary-bg);
 
     canvas {
         display: block;
@@ -107,7 +107,7 @@
     position: relative;
     overflow: hidden;
     height: 620px;
-    background-color: var(--wem-viewer-bg, #f7f8fa);
+    background-color: var(--wem-viewer-bg, var(--bs-tertiary-bg));
     border-radius: .25rem;
 
     img {
@@ -124,8 +124,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(248, 249, 250, .88);
-    color: #46525f;
+    background-color: rgba(var(--bs-tertiary-bg-rgb), .88);
+    color: var(--bs-secondary-color);
     text-align: center;
     padding: 1rem;
 }

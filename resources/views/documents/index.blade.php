@@ -9,7 +9,7 @@
 @stop
 
 @section('content')
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-3">
         <div class="card-body p-0">
             <div id="document-table-app"
                  data-documents='@json($documents, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'

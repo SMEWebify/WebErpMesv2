@@ -220,7 +220,7 @@ function PhotosSection({ visit, endpoints, opportunityId, imageAccept, readOnly,
             <div className="row g-2">
                 {photos.map(photo => (
                     <div key={photo.id} className="col-4 col-md-3">
-                        <a href={photo.view_url} target="_blank" rel="noopener noreferrer" className="d-block ratio ratio-1x1 bg-light rounded overflow-hidden">
+                        <a href={photo.view_url} target="_blank" rel="noopener noreferrer" className="d-block ratio ratio-1x1 bg-body-tertiary rounded overflow-hidden">
                             <img src={photo.view_url} alt={photo.comment || photo.name} loading="lazy"
                                  style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
                         </a>

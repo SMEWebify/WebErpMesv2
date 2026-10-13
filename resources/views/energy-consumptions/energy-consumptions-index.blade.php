@@ -25,7 +25,7 @@
                     <x-adminlte-input name="cost_per_kwh" type="number" step="0.01" label="{{ __('general_content.cost_per_kwh_trans_key') }}" required />
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.add_trans_key') }}" theme="success" icon="fas fa-plus"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.add_trans_key') }}" theme="success" icon="fas fa-plus"/>
                 </div>
             </div>
         </form>

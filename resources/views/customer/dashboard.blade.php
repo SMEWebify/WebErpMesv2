@@ -6,7 +6,7 @@
     <div class="row g-3 mb-4">
         @foreach($notifications as $notification)
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border-0 shadow-sm h-100 mb-3">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-white d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
+        <div class="card-header bg-body d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
             <div>
                 <h5 class="mb-0">{{ __('general_content.orders_trans_key') }}</h5>
                 <small class="text-muted">{{ __('general_content.orders_list_trans_key') }}</small>
@@ -89,13 +89,13 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white">
+        <div class="card-footer bg-body">
             {{ $orders->withQueryString()->links('pagination::bootstrap-4') }}
         </div>
     </div>
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-white d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
+        <div class="card-header bg-body d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3">
             <div>
                 <h5 class="mb-0">{{ __('general_content.invoices_trans_key') }}</h5>
                 <small class="text-muted">{{ __('general_content.invoices_list_trans_key') }}</small>
@@ -168,13 +168,13 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white">
+        <div class="card-footer bg-body">
             {{ $invoices->withQueryString()->links('pagination::bootstrap-4') }}
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white">
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-body">
             <h5 class="mb-0">{{ __('general_content.delivery_notes_trans_key') }}</h5>
         </div>
         <div class="card-body p-0">
@@ -202,7 +202,7 @@
                                 <td>{{ $delivery->GetshortCreatedAttribute() }}</td>
                                 <td>
                                     @if($delivery->Orders)
-                                        <span class="badge bg-light text-dark">#{{ $delivery->Orders->code }}</span>
+                                        <span class="badge bg-body-tertiary text-dark">#{{ $delivery->Orders->code }}</span>
                                     @endif
                                 </td>
                                 <td class="text-end">
@@ -220,7 +220,7 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white">
+        <div class="card-footer bg-body">
             {{ $deliveries->withQueryString()->links('pagination::bootstrap-4') }}
         </div>
     </div>

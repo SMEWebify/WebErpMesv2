@@ -9,7 +9,7 @@
 @section('right-sidebar')
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
     @include('include.alert-result')
     <div class="card-header p-2">
         <ul class="nav nav-pills" id="AccountingNav">
@@ -25,7 +25,7 @@
             <li class="nav-item"><a class="nav-link {{ $activeTab === 'vat-references' ? 'active' : '' }}" href="{{ route('accounting.vatReferences') }}">{{ __('vat.tab_references') }}</a></li>
             <li class="nav-item"><a class="nav-link {{ $activeTab === 'vat-matrix-sales' ? 'active' : '' }}" href="{{ route('accounting.vatMatrixSales') }}">{{ __('vat.tab_matrix_sales') }}</a></li>
             <li class="nav-item"><a class="nav-link {{ $activeTab === 'vat-matrix-purchase' ? 'active' : '' }}" href="{{ route('accounting.vatMatrixPurchase') }}">{{ __('vat.tab_matrix_purchase') }}</a></li>
-            <li class="nav-item"><a class="nav-link {{ $activeTab === 'periods' ? 'active' : '' }}" href="{{ route('accounting.periods.ui') }}"><i class="fas fa-lock mr-1"></i>Périodes</a></li>
+            <li class="nav-item"><a class="nav-link {{ $activeTab === 'periods' ? 'active' : '' }}" href="{{ route('accounting.periods.ui') }}"><i class="fas fa-lock me-1"></i>Périodes</a></li>
             @endcan
         </ul>
     </div>

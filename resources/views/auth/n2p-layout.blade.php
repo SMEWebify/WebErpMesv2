@@ -242,8 +242,7 @@
         }
 
         /* Primary gradient button */
-        .n2p-card .btn.btn-primary,
-        .n2p-card .btn.btn-flat.btn-primary {
+        .n2p-card .btn.btn-primary {
             background: linear-gradient(90deg, var(--n2p-sky), var(--n2p-blue));
             border: 0;
             color: #ffffff;
@@ -255,14 +254,12 @@
             box-shadow: 0 10px 22px -8px rgba(59, 91, 219, .55);
             transition: transform .12s ease, box-shadow .18s ease, filter .18s ease;
         }
-        .n2p-card .btn.btn-primary:hover,
-        .n2p-card .btn.btn-flat.btn-primary:hover {
+        .n2p-card .btn.btn-primary:hover {
             transform: translateY(-1px);
             box-shadow: 0 14px 30px -8px rgba(59, 91, 219, .55);
             filter: brightness(1.02);
         }
-        .n2p-card .btn.btn-primary:focus,
-        .n2p-card .btn.btn-flat.btn-primary:focus {
+        .n2p-card .btn.btn-primary:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(56, 189, 248, .35);
         }
@@ -271,8 +268,8 @@
             margin-right: 6px;
         }
 
-        /* icheck (remember me) */
-        .n2p-card .icheck-primary label { color: var(--n2p-muted); font-size: 13px; }
+        /* Case « se souvenir de moi » */
+        .n2p-card .form-check-label { color: var(--n2p-muted); font-size: 13px; }
 
         /* Footer of the card (links) */
         .n2p-card-footer {

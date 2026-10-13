@@ -8,9 +8,9 @@
         <div class="d-flex align-items-center">
             <button
                 type="button"
-                class="btn btn-outline-info btn-sm mr-3"
-                data-toggle="modal"
-                data-target="#spreadsheet-help-modal"
+                class="btn btn-outline-info btn-sm me-3"
+                data-bs-toggle="modal"
+                data-bs-target="#spreadsheet-help-modal"
             >
                 Aide formules
             </button>
@@ -27,9 +27,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="spreadsheet-help-modal-label">Aide des formules tableur</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Fermer" class="btn-close float-end"></button>
                 </div>
                 <div class="modal-body">
                     <p>
@@ -127,7 +125,7 @@
                     </small>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                 </div>
             </div>
         </div>

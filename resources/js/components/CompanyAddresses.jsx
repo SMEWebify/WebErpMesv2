@@ -34,12 +34,10 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
         <form onSubmit={handleSubmit}>
             <div className="row">
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.sort}</label>
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
                             <input type="number" className={`form-control ${errors.ordre ? 'is-invalid' : ''}`}
                                 value={form.ordre ?? ''} onChange={set('ordre')} placeholder={trans.sort} />
                         </div>
@@ -47,12 +45,10 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.label}</label>
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-tags" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-tags" /></span>
                             <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`}
                                 value={form.label ?? ''} onChange={set('label')} placeholder={trans.label} />
                         </div>
@@ -61,7 +57,7 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                 </div>
             </div>
             <hr />
-            <div className="form-group">
+            <div className="mb-3">
                 <label>{trans.adress}</label>
                 <input type="text" className={`form-control ${errors.adress ? 'is-invalid' : ''}`}
                     value={form.adress ?? ''} onChange={set('adress')} placeholder={trans.adress} />
@@ -69,7 +65,7 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
             </div>
             <div className="row">
                 <div className="col-md-4">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.zipcode}</label>
                         <input type="text" className={`form-control ${errors.zipcode ? 'is-invalid' : ''}`}
                             value={form.zipcode ?? ''} onChange={set('zipcode')} placeholder={trans.zipcode} />
@@ -77,7 +73,7 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.city}</label>
                         <input type="text" className={`form-control ${errors.city ? 'is-invalid' : ''}`}
                             value={form.city ?? ''} onChange={set('city')} placeholder={trans.city} />
@@ -85,14 +81,14 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.province}</label>
                         <input type="text" className="form-control"
                             value={form.province ?? ''} onChange={set('province')} placeholder={trans.province} />
                     </div>
                 </div>
             </div>
-            <div className="form-group">
+            <div className="mb-3">
                 <label>{trans.country}</label>
                 <input type="text" className={`form-control ${errors.country ? 'is-invalid' : ''}`}
                     value={form.country ?? ''} onChange={set('country')} placeholder={trans.country} />
@@ -100,14 +96,14 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.phone}</label>
                         <input type="text" className="form-control"
                             value={form.number ?? ''} onChange={set('number')} placeholder={trans.phone} />
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.email}</label>
                         <input type="email" className="form-control"
                             value={form.mail ?? ''} onChange={set('mail')} placeholder={trans.email} />
@@ -118,30 +114,30 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
             <hr />
 
             {/* Global default */}
-            <div className="custom-control custom-switch mb-3">
-                <input type="checkbox" className="custom-control-input" id={`addr-default-${formId}`}
+            <div className="form-check form-switch mb-3">
+                <input type="checkbox" className="form-check-input" id={`addr-default-${formId}`}
                     checked={!!form.default}
                     onChange={e => setForm(f => ({ ...f, default: e.target.checked }))} />
-                <label className="custom-control-label" htmlFor={`addr-default-${formId}`}>{trans.by_default}</label>
+                <label className="form-check-label" htmlFor={`addr-default-${formId}`}>{trans.by_default}</label>
             </div>
 
             {/* Per-document-type defaults */}
-            <div className="form-group">
+            <div className="mb-3">
                 <label style={{ display: 'block', marginBottom: '0.4rem' }}>{trans.default_by_doc ?? 'Adresse par défaut pour :'}</label>
                 <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
                     {DOC_TYPES.map(({ key, label, color }) => {
                         const checked = form.docTypes.includes(key);
                         return (
-                            <div key={key} className="custom-control custom-switch">
+                            <div key={key} className="form-check form-switch">
                                 <input
                                     type="checkbox"
-                                    className="custom-control-input"
+                                    className="form-check-input"
                                     id={`addr-doc-${key}-${formId}`}
                                     checked={checked}
                                     onChange={() => toggleDocType(key)}
                                 />
                                 <label
-                                    className="custom-control-label"
+                                    className="form-check-label"
                                     htmlFor={`addr-doc-${key}-${formId}`}
                                     style={{ fontWeight: checked ? 600 : 400, color: checked ? color : undefined }}
                                 >
@@ -153,8 +149,8 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                 </div>
             </div>
 
-            <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-1`} />
+            <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} me-1`} />
                 {saving ? trans.saving : trans.save}
             </button>
         </form>
@@ -254,7 +250,7 @@ export default function CompanyAddresses({
         <div className="row">
             {/* Table */}
             <div className="col-md-8">
-                <div className="card card-primary">
+                <div className="card card-primary mb-3">
                     <div className="card-header">
                         <h3 className="card-title">{trans.addresses}</h3>
                     </div>
@@ -292,7 +288,7 @@ export default function CompanyAddresses({
                                                 <td className="align-middle">{a.mail}</td>
                                                 <td className="align-middle">
                                                     {!!a.default && (
-                                                        <i className="fas fa-check-circle text-success mr-1" title={trans.by_default} />
+                                                        <i className="fas fa-check-circle text-success me-1" title={trans.by_default} />
                                                     )}
                                                     {DOC_TYPES.map(({ key }) => (
                                                         <DocBadge key={key} type={key} active={activeTypes.includes(key)} />
@@ -301,7 +297,7 @@ export default function CompanyAddresses({
                                                 <td className="py-1 align-middle" style={{ whiteSpace: 'nowrap' }}>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-xs btn-info"
+                                                        className="btn btn-sm btn-info"
                                                         onClick={() => openEdit(a)}
                                                     >
                                                         <i className="fas fa-pen" />
@@ -319,7 +315,7 @@ export default function CompanyAddresses({
 
             {/* Create form */}
             <div className="col-md-4">
-                <div className="card card-secondary">
+                <div className="card card-secondary mb-3">
                     <div className="card-header">
                         <h3 className="card-title">{trans.new_address}</h3>
                     </div>

@@ -1,13 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-@import 'variables';
-@import 'bootstrap/scss/bootstrap';
+// Pages du gabarit AdminLTE : Bootstrap 5 est déjà fourni par AdminLTE 4
+// (adminlte.min.css). Le recompiler ici le chargerait une seconde fois, avec
+// d'autres couleurs, et écraserait les règles d'AdminLTE (ex. .btn-teal).
+// Les pages hors AdminLTE utilisent resources/sass/standalone.scss.
 @import 'file-manager';
 @import 'load-planning';
 @import 'task-statu';
-
-// Les pages chargent ce Bootstrap 5 après AdminLTE 3 (Bootstrap 4) : le `.badge` de BS5 impose
-// un texte blanc qui écrase la couleur foncée de `.badge-light` (BS4) — texte blanc sur fond
-// blanc. On rétablit la couleur d'AdminLTE.
-.badge.badge-light {
-    color: #1f2d3d;
-}

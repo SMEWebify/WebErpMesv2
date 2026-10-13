@@ -7,11 +7,11 @@
 @stop
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
     <div class="card-header p-2">
-        <ul class="nav nav-pills"><li class="nav-item"><a class="nav-link active" href="#Role" data-toggle="tab">{{ __('general_content.roles_trans_key') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">{{ __('general_content.permissions_trans_key') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-toggle="tab">{{ __('general_content.role_in_permissions_trans_key') }}</a></li>
+        <ul class="nav nav-pills"><li class="nav-item"><a class="nav-link active" href="#Role" data-bs-toggle="tab">{{ __('general_content.roles_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Permissions" data-bs-toggle="tab">{{ __('general_content.permissions_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-bs-toggle="tab">{{ __('general_content.role_in_permissions_trans_key') }}</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -24,14 +24,12 @@
                         <div class="row">
                             <label for="label" >{{__('general_content.role_trans_key') }} :</label>
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="Text" class="form-control" id="name" name="name" placeholder="{{__('general_content.role_trans_key') }}" >
                             </div>
                         </div>
                         <x-slot name="footerSlot">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </x-slot>
                     </x-adminlte-card>
                 </form>
@@ -44,7 +42,7 @@
                                     <th class="text-capitalize">{{__('general_content.role_trans_key') }}</th>
                                     <th class="text-capitalize">{{__('general_content.permissions_trans_key') }}</th>
                                     <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
-                                    <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
+                                    <th class="text-capitalize text-end" >{{ __('general_content.action_trans_key') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,15 +53,15 @@
                                         <div class="row">
                                             @forelse ($Role->permissions->pluck('name') as $RolePermission)
                                             <div class="col-2">
-                                                <button type="button" class="btn btn-block btn-outline-success  btn-sm disabled">{{ $RolePermission}}</button>
+                                                <button type="button" class="btn w-100 btn-outline-success btn-sm disabled">{{ $RolePermission}}</button>
                                             </div>
                                             @empty
-                                            <button type="button" class="btn btn-block btn-outline-danger  btn-sm disabled">{{__('general_content.no_permissions_trans_key') }}</button>
+                                            <button type="button" class="btn w-100 btn-outline-danger btn-sm disabled">{{__('general_content.no_permissions_trans_key') }}</button>
                                             @endforelse
                                         </div>
                                     </td>
                                     <td>{{ $Role->created_at }}</td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <!-- Button Modal -->
                                         <x-ButtonTextEdit :modalTarget="'Role' . $Role->id" />
                                         <!-- Modal {{ $Role->id }} -->
@@ -74,18 +72,16 @@
                                                 <div class="row">
                                                     <label for="label" >{{__('general_content.role_trans_key') }} :</label>
                                                     <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                         <input type="Text" class="form-control" id="name" name="name" placeholder="Role Name" value="{{ $Role->name }}">
                                                     </div>
                                                 </div>
                                                 @forelse ($Permissions as $Permission)
                                                 <div class="row">
-                                                    <div class="form-group">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" name="permission[]" id="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" @if($Role->permissions->contains($Permission)) checked @endif value="{{ $Permission->id }}">
-                                                            <label for="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" class="custom-control-label">{{ $Permission->name }}</label>
+                                                    <div class="mb-3">
+                                                        <div class="form-check ">
+                                                            <input class="form-check-input" type="checkbox" name="permission[]" id="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" @if($Role->permissions->contains($Permission)) checked @endif value="{{ $Permission->id }}">
+                                                            <label for="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" class="form-check-label">{{ $Permission->name }}</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -95,7 +91,7 @@
                                                 </div>
                                                 @endforelse
                                                 <div class="card-footer">
-                                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                 </div>
                                             </form>
                                         </x-adminlte-modal>
@@ -111,7 +107,7 @@
                                     <th class="text-capitalize">{{__('general_content.role_trans_key') }}</th>
                                     <th class="text-capitalize">{{__('general_content.permissions_trans_key') }}</th>
                                     <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
-                                    <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
+                                    <th class="text-capitalize text-end" >{{ __('general_content.action_trans_key') }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -124,14 +120,12 @@
                     @csrf
                     <x-adminlte-card title="{{ __('general_content.make_new_permissions_trans_key') }}" theme="info" maximizable>
                         <div class="row">
-                            <!-- /.form-group -->
-                            <div class="form-group">
+                            <!-- /.mb-3 -->
+                            <div class="mb-3">
                                 <label for="role">{{ __('general_content.permission_trans_key') }} :</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                    </div>
-                                    <select class="form-control" name="name" id="name">
+                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    <select class="form-select" name="name" id="name">
                                         <option value="companies-menu">companies-menu</option>
                                         <option value="leads-menu">leads-menu</option>
                                         <option value="opportunities-menu">opportunities-menu</option>
@@ -154,7 +148,7 @@
                             </div>
                         </div>
                         <x-slot name="footerSlot">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </x-slot>
                     </x-adminlte-card>
                 </form>
@@ -167,7 +161,7 @@
                                     <th class="text-capitalize">{{ __('general_content.permission_trans_key') }}</th>
                                     <!--<th class="text-capitalize">Groupe Name</th>-->
                                     <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
-                                    <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
+                                    <th class="text-capitalize text-end" >{{ __('general_content.action_trans_key') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -176,7 +170,7 @@
                                     <td>{{ $Permission->name }}</td>
                                     <!--<td>{{ $Permission->groupe_name }}</td>-->
                                     <td>{{ $Permission->created_at }}</td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <x-ButtonTextDelete route="{{ route('admin.factory.permissions.destroy', ['permission' => $Permission->id]) }}" />
                                     </td>
                                 </tr>
@@ -189,7 +183,7 @@
                                     <th class="text-capitalize">{{ __('general_content.permission_trans_key') }}</th>
                                     <!--<th class="text-capitalize">Groupe Name</th>-->
                                     <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
-                                    <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
+                                    <th class="text-capitalize text-end" >{{ __('general_content.action_trans_key') }}</th>
                                 </tr>
                             </thead>
                         </table>
@@ -203,14 +197,12 @@
                     
                     <x-adminlte-card title="{{ __('general_content.add_role_permission_trans_key') }}" theme="info" maximizable>
                         <div class="row">
-                            <!-- /.form-group -->
-                            <div class="form-group">
+                            <!-- /.mb-3 -->
+                            <div class="mb-3">
                                 <label for="role">{{__('general_content.role_trans_key') }} :</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                    </div>
-                                    <select class="form-control" name="role_id" id="role_id">
+                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    <select class="form-select" name="role_id" id="role_id">
                                         @forelse ($Roles as $Role)
                                             <option value="{{ $Role->id }}">{{ $Role->name }}</option>
                                         @empty
@@ -222,10 +214,10 @@
                         </div>
                         @forelse ($Permissions as $Permission)
                         <div class="row">
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" name="permission[]" id="checkDefault{{ $Permission->id }}" value="{{ $Permission->id }}">
-                                    <label for="checkDefault{{ $Permission->id }}" class="custom-control-label">{{ $Permission->name }}</label>
+                            <div class="mb-3">
+                                <div class="form-check ">
+                                    <input class="form-check-input" type="checkbox" name="permission[]" id="checkDefault{{ $Permission->id }}" value="{{ $Permission->id }}">
+                                    <label for="checkDefault{{ $Permission->id }}" class="form-check-label">{{ $Permission->name }}</label>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +228,7 @@
                         @endforelse
 
                         <x-slot name="footerSlot">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </x-slot>
                     </x-adminlte-card>
                 </form>

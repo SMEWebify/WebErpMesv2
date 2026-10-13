@@ -129,7 +129,7 @@ export default function MoodTrackerWidget({
 
                     {/* ── Mon humeur ─────────────────────────────────────── */}
                     <div>
-                        <div style={{ fontSize: '0.72rem', color: '#6c757d', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--bs-secondary-color)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             {t('my_mood', "Mon humeur aujourd'hui")}
                         </div>
                         <div className="d-flex" style={{ gap: '0.4rem' }}>
@@ -175,7 +175,7 @@ export default function MoodTrackerWidget({
                         <div>
                             {/* Titre + compteurs */}
                             <div className="d-flex align-items-center" style={{ marginBottom: '0.4rem', gap: '0.5rem' }}>
-                                <span style={{ fontSize: '0.72rem', color: '#6c757d', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                <span style={{ fontSize: '0.72rem', color: 'var(--bs-secondary-color)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                                     {t('team_mood', 'Équipe')} ({data.team.length})
                                 </span>
                                 <div className="d-flex" style={{ gap: '0.3rem', marginLeft: 'auto' }}>
@@ -220,7 +220,7 @@ export default function MoodTrackerWidget({
                         </div>
                     ) : (
                         <p className="text-muted text-center small mb-0">
-                            <i className="fas fa-users mr-1" />
+                            <i className="fas fa-users me-1" />
                             {t('no_mood_yet', "Aucun vote aujourd'hui")}
                         </p>
                     )}

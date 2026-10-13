@@ -10,7 +10,8 @@ use JeroenNoten\LaravelAdminLte\Http\Controllers\DarkModeController;
  * Trois valeurs : "light", "dark" et "pro" (chrome neutre, couleur conservée
  * uniquement sur les statuts). La préférence vit en session, comme le dark mode
  * natif d'AdminLTE dont elle reste le sur-ensemble : la clé de session AdminLTE
- * est tenue synchronisée pour que le layout continue de poser "dark-mode" seul.
+ * est tenue synchronisée pour que le layout pose de lui-même data-bs-theme="dark"
+ * sur <html> (AdminLTE 4, voir JeroenNoten\LaravelAdminLte\Layout\ColorMode).
  */
 class ThemeMode
 {
@@ -62,7 +63,8 @@ class ThemeMode
     }
 
     /**
-     * La classe à ajouter sur le tag body. AdminLTE gère déjà "dark-mode".
+     * La classe à ajouter sur le tag body. Le mode sombre, lui, est porté par
+     * l'attribut data-bs-theme de <html>, posé par AdminLTE.
      */
     public static function bodyClass(): string
     {

@@ -7,10 +7,10 @@ import { SortIcon } from './table';
 // ---------------------------------------------------------------------------
 
 const TASKS_STATUS = {
-    1: { badge: 'badge-info',    key: 'no_task' },
-    2: { badge: 'badge-warning', key: 'created' },
-    3: { badge: 'badge-success', key: 'in_progress' },
-    4: { badge: 'badge-danger',  key: 'finished' },
+    1: { badge: 'text-bg-info',    key: 'no_task' },
+    2: { badge: 'text-bg-warning', key: 'created' },
+    3: { badge: 'text-bg-success', key: 'in_progress' },
+    4: { badge: 'text-bg-danger',  key: 'finished' },
 };
 
 // ---------------------------------------------------------------------------
@@ -185,23 +185,21 @@ export default function DeliverysRequest({
     // ---------------------------------------------------------------------------
 
     return (
-        <div className="card card-outline card-primary">
+        <div className="card card-outline card-primary mb-3">
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
                     {errors.general && (
                         <div className="alert alert-danger">{errors.general}</div>
                     )}
 
-                    <div className="form-row">
+                    <div className="row gx-2">
                         {/* Company */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.company}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesId}
                                     onChange={e => setField('companiesId', e.target.value)}
                                 >
@@ -215,12 +213,10 @@ export default function DeliverysRequest({
                         </div>
 
                         {/* Code */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.external_id}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -232,12 +228,10 @@ export default function DeliverysRequest({
                         </div>
 
                         {/* Label */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.label}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-tags" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -249,14 +243,12 @@ export default function DeliverysRequest({
                         </div>
 
                         {/* User */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.user}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.userId}
                                     onChange={e => setField('userId', e.target.value)}
                                 >
@@ -270,14 +262,12 @@ export default function DeliverysRequest({
                         </div>
 
                         {/* Address */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.address}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-map-marked-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-map-marked-alt" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesAddressesId}
                                     onChange={e => setField('companiesAddressesId', e.target.value)}
                                 >
@@ -291,14 +281,12 @@ export default function DeliverysRequest({
                         </div>
 
                         {/* Contact */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.contact}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesContactsId}
                                     onChange={e => setField('companiesContactsId', e.target.value)}
                                 >
@@ -313,11 +301,11 @@ export default function DeliverysRequest({
 
                         {/* Stock options (permission gate) */}
                         {canManageStock && (
-                            <div className="form-group col-md-3">
+                            <div className="mb-3 col-md-3">
                                 <label className="d-block">
                                     <input
                                         type="checkbox"
-                                        className="mr-1"
+                                        className="me-1"
                                         checked={form.removeFromStock}
                                         onChange={e => setField('removeFromStock', e.target.checked)}
                                     />
@@ -326,7 +314,7 @@ export default function DeliverysRequest({
                                 <label className="d-block">
                                     <input
                                         type="checkbox"
-                                        className="mr-1"
+                                        className="me-1"
                                         checked={form.createSerialNumber}
                                         onChange={e => setField('createSerialNumber', e.target.checked)}
                                     />
@@ -336,10 +324,10 @@ export default function DeliverysRequest({
                         )}
 
                         {/* Submit */}
-                        <div className="form-group col-md-3 d-flex align-items-end">
+                        <div className="mb-3 col-md-3 d-flex align-items-end">
                             <button type="submit" className="btn btn-success" disabled={submitting}>
                                 {submitting
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.new_delivery}</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{trans.new_delivery}</>
                                     : trans.new_delivery
                                 }
                             </button>
@@ -356,7 +344,7 @@ export default function DeliverysRequest({
 
                 {loading ? (
                     <div className="text-center p-4">
-                        <i className="fas fa-spinner fa-spin mr-2" />Loading...
+                        <i className="fas fa-spinner fa-spin me-2" />Loading...
                     </div>
                 ) : (
                     <table className="table table-hover">
@@ -389,15 +377,15 @@ export default function DeliverysRequest({
                                 <th>
                                     {trans.action}
                                     {form.companiesId && lines.length > 0 && (
-                                        <div className="custom-control custom-checkbox mt-2">
+                                        <div className="form-check mt-2">
                                             <input
-                                                className="custom-control-input"
+                                                className="form-check-input"
                                                 id="selectAllLines"
                                                 type="checkbox"
                                                 checked={allChecked}
                                                 onChange={e => handleSelectAll(e.target.checked)}
                                             />
-                                            <label className="custom-control-label" htmlFor="selectAllLines">
+                                            <label className="form-check-label" htmlFor="selectAllLines">
                                                 {allChecked ? trans.deselect_all : trans.select_all}
                                             </label>
                                         </div>
@@ -457,15 +445,15 @@ export default function DeliverysRequest({
                                         <td>{line.vat_label}</td>
                                         <td>{line.delivery_date}</td>
                                         <td>
-                                            <div className="custom-control custom-checkbox">
+                                            <div className="form-check ">
                                                 <input
-                                                    className="custom-control-input"
+                                                    className="form-check-input"
                                                     type="checkbox"
                                                     id={`line-${line.id}`}
                                                     checked={sel.checked ?? false}
                                                     onChange={e => handleLineCheck(line.id, e.target.checked)}
                                                 />
-                                                <label className="custom-control-label" htmlFor={`line-${line.id}`}>
+                                                <label className="form-check-label" htmlFor={`line-${line.id}`}>
                                                     {trans.add_to_note}
                                                 </label>
                                             </div>

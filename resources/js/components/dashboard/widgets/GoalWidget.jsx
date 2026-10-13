@@ -162,7 +162,7 @@ export default function GoalWidget({
             <RadialGauge pct={pct} />
 
             {/* Détail chiffré */}
-            <div className="text-center mt-2" style={{ fontSize: '0.82rem', color: '#495057', lineHeight: 1.6 }}>
+            <div className="text-center mt-2" style={{ fontSize: '0.82rem', color: 'var(--bs-body-color)', lineHeight: 1.6 }}>
                 <div>
                     <span className="text-muted">{trans.total_invoiced ?? 'CA facturé'} : </span>
                     <strong>{formatCurrency(invoiced, currency, locale)}</strong>
@@ -184,7 +184,7 @@ export default function GoalWidget({
                     aria-valuemax="100"
                 />
             </div>
-            <div className="text-right mt-1" style={{ fontSize: '0.72rem', color: '#6c757d' }}>
+            <div className="text-end mt-1" style={{ fontSize: '0.72rem', color: 'var(--bs-secondary-color)' }}>
                 {formatCurrency(Math.max(target - invoiced, 0), currency, locale)} {trans.remaining ?? 'restant'}
             </div>
         </WidgetCard>

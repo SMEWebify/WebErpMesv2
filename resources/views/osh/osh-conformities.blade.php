@@ -44,7 +44,7 @@
                             <td><img src="{{ Avatar::create($conformite->UserManagement['name'] ?? 'N/A')->toBase64() }}" /></td>
                             <td class="py-0 align-middle">
                                 <!-- Button Modal -->
-                                <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#conformite{{ $conformite->id }}">
+                                <button type="button" class="btn btn-teal" data-bs-toggle="modal" data-bs-target="#conformite{{ $conformite->id }}">
                                     <i class="fa fa-lg fa-fw fa-edit"></i>
                                 </button>
                                 <!-- Modal -->
@@ -52,37 +52,37 @@
                                     <form method="POST" action="{{ route('osh.conformities.update', ['id' => $conformite->id]) }}">
                                         @csrf
                                         <div class="card-body">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="document_type">{{ __('general_content.document_type_trans_key') }}</label>
                                                 <input type="text" class="form-control" name="document_type" value="{{ $conformite->document_type }}">
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="description">{{ __('general_content.description_trans_key') }}</label>
                                                 <textarea class="form-control" name="description" rows="3">{{ $conformite->description }}</textarea>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="expiration_date">{{ __('general_content.expiration_date_trans_key') }}</label>
                                                 <input type="date" class="form-control" name="expiration_date" value="{{ $conformite->expiration_date }}">
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="statut">{{ __('general_content.status_trans_key') }}</label>
-                                                <select class="form-control" name="statut">
+                                                <select class="form-select" name="statut">
                                                     <option value="1" {{ $conformite->statut == 1 ? 'selected' : '' }}>{{ __('general_content.in_progress_trans_key') }}</option>
                                                     <option value="2" {{ $conformite->statut == 2 ? 'selected' : '' }}>{{ __('general_content.approved_trans_key') }}</option>
                                                     <option value="3" {{ $conformite->statut == 3 ? 'selected' : '' }}>{{ __('general_content.expired_trans_key') }}</option>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
-                                                <select class="form-control" name="section_id">
+                                                <select class="form-select" name="section_id">
                                                     @foreach($sectionsSelect as $section)
                                                         <option value="{{ $section->id }}" {{ $conformite->section_id == $section->id ? 'selected' : '' }}>{{ $section->label }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                                                <select class="form-control" name="user_id">
+                                                <select class="form-select" name="user_id">
                                                     @foreach($userSelect as $user)
                                                         <option value="{{ $user->id }}" {{ $conformite->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
@@ -90,7 +90,7 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                         </div>
                                     </form>
                                 </x-adminlte-modal>
@@ -119,31 +119,31 @@
         <form method="POST" action="{{ route('osh.conformities.create') }}">
             @csrf
             <x-adminlte-card title="{{ __('general_content.new_conformity_trans_key') }}" theme="secondary" maximizable>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="document_type">{{ __('general_content.document_type_trans_key') }}</label>
                     <input type="text" class="form-control" name="document_type" placeholder="{{ __('general_content.document_type_trans_key') }}" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="description">{{ __('general_content.description_trans_key') }}</label>
                     <textarea class="form-control" name="description" rows="3" placeholder="{{ __('general_content.description_trans_key') }}"></textarea>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="expiration_date">{{ __('general_content.expiration_date_trans_key') }}</label>
                     <input type="date" class="form-control" name="expiration_date">
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
-                    <select class="form-control" name="section_id">
+                    <select class="form-select" name="section_id">
                         @foreach($sectionsSelect as $section)
                             <option value="{{ $section->id }}">{{ $section->label }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     @include('include.form.form-select-user',['userId' =>  null ])
                 </div>
                 <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
             </x-adminlte-card>
         </form>

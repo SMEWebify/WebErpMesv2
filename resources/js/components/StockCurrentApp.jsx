@@ -5,9 +5,9 @@ function getCsrf() {
 }
 
 const STATUS_CONFIG = {
-    success: { label: 'Stock OK',  icon: 'fas fa-check-circle', badgeClass: 'badge-success' },
-    warning: { label: 'Seuil min', icon: 'fas fa-exclamation-triangle', badgeClass: 'badge-warning' },
-    danger:  { label: 'Rupture',   icon: 'fas fa-times-circle',  badgeClass: 'badge-danger'  },
+    success: { label: 'Stock OK',  icon: 'fas fa-check-circle', badgeClass: 'text-bg-success' },
+    warning: { label: 'Seuil min', icon: 'fas fa-exclamation-triangle', badgeClass: 'text-bg-warning' },
+    danger:  { label: 'Rupture',   icon: 'fas fa-times-circle',  badgeClass: 'text-bg-danger'  },
 };
 
 function SummaryBar({ products }) {
@@ -19,14 +19,12 @@ function SummaryBar({ products }) {
         <div className="row mb-3">
             {Object.entries(STATUS_CONFIG).map(([color, cfg]) => (
                 <div className="col-md-4" key={color}>
-                    <div className={`small-box bg-${color}`} style={{ marginBottom: 0 }}>
+                    <div className={`small-box text-bg-${color}`} style={{ marginBottom: 0 }}>
                         <div className="inner">
                             <h3>{counts[color] ?? 0}</h3>
                             <p>{cfg.label}</p>
                         </div>
-                        <div className="icon">
-                            <i className={cfg.icon}></i>
-                        </div>
+                        <i className={`small-box-icon ${cfg.icon}`} aria-hidden="true" />
                     </div>
                 </div>
             ))}
@@ -38,7 +36,7 @@ function StatusBadge({ color }) {
     const cfg = STATUS_CONFIG[color] ?? STATUS_CONFIG.danger;
     return (
         <span className={`badge ${cfg.badgeClass}`} style={{ fontSize: '0.8em', whiteSpace: 'nowrap' }}>
-            <i className={`${cfg.icon} mr-1`}></i>
+            <i className={`${cfg.icon} me-1`}></i>
             {cfg.label}
         </span>
     );
@@ -75,7 +73,7 @@ function ProductRow({ product, storeOrderUrl }) {
         <tr>
             {/* Produit */}
             <td>
-                <a href={product.product_url} className="font-weight-bold text-dark">
+                <a href={product.product_url} className="fw-bold text-dark">
                     {product.label}
                 </a>
             </td>
@@ -114,11 +112,11 @@ function ProductRow({ product, storeOrderUrl }) {
                             <a
                                 key={loc.id}
                                 href={loc.url}
-                                className={`btn btn-xs btn-${loc.color}`}
+                                className={`btn btn-sm btn-${loc.color}`}
                                 title={`Qté : ${loc.current_stock} (min : ${loc.mini_qty})`}
                             >
                                 {loc.code}
-                                <span className="ml-1 badge badge-light text-dark">{loc.current_stock}</span>
+                                <span className="ms-1 badge text-bg-light text-dark">{loc.current_stock}</span>
                             </a>
                         ))}
                     </div>
@@ -127,12 +125,12 @@ function ProductRow({ product, storeOrderUrl }) {
 
             {/* Actions */}
             <td className="align-middle text-center">
-                <a href={product.product_url} className="btn btn-xs btn-info mr-1" title="Voir le produit">
+                <a href={product.product_url} className="btn btn-sm btn-info me-1" title="Voir le produit">
                     <i className="fas fa-eye"></i>
                 </a>
                 {product.qty_need > 0 && (
                     <button
-                        className="btn btn-xs btn-primary"
+                        className="btn btn-sm btn-primary"
                         onClick={handleCreateOrder}
                         disabled={ordering}
                         title="Créer une commande interne"
@@ -182,8 +180,8 @@ export default function StockCurrentApp({ endpoints, trans }) {
             {!loaded && (
                 <button className="btn btn-success" onClick={loadStock} disabled={loading}>
                     {loading
-                        ? <><i className="fas fa-spinner fa-spin mr-1"></i>Chargement...</>
-                        : <><i className="fas fa-boxes mr-1"></i>{trans.view_stock ?? 'Voir le stock actuel'}</>
+                        ? <><i className="fas fa-spinner fa-spin me-1"></i>Chargement...</>
+                        : <><i className="fas fa-boxes me-1"></i>{trans.view_stock ?? 'Voir le stock actuel'}</>
                     }
                 </button>
             )}
@@ -205,25 +203,25 @@ export default function StockCurrentApp({ endpoints, trans }) {
                         ].map(f => (
                             <button
                                 key={f.key}
-                                className={`btn btn-sm mr-1 ${filter === f.key ? 'btn-dark' : 'btn-outline-secondary'}`}
+                                className={`btn btn-sm me-1 ${filter === f.key ? 'btn-dark' : 'btn-outline-secondary'}`}
                                 onClick={() => setFilter(f.key)}
                             >
-                                {f.key !== 'all' && <i className={`${STATUS_CONFIG[f.key].icon} mr-1`}></i>}
+                                {f.key !== 'all' && <i className={`${STATUS_CONFIG[f.key].icon} me-1`}></i>}
                                 {f.label}
-                                <span className="badge badge-light ml-1 text-dark">
+                                <span className="badge text-bg-light ms-1 text-dark">
                                     {f.key === 'all' ? products.length : products.filter(p => p.status_color === f.key).length}
                                 </span>
                             </button>
                         ))}
-                        <button className="btn btn-sm btn-link float-right" onClick={loadStock}>
-                            <i className="fas fa-sync-alt mr-1"></i>Actualiser
+                        <button className="btn btn-sm btn-link float-end" onClick={loadStock}>
+                            <i className="fas fa-sync-alt me-1"></i>Actualiser
                         </button>
                     </div>
 
                     {/* Tableau */}
                     <div className="table-responsive">
                         <table className="table table-hover table-sm">
-                            <thead className="thead-light">
+                            <thead className="table-light">
                                 <tr>
                                     <th>Produit</th>
                                     <th className="text-center">Statut</th>

@@ -12,7 +12,7 @@ const STATUSES = [
 function StatusBadge({ statu }) {
     const s = STATUSES.find(x => x.value === statu);
     if (!s) return null;
-    return <span className={`badge badge-${s.badge}`}>{s.label}</span>;
+    return <span className={`badge text-bg-${s.badge}`}>{s.label}</span>;
 }
 
 export default function ProformasIndex({ endpoints }) {
@@ -57,14 +57,14 @@ export default function ProformasIndex({ endpoints }) {
                         <button
                             key={s.value}
                             onClick={() => toggleStatus(s.value)}
-                            className={`btn btn-sm mr-1 ${statuses.includes(s.value) ? `btn-${s.badge}` : 'btn-outline-secondary'}`}
+                            className={`btn btn-sm me-1 ${statuses.includes(s.value) ? `btn-${s.badge}` : 'btn-outline-secondary'}`}
                         >
                             {s.label}
                         </button>
                     ))}
                 </div>
                 <a href={endpoints.request} className="btn btn-success btn-sm">
-                    <i className="fas fa-plus mr-1" /> Nouvelle proforma
+                    <i className="fas fa-plus me-1" /> Nouvelle proforma
                 </a>
             </div>
 
@@ -113,10 +113,10 @@ export default function ProformasIndex({ endpoints }) {
                                 <td>{row.total_amount?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
                                 <td><StatusBadge statu={row.statu} /></td>
                                 <td>
-                                    <a href={row.url} className="btn btn-xs btn-info mr-1" title="Voir">
+                                    <a href={row.url} className="btn btn-sm btn-info me-1" title="Voir">
                                         <i className="fas fa-eye" />
                                     </a>
-                                    <a href={row.url_pdf} className="btn btn-xs btn-secondary" title="PDF" target="_blank" rel="noreferrer">
+                                    <a href={row.url_pdf} className="btn btn-sm btn-secondary" title="PDF" target="_blank" rel="noreferrer">
                                         <i className="fas fa-file-pdf" />
                                     </a>
                                 </td>
@@ -131,7 +131,7 @@ export default function ProformasIndex({ endpoints }) {
                 <div className="d-flex justify-content-between align-items-center mt-2">
                     <small className="text-muted">{meta.total} résultat(s)</small>
                     <div>
-                        <button className="btn btn-sm btn-outline-secondary mr-1" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
+                        <button className="btn btn-sm btn-outline-secondary me-1" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
                             <i className="fas fa-chevron-left" />
                         </button>
                         <span className="mx-2">{page} / {meta.last_page}</span>

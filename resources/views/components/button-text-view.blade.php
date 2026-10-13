@@ -1,5 +1,5 @@
 @if($modalTarget)
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#{{ $modalTarget }}">
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ $modalTarget }}">
         <i class="fas fa-folder"></i>
         {{ __('general_content.view_trans_key') }}
     </button>

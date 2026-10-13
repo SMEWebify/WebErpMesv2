@@ -121,7 +121,7 @@
                                    @if($child['target']) target="{{ $child['target'] }}" @endif>
                                     <span class="wem-list__text">{{ $child['text'] }}</span>
                                     @if(isset($child['label']) && $child['label'] !== '')
-                                        <span class="badge badge-{{ $child['label_color'] }}">{{ $child['label'] }}</span>
+                                        <span class="badge text-bg-{{ $child['label_color'] }}">{{ $child['label'] }}</span>
                                     @endif
                                     <i class="fas fa-chevron-right wem-list__chevron"></i>
                                 </a>
@@ -138,12 +138,12 @@
 <style>
     /* ---- Navbar mobile ---------------------------------------------- */
     @media (max-width: 991.98px) {
-        .main-header .wem-hide-mobile,
-        .main-header [data-widget="fullscreen"] {
+        .app-header .wem-hide-mobile,
+        .app-header [data-lte-toggle="fullscreen"] {
             display: none !important;
         }
 
-        .main-header .wem-launcher-toggle i {
+        .app-header .wem-launcher-toggle i {
             font-size: 1.15rem;
         }
 
@@ -185,7 +185,7 @@
         animation: wem-launcher-in .18s ease-out;
     }
 
-    body.dark-mode .wem-launcher {
+    [data-bs-theme="dark"] .wem-launcher {
         --wem-bg: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
         --wem-fg: #e2e8f0;
         --wem-muted: #94a3b8;

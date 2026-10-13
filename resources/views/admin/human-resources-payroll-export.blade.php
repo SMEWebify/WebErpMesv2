@@ -10,19 +10,19 @@
 @include('include.alert-result')
 
 <x-adminlte-card title="{{ __('general_content.search_trans_key') }}" theme="secondary" collapsible>
-    <form method="GET" action="{{ route('human.resources.payroll.export') }}" class="form-inline">
-        <label class="mr-2" for="month">{{ __('general_content.payroll_month_trans_key') }}</label>
-        <input type="month" class="form-control mr-3" name="month" id="month" value="{{ $filters['month'] }}">
+    <form method="GET" action="{{ route('human.resources.payroll.export') }}" class="d-flex flex-wrap align-items-center gap-2">
+        <label class="me-2 mb-0" for="month">{{ __('general_content.payroll_month_trans_key') }}</label>
+        <input type="month" class="form-control me-3 w-auto" name="month" id="month" value="{{ $filters['month'] }}">
 
-        <label class="mr-2" for="user_id">{{ __('general_content.user_trans_key') }}</label>
-        <select class="form-control mr-3" name="user_id" id="user_id">
+        <label class="me-2 mb-0" for="user_id">{{ __('general_content.user_trans_key') }}</label>
+        <select class="form-select me-3 w-auto" name="user_id" id="user_id">
             <option value="">{{ __('general_content.all_trans_key') }}</option>
             @foreach($userSelect as $item)
                 <option value="{{ $item->id }}" @if($filters['user_id'] == $item->id) selected @endif>{{ $item->name }}</option>
             @endforeach
         </select>
 
-        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.search_trans_key') }}" theme="primary" icon="fas fa-lg fa-search"/>
+        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.search_trans_key') }}" theme="primary" icon="fas fa-lg fa-search"/>
     </form>
 </x-adminlte-card>
 
@@ -53,7 +53,7 @@
                     <th>{{ __('general_content.user_trans_key') }}</th>
                     <th>{{ __('general_content.code_trans_key') }}</th>
                     <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th class="text-right">{{ __('general_content.payroll_quantity_trans_key') }}</th>
+                    <th class="text-end">{{ __('general_content.payroll_quantity_trans_key') }}</th>
                     <th>{{ __('general_content.unit_trans_key') }}</th>
                 </tr>
             </thead>
@@ -62,9 +62,9 @@
                 <tr>
                     <td>{{ $Row['matricule'] }}</td>
                     <td>{{ $Row['name'] }}</td>
-                    <td><span class="badge badge-secondary">{{ $Row['code'] }}</span></td>
+                    <td><span class="badge text-bg-secondary">{{ $Row['code'] }}</span></td>
                     <td>{{ $Row['label'] }}</td>
-                    <td class="text-right">{{ number_format((float) $Row['quantity'], 2, ',', ' ') }}</td>
+                    <td class="text-end">{{ number_format((float) $Row['quantity'], 2, ',', ' ') }}</td>
                     <td>{{ $Row['unit'] }}</td>
                 </tr>
             @empty
@@ -79,15 +79,15 @@
             @csrf
             <input type="hidden" name="month" value="{{ $filters['month'] }}">
             <input type="hidden" name="user_id" value="{{ $filters['user_id'] }}">
-            <x-adminlte-button class="btn-flat" type="submit" label="CSV" theme="success" icon="fas fa-lg fa-file-csv"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="CSV" theme="success" icon="fas fa-lg fa-file-csv"/>
         </form>
         <form method="POST" action="{{ route('human.resources.payroll.export.download', ['ext' => 'xlsx']) }}" class="d-inline">
             @csrf
             <input type="hidden" name="month" value="{{ $filters['month'] }}">
             <input type="hidden" name="user_id" value="{{ $filters['user_id'] }}">
-            <x-adminlte-button class="btn-flat" type="submit" label="Excel" theme="success" icon="fas fa-lg fa-file-excel"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="Excel" theme="success" icon="fas fa-lg fa-file-excel"/>
         </form>
-        <small class="text-muted ml-2">{{ __('general_content.payroll_export_hint_trans_key') }}</small>
+        <small class="text-muted ms-2">{{ __('general_content.payroll_export_hint_trans_key') }}</small>
     </x-slot>
 </x-adminlte-card>
 @stop

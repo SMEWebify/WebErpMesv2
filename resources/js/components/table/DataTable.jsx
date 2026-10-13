@@ -40,7 +40,7 @@ export const MOBILE_QUERY = '(max-width: 767.98px)';
 const INPUT_STYLE = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
 const EMPTY_VALUES = [null, undefined, '', '—'];
 
-const alignClass = align => (align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : '');
+const alignClass = align => (align === 'right' ? 'text-end' : align === 'center' ? 'text-center' : '');
 const sortFieldOf = col => (col.sortable === true ? col.key : col.sortable || null);
 const renderCell = (col, row) => (col.render ? col.render(row) : row[col.key]);
 
@@ -73,7 +73,7 @@ function joinNodes(nodes, separator) {
 
 function DefaultRowAction({ href, title }) {
     return (
-        <a href={href} className="btn btn-xs btn-info" title={title}>
+        <a href={href} className="btn btn-sm btn-info" title={title}>
             <i className="fas fa-eye" />
         </a>
     );
@@ -91,7 +91,7 @@ function MobileSort({ columns, sortField, sortAsc, onSort, trans }) {
     return (
         <div className="d-flex mb-2" style={{ gap: '0.5rem' }}>
             <select
-                className="form-control"
+                className="form-select"
                 style={touch}
                 aria-label={trans.sort_by ?? 'Trier par'}
                 value={sortField ?? ''}
@@ -143,7 +143,7 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpa
                         <div className={`list-group-item position-relative py-2${href ? ' list-group-item-action' : ''}`} style={{ minHeight: 44, ...rowStyle?.(row) }}>
                             <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
                                 <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                    <div className="font-weight-bold text-truncate">
+                                    <div className="fw-bold text-truncate">
                                         {href
                                             ? <a href={href} className="stretched-link text-body text-decoration-none">{joinNodes(title, ' · ')}</a>
                                             : joinNodes(title, ' · ')}
@@ -153,9 +153,9 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpa
                                     )}
                                 </div>
                                 {(badges.length > 0 || amounts.length > 0) && (
-                                    <div className="text-right flex-shrink-0">
+                                    <div className="text-end flex-shrink-0">
                                         {badges.map((b, i) => <div key={i}>{b}</div>)}
-                                        {amounts.map((a, i) => <div key={i} className="font-weight-bold" style={{ whiteSpace: 'nowrap' }}>{a}</div>)}
+                                        {amounts.map((a, i) => <div key={i} className="fw-bold" style={{ whiteSpace: 'nowrap' }}>{a}</div>)}
                                     </div>
                                 )}
                             </div>
@@ -170,7 +170,7 @@ function MobileCards({ rows, columns, rowKey, rowHref, mobileActions, renderExpa
                 );
             })}
             {totals.map(({ col, sum }) => (
-                <div key={col.key} className="list-group-item d-flex justify-content-between font-weight-bold bg-light">
+                <div key={col.key} className="list-group-item d-flex justify-content-between fw-bold bg-body-tertiary">
                     <span>{totalLabel}{totals.length > 1 ? ` — ${col.label}` : ''}</span>
                     <span style={{ whiteSpace: 'nowrap' }}>{col.total.format ? col.total.format(sum) : sum}</span>
                 </div>
@@ -293,18 +293,18 @@ export default function DataTable({
 
             <div className="table-responsive">
                 <table className={tableClassName}>
-                    <thead>
-                        <tr>
-                            {visible.map(col => {
+ <thead>
+ <tr>
+ {visible.map(col => {
                                 const field    = sortFieldOf(col);
                                 const dropping = dragOver === col.key;
                                 return (
                                     <th
                                         key={col.key}
                                         className={alignClass(col.align)}
-                                        draggable={reorderable || undefined}
-                                        style={{
-                                            cursor:     field ? 'pointer' : unsortableCursor,
+ draggable={reorderable || undefined}
+ style={{
+ cursor:     field ? 'pointer' : unsortableCursor,
                                             whiteSpace: 'nowrap',
                                             userSelect: 'none',
                                             borderLeft: dropping ? '3px solid #007bff' : undefined,
@@ -321,7 +321,7 @@ export default function DataTable({
                                         onClick={() => field && onSort?.(field)}
                                     >
                                         {reorderable && (
-                                            <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
+                                            <i className="fas fa-grip-vertical text-muted me-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
                                         )}
                                         {col.label}
                                         {(field || unsortableIcon) && (
@@ -403,7 +403,7 @@ export default function DataTable({
                                         {visible.map(col => (
                                             <td
                                                 key={col.key}
-                                                className={`${alignClass(col.align)}${col.bold ? ' font-weight-bold' : ''}`}
+                                                className={`${alignClass(col.align)}${col.bold ? ' fw-bold' : ''}`}
                                                 style={(col.nowrap ?? (col.align === 'right' || col.bold)) ? { whiteSpace: 'nowrap' } : {}}
                                             >
                                                 {renderCell(col, row)}
@@ -418,15 +418,15 @@ export default function DataTable({
                     </tbody>
                     {filtered.length > 0 && totals.length > 0 && (
                         <tfoot>
-                            <tr className="font-weight-bold bg-light">
+                            <tr className="fw-bold bg-body-tertiary">
                                 {visible.map((col, i) => {
                                     const total = totals.find(t => t.col === col);
                                     if (total) return (
-                                        <td key={col.key} className="text-right" style={{ whiteSpace: 'nowrap' }}>
+                                        <td key={col.key} className="text-end" style={{ whiteSpace: 'nowrap' }}>
                                             {col.total.format ? col.total.format(total.sum) : total.sum}
                                         </td>
                                     );
-                                    if (i === firstTotalIdx - 1) return <td key={col.key} className="text-right">{totalText}</td>;
+                                    if (i === firstTotalIdx - 1) return <td key={col.key} className="text-end">{totalText}</td>;
                                     return <td key={col.key} />;
                                 })}
                                 {actionsColumn && <td />}

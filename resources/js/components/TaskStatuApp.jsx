@@ -306,13 +306,13 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
             onClick={() => enabled && action(type)}
         >
             <i className={icon} />
-            {label}
+ {label}
         </button>
     );
 
     return (
         <div className={layout}>
-            {btn(canStart, 'start', 'fas fa-play', t('play_trans_key'), 'start', running ? ' ts-run__btn--is-active' : '')}
+ {btn(canStart, 'start', 'fas fa-play', t('play_trans_key'), 'start', running ? ' ts-run__btn--is-active' : '')}
             {btn(canPause, 'pause', 'fas fa-pause', t('pause_trans_key'), 'pause')}
             {btn(canFinish, 'stop', 'fas fa-stop', t('end_trans_key'), 'finish')}
         </div>
@@ -401,7 +401,7 @@ function ActivityFeed({ timeline, trans }) {
                         {showDate && <div className="ts-feed__day">{item.date_label}</div>}
                         <div className={`ts-feed__item${tone ? ` ts-feed__item--${tone}` : ''}`}>
                             <div className="ts-feed__text">
-                                {icon && <i className={`${icon} ts-muted mr-2`} />}
+                                {icon && <i className={`${icon} ts-muted me-2`} />}
                                 {item.content}
                             </div>
                             <div className="ts-feed__meta">{item.details}</div>
@@ -458,7 +458,7 @@ function DocumentStage({ documents, fileTrans, trans }) {
                                 onClick={() => setActiveId(doc.id)}
                             >
                                 <i className={doc.icon} />
-                                <span className="ts-doctab__ext">{doc.extension?.toUpperCase()}</span>
+ <span className="ts-doctab__ext">{doc.extension?.toUpperCase()}</span>
                                 <span className="ts-doctab__name">{doc.name}</span>
                             </button>
                         ))}
@@ -736,7 +736,7 @@ function PlanningCard({ task, apiBase, onReload, trans }) {
                     </div>
                     {userforcedResource && (
                         <span className="ts-muted" style={{ fontSize: 12, display: 'block', marginTop: 6 }}>
-                            <i className="fas fa-user-lock mr-1" />
+                            <i className="fas fa-user-lock me-1" />
                             {t('user_choise_trans_key')}
                         </span>
                     )}

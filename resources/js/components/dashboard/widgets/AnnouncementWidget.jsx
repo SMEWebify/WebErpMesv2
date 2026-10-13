@@ -6,7 +6,7 @@ export default function AnnouncementWidget({ announcement, trans = {}, editMode,
         <WidgetCard
             title={trans.announcement ?? 'Annonces'}
             icon="fa-envelope"
-            theme="lightblue"
+            theme="sky"
             empty={!announcement}
             emptyText={trans.no_announcement ?? 'Aucune annonce'}
             editMode={editMode}
@@ -15,10 +15,10 @@ export default function AnnouncementWidget({ announcement, trans = {}, editMode,
             {announcement && (
                 <>
                     <h5 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        <i className="fas fa-info mr-1" />
+                        <i className="fas fa-info me-1" />
                         {announcement.title}
                     </h5>
-                    <p style={{ fontSize: '0.85rem', color: '#495057', whiteSpace: 'pre-line', margin: 0 }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--bs-body-color)', whiteSpace: 'pre-line', margin: 0 }}>
                         {announcement.comment}
                     </p>
                 </>

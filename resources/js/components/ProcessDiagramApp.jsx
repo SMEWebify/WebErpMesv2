@@ -84,7 +84,7 @@ function ProcessNode({ data, selected }) {
     return (
         <NodeWrapper data={data} selected={selected}>
             <div style={{ fontWeight: 700, color: data.color ?? '#3b82f6', marginBottom: 2 }}>
-                <i className="fas fa-cog mr-1" />{data.label}
+                <i className="fas fa-cog me-1" />{data.label}
             </div>
             {data.pilot    && <div style={{ color: '#6b7280', fontSize: 11 }}>Pilote : {data.pilot}</div>}
             {data.kpi      && <div style={{ color: '#6b7280', fontSize: 11 }}>KPI : {data.kpi}</div>}
@@ -127,7 +127,7 @@ function IONode({ data, selected }) {
             borderStyle: 'dashed',
         }}>
             <div style={{ fontWeight: 700, color: data.color ?? '#10b981' }}>
-                <i className="fas fa-exchange-alt mr-1" />{data.label}
+                <i className="fas fa-exchange-alt me-1" />{data.label}
             </div>
         </NodeWrapper>
     );
@@ -141,7 +141,7 @@ function TriggerNode({ data, selected }) {
             borderColor: selected ? '#1d4ed8' : (data.color ?? '#8b5cf6'),
         }}>
             <div style={{ fontWeight: 700, color: data.color ?? '#8b5cf6' }}>
-                <i className="fas fa-play-circle mr-1" />{data.label}
+                <i className="fas fa-play-circle me-1" />{data.label}
             </div>
         </NodeWrapper>
     );
@@ -151,7 +151,7 @@ function DocumentNode({ data, selected }) {
     return (
         <NodeWrapper data={data} selected={selected} style={{ borderStyle: 'dotted' }}>
             <div style={{ fontWeight: 600, color: data.color ?? '#6b7280' }}>
-                <i className="fas fa-file-alt mr-1" />{data.label}
+                <i className="fas fa-file-alt me-1" />{data.label}
             </div>
         </NodeWrapper>
     );
@@ -200,7 +200,7 @@ function Palette() {
                         userSelect: 'none',
                     }}
                 >
-                    <i className={`${meta.icon} mr-1`} />{meta.label}
+                    <i className={`${meta.icon} me-1`} />{meta.label}
                 </div>
             ))}
             <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 8 }}>
@@ -233,7 +233,7 @@ function PropertiesPanel({ node, onChange }) {
     return (
         <div style={{ width: 200, background: '#f8fafc', borderLeft: '1px solid #e2e8f0', padding: 16, overflowY: 'auto' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: meta?.color ?? '#3b82f6', textTransform: 'uppercase', marginBottom: 12 }}>
-                <i className={`${meta?.icon} mr-1`} />{meta?.label ?? node.type}
+                <i className={`${meta?.icon} me-1`} />{meta?.label ?? node.type}
             </div>
 
             <div style={{ marginBottom: 10 }}>
@@ -299,9 +299,9 @@ function DiagramList({ diagrams, onSelect, onCreate, onDelete, loading }) {
     };
 
     return (
-        <div className="card card-primary card-outline">
+        <div className="card card-primary card-outline mb-3">
             <div className="card-header">
-                <h3 className="card-title"><i className="fas fa-sitemap mr-1" />Mes diagrammes</h3>
+                <h3 className="card-title"><i className="fas fa-sitemap me-1" />Mes diagrammes</h3>
             </div>
             <div className="card-body p-0">
                 {loading ? (
@@ -313,7 +313,7 @@ function DiagramList({ diagrams, onSelect, onCreate, onDelete, loading }) {
                         {diagrams.map(d => (
                             <li key={d.id} className="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div className="font-weight-bold">{d.name}</div>
+                                    <div className="fw-bold">{d.name}</div>
                                     {d.description && <div className="text-muted small">{d.description}</div>}
                                     <div className="text-muted small">{d.creator?.name ?? ''}</div>
                                 </div>
@@ -332,7 +332,7 @@ function DiagramList({ diagrams, onSelect, onCreate, onDelete, loading }) {
             </div>
             <div className="card-footer">
                 <form onSubmit={handleCreate}>
-                    <div className="form-group mb-2">
+                    <div className="mb-3 mb-2">
                         <input
                             className="form-control form-control-sm"
                             placeholder="Nom du diagramme"
@@ -341,7 +341,7 @@ function DiagramList({ diagrams, onSelect, onCreate, onDelete, loading }) {
                             required
                         />
                     </div>
-                    <div className="form-group mb-2">
+                    <div className="mb-3 mb-2">
                         <input
                             className="form-control form-control-sm"
                             placeholder="Description (optionnel)"
@@ -349,8 +349,8 @@ function DiagramList({ diagrams, onSelect, onCreate, onDelete, loading }) {
                             onChange={e => setDesc(e.target.value)}
                         />
                     </div>
-                    <button className="btn btn-primary btn-sm btn-block" type="submit">
-                        <i className="fas fa-plus mr-1" />Nouveau diagramme
+                    <button className="btn btn-primary btn-sm w-100" type="submit">
+                        <i className="fas fa-plus me-1" />Nouveau diagramme
                     </button>
                 </form>
             </div>
@@ -439,13 +439,13 @@ function DiagramEditor({ diagram, endpoints, onSaved, onClose }) {
             {/* Toolbar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
                 <button className="btn btn-sm btn-outline-secondary" onClick={onClose}>
-                    <i className="fas fa-arrow-left mr-1" />Retour
+                    <i className="fas fa-arrow-left me-1" />Retour
                 </button>
                 <strong style={{ fontSize: 14 }}>{diagram.name}</strong>
-                {dirty && <span className="badge badge-warning ml-1">Non sauvegardé</span>}
+                {dirty && <span className="badge text-bg-warning ms-1">Non sauvegardé</span>}
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
                     <button className="btn btn-sm btn-success" onClick={handleSave} disabled={saving || !dirty}>
-                        <i className="fas fa-save mr-1" />{saving ? 'Sauvegarde...' : 'Sauvegarder'}
+                        <i className="fas fa-save me-1" />{saving ? 'Sauvegarde...' : 'Sauvegarder'}
                     </button>
                 </div>
             </div>
@@ -544,7 +544,7 @@ export default function ProcessDiagramApp({ endpoints }) {
                 {error && (
                     <div className="alert alert-danger alert-dismissible">
                         {error}
-                        <button type="button" className="close" onClick={() => setError(null)}>&times;</button>
+                        <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                 )}
 
@@ -567,7 +567,7 @@ export default function ProcessDiagramApp({ endpoints }) {
                             />
                         </div>
                         <div className="col-lg-7">
-                            <div className="card card-outline card-secondary">
+                            <div className="card card-outline card-secondary mb-3">
                                 <div className="card-body text-muted text-center" style={{ padding: '60px 20px' }}>
                                     <i className="fas fa-sitemap fa-3x mb-3" style={{ color: '#cbd5e1' }} />
                                     <div>Créez ou sélectionnez un diagramme pour commencer.</div>

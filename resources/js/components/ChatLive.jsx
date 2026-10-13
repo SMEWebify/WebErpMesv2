@@ -92,7 +92,7 @@ export default function ChatLive({ endpoints, trans }) {
     const withSides = assignSides(messages);
 
     return (
-        <div className="card card-secondary">
+        <div className="card card-secondary mb-3">
             <div className="card-header">
                 <h3 className="card-title">Direct Chat</h3>
             </div>
@@ -102,8 +102,8 @@ export default function ChatLive({ endpoints, trans }) {
                     {withSides.length === 0 ? (
                         <div>
                             <div className="direct-chat-infos clearfix">
-                                <span className="direct-chat-name float-left">system</span>
-                                <span className="direct-chat-timestamp float-right">-</span>
+                                <span className="direct-chat-name float-start">system</span>
+                                <span className="direct-chat-timestamp float-end">-</span>
                             </div>
                             <div className="direct-chat-text">
                                 {t('no_data_trans_key', 'Aucun message.')}
@@ -113,10 +113,10 @@ export default function ChatLive({ endpoints, trans }) {
                         withSides.map((msg) => (
                             <div key={msg.id} className={`direct-chat-msg ${msg.side}`}>
                                 <div className="direct-chat-infos clearfix">
-                                    <span className={`direct-chat-name float-${msg.side}`}>
+                                    <span className={`direct-chat-name float-${msg.side === 'left' ? 'start' : 'end'}`}>
                                         {msg.user_name}
                                     </span>
-                                    <span className={`direct-chat-timestamp float-${msg.side === 'left' ? 'right' : 'left'}`}>
+                                    <span className={`direct-chat-timestamp float-${msg.side === 'left' ? 'end' : 'start'}`}>
                                         {msg.created_at}
                                     </span>
                                 </div>
@@ -141,11 +141,9 @@ export default function ChatLive({ endpoints, trans }) {
                             className="form-control"
                             disabled={loading}
                         />
-                        <span className="input-group-append">
-                            <button type="submit" className="btn btn-danger" disabled={loading}>
-                                {t('add_trans_key', 'Ajouter')}
-                            </button>
-                        </span>
+                        <button type="submit" className="btn btn-danger" disabled={loading}>
+                            {t('add_trans_key', 'Ajouter')}
+                        </button>
                     </div>
                     {error && <span className="text-danger">{error}</span>}
                 </form>

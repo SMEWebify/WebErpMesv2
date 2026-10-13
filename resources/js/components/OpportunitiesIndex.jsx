@@ -8,12 +8,12 @@ import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',      label: 'new' },
-    2: { badge: 'badge-primary',   label: 'quote_made' },
-    3: { badge: 'badge-warning',   label: 'negotiation' },
-    4: { badge: 'badge-success',   label: 'closed_won' },
-    5: { badge: 'badge-danger',    label: 'closed_lost' },
-    6: { badge: 'badge-secondary', label: 'informational' },
+    1: { badge: 'text-bg-info',      label: 'new' },
+    2: { badge: 'text-bg-primary',   label: 'quote_made' },
+    3: { badge: 'text-bg-warning',   label: 'negotiation' },
+    4: { badge: 'text-bg-success',   label: 'closed_won' },
+    5: { badge: 'text-bg-danger',    label: 'closed_lost' },
+    6: { badge: 'text-bg-secondary', label: 'informational' },
 };
 
 const LS_COL_ORDER   = 'opportunities_table_col_order';
@@ -106,7 +106,7 @@ function DonutChart({ data, trans }) {
             </svg>
             <div className="mt-1" style={{ fontSize: '0.72rem' }}>
                 {slices.map((s, i) => (
-                    <span key={i} className="mr-2" style={{ color: s.color, fontWeight: hovered === i ? 700 : 400 }}>
+                    <span key={i} className="me-2" style={{ color: s.color, fontWeight: hovered === i ? 700 : 400 }}>
                         ● {trans[STATUS_CONFIG[s.statu]?.label] ?? s.statu}
                     </span>
                 ))}
@@ -124,10 +124,10 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
         <div className="row">
             {/* Donut chart */}
             <div className="col-md-3">
-                <div className="card card-teal">
-                    <div className="card-header bg-teal">
+                <div className="card card-teal mb-3">
+                    <div className="card-header text-bg-teal">
                         <h3 className="card-title text-white">
-                            <i className="fas fa-chart-bar mr-1" />{trans.statistics ?? 'Statistics'}
+                            <i className="fas fa-chart-bar me-1" />{trans.statistics ?? 'Statistics'}
                         </h3>
                     </div>
                     <div className="card-body d-flex justify-content-center">
@@ -138,10 +138,10 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
 
             {/* Activities + KPI boxes */}
             <div className="col-md-3">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header bg-primary">
                         <h3 className="card-title text-white">
-                            <i className="fas fa-history mr-1" />{trans.recent_activities ?? 'Recent activities'}
+                            <i className="fas fa-history me-1" />{trans.recent_activities ?? 'Recent activities'}
                         </h3>
                     </div>
                     <div className="card-body p-0">
@@ -155,7 +155,7 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
                                         <td style={{ fontSize: '0.78rem' }}>{a.label}</td>
                                         <td style={{ fontSize: '0.72rem' }} className="text-muted">{a.created_pretty}</td>
                                         <td>
-                                            <a href={a.url} className="btn btn-xs btn-info">
+                                            <a href={a.url} className="btn btn-sm btn-info">
                                                 <i className="fas fa-eye" />
                                             </a>
                                         </td>
@@ -166,34 +166,34 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
                     </div>
                 </div>
 
-                <div className="small-box bg-danger" style={{ overflow: 'hidden' }}>
+                <div className="small-box text-bg-danger" style={{ overflow: 'hidden' }}>
                     <div className="inner">
                         <h4 style={{ fontSize: '1rem' }}>{kpi.totalWon}</h4>
                         <p style={{ fontSize: '0.78rem' }}>{trans.total_won ?? 'Total won'}</p>
                     </div>
-                    <div className="icon" style={{ fontSize: '40px' }}><i className="fas fa-shopping-cart" /></div>
+                    <i className="small-box-icon fas fa-shopping-cart" style={{ fontSize: 40, height: 40 }} aria-hidden="true" />
                 </div>
 
-                <div className="small-box bg-warning" style={{ overflow: 'hidden' }}>
+                <div className="small-box text-bg-warning" style={{ overflow: 'hidden' }}>
                     <div className="inner">
                         <h4 style={{ fontSize: '1rem' }}>{kpi.totalLost}</h4>
                         <p style={{ fontSize: '0.78rem' }}>{trans.total_lost ?? 'Total lost'}</p>
                     </div>
-                    <div className="icon" style={{ fontSize: '40px' }}><i className="fas fa-times-circle" /></div>
+                    <i className="small-box-icon fas fa-times-circle" style={{ fontSize: 40, height: 40 }} aria-hidden="true" />
                 </div>
             </div>
 
             {/* By company */}
             <div className="col-md-3">
-                <div className="small-box bg-teal">
+                <div className="small-box text-bg-teal">
                     <div className="inner">
                         <h3>{kpi.count}</h3>
                         <p>{trans.count ?? 'Opportunities'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-chart-bar" /></div>
+                    <i className="small-box-icon fas fa-chart-bar" aria-hidden="true" />
                 </div>
 
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header bg-secondary">
                         <h3 className="card-title text-white" style={{ fontSize: '0.82rem' }}>
                             {trans.by_company ?? 'By company'}
@@ -227,7 +227,7 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
 
             {/* By probability/amount */}
             <div className="col-md-3">
-                <div className="card">
+                <div className="card mb-3">
                     <div className="card-header bg-dark">
                         <h3 className="card-title text-white" style={{ fontSize: '0.82rem' }}>
                             {trans.by_amount ?? 'By probability'}
@@ -277,7 +277,7 @@ function opportunityColumns(trans, currency, locale) {
           render: o => <span>{o.probality ?? '—'} %</span>,
           mobile: 'subtitle', mobileRender: o => (o.probality != null ? `${o.probality} %` : null) },
         { key: 'budget',     label: trans.budget      ?? 'Budget',      sortable: true, align: 'right', nowrap: false,
-          render: o => <span className="font-weight-bold">{formatCurrency(o.budget, currency, locale)}</span>,
+          render: o => <span className="fw-bold">{formatCurrency(o.budget, currency, locale)}</span>,
           total: { value: o => Number(o.budget) || 0, format: sum => formatCurrency(sum, currency, locale) },
           mobile: 'amount', mobileRender: o => (Number(o.budget) > 0 ? formatCurrency(o.budget, currency, locale) : null) },
         { key: 'user',       label: trans.user        ?? 'User',
@@ -322,18 +322,18 @@ function OpportunityCards({ items, loading, trans, currency, locale }) {
         <div className="row">
             {items.map(o => {
                 const cfg = STATUS_CONFIG[o.statu] ?? {};
-                const bg  = cfg.badge?.replace('badge-', 'bg-') ?? 'bg-secondary';
+                const bg  = cfg.badge?.replace(/^(badge|text-bg)-/, 'bg-') ?? 'bg-secondary';
                 return (
                     <div key={o.id} className="col-md-3 mb-3">
-                        <div className="card h-100">
+                        <div className="card h-100 mb-3">
                             <div className={`card-header ${bg} py-2`}>
                                 <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
                                     {o.user && (
-                                        <span className="badge badge-light" style={{ fontSize: '0.65rem' }}>
+                                        <span className="badge text-bg-light" style={{ fontSize: '0.65rem' }}>
                                             {o.user.name.charAt(0).toUpperCase()}
                                         </span>
                                     )}
-                                    <span className="text-white font-weight-bold text-truncate" style={{ fontSize: '0.82rem' }}>
+                                    <span className="text-white fw-bold text-truncate" style={{ fontSize: '0.82rem' }}>
                                         {o.label}
                                     </span>
                                 </div>
@@ -353,7 +353,7 @@ function OpportunityCards({ items, loading, trans, currency, locale }) {
                                 <span className="text-white" style={{ fontSize: '0.72rem' }}>
                                     {o.companie?.label ?? '—'}
                                 </span>
-                                <a href={o.url} className="btn btn-xs btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
+                                <a href={o.url} className="btn btn-sm btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
                                     <i className="fas fa-eye" />
                                 </a>
                             </div>
@@ -403,22 +403,22 @@ function KanbanBoard({ endpoints, trans, currency, locale }) {
         <div className="d-flex" style={{ overflowX: 'auto', gap: '0.75rem', paddingBottom: '0.5rem' }}>
             {Object.entries(STATUS_CONFIG).map(([id, cfg]) => {
                 const statusId  = Number(id);
-                const bg        = cfg.badge.replace('badge-', 'bg-');
+                const bg        = cfg.badge.replace(/^(badge|text-bg)-/, 'bg-');
                 const colItems  = items.filter(o => o.statu === statusId);
                 const isDropTarget = dragOver === statusId;
                 return (
                     <div key={statusId}
-                        className="card flex-shrink-0"
+                        className="card flex-shrink-0 mb-3"
                         style={{ minWidth: 200, maxWidth: 240, width: '100%', border: isDropTarget ? '2px dashed #007bff' : undefined }}
                         onDragOver={e => handleDragOver(e, statusId)}
                         onDrop={() => handleDrop(statusId)}
                         onDragLeave={() => setDragOver(null)}
                     >
                         <div className={`card-header py-1 d-flex justify-content-between align-items-center ${bg}`}>
-                            <span className="text-white font-weight-bold" style={{ fontSize: '0.82rem' }}>
+                            <span className="text-white fw-bold" style={{ fontSize: '0.82rem' }}>
                                 {trans[cfg.label] ?? cfg.label}
                             </span>
-                            <span className="badge badge-light">{colItems.length}</span>
+                            <span className="badge text-bg-light">{colItems.length}</span>
                         </div>
                         <div className="card-body p-2" style={{ maxHeight: 440, overflowY: 'auto' }}>
                             {colItems.map(o => (
@@ -429,7 +429,7 @@ function KanbanBoard({ endpoints, trans, currency, locale }) {
                                     style={{ cursor: 'grab', opacity: dragItem?.id === o.id ? 0.4 : 1 }}
                                 >
                                     <div className="card-body p-2">
-                                        <a href={o.url} className="font-weight-bold text-primary d-block mb-1"
+                                        <a href={o.url} className="fw-bold text-primary d-block mb-1"
                                             style={{ fontSize: '0.8rem' }}
                                             onClick={e => e.stopPropagation()}>
                                             {o.label}
@@ -441,7 +441,7 @@ function KanbanBoard({ endpoints, trans, currency, locale }) {
                                             <span className="text-muted" style={{ fontSize: '0.68rem' }}>
                                                 {o.probality ?? '—'} %
                                             </span>
-                                            <span className="font-weight-bold" style={{ fontSize: '0.68rem' }}>
+                                            <span className="fw-bold" style={{ fontSize: '0.68rem' }}>
                                                 {formatCurrency(o.budget, currency, locale)}
                                             </span>
                                         </div>
@@ -505,7 +505,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                     <div className="modal-content">
                         <div className="modal-header bg-success">
                             <h5 className="modal-title text-white">{trans.new_opportunity ?? 'New opportunity'}</h5>
-                            <button className="close text-white" onClick={onClose}><span>×</span></button>
+                            <button onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <div className="modal-body">
                             <div className="row">
@@ -519,7 +519,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* User */}
                                 <div className="col-md-4 mb-2">
                                     <label className="mb-0 small">{trans.user ?? 'User'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.user_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.user_id ? 'is-invalid' : ''}`}
                                         value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                                         <option value="">—</option>
                                         {(selectData?.users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
@@ -529,7 +529,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Company */}
                                 <div className="col-12 mb-2">
                                     <label className="mb-0 small">{trans.company ?? 'Company'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_id ? 'is-invalid' : ''}`}
                                         value={form.companies_id} onChange={e => {
                                             set('companies_id', e.target.value);
                                             set('companies_addresses_id', '');
@@ -545,7 +545,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Address */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.address_select ?? 'Address'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
                                         value={form.companies_addresses_id}
                                         onChange={e => set('companies_addresses_id', e.target.value)}
                                         disabled={!form.companies_id}>
@@ -557,7 +557,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Contact */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.contact_select ?? 'Contact'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
                                         value={form.companies_contacts_id}
                                         onChange={e => set('companies_contacts_id', e.target.value)}
                                         disabled={!form.companies_id}>
@@ -595,7 +595,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {trans.close ?? 'Close'}
                             </button>
                             <button className="btn btn-success btn-sm" onClick={save} disabled={saving}>
-                                <i className="fas fa-save mr-1" />
+                                <i className="fas fa-save me-1" />
                                 {saving ? '…' : (trans.submit ?? 'Submit')}
                             </button>
                         </div>
@@ -688,9 +688,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control"
                         placeholder={trans.search ?? 'Search…'}
                         value={search}
@@ -720,7 +718,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 
                 {/* New opportunity */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_opportunity ?? 'New opportunity'}
+                    <i className="fas fa-plus me-1" />{trans.new_opportunity ?? 'New opportunity'}
                 </button>
             </div>
 
@@ -773,7 +771,7 @@ export default function OpportunitiesIndex({ kpi, chart, activities, byCompany, 
     const locale   = trans.locale   ?? 'fr-FR';
 
     return (
-        <div className="card card-outline card-danger">
+        <div className="card card-outline card-danger mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

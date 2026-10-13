@@ -66,9 +66,9 @@ const STEPS = [
 
 function Field({ label, required, children, hint }) {
     return (
-        <div className="form-group mb-3">
-            <label className="font-weight-bold mb-1">
-                {label}{required && <span className="text-danger ml-1">*</span>}
+        <div className="mb-3 mb-3">
+            <label className="fw-bold mb-1">
+                {label}{required && <span className="text-danger ms-1">*</span>}
             </label>
             {children}
             {hint && <small className="text-muted">{hint}</small>}
@@ -110,16 +110,16 @@ function LogoUpload({ preview, onFile, onRemove }) {
     }
 
     return (
-        <div className="form-group mb-4">
-            <label className="font-weight-bold mb-2">
-                Logo de l&apos;entreprise <small className="text-muted font-weight-normal">(optionnel — PNG, JPG, SVG, max 2 Mo)</small>
+        <div className="mb-3 mb-4">
+            <label className="fw-bold mb-2">
+                Logo de l&apos;entreprise <small className="text-muted fw-normal">(optionnel — PNG, JPG, SVG, max 2 Mo)</small>
             </label>
             <div
                 onClick={() => !preview && inputRef.current?.click()}
                 onDragOver={e => { e.preventDefault(); setDrag(true); }}
                 onDragLeave={() => setDrag(false)}
                 onDrop={handleDrop}
-                className={`border rounded d-flex align-items-center justify-content-center ${drag ? 'border-primary bg-light' : 'border-dashed'}`}
+                className={`border rounded d-flex align-items-center justify-content-center ${drag ? 'border-primary bg-body-tertiary' : 'border-dashed'}`}
                 style={{
                     minHeight: 110,
                     cursor: preview ? 'default' : 'pointer',
@@ -284,15 +284,15 @@ function StepPaymentCondition({ data, onChange }) {
                 </div>
                 <div className="col-md-4">
                     <Field label="Fin de mois">
-                        <div className="custom-control custom-switch mt-2">
+                        <div className="form-check form-switch mt-2">
                             <input
                                 type="checkbox"
-                                className="custom-control-input"
+                                className="form-check-input"
                                 id="month_end"
                                 checked={data.month_end === 1}
                                 onChange={e => onChange({ ...data, month_end: e.target.checked ? 1 : 0 })}
                             />
-                            <label className="custom-control-label" htmlFor="month_end">Fin de mois</label>
+                            <label className="form-check-label" htmlFor="month_end">Fin de mois</label>
                         </div>
                     </Field>
                 </div>
@@ -370,7 +370,7 @@ function StepUnit({ data, onChange }) {
                 <div className="col-md-4">
                     <Field label="Type" required>
                         <select
-                            className="form-control"
+                            className="form-select"
                             value={data.type}
                             onChange={e => onChange({ ...data, type: parseInt(e.target.value, 10) })}
                         >
@@ -408,7 +408,7 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
                 <>
                     <Field label="Sélectionner un rôle existant ou en créer un" required>
                         <select
-                            className="form-control"
+                            className="form-select"
                             value={data.role_id ?? ''}
                             onChange={e => onChange({
                                 ...data,
@@ -446,7 +446,7 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
             {availablePermissions.length > 0 && (
                 <div className="mt-3">
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                        <label className="font-weight-bold mb-0">
+                        <label className="fw-bold mb-0">
                             Permissions attribuées à ce rôle
                         </label>
                         <button
@@ -459,21 +459,21 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
                     </div>
                     <div
                         className="border rounded p-3"
-                        style={{ maxHeight: 220, overflowY: 'auto', background: '#f8f9fa' }}
+                        style={{ maxHeight: 220, overflowY: 'auto', background: 'var(--bs-tertiary-bg)' }}
                     >
                         <div className="row">
                             {availablePermissions.map(p => (
                                 <div key={p.name} className="col-md-6 mb-1">
-                                    <div className="custom-control custom-checkbox">
+                                    <div className="form-check ">
                                         <input
                                             type="checkbox"
-                                            className="custom-control-input"
+                                            className="form-check-input"
                                             id={`perm-${p.name}`}
                                             checked={data.permissions.includes(p.name)}
                                             onChange={() => togglePermission(p.name)}
                                         />
                                         <label
-                                            className="custom-control-label"
+                                            className="form-check-label"
                                             htmlFor={`perm-${p.name}`}
                                             style={{ fontSize: '0.85rem' }}
                                         >
@@ -530,9 +530,7 @@ function StepEstimatedBudget({ data, onChange }) {
                                     onChange={e => onChange({ ...data, [key]: e.target.value })}
                                     placeholder="0"
                                 />
-                                <div className="input-group-append">
-                                    <span className="input-group-text">€</span>
-                                </div>
+                                <span className="input-group-text">€</span>
                             </div>
                         </div>
                     );
@@ -783,8 +781,8 @@ export default function SetupWizard({ endpoints, initial }) {
 
                 {/* Header */}
                 <div className="text-center mb-4">
-                    <h2 className="text-white font-weight-bold mb-1">
-                        <i className="fas fa-cogs mr-2" />
+                    <h2 className="text-white fw-bold mb-1">
+                        <i className="fas fa-cogs me-2" />
                         Configuration initiale
                     </h2>
                     <p className="text-white-50">
@@ -793,7 +791,7 @@ export default function SetupWizard({ endpoints, initial }) {
                 </div>
 
                 {/* Card */}
-                <div className="card shadow-lg border-0" style={{ borderRadius: 12 }}>
+                <div className="card shadow-lg border-0 mb-3" style={{ borderRadius: 12 }}>
                     <div className="card-body p-4 p-md-5">
 
                         <ProgressBar currentStep={step} total={STEPS.length} />
@@ -807,7 +805,7 @@ export default function SetupWizard({ endpoints, initial }) {
                         {/* Error */}
                         {error && (
                             <div className="alert alert-danger d-flex align-items-center" role="alert">
-                                <i className="fas fa-exclamation-circle mr-2" />
+                                <i className="fas fa-exclamation-circle me-2" />
                                 {error}
                             </div>
                         )}
@@ -844,7 +842,7 @@ export default function SetupWizard({ endpoints, initial }) {
                                 onClick={handlePrev}
                                 disabled={step === 1 || loading}
                             >
-                                <i className="fas fa-arrow-left mr-1" /> Précédent
+                                <i className="fas fa-arrow-left me-1" /> Précédent
                             </button>
                             <button
                                 className="btn btn-primary px-4"
@@ -852,11 +850,11 @@ export default function SetupWizard({ endpoints, initial }) {
                                 disabled={loading}
                             >
                                 {loading && (
-                                    <span className="spinner-border spinner-border-sm mr-2" role="status" />
+                                    <span className="spinner-border spinner-border-sm me-2" role="status" />
                                 )}
                                 {isLast
-                                    ? <><i className="fas fa-check mr-1" /> Terminer</>
-                                    : <>Suivant <i className="fas fa-arrow-right ml-1" /></>}
+                                    ? <><i className="fas fa-check me-1" /> Terminer</>
+                                    : <>Suivant <i className="fas fa-arrow-right ms-1" /></>}
                             </button>
                         </div>
                     </div>

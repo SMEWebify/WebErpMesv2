@@ -5,21 +5,21 @@ function NotificationItem({ n, onRead, showReadAction }) {
     return (
         <div className={`d-flex align-items-start py-2 ${n.read_at ? 'text-muted' : ''}`}>
             <a href={n.route} className="flex-grow-1 text-decoration-none text-dark d-flex align-items-center">
-                <i className={`${n.icon} mr-2 flex-shrink-0`} style={{ width: 16 }}></i>
+                <i className={`${n.icon} me-2 flex-shrink-0`} style={{ width: 16 }}></i>
                 <span className="small">{n.text}</span>
             </a>
-            <div className="ml-2 d-flex flex-column align-items-end flex-shrink-0">
+            <div className="ms-2 d-flex flex-column align-items-end flex-shrink-0">
                 <span className="text-muted" style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{n.time}</span>
                 {!n.read_at && (
-                    <span className="badge badge-primary" style={{ fontSize: '0.65rem' }}>Nouveau</span>
+                    <span className="badge text-bg-primary" style={{ fontSize: '0.65rem' }}>Nouveau</span>
                 )}
                 {n.read_at && (
-                    <span className="badge badge-secondary" style={{ fontSize: '0.65rem' }}>Lu</span>
+                    <span className="badge text-bg-secondary" style={{ fontSize: '0.65rem' }}>Lu</span>
                 )}
             </div>
             {showReadAction && !n.read_at && (
                 <button
-                    className="btn btn-sm btn-outline-info ml-2 flex-shrink-0"
+                    className="btn btn-sm btn-outline-info ms-2 flex-shrink-0"
                     style={{ padding: '1px 6px', fontSize: '0.7rem' }}
                     onClick={() => onRead(n.id)}
                     title="Marquer comme lu"
@@ -92,7 +92,7 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
         base: {
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '10px 22px', border: 'none', background: 'transparent',
-            fontSize: '0.88rem', fontWeight: 500, color: '#6c757d',
+            fontSize: '0.88rem', fontWeight: 500, color: 'var(--bs-secondary-color)',
             cursor: 'pointer', borderBottom: '3px solid transparent',
             transition: 'color .15s, border-color .15s',
             whiteSpace: 'nowrap',
@@ -101,8 +101,8 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
     };
 
     return (
-        <div className="card shadow-sm" style={{ border: '1px solid #e3e6ea', borderRadius: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px', borderBottom: '1px solid #e3e6ea', background: '#fff', borderRadius: '8px 8px 0 0' }}>
+        <div className="card shadow-sm mb-3" style={{ border: '1px solid #e3e6ea', borderRadius: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px', borderBottom: '1px solid #e3e6ea', background: 'var(--bs-body-bg)', borderRadius: '8px 8px 0 0' }}>
                 <div style={{ display: 'flex' }}>
                     <button
                         style={{ ...tabStyle.base, ...(activeTab === 'unread' ? tabStyle.active : {}) }}
@@ -129,7 +129,7 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
             <div className="card-body">
                 {success && (
                     <div className="alert alert-success alert-dismissible py-2 mb-2">
-                        <button type="button" className="close" onClick={() => setSuccess('')}><span>&times;</span></button>
+                        <button type="button" onClick={() => setSuccess('')} aria-label="Close" className="btn-close float-end"></button>
                         {success}
                     </div>
                 )}
@@ -156,7 +156,7 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
                     <>
                         {!historyLoaded && historyLoading && (
                             <div className="text-center text-muted py-3">
-                                <i className="fas fa-spinner fa-spin mr-1"></i>
+                                <i className="fas fa-spinner fa-spin me-1"></i>
                                 {trans.loading ?? 'Chargement…'}
                             </div>
                         )}
@@ -180,8 +180,8 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
                                     disabled={historyLoading}
                                 >
                                     {historyLoading
-                                        ? <><i className="fas fa-spinner fa-spin mr-1"></i>{trans.loading ?? 'Chargement…'}</>
-                                        : <><i className="fas fa-chevron-down mr-1"></i>{trans.load_more ?? 'Charger plus'}</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1"></i>{trans.loading ?? 'Chargement…'}</>
+                                        : <><i className="fas fa-chevron-down me-1"></i>{trans.load_more ?? 'Charger plus'}</>
                                     }
                                 </button>
                             </div>
@@ -193,7 +193,7 @@ export default function NotificationLinePage({ initialNotifications, endpoints, 
             {activeTab === 'unread' && unread.length > 0 && (
                 <div className="card-footer">
                     <button className="btn btn-info btn-sm" onClick={handleReadAll}>
-                        <i className="fas fa-check-double mr-1"></i>
+                        <i className="fas fa-check-double me-1"></i>
                         {trans.all_read ?? 'Tout marquer comme lu'}
                     </button>
                 </div>

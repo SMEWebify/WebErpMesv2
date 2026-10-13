@@ -3,7 +3,7 @@
 @section('title', 'Planificateur d\'audits internes ISO 9001')
 
 @section('content_header')
-    <h1><i class="fas fa-clipboard-check mr-2"></i>Planificateur d'audits internes ISO 9001</h1>
+    <h1><i class="fas fa-clipboard-check me-2"></i>Planificateur d'audits internes ISO 9001</h1>
 @stop
 
 @section('content')

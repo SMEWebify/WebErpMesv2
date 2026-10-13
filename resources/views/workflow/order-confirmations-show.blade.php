@@ -23,20 +23,20 @@
   $diffCount = count($diff['added']) + count($diff['removed']) + count($diff['modified']);
 @endphp
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Confirmation" data-toggle="tab">{{ __('general_content.informations_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.lines_trans_key') }} ({{ count($Confirmation->OrderConfirmationLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Confirmation" data-bs-toggle="tab">{{ __('general_content.informations_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-bs-toggle="tab">{{ __('general_content.lines_trans_key') }} ({{ count($Confirmation->OrderConfirmationLines) }})</a></li>
       <li class="nav-item">
-        <a class="nav-link" href="#Diff" data-toggle="tab">
+        <a class="nav-link" href="#Diff" data-bs-toggle="tab">
           {{ __('general_content.arc_differences_trans_key') }}
           @if($diffCount > 0)
-            <span class="badge badge-warning ml-1">{{ $diffCount }}</span>
+            <span class="badge text-bg-warning ms-1">{{ $diffCount }}</span>
           @endif
         </a>
       </li>
-      <li class="nav-item"><a class="nav-link" href="#Revisions" data-toggle="tab">{{ __('general_content.arc_revisions_trans_key') }} ({{ count($revisions) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Revisions" data-bs-toggle="tab">{{ __('general_content.arc_revisions_trans_key') }} ({{ count($revisions) }})</a></li>
     </ul>
   </div>
 
@@ -49,7 +49,7 @@
 
         @if($diffCount > 0 && $Confirmation->is_current)
           <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle mr-1"></i>
+            <i class="fas fa-exclamation-triangle me-1"></i>
             {{ __('general_content.arc_diverged_warning_trans_key', ['revision' => $Confirmation->revision]) }}
           </div>
         @endif
@@ -61,13 +61,13 @@
                 <div class="col-md-6">
                   <p><label class="text-success">{{ __('general_content.external_id_trans_key') }}</label> {{ $Confirmation->code }}</p>
                   <p><label class="text-success">{{ __('general_content.revision_trans_key') }}</label>
-                    <span class="badge badge-dark">{{ $Confirmation->revision }}</span>
+                    <span class="badge text-bg-dark">{{ $Confirmation->revision }}</span>
                     @if($Confirmation->is_current)
-                      <span class="badge badge-success ml-1">{{ __('general_content.arc_current_trans_key') }}</span>
+                      <span class="badge text-bg-success ms-1">{{ __('general_content.arc_current_trans_key') }}</span>
                     @endif
                   </p>
                   <p><label class="text-success">{{ __('general_content.status_trans_key') }}</label>
-                    <span class="badge badge-{{ $statusColor }}">{{ $statusLabel }}</span>
+                    <span class="badge text-bg-{{ $statusColor }}">{{ $statusLabel }}</span>
                   </p>
                   <p><label class="text-success">{{ __('general_content.label_trans_key') }}</label> {{ $Confirmation->label }}</p>
                   <p><label class="text-success">{{ __('general_content.customer_reference_trans_key') }}</label> {{ $Confirmation->customer_reference ?: '-' }}</p>
@@ -176,13 +176,13 @@
               <tr>
                 <th>#</th>
                 <th>{{ __('general_content.description_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.qty_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.qty_trans_key') }}</th>
                 <th>{{ __('general_content.unit_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.price_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.discount_trans_key') }}</th>
-                <th class="text-right">TVA</th>
+                <th class="text-end">{{ __('general_content.price_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.discount_trans_key') }}</th>
+                <th class="text-end">TVA</th>
                 <th>{{ __('general_content.delivery_date_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.total_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.total_trans_key') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -193,13 +193,13 @@
                     {{ $line->label }}
                     @if($line->code)<br><span class="text-muted small">{{ $line->code }}</span>@endif
                   </td>
-                  <td class="text-right">{{ $line->qty }}</td>
+                  <td class="text-end">{{ $line->qty }}</td>
                   <td>{{ $line->unit_label ?: '-' }}</td>
-                  <td class="text-right">{{ $line->formatted_selling_price }}</td>
-                  <td class="text-right">{{ $line->discount }} %</td>
-                  <td class="text-right">{{ $line->vat_rate }} %</td>
+                  <td class="text-end">{{ $line->formatted_selling_price }}</td>
+                  <td class="text-end">{{ $line->discount }} %</td>
+                  <td class="text-end">{{ $line->vat_rate }} %</td>
                   <td>{{ $line->delivery_date ?: '-' }}</td>
-                  <td class="text-right">{{ $line->formatted_total }}</td>
+                  <td class="text-end">{{ $line->formatted_total }}</td>
                 </tr>
               @empty
                 <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}" />
@@ -215,7 +215,7 @@
           <p class="text-muted">{{ __('general_content.arc_diff_only_current_trans_key') }}</p>
         @elseif($diffCount === 0)
           <div class="alert alert-success mb-0">
-            <i class="fas fa-check-circle mr-1"></i>{{ __('general_content.arc_no_difference_trans_key') }}
+            <i class="fas fa-check-circle me-1"></i>{{ __('general_content.arc_no_difference_trans_key') }}
           </div>
         @else
           <table class="table table-sm">
@@ -229,21 +229,21 @@
             <tbody>
               @foreach($diff['added'] as $line)
                 <tr>
-                  <td><span class="badge badge-success">{{ __('general_content.arc_line_added_trans_key') }}</span></td>
+                  <td><span class="badge text-bg-success">{{ __('general_content.arc_line_added_trans_key') }}</span></td>
                   <td>{{ $line['label'] }}</td>
                   <td class="text-muted">-</td>
                 </tr>
               @endforeach
               @foreach($diff['removed'] as $line)
                 <tr>
-                  <td><span class="badge badge-danger">{{ __('general_content.arc_line_removed_trans_key') }}</span></td>
+                  <td><span class="badge text-bg-danger">{{ __('general_content.arc_line_removed_trans_key') }}</span></td>
                   <td>{{ $line['label'] }}</td>
                   <td class="text-muted">-</td>
                 </tr>
               @endforeach
               @foreach($diff['modified'] as $line)
                 <tr>
-                  <td><span class="badge badge-warning">{{ __('general_content.arc_line_modified_trans_key') }}</span></td>
+                  <td><span class="badge text-bg-warning">{{ __('general_content.arc_line_modified_trans_key') }}</span></td>
                   <td>{{ $line['label'] }}</td>
                   <td>
                     @foreach($line['changes'] as $field => $change)
@@ -271,7 +271,7 @@
               <th>{{ __('general_content.external_id_trans_key') }}</th>
               <th>{{ __('general_content.status_trans_key') }}</th>
               <th>{{ __('general_content.send_trans_key') }}</th>
-              <th class="text-right">{{ __('general_content.total_trans_key') }}</th>
+              <th class="text-end">{{ __('general_content.total_trans_key') }}</th>
               <th></th>
             </tr>
           </thead>
@@ -280,18 +280,18 @@
               @php [$c, $l] = $statusMap[(int) $revision->statu] ?? ['secondary', $revision->statu]; @endphp
               <tr class="{{ $revision->id === $Confirmation->id ? 'table-active' : '' }}">
                 <td>
-                  <span class="badge badge-dark">{{ $revision->revision }}</span>
+                  <span class="badge text-bg-dark">{{ $revision->revision }}</span>
                   @if($revision->is_current)
-                    <i class="fas fa-check-circle text-success ml-1" title="{{ __('general_content.arc_current_trans_key') }}"></i>
+                    <i class="fas fa-check-circle text-success ms-1" title="{{ __('general_content.arc_current_trans_key') }}"></i>
                   @endif
                 </td>
                 <td>{{ $revision->code }}</td>
-                <td><span class="badge badge-{{ $c }}">{{ $l }}</span></td>
+                <td><span class="badge text-bg-{{ $c }}">{{ $l }}</span></td>
                 <td>{{ $revision->sent_at?->format('d/m/Y') ?: '-' }}</td>
-                <td class="text-right">{{ $revision->formatted_total_price }}</td>
+                <td class="text-end">{{ $revision->formatted_total_price }}</td>
                 <td>
                   @if($revision->id !== $Confirmation->id)
-                    <a href="{{ route('order.confirmations.show', ['id' => $revision->id]) }}" class="btn btn-xs btn-outline-primary">
+                    <a href="{{ route('order.confirmations.show', ['id' => $revision->id]) }}" class="btn btn-sm btn-outline-primary">
                       <i class="fas fa-eye"></i>
                     </a>
                   @endif

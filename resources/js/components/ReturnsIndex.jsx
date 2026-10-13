@@ -6,10 +6,10 @@ import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 // ---------------------------------------------------------------------------
 
 const RETURN_STATUS = {
-    1: { badge: 'badge-info',    key: 'status_received' },
-    2: { badge: 'badge-primary', key: 'status_diagnosed' },
-    3: { badge: 'badge-warning', key: 'status_in_rework' },
-    4: { badge: 'badge-success', key: 'status_closed' },
+    1: { badge: 'text-bg-info',    key: 'status_received' },
+    2: { badge: 'text-bg-primary', key: 'status_diagnosed' },
+    3: { badge: 'text-bg-warning', key: 'status_in_rework' },
+    4: { badge: 'text-bg-success', key: 'status_closed' },
 };
 
 // Même table au format attendu par StatusFilter ({ badge, label } = clé de traduction).
@@ -58,7 +58,7 @@ function Flash({ msg, type, onClose }) {
     return (
         <div className={`alert alert-${type} alert-dismissible`} role="alert">
             {msg}
-            <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+            <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
         </div>
     );
 }
@@ -123,37 +123,37 @@ function CreateForm({ endpoints, props, trans, onCreated, onCancel }) {
     return (
         <div className="card card-outline card-info mb-4">
             <div className="card-header py-2">
-                <h3 className="card-title"><i className="fas fa-plus mr-1" />{trans.add_return}</h3>
+                <h3 className="card-title"><i className="fas fa-plus me-1" />{trans.add_return}</h3>
             </div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <div className="form-group col-md-4">
+                    <div className="row gx-2">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.code}</label>
                             <input type="text" className="form-control" value={code} readOnly />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.label}</label>
                             <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`} value={label} onChange={e => setLabel(e.target.value)} />
                             {errors.label && <div className="invalid-feedback">{errors.label[0]}</div>}
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.delivery}</label>
-                            <select className="form-control" value={deliverysId} onChange={e => handleDeliveryChange(e.target.value)}>
+                            <select className="form-select" value={deliverysId} onChange={e => handleDeliveryChange(e.target.value)}>
                                 <option value="">{trans.choose}</option>
                                 {props.deliveries?.map(d => <option key={d.id} value={d.id}>{d.code}</option>)}
                             </select>
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="form-group col-md-4">
+                    <div className="row gx-2">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.non_conformity}</label>
-                            <select className="form-control" value={ncId} onChange={e => setNcId(e.target.value)}>
+                            <select className="form-select" value={ncId} onChange={e => setNcId(e.target.value)}>
                                 <option value="">{trans.choose}</option>
                                 {props.nonConformities?.map(nc => <option key={nc.id} value={nc.id}>{nc.code}</option>)}
                             </select>
                         </div>
-                        <div className="form-group col-md-8">
+                        <div className="mb-3 col-md-8">
                             <label>{trans.customer_report}</label>
                             <textarea className="form-control" rows="2" value={report} onChange={e => setReport(e.target.value)} />
                         </div>
@@ -164,34 +164,34 @@ function CreateForm({ endpoints, props, trans, onCreated, onCancel }) {
 
                     {lines.map((line, i) => (
                         <div key={i} className="border rounded p-3 mb-2">
-                            <div className="form-row">
-                                <div className="form-group col-md-4">
+                            <div className="row gx-2">
+                                <div className="mb-3 col-md-4">
                                     <label>{trans.delivery_line}</label>
-                                    <select className="form-control form-control-sm" value={line.delivery_line_id} onChange={e => updateLine(i, 'delivery_line_id', e.target.value)}>
+                                    <select className="form-select form-select-sm" value={line.delivery_line_id} onChange={e => updateLine(i, 'delivery_line_id', e.target.value)}>
                                         <option value="">{trans.choose}</option>
                                         {deliveryLines.map(dl => <option key={dl.id} value={dl.id}>{dl.ordre} - {dl.label}</option>)}
                                     </select>
                                 </div>
-                                <div className="form-group col-md-3">
+                                <div className="mb-3 col-md-3">
                                     <label>{trans.task}</label>
                                     <input type="number" className="form-control form-control-sm" value={line.original_task_id} onChange={e => updateLine(i, 'original_task_id', e.target.value)} />
                                 </div>
-                                <div className="form-group col-md-2">
+                                <div className="mb-3 col-md-2">
                                     <label>{trans.qty}</label>
                                     <input type="number" min="1" className="form-control form-control-sm" value={line.qty} onChange={e => updateLine(i, 'qty', e.target.value)} />
                                 </div>
-                                <div className="form-group col-md-1 d-flex align-items-end">
+                                <div className="mb-3 col-md-1 d-flex align-items-end">
                                     <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => removeLine(i)} disabled={lines.length === 1}>
                                         <i className="fas fa-trash" />
                                     </button>
                                 </div>
                             </div>
-                            <div className="form-row">
-                                <div className="form-group col-md-6">
+                            <div className="row gx-2">
+                                <div className="mb-3 col-md-6">
                                     <label>{trans.issue}</label>
                                     <textarea className="form-control form-control-sm" rows="2" value={line.issue_description} onChange={e => updateLine(i, 'issue_description', e.target.value)} />
                                 </div>
-                                <div className="form-group col-md-6">
+                                <div className="mb-3 col-md-6">
                                     <label>{trans.action}</label>
                                     <textarea className="form-control form-control-sm" rows="2" value={line.rework_instructions} onChange={e => updateLine(i, 'rework_instructions', e.target.value)} />
                                 </div>
@@ -200,13 +200,13 @@ function CreateForm({ endpoints, props, trans, onCreated, onCancel }) {
                     ))}
 
                     <button type="button" className="btn btn-sm btn-outline-primary mb-3" onClick={addLine}>
-                        <i className="fas fa-plus mr-1" />{trans.add_line}
+                        <i className="fas fa-plus me-1" />{trans.add_line}
                     </button>
 
                     <div className="d-flex justify-content-end" style={{ gap: 8 }}>
                         <button type="button" className="btn btn-secondary" onClick={onCancel}>{trans.choose === 'Choisir' ? 'Annuler' : 'Cancel'}</button>
                         <button type="submit" className="btn btn-success" disabled={saving}>
-                            <i className="fas fa-save mr-1" />{trans.save}
+                            <i className="fas fa-save me-1" />{trans.save}
                         </button>
                     </div>
                 </form>
@@ -241,20 +241,20 @@ function DiagnosisForm({ ret, endpoint, trans, onDone, onCancel }) {
 
     return (
         <form onSubmit={handleSubmit} className="p-2">
-            <div className="form-row">
-                <div className="form-group col-md-6">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-6">
                     <label>{trans.diagnosis}</label>
                     <textarea className={`form-control form-control-sm ${errors.diagnosis ? 'is-invalid' : ''}`} rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
                     {errors.diagnosis && <div className="invalid-feedback">{errors.diagnosis[0]}</div>}
                 </div>
-                <div className="form-group col-md-6">
+                <div className="mb-3 col-md-6">
                     <label>{trans.customer_report}</label>
                     <textarea className="form-control form-control-sm" rows="3" value={report} onChange={e => setReport(e.target.value)} />
                 </div>
             </div>
             <div style={{ gap: 6, display: 'flex' }}>
                 <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
-                    <i className="fas fa-save mr-1" />{trans.save}
+                    <i className="fas fa-save me-1" />{trans.save}
                 </button>
                 <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
             </div>
@@ -283,13 +283,13 @@ function ClosureForm({ ret, endpoint, trans, onDone, onCancel }) {
 
     return (
         <form onSubmit={handleSubmit} className="p-2">
-            <div className="form-group">
+            <div className="mb-3">
                 <label>{trans.closure_comment}</label>
                 <textarea className="form-control form-control-sm" rows="3" value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
             <div style={{ gap: 6, display: 'flex' }}>
                 <button type="submit" className="btn btn-sm btn-success" disabled={saving}>
-                    <i className="fas fa-check mr-1" />{trans.close_return}
+                    <i className="fas fa-check me-1" />{trans.close_return}
                 </button>
                 <button type="button" className="btn btn-sm btn-secondary" onClick={onCancel}>×</button>
             </div>
@@ -314,7 +314,7 @@ function returnColumns(trans) {
           render: r => r.non_conformity?.code ?? '—', filterValue: r => r.non_conformity?.code, filter: 'text' },
         { key: 'statu',          label: trans.status,         sortable: true,
           render: r => {
-              const cfg = RETURN_STATUS[r.statu] ?? { badge: 'badge-secondary', key: '' };
+              const cfg = RETURN_STATUS[r.statu] ?? { badge: 'text-bg-secondary', key: '' };
               return <span className={`badge ${cfg.badge}`}>{trans[cfg.key] ?? r.status_label}</span>;
           },
           mobile: 'badge' },
@@ -412,8 +412,8 @@ const [rows, setRows]         = useState([]);
             <Flash msg={flash.msg} type={flash.type} onClose={() => setFlash({ msg: '', type: 'success' })} />
             {fetchError && (
                 <div className="alert alert-danger alert-dismissible py-2">
-                    <i className="fas fa-exclamation-triangle mr-1" />{fetchError}
-                    <button type="button" className="close py-1" onClick={() => setFetchError('')}><span>&times;</span></button>
+                    <i className="fas fa-exclamation-triangle me-1" />{fetchError}
+                    <button type="button" onClick={() => setFetchError('')} aria-label="Close" className="btn-close py-1 float-end"></button>
                 </div>
             )}
 
@@ -427,14 +427,12 @@ const [rows, setRows]         = useState([]);
                 />
             )}
 
-            <div className="card card-outline card-primary">
+            <div className="card card-outline card-primary mb-3">
                 <div className="card-header py-2">
                     <div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
                         {/* Search */}
                         <div className="input-group" style={{ maxWidth: 240 }}>
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-search" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-search" /></span>
                             <input
                                 type="text"
                                 className="form-control form-control-sm"
@@ -452,7 +450,7 @@ const [rows, setRows]         = useState([]);
                         <div style={{ flex: 1 }} />
 
                         <button className="btn btn-sm btn-primary" onClick={() => setShowCreate(v => !v)}>
-                            <i className="fas fa-plus mr-1" />{trans.add_return}
+                            <i className="fas fa-plus me-1" />{trans.add_return}
                         </button>
                     </div>
                 </div>
@@ -477,14 +475,14 @@ const [rows, setRows]         = useState([]);
                     rowActions={row => (
                         <div className="d-flex" style={{ gap: 4 }}>
                             <button
-                                className="btn btn-xs btn-outline-info"
+                                className="btn btn-sm btn-outline-info"
                                 title={trans.diagnosis}
                                 onClick={() => setDiagnosisId(v => v === row.id ? null : row.id)}
                             >
                                 <i className="fas fa-stethoscope" />
                             </button>
                             <button
-                                className="btn btn-xs btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary"
                                 title={trans.reopen_tasks}
                                 disabled={row.statu >= 4}
                                 onClick={() => handleReopen(row)}
@@ -492,14 +490,14 @@ const [rows, setRows]         = useState([]);
                                 <i className="fas fa-undo" />
                             </button>
                             <button
-                                className="btn btn-xs btn-outline-success"
+                                className="btn btn-sm btn-outline-success"
                                 title={trans.close_return}
                                 disabled={row.statu === 4}
                                 onClick={() => setClosingId(v => v === row.id ? null : row.id)}
                             >
                                 <i className="fas fa-check" />
                             </button>
-                            <a href={row.url} className="btn btn-xs btn-info" title={trans.view}>
+                            <a href={row.url} className="btn btn-sm btn-info" title={trans.view}>
                                 <i className="fas fa-eye" />
                             </a>
                         </div>
@@ -508,15 +506,15 @@ const [rows, setRows]         = useState([]);
                         <div className="d-flex flex-wrap" style={{ gap: '0.5rem' }}>
                             <button type="button" className="btn btn-outline-info" style={{ minHeight: 44 }}
                                 onClick={() => setDiagnosisId(v => v === row.id ? null : row.id)}>
-                                <i className="fas fa-stethoscope mr-1" />{trans.diagnosis}
+                                <i className="fas fa-stethoscope me-1" />{trans.diagnosis}
                             </button>
                             <button type="button" className="btn btn-outline-secondary" style={{ minHeight: 44 }}
                                 disabled={row.statu >= 4} onClick={() => handleReopen(row)}>
-                                <i className="fas fa-undo mr-1" />{trans.reopen_tasks}
+                                <i className="fas fa-undo me-1" />{trans.reopen_tasks}
                             </button>
                             <button type="button" className="btn btn-outline-success" style={{ minHeight: 44 }}
                                 disabled={row.statu === 4} onClick={() => setClosingId(v => v === row.id ? null : row.id)}>
-                                <i className="fas fa-check mr-1" />{trans.close_return}
+                                <i className="fas fa-check me-1" />{trans.close_return}
                             </button>
                         </div>
                     )}

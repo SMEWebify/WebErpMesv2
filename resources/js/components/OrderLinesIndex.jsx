@@ -7,23 +7,23 @@ import { DataTable, Pagination, MobileFilters } from './table';
 // ---------------------------------------------------------------------------
 
 const TASKS_STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'no_task' },
-    2: { badge: 'badge-warning', label: 'created' },
-    3: { badge: 'badge-success', label: 'in_progress' },
-    4: { badge: 'badge-danger',  label: 'finished_task' },
+    1: { badge: 'text-bg-info',    label: 'no_task' },
+    2: { badge: 'text-bg-warning', label: 'created' },
+    3: { badge: 'text-bg-success', label: 'in_progress' },
+    4: { badge: 'text-bg-danger',  label: 'finished_task' },
 };
 
 const DELIVERY_STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'not_delivered' },
-    2: { badge: 'badge-warning', label: 'partly_delivered' },
-    3: { badge: 'badge-success', label: 'delivered' },
-    4: { badge: 'badge-primary', label: 'delivered_without_dn' },
+    1: { badge: 'text-bg-info',    label: 'not_delivered' },
+    2: { badge: 'text-bg-warning', label: 'partly_delivered' },
+    3: { badge: 'text-bg-success', label: 'delivered' },
+    4: { badge: 'text-bg-primary', label: 'delivered_without_dn' },
 };
 
 const INVOICE_STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'not_invoiced' },
-    2: { badge: 'badge-warning', label: 'partly_invoiced' },
-    3: { badge: 'badge-success', label: 'invoiced' },
+    1: { badge: 'text-bg-info',    label: 'not_invoiced' },
+    2: { badge: 'text-bg-warning', label: 'partly_invoiced' },
+    3: { badge: 'text-bg-success', label: 'invoiced' },
 };
 
 const LS_COL_ORDER   = 'order_lines_table_col_order';
@@ -59,7 +59,7 @@ function DeliveryStatusFilter({ active, onToggle, trans }) {
                 return (
                     <button
                         key={sid}
-                        className={`btn btn-sm ${isActive ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${isActive ? cfg.badge.replace(/^(badge|text-bg)-/, 'btn-') : 'btn-outline-secondary'}`}
                         onClick={() => onToggle(sid)}
                     >
                         {trans[cfg.label] ?? cfg.label}
@@ -95,13 +95,13 @@ function LinesPopover({ items, badgeClass, badgeLabel }) {
             {open && (
                 <div style={{
                     position: 'absolute', zIndex: 1050, top: '100%', left: 0, minWidth: 200,
-                    background: '#fff', border: '1px solid #dee2e6', borderRadius: 4,
+                    background: 'var(--bs-body-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 4,
                     boxShadow: '0 4px 12px rgba(0,0,0,.15)', padding: '0.5rem',
                 }}>
                     <ul className="list-unstyled mb-0">
                         {items.map(item => (
                             <li key={item.id} className="mb-1">
-                                <a href={item.url} className="text-primary font-weight-bold">{item.code}</a>
+                                <a href={item.url} className="text-primary fw-bold">{item.code}</a>
                                 {' — '}<small>{formatQty(item.qty)}</small>
                             </li>
                         ))}
@@ -116,7 +116,7 @@ function ProgressBar({ value }) {
     const pct = Math.min(100, Math.max(0, value));
     return (
         <div className="progress mt-1" style={{ height: 5 }}>
-            <div className="progress-bar bg-teal" style={{ width: `${pct}%` }} />
+            <div className="progress-bar text-bg-teal" style={{ width: `${pct}%` }} />
         </div>
     );
 }
@@ -175,7 +175,7 @@ function orderLineColumns(trans, currency, locale) {
         { key: 'code',            label: trans.code,
           render: l => <code>{l.code}</code>, filter: 'text', mobile: 'subtitle', mobileRender: l => l.code },
         { key: 'product',         label: trans.product,
-          render: l => (l.product_url ? <a href={l.product_url} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a> : '—') },
+          render: l => (l.product_url ? <a href={l.product_url} className="btn btn-sm btn-info"><i className="fas fa-eye" /></a> : '—') },
         { key: 'label',           label: trans.label,           sortable: true, bold: true, nowrap: false,
           filter: 'text', mobile: 'title' },
         { key: 'qty',             label: trans.qty,             sortable: true, align: 'right', nowrap: false,
@@ -186,7 +186,7 @@ function orderLineColumns(trans, currency, locale) {
           render: l => (
               <strong>
                   {formatCurrency(l.selling_price, currency, locale)}
-                  {l.use_calculated_price && <i className="fas fa-calculator text-warning ml-1" title={trans.calculated_price} />}
+                  {l.use_calculated_price && <i className="fas fa-calculator text-warning ms-1" title={trans.calculated_price} />}
               </strong>
           ),
           total: { value: lineAmount, format: sum => formatCurrency(sum, currency, locale) },
@@ -213,10 +213,10 @@ function orderLineColumns(trans, currency, locale) {
         { key: 'actions',         label: trans.action,          hideable: false,
           render: l => (
               <div className="btn-group btn-group-sm">
-                  <a href={l.order_url} className="btn btn-xs btn-info" title={trans.view_order}>
+                  <a href={l.order_url} className="btn btn-sm btn-info" title={trans.view_order}>
                       <i className="fas fa-eye" />
                   </a>
-                  <a href={l.task_url} className="btn btn-success btn-xs" title={trans.tasks}>
+                  <a href={l.task_url} className="btn btn-success btn-sm" title={trans.tasks}>
                       <i className="fas fa-list" />
                       {' '}({l.task_count}) ({l.sub_assembly_count})
                   </a>
@@ -253,7 +253,7 @@ function OrderLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, l
             rowHref={l => l.order_url}
             mobileActions={l => (
                 <a href={l.task_url} className="btn btn-outline-success" style={{ minHeight: 44, lineHeight: '30px' }}>
-                    <i className="fas fa-list mr-1" />{trans.tasks} ({l.task_count})
+                    <i className="fas fa-list me-1" />{trans.tasks} ({l.task_count})
                 </a>
             )}
         />
@@ -323,7 +323,7 @@ export default function OrderLinesIndex({ endpoints, trans }) {
 
 
     return (
-        <div className="card card-outline card-warning">
+        <div className="card card-outline card-warning mb-3">
             <div className="card-body">
                 {/* Search + delivery status filters */}
                 <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
@@ -335,9 +335,7 @@ export default function OrderLinesIndex({ endpoints, trans }) {
                             onChange={e => handleSearch(e.target.value)}
                         />
                         {search && (
-                            <div className="input-group-append">
-                                <button className="btn btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
-                            </div>
+                            <button className="btn btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
                         )}
                     </div>
 
@@ -347,7 +345,7 @@ export default function OrderLinesIndex({ endpoints, trans }) {
 
                     <div className="flex-grow-1" />
 
-                    {loading && <span className="text-muted"><i className="fas fa-spinner fa-spin mr-1" /></span>}
+                    {loading && <span className="text-muted"><i className="fas fa-spinner fa-spin me-1" /></span>}
                     {meta && <small className="text-muted">{meta.total} lignes</small>}
                 </div>
 

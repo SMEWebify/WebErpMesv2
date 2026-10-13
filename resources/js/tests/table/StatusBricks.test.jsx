@@ -4,9 +4,9 @@ import { describe, it, expect, vi } from 'vitest';
 import { SortIcon, StatusBadge, StatusFilter } from '../../components/table';
 
 const CONFIG = {
-    1: { badge: 'badge-info',    label: 'open' },
-    2: { badge: 'badge-success', label: 'won' },
-    3: { badge: 'badge-danger',  label: 'untranslated' },
+    1: { badge: 'text-bg-info',    label: 'open' },
+    2: { badge: 'text-bg-success', label: 'won' },
+    3: { badge: 'text-bg-danger',  label: 'untranslated' },
 };
 const TRANS = { open: 'Ouvert', won: 'Gagné' };
 
@@ -14,8 +14,8 @@ describe('SortIcon', () => {
     it('neutre hors colonne triée ou sans champ', () => {
         const { container: a } = render(<SortIcon field="code" sortField="label" sortAsc />);
         const { container: b } = render(<SortIcon field={null} sortField="label" sortAsc />);
-        expect(a.firstChild.className).toBe('fas fa-sort text-muted ml-1');
-        expect(b.firstChild.className).toBe('fas fa-sort text-muted ml-1');
+        expect(a.firstChild.className).toBe('fas fa-sort text-muted ms-1');
+        expect(b.firstChild.className).toBe('fas fa-sort text-muted ms-1');
     });
 
     it('flèche selon le sens sur la colonne triée', () => {
@@ -34,7 +34,7 @@ describe('SortIcon', () => {
 describe('StatusBadge', () => {
     it('traduit le libellé et applique la couleur du statut', () => {
         render(<StatusBadge statu={2} config={CONFIG} trans={TRANS} />);
-        expect(screen.getByText('Gagné')).toHaveClass('badge', 'badge-success');
+        expect(screen.getByText('Gagné')).toHaveClass('badge', 'text-bg-success');
     });
 
     it("fallback 'key' : clé de traduction, ou statut brut s'il est inconnu", () => {
@@ -42,7 +42,7 @@ describe('StatusBadge', () => {
         expect(container.textContent).toBe('untranslated');
         rerender(<StatusBadge statu={9} config={CONFIG} trans={TRANS} />);
         expect(container.textContent).toBe('9');
-        expect(container.firstChild).toHaveClass('badge-secondary');
+        expect(container.firstChild).toHaveClass('text-bg-secondary');
     });
 
     it("fallback 'value' : statut brut", () => {

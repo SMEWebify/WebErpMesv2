@@ -11,15 +11,15 @@ export default function PdfViewer({ file, t, height = 900 }) {
     return (
         <div className="wem-viewer">
             <div className="btn-toolbar mb-2" role="toolbar">
-                <div className="btn-group btn-group-sm mr-2">
+                <div className="btn-group btn-group-sm me-2">
                     <a className="btn btn-outline-secondary" href={file.view_url} target="_blank" rel="noreferrer">
-                        <i className="fas fa-external-link-alt mr-1" />
+                        <i className="fas fa-external-link-alt me-1" />
                         {t('open_new_tab')}
                     </a>
                 </div>
                 <div className="btn-group btn-group-sm">
                     <a className="btn btn-outline-secondary" href={file.download_url}>
-                        <i className="fas fa-download mr-1" />
+                        <i className="fas fa-download me-1" />
                         {t('download')}
                     </a>
                 </div>

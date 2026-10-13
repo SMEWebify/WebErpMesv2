@@ -40,9 +40,9 @@
                     @if($MethodsUnit->type  == 5) {{ __('general_content.other_trans_key') }} @endif
                   </td>
                   <td>
-                    <div class="custom-control custom-radio">
-                      <input class="custom-control-input" type="radio" id="customRadio{{ $MethodsUnit->id }}" name="customRadio"  @if( $MethodsUnit->default == 1 ) checked @endif disabled>
-                      <label for="customRadio{{ $MethodsUnit->id }}" class="custom-control-label">by default</label>
+                    <div class="form-check ">
+                      <input class="form-check-input" type="radio" id="customRadio{{ $MethodsUnit->id }}" name="customRadio"  @if( $MethodsUnit->default == 1 ) checked @endif disabled>
+                      <label for="customRadio{{ $MethodsUnit->id }}" class="form-check-label">by default</label>
                     </div>
                   </td>
                   <td class=" py-0 align-middle">
@@ -53,22 +53,18 @@
                       <form method="POST" action="{{ route('methods.unit.update', ['id' => $MethodsUnit->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                              </div>
+                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsUnit->label }}">
                             </div>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="type">{{ __('general_content.type_trans_key') }}</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-ruler"></i></span>
-                              </div>
-                              <select class="form-control" name="type" id="type">
+                              <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                              <select class="form-select" name="type" id="type">
                                   <option value="1" @if($MethodsUnit->type == 1  ) Selected @endif>{{ __('general_content.mass_trans_key') }}</option>
                                   <option value="2" @if($MethodsUnit->type == 2  ) Selected @endif>{{ __('general_content.length_trans_key') }}</option>
                                   <option value="3" @if($MethodsUnit->type == 3  ) Selected @endif>{{ __('general_content.aera_trans_key') }}</option>
@@ -77,16 +73,16 @@
                               </select>
                             </div>
                           </div>
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="default">{{__('general_content.by_default_trans_key') }}</label>
-                            <select class="form-control" name="default" id="default">
+                            <select class="form-select" name="default" id="default">
                                 <option value="0" @if($MethodsUnit->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                 <option value="1" @if($MethodsUnit->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                             </select>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -114,31 +110,25 @@
         <form  method="POST" action="{{ route('methods.unit.create') }}" class="form-horizontal">
           <x-adminlte-card title="{{ __('general_content.new_unit_trans_key') }}" theme="secondary" maximizable>
             @csrf
-            <div class="form-group">
+            <div class="mb-3">
               <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
               </div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
               <label for="label">{{__('general_content.label_trans_key') }}</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
               </div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-ruler"></i></span>
-                  </div>
-                  <select class="form-control" name="type" id="type">
+                  <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                  <select class="form-select" name="type" id="type">
                       <option value="1">{{ __('general_content.mass_trans_key') }}</option>
                       <option value="2">{{ __('general_content.length_trans_key') }}</option>
                       <option value="3">{{ __('general_content.aera_trans_key') }}</option>
@@ -148,7 +138,7 @@
                 </div>
             </div>
             <div class="card-footer">
-              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+              <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           </x-adminlte-card>
         </form>

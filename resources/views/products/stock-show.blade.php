@@ -8,7 +8,7 @@
       <h1>{{ $Stock->label }} {{ __('general_content.stock_trans_key') }}</h1>
     </div>
     <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
+        <ol class="breadcrumb float-sm-end">
             <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">{{ __('general_content.stock_list_trans_key') }}</a></li>
         </ol>
     </div>
@@ -51,36 +51,32 @@
                     <form method="POST" action="{{ route('products.stocklocation.update', ['id' => $StockLocation->id]) }}" >
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="label">{{__('general_content.label_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $StockLocation->label }}">
                             <input type="hidden" name="stocks_id"  id="stocks_id"  value="{{ $StockLocation->stocks_id }}">
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="service_id">{{ __('general_content.user_management_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-list"></i></span>
-                            </div>
-                              <select class="form-control" name="user_id" id="user_id">
+                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                              <select class="form-select" name="user_id" id="user_id">
                                 @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}" @if($StockLocation->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                 @endforeach
                               </select>
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label>{{ __('general_content.comment_trans_key') }}</label>
                           <textarea class="form-control" rows="3" name="comment"  placeholder="...">{{ $StockLocation->comment }}</textarea>
                         </div>
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -109,48 +105,42 @@
       <form  method="POST" action="{{ route('products.stocklocation.store') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_stock_location_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
               <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-LOCATION-{{ $LastStockLocation->id ?? '0' }}">
               <input type="hidden" name="stocks_id" id="stocks_id" value="{{ $Stock->id }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="label">{{ __('general_content.description_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-tags"></i></span>
               <input type="text" class="form-control" name="label" id="label" placeholder="Description">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-              </div>
-              <select class="form-control" name="user_id" id="user_id">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <select class="form-select" name="user_id" id="user_id">
                 @foreach ($userSelect as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach
               </select>
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
             <input type="date" class="form-control" name="end_date"  id="end_date" >
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label>{{ __('general_content.comment_trans_key') }}</label>
             <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
           </div>
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
         </x-adminlte-card>
       </form>

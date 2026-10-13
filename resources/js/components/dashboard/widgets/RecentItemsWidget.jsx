@@ -4,42 +4,42 @@ import WidgetCard from '../WidgetCard.jsx';
 // ─── Config statuts ───────────────────────────────────────────────────────────
 
 const ORDER_STATUS = {
-    1: { badge: 'badge-info',      labelKey: 'open'             },
-    2: { badge: 'badge-warning',   labelKey: 'in_progress'      },
-    3: { badge: 'badge-success',   labelKey: 'delivered'        },
-    4: { badge: 'badge-danger',    labelKey: 'partly_delivered' },
-    5: { badge: 'badge-danger',    labelKey: 'stopped'          },
-    6: { badge: 'badge-warning',   labelKey: 'canceled'         },
+    1: { badge: 'text-bg-info',      labelKey: 'open'             },
+    2: { badge: 'text-bg-warning',   labelKey: 'in_progress'      },
+    3: { badge: 'text-bg-success',   labelKey: 'delivered'        },
+    4: { badge: 'text-bg-danger',    labelKey: 'partly_delivered' },
+    5: { badge: 'text-bg-danger',    labelKey: 'stopped'          },
+    6: { badge: 'text-bg-warning',   labelKey: 'canceled'         },
 };
 
 const QUOTE_STATUS = {
-    1: { badge: 'badge-info',      labelKey: 'open'     },
-    2: { badge: 'badge-warning',   labelKey: 'send'     },
-    3: { badge: 'badge-success',   labelKey: 'win'      },
-    4: { badge: 'badge-danger',    labelKey: 'lost'     },
-    5: { badge: 'badge-secondary', labelKey: 'closed'   },
-    6: { badge: 'badge-secondary', labelKey: 'obsolete' },
+    1: { badge: 'text-bg-info',      labelKey: 'open'     },
+    2: { badge: 'text-bg-warning',   labelKey: 'send'     },
+    3: { badge: 'text-bg-success',   labelKey: 'win'      },
+    4: { badge: 'text-bg-danger',    labelKey: 'lost'     },
+    5: { badge: 'text-bg-secondary', labelKey: 'closed'   },
+    6: { badge: 'text-bg-secondary', labelKey: 'obsolete' },
 };
 
 const INVOICE_STATUS = {
-    1: { badge: 'badge-info',      labelKey: 'open'      },
-    2: { badge: 'badge-warning',   labelKey: 'send'      },
-    3: { badge: 'badge-success',   labelKey: 'paid'      },
-    4: { badge: 'badge-danger',    labelKey: 'canceled'  },
+    1: { badge: 'text-bg-info',      labelKey: 'open'      },
+    2: { badge: 'text-bg-warning',   labelKey: 'send'      },
+    3: { badge: 'text-bg-success',   labelKey: 'paid'      },
+    4: { badge: 'text-bg-danger',    labelKey: 'canceled'  },
 };
 
 const DELIVERY_STATUS = {
-    1: { badge: 'badge-info',      labelKey: 'open'      },
-    2: { badge: 'badge-success',   labelKey: 'delivered' },
-    3: { badge: 'badge-danger',    labelKey: 'canceled'  },
+    1: { badge: 'text-bg-info',      labelKey: 'open'      },
+    2: { badge: 'text-bg-success',   labelKey: 'delivered' },
+    3: { badge: 'text-bg-danger',    labelKey: 'canceled'  },
 };
 
 const PURCHASE_STATUS = {
-    1: { badge: 'badge-info',      labelKey: 'in_progress'    },
-    2: { badge: 'badge-warning',   labelKey: 'ordered'        },
-    3: { badge: 'badge-primary',   labelKey: 'partly_received'},
-    4: { badge: 'badge-success',   labelKey: 'received'       },
-    5: { badge: 'badge-dark',      labelKey: 'canceled'       },
+    1: { badge: 'text-bg-info',      labelKey: 'in_progress'    },
+    2: { badge: 'text-bg-warning',   labelKey: 'ordered'        },
+    3: { badge: 'text-bg-primary',   labelKey: 'partly_received'},
+    4: { badge: 'text-bg-success',   labelKey: 'received'       },
+    5: { badge: 'text-bg-dark',      labelKey: 'canceled'       },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ function normalize(raw) {
 
 function StatusBadge({ statu, statusConfig, trans }) {
     const cfg = statusConfig[statu];
-    if (!cfg) return <span className="badge badge-secondary">{statu}</span>;
+    if (!cfg) return <span className="badge text-bg-secondary">{statu}</span>;
     return (
         <span className={`badge ${cfg.badge}`} style={{ fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
             {trans[cfg.labelKey] ?? cfg.labelKey}
@@ -105,11 +105,11 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
             {/* Code */}
             <td style={{ whiteSpace: 'nowrap' }}>
                 {urlShow ? (
-                    <a href={`${urlShow}${item.id}`} className="font-weight-bold" style={{ fontSize: '0.85rem' }}>
+                    <a href={`${urlShow}${item.id}`} className="fw-bold" style={{ fontSize: '0.85rem' }}>
                         {item.code}
                     </a>
                 ) : (
-                    <span className="font-weight-bold" style={{ fontSize: '0.85rem' }}>{item.code}</span>
+                    <span className="fw-bold" style={{ fontSize: '0.85rem' }}>{item.code}</span>
                 )}
             </td>
 
@@ -134,7 +134,7 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
 
             {/* Label */}
             {showLabel && (
-                <td style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#495057' }} title={item.label || ''}>
+                <td style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: 'var(--bs-body-color)' }} title={item.label || ''}>
                     {item.label || <span className="text-muted">—</span>}
                 </td>
             )}
@@ -145,12 +145,12 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
             </td>
 
             {/* Montant */}
-            <td className="text-right" style={{ whiteSpace: 'nowrap', fontSize: '0.85rem' }}>
+            <td className="text-end" style={{ whiteSpace: 'nowrap', fontSize: '0.85rem' }}>
                 {item.formatted_total_price ?? '—'}
             </td>
 
             {/* Date */}
-            <td style={{ whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#6c757d' }}>
+            <td style={{ whiteSpace: 'nowrap', fontSize: '0.82rem', color: 'var(--bs-secondary-color)' }}>
                 {dateValue ?? '—'}
             </td>
         </tr>

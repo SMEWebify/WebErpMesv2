@@ -22,10 +22,10 @@ function formatDate(dateStr, locale) {
 
 function KPICards({ kpi, trans }) {
     const cards = [
-        { value: kpi.total,     label: trans.total,    bg: 'bg-info',    icon: 'fa-building' },
-        { value: kpi.clients,   label: trans.client,   bg: 'bg-success', icon: 'fa-user-tie' },
-        { value: kpi.prospects, label: trans.prospect, bg: 'bg-warning', icon: 'fa-user-clock' },
-        { value: kpi.suppliers, label: trans.supplier, bg: 'bg-danger',  icon: 'fa-truck' },
+        { value: kpi.total,     label: trans.total,    bg: 'text-bg-info',    icon: 'fa-building' },
+        { value: kpi.clients,   label: trans.client,   bg: 'text-bg-success', icon: 'fa-user-tie' },
+        { value: kpi.prospects, label: trans.prospect, bg: 'text-bg-warning', icon: 'fa-user-clock' },
+        { value: kpi.suppliers, label: trans.supplier, bg: 'text-bg-danger',  icon: 'fa-truck' },
     ];
     return (
         <div className="row">
@@ -36,7 +36,7 @@ function KPICards({ kpi, trans }) {
                             <h3>{c.value ?? 0}</h3>
                             <p>{c.label}</p>
                         </div>
-                        <div className="icon"><i className={`fas ${c.icon}`} /></div>
+                        <i className={`small-box-icon fas ${c.icon}`} aria-hidden="true" />
                     </div>
                 </div>
             ))}
@@ -237,19 +237,19 @@ function MonthlyBarChart({ chartData, trans }) {
 // ---------------------------------------------------------------------------
 
 function CustomerBadge({ statu }) {
-    if (statu === 2) return <span className="badge badge-warning"><i className="fa fa-check mr-1" />Client</span>;
-    if (statu === 3) return <span className="badge badge-success"><i className="fa fa-check-double mr-1" />Prospect</span>;
-    return <span className="badge badge-secondary">—</span>;
+    if (statu === 2) return <span className="badge text-bg-warning"><i className="fa fa-check me-1" />Client</span>;
+    if (statu === 3) return <span className="badge text-bg-success"><i className="fa fa-check-double me-1" />Prospect</span>;
+    return <span className="badge text-bg-secondary">—</span>;
 }
 
 function SupplierBadge({ statu }) {
-    if (statu === 2) return <span className="badge badge-success"><i className="fa fa-check mr-1" /></span>;
-    return <span className="badge badge-secondary"><i className="fa fa-times" /></span>;
+    if (statu === 2) return <span className="badge text-bg-success"><i className="fa fa-check me-1" /></span>;
+    return <span className="badge text-bg-secondary"><i className="fa fa-times" /></span>;
 }
 
 function ActiveBadge({ active }) {
-    if (active == 1) return <span className="badge badge-success"><i className="fa fa-check" /></span>;
-    return <span className="badge badge-danger"><i className="fa fa-times" /></span>;
+    if (active == 1) return <span className="badge text-bg-success"><i className="fa fa-check" /></span>;
+    return <span className="badge text-bg-danger"><i className="fa fa-times" /></span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -299,13 +299,13 @@ function companyColumns(trans) {
         { key: 'active',         label: trans.active,          sortable: true, sortIconSize: 'sm', align: 'center',
           render: c => <ActiveBadge active={c.active} />,
           mobile: 'badge', mobileOrder: 2000,
-          mobileRender: c => (c.active == 1 ? null : <span className="badge badge-danger">{trans.inactive ?? 'Inactive'}</span>) },
+          mobileRender: c => (c.active == 1 ? null : <span className="badge text-bg-danger">{trans.inactive ?? 'Inactive'}</span>) },
         { key: 'statu_customer', label: trans.status_client,   sortable: true, sortIconSize: 'sm', align: 'center',
           render: c => <CustomerBadge statu={c.statu_customer} />,
           mobile: 'badge', mobileRender: c => ([2, 3].includes(c.statu_customer) ? <CustomerBadge statu={c.statu_customer} /> : null) },
         { key: 'statu_supplier', label: trans.status_supplier, sortable: true, sortIconSize: 'sm', align: 'center',
           render: c => <SupplierBadge statu={c.statu_supplier} />,
-          mobile: 'badge', mobileRender: c => (c.statu_supplier === 2 ? <span className="badge badge-info">{trans.supplier ?? trans.status_supplier}</span> : null) },
+          mobile: 'badge', mobileRender: c => (c.statu_supplier === 2 ? <span className="badge text-bg-info">{trans.supplier ?? trans.status_supplier}</span> : null) },
         { key: 'created_at',     label: trans.created_at,      sortable: true, sortIconSize: 'sm',
           render: c => c.created_at ?? '—', filter: 'date' },
     ];
@@ -381,7 +381,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                 <div className="modal-content">
                     <div className="modal-header bg-success">
                         <h5 className="modal-title text-white">{trans.new_company}</h5>
-                        <button type="button" className="close text-white" onClick={onClose}>&times;</button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="modal-body">
@@ -391,13 +391,13 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                             {selectData && (
                                 <>
                                     <div className="card card-body mb-3">
-                                        <div className="form-row">
-                                            <div className="form-group col-md-4">
+                                        <div className="row gx-2">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.external_id}</label>
                                                 <input className="form-control" value={form.code} onChange={set('code')} />
                                                 {fe('code')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.customer_type}</label>
                                                 <select
                                                     className="form-control"
@@ -413,9 +413,9 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 </select>
                                                 {fe('client_type')}
                                             </div>
-                                            <div className="form-group col-md-4">
+                                            <div className="mb-3 col-md-4">
                                                 <label>{trans.user_management}</label>
-                                                <select className="form-control" value={form.user_id} onChange={set('user_id')}>
+                                                <select className="form-select" value={form.user_id} onChange={set('user_id')}>
                                                     <option value="">—</option>
                                                     {selectData.users.map(u => (
                                                         <option key={u.id} value={u.id}>{u.name}</option>
@@ -424,9 +424,9 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 {fe('user_id')}
                                             </div>
                                         </div>
-                                        <div className="form-row">
+                                        <div className="row gx-2">
                                             {!isIndividual && (
-                                                <div className="form-group col-md-12">
+                                                <div className="mb-3 col-md-12">
                                                     <label>{trans.name_company} *</label>
                                                     <input className="form-control" value={form.label} onChange={set('label')} placeholder={trans.name_company} />
                                                     {fe('label')}
@@ -434,17 +434,17 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                             )}
                                             {isIndividual && (
                                                 <>
-                                                    <div className="form-group col-md-3">
+                                                    <div className="mb-3 col-md-3">
                                                         <label>{trans.civility}</label>
                                                         <input className="form-control" value={form.civility} onChange={set('civility')} placeholder={trans.civility} />
                                                         {fe('civility')}
                                                     </div>
-                                                    <div className="form-group col-md-4">
+                                                    <div className="mb-3 col-md-4">
                                                         <label>{trans.first_name} *</label>
                                                         <input className="form-control" value={form.label} onChange={set('label')} placeholder={trans.first_name} />
                                                         {fe('label')}
                                                     </div>
-                                                    <div className="form-group col-md-5">
+                                                    <div className="mb-3 col-md-5">
                                                         <label>{trans.contact_name} *</label>
                                                         <input className="form-control" value={form.last_name} onChange={set('last_name')} placeholder={trans.contact_name} />
                                                         {fe('last_name')}
@@ -453,7 +453,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="card card-body">
+                                    <div className="card card-body mb-3">
                                         <label>{trans.comment}</label>
                                         <textarea className="form-control" rows="3" value={form.comment} onChange={set('comment')} placeholder="..." />
                                         {fe('comment')}
@@ -464,7 +464,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={onClose}>{trans.cancel}</button>
                             <button type="submit" className="btn btn-success" disabled={saving || !selectData}>
-                                {saving ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.saving}</> : trans.save}
+                                {saving ? <><i className="fas fa-spinner fa-spin me-1" />{trans.saving}</> : trans.save}
                             </button>
                         </div>
                     </form>
@@ -556,9 +556,7 @@ function ListTab({ endpoints, trans }) {
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input
                         type="text"
                         className="form-control"
@@ -572,7 +570,7 @@ function ListTab({ endpoints, trans }) {
                 </MobileFilters>
                 <div className="flex-grow-1" />
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_company}
+                    <i className="fas fa-plus me-1" />{trans.new_company}
                 </button>
             </div>
 
@@ -607,9 +605,9 @@ function DashboardTab({ kpi, chartData, trans }) {
             <KPICards kpi={kpi} trans={trans} />
             <div className="row">
                 <div className="col-md-4">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-chart-pie mr-1" />{trans.statistiques}</h3>
+                            <h3 className="card-title"><i className="fas fa-chart-pie me-1" />{trans.statistiques}</h3>
                         </div>
                         <div className="card-body">
                             <DonutChart chartData={chartData} trans={trans} />
@@ -617,9 +615,9 @@ function DashboardTab({ kpi, chartData, trans }) {
                     </div>
                 </div>
                 <div className="col-md-8">
-                    <div className="card card-primary">
+                    <div className="card card-primary mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-chart-bar mr-1" />{trans.monthly_new} ({new Date().getFullYear()})</h3>
+                            <h3 className="card-title"><i className="fas fa-chart-bar me-1" />{trans.monthly_new} ({new Date().getFullYear()})</h3>
                         </div>
                         <div className="card-body">
                             <MonthlyBarChart chartData={chartData} trans={trans} />
@@ -639,7 +637,7 @@ export default function CompaniesIndex({ kpi, chartData, endpoints, trans }) {
     const [activeTab, setActiveTab] = useIndexTab('companies_index_tab');
 
     return (
-        <div className="card card-outline card-info">
+        <div className="card card-outline card-info mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

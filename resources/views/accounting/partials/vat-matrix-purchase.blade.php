@@ -18,19 +18,19 @@
               <td>{{ $rule->VAT?->label }}</td>
               <td>{{ $rule->purchase_account }}</td>
               <td>{{ $rule->vat_account }}</td>
-              <td>@if($rule->manual_vat)<span class="badge badge-warning">{{ __('vat.manual_badge') }}</span>@endif</td>
-              <td class="py-0 align-middle text-right">
+              <td>@if($rule->manual_vat)<span class="badge text-bg-warning">{{ __('vat.manual_badge') }}</span>@endif</td>
+              <td class="py-0 align-middle text-end">
                 <x-ButtonTextEdit :modalTarget="'PurchaseRule' . $rule->id" />
                 <form method="POST" action="{{ route('accounting.vatMatrixPurchase.destroy', ['id' => $rule->id]) }}" class="d-inline" onsubmit="return confirm(@js(__('vat.confirm_delete_rule')))">
                   @csrf @method('DELETE')
-                  <button type="submit" class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
+                  <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                 </form>
                 <form method="POST" action="{{ route('accounting.vatMatrixPurchase.update', ['id' => $rule->id]) }}">
                   <x-adminlte-modal id="PurchaseRule{{ $rule->id }}" title="{{ __('vat.edit_rule') }}" theme="teal" icon="fa fa-pen" size="lg" disable-animations>
                     @csrf
                     @include('accounting.partials.vat-matrix-purchase-fields', ['rule' => $rule])
                     <x-slot name="footerSlot">
-                      <x-adminlte-button class="btn-flat" type="submit" label="{{ __('vat.save') }}" theme="info" icon="fas fa-save"/>
+                      <x-adminlte-button class="rounded-0" type="submit" label="{{ __('vat.save') }}" theme="info" icon="fas fa-save"/>
                     </x-slot>
                   </x-adminlte-modal>
                 </form>
@@ -51,7 +51,7 @@
         @csrf
         @include('accounting.partials.vat-matrix-purchase-fields', ['rule' => null])
         <x-slot name="footerSlot">
-          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('vat.add') }}" theme="danger" icon="fas fa-save"/>
+          <x-adminlte-button class="rounded-0" type="submit" label="{{ __('vat.add') }}" theme="danger" icon="fas fa-save"/>
         </x-slot>
       </x-adminlte-card>
     </form>

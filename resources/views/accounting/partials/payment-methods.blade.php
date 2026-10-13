@@ -19,9 +19,9 @@
                     <td>{{ $PaymentMethod->label }}</td>
                     <td>{{ $PaymentMethod->code_account }}</td>
                     <td>
-                      <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="customRadioPaymentMethod{{ $PaymentMethod->id }}" name="customRadioPaymentMethod"  @if( $PaymentMethod->default == 1 ) checked @endif disabled>
-                        <label for="customRadioPaymentMethod{{ $PaymentMethod->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                      <div class="form-check ">
+                        <input class="form-check-input" type="radio" id="customRadioPaymentMethod{{ $PaymentMethod->id }}" name="customRadioPaymentMethod"  @if( $PaymentMethod->default == 1 ) checked @endif disabled>
+                        <label for="customRadioPaymentMethod{{ $PaymentMethod->id }}" class="form-check-label">{{__('general_content.by_default_trans_key') }}</label>
                       </div>
                     </td>
                     <td class=" py-0 align-middle">
@@ -32,29 +32,27 @@
                         <x-adminlte-modal id="PaymentMethod{{ $PaymentMethod->id }}" title="Update {{ $PaymentMethod->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                         @csrf
                           <div class="card-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $PaymentMethod->label }}">
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="code_account">{{__('general_content.code_account_trans_key') }}</label>
                               <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="{{__('general_content.code_account_trans_key') }}" value="{{ $PaymentMethod->code_account }}">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                               <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
-                              <select class="form-control" name="default" id="default">
+                              <select class="form-select" name="default" id="default">
                                   <option value="0" @if($PaymentMethod->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                   <option value="1" @if($PaymentMethod->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </x-adminlte-modal>
                       </form>
@@ -83,30 +81,26 @@
           <form  method="POST" action="{{ route('accounting.paymentMethod.create') }}" class="form-horizontal">
             <x-adminlte-card title="{{ __('general_content.new_payment_methods_trans_key') }}" theme="secondary" maximizable>
               @csrf
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
+                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="form-group">
+              <div class="mb-3">
                 <label for="code_account">{{__('general_content.code_account_trans_key') }}</label>
                 <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="{{__('general_content.code_account_trans_key') }}">
               </div>
               <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
             </x-adminlte-card>
           </form>

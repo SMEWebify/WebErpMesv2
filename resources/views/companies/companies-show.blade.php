@@ -370,16 +370,16 @@
 @endphp
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Company" data-toggle="tab">{{ __('general_content.detail_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">{{ __('general_content.adress_trans_key') }} ({{ $Companie->getAddressesCountAttribute() }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">{{ __('general_content.contacts_trans_key') }} ({{ $Companie->getContactsCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-bs-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Company" data-bs-toggle="tab">{{ __('general_content.detail_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Adresses" data-bs-toggle="tab">{{ __('general_content.adress_trans_key') }} ({{ $Companie->getAddressesCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Contact" data-bs-toggle="tab">{{ __('general_content.contacts_trans_key') }} ({{ $Companie->getContactsCountAttribute() }})</a></li>
       <li class="nav-item">
-        <a class="nav-link" href="#timeline" data-toggle="tab">
-          <i class="fas fa-stream mr-1"></i>
+        <a class="nav-link" href="#timeline" data-bs-toggle="tab">
+          <i class="fas fa-stream me-1"></i>
           Historique
           @php
             $timelineCount = $Companie->getLeadsCountAttribute()
@@ -394,9 +394,9 @@
       </li>
       
       @if($Companie->statu_supplier == 2 )
-      <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#evaluation" data-bs-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Companie->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Companie->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -431,7 +431,7 @@
             </x-adminlte-card>
             @endif
 
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="purple" maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="violet" maximizable>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('companies.store.quote', ['id' => $Companie->id ]) }}">
                   <i class="fas fa-folder"></i>
@@ -521,9 +521,9 @@
                 <form method="POST" action="{{ route('companies.ratings.store') }}">
                   @csrf
                   <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="purchases_id">{{ __('general_content.purchase_order_trans_key') }}</label>
-                    <select name="purchases_id" id="purchases_id" class="form-control">
+                    <select name="purchases_id" id="purchases_id" class="form-select">
                       @foreach($purchasesForEvaluation as $purchase)
                         <option value="{{ $purchase->id }}">
                           {{ $purchase->code }} - {{ $purchase->label }} ({{ $purchase->GetPrettyCreatedAttribute() }})
@@ -531,55 +531,55 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="rating">{{ __('general_content.evaluation_rating_trans_key') }}</label>
-                    <select name="rating" id="rating" class="form-control">
+                    <select name="rating" id="rating" class="form-select">
                       @for ($i = 1; $i <= 5; $i++)
                         <option value="{{ $i }}">{{ $i }}</option>
                       @endfor
                     </select>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="evaluation_status">{{ __('general_content.evaluation_status_trans_key') }}</label>
-                    <select name="evaluation_status" id="evaluation_status" class="form-control">
+                    <select name="evaluation_status" id="evaluation_status" class="form-select">
                       @foreach($evaluationStatusLabels as $statusOption => $statusLabel)
                         <option value="{{ $statusOption }}">{{ $statusLabel }}</option>
                       @endforeach
                     </select>
                   </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
+                  <div class="row gx-2">
+                    <div class="mb-3 col-md-6">
                       <label for="approved_at">{{ __('general_content.evaluation_approved_at_trans_key') }}</label>
                       <input type="datetime-local" name="approved_at" id="approved_at" class="form-control">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                       <label for="next_review_at">{{ __('general_content.evaluation_next_review_at_trans_key') }}</label>
                       <input type="date" name="next_review_at" id="next_review_at" class="form-control">
                     </div>
                   </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-4">
+                  <div class="row gx-2">
+                    <div class="mb-3 col-md-4">
                       <label for="evaluation_score_quality">{{ $evaluationScoresLabel['quality'] }}</label>
                       <input type="number" class="form-control" name="evaluation_score_quality" id="evaluation_score_quality" min="0" max="100" step="1">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="mb-3 col-md-4">
                       <label for="evaluation_score_logistics">{{ $evaluationScoresLabel['logistics'] }}</label>
                       <input type="number" class="form-control" name="evaluation_score_logistics" id="evaluation_score_logistics" min="0" max="100" step="1">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="mb-3 col-md-4">
                       <label for="evaluation_score_service">{{ $evaluationScoresLabel['service'] }}</label>
                       <input type="number" class="form-control" name="evaluation_score_service" id="evaluation_score_service" min="0" max="100" step="1">
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                     <textarea name="comment" id="comment" rows="3" class="form-control"></textarea>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="action_plan">{{ __('general_content.evaluation_action_plan_trans_key') }}</label>
                     <textarea name="action_plan" id="action_plan" rows="3" class="form-control"></textarea>
                   </div>
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
                 </form>
               @endif
             </x-adminlte-card>
@@ -593,9 +593,9 @@
                   <li><strong>{{ __('general_content.evaluation_rating_trans_key') }}:</strong>
                     @for ($i = 1; $i <= 5; $i++)
                       @if ($i <= ($latestEvaluation->rating ?? 0))
-                        <span class="badge badge-warning">&#9733;</span>
+                        <span class="badge text-bg-warning">&#9733;</span>
                       @else
-                        <span class="badge badge-info">&#9734;</span>
+                        <span class="badge text-bg-info">&#9734;</span>
                       @endif
                     @endfor
                   </li>

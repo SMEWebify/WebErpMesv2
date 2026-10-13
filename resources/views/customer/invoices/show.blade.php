@@ -20,7 +20,7 @@
                                     <span class="me-3">#{{ $invoice->code }}</span>
                                     @php($status = $invoice->statu)
                                     @if(isset($invoiceStatusBadges[$status]))
-                                        <span class="badge badge-{{ $invoiceStatusBadges[$status] }}">{{ __($invoiceStatusLabels[$status]) }}</span>
+                                        <span class="badge text-bg-{{ $invoiceStatusBadges[$status] }}">{{ __($invoiceStatusLabels[$status]) }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card mb-3">
                         <div class="card-body">
                             <h3 class="h6">{{ __('general_content.factory_trans_key') }}</h3>
                             <p class="mb-0">

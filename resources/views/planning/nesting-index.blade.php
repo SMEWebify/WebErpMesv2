@@ -3,7 +3,7 @@
 @section('title', 'Nesting')
 
 @section('content_header')
-    <h1><i class="fas fa-th mr-2"></i>Nesting - Besoin matière</h1>
+    <h1><i class="fas fa-th me-2"></i>Nesting - Besoin matière</h1>
 @stop
 
 @section('content')

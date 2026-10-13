@@ -15,6 +15,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
+                'resources/sass/standalone.scss',
                 'resources/js/app.js',
                 'resources/js/guest.js',
                 'resources/js/spreadsheet.js',

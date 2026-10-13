@@ -158,24 +158,22 @@ export default function PurchasesRequest({
     // ---------------------------------------------------------------------------
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             {errors.general && (
                 <div className="alert alert-danger m-3">{errors.general}</div>
             )}
 
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
-                    <div className="form-row">
+                    <div className="row gx-2">
 
                         {/* Document type */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.document_type}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-tags" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={documentType}
                                     onChange={e => setDocumentType(e.target.value)}
                                 >
@@ -188,14 +186,12 @@ export default function PurchasesRequest({
                         </div>
 
                         {/* Filter by supplier (for table) */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.sort_supplier}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={filterCompanyId}
                                     onChange={e => setFilterCompanyId(e.target.value)}
                                 >
@@ -209,14 +205,12 @@ export default function PurchasesRequest({
 
                         {/* PU: single supplier */}
                         {documentType === 'PU' && (
-                            <div className="form-group col-md-3">
+                            <div className="mb-3 col-md-3">
                                 <label>{trans.purchase_order} — Fournisseur</label>
                                 <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-industry" /></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-industry" /></span>
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={companyId}
                                         onChange={e => setCompanyId(e.target.value)}
                                     >
@@ -232,14 +226,12 @@ export default function PurchasesRequest({
 
                         {/* PQ: multi-select suppliers */}
                         {documentType === 'PQ' && (
-                            <div className="form-group col-md-3">
+                            <div className="mb-3 col-md-3">
                                 <label>{trans.select_suppliers}</label>
                                 <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-industry" /></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-industry" /></span>
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         multiple
                                         ref={multiSelectRef}
                                         style={{ minHeight: '80px' }}
@@ -254,12 +246,10 @@ export default function PurchasesRequest({
                         )}
 
                         {/* Code */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.external_id}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -272,12 +262,10 @@ export default function PurchasesRequest({
                         </div>
 
                         {/* Label */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.label}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-tags" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -290,24 +278,24 @@ export default function PurchasesRequest({
                         </div>
 
                         {/* Submit */}
-                        <div className="form-group col-md-2 d-flex align-items-end">
-                            <button type="submit" className="btn btn-success btn-block" disabled={submitting}>
+                        <div className="mb-3 col-md-2 d-flex align-items-end">
+                            <button type="submit" className="btn btn-success w-100" disabled={submitting}>
                                 {submitting
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.new_purchase_doc}</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{trans.new_purchase_doc}</>
                                     : trans.new_purchase_doc}
                             </button>
                         </div>
                     </div>
 
                     {/* CSV export row */}
-                    <div className="form-row">
-                        <div className="form-group col-md-4">
+                    <div className="row gx-2">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.sheet_metal_need}</label>
                             <a
                                 href={endpoints.exportCsv}
-                                className="btn btn-outline-info btn-block"
+                                className="btn btn-outline-info w-100"
                             >
-                                <i className="fas fa-file-csv mr-1" />
+                                <i className="fas fa-file-csv me-1" />
                                 {trans.export_csv}
                             </a>
                             <small className="form-text text-muted">{trans.sheet_metal_hint}</small>
@@ -320,7 +308,7 @@ export default function PurchasesRequest({
             <div className="table-responsive p-0">
                 {loading ? (
                     <div className="text-center p-4">
-                        <i className="fas fa-spinner fa-spin mr-2" />Loading...
+                        <i className="fas fa-spinner fa-spin me-2" />Loading...
                     </div>
                 ) : (
                     <table className="table table-hover">
@@ -359,13 +347,13 @@ export default function PurchasesRequest({
                                     </td>
                                     <td>{task.order_label ?? ''}</td>
                                     <td>
-                                        <a href={task.task_url} className="btn btn-sm btn-success mr-1">{trans.view}</a>
+                                        <a href={task.task_url} className="btn btn-sm btn-success me-1">{trans.view}</a>
                                         #{task.id} - {task.label}
                                         {task.component_label ? ` - ${task.component_label}` : ''}
                                     </td>
                                     <td>
                                         {task.component_url && (
-                                            <a href={task.component_url} className="btn btn-xs btn-info">
+                                            <a href={task.component_url} className="btn btn-sm btn-info">
                                                 <i className="fas fa-eye" />
                                             </a>
                                         )}
@@ -375,15 +363,15 @@ export default function PurchasesRequest({
                                         {task.service_label ?? ''}
                                     </td>
                                     <td>
-                                        <div className="custom-control custom-checkbox">
+                                        <div className="form-check ">
                                             <input
-                                                className="custom-control-input"
+                                                className="form-check-input"
                                                 type="checkbox"
                                                 id={`task-${task.id}`}
                                                 checked={!!selections[task.id]}
                                                 onChange={e => handleCheck(task.id, e.target.checked)}
                                             />
-                                            <label className="custom-control-label" htmlFor={`task-${task.id}`}>
+                                            <label className="form-check-label" htmlFor={`task-${task.id}`}>
                                                 {trans.add_to_document}
                                             </label>
                                         </div>

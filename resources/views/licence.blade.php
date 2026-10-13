@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-<div class="float-right"><img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image  elevation-3"></div>
+<div class="float-end"><img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image shadow"></div>
 <div class="content px-20">
     <p>
         <a href="https://opensource.org/licenses/MIT">MIT license</a><br/>

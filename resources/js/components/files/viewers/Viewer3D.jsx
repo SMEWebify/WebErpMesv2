@@ -65,7 +65,7 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
     return (
         <div className="wem-viewer">
             <div className="btn-toolbar mb-2" role="toolbar">
-                <div className="btn-group btn-group-sm mr-2">
+                <div className="btn-group btn-group-sm me-2">
                     {VIEWS.map((view) => (
                         <button
                             key={view}
@@ -79,7 +79,7 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
                 </div>
                 <div className="btn-group btn-group-sm">
                     <a className="btn btn-outline-secondary" href={file.download_url}>
-                        <i className="fas fa-download mr-1" />
+                        <i className="fas fa-download me-1" />
                         {t('download')}
                     </a>
                 </div>

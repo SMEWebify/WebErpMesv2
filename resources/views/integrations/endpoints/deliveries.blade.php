@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <label>Direction</label>
-                    <select name="direction" class="form-control">
+                    <select name="direction" class="form-select">
                         <option value="">Toutes</option>
                         <option value="in"  @selected(request('direction') === 'in')>Entrantes</option>
                         <option value="out" @selected(request('direction') === 'out')>Sortantes</option>
@@ -30,14 +30,14 @@
                 </div>
                 <div class="col-md-3">
                     <label>Statut</label>
-                    <select name="status" class="form-control">
+                    <select name="status" class="form-select">
                         <option value="">Tous</option>
                         <option value="failed"  @selected(request('status') === 'failed')>En erreur</option>
                         <option value="pending" @selected(request('status') === 'pending')>En attente</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary mr-2">
+                    <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-filter"></i> Filtrer
                     </button>
                     <a href="{{ route('admin.integrations.endpoints.deliveries', $endpoint) }}" class="btn btn-outline-secondary">
@@ -72,16 +72,16 @@
                                 <td>{{ $delivery->created_at?->format('Y-m-d H:i:s') }}</td>
                                 <td>
                                     @if($delivery->direction === 'in')
-                                        <span class="badge badge-warning">IN</span>
+                                        <span class="badge text-bg-warning">IN</span>
                                     @else
-                                        <span class="badge badge-info">OUT</span>
+                                        <span class="badge text-bg-info">OUT</span>
                                     @endif
                                 </td>
                                 <td><code>{{ $delivery->event_type }}</code></td>
                                 <td><small class="text-muted">{{ Str::limit($delivery->event_id, 13, '…') }}</small></td>
                                 <td>
                                     @if($delivery->http_status)
-                                        <span class="badge {{ $delivery->http_status < 300 ? 'badge-success' : 'badge-danger' }}">
+                                        <span class="badge {{ $delivery->http_status < 300 ? 'text-bg-success' : 'text-bg-danger' }}">
                                             {{ $delivery->http_status }}
                                         </span>
                                     @else

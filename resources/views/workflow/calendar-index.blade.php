@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
   <div class="card-body">
     <div id="calendar"></div>
   </div>

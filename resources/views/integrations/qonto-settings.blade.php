@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <a href="{{ route('admin.integrations.index') }}" class="text-muted mr-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
+        <a href="{{ route('admin.integrations.index') }}" class="text-muted me-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
         Qonto <small class="text-muted">Synchronisation clients</small>
     </h1>
 @stop
@@ -28,7 +28,7 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
                 @if($connection)
-                    <span class="badge badge-success mr-2"><i class="fas fa-check-circle"></i> Connecté</span>
+                    <span class="badge text-bg-success me-2"><i class="fas fa-check-circle"></i> Connecté</span>
                     @if($connection->scope)
                         <small class="text-muted">Scopes : {{ $connection->scope }}</small>
                     @endif
@@ -39,7 +39,7 @@
                         </small>
                     @endif
                 @else
-                    <span class="badge badge-secondary mr-2"><i class="fas fa-times-circle"></i> Non connecté</span>
+                    <span class="badge text-bg-secondary me-2"><i class="fas fa-times-circle"></i> Non connecté</span>
                 @endif
             </div>
             <div class="d-flex gap-2">
@@ -48,12 +48,12 @@
                           onsubmit="return confirm('Déconnecter Qonto ?')">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-unlink mr-1"></i>Déconnecter
+                            <i class="fas fa-unlink me-1"></i>Déconnecter
                         </button>
                     </form>
                 @elseif($featureEnabled)
                     <a href="{{ route('admin.integrations.qonto.connect') }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plug mr-1"></i>Connecter Qonto
+                        <i class="fas fa-plug me-1"></i>Connecter Qonto
                     </a>
                 @endif
             </div>
@@ -110,7 +110,7 @@
             <form method="POST" action="{{ route('admin.integrations.qonto.sync') }}">
                 @csrf
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-sync-alt mr-1"></i>Synchroniser maintenant
+                    <i class="fas fa-sync-alt me-1"></i>Synchroniser maintenant
                 </button>
             </form>
         </x-adminlte-card>
@@ -119,19 +119,19 @@
         <x-adminlte-card title="Paramètres" theme="secondary" theme-mode="outline">
             <form method="POST" action="{{ route('admin.integrations.qonto.settings') }}">
                 @csrf
-                <div class="form-group">
-                    <div class="custom-control custom-switch">
+                <div class="mb-3">
+                    <div class="form-check form-switch">
                         <input type="hidden" name="import_bidirectionnel" value="0">
-                        <input type="checkbox" class="custom-control-input" id="import_bidirectionnel"
+                        <input type="checkbox" class="form-check-input" id="import_bidirectionnel"
                                name="import_bidirectionnel" value="1"
                                {{ $connection->import_bidirectionnel ? 'checked' : '' }}>
-                        <label class="custom-control-label" for="import_bidirectionnel">
+                        <label class="form-check-label" for="import_bidirectionnel">
                             Import bidirectionnel - créer dans WEM les clients Qonto non trouvés
                         </label>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-save mr-1"></i>Enregistrer
+                    <i class="fas fa-save me-1"></i>Enregistrer
                 </button>
             </form>
         </x-adminlte-card>
@@ -149,7 +149,7 @@
                                 <th>Client WEM</th>
                                 <th>Candidat Qonto</th>
                                 <th>Score</th>
-                                <th class="text-right">Actions</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -167,11 +167,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge badge-{{ $review->matching_score >= 60 ? 'warning' : 'secondary' }}">
+                                        <span class="badge text-bg-{{ $review->matching_score >= 60 ? 'warning' : 'secondary' }}">
                                             {{ $review->matching_score }}
                                         </span>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <form method="POST"
                                               action="{{ route('admin.integrations.qonto.resolve', $review->id) }}"
                                               class="d-inline">
@@ -180,8 +180,8 @@
                                             @if($review->qonto_client_id)
                                                 <input type="hidden" name="qonto_client_id" value="{{ $review->qonto_client_id }}">
                                             @endif
-                                            <button type="submit" class="btn btn-xs btn-success">
-                                                <i class="fas fa-check mr-1"></i>Lier
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="fas fa-check me-1"></i>Lier
                                             </button>
                                         </form>
                                         <form method="POST"
@@ -189,8 +189,8 @@
                                               class="d-inline">
                                             @csrf
                                             <input type="hidden" name="action" value="ignore">
-                                            <button type="submit" class="btn btn-xs btn-outline-secondary">
-                                                <i class="fas fa-ban mr-1"></i>Ignorer
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-ban me-1"></i>Ignorer
                                             </button>
                                         </form>
                                     </td>

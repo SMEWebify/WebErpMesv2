@@ -8,7 +8,7 @@
         <h1>Print document</h1>
         </div>
         <div class="col-sm-6">
-        <a class="btn btn-primary btn-sm float-sm-right" href="{{ url()->previous() }}">
+        <a class="btn btn-primary btn-sm float-sm-end" href="{{ url()->previous() }}">
             {{ __('general_content.back_trans_key') }}
         </a>
         </div>
@@ -25,11 +25,11 @@
                 
                 <div class="col-12">
                     <!-- Main content -->
-                    <div class="invoice p-3 mb-3">
+                    <div class="wem-print-sheet bg-body border p-3 mb-3">
                     <!-- title row -->
                     <div class="row">
                         <div class="col-12">
-                        <h4><small class="float-right">{{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}</small>
+                        <h4><small class="float-end">{{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}</small>
                         </h4>
                         </div>
                         <!-- /.col -->
@@ -118,7 +118,7 @@
                     <div class="row">
                         <div class="col-12 table-responsive">
                         <table class="table table-bordered table-sm">
-                            <tbody class="thead-light">
+                            <tbody class="table-light">
                             @forelse($Document->Lines as $DocumentLine)
                                 <tr>
                                     <th rowspan="2" class="align-middle">
@@ -137,7 +137,7 @@
                                 <tr>
                                     <td colspan="2">
                                         <table class="table table-bordered">
-                                            <tr class="thead-light">
+                                            <tr class="table-light">
                                                 <th colspan="8">Données techniques</th>
                                             </tr>
                                             <tr>
@@ -230,6 +230,12 @@
 @stop
 
 @section('css')
+<style>
+    /* Feuille imprimable (ex-.invoice d'AdminLTE 3) : ni cadre ni marge sur papier. */
+    @media print {
+        .wem-print-sheet { border: 0 !important; margin: 0 !important; padding: 0 !important; }
+    }
+</style>
 @stop
 
 @section('js')

@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import axios from 'axios';
-import $ from 'jquery';
-import 'bootstrap';
+
+// Ni Bootstrap ni jQuery ne sont importés ici : AdminLTE v4 charge déjà le bundle
+// Bootstrap 5 (window.bootstrap) et config/adminlte.php le jQuery requis par
+// Select2. Un second exemplaire doublerait les écouteurs data-bs-toggle (menus
+// ouverts puis refermés) et écraserait window.jQuery par une copie sans Select2.
 
 window._ = _;
-window.$ = window.jQuery = $;
 
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

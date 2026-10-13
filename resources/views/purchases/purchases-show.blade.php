@@ -23,17 +23,16 @@ $purchaseSteps = json_encode([
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{  __('general_content.purchase_info_trans_key') }}</a></li> 
-      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{  __('general_content.purchase_lines_trans_key') }} ({{ count($Purchase->PurchaseLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-bs-toggle="tab">{{  __('general_content.purchase_info_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-bs-toggle="tab">{{  __('general_content.purchase_lines_trans_key') }} ({{ count($Purchase->PurchaseLines) }})</a></li>
       @if(count($CustomFields)> 0)
-      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Purchase->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Purchase->files) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -47,11 +46,11 @@ $purchaseSteps = json_encode([
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="orange" theme-mode="outline" maximizable>
                 @csrf 
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Purchase->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
                   </div>
                 </div>
@@ -62,18 +61,18 @@ $purchaseSteps = json_encode([
                 <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
                 @endif
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-select-companie',['companiesId' =>  $Purchase->companies_id])
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-select-adress',['adressId' =>   $Purchase->companies_addresses_id])
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-select-contact',['contactId' =>   $Purchase->companies_contacts_id])
                   </div>
                 </div>
@@ -81,7 +80,7 @@ $purchaseSteps = json_encode([
                   <x-FormTextareaComment  comment="{{ $Purchase->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -120,13 +119,11 @@ $purchaseSteps = json_encode([
                   @csrf
                   <input type="hidden" name="purchases_id" value="{{ $Purchase->id }}" >
                   <input type="hidden" name="companies_id" value="{{ $Purchase->companies_id }}" >
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="rating">{{ __('general_content.supplier_rate_trans_key') }}</label>
                     <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
-                      </div>
-                      <select name="rating" id="rating" class="form-control">
+                      <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
+                      <select name="rating" id="rating" class="form-select">
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -135,10 +132,10 @@ $purchaseSteps = json_encode([
                       </select>
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <x-FormTextareaComment  comment="" />
                   </div>
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </form>
                 @else
                   @php
@@ -147,9 +144,9 @@ $purchaseSteps = json_encode([
                   <label for="rating">{{ __('general_content.supplier_rate_trans_key') }}</label>
                   @for ($i = 1; $i <= 5; $i++)
                       @if ($i <= $Rating[0]['rating'])
-                          <span class="badge badge-warning">&#9733;</span>
+                          <span class="badge text-bg-warning">&#9733;</span>
                       @else
-                          <span class="badge badge-info">&#9734;</span>
+                          <span class="badge text-bg-info">&#9734;</span>
                       @endif
                   @endfor
                 @endif

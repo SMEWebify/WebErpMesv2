@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
   <div class="card-header">
     <h3 class="card-title">{{ $rfqGroup->label }}</h3>
   </div>

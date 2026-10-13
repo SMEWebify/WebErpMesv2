@@ -9,7 +9,7 @@
     <title>{{ __('general_content.order_trans_key') }} #{{ $Order->code }} - {{ $Factory->name ?? config('app.name') }}</title>
 
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-    @vite('resources/sass/app.scss')
+    @vite('resources/sass/standalone.scss')
 
     <style>
         body { background: #f4f6f9; }
@@ -25,7 +25,7 @@
         <div class="container">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-3">
-                    @if($Factory->picture)
+                    @if($Factory->hasPictureFile())
                         <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="{{ $Factory->name }}" height="36">
                     @endif
                     <span class="fw-semibold text-dark">{{ $Factory->name ?? config('app.name') }}</span>
@@ -171,7 +171,7 @@
                         <h6 class="card-title text-uppercase text-muted small fw-bold mb-3">{{ $Factory->name }}</h6>
                         <div class="row">
                             <div class="col-sm-6">
-                                @if($Factory->picture)
+                                @if($Factory->hasPictureFile())
                                     <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" height="48" class="mb-2">
                                 @endif
                             </div>
@@ -310,6 +310,6 @@
     @endforeach
 
     @vite('resources/js/guest.js')
-      @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+      @vite(['resources/sass/standalone.scss', 'resources/js/app.js'])
 </body>
 </html>

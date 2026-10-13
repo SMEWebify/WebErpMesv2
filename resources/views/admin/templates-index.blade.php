@@ -33,16 +33,16 @@
                                     <x-adminlte-modal id="Template{{ $template->id }}" title="Modifier {{ $template->document_type }}" theme="teal" icon="fa fa-pen" size='lg'>
                                         <form method="POST" action="{{ route('admin.emails.templates.update', $template->id) }}">
                                             @csrf
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.object_trans_key') }} :</label>
                                                 <input type="text" name="subject" class="form-control" value="{{ $template->subject }}" required>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label>{{ __('general_content.message_trans_key') }} :</label> 
                                                 <textarea name="content" class="form-control summernote" required>{{ $template->content }}</textarea>
                                             </div>
                                             <div class="card-footer">
-                                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                             </div>
                                         </form>
                                     </x-adminlte-modal>
@@ -61,9 +61,9 @@
         <x-adminlte-card title="{{ __('general_content.new_template_mail_trans_key') }}" theme="secondary" maximizable> 
             <form method="POST" action="{{ route('admin.emails.templates.store') }}">
                 @csrf
-                <div class="form-group">
+                <div class="mb-3">
                     <label>{{ __('general_content.entity_type_trans_key') }} :</label>
-                    <select class="form-control" name="document_type" required>
+                    <select class="form-select" name="document_type" required>
                         @forelse($availableDocumentTypes as $value => $label)
                             <option value="{{ $value }}">{{ __($label) }}</option>
                         @empty
@@ -71,16 +71,16 @@
                         @endforelse
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label>{{ __('general_content.object_trans_key') }} :</label>
                     <input type="text" name="subject" class="form-control" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label>{{ __('general_content.message_trans_key') }} :</label>
                     <textarea name="content" class="form-control summernote" required></textarea>
                 </div>
                 <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" :disabled="empty($availableDocumentTypes)"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" :disabled="empty($availableDocumentTypes)"/>
                 </div>
             </form>
         </x-adminlte-card>

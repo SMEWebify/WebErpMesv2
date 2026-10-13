@@ -38,9 +38,7 @@ function Alert({ type, message, onClose }) {
     if (!message) return null;
     return (
         <div className={`alert alert-${type} alert-dismissible`}>
-            <button type="button" className="close" onClick={onClose}>
-                <span>&times;</span>
-            </button>
+            <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
             {message}
         </div>
     );
@@ -67,10 +65,10 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
     ];
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-header">
                 <h3 className="card-title">
-                    <i className="fas fa-chart-line mr-2" />
+                    <i className="fas fa-chart-line me-2" />
                     {isEdit ? trans.update : trans.submit} — {trans.title}
                 </h3>
             </div>
@@ -79,15 +77,13 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                     {/* Row 1: year + months 1-4 + submit */}
                     <div className="row">
                         <div className="col-md-2">
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>{trans.year}</label>
                                 <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-calendar" /></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-calendar" /></span>
                                     <select
                                         name="year"
-                                        className={`form-control${errors.year ? ' is-invalid' : ''}`}
+                                        className={`form-select${errors.year ? ' is-invalid' : ''}`}
                                         value={form.year}
                                         onChange={handleChange}
                                     >
@@ -102,12 +98,10 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                         </div>
                         {rows[0].map(i => (
                             <div key={i} className="col-md-2">
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{months[i - 1] ?? `M${i}`}</label>
                                     <div className="input-group">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">{currency}</span>
-                                        </div>
+                                        <span className="input-group-text">{currency}</span>
                                         <input
                                             type="number"
                                             step="0.001"
@@ -123,15 +117,15 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                             </div>
                         ))}
                         <div className="col-md-2 d-flex align-items-end">
-                            <div className="form-group w-100">
+                            <div className="mb-3 w-100">
                                 <button
                                     type="submit"
-                                    className={`btn btn-block ${isEdit ? 'btn-info' : 'btn-danger'}`}
+                                    className={`btn w-100 ${isEdit ? 'btn-info' : 'btn-danger'}`}
                                     disabled={loading}
                                 >
                                     {loading
                                         ? <i className="fas fa-spinner fa-spin" />
-                                        : <><i className={`fas fa-save mr-1`} />{isEdit ? trans.update : trans.submit}</>
+                                        : <><i className={`fas fa-save me-1`} />{isEdit ? trans.update : trans.submit}</>
                                     }
                                 </button>
                             </div>
@@ -143,12 +137,10 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                         <div className="col-md-2" /> {/* spacer under year */}
                         {rows[1].map(i => (
                             <div key={i} className="col-md-2">
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{months[i - 1] ?? `M${i}`}</label>
                                     <div className="input-group">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">{currency}</span>
-                                        </div>
+                                        <span className="input-group-text">{currency}</span>
                                         <input
                                             type="number"
                                             step="0.001"
@@ -165,9 +157,9 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                         ))}
                         {isEdit && (
                             <div className="col-md-2 d-flex align-items-end">
-                                <div className="form-group w-100">
-                                    <button type="button" className="btn btn-secondary btn-block" onClick={onCancel}>
-                                        <i className="fas fa-times mr-1" />{trans.cancel}
+                                <div className="mb-3 w-100">
+                                    <button type="button" className="btn btn-secondary w-100" onClick={onCancel}>
+                                        <i className="fas fa-times me-1" />{trans.cancel}
                                     </button>
                                 </div>
                             </div>
@@ -179,12 +171,10 @@ function BudgetForm({ form, setForm, editId, onSubmit, onCancel, loading, errors
                         <div className="col-md-2" />
                         {rows[2].map(i => (
                             <div key={i} className="col-md-2">
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>{months[i - 1] ?? `M${i}`}</label>
                                     <div className="input-group">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">{currency}</span>
-                                        </div>
+                                        <span className="input-group-text">{currency}</span>
                                         <input
                                             type="number"
                                             step="0.001"
@@ -234,15 +224,13 @@ function budgetColumns(trans) {
 
 function BudgetTable({ budgets, meta, sortField, sortAsc, onSort, onEdit, onDelete, page, onPageChange, search, onSearch, loading, trans }) {
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-body">
                 {/* Search */}
                 <div className="row mb-3">
                     <div className="col-md-4">
                         <div className="input-group input-group-sm">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-search" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-search" /></span>
                             <input
                                 type="text"
                                 className="form-control"
@@ -286,16 +274,16 @@ function BudgetTable({ budgets, meta, sortField, sortAsc, onSort, onEdit, onDele
                     mobileActions={b => (
                         <div className="d-flex" style={{ gap: '0.5rem' }}>
                             <button type="button" className="btn btn-outline-warning" style={{ minHeight: 44 }} onClick={() => onEdit(b)}>
-                                <i className="fa fa-edit mr-1" />{trans.update}
+                                <i className="fa fa-edit me-1" />{trans.update}
                             </button>
                             <button type="button" className="btn btn-outline-danger" style={{ minHeight: 44 }} onClick={() => onDelete(b.id)}>
-                                <i className="fa fa-trash mr-1" />Supprimer
+                                <i className="fa fa-trash me-1" />Supprimer
                             </button>
                         </div>
                     )}
                 />
 
-                <Pagination meta={meta} prevNext={false} ulClassName="pagination pagination-sm m-0 float-right" onPage={onPageChange} />
+                <Pagination meta={meta} prevNext={false} ulClassName="pagination pagination-sm m-0 float-end" onPage={onPageChange} />
             </div>
         </div>
     );

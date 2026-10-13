@@ -34,9 +34,9 @@
                 <td>{{ $MethodsFamilie->service['label'] }}</td>
                 <td>
                   @if($MethodsFamilie->nest_type == 'sheet')
-                    <span class="badge badge-info">Tôle 2D</span>
+                    <span class="badge text-bg-info">Tôle 2D</span>
                   @elseif($MethodsFamilie->nest_type == 'bar')
-                    <span class="badge badge-warning">Barre 1D</span>
+                    <span class="badge text-bg-warning">Barre 1D</span>
                   @else
                     <span class="text-muted">-</span>
                   @endif
@@ -49,22 +49,18 @@
                     <form method="POST" action="{{ route('methods.family.update', ['id' => $MethodsFamilie->id]) }}" enctype="multipart/form-data">
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="label">{{__('general_content.label_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsFamilie->label }}">
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="methods_services_id_{{ $MethodsFamilie->id }}">{{ __('general_content.service_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-list"></i></span>
-                            </div>
-                            <select class="form-control" name="methods_services_id" id="methods_services_id_{{ $MethodsFamilie->id }}">
+                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            <select class="form-select" name="methods_services_id" id="methods_services_id_{{ $MethodsFamilie->id }}">
                               @forelse ($ServicesSelect as $item)
                               <option value="{{ $item->id }}" @if($MethodsFamilie->methods_services_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                               @empty
@@ -73,13 +69,11 @@
                             </select>
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="nest_type_{{ $MethodsFamilie->id }}">Moyen de débit (nesting)</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-th"></i></span>
-                            </div>
-                            <select class="form-control" name="nest_type" id="nest_type_{{ $MethodsFamilie->id }}">
+                            <span class="input-group-text"><i class="fas fa-th"></i></span>
+                            <select class="form-select" name="nest_type" id="nest_type_{{ $MethodsFamilie->id }}">
                               <option value="">- Aucun -</option>
                               <option value="sheet" @if($MethodsFamilie->nest_type == 'sheet') selected @endif>Tôle (2D)</option>
                               <option value="bar" @if($MethodsFamilie->nest_type == 'bar') selected @endif>Barre (1D)</option>
@@ -88,7 +82,7 @@
                         </div>
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -116,34 +110,28 @@
       <form  method="POST" action="{{ route('methods.family.create') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_family_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
               <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="label">{{__('general_content.label_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-tags"></i></span>
               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             @include('include.form.form-select-service',['serviceId' => null  ])
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="nest_type">Moyen de débit (nesting)</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-th"></i></span>
-              </div>
-              <select class="form-control" name="nest_type" id="nest_type">
+              <span class="input-group-text"><i class="fas fa-th"></i></span>
+              <select class="form-select" name="nest_type" id="nest_type">
                 <option value="">- Aucun -</option>
                 <option value="sheet">Tôle (2D)</option>
                 <option value="bar">Barre (1D)</option>
@@ -151,7 +139,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </div>
         </x-adminlte-card>
       </form>

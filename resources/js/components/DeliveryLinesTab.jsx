@@ -6,10 +6,10 @@ import { formatQty } from '../utils';
 // ---------------------------------------------------------------------------
 
 const INVOICE_STATUS = {
-    1: { badge: 'badge-info',    label: 'Facturable' },
-    2: { badge: 'badge-danger',  label: 'Non facturable' },
-    3: { badge: 'badge-warning', label: 'Partiellement' },
-    4: { badge: 'badge-success', label: 'Facturé' },
+    1: { badge: 'text-bg-info',    label: 'Facturable' },
+    2: { badge: 'text-bg-danger',  label: 'Non facturable' },
+    3: { badge: 'text-bg-warning', label: 'Partiellement' },
+    4: { badge: 'text-bg-success', label: 'Facturé' },
 };
 
 // ---------------------------------------------------------------------------
@@ -97,7 +97,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
             <div style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0,
                 width: 460, maxWidth: '95vw',
-                background: '#fff', zIndex: 1050,
+                background: 'var(--bs-body-bg)', zIndex: 1050,
                 display: 'flex', flexDirection: 'column',
                 transform: open ? 'translateX(0)' : 'translateX(100%)',
                 transition: 'transform 0.25s ease',
@@ -108,7 +108,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom"
                      style={{ background: '#fff3cd' }}>
                     <strong>
-                        <i className="fas fa-undo mr-2 text-warning" />
+                        <i className="fas fa-undo me-2 text-warning" />
                         {trans.add_return ?? 'Nouveau retour'}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
@@ -125,19 +125,17 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                     <form id="return-drawer-form" onSubmit={handleSubmit}>
 
                         {/* Ligne de livraison — lecture seule */}
-                        <div className="form-group mb-3">
-                            <label className="mb-1 small font-weight-bold">
+                        <div className="mb-3 mb-3">
+                            <label className="mb-1 small fw-bold">
                                 {trans.delivery_line ?? 'Ligne de livraison'}
                             </label>
                             <div className="input-group input-group-sm">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text bg-light">
+                                <span className="input-group-text bg-body-tertiary">
                                         <i className="fas fa-box" />
                                     </span>
-                                </div>
                                 <input
                                     type="text"
-                                    className="form-control bg-light"
+                                    className="form-control bg-body-tertiary"
                                     value={line ? `${line.code ? line.code + ' — ' : ''}${line.label ?? ''}` : ''}
                                     readOnly
                                 />
@@ -145,8 +143,8 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                         </div>
 
                         {/* Quantité */}
-                        <div className="form-group mb-3">
-                            <label className="mb-1 small font-weight-bold">
+                        <div className="mb-3 mb-3">
+                            <label className="mb-1 small fw-bold">
                                 {trans.qty ?? 'Quantité'}
                             </label>
                             <input
@@ -159,12 +157,12 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                         </div>
 
                         {/* Non-conformité */}
-                        <div className="form-group mb-3">
-                            <label className="mb-1 small font-weight-bold">
+                        <div className="mb-3 mb-3">
+                            <label className="mb-1 small fw-bold">
                                 {trans.non_conformity ?? 'Non-conformité'}
                             </label>
                             <select
-                                className="form-control form-control-sm"
+                                className="form-select form-select-sm"
                                 value={ncId}
                                 onChange={e => setNcId(e.target.value)}
                             >
@@ -176,8 +174,8 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                         </div>
 
                         {/* Description du problème */}
-                        <div className="form-group mb-3">
-                            <label className="mb-1 small font-weight-bold">
+                        <div className="mb-3 mb-3">
+                            <label className="mb-1 small fw-bold">
                                 {trans.issue ?? 'Description du problème'}
                             </label>
                             <textarea
@@ -196,7 +194,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                 </div>
 
                 {/* Footer */}
-                <div className="px-3 py-2 border-top d-flex justify-content-end" style={{ gap: 8, background: '#f8f9fa' }}>
+                <div className="px-3 py-2 border-top d-flex justify-content-end" style={{ gap: 8, background: 'var(--bs-tertiary-bg)' }}>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                         {trans.cancel ?? 'Annuler'}
                     </button>
@@ -206,7 +204,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
                         className="btn btn-sm btn-warning"
                         disabled={saving}
                     >
-                        <i className="fas fa-save mr-1" />
+                        <i className="fas fa-save me-1" />
                         {saving ? '…' : (trans.save ?? 'Enregistrer')}
                     </button>
                 </div>
@@ -273,20 +271,16 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
             {/* Flash success */}
             {flash && (
                 <div className="alert alert-success alert-dismissible py-2 mb-2" role="alert">
-                    <i className="fas fa-check-circle mr-1" />{flash}
-                    <button type="button" className="close py-1" onClick={() => setFlash('')}>
-                        <span>&times;</span>
-                    </button>
+                    <i className="fas fa-check-circle me-1" />{flash}
+                    <button type="button" onClick={() => setFlash('')} aria-label="Close" className="btn-close py-1 float-end"></button>
                 </div>
             )}
 
             {/* Flash error */}
             {error && (
                 <div className="alert alert-danger alert-dismissible py-2 mb-2" role="alert">
-                    <i className="fas fa-exclamation-triangle mr-1" />{error}
-                    <button type="button" className="close py-1" onClick={() => setError('')}>
-                        <span>&times;</span>
-                    </button>
+                    <i className="fas fa-exclamation-triangle me-1" />{error}
+                    <button type="button" onClick={() => setError('')} aria-label="Close" className="btn-close py-1 float-end"></button>
                 </div>
             )}
 
@@ -302,7 +296,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                             <th>{trans.delivered_qty ?? 'Livré'}</th>
                             <th>{trans.remaining_qty ?? 'Restant'}</th>
                             <th>{trans.invoice_status ?? 'Facturation'}</th>
-                            <th style={{ width: 110 }} className="text-right">{trans.return ?? 'Retour'}</th>
+                            <th style={{ width: 110 }} className="text-end">{trans.return ?? 'Retour'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -317,7 +311,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                             return (
                                 <tr key={line.id}>
                                     <td>
-                                        <a href={line.order_url} className="btn btn-xs btn-outline-secondary">
+                                        <a href={line.order_url} className="btn btn-sm btn-outline-secondary">
                                             {line.order_code}
                                         </a>
                                     </td>
@@ -332,11 +326,11 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                             <span className={`badge ${inv.badge}`}>{inv.label}</span>
                                         )}
                                     </td>
-                                    <td className="text-right text-nowrap">
+                                    <td className="text-end text-nowrap">
                                         {(line.invoice_status === 1 || line.invoice_status === 3) && (
                                             <button
                                                 type="button"
-                                                className="btn btn-xs btn-outline-danger mr-1"
+                                                className="btn btn-sm btn-outline-danger me-1"
                                                 title={trans.mark_not_chargeable ?? 'Marquer non facturable'}
                                                 disabled={busyId === line.id}
                                                 onClick={() => markNotChargeable(line)}
@@ -346,7 +340,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                         )}
                                         <button
                                             type="button"
-                                            className="btn btn-xs btn-outline-warning"
+                                            className="btn btn-sm btn-outline-warning"
                                             title={trans.add_return ?? 'Nouveau retour'}
                                             onClick={() => openDrawer(line)}
                                         >

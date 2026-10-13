@@ -42,7 +42,7 @@ function PropertiesTable({ properties }) {
                             <td>{display(oldVal)}</td>
                             <td>
                                 {changed
-                                    ? <span className="badge badge-warning">{display(newVal)}</span>
+                                    ? <span className="badge text-bg-warning">{display(newVal)}</span>
                                     : display(newVal)
                                 }
                             </td>
@@ -110,10 +110,10 @@ export default function LogsViewer({ endpoints, subjectType, subjectId, trans })
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     {!subjectType && (
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>Subject Type</label>
                             <select
-                                className="form-control"
+                                className="form-select"
                                 value={model}
                                 onChange={(e) => setModel(e.target.value)}
                             >
@@ -126,10 +126,10 @@ export default function LogsViewer({ endpoints, subjectType, subjectId, trans })
                         </div>
                     )}
 
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>{t('user')}</label>
                         <select
-                            className="form-control"
+                            className="form-select"
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
                         >
@@ -140,7 +140,7 @@ export default function LogsViewer({ endpoints, subjectType, subjectId, trans })
                         </select>
                     </div>
 
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>{t('start_date')}</label>
                         <input
                             type="date"
@@ -151,7 +151,7 @@ export default function LogsViewer({ endpoints, subjectType, subjectId, trans })
                         {errors.startDate && <span className="text-danger">{errors.startDate}</span>}
                     </div>
 
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>{t('end_date')}</label>
                         <input
                             type="date"
@@ -162,13 +162,13 @@ export default function LogsViewer({ endpoints, subjectType, subjectId, trans })
                         {errors.endDate && <span className="text-danger">{errors.endDate}</span>}
                     </div>
 
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <button
                             type="submit"
                             className="btn btn-danger mt-4"
                             disabled={loading}
                         >
-                            <i className="fas fa-search mr-1" />
+                            <i className="fas fa-search me-1" />
                             {loading ? '...' : t('submit')}
                         </button>
                     </div>

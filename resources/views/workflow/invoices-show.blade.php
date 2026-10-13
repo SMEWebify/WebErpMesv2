@@ -25,28 +25,27 @@ $invoiceSteps = [
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">{{ __('general_content.invoice_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }} ({{ count($Invoice->InvoiceLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Invoice" data-bs-toggle="tab">{{ __('general_content.invoice_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-bs-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }} ({{ count($Invoice->InvoiceLines) }})</a></li>
       @if(count($CustomFields)> 0)
-      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}  ({{ count($CustomFields) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}  ({{ count($CustomFields) }})</a></li>
       @endif
       <li class="nav-item">
-        <a class="nav-link" href="#Payments" data-toggle="tab">
-          <i class="fas fa-euro-sign mr-1"></i>Règlements
+        <a class="nav-link" href="#Payments" data-bs-toggle="tab">
+          <i class="fas fa-euro-sign me-1"></i>Règlements
           @if($Invoice->paid_amount > 0)
-            <span class="badge badge-{{ $Invoice->remaining_amount <= 0 ? 'success' : 'warning' }} ml-1">
+            <span class="badge text-bg-{{ $Invoice->remaining_amount <= 0 ? 'success' : 'warning' }} ms-1">
               {{ $Invoice->remaining_amount <= 0 ? 'Soldée' : 'Partiel' }}
             </span>
           @endif
         </a>
       </li>
-      <li class="nav-item"><a class="nav-link" href="#Documents" data-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Invoice->files) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }} ({{ count($Invoice->files) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab">Logs</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -61,31 +60,31 @@ $invoiceSteps = [
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="danger" theme-mode="outline" maximizable>
                 @csrf
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Invoice->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Invoice->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
                     @include('include.form.form-input-customerInfo',['customerReference' =>  $Invoice->customer_reference])
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="label">{{ __('general_content.due_date_trans_key') }}</label>
                     <input type="date" class="form-control" name="due_date"  id="due_date" value="{{  $Invoice->due_date }}">
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="mb-3 col-md-6">
                     <label for="incoterm">{{ __('general_content.incoterm_trans_key') }}</label>
                     <input type="text" class="form-control" name="incoterm"  id="incoterm" value="{{  $Invoice->incoterm }}">
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_id" id="invoice_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.companie_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-building"></i>
                             </div>
                         </x-slot>
@@ -94,11 +93,11 @@ $invoiceSteps = [
                         @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_addresses_id" id="invoice_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-map-marked-alt"></i>
                             </div>
                         </x-slot>
@@ -107,11 +106,11 @@ $invoiceSteps = [
                         @endforeach
                     </x-adminlte-select2>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="mb-3 col-md-4">
                     <x-adminlte-select2 name="companies_contacts_id" id="invoice_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.contact_name_trans_key') }}">
                         <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-info">
+                            <div class="input-group-text text-bg-info bg-gradient">
                                 <i class="fas fa-user"></i>
                             </div>
                         </x-slot>
@@ -125,7 +124,7 @@ $invoiceSteps = [
                   <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
               </x-adminlte-card>
             </form>
@@ -145,7 +144,7 @@ $invoiceSteps = [
                         <td style="width:50%">{{ __('general_content.invoices_trans_key') }}</td>
                         <td>
                             @if($Invoice->statu === 1)
-                                <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} - PDF indisponible</span>
+                                <span class="badge text-bg-secondary">{{ __('general_content.invoice_draft_trans_key') }} - PDF indisponible</span>
                             @else
                                 <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
                             @endif
@@ -156,7 +155,7 @@ $invoiceSteps = [
                       <td style="width:50%">{{ __('general_content.email_trans_key') }}</td>
                       <td>
                         @if($Invoice->statu === 1)
-                            <span class="badge badge-secondary">{{ __('general_content.invoice_draft_trans_key') }} - {{ __('general_content.invoice_draft_no_email_short_trans_key') }}</span>
+                            <span class="badge text-bg-secondary">{{ __('general_content.invoice_draft_trans_key') }} - {{ __('general_content.invoice_draft_no_email_short_trans_key') }}</span>
                         @else
                             <x-ButtonTextEmail route="{{ route('email.create', ['type' => 'invoice', 'id' => $Invoice->id]) }}" />
                         @endif
@@ -224,15 +223,15 @@ $invoiceSteps = [
               <input type="hidden" name="all_invoice_lines[]" value="{{ $line->id }}">
             @endforeach
             <div class="d-flex align-items-center">
-              <label class="mr-2 mb-0 text-muted small">Sélectionner les lignes pour avoir :</label>
+              <label class="me-2 mb-0 text-muted small">Sélectionner les lignes pour avoir :</label>
               @foreach($Invoice->InvoiceLines as $line)
-                <label class="mr-3 mb-0 small">
-                  <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="mr-1">
+                <label class="me-3 mb-0 small">
+                  <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="me-1">
                   {{ $line->display_code ?: $line->display_label }}
                 </label>
               @endforeach
-              <button type="submit" class="btn btn-info btn-sm ml-auto">
-                <i class="fas fa-save mr-1"></i>{{ __('general_content.new_credit_note_trans_key') }}
+              <button type="submit" class="btn btn-info btn-sm ms-auto">
+                <i class="fas fa-save me-1"></i>{{ __('general_content.new_credit_note_trans_key') }}
               </button>
             </div>
           </form>

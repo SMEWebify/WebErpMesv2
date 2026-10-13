@@ -5,8 +5,8 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="mb-0">Pré-commande #{{ $preOrder->id }}</h1>
-        <a href="{{ route('pre-orders.index') }}" class="btn btn-default btn-sm">
-            <i class="fas fa-arrow-left mr-1"></i> Retour à l'index
+        <a href="{{ route('pre-orders.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Retour à l'index
         </a>
     </div>
 @stop
@@ -34,22 +34,22 @@
                 @endphp
 
                 <div class="d-flex mb-3">
-                    <form method="POST" action="{{ route('pre-orders.matching', $preOrder) }}" class="mr-2">
+                    <form method="POST" action="{{ route('pre-orders.matching', $preOrder) }}" class="me-2">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fas fa-link mr-1"></i> Matching article
+                            <i class="fas fa-link me-1"></i> Matching article
                         </button>
                     </form>
 
-                    <form method="POST" action="{{ route('pre-orders.accept-all-matching', $preOrder) }}" class="mr-2">
+                    <form method="POST" action="{{ route('pre-orders.accept-all-matching', $preOrder) }}" class="me-2">
                         @csrf
                         <button type="submit" class="btn btn-success btn-sm" @disabled(! $hasPendingMatching)>
-                            <i class="fas fa-check-double mr-1"></i> Valider toutes les lignes
+                            <i class="fas fa-check-double me-1"></i> Valider toutes les lignes
                         </button>
                     </form>
 
                     <a href="{{ route('pre-orders.export-zero-price', $preOrder) }}" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-file-csv mr-1"></i> Exporter articles à 0 €
+                        <i class="fas fa-file-csv me-1"></i> Exporter articles à 0 €
                     </a>
                 </div>
 
@@ -79,9 +79,9 @@
                                     <td>{{ $line->formatted_total_price }}</td>
                                     <td>
                                         @if($line->linkedProduct)
-                                            <span class="badge badge-success">{{ $line->linkedProduct->code }} - {{ $line->linkedProduct->label }}</span>
+                                            <span class="badge text-bg-success">{{ $line->linkedProduct->code }} - {{ $line->linkedProduct->label }}</span>
                                         @elseif($line->suggestedProduct)
-                                            <span class="badge badge-warning">{{ $line->suggestedProduct->code }} - {{ $line->suggestedProduct->label }}</span>
+                                            <span class="badge text-bg-warning">{{ $line->suggestedProduct->code }} - {{ $line->suggestedProduct->label }}</span>
                                         @else
                                             <span class="text-muted">Aucun</span>
                                         @endif
@@ -89,11 +89,11 @@
                                     <td>{{ $line->formatted_matching_unit_price ?? '-' }}</td>
                                     <td>
                                         @if($line->linked_product_id)
-                                            <span class="badge badge-success">Validé</span>
+                                            <span class="badge text-bg-success">Validé</span>
                                         @elseif($line->suggested_product_id)
                                             <form method="POST" action="{{ route('pre-orders.accept-matching', [$preOrder, $line]) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-xs btn-success">Accepter</button>
+                                                <button type="submit" class="btn btn-sm btn-success">Accepter</button>
                                             </form>
                                         @else
                                             <span class="text-muted">-</span>
@@ -109,8 +109,8 @@
             <x-adminlte-card title="PDF source" theme="info" maximizable class="mt-3">
                 @if($sourcePdfUrl)
                     <div class="mb-2">
-                        <a href="{{ $sourcePdfUrl }}" target="_blank" rel="noopener" class="btn btn-default btn-sm">
-                            <i class="fas fa-external-link-alt mr-1"></i> Ouvrir dans un nouvel onglet
+                        <a href="{{ $sourcePdfUrl }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i> Ouvrir dans un nouvel onglet
                         </a>
                     </div>
                     <iframe
@@ -126,9 +126,9 @@
             </x-adminlte-card>
         </div>
         <div class="col-lg-4">
-            <x-adminlte-card title="Transformation en commande" theme="lightblue" theme-mode="outline">
+            <x-adminlte-card title="Transformation en commande" theme="sky" theme-mode="outline">
                 @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_CONVERTED)
-                    <p class="mb-2"><span class="badge badge-success">Déjà convertie</span></p>
+                    <p class="mb-2"><span class="badge text-bg-success">Déjà convertie</span></p>
                     <p>Commande créée :
                         <a href="{{ route('orders.show', ['id' => $preOrder->converted_order_id]) }}">#{{ $preOrder->converted_order_id }}</a>
                     </p>
@@ -137,7 +137,7 @@
 
                     @if($duplicateWarning)
                         <div class="alert alert-warning">
-                            <h6 class="font-weight-bold mb-1"><i class="fas fa-exclamation-triangle mr-1"></i> Doublon possible</h6>
+                            <h6 class="fw-bold mb-1"><i class="fas fa-exclamation-triangle me-1"></i> Doublon possible</h6>
                             <p class="mb-1">
                                 Une commande existe déjà :
                                 <a href="{{ route('orders.show', ['id' => $duplicateWarning['id']]) }}" target="_blank" rel="noopener">#{{ $duplicateWarning['code'] }}</a>
@@ -214,10 +214,10 @@
                         <x-adminlte-textarea name="comment" label="Commentaire" rows=3>{{ old('comment') }}</x-adminlte-textarea>
 
                         @if($duplicateWarning)
-                            <button type="submit" class="btn btn-warning btn-block">Créer quand même la commande</button>
-                            <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-default btn-block">Annuler</a>
+                            <button type="submit" class="btn btn-warning w-100">Créer quand même la commande</button>
+                            <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-outline-secondary w-100">Annuler</a>
                         @else
-                            <button type="submit" class="btn btn-success btn-block">Créer la commande</button>
+                            <button type="submit" class="btn btn-success w-100">Créer la commande</button>
                         @endif
                     </form>
                 @endif

@@ -15,7 +15,7 @@ export const WIDGET_REGISTRY = [
         emptyMsg: 'Aucune facture échue.',
         dateLabel: 'Échéance',
         daysSuffix: (d) => d > 0 ? `${d}j de retard` : 'Échue aujourd\'hui',
-        badgeClass: 'badge-danger',
+        badgeClass: 'text-bg-danger',
     },
     {
         id:       'orders_late',
@@ -27,7 +27,7 @@ export const WIDGET_REGISTRY = [
         emptyMsg: 'Aucune commande en retard.',
         dateLabel: 'Livraison prévue',
         daysSuffix: (d) => d > 0 ? `${d}j de retard` : 'Aujourd\'hui',
-        badgeClass: 'badge-warning',
+        badgeClass: 'text-bg-warning',
     },
     {
         id:       'quotes_expiring',
@@ -39,7 +39,7 @@ export const WIDGET_REGISTRY = [
         emptyMsg: 'Aucun devis proche de l\'expiration.',
         dateLabel: 'Expire le',
         daysSuffix: (d) => d < 0 ? `Expiré` : d === 0 ? 'Expire aujourd\'hui' : `Dans ${d}j`,
-        badgeClass: 'badge-info',
+        badgeClass: 'text-bg-info',
     },
     {
         id:       'leads_pending',
@@ -51,7 +51,7 @@ export const WIDGET_REGISTRY = [
         emptyMsg: 'Aucun lead en attente.',
         dateLabel: 'Reçu le',
         daysSuffix: (d) => `${d}j sans suivi`,
-        badgeClass: 'badge-info',
+        badgeClass: 'text-bg-info',
     },
     {
         id:       'orders_due_week',
@@ -63,26 +63,26 @@ export const WIDGET_REGISTRY = [
         emptyMsg: 'Aucune livraison prévue cette semaine.',
         dateLabel: 'Livraison',
         daysSuffix: (d) => d === 0 ? 'Aujourd\'hui' : `Dans ${d}j`,
-        badgeClass: 'badge-success',
+        badgeClass: 'text-bg-success',
     },
     {
         id:       'recent_activity',
         label:    'Activité récente',
         icon:     'fa-history',
-        color:    '#6c757d',
+        color:    'var(--bs-secondary-color)',
         section:  'recent',
         endpointKey: 'today_recent_activity',
         emptyMsg: 'Aucune activité récente.',
         dateLabel: 'Créé le',
         daysSuffix: null,
-        badgeClass: 'badge-secondary',
+        badgeClass: 'text-bg-secondary',
     },
 ];
 
 const SECTIONS = [
     { id: 'now',    label: 'À faire maintenant',    icon: 'fa-exclamation-circle', color: '#dc3545' },
     { id: 'week',   label: 'Cette semaine',          icon: 'fa-calendar-week',      color: '#fd7e14' },
-    { id: 'recent', label: 'Récent',                 icon: 'fa-history',            color: '#6c757d' },
+    { id: 'recent', label: 'Récent',                 icon: 'fa-history',            color: 'var(--bs-secondary-color)' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -143,9 +143,9 @@ function TodayItem({ item, def }) {
             {/* Contenu */}
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {item.code && <span style={{ marginRight: 4, color: '#495057' }}>{item.code}</span>}
-                    {item.company && <span style={{ color: '#6c757d' }}>{item.company}</span>}
-                    {item.label && !item.company && <span style={{ color: '#6c757d' }}>{item.label}</span>}
+                    {item.code && <span style={{ marginRight: 4, color: 'var(--bs-body-color)' }}>{item.code}</span>}
+                    {item.company && <span style={{ color: 'var(--bs-secondary-color)' }}>{item.company}</span>}
+                    {item.label && !item.company && <span style={{ color: 'var(--bs-secondary-color)' }}>{item.label}</span>}
                 </div>
                 {item.label && item.company && (
                     <div style={{ fontSize: 11, color: '#adb5bd', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -162,7 +162,7 @@ function TodayItem({ item, def }) {
             {/* Lien */}
             <a
                 href={item.url}
-                className="btn btn-xs btn-outline-secondary"
+                className="btn btn-sm btn-outline-secondary"
                 style={{ fontSize: 10, padding: '1px 6px', flexShrink: 0 }}
                 title="Ouvrir"
             >
@@ -192,8 +192,8 @@ function TodayWidget({ def, endpoint }) {
 
     return (
         <div style={{
-            background: '#fff',
-            border: '1px solid #dee2e6',
+            background: 'var(--bs-body-bg)',
+            border: '1px solid var(--bs-border-color)',
             borderTop: `3px solid ${def.color}`,
             borderRadius: 4,
             marginBottom: 12,
@@ -204,12 +204,12 @@ function TodayWidget({ def, endpoint }) {
                 padding: '8px 12px',
                 borderBottom: count > 0 ? '1px solid #f1f3f4' : 'none',
             }}>
-                <span style={{ fontWeight: 600, fontSize: 13, color: '#343a40' }}>
-                    <i className={`fas ${def.icon} mr-2`} style={{ color: def.color }} />
+                <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--bs-emphasis-color)' }}>
+                    <i className={`fas ${def.icon} me-2`} style={{ color: def.color }} />
                     {def.label}
                 </span>
                 {!loading && (
-                    <span className={`badge ${count > 0 ? def.badgeClass : 'badge-secondary'}`}>
+                    <span className={`badge ${count > 0 ? def.badgeClass : 'text-bg-secondary'}`}>
                         {count}
                     </span>
                 )}
@@ -226,12 +226,12 @@ function TodayWidget({ def, endpoint }) {
             )}
             {!loading && !error && count === 0 && (
                 <div style={{ padding: '10px 12px', color: '#adb5bd', fontSize: 12 }}>
-                    <i className="fas fa-check-circle mr-1 text-success" />{def.emptyMsg}
+                    <i className="fas fa-check-circle me-1 text-success" />{def.emptyMsg}
                 </div>
             )}
             {error && (
                 <div style={{ padding: '8px 12px', color: '#dc3545', fontSize: 12 }}>
-                    <i className="fas fa-exclamation-triangle mr-1" />Erreur de chargement
+                    <i className="fas fa-exclamation-triangle me-1" />Erreur de chargement
                 </div>
             )}
         </div>
@@ -251,7 +251,7 @@ function ConfigPanel({ layout, onSave, onClose }) {
     return (
         <div style={{
             position: 'fixed', top: 0, right: 0, bottom: 0, width: 300,
-            background: '#fff', boxShadow: '-4px 0 16px rgba(0,0,0,0.15)',
+            background: 'var(--bs-body-bg)', boxShadow: '-4px 0 16px rgba(0,0,0,0.15)',
             zIndex: 1050, padding: '1rem', overflowY: 'auto',
         }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -270,31 +270,31 @@ function ConfigPanel({ layout, onSave, onClose }) {
                 return (
                     <div key={def.id}
                         className="d-flex align-items-center justify-content-between mb-2 p-2"
-                        style={{ border: '1px solid #dee2e6', borderRadius: 4 }}
+                        style={{ border: '1px solid var(--bs-border-color)', borderRadius: 4 }}
                     >
                         <span style={{ fontSize: 13 }}>
-                            <i className={`fas ${def.icon} mr-2`} style={{ color: def.color, width: 16 }} />
+                            <i className={`fas ${def.icon} me-2`} style={{ color: def.color, width: 16 }} />
                             {def.label}
                         </span>
-                        <div className="custom-control custom-switch">
+                        <div className="form-check form-switch">
                             <input
                                 type="checkbox"
-                                className="custom-control-input"
+                                className="form-check-input"
                                 id={`widget-toggle-${def.id}`}
                                 checked={enabled}
                                 onChange={() => toggle(def.id)}
                             />
-                            <label className="custom-control-label" htmlFor={`widget-toggle-${def.id}`} />
+                            <label className="form-check-label" htmlFor={`widget-toggle-${def.id}`} />
                         </div>
                     </div>
                 );
             })}
 
             <button
-                className="btn btn-primary btn-block mt-3"
+                className="btn btn-primary w-100 mt-3"
                 onClick={() => { onSave(local); onClose(); }}
             >
-                <i className="fas fa-save mr-1" />Enregistrer
+                <i className="fas fa-save me-1" />Enregistrer
             </button>
         </div>
     );
@@ -339,7 +339,7 @@ export default function TodayView({ endpoints }) {
     if (!layout) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />Chargement…
             </div>
         );
     }
@@ -360,15 +360,15 @@ export default function TodayView({ endpoints }) {
             {/* En-tête */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h6 className="mb-0" style={{ fontWeight: 600, color: '#343a40' }}>
-                        <i className="fas fa-sun mr-2 text-warning" />
+                    <h6 className="mb-0" style={{ fontWeight: 600, color: 'var(--bs-emphasis-color)' }}>
+                        <i className="fas fa-sun me-2 text-warning" />
                         {today.charAt(0).toUpperCase() + today.slice(1)}
                     </h6>
                 </div>
                 <div className="d-flex align-items-center" style={{ gap: 8 }}>
                     {saving && (
                         <small className="text-muted">
-                            <i className="fas fa-spinner fa-spin mr-1" />
+                            <i className="fas fa-spinner fa-spin me-1" />
                         </small>
                     )}
                     <button
@@ -376,7 +376,7 @@ export default function TodayView({ endpoints }) {
                         onClick={() => setShowConfig(s => !s)}
                         title="Personnaliser"
                     >
-                        <i className="fas fa-sliders-h mr-1" />Personnaliser
+                        <i className="fas fa-sliders-h me-1" />Personnaliser
                     </button>
                 </div>
             </div>
@@ -395,11 +395,11 @@ export default function TodayView({ endpoints }) {
                             <i className={`fas ${section.icon}`} style={{ color: section.color, fontSize: 13 }} />
                             <span style={{
                                 fontSize: 11, fontWeight: 700, letterSpacing: 0.8,
-                                textTransform: 'uppercase', color: '#6c757d',
+                                textTransform: 'uppercase', color: 'var(--bs-secondary-color)',
                             }}>
                                 {section.label}
                             </span>
-                            <div style={{ flex: 1, height: 1, background: '#dee2e6' }} />
+                            <div style={{ flex: 1, height: 1, background: 'var(--bs-border-color)' }} />
                         </div>
 
                         <div className="row">

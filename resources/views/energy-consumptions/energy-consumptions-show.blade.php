@@ -18,6 +18,6 @@
             <dt class="col-sm-3">{{ __('general_content.total_cost_trans_key') }}</dt>
             <dd class="col-sm-9">{{ $energyConsumption->total_cost }}</dd>
         </dl>
-        <x-adminlte-button class="btn-flat" theme="secondary" icon="fas fa-arrow-left" label="{{ __('general_content.back_to_list_trans_key') }}" onclick="window.location='{{ route('energy-consumptions.index') }}'"/>
+        <x-adminlte-button class="rounded-0" theme="secondary" icon="fas fa-arrow-left" label="{{ __('general_content.back_to_list_trans_key') }}" onclick="window.location='{{ route('energy-consumptions.index') }}'"/>
     </x-adminlte-card>
 @stop

@@ -12,7 +12,7 @@ export default function MonthlyStatsWidget({ kpi, trans = {}, urls = {} }) {
                     value={kpi.delivered_month}
                     label={t.delivered_month}
                     icon="fa-info"
-                    theme="yellow"
+                    theme="warning"
                     url={u.orders_index}
                     urlText={t.view_details}
                 />

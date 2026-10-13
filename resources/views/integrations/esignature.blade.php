@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <i class="fas fa-file-signature mr-1"></i> {{ __('esignature.title') }}
+        <i class="fas fa-file-signature me-1"></i> {{ __('esignature.title') }}
         <small class="text-muted">{{ __('esignature.subtitle') }}</small>
     </h1>
 @stop
@@ -27,12 +27,12 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-primary mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('esignature.config') }}</h3>
                     <div class="card-tools">
                         @if($setting?->isUsable())
-                            <span class="badge badge-success">{{ __('general_content.active_trans_key') }}</span>
+                            <span class="badge text-bg-success">{{ __('general_content.active_trans_key') }}</span>
                         @endif
                     </div>
                 </div>
@@ -44,15 +44,15 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label>{{ __('esignature.provider') }}</label>
                                     <input type="text" class="form-control" value="DocuSign" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="environment">{{ __('esignature.environment') }}</label>
-                                    <select id="environment" name="environment" class="form-control" required>
+                                    <select id="environment" name="environment" class="form-select" required>
                                         <option value="demo" @selected(old('environment', $setting->environment ?? 'demo') === 'demo')>{{ __('esignature.environment_demo') }}</option>
                                         <option value="production" @selected(old('environment', $setting->environment ?? 'demo') === 'production')>{{ __('esignature.environment_production') }}</option>
                                     </select>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="integration_key">{{ __('esignature.integration_key') }}</label>
                             <input type="text" id="integration_key" name="integration_key" class="form-control" required
                                    autocomplete="off" value="{{ old('integration_key', $setting->integration_key ?? '') }}"
@@ -70,7 +70,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="api_user_id">{{ __('esignature.api_user_id') }}</label>
                                     <input type="text" id="api_user_id" name="api_user_id" class="form-control" required
                                            autocomplete="off" value="{{ old('api_user_id', $setting->api_user_id ?? '') }}">
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="account_id">{{ __('esignature.account_id') }}</label>
                                     <input type="text" id="account_id" name="account_id" class="form-control" required
                                            autocomplete="off" value="{{ old('account_id', $setting->account_id ?? '') }}">
@@ -87,20 +87,20 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="private_key">
                                 {{ __('esignature.private_key') }}
                                 @if($has_private_key)
                                     <small class="text-success">({{ __('esignature.secret_keep_hint') }})</small>
                                 @endif
                             </label>
-                            <textarea id="private_key" name="private_key" class="form-control text-monospace" rows="5"
+                            <textarea id="private_key" name="private_key" class="form-control font-monospace" rows="5"
                                       autocomplete="off" spellcheck="false" @if(! $has_private_key) required @endif
                                       placeholder="{{ $has_private_key ? '••••••••' : '-----BEGIN RSA PRIVATE KEY-----' }}"></textarea>
                             <small class="form-text text-muted">{{ __('esignature.private_key_hint') }}</small>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="hmac_key">
                                 {{ __('esignature.hmac_key') }}
                                 @if($has_hmac_key)
@@ -111,34 +111,34 @@
                                    autocomplete="new-password" placeholder="{{ $has_hmac_key ? '••••••••' : '' }}">
                             <small class="form-text text-muted">{{ __('esignature.hmac_key_hint') }}</small>
                             @if($has_hmac_key)
-                                <div class="custom-control custom-checkbox mt-1">
-                                    <input type="checkbox" id="clear_hmac_key" name="clear_hmac_key" value="1" class="custom-control-input">
-                                    <label class="custom-control-label" for="clear_hmac_key">{{ __('general_content.delete_trans_key') }}</label>
+                                <div class="form-check mt-1">
+                                    <input type="checkbox" id="clear_hmac_key" name="clear_hmac_key" value="1" class="form-check-input">
+                                    <label class="form-check-label" for="clear_hmac_key">{{ __('general_content.delete_trans_key') }}</label>
                                 </div>
                             @endif
                         </div>
 
                         <hr>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label>{{ __('esignature.signing_mode') }}</label>
                             @foreach(['embedded', 'email'] as $mode)
-                                <div class="custom-control custom-radio">
+                                <div class="form-check ">
                                     <input type="radio" id="signing_mode_{{ $mode }}" name="signing_mode" value="{{ $mode }}"
-                                           class="custom-control-input"
+                                           class="form-check-input"
                                            @checked(old('signing_mode', $setting->signing_mode ?? 'embedded') === $mode)>
-                                    <label class="custom-control-label" for="signing_mode_{{ $mode }}">{{ __('esignature.signing_mode_' . $mode) }}</label>
+                                    <label class="form-check-label" for="signing_mode_{{ $mode }}">{{ __('esignature.signing_mode_' . $mode) }}</label>
                                 </div>
                             @endforeach
                             <small class="form-text text-muted">{{ __('esignature.signing_mode_hint') }}</small>
                         </div>
 
-                        <div class="custom-control custom-switch">
+                        <div class="form-check form-switch">
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" id="is_active" name="is_active" value="1"
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    @checked(old('is_active', $setting->is_active ?? false))>
-                            <label class="custom-control-label" for="is_active">{{ __('esignature.is_active') }}</label>
+                            <label class="form-check-label" for="is_active">{{ __('esignature.is_active') }}</label>
                         </div>
                     </div>
 
@@ -157,7 +157,7 @@
         <div class="col-lg-4">
             <div id="test-result"></div>
 
-            <div class="card card-outline card-warning">
+            <div class="card card-outline card-warning mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('esignature.consent_title') }}</h3>
                 </div>
@@ -172,7 +172,7 @@
                 </div>
             </div>
 
-            <div class="card card-outline card-info">
+            <div class="card card-outline card-info mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('esignature.webhook_title') }}</h3>
                 </div>
@@ -186,12 +186,12 @@
                 </div>
             </div>
 
-            <div class="card card-outline card-secondary">
+            <div class="card card-outline card-secondary mb-3">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('esignature.what_title') }}</h3>
                 </div>
                 <div class="card-body">
-                    <ol class="pl-3 mb-0">
+                    <ol class="ps-3 mb-0">
                         <li>{{ __('esignature.what_1') }}</li>
                         <li>{{ __('esignature.what_2') }}</li>
                         <li>{{ __('esignature.what_3') }}</li>

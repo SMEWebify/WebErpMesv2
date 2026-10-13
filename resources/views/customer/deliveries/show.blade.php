@@ -20,7 +20,7 @@
                             <span class="me-3">#{{ $delivery->code }}</span>
                             @php($status = $delivery->statu)
                             @if(isset($deliveryStatusBadges[$status]))
-                                <span class="badge badge-{{ $deliveryStatusBadges[$status] }}">{{ __($deliveryStatusLabels[$status]) }}</span>
+                                <span class="badge text-bg-{{ $deliveryStatusBadges[$status] }}">{{ __($deliveryStatusLabels[$status]) }}</span>
                             @endif
                         </div>
                     </div>
@@ -56,16 +56,16 @@
                                     <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
                                     <td>
                                         @if(1 == $DocumentLine->invoice_status)
-                                            <span class="badge badge-info">{{ __('general_content.chargeable_trans_key') }}</span>
+                                            <span class="badge text-bg-info">{{ __('general_content.chargeable_trans_key') }}</span>
                                         @endif
                                         @if(2 == $DocumentLine->invoice_status)
-                                            <span class="badge badge-danger">{{ __('general_content.not_chargeable_trans_key') }}</span>
+                                            <span class="badge text-bg-danger">{{ __('general_content.not_chargeable_trans_key') }}</span>
                                         @endif
                                         @if(3 == $DocumentLine->invoice_status)
-                                            <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>
+                                            <span class="badge text-bg-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>
                                         @endif
                                         @if(4 == $DocumentLine->invoice_status)
-                                            <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>
+                                            <span class="badge text-bg-success">{{ __('general_content.invoiced_trans_key') }}</span>
                                         @endif
                                     </td>
                                     <td>
@@ -75,16 +75,16 @@
                                                 {{ $DocumentLine->QualityNonConformity->label }}
                                             </a>
                                             @if($DocumentLine->QualityNonConformity->statu == 1)
-                                                <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>
+                                                <span class="badge text-bg-info">{{ __('general_content.in_progress_trans_key') }}</span>
                                             @endif
                                             @if($DocumentLine->QualityNonConformity->statu == 2)
-                                                <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span>
+                                                <span class="badge text-bg-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span>
                                             @endif
                                             @if($DocumentLine->QualityNonConformity->statu == 3)
-                                                <span class="badge badge-success">{{ __('general_content.validate_trans_key') }}</span>
+                                                <span class="badge text-bg-success">{{ __('general_content.validate_trans_key') }}</span>
                                             @endif
                                             @if($DocumentLine->QualityNonConformity->statu == 4)
-                                                <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span>
+                                                <span class="badge text-bg-danger">{{ __('general_content.canceled_trans_key') }}</span>
                                             @endif
                                         @else
                                             <a class="btn btn-warning btn-sm" href="{{ route('guest.nonConformitie.create', ['id' => $DocumentLine->id]) }}">
@@ -107,7 +107,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <h3 class="h6">{{ $Factory->name }}</h3>
-                            @if($Factory->picture)
+                            @if($Factory->hasPictureFile())
                                 <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" width="64" class="logo"/>
                             @endif
                         </div>
@@ -125,7 +125,7 @@
             </div>
 
             @if ($delivery->comment)
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <h3 class="h6">{{ __('general_content.comment_trans_key') }}</h3>
                         <p class="mb-0">{{ $delivery->comment }}</p>

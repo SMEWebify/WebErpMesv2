@@ -100,7 +100,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], c
 
     if (created) {
         return (
-            <div className="card">
+            <div className="card mb-3">
                 <div className="card-body">
                     <h5 className="text-success"><i className="fas fa-check-circle me-2" />{created.length} commande(s) d'achat créée(s) en brouillon</h5>
                     <p className="text-muted small">Relisez-les, ajustez si besoin, puis passez-les au statut « Commandé » pour les envoyer.</p>
@@ -119,7 +119,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], c
     }
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-header d-flex align-items-center py-2">
                 <span className="small text-muted">
                     À commander = seuil mini + besoins réservés − stock − déjà en commande (arrondi à la qté éco. d'achat).

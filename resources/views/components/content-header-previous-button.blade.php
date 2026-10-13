@@ -3,7 +3,7 @@
         <h1> {{ $h1 }}</h1>
     </div>
     <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
+        <ol class="breadcrumb float-sm-end">
             <li class="breadcrumb-item">
                 @if($previous)
                     <a href="{{ $previous }}">{{ __('general_content.previous_trans_key') }}</a>

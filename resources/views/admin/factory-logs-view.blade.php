@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <x-adminlte-card theme="lime" theme-mode="outline">
+    <x-adminlte-card theme="success" theme-mode="outline">
         @include('include.logs-viewer-mount')
     </x-adminlte-card>
 @stop

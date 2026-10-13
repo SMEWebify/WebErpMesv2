@@ -10,23 +10,23 @@ import { apiRequest as apiFetch } from '../lib/http';
 // ---------------------------------------------------------------------------
 
 const TASKS_STATUS_CONFIG = {
-    1: { badge: 'badge-secondary', label: 'Sans tâche' },
-    2: { badge: 'badge-info',      label: 'Créé' },
-    3: { badge: 'badge-warning',   label: 'En cours' },
-    4: { badge: 'badge-success',   label: 'Terminé' },
+    1: { badge: 'text-bg-secondary', label: 'Sans tâche' },
+    2: { badge: 'text-bg-info',      label: 'Créé' },
+    3: { badge: 'text-bg-warning',   label: 'En cours' },
+    4: { badge: 'text-bg-success',   label: 'Terminé' },
 };
 
 const DELIVERY_STATUS_CONFIG = {
-    1: { badge: 'badge-secondary', label: 'Non livré' },
-    2: { badge: 'badge-warning',   label: 'Partiel' },
-    3: { badge: 'badge-success',   label: 'Livré' },
-    4: { badge: 'badge-primary',   label: 'Sans BL' },
+    1: { badge: 'text-bg-secondary', label: 'Non livré' },
+    2: { badge: 'text-bg-warning',   label: 'Partiel' },
+    3: { badge: 'text-bg-success',   label: 'Livré' },
+    4: { badge: 'text-bg-primary',   label: 'Sans BL' },
 };
 
 const INVOICE_STATUS_CONFIG = {
-    1: { badge: 'badge-secondary', label: 'Non facturé' },
-    2: { badge: 'badge-warning',   label: 'Partiel' },
-    3: { badge: 'badge-success',   label: 'Facturé' },
+    1: { badge: 'text-bg-secondary', label: 'Non facturé' },
+    2: { badge: 'text-bg-warning',   label: 'Partiel' },
+    3: { badge: 'text-bg-success',   label: 'Facturé' },
 };
 
 const EMPTY_FORM = {
@@ -60,7 +60,7 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
             <div className="card card-outline card-info mb-0">
                 <div className="card-header py-2">
                     <h6 className="card-title mb-0">
-                        <i className="fas fa-tag mr-1 text-info" />
+                        <i className="fas fa-tag me-1 text-info" />
                         Grille tarifaire client
                     </h6>
                 </div>
@@ -81,7 +81,7 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
                                     <td>
                                         <button
                                             type="button"
-                                            className="btn btn-xs btn-outline-primary"
+                                            className="btn btn-sm btn-outline-primary"
                                             onClick={() => onApplyPrice(e.price)}
                                         >
                                             Appliquer
@@ -146,7 +146,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
             <div style={{
                 position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)',
                 width: '90%', maxWidth: 780, maxHeight: '80vh',
-                background: '#fff', borderRadius: 6, zIndex: 1060,
+                background: 'var(--bs-body-bg)', borderRadius: 6, zIndex: 1060,
                 display: 'flex', flexDirection: 'column',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
             }}>
@@ -154,7 +154,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom"
                     style={{ background: '#ffc107', borderRadius: '6px 6px 0 0' }}>
                     <strong className="text-dark">
-                        <i className="fas fa-list mr-2" />
+                        <i className="fas fa-list me-2" />
                         Tâches — {lineLabel}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-dark" onClick={onClose}>
@@ -166,22 +166,22 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                 <div className="flex-grow-1 overflow-auto p-3">
                     {tasks === null ? (
                         <div className="text-center py-4">
-                            <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                            <i className="fas fa-spinner fa-spin me-2" />Chargement…
                         </div>
                     ) : tasks.length === 0 ? (
                         <p className="text-muted text-center py-4">Aucune tâche pour cette ligne.</p>
                     ) : (
                         <table className="table table-hover table-sm mb-0">
-                            <thead className="thead-light">
+                            <thead className="table-light">
                                 <tr>
                                     <th>Ordre</th>
                                     <th>Libellé</th>
                                     <th>Service</th>
-                                    <th className="text-right">Temps</th>
-                                    <th className="text-right">Qté</th>
-                                    <th className="text-right">Coût</th>
-                                    <th className="text-right">Marge</th>
-                                    <th className="text-right">Prix</th>
+                                    <th className="text-end">Temps</th>
+                                    <th className="text-end">Qté</th>
+                                    <th className="text-end">Coût</th>
+                                    <th className="text-end">Marge</th>
+                                    <th className="text-end">Prix</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -192,11 +192,11 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                                         <td style={{ background: t.service?.color ?? undefined }}>
                                             {t.service?.label ?? '—'}
                                         </td>
-                                        <td className="text-right">{t.total_time} h</td>
-                                        <td className="text-right">{formatQty(t.qty)}</td>
-                                        <td className="text-right">{t.unit_cost}</td>
-                                        <td className="text-right">{t.margin != null ? `${t.margin} %` : '—'}</td>
-                                        <td className="text-right">{t.unit_price}</td>
+                                        <td className="text-end">{t.total_time} h</td>
+                                        <td className="text-end">{formatQty(t.qty)}</td>
+                                        <td className="text-end">{t.unit_cost}</td>
+                                        <td className="text-end">{t.margin != null ? `${t.margin} %` : '—'}</td>
+                                        <td className="text-end">{t.unit_price}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -207,7 +207,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                 {/* Footer */}
                 <div className="border-top px-3 py-2 d-flex align-items-center justify-content-between flex-wrap" style={{ gap: '0.5rem' }}>
                     <a href={taskUrl} className="btn btn-sm btn-info">
-                        <i className="fas fa-folder mr-1" />Gérer les tâches
+                        <i className="fas fa-folder me-1" />Gérer les tâches
                     </a>
                     {!isReadOnly && (
                         <button
@@ -217,8 +217,8 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                             disabled={toggling}
                         >
                             {toggling
-                                ? <i className="fas fa-spinner fa-spin mr-1" />
-                                : <i className={`fas ${calcPrice ? 'fa-toggle-on' : 'fa-toggle-off'} mr-1`} />}
+                                ? <i className="fas fa-spinner fa-spin me-1" />
+                                : <i className={`fas ${calcPrice ? 'fa-toggle-on' : 'fa-toggle-off'} me-1`} />}
                             {calcPrice ? 'Désactiver prix calculé' : 'Activer prix calculé'}
                         </button>
                     )}
@@ -410,7 +410,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             <div style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0,
                 width: 460, maxWidth: '95vw',
-                background: '#fff', zIndex: 1050,
+                background: 'var(--bs-body-bg)', zIndex: 1050,
                 display: 'flex', flexDirection: 'column',
                 transform: open ? 'translateX(0)' : 'translateX(100%)',
                 transition: 'transform 0.25s ease',
@@ -418,11 +418,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             }}>
 
                 {/* Header */}
-                <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-light">
+                <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-body-tertiary">
                     <strong>
                         {editingLine
-                            ? <><i className="fas fa-edit mr-2 text-warning" />Modifier la ligne</>
-                            : <><i className="fas fa-plus-circle mr-2 text-success" />Nouvelle ligne</>}
+                            ? <><i className="fas fa-edit me-2 text-warning" />Modifier la ligne</>
+                            : <><i className="fas fa-plus-circle me-2 text-success" />Nouvelle ligne</>}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -436,12 +436,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                     <form id="line-drawer-form" onSubmit={handleSubmit}>
 
                         {/* Product */}
-                        <div className="form-group mb-2 position-relative">
-                            <label className="mb-1 small font-weight-bold">Produit</label>
+                        <div className="mb-3 mb-2 position-relative">
+                            <label className="mb-1 small fw-bold">Produit</label>
                             <div className="input-group input-group-sm">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-barcode" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-barcode" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -453,17 +451,15 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     disabled={isReadOnly}
                                 />
                                 {form.product_id && (
-                                    <div className="input-group-append">
-                                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={handleProductClear}>
+                                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={handleProductClear}>
                                             <i className="fas fa-times" />
                                         </button>
-                                    </div>
                                 )}
                             </div>
                             {showProductList && filteredProducts.length > 0 && (
                                 <div style={{
                                     position: 'absolute', zIndex: 1060, left: 0, right: 0,
-                                    background: '#fff', border: '1px solid #ccc',
+                                    background: 'var(--bs-body-bg)', border: '1px solid #ccc',
                                     borderRadius: '0 0 4px 4px', maxHeight: 200, overflowY: 'auto',
                                     boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
                                 }}>
@@ -474,7 +470,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                             onMouseEnter={(e) => e.currentTarget.style.background = '#f0f4ff'}
                                             onMouseLeave={(e) => e.currentTarget.style.background = ''}>
                                             <strong>{p.code}</strong>
-                                            <span className="text-muted ml-2">{p.label}</span>
+                                            <span className="text-muted ms-2">{p.label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -482,18 +478,18 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Code + Ordre */}
-                        <div className="form-row">
-                            <div className="form-group col-8 mb-2">
-                                <label className="mb-1 small font-weight-bold">Réf. externe</label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-8 mb-2">
+                                <label className="mb-1 small fw-bold">Réf. externe</label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                     <input type="text" className={`form-control ${errors.code ? 'is-invalid' : ''}`}
                                         placeholder="Code externe" value={form.code}
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
-                            <div className="form-group col-4 mb-2">
-                                <label className="mb-1 small font-weight-bold">Ordre</label>
+                            <div className="mb-3 col-4 mb-2">
+                                <label className="mb-1 small fw-bold">Ordre</label>
                                 <input type="number" className={`form-control form-control-sm ${errors.ordre ? 'is-invalid' : ''}`}
                                     min="1" value={form.ordre}
                                     onChange={(e) => set('ordre', e.target.value)} disabled={isReadOnly} />
@@ -501,10 +497,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Label */}
-                        <div className="form-group mb-2">
-                            <label className="mb-1 small font-weight-bold">Description <span className="text-danger">*</span></label>
+                        <div className="mb-3 mb-2">
+                            <label className="mb-1 small fw-bold">Description <span className="text-danger">*</span></label>
                             <div className="input-group input-group-sm">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-tags" /></span></div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`}
                                     placeholder="Description de la ligne" value={form.label}
                                     onChange={(e) => set('label', e.target.value)} disabled={isReadOnly} />
@@ -513,20 +509,20 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Qty + Unit */}
-                        <div className="form-row">
-                            <div className="form-group col-5 mb-2">
-                                <label className="mb-1 small font-weight-bold">Quantité <span className="text-danger">*</span></label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-5 mb-2">
+                                <label className="mb-1 small fw-bold">Quantité <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-times" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-times" /></span>
                                     <input type="number" className={`form-control ${errors.qty ? 'is-invalid' : ''}`}
                                         min="0" step="0.001" value={form.qty}
                                         onChange={(e) => set('qty', e.target.value)} disabled={isReadOnly} />
                                 </div>
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
-                            <div className="form-group col-7 mb-2">
-                                <label className="mb-1 small font-weight-bold">Unité</label>
-                                <select className="form-control form-control-sm" value={form.methods_units_id}
+                            <div className="mb-3 col-7 mb-2">
+                                <label className="mb-1 small fw-bold">Unité</label>
+                                <select className="form-select form-select-sm" value={form.methods_units_id}
                                     onChange={(e) => set('methods_units_id', e.target.value)} disabled={isReadOnly}>
                                     <option value="">— Unité —</option>
                                     {(selectData.units ?? []).map((u) => (
@@ -537,21 +533,21 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* Price + Discount */}
-                        <div className="form-row">
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Prix unitaire <span className="text-danger">*</span></label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Prix unitaire <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text">{selectData.currency ?? '€'}</span></div>
+                                    <span className="input-group-text">{selectData.currency ?? '€'}</span>
                                     <input type="number" className={`form-control ${errors.selling_price ? 'is-invalid' : ''}`}
                                         min="0" step="0.001" value={form.selling_price}
                                         onChange={(e) => set('selling_price', e.target.value)} disabled={isReadOnly} />
                                 </div>
                                 {errors.selling_price && <div className="invalid-feedback d-block">{errors.selling_price[0]}</div>}
                             </div>
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Remise %</label>
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Remise %</label>
                                 <div className="input-group input-group-sm">
-                                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-percentage" /></span></div>
+                                    <span className="input-group-text"><i className="fas fa-percentage" /></span>
                                     <input type="number" className={`form-control ${errors.discount ? 'is-invalid' : ''}`}
                                         min="0" max="100" step="0.01" value={form.discount}
                                         onChange={(e) => set('discount', e.target.value)} disabled={isReadOnly} />
@@ -560,10 +556,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </div>
 
                         {/* VAT + Delivery */}
-                        <div className="form-row">
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">TVA</label>
-                                <select className="form-control form-control-sm" value={form.accounting_vats_id}
+                        <div className="row gx-2">
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">TVA</label>
+                                <select className="form-select form-select-sm" value={form.accounting_vats_id}
                                     onChange={(e) => set('accounting_vats_id', e.target.value)} disabled={isReadOnly}>
                                     <option value="">— TVA —</option>
                                     {(selectData.vats ?? []).map((v) => (
@@ -571,8 +567,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group col-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Date livraison</label>
+                            <div className="mb-3 col-6 mb-2">
+                                <label className="mb-1 small fw-bold">Date livraison</label>
                                 <input type="date" className="form-control form-control-sm" value={form.delivery_date}
                                     onChange={(e) => set('delivery_date', e.target.value)} disabled={isReadOnly} />
                             </div>
@@ -584,26 +580,26 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 </div>
 
                 {/* Footer */}
-                <div className="border-top px-3 py-2 d-flex justify-content-between align-items-center bg-light">
+                <div className="border-top px-3 py-2 d-flex justify-content-between align-items-center bg-body-tertiary">
                     {editingLine?.detail_url ? (
                         <a href={editingLine.detail_url} className="btn btn-sm btn-outline-info"
                             target="_blank" rel="noreferrer">
-                            <i className="fas fa-info-circle mr-1" />Détails techniques
+                            <i className="fas fa-info-circle me-1" />Détails techniques
                         </a>
                     ) : <span />}
                     <div>
-                        <button type="button" className="btn btn-sm btn-outline-secondary mr-2" onClick={onClose}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary me-2" onClick={onClose}>
                             Annuler
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="line-drawer-form" className="btn btn-sm btn-success" disabled={saving}>
                                 {editingLine
                                     ? saving
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
-                                        : <><i className="fas fa-save mr-1" />Enregistrer</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
+                                        : <><i className="fas fa-save me-1" />Enregistrer</>
                                     : saving
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Ajout…</>
-                                        : <><i className="fas fa-plus mr-1" />Ajouter</>}
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Ajout…</>
+                                        : <><i className="fas fa-plus me-1" />Ajouter</>}
                             </button>
                         )}
                     </div>
@@ -635,18 +631,18 @@ function LinesPopover({ items, badgeClass, badgeLabel }) {
     return (
         <span ref={ref} style={{ position: 'relative' }}>
             <span className={`badge ${badgeClass}`} style={{ cursor: 'pointer' }} onClick={() => setOpen((o) => !o)}>
-                {badgeLabel} <i className="fas fa-external-link-alt ml-1" style={{ fontSize: 9 }} />
+                {badgeLabel} <i className="fas fa-external-link-alt ms-1" style={{ fontSize: 9 }} />
             </span>
             {open && (
                 <div style={{
                     position: 'absolute', zIndex: 1050, top: '100%', left: 0, minWidth: 200,
-                    background: '#fff', border: '1px solid #dee2e6', borderRadius: 4,
+                    background: 'var(--bs-body-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 4,
                     boxShadow: '0 4px 12px rgba(0,0,0,.15)', padding: '0.5rem',
                 }}>
                     <ul className="list-unstyled mb-0">
                         {items.map((item) => (
                             <li key={item.id} className="mb-1">
-                                <a href={item.url} className="text-primary font-weight-bold" target="_blank" rel="noreferrer">
+                                <a href={item.url} className="text-primary fw-bold" target="_blank" rel="noreferrer">
                                     {item.code}
                                 </a>
                                 {' — '}<small className="text-muted">{formatQty(item.qty)}</small>
@@ -680,19 +676,19 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
                     <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
                         <strong className="text-uppercase flex-grow-1">{line.label}</strong>
                         {Number(line.pdf_package) !== PACKAGE.NONE && <span className="badge text-bg-light border">forfait</span>}
-                        <span className="font-weight-bold text-nowrap">{money(info?.amount)}</span>
+                        <span className="fw-bold text-nowrap">{money(info?.amount)}</span>
                     </div>
                 )}
                 {type === LINE_TYPES.SUBTOTAL && (
                     <div className="d-flex">
-                        <span className="flex-grow-1 text-right font-weight-bold mr-2">
+                        <span className="flex-grow-1 text-end fw-bold me-2">
                             {line.label || (sectionLabel ? `Sous-total ${sectionLabel}` : 'Sous-total')}
                         </span>
-                        <span className="font-weight-bold text-nowrap">{money(info?.amount)}</span>
+                        <span className="fw-bold text-nowrap">{money(info?.amount)}</span>
                     </div>
                 )}
                 {type === LINE_TYPES.TEXT && (
-                    <span className="font-italic" style={{ whiteSpace: 'pre-wrap' }}>{line.label}</span>
+                    <span className="fst-italic" style={{ whiteSpace: 'pre-wrap' }}>{line.label}</span>
                 )}
             </td>
             <td />
@@ -729,9 +725,9 @@ function LineRow({
         setMenuOpen((v) => !v);
     };
 
-    const tasksCfg    = TASKS_STATUS_CONFIG[line.tasks_status]    ?? { badge: 'badge-secondary', label: '—' };
-    const deliveryCfg = DELIVERY_STATUS_CONFIG[line.delivery_status] ?? { badge: 'badge-secondary', label: '—' };
-    const invoiceCfg  = INVOICE_STATUS_CONFIG[line.invoice_status]   ?? { badge: 'badge-secondary', label: '—' };
+    const tasksCfg    = TASKS_STATUS_CONFIG[line.tasks_status]    ?? { badge: 'text-bg-secondary', label: '—' };
+    const deliveryCfg = DELIVERY_STATUS_CONFIG[line.delivery_status] ?? { badge: 'text-bg-secondary', label: '—' };
+    const invoiceCfg  = INVOICE_STATUS_CONFIG[line.invoice_status]   ?? { badge: 'text-bg-secondary', label: '—' };
 
     const rowStyle = {
         opacity:    isDragging ? 0.4  : 1,
@@ -756,7 +752,7 @@ function LineRow({
                         <img
                             src={`/images/quote-lines/${line.picture}`}
                             alt=""
-                            style={{ width: 42, height: 42, objectFit: 'contain', background: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: 3, display: 'block' }}
+                            style={{ width: 42, height: 42, objectFit: 'contain', background: 'var(--bs-tertiary-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 3, display: 'block' }}
                         />
                         <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.6rem', padding: '0 3px', borderRadius: '3px 0 3px 0', lineHeight: '1.5' }}>
                             {line.ordre}
@@ -764,7 +760,7 @@ function LineRow({
                     </div>
                 ) : (
                     <>
-                        <i className="fas fa-grip-vertical mr-1" style={{ color: '#aaa' }} />
+                        <i className="fas fa-grip-vertical me-1" style={{ color: '#aaa' }} />
                         <span className="text-muted small">{line.ordre}</span>
                     </>
                 )}
@@ -781,32 +777,32 @@ function LineRow({
             {/* Product link */}
             <td style={{ width: 36 }}>
                 {line.product_id && line.product_url
-                    ? <a href={line.product_url} className="btn btn-xs btn-outline-secondary" target="_blank" rel="noreferrer"><i className="fas fa-cube" /></a>
+                    ? <a href={line.product_url} className="btn btn-sm btn-outline-secondary" target="_blank" rel="noreferrer"><i className="fas fa-cube" /></a>
                     : null}
             </td>
 
             {/* Label */}
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.hide_on_pdf && (
-                    <i className="fas fa-eye-slash text-muted mr-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                    <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
                 )}
                 <span title={line.label}>{line.label}</span>
             </td>
 
             {/* Qty */}
-            <td className="text-right">{formatQty(line.qty)}</td>
+            <td className="text-end">{formatQty(line.qty)}</td>
 
             {/* Unit */}
             <td className="small">{line.unit_label ?? '—'}</td>
 
             {/* Price */}
-            <td className={`text-right font-weight-bold ${line.use_calculated_price ? 'bg-warning' : ''}`}
+            <td className={`text-end fw-bold ${line.use_calculated_price ? 'bg-warning' : ''}`}
                 title={line.use_calculated_price ? 'Prix calculé' : ''}>
                 {line.formatted_price}
             </td>
 
             {/* Discount */}
-            <td className="text-right">{line.discount} %</td>
+            <td className="text-end">{line.discount} %</td>
 
             {/* VAT */}
             <td className="small">{line.vat_label ?? '—'}</td>
@@ -842,51 +838,51 @@ function LineRow({
             {/* Actions */}
             <td>
                 <div className="btn-group btn-group-xs" ref={menuRef}>
-                    <a href={line.detail_url} className="btn btn-xs bg-teal" target="_blank" rel="noreferrer" title="Détails techniques">
+                    <a href={line.detail_url} className="btn btn-sm btn-teal" target="_blank" rel="noreferrer" title="Détails techniques">
                         <i className="fas fa-info-circle" />
                     </a>
                     {line.task_count > 0 && (
-                        <button type="button" className="btn btn-xs btn-warning"
+                        <button type="button" className="btn btn-sm btn-warning"
                             title={`Tâches (${line.task_count})`}
                             onClick={() => onOpenTaskModal(line)}>
-                            <span className="badge badge-dark">{line.task_count}</span>
+                            <span className="badge text-bg-dark">{line.task_count}</span>
                         </button>
                     )}
-                    <button ref={toggleRef} className="btn btn-xs btn-default dropdown-toggle dropdown-toggle-split"
+                    <button ref={toggleRef} className="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                         onClick={handleToggleMenu} />
                     {menuOpen && (
                         <div className="dropdown-menu show" style={menuStyle}>
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onEdit(line); setMenuOpen(false); }}>
-                                    <i className="fas fa-edit fa-fw mr-2 text-warning" />Modifier
+                                    <i className="fas fa-edit fa-fw me-2 text-warning" />Modifier
                                 </button>
                             )}
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onDuplicate(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-copy fa-fw mr-2 text-info" />Dupliquer
+                                    <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
                                 </button>
                             )}
                             {!isReadOnly && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-trash fa-fw mr-2" />Supprimer
+                                    <i className="fas fa-trash fa-fw me-2" />Supprimer
                                 </button>
                             )}
                             <div className="dropdown-divider" />
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
-                                <i className="fas fa-info-circle fa-fw mr-2 text-teal" />Détails techniques
+                                <i className="fas fa-info-circle fa-fw me-2 text-teal" />Détails techniques
                             </a>
                             {!isReadOnly && line.product_id && (
                                 <button className="dropdown-item"
                                     onClick={() => { onBreakDown(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-sitemap fa-fw mr-2 text-secondary" />Découpage technique
+                                    <i className="fas fa-sitemap fa-fw me-2 text-secondary" />Découpage technique
                                 </button>
                             )}
                             <button className="dropdown-item"
                                 onClick={() => { onOpenTaskModal(line); setMenuOpen(false); }}>
-                                <i className="fas fa-list fa-fw mr-2 text-warning" />Tâches ({line.task_count})
+                                <i className="fas fa-list fa-fw me-2 text-warning" />Tâches ({line.task_count})
                             </button>
                         </div>
                     )}
@@ -1262,20 +1258,18 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             {flash && (
                 <div className={`alert alert-${flash.type} alert-dismissible py-2 mb-2`}>
                     {flash.msg}
-                    <button type="button" className="close" onClick={() => setFlash(null)}><span>&times;</span></button>
+                    <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm" style={{ maxWidth: 260 }}>
-                    <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-search" /></span></div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control" placeholder="Rechercher…"
                         value={search} onChange={(e) => setSearch(e.target.value)} />
                     {search && (
-                        <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
-                        </div>
+                        <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
                     )}
                 </div>
                 {!isReadOnly && (
@@ -1283,16 +1277,14 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                         <input type="number" className="form-control" placeholder="Augmentation de prix…"
                             min="0" step="0.01" value={priceIncAmt}
                             onChange={(e) => setPriceIncAmt(e.target.value)} />
-                        <div className="input-group-append">
-                            <button className="btn btn-primary"
+                        <button className="btn btn-primary"
                                 onClick={handlePriceIncrease}
                                 disabled={!priceIncAmt || parseFloat(priceIncAmt) <= 0}>
-                                <i className="fas fa-plus-circle mr-1" />Appliquer
+                                <i className="fas fa-plus-circle me-1" />Appliquer
                             </button>
-                        </div>
                     </div>
                 )}
-                <span className="badge badge-secondary ml-auto">
+                <span className="badge text-bg-secondary ms-auto">
                     {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
                 </span>
             </div>
@@ -1321,13 +1313,13 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                             Créer n° série
                                         </label>
                                     </div>
-                                    <span className="text-muted" style={{ borderLeft: '1px solid #dee2e6', height: 20 }} />
+                                    <span className="text-muted" style={{ borderLeft: '1px solid var(--bs-border-color)', height: 20 }} />
                                 </>
                             )}
 
                             {/* Action buttons */}
                             <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
-                                <i className="fas fa-barcode mr-1" />
+                                <i className="fas fa-barcode me-1" />
                                 Créer produits ({selected.size})
                             </button>
                             {(() => {
@@ -1339,17 +1331,17 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 return (
                                     <button className="btn btn-info btn-sm" onClick={handleLinkProducts}
                                         title="Pour chaque ligne avec un code externe mais sans produit lié, chercher un produit existant par code">
-                                        <i className="fas fa-link mr-1" />
+                                        <i className="fas fa-link me-1" />
                                         Lier articles existants ({linkableCount})
                                     </button>
                                 );
                             })()}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
-                                <i className="fas fa-folder mr-1" />
+                                <i className="fas fa-folder me-1" />
                                 Nouveau BL ({selected.size})
                             </button>
                             <button className="btn btn-primary btn-sm" onClick={handleStoreInvoice}>
-                                <i className="fas fa-file-invoice mr-1" />
+                                <i className="fas fa-file-invoice me-1" />
                                 Nouvelle facture ({selected.size})
                             </button>
                         </div>
@@ -1360,7 +1352,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             {/* Hint drag */}
             {!isReadOnly && filteredLines.length > 1 && !search && (
                 <p className="text-muted small mb-2">
-                    <i className="fas fa-grip-vertical mr-1" />
+                    <i className="fas fa-grip-vertical me-1" />
                     Glissez les lignes pour modifier l'ordre.
                 </p>
             )}
@@ -1368,7 +1360,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             {/* Table */}
             <div className="table-responsive p-0">
                 <table className="table table-hover table-sm mb-0">
-                    <thead className="thead-light">
+                    <thead className="table-light">
                         <tr>
                             <th style={{ width: 48 }} title="Glisser pour réordonner">
                                 <i className="fas fa-grip-vertical text-muted" />
@@ -1380,10 +1372,10 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                             <th>Réf. ext.</th>
                             <th style={{ width: 36 }} />
                             <th>Description</th>
-                            <th className="text-right">Qté</th>
+                            <th className="text-end">Qté</th>
                             <th>Unité</th>
-                            <th className="text-right">Prix</th>
-                            <th className="text-right">Remise</th>
+                            <th className="text-end">Prix</th>
+                            <th className="text-end">Remise</th>
                             <th>TVA</th>
                             <th>Livraison</th>
                             <th>Tâches</th>
@@ -1396,7 +1388,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                         {loading ? (
                             <tr>
                                 <td colSpan={15} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
                                 </td>
                             </tr>
                         ) : filteredLines.length === 0 ? (
@@ -1404,7 +1396,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 <td colSpan={15} className="text-center py-4 text-muted">
                                     {search ? 'Aucune ligne ne correspond.' : 'Aucune ligne dans cette commande.'}
                                     {!search && !isReadOnly && (
-                                        <button className="btn btn-link p-0 ml-2" onClick={handleOpenCreate}>
+                                        <button className="btn btn-link p-0 ms-2" onClick={handleOpenCreate}>
                                             Ajouter la première ligne
                                         </button>
                                     )}

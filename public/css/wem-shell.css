@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Ajustements du shell AdminLTE 4 propres à l'application.
+   ========================================================================== */
+
+/* Sidebar neutre (habillages Nest2Prod, Light… : classe posée par
+   App\Support\UiTheme) : l'élément actif prend un aplat de la couleur primaire
+   au lieu du gris translucide de la v4. Passe par les variables de la v4, donc
+   suit la couleur primaire choisie et le mode sombre. Une sidebar colorée
+   (indigo, navy…) garde l'élément actif d'AdminLTE, lisible sur sa teinte. */
+.app-sidebar.wem-sidebar-neutral {
+    --lte-sidebar-menu-active-bg: var(--bs-primary);
+    --lte-sidebar-menu-active-color: #fff;
+    --lte-sidebar-submenu-active-bg: rgba(var(--bs-primary-rgb), 0.12);
+    --lte-sidebar-submenu-active-color: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] .app-sidebar.wem-sidebar-neutral,
+.app-sidebar.wem-sidebar-neutral[data-bs-theme="dark"] {
+    --lte-sidebar-menu-active-bg: var(--bs-primary);
+    --lte-sidebar-menu-active-color: #fff;
+    --lte-sidebar-submenu-active-bg: rgba(var(--bs-primary-rgb), 0.3);
+    --lte-sidebar-submenu-active-color: #fff;
+}
+
+/* Sidebar : le badge (compteur) et la flèche de sous-menu sont en position
+   absolue à droite du lien, sans place réservée : un libellé long passait
+   dessous (« En attente de réception »). On réserve leur largeur, le libellé
+   passe à la ligne. Badge + flèche : le badge est décalé (me-3) à gauche de la
+   flèche, d'où la plus grande réserve. */
+.sidebar-menu .nav-link:has(.nav-arrow) {
+    padding-right: 2.5rem;
+}
+
+.sidebar-menu .nav-link:has(.nav-badge) {
+    padding-right: 3.5rem;
+}
+
+.sidebar-menu .nav-link:has(.nav-badge):has(.nav-arrow) {
+    padding-right: 5rem;
+}
+
+/* Photo de la carte de profil (fiche salarié, ressources, services, outils) :
+   Bootstrap 5 n'a pas d'utilitaire de largeur fixe en pixels. */
+.profile-user-img {
+    border: 3px solid var(--bs-secondary-color);
+    margin: 0 auto;
+    padding: 3px;
+    width: 100px;
+}
+
+/* En-têtes de tableau .table-light (ex-thead-light) : Bootstrap 5 les garde
+   clairs même en mode sombre ; ici ils prennent la teinte de surface du thème. */
+[data-bs-theme="dark"] .table-light {
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-bg: var(--bs-tertiary-bg);
+    --bs-table-border-color: var(--bs-border-color);
+    --bs-table-striped-bg: var(--bs-secondary-bg);
+    --bs-table-striped-color: var(--bs-body-color);
+    --bs-table-active-bg: var(--bs-secondary-bg);
+    --bs-table-active-color: var(--bs-body-color);
+    --bs-table-hover-bg: var(--bs-secondary-bg);
+    --bs-table-hover-color: var(--bs-body-color);
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color);
+}
+
+/* Navbar : les liens de plusieurs mots (« Tableau blanc », « Iframe mode ») ne
+   passent pas à la ligne, comme en AdminLTE 3. */
+.app-header .navbar-nav .nav-link {
+    white-space: nowrap;
+}
+
+/* Écrans atelier (resources/views/workshop) : ils posent "sidebar-hidden" sur
+   le body pour travailler en plein écran. AdminLTE 3 fournissait cette classe,
+   pas AdminLTE 4 ; la grille de .app-wrapper donne sa largeur automatique à la
+   colonne de la sidebar, qui disparaît donc avec elle. */
+body.sidebar-hidden .app-sidebar {
+    display: none !important;
+}
+
+/* Page chargée dans un onglet du mode IFrame (classe posée par master.blade.php) :
+   la page hôte porte déjà la sidebar et la navbar, l'onglet n'affiche que le
+   contenu. */
+.wem-iframe-tab .app-sidebar,
+.wem-iframe-tab .app-header,
+.wem-iframe-tab .app-footer,
+.wem-iframe-tab #adminlte-preloader,
+.wem-iframe-tab .wem-launcher {
+    display: none !important;
+}

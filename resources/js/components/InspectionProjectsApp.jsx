@@ -43,15 +43,15 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_BADGE = {
-    draft:    'badge-secondary',
-    active:   'badge-success',
-    closed:   'badge-danger',
-    archived: 'badge-dark',
+    draft:    'text-bg-secondary',
+    active:   'text-bg-success',
+    closed:   'text-bg-danger',
+    archived: 'text-bg-dark',
 };
 
 function StatusBadge({ status }) {
     return (
-        <span className={`badge ${STATUS_BADGE[status] ?? 'badge-secondary'}`}>
+        <span className={`badge ${STATUS_BADGE[status] ?? 'text-bg-secondary'}`}>
             {STATUS_OPTIONS.find(o => o.value === status)?.label ?? status}
         </span>
     );
@@ -63,7 +63,7 @@ function StatusBadge({ status }) {
 
 function Field({ label, children }) {
     return (
-        <div className="form-group">
+        <div className="mb-3">
             <label>{label}</label>
             {children}
         </div>
@@ -87,7 +87,7 @@ function Input({ id, value, onChange, type = 'text', required, min, step }) {
 
 function Select({ id, value, onChange, options }) {
     return (
-        <select id={id} className="form-control" value={value} onChange={e => onChange(e.target.value)}>
+        <select id={id} className="form-select" value={value} onChange={e => onChange(e.target.value)}>
             {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
     );
@@ -132,9 +132,9 @@ function ProjectForm({ title, theme, icon, initialValues, submitLabel, onSubmit,
     };
 
     return (
-        <div className={`card card-${theme} card-outline`}>
+        <div className={`card card-${theme} card-outline mb-3`}>
             <div className="card-header">
-                <h3 className="card-title"><i className={`${icon} mr-1`} />{title}</h3>
+                <h3 className="card-title"><i className={`${icon} me-1`} />{title}</h3>
             </div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
@@ -159,7 +159,7 @@ function ProjectForm({ title, theme, icon, initialValues, submitLabel, onSubmit,
                     <Field label="Quantité prévue">
                         <Input id={`${title}-qty`} value={form.quantity_planned} onChange={set('quantity_planned')} type="number" min="0" />
                     </Field>
-                    <div className="form-group">
+                    <div className="mb-3">
                         <Checkbox
                             id={`${title}-serial`}
                             checked={Boolean(form.serial_tracking)}
@@ -182,9 +182,9 @@ function ProjectForm({ title, theme, icon, initialValues, submitLabel, onSubmit,
 
 function ProjectsTable({ projects, onSelect, selectedId }) {
     return (
-        <div className="card card-secondary card-outline">
+        <div className="card card-secondary card-outline mb-3">
             <div className="card-header">
-                <h3 className="card-title"><i className="fas fa-list mr-1" />Projets d'inspection</h3>
+                <h3 className="card-title"><i className="fas fa-list me-1" />Projets d'inspection</h3>
             </div>
             <div className="card-body p-0">
                 <div className="table-responsive">
@@ -233,10 +233,10 @@ function ProjectsTable({ projects, onSelect, selectedId }) {
 // ---------------------------------------------------------------------------
 
 const DOC_STATUS_BADGE = {
-    draft:            'badge-secondary',
-    pending_approval: 'badge-warning',
-    approved:         'badge-success',
-    obsolete:         'badge-dark',
+    draft:            'text-bg-secondary',
+    pending_approval: 'text-bg-warning',
+    approved:         'text-bg-success',
+    obsolete:         'text-bg-dark',
 };
 
 const DOC_STATUS_LABEL = {
@@ -248,7 +248,7 @@ const DOC_STATUS_LABEL = {
 
 function DocumentStatusBadge({ status }) {
     return (
-        <span className={`badge ${DOC_STATUS_BADGE[status] ?? 'badge-secondary'}`}>
+        <span className={`badge ${DOC_STATUS_BADGE[status] ?? 'text-bg-secondary'}`}>
             {DOC_STATUS_LABEL[status] ?? status}
         </span>
     );
@@ -330,21 +330,21 @@ function DocumentsSection({ documents, projectId, endpoints, onRefresh, canAppro
                     <li key={doc.id} className="list-group-item">
                         <div className="d-flex justify-content-between align-items-start">
                             <div>
-                                <span className="font-weight-bold">{doc.file_name ?? doc.file_path}</span>
+                                <span className="fw-bold">{doc.file_name ?? doc.file_path}</span>
                                 {doc.version_label && (
-                                    <span className="text-muted small ml-2">v{doc.version_label}</span>
+                                    <span className="text-muted small ms-2">v{doc.version_label}</span>
                                 )}
                                 <div className="mt-1">
-                                    <span className="badge badge-light mr-1">{doc.type ?? ''}</span>
+                                    <span className="badge text-bg-light me-1">{doc.type ?? ''}</span>
                                     <DocumentStatusBadge status={doc.status} />
                                     {doc.approved_at && (
-                                        <span className="text-muted small ml-2">
+                                        <span className="text-muted small ms-2">
                                             par {doc.approver?.name ?? '—'} le {fmt(doc.approved_at)}
                                         </span>
                                     )}
                                 </div>
                             </div>
-                            <div className="btn-group btn-group-sm ml-2">
+                            <div className="btn-group btn-group-sm ms-2">
                                 {doc.status === 'draft' && (
                                     <button
                                         className="btn btn-outline-warning"
@@ -550,16 +550,16 @@ function ControlPointsSection({ points, projectId, endpoints, onRefresh }) {
         <div>
             <h5>Points de contrôle</h5>
             <form onSubmit={handleSubmit}>
-                <div className="form-row">
-                    <div className="form-group col-md-2">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-2">
                         <label>N°</label>
                         <Input id="cp-number" value={form.number} onChange={set('number')} type="number" required />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>Libellé</label>
                         <Input id="cp-label" value={form.label} onChange={set('label')} required />
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>Catégorie</label>
                         <Select
                             id="cp-category"
@@ -572,47 +572,47 @@ function ControlPointsSection({ points, projectId, endpoints, onRefresh }) {
                             ]}
                         />
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>Unité</label>
                         <Input id="cp-unit" value={form.unit} onChange={set('unit')} />
                     </div>
                 </div>
-                <div className="form-row">
-                    <div className="form-group col-md-3">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-3">
                         <label>Nominal</label>
                         <Input id="cp-nominal" value={form.nominal_value} onChange={set('nominal_value')} type="number" step="0.01" />
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>Tol min</label>
                         <Input id="cp-tol-min" value={form.tol_min} onChange={set('tol_min')} type="number" step="0.01" />
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>Tol max</label>
                         <Input id="cp-tol-max" value={form.tol_max} onChange={set('tol_max')} type="number" step="0.01" />
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="mb-3 col-md-3">
                         <label>Plan page</label>
                         <Input id="cp-plan-page" value={form.plan_page} onChange={set('plan_page')} type="number" />
                     </div>
                 </div>
-                <div className="form-row">
-                    <div className="form-group col-md-4">
+                <div className="row gx-2">
+                    <div className="mb-3 col-md-4">
                         <label>Plan ref</label>
                         <Input id="cp-plan-ref" value={form.plan_ref} onChange={set('plan_ref')} />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>Phase</label>
                         <Input id="cp-phase" value={form.phase} onChange={set('phase')} />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="mb-3 col-md-4">
                         <label>Instrument</label>
                         <Input id="cp-instrument" value={form.instrument_type} onChange={set('instrument_type')} />
                     </div>
                 </div>
-                <div className="form-group">
+                <div className="mb-3">
                     <Checkbox id="cp-critical" checked={form.is_critical} onChange={set('is_critical')} label="Point critique" />
                 </div>
-                <button className="btn btn-outline-primary btn-sm mr-1" type="submit" disabled={loading}>
+                <button className="btn btn-outline-primary btn-sm me-1" type="submit" disabled={loading}>
                     {loading ? '...' : 'Enregistrer'}
                 </button>
                 <button className="btn btn-outline-secondary btn-sm" type="button" onClick={reset}>
@@ -648,10 +648,10 @@ function ControlPointsSection({ points, projectId, endpoints, onRefresh }) {
                                 <td>{p.tol_min ?? '—'} / {p.tol_max ?? '—'}</td>
                                 <td>{p.unit ?? '—'}</td>
                                 <td>{p.plan_page ? `P.${p.plan_page}` : ''} {p.plan_ref ?? ''}</td>
-                                <td>{p.is_critical ? <span className="badge badge-danger">Oui</span> : 'Non'}</td>
+                                <td>{p.is_critical ? <span className="badge text-bg-danger">Oui</span> : 'Non'}</td>
                                 <td>
-                                    <button className="btn btn-xs btn-outline-info mr-1" onClick={() => editPoint(p)}>Éditer</button>
-                                    <button className="btn btn-xs btn-outline-danger" onClick={() => handleDelete(p.id)}>Suppr.</button>
+                                    <button className="btn btn-sm btn-outline-info me-1" onClick={() => editPoint(p)}>Éditer</button>
+                                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p.id)}>Suppr.</button>
                                 </td>
                             </tr>
                         ))}
@@ -669,9 +669,9 @@ function ControlPointsSection({ points, projectId, endpoints, onRefresh }) {
 function ProjectDetails({ project, endpoints, onRefresh, canApprove }) {
     if (!project) {
         return (
-            <div className="card card-secondary card-outline">
+            <div className="card card-secondary card-outline mb-3">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-search mr-1" />Détails du projet</h3>
+                    <h3 className="card-title"><i className="fas fa-search me-1" />Détails du projet</h3>
                 </div>
                 <div className="card-body text-muted">
                     Sélectionnez un projet pour charger ses détails.
@@ -681,14 +681,14 @@ function ProjectDetails({ project, endpoints, onRefresh, canApprove }) {
     }
 
     return (
-        <div className="card card-secondary card-outline">
+        <div className="card card-secondary card-outline mb-3">
             <div className="card-header">
-                <h3 className="card-title"><i className="fas fa-search mr-1" />Détails du projet</h3>
+                <h3 className="card-title"><i className="fas fa-search me-1" />Détails du projet</h3>
             </div>
             <div className="card-body">
                 <div className="mb-3">
                     <strong>{project.title ?? ''}</strong>
-                    {project.code && <span className="text-muted ml-2">({project.code})</span>}
+                    {project.code && <span className="text-muted ms-2">({project.code})</span>}
                     <div>Statut : <StatusBadge status={project.status} /></div>
                     <div>Quantité prévue : {project.quantity_planned ?? '—'}</div>
                     <div>Client : {project.company?.label ?? '—'}</div>
@@ -701,7 +701,7 @@ function ProjectDetails({ project, endpoints, onRefresh, canApprove }) {
                         target="_blank"
                         rel="noreferrer"
                     >
-                        <i className="fas fa-file-pdf mr-1" />Exporter PDF
+                        <i className="fas fa-file-pdf me-1" />Exporter PDF
                     </a>
                     <a
                         href={url(endpoints.exportXlsx, project.id)}
@@ -709,7 +709,7 @@ function ProjectDetails({ project, endpoints, onRefresh, canApprove }) {
                         target="_blank"
                         rel="noreferrer"
                     >
-                        <i className="fas fa-file-excel mr-1" />Exporter XLSX
+                        <i className="fas fa-file-excel me-1" />Exporter XLSX
                     </a>
                 </div>
 
@@ -853,9 +853,7 @@ export default function InspectionProjectsApp({ endpoints, canApprove }) {
             {error && (
                 <div className="alert alert-danger alert-dismissible">
                     {error}
-                    <button type="button" className="close" onClick={() => setError(null)}>
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 

@@ -109,7 +109,7 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
             <div style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0,
                 width: 520, maxWidth: '95vw',
-                background: '#fff', zIndex: 1050,
+                background: 'var(--bs-body-bg)', zIndex: 1050,
                 display: 'flex', flexDirection: 'column',
                 transform: open ? 'translateX(0)' : 'translateX(100%)',
                 transition: 'transform 0.25s ease',
@@ -118,9 +118,9 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                 {/* Header */}
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom" style={{ background: teal, color: '#fff' }}>
                     <strong>
-                        <i className="fas fa-clipboard-check mr-2" />
+                        <i className="fas fa-clipboard-check me-2" />
                         Détails d'inspection
-                        {line && <span className="ml-2 font-weight-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
+                        {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
                         </span>}
                     </strong>
@@ -136,16 +136,16 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                     {line && (
                         <div className="alert alert-light py-2 mb-3 small">
                             <strong>Qté reçue :</strong> {fmt(line.receipt_qty)}
-                            {line.accepted_qty != null && <span className="ml-3"><strong>Acceptée :</strong> <span className="text-success">{fmt(line.accepted_qty)}</span></span>}
-                            {line.rejected_qty != null && line.rejected_qty > 0 && <span className="ml-3"><strong>Rejetée :</strong> <span className="text-danger">{fmt(line.rejected_qty)}</span></span>}
+                            {line.accepted_qty != null && <span className="ms-3"><strong>Acceptée :</strong> <span className="text-success">{fmt(line.accepted_qty)}</span></span>}
+                            {line.rejected_qty != null && line.rejected_qty > 0 && <span className="ms-3"><strong>Rejetée :</strong> <span className="text-danger">{fmt(line.rejected_qty)}</span></span>}
                         </div>
                     )}
 
                     <form id="inspection-form" onSubmit={handleSubmit}>
-                        <div className="form-row">
-                            <div className="form-group col-md-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Inspecté par</label>
-                                <select className="form-control form-control-sm" value={form.inspected_by}
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-6 mb-2">
+                                <label className="mb-1 small fw-bold">Inspecté par</label>
+                                <select className="form-select form-select-sm" value={form.inspected_by}
                                     onChange={(e) => set('inspected_by', e.target.value)}>
                                     <option value="">— Sélectionner —</option>
                                     {(selectData.users ?? []).map((u) => (
@@ -153,31 +153,31 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group col-md-6 mb-2">
-                                <label className="mb-1 small font-weight-bold">Date d'inspection</label>
+                            <div className="mb-3 col-md-6 mb-2">
+                                <label className="mb-1 small fw-bold">Date d'inspection</label>
                                 <input type="date" className="form-control form-control-sm" value={form.inspection_date}
                                     onChange={(e) => set('inspection_date', e.target.value)} />
                             </div>
                         </div>
 
-                        <div className="form-row">
-                            <div className="form-group col-md-4 mb-2">
-                                <label className="mb-1 small font-weight-bold">Qté acceptée</label>
+                        <div className="row gx-2">
+                            <div className="mb-3 col-md-4 mb-2">
+                                <label className="mb-1 small fw-bold">Qté acceptée</label>
                                 <input type="number" min="0" className={`form-control form-control-sm ${errors.accepted_qty ? 'is-invalid' : ''}`}
                                     value={form.accepted_qty}
                                     onChange={(e) => set('accepted_qty', e.target.value)} />
                                 {errors.accepted_qty && <div className="invalid-feedback d-block">{errors.accepted_qty[0]}</div>}
                             </div>
-                            <div className="form-group col-md-4 mb-2">
-                                <label className="mb-1 small font-weight-bold">Qté rejetée</label>
+                            <div className="mb-3 col-md-4 mb-2">
+                                <label className="mb-1 small fw-bold">Qté rejetée</label>
                                 <input type="number" min="0" className={`form-control form-control-sm ${errors.rejected_qty ? 'is-invalid' : ''}`}
                                     value={form.rejected_qty}
                                     onChange={(e) => set('rejected_qty', e.target.value)} />
                                 {errors.rejected_qty && <div className="invalid-feedback d-block">{errors.rejected_qty[0]}</div>}
                             </div>
-                            <div className="form-group col-md-4 mb-2">
-                                <label className="mb-1 small font-weight-bold">Non-conformité</label>
-                                <select className="form-control form-control-sm" value={form.quality_non_conformity_id}
+                            <div className="mb-3 col-md-4 mb-2">
+                                <label className="mb-1 small fw-bold">Non-conformité</label>
+                                <select className="form-select form-select-sm" value={form.quality_non_conformity_id}
                                     onChange={(e) => set('quality_non_conformity_id', e.target.value)}>
                                     <option value="">— Aucune —</option>
                                     {(selectData.non_conformities ?? []).map((nc) => (
@@ -187,31 +187,31 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                             </div>
                         </div>
 
-                        <div className="form-group mb-3">
-                            <label className="mb-1 small font-weight-bold">Résultat d'inspection</label>
+                        <div className="mb-3 mb-3">
+                            <label className="mb-1 small fw-bold">Résultat d'inspection</label>
                             <input type="text" className="form-control form-control-sm" value={form.inspection_result}
                                 onChange={(e) => set('inspection_result', e.target.value)}
                                 placeholder="Observations ou résultat…" />
                         </div>
 
                         <div className="border rounded p-3">
-                            <div className="custom-control custom-switch mb-2">
-                                <input type="checkbox" className="custom-control-input" id="create-nc-toggle"
+                            <div className="form-check form-switch mb-2">
+                                <input type="checkbox" className="form-check-input" id="create-nc-toggle"
                                     checked={form.create_non_conformity}
                                     onChange={(e) => set('create_non_conformity', e.target.checked)} />
-                                <label className="custom-control-label" htmlFor="create-nc-toggle">
+                                <label className="form-check-label" htmlFor="create-nc-toggle">
                                     Créer une NC rapide
                                 </label>
                             </div>
                             {form.create_non_conformity && (
-                                <div className="form-row">
-                                    <div className="form-group col-md-6 mb-0">
+                                <div className="row gx-2">
+                                    <div className="mb-3 col-md-6 mb-0">
                                         <label className="mb-1 small">Libellé NC</label>
                                         <input type="text" className="form-control form-control-sm" value={form.new_nc_label}
                                             onChange={(e) => set('new_nc_label', e.target.value)}
                                             placeholder="Libellé de la non-conformité" />
                                     </div>
-                                    <div className="form-group col-md-6 mb-0">
+                                    <div className="mb-3 col-md-6 mb-0">
                                         <label className="mb-1 small">Commentaire</label>
                                         <textarea className="form-control form-control-sm" rows="2"
                                             value={form.new_nc_comment}
@@ -225,12 +225,12 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                 </div>
 
                 {/* Footer */}
-                <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-light" style={{ gap: '0.5rem' }}>
+                <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-body-tertiary" style={{ gap: '0.5rem' }}>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>Annuler</button>
                     <button type="submit" form="inspection-form" className="btn btn-sm" style={{ background: teal, color: '#fff' }} disabled={saving}>
                         {saving
-                            ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
-                            : <><i className="fas fa-save mr-1" />Enregistrer</>}
+                            ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
+                            : <><i className="fas fa-save me-1" />Enregistrer</>}
                     </button>
                 </div>
             </div>
@@ -331,7 +331,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
             <div style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0,
                 width: 480, maxWidth: '95vw',
-                background: '#fff', zIndex: 1050,
+                background: 'var(--bs-body-bg)', zIndex: 1050,
                 display: 'flex', flexDirection: 'column',
                 transform: open ? 'translateX(0)' : 'translateX(100%)',
                 transition: 'transform 0.25s ease',
@@ -340,9 +340,9 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                 {/* Header */}
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-success text-white">
                     <strong>
-                        <i className="fas fa-warehouse mr-2" />
+                        <i className="fas fa-warehouse me-2" />
                         Mise en stock
-                        {line && <span className="ml-2 font-weight-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
+                        {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
                         </span>}
                     </strong>
@@ -357,13 +357,13 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
 
                     {alreadyStocked ? (
                         <div className="alert alert-success">
-                            <i className="fas fa-check-circle mr-2" />
+                            <i className="fas fa-check-circle me-2" />
                             Stock assigné :{' '}
-                            <a href={line.stock_url} className="font-weight-bold alert-link">{line.stock_code}</a>
+                            <a href={line.stock_url} className="fw-bold alert-link">{line.stock_code}</a>
                         </div>
                     ) : !hasProduct ? (
                         <div className="alert alert-warning">
-                            <i className="fas fa-exclamation-triangle mr-2" />
+                            <i className="fas fa-exclamation-triangle me-2" />
                             Aucun produit associé à cette ligne.
                         </div>
                     ) : (
@@ -376,14 +376,14 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                                 <li className="nav-item">
                                     <a className={`nav-link ${activeTab === 'new' ? 'active' : ''}`} href="#"
                                         onClick={(e) => { e.preventDefault(); setActiveTab('new'); }}>
-                                        <i className="fas fa-plus-circle mr-1" />Nouvel emplacement
+                                        <i className="fas fa-plus-circle me-1" />Nouvel emplacement
                                     </a>
                                 </li>
                                 {filteredStockProducts.length > 0 && (
                                     <li className="nav-item">
                                         <a className={`nav-link ${activeTab === 'existing' ? 'active' : ''}`} href="#"
                                             onClick={(e) => { e.preventDefault(); setActiveTab('existing'); }}>
-                                            <i className="fas fa-boxes mr-1" />Existant ({filteredStockProducts.length})
+                                            <i className="fas fa-boxes me-1" />Existant ({filteredStockProducts.length})
                                         </a>
                                     </li>
                                 )}
@@ -391,15 +391,13 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
 
                             {activeTab === 'new' && (
                                 <form id="stock-new-form" onSubmit={handleStoreNew}>
-                                    <div className="form-group mb-2">
-                                        <label className="mb-1 small font-weight-bold">
+                                    <div className="mb-3 mb-2">
+                                        <label className="mb-1 small fw-bold">
                                             Emplacement de stock <span className="text-danger">*</span>
                                         </label>
                                         <div className="input-group input-group-sm">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text"><i className="fas fa-map-marker-alt" /></span>
-                                            </div>
-                                            <select className="form-control" value={stockLocationId}
+                                            <span className="input-group-text"><i className="fas fa-map-marker-alt" /></span>
+                                            <select className="form-select" value={stockLocationId}
                                                 onChange={(e) => setStockLocationId(e.target.value)}>
                                                 <option value="">— Sélectionner —</option>
                                                 {(selectData.stock_locations ?? []).map((sl) => (
@@ -415,15 +413,13 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
 
                             {activeTab === 'existing' && (
                                 <form id="stock-existing-form" onSubmit={handleEntryExisting}>
-                                    <div className="form-group mb-2">
-                                        <label className="mb-1 small font-weight-bold">
+                                    <div className="mb-3 mb-2">
+                                        <label className="mb-1 small fw-bold">
                                             Ligne de stock existante <span className="text-danger">*</span>
                                         </label>
                                         <div className="input-group input-group-sm">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text"><i className="fas fa-boxes" /></span>
-                                            </div>
-                                            <select className="form-control" value={existingStockId}
+                                            <span className="input-group-text"><i className="fas fa-boxes" /></span>
+                                            <select className="form-select" value={existingStockId}
                                                 onChange={(e) => setExistingStockId(e.target.value)}>
                                                 <option value="">— Sélectionner —</option>
                                                 {filteredStockProducts.map((slp) => (
@@ -442,7 +438,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
 
                 {/* Footer */}
                 {!alreadyStocked && hasProduct && (
-                    <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-light" style={{ gap: '0.5rem' }}>
+                    <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-body-tertiary" style={{ gap: '0.5rem' }}>
                         <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>Annuler</button>
                         <button
                             type="submit"
@@ -451,8 +447,8 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                             disabled={saving}
                         >
                             {saving
-                                ? <><i className="fas fa-spinner fa-spin mr-1" />Traitement…</>
-                                : <><i className="fas fa-check mr-1" />Mettre en stock</>}
+                                ? <><i className="fas fa-spinner fa-spin me-1" />Traitement…</>
+                                : <><i className="fas fa-check me-1" />Mettre en stock</>}
                         </button>
                     </div>
                 )}
@@ -506,7 +502,7 @@ function ManualLineForm({ endpoints, onAdded }) {
         <div className="card card-outline card-info mb-3">
             <div className="card-header py-2 d-flex align-items-center justify-content-between">
                 <strong className="small">
-                    <i className="fas fa-plus-circle mr-2 text-info" />Ajouter une ligne manuelle
+                    <i className="fas fa-plus-circle me-2 text-info" />Ajouter une ligne manuelle
                 </strong>
                 <button type="button" className="btn btn-sm btn-outline-info"
                     onClick={() => setOpen((v) => !v)}>
@@ -517,9 +513,9 @@ function ManualLineForm({ endpoints, onAdded }) {
                 <div className="card-body py-2">
                     {errors._global && <div className="alert alert-danger py-2 mb-2 small">{errors._global}</div>}
                     <form onSubmit={handleSubmit}>
-                        <div className="form-row align-items-end">
-                            <div className="form-group col-md-7 mb-0" style={{ position: 'relative' }}>
-                                <label className="mb-1 small font-weight-bold">Produit <span className="text-danger">*</span></label>
+                        <div className="row gx-2 align-items-end">
+                            <div className="mb-3 col-md-7 mb-0" style={{ position: 'relative' }}>
+                                <label className="mb-1 small fw-bold">Produit <span className="text-danger">*</span></label>
                                 <input
                                     type="text"
                                     className={`form-control form-control-sm ${errors.product_id ? 'is-invalid' : ''}`}
@@ -532,7 +528,7 @@ function ManualLineForm({ endpoints, onAdded }) {
                                 {showProductList && filteredProducts.length > 0 && (
                                     <div style={{
                                         position: 'absolute', zIndex: 1060, left: 5, right: 5,
-                                        background: '#fff', border: '1px solid #ccc',
+                                        background: 'var(--bs-body-bg)', border: '1px solid #ccc',
                                         borderRadius: '0 0 4px 4px', maxHeight: 200, overflowY: 'auto',
                                         boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
                                     }}>
@@ -543,22 +539,22 @@ function ManualLineForm({ endpoints, onAdded }) {
                                                 onMouseEnter={(e) => e.currentTarget.style.background = '#f0f4ff'}
                                                 onMouseLeave={(e) => e.currentTarget.style.background = ''}>
                                                 <strong>{p.code}</strong>
-                                                <span className="text-muted ml-2">{p.label}</span>
+                                                <span className="text-muted ms-2">{p.label}</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                                 {errors.product_id && <div className="invalid-feedback d-block">{errors.product_id[0]}</div>}
                             </div>
-                            <div className="form-group col-md-3 mb-0">
-                                <label className="mb-1 small font-weight-bold">Qté <span className="text-danger">*</span></label>
+                            <div className="mb-3 col-md-3 mb-0">
+                                <label className="mb-1 small fw-bold">Qté <span className="text-danger">*</span></label>
                                 <input type="number" min="1" className={`form-control form-control-sm ${errors.qty ? 'is-invalid' : ''}`}
                                     value={qty} onChange={(e) => setQty(e.target.value)} />
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
-                            <div className="form-group col-md-2 mb-0">
-                                <button type="submit" className="btn btn-info btn-sm btn-block" disabled={saving || !productId}>
-                                    {saving ? <i className="fas fa-spinner fa-spin" /> : <><i className="fas fa-plus mr-1" />Ajouter</>}
+                            <div className="mb-3 col-md-2 mb-0">
+                                <button type="submit" className="btn btn-info btn-sm w-100" disabled={saving || !productId}>
+                                    {saving ? <i className="fas fa-spinner fa-spin" /> : <><i className="fas fa-plus me-1" />Ajouter</>}
                                 </button>
                             </div>
                         </div>
@@ -583,8 +579,8 @@ function LineRow({ line, onInspect, onStock }) {
             {/* Commande */}
             <td style={{ whiteSpace: 'nowrap' }}>
                 {line.order_url
-                    ? <a href={line.order_url} className="btn btn-xs btn-outline-primary">
-                        <i className="fas fa-folder-open mr-1" />{line.order_code}
+                    ? <a href={line.order_url} className="btn btn-sm btn-outline-primary">
+                        <i className="fas fa-folder-open me-1" />{line.order_code}
                       </a>
                     : <span className="text-muted small">Générique</span>}
             </td>
@@ -592,14 +588,14 @@ function LineRow({ line, onInspect, onStock }) {
             {/* Bon d'achat */}
             <td style={{ whiteSpace: 'nowrap' }}>
                 {line.purchase_url
-                    ? <a href={line.purchase_url} className="btn btn-xs btn-primary">
-                        <i className="fas fa-folder mr-1" />{line.purchase_code}
+                    ? <a href={line.purchase_url} className="btn btn-sm btn-primary">
+                        <i className="fas fa-folder me-1" />{line.purchase_code}
                       </a>
                     : '—'}
             </td>
 
             {/* Qté ordre */}
-            <td className="text-right">
+            <td className="text-end">
                 {line.order_line_qty != null
                     ? `${line.order_line_qty} × ${line.task_qty}`
                     : <span className="text-muted">—</span>}
@@ -613,7 +609,7 @@ function LineRow({ line, onInspect, onStock }) {
             {/* Libellé ligne */}
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.task_url && (
-                    <a href={line.task_url} className="btn btn-xs btn-success mr-1" title={`Tâche #${line.task_id}`}>
+                    <a href={line.task_url} className="btn btn-sm btn-success me-1" title={`Tâche #${line.task_id}`}>
                         <i className="fas fa-eye" />
                     </a>
                 )}
@@ -627,34 +623,34 @@ function LineRow({ line, onInspect, onStock }) {
             {/* Produit */}
             <td style={{ width: 36 }}>
                 {line.product_url
-                    ? <a href={line.product_url} className="btn btn-xs btn-outline-secondary" title="Voir le produit">
+                    ? <a href={line.product_url} className="btn btn-sm btn-outline-secondary" title="Voir le produit">
                         <i className="fas fa-cube" />
                       </a>
                     : '—'}
             </td>
 
             {/* Qté requise */}
-            <td className="text-right">
+            <td className="text-end">
                 {line.quality_required != null ? fmt(line.quality_required) : <span className="text-muted">—</span>}
             </td>
 
             {/* Qté achat */}
-            <td className="text-right">{fmt(line.purchase_line_qty)}</td>
+            <td className="text-end">{fmt(line.purchase_line_qty)}</td>
 
             {/* Qté reçue */}
-            <td className="text-right font-weight-bold">{fmt(line.receipt_qty)}</td>
+            <td className="text-end fw-bold">{fmt(line.receipt_qty)}</td>
 
             {/* Qté acceptée */}
-            <td className="text-right">
+            <td className="text-end">
                 {line.accepted_qty != null
-                    ? <span className="badge badge-success">{fmt(line.accepted_qty)}</span>
+                    ? <span className="badge text-bg-success">{fmt(line.accepted_qty)}</span>
                     : <span className="text-muted">—</span>}
             </td>
 
             {/* Qté rejetée */}
-            <td className="text-right">
+            <td className="text-end">
                 {line.rejected_qty != null && line.rejected_qty > 0
-                    ? <span className="badge badge-danger">{fmt(line.rejected_qty)}</span>
+                    ? <span className="badge text-bg-danger">{fmt(line.rejected_qty)}</span>
                     : <span className="text-muted">—</span>}
             </td>
 
@@ -674,7 +670,7 @@ function LineRow({ line, onInspect, onStock }) {
             {/* NC */}
             <td>
                 {line.nc_code
-                    ? <span className="badge badge-warning">{line.nc_code}</span>
+                    ? <span className="badge text-bg-warning">{line.nc_code}</span>
                     : <span className="text-muted">—</span>}
             </td>
 
@@ -682,7 +678,7 @@ function LineRow({ line, onInspect, onStock }) {
             <td style={{ whiteSpace: 'nowrap' }}>
                 <button
                     type="button"
-                    className={`btn btn-xs mr-1 ${hasInspection ? 'btn-teal' : 'btn-outline-secondary'}`}
+                    className={`btn btn-sm me-1 ${hasInspection ? 'btn-teal' : 'btn-outline-secondary'}`}
                     style={hasInspection ? { background: '#008080', color: '#fff', border: '1px solid #008080' } : {}}
                     title="Détails d'inspection"
                     onClick={() => onInspect(line)}
@@ -692,12 +688,12 @@ function LineRow({ line, onInspect, onStock }) {
                 {hasProduct && (
                     <button
                         type="button"
-                        className={`btn btn-xs ${hasStock ? 'btn-success' : 'btn-outline-success'}`}
+                        className={`btn btn-sm ${hasStock ? 'btn-success' : 'btn-outline-success'}`}
                         title={hasStock ? `Stock : ${line.stock_code}` : 'Mise en stock'}
                         onClick={() => onStock(line)}
                     >
                         <i className="fas fa-warehouse" />
-                        {hasStock && <i className="fas fa-check ml-1" style={{ fontSize: 9 }} />}
+                        {hasStock && <i className="fas fa-check ms-1" style={{ fontSize: 9 }} />}
                     </button>
                 )}
             </td>
@@ -761,7 +757,7 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
             {flash && (
                 <div className={`alert alert-${flash.type} alert-dismissible py-2 mb-3`}>
                     {flash.msg}
-                    <button type="button" className="close" onClick={() => setFlash(null)}><span>&times;</span></button>
+                    <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
@@ -774,19 +770,19 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
             {/* Table */}
             <div className="table-responsive p-0">
                 <table className="table table-striped table-sm mb-0" style={{ fontSize: '0.8rem' }}>
-                    <thead className="thead-light">
+                    <thead className="table-light">
                         <tr>
                             <th>Commande</th>
                             <th>Bon d'achat</th>
-                            <th className="text-right">Qté cmd</th>
+                            <th className="text-end">Qté cmd</th>
                             <th>Libellé cmd</th>
                             <th>Libellé</th>
                             <th style={{ width: 36 }} />
-                            <th className="text-right">Qté req.</th>
-                            <th className="text-right">Qté achat</th>
-                            <th className="text-right">Qté reçue</th>
-                            <th className="text-right">Accepté</th>
-                            <th className="text-right">Rejeté</th>
+                            <th className="text-end">Qté req.</th>
+                            <th className="text-end">Qté achat</th>
+                            <th className="text-end">Qté reçue</th>
+                            <th className="text-end">Accepté</th>
+                            <th className="text-end">Rejeté</th>
                             <th>Résultat insp.</th>
                             <th>Date insp.</th>
                             <th>Inspecté par</th>
@@ -798,7 +794,7 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                         {loading ? (
                             <tr>
                                 <td colSpan={16} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin mr-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
                                 </td>
                             </tr>
                         ) : lines.length === 0 ? (
@@ -820,14 +816,14 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                     </tbody>
                     {lines.length > 0 && (
                         <tfoot>
-                            <tr className="font-weight-bold bg-light">
-                                <td colSpan={8} className="text-right pr-2 small text-muted">Total :</td>
-                                <td className="text-right">{fmt(totalReceipt)}</td>
-                                <td className="text-right">
-                                    {totalAccepted > 0 && <span className="badge badge-success">{fmt(totalAccepted)}</span>}
+                            <tr className="fw-bold bg-body-tertiary">
+                                <td colSpan={8} className="text-end pe-2 small text-muted">Total :</td>
+                                <td className="text-end">{fmt(totalReceipt)}</td>
+                                <td className="text-end">
+                                    {totalAccepted > 0 && <span className="badge text-bg-success">{fmt(totalAccepted)}</span>}
                                 </td>
-                                <td className="text-right">
-                                    {totalRejected > 0 && <span className="badge badge-danger">{fmt(totalRejected)}</span>}
+                                <td className="text-end">
+                                    {totalRejected > 0 && <span className="badge text-bg-danger">{fmt(totalRejected)}</span>}
                                 </td>
                                 <td colSpan={5} />
                             </tr>

@@ -66,9 +66,9 @@ class NotificationsController extends Controller
         // Now, we create the notification dropdown main content.
         $dropdownHtml = '';
         foreach ($notifications as $key => $not) {
-            $icon = "<span class='notification-icon mr-2'><i class='{$not['icon']} fa-fw'></i></span>";
+            $icon = "<span class='notification-icon me-2'><i class='{$not['icon']} fa-fw'></i></span>";
             $text = "<span class='notification-text d-block text-truncate' style='max-width: 220px;' title='{$not['text']}'>{$not['text']}</span>";
-            $time = "<span class='notification-time text-muted text-sm d-block mt-1'>{$not['time']}</span>";
+            $time = "<span class='notification-time text-muted small d-block mt-1'>{$not['time']}</span>";
             $content = "<div class='notification-content d-flex flex-column flex-fill'>{$text}{$time}</div>";
             $dropdownHtml .= "<a href='{$not['route']}' class='dropdown-item notification-item d-flex align-items-start'>{$icon}{$content}</a>";
 

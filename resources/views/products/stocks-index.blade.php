@@ -43,22 +43,18 @@
                     <form method="POST" action="{{ route('products.stock.update', ['id' => $stock->id]) }}" >
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="label">{{__('general_content.label_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $stock->label }}">
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="service_id">{{ __('general_content.user_management_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-list"></i></span>
-                            </div>
-                              <select class="form-control" name="user_id" id="user_id">
+                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                              <select class="form-select" name="user_id" id="user_id">
                                 @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}" @if($stock->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                 @endforeach
@@ -67,7 +63,7 @@
                         </div>
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -96,31 +92,25 @@
       <form  method="POST" action="{{ route('products.stock.store') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_stock_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
               <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-{{ $LastStock->id ?? '0' }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="label">{{ __('general_content.description_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-tags"></i></span>
               <input type="text" class="form-control" name="label" id="label" placeholder="Description">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-              </div>
-              <select class="form-control" name="user_id" id="user_id">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <select class="form-select" name="user_id" id="user_id">
                 @foreach ($userSelect as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach
@@ -128,7 +118,7 @@
             </div>
           </div>
           <x-slot name="footerSlot">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
         </x-adminlte-card>
       </form>
@@ -181,20 +171,18 @@
                       <input type="hidden" name="component_price" id="component_price" value="{{ $InternalOrderRequestsLines->selling_price }}" >
                       <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
                       <input type="hidden" name="user_id" id="user_id" value="{{ Auth::id() }}" >
-                      <div class="form-group">
+                      <div class="mb-3">
                         <label for="stock_locations_id">{{ __('general_content.stock_location_list_trans_key') }}</label>
                         <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                          </div>
-                          <select class="form-control" name="stock_locations_id" id="stock_locations_id">
+                          <span class="input-group-text"><i class="fas fa-user"></i></span>
+                          <select class="form-select" name="stock_locations_id" id="stock_locations_id">
                             @forelse ($StockLocationList as $StockLocation)
                             <option value="{{ $StockLocation->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocation->Stocks->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
                             @empty
                             <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
                             @endforelse
                           </select>
-                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.new_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
                         </div>
                       </div>
                     </form>
@@ -205,13 +193,11 @@
                       <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
                       <input type="hidden" name="component_price" id="component_price" value="{{ $InternalOrderRequestsLines->selling_price }}" >
                       <input type="hidden" name="typ_move" id="typ_move" value="12" >
-                      <div class="form-group">
+                      <div class="mb-3">
                         <label for="stock_location_products_id">{{ __('general_content.stock_location_product_list_trans_key') }}</label>
                         <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                          </div>
-                          <select class="form-control" name="stock_location_products_id" id="stock_location_products_id">
+                          <span class="input-group-text"><i class="fas fa-user"></i></span>
+                          <select class="form-select" name="stock_location_products_id" id="stock_location_products_id">
                             @forelse ($StockLocationProductList as $StockLocationProduct)
                                 @if($StockLocationProduct->products_id == $InternalOrderRequestsLines->product_id)
                                   <option value="{{ $StockLocationProduct->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocationProduct->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
@@ -220,7 +206,7 @@
                             <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
                             @endforelse
                           </select>
-                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_entry_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.new_entry_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
                         </div>
                       </div>
                     </form>

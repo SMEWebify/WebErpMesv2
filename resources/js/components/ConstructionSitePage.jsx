@@ -9,7 +9,7 @@ function FieldGroup({ label, name, value, onChange, showPdfName, showPdfValue, o
     return (
         <div className="card card-secondary card-outline mb-3">
             <div className="card-body py-2">
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label htmlFor={name}>{label}</label>
                     <textarea
                         className="form-control"
@@ -22,15 +22,15 @@ function FieldGroup({ label, name, value, onChange, showPdfName, showPdfValue, o
                 </div>
                 {showPdfName && (
                     <div className="d-flex align-items-center">
-                        <div className="custom-control custom-switch">
+                        <div className="form-check form-switch">
                             <input
                                 type="checkbox"
-                                className="custom-control-input"
+                                className="form-check-input"
                                 id={showPdfName}
                                 checked={showPdfValue === 1}
                                 onChange={e => onToggle(showPdfName, e.target.checked ? 1 : 2)}
                             />
-                            <label className="custom-control-label" htmlFor={showPdfName}>
+                            <label className="form-check-label" htmlFor={showPdfName}>
                                 PDF
                             </label>
                         </div>
@@ -45,7 +45,7 @@ function CostFieldGroup({ label, name, value, onChange, costName, costValue, sho
     return (
         <div className="card card-secondary card-outline mb-3">
             <div className="card-body py-2">
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label htmlFor={name}>{label}</label>
                     <textarea
                         className="form-control"
@@ -56,7 +56,7 @@ function CostFieldGroup({ label, name, value, onChange, costName, costValue, sho
                         onChange={e => onChange(name, e.target.value)}
                     />
                 </div>
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label htmlFor={costName}>
                         {costName.replace(/_/g, ' ')} ({currency})
                     </label>
@@ -70,15 +70,15 @@ function CostFieldGroup({ label, name, value, onChange, costName, costValue, sho
                         onChange={e => onChange(costName, e.target.value)}
                     />
                 </div>
-                <div className="custom-control custom-switch">
+                <div className="form-check form-switch">
                     <input
                         type="checkbox"
-                        className="custom-control-input"
+                        className="form-check-input"
                         id={showPdfName}
                         checked={showPdfValue === 1}
                         onChange={e => onToggle(showPdfName, e.target.checked ? 1 : 2)}
                     />
-                    <label className="custom-control-label" htmlFor={showPdfName}>
+                    <label className="form-check-label" htmlFor={showPdfName}>
                         PDF
                     </label>
                 </div>
@@ -165,9 +165,7 @@ export default function ConstructionSitePage({ quoteId, saveUrl, currency, initi
         <form onSubmit={handleSubmit}>
             {flash && (
                 <div className={`alert alert-${flash.type} alert-dismissible`}>
-                    <button type="button" className="close" onClick={() => setFlash(null)}>
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                     {flash.msg}
                 </div>
             )}
@@ -283,7 +281,7 @@ export default function ConstructionSitePage({ quoteId, saveUrl, currency, initi
 
                     <div className="card card-secondary card-outline mb-3">
                         <div className="card-body py-2">
-                            <div className="form-group mb-2">
+                            <div className="mb-3 mb-2">
                                 <label htmlFor="work_start_date">Date de début des travaux</label>
                                 <input
                                     type="date"
@@ -293,7 +291,7 @@ export default function ConstructionSitePage({ quoteId, saveUrl, currency, initi
                                     onChange={e => handleChange('work_start_date', e.target.value)}
                                 />
                             </div>
-                            <div className="form-group mb-2">
+                            <div className="mb-3 mb-2">
                                 <label htmlFor="work_end_date">Date de fin des travaux</label>
                                 <input
                                     type="date"
@@ -303,7 +301,7 @@ export default function ConstructionSitePage({ quoteId, saveUrl, currency, initi
                                     onChange={e => handleChange('work_end_date', e.target.value)}
                                 />
                             </div>
-                            <div className="form-group mb-0">
+                            <div className="mb-3 mb-0">
                                 <label htmlFor="contingency_days">Marge de manœuvre (jours)</label>
                                 <input
                                     type="number"

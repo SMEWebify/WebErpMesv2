@@ -221,7 +221,7 @@ export default function DocumentTable({ initialDocuments, translations }) {
 
     return (
         <div style={{ minHeight: '420px' }}>
-            <div className="p-3 border-bottom bg-light">
+            <div className="p-3 border-bottom bg-body-tertiary">
                 <div className="row g-3">
                     <div className="col-md-3">
                         <label className="form-label fw-semibold">
@@ -362,7 +362,7 @@ export default function DocumentTable({ initialDocuments, translations }) {
                                     {column.sortable && (
                                         <span
                                             className="ms-1"
-                                            style={{ color: '#6c757d', fontSize: '0.85rem' }}
+                                            style={{ color: 'var(--bs-secondary-color)', fontSize: '0.85rem' }}
                                         >
                                             {sortState.key === column.key ? (
                                                 <i

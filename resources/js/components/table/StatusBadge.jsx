@@ -10,9 +10,9 @@ import React from 'react';
  */
 export default function StatusBadge({ statu, config, trans, fallback = 'key' }) {
     if (fallback === 'value') {
-        const cfg = config[statu] ?? { badge: 'badge-secondary', label: 'unknown' };
+        const cfg = config[statu] ?? { badge: 'text-bg-secondary', label: 'unknown' };
         return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? statu}</span>;
     }
-    const cfg = config[statu] ?? { badge: 'badge-secondary', label: String(statu) };
+    const cfg = config[statu] ?? { badge: 'text-bg-secondary', label: String(statu) };
     return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
 }

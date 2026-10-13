@@ -6,16 +6,16 @@ import { Pagination } from './table';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    received:           { badge: 'badge-info',      label: 'Reçue' },
-    supplier_unmatched: { badge: 'badge-warning',   label: 'Fournisseur inconnu' },
-    converted:          { badge: 'badge-success',   label: 'Convertie' },
-    rejected:           { badge: 'badge-secondary', label: 'Refusée' },
-    unreadable:         { badge: 'badge-danger',    label: 'Illisible' },
+    received:           { badge: 'text-bg-info',      label: 'Reçue' },
+    supplier_unmatched: { badge: 'text-bg-warning',   label: 'Fournisseur inconnu' },
+    converted:          { badge: 'text-bg-success',   label: 'Convertie' },
+    rejected:           { badge: 'text-bg-secondary', label: 'Refusée' },
+    unreadable:         { badge: 'text-bg-danger',    label: 'Illisible' },
 };
 
 const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected', 'unreadable'];
 
-// Provenance du document. Rendue en texte et non en badge : `badge-light` du
+// Provenance du document. Rendue en texte et non en badge : `text-bg-light` du
 // thème AdminLTE s'affiche en blanc sur blanc dans ce tableau.
 const PROVIDER_LABELS = {
     superpdp: 'SUPER PDP',
@@ -78,7 +78,7 @@ async function apiFetch(url, options = {}) {
 }
 
 function StatusBadge({ status }) {
-    const cfg = STATUS_CONFIG[status] ?? { badge: 'badge-secondary', label: status };
+    const cfg = STATUS_CONFIG[status] ?? { badge: 'text-bg-secondary', label: status };
     return <span className={`badge ${cfg.badge}`}>{cfg.label}</span>;
 }
 
@@ -134,10 +134,10 @@ function UploadCard({ uploadUrl, onUploaded }) {
     };
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-header">
                 <h3 className="card-title">
-                    <i className="fas fa-inbox mr-2 text-muted" />
+                    <i className="fas fa-inbox me-2 text-muted" />
                     Déposer une facture électronique reçue
                 </h3>
             </div>
@@ -169,7 +169,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
                     ) : file ? (
                         <>
                             <i className="fas fa-file-invoice fa-2x mb-2 text-primary" />
-                            <div className="font-weight-bold">{file.name}</div>
+                            <div className="fw-bold">{file.name}</div>
                             <div className="small text-muted mt-1">{fileSize(file.size)}</div>
                         </>
                     ) : (
@@ -184,7 +184,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
                 {file && ! busy && (
                     <div className="d-flex align-items-center mt-3" style={{ gap: '.5rem' }}>
                         <button type="button" className="btn btn-primary" onClick={submit}>
-                            <i className="fas fa-upload mr-1" />Importer
+                            <i className="fas fa-upload me-1" />Importer
                         </button>
                         <button type="button" className="btn btn-link text-muted" onClick={reset}>
                             Choisir un autre fichier
@@ -196,7 +196,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
                 {err && <div className="alert alert-danger mt-3 mb-0 py-2">{err}</div>}
 
                 <small className="text-muted d-block mt-3">
-                    <i className="fas fa-info-circle mr-1" />
+                    <i className="fas fa-info-circle me-1" />
                     Le vendeur est rapproché automatiquement par n° de TVA intracommunautaire ou SIREN.
                     Les factures transmises par la plateforme arrivent seules, sans dépôt manuel.
                 </small>
@@ -292,7 +292,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
 
             <UploadCard uploadUrl={endpoints.upload} onUploaded={() => fetchData({ page: 1 })} />
 
-            <div className="card">
+            <div className="card mb-3">
                 <div className="card-body pb-2">
                     <div className="btn-group btn-group-sm" role="group">
                         <button className={`btn ${status === '' ? 'btn-secondary' : 'btn-outline-secondary'}`} onClick={() => handleStatus('')}>
@@ -300,7 +300,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                         </button>
                         {ALL_STATUSES.map(st => (
                             <button key={st}
-                                className={`btn ${status === st ? STATUS_CONFIG[st].badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
+                                className={`btn ${status === st ? STATUS_CONFIG[st].badge.replace(/^(badge|text-bg)-/, 'btn-') : 'btn-outline-secondary'}`}
                                 onClick={() => handleStatus(st)}>
                                 {STATUS_CONFIG[st].label}
                             </button>
@@ -321,10 +321,10 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                         <th>Vendeur</th>
                                         <th>N° facture</th>
                                         <th>Date</th>
-                                        <th className="text-right">TTC</th>
+                                        <th className="text-end">TTC</th>
                                         <th>Fournisseur WEM</th>
                                         <th className="text-center">Statut</th>
-                                        <th className="text-right">Actions</th>
+                                        <th className="text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -336,10 +336,10 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                             <td>{row.seller_name}<br /><small className="text-muted">{row.seller_vat}</small></td>
                                             <td>{row.invoice_number}</td>
                                             <td>{row.issue_date ?? '—'}</td>
-                                            <td className="text-right">{formatCurrency(row.total_ttc, row.currency, locale)}</td>
+                                            <td className="text-end">{formatCurrency(row.total_ttc, row.currency, locale)}</td>
                                             <td>{row.supplier?.label ?? <span className="text-muted">—</span>}</td>
                                             <td className="text-center"><StatusBadge status={row.status} /></td>
-                                            <td className="text-right text-nowrap">
+                                            <td className="text-end text-nowrap">
                                                 {row.purchase_invoice_url && (
                                                     <a href={row.purchase_invoice_url} className="btn btn-sm btn-outline-success">
                                                         Facture d'achat
@@ -348,29 +348,29 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                                 {row.reconcile_url && (
                                                     <a className="btn btn-sm btn-success" href={row.reconcile_url}
                                                        title="Sélectionner les réceptions couvertes par cette facture">
-                                                        <i className="fas fa-link mr-1" />Rapprocher
+                                                        <i className="fas fa-link me-1" />Rapprocher
                                                     </a>
                                                 )}
                                                 {row.convert_url && (
-                                                    <button className="btn btn-sm btn-outline-success ml-1" disabled={acting === row.id}
+                                                    <button className="btn btn-sm btn-outline-success ms-1" disabled={acting === row.id}
                                                         onClick={() => doAction(row, row.convert_url, 'Créer une facture d\'achat sans rapprochement ? À réserver aux factures sans commande ni réception (frais, abonnements).')}>
                                                         Sans rapprochement
                                                     </button>
                                                 )}
                                                 {row.status_url && (
-                                                    <div className="btn-group ml-1">
+                                                    <div className="btn-group ms-1">
                                                         <button type="button"
                                                                 className="btn btn-sm btn-outline-primary dropdown-toggle"
-                                                                data-toggle="dropdown"
+                                                                data-bs-toggle="dropdown"
                                                                 disabled={acting === row.id}>
                                                             Déclarer
                                                         </button>
-                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                        <div className="dropdown-menu dropdown-menu-end">
                                                             <h6 className="dropdown-header">Statut renvoyé au fournisseur</h6>
                                                             {OUTGOING_STATUSES.map(s => (
                                                                 <button key={s.code} type="button" className="dropdown-item"
                                                                         onClick={() => declareStatus(row, s)}>
-                                                                    <i className={`fas ${s.icon} fa-fw mr-2 text-muted`} />
+                                                                    <i className={`fas ${s.icon} fa-fw me-2 text-muted`} />
                                                                     {s.label}
                                                                 </button>
                                                             ))}
@@ -378,13 +378,13 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                                     </div>
                                                 )}
                                                 {row.reject_url && (
-                                                    <button className="btn btn-sm btn-outline-secondary ml-1" disabled={acting === row.id}
+                                                    <button className="btn btn-sm btn-outline-secondary ms-1" disabled={acting === row.id}
                                                         onClick={() => doAction(row, row.reject_url, 'Refuser cette facture ?')}>
                                                         Refuser
                                                     </button>
                                                 )}
                                                 {row.status === 'supplier_unmatched' && (
-                                                    <span className="text-muted small ml-1">TVA {row.seller_vat}</span>
+                                                    <span className="text-muted small ms-1">TVA {row.seller_vat}</span>
                                                 )}
                                             </td>
                                         </tr>

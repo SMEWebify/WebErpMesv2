@@ -88,7 +88,7 @@ export function Modal({ title, icon, onClose, children }) {
                     flexShrink: 0,
                 }}>
                     <h5 style={{ margin: 0, color: '#fff', fontWeight: 600, fontSize: '1rem' }}>
-                        <i className={`fas ${icon} mr-2`} />{title}
+                        <i className={`fas ${icon} me-2`} />{title}
                     </h5>
                     <button
                         type="button"
@@ -106,7 +106,7 @@ export function Modal({ title, icon, onClose, children }) {
                 </div>
                 {/* Body */}
                 <div style={{
-                    backgroundColor: '#fff',
+                    backgroundColor: 'var(--bs-body-bg)',
                     padding: '1.5rem',
                     overflowY: 'auto',
                     flex: 1,

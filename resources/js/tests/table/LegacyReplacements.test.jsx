@@ -8,8 +8,8 @@ import { SortIcon, Pagination } from '../../components/table';
 
 // DeliverysRequest, PurchasesRequest, ProformasIndex
 function LegacySortIcon({ field, sortField, sortAsc }) {
-    if (sortField !== field) return <i className="fas fa-sort ml-1 text-muted" />;
-    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
+    if (sortField !== field) return <i className="fas fa-sort ms-1 text-muted" />;
+    return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ms-1`} />;
 }
 
 // IncomingInvoicesIndex

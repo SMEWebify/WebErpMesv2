@@ -8,7 +8,7 @@
 
 @section('content')
 @include('include.alert-result')
-    <x-adminlte-card title="{{ __('general_content.users_list_trans_key') }}" theme="purple" maximizable>
+    <x-adminlte-card title="{{ __('general_content.users_list_trans_key') }}" theme="violet" maximizable>
         <div class="table-responsive p-0">
             <div class="table-responsive p-0">
                 <table class="table table-hover">
@@ -33,25 +33,25 @@
                         <tr>
                             <td>
                                 @if(Cache::has('user-is-online-' . $User->id))
-                                    <span class="badge badge-success">{{__('general_content.online_trans_key') }}</span>
+                                    <span class="badge text-bg-success">{{__('general_content.online_trans_key') }}</span>
                                 @else
-                                    <span class="badge badge-secondary">{{__('general_content.offline_trans_key') }}</span>
+                                    <span class="badge text-bg-secondary">{{__('general_content.offline_trans_key') }}</span>
                                 @endif 
                             </td>
                             <td>
                                 {{ $User->name }}</td>
                             <td>{{ $User->email }}</td>
                             <td>
-                                @if(1 == $User->employment_status )   <span class="badge badge-danger">{{__('general_content.undefined_trans_key') }}</span>@endif
-                                @if(2 == $User->employment_status )  <span class="badge badge-success">{{__('general_content.worker_trans_key') }}</span>@endif
-                                @if(3 == $User->employment_status )  <span class="badge badge-warning">{{__('general_content.employee_trans_key') }}</span>@endif
-                                @if(4 == $User->employment_status )  <span class="badge badge-info">{{__('general_content.self_employed_trans_key') }}</span>@endif
+                                @if(1 == $User->employment_status )   <span class="badge text-bg-danger">{{__('general_content.undefined_trans_key') }}</span>@endif
+                                @if(2 == $User->employment_status )  <span class="badge text-bg-success">{{__('general_content.worker_trans_key') }}</span>@endif
+                                @if(3 == $User->employment_status )  <span class="badge text-bg-warning">{{__('general_content.employee_trans_key') }}</span>@endif
+                                @if(4 == $User->employment_status )  <span class="badge text-bg-info">{{__('general_content.self_employed_trans_key') }}</span>@endif
                             </td>
                             <td>{{ $User->job_title ?? __('general_content.undefined_trans_key')}}</td>
                             <td>
                                 @if(!empty($User->getRoleNames()))
                                 @foreach($User->getRoleNames() as $v)
-                                    <label class="badge badge-success">{{ $v }}</label>
+                                    <label class="badge text-bg-success">{{ $v }}</label>
                                 @endforeach
                                 @endif
                             </td>
@@ -64,8 +64,8 @@
                             </td>
                             <td>{{ $User->born_date ?? __('general_content.undefined_trans_key') }}</td>
                             <td>
-                                @if(1 == $User->statu )  <span class="badge badge-success">{{__('general_content.active_trans_key') }}</span>@endif
-                                @if(2 == $User->statu )  <span class="badge badge-danger">{{__('general_content.inactive_trans_key') }}</span>@endif
+                                @if(1 == $User->statu )  <span class="badge text-bg-success">{{__('general_content.active_trans_key') }}</span>@endif
+                                @if(2 == $User->statu )  <span class="badge text-bg-danger">{{__('general_content.inactive_trans_key') }}</span>@endif
                             </td>
                             <td>
                                 <x-ButtonTextView route="{{ route('human.resources.show.user', ['id' => $User->id])}}" />

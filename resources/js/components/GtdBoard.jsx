@@ -55,16 +55,16 @@ function TaskCard({ task, users, priorities, columns, endpoints, onRefresh }) {
                 <div className="d-flex justify-content-between align-items-start mb-2">
                     <div>
                         <h5 className="card-title mb-1">#{task.id} - {task.label}</h5>
-                        <span className={`badge badge-pill badge-${PRIORITY_STYLES[task.priority] ?? 'secondary'}`}>
+                        <span className={`badge rounded-pill text-bg-${PRIORITY_STYLES[task.priority] ?? 'secondary'}`}>
                             Priority : {task.priority_label}
                         </span>
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                         {task.due_date ? (
                             <>
-                                <span className="badge badge-info">{task.due_date.split('-').reverse().join('/')}</span>
-                                {task.is_overdue && <div><span className="badge badge-danger">Overdue</span></div>}
-                                {task.is_today  && <div><span className="badge badge-warning">Due today</span></div>}
+                                <span className="badge text-bg-info">{task.due_date.split('-').reverse().join('/')}</span>
+                                {task.is_overdue && <div><span className="badge text-bg-danger">Overdue</span></div>}
+                                {task.is_today  && <div><span className="badge text-bg-warning">Due today</span></div>}
                             </>
                         ) : (
                             <small className="text-muted">No due date</small>
@@ -74,25 +74,25 @@ function TaskCard({ task, users, priorities, columns, endpoints, onRefresh }) {
 
                 <p className="text-muted mb-2">Status : {task.status_title ?? 'No status'}</p>
 
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label className="mb-1">Primary assignee</label>
-                    <select className="form-control form-control-sm" value={task.user_id ?? ''} onChange={e => handleAssign('user_id', e.target.value)}>
+                    <select className="form-select form-select-sm" value={task.user_id ?? ''} onChange={e => handleAssign('user_id', e.target.value)}>
                         <option value="">Unassigned</option>
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
 
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label className="mb-1">Secondary assignee</label>
-                    <select className="form-control form-control-sm" value={task.secondary_user_id ?? ''} onChange={e => handleAssign('secondary_user_id', e.target.value)}>
+                    <select className="form-select form-select-sm" value={task.secondary_user_id ?? ''} onChange={e => handleAssign('secondary_user_id', e.target.value)}>
                         <option value="">Unassigned</option>
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
 
-                <div className="form-group mb-2">
+                <div className="mb-3 mb-2">
                     <label className="mb-1">Priority level</label>
-                    <select className="form-control form-control-sm" value={task.priority} onChange={e => handlePriority(e.target.value)}>
+                    <select className="form-select form-select-sm" value={task.priority} onChange={e => handlePriority(e.target.value)}>
                         {Object.entries(priorities).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                 </div>
@@ -113,7 +113,7 @@ function TaskCard({ task, users, priorities, columns, endpoints, onRefresh }) {
                         <p className="text-muted small mb-2">No comments yet.</p>
                     )}
 
-                    <div className="form-group mb-0">
+                    <div className="mb-3 mb-0">
                         <label className="mb-1">Add a comment</label>
                         <textarea className="form-control form-control-sm" rows={2} value={comment} onChange={e => setComment(e.target.value)} />
                         <div className="d-flex justify-content-between align-items-center mt-2">
@@ -160,10 +160,10 @@ export default function GtdBoard({ endpoints }) {
         <div className="row">
             {Object.entries(columns).map(([colKey, col]) => (
                 <div key={colKey} className="col-xl-4 col-lg-6 mb-4 d-flex">
-                    <div className="card w-100 shadow-sm">
+                    <div className="card w-100 shadow-sm mb-3">
                         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <span>{col.title}</span>
-                            <span className="badge badge-light">{col.tasks.length}</span>
+                            <span className="badge text-bg-light">{col.tasks.length}</span>
                         </div>
                         <div className="card-body">
                             {col.tasks.length === 0 ? (

@@ -10,16 +10,16 @@ function KPICards({ kpi, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.totalCount ?? 0}</h3>
                         <p>{trans.total_products}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-boxes" /></div>
+                    <i className="small-box-icon fas fa-boxes" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3>
                             {kpi.soldCount ?? 0}
@@ -27,11 +27,11 @@ function KPICards({ kpi, trans }) {
                         </h3>
                         <p>{trans.sold_products}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-tag" /></div>
+                    <i className="small-box-icon fas fa-tag" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-warning">
+                <div className="small-box text-bg-warning">
                     <div className="inner">
                         <h3>
                             {kpi.purchasedCount ?? 0}
@@ -39,7 +39,7 @@ function KPICards({ kpi, trans }) {
                         </h3>
                         <p>{trans.purchased_products}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-shopping-cart" /></div>
+                    <i className="small-box-icon fas fa-shopping-cart" aria-hidden="true" />
                 </div>
             </div>
         </div>
@@ -194,10 +194,10 @@ function DashboardTab({ kpi, chartData, trans }) {
             <KPICards kpi={kpi} trans={trans} />
             <div className="row">
                 <div className="col-md-5">
-                    <div className="card card-info">
+                    <div className="card card-info mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.by_service}
                             </h3>
                         </div>
@@ -207,10 +207,10 @@ function DashboardTab({ kpi, chartData, trans }) {
                     </div>
                 </div>
                 <div className="col-md-7">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.by_family}
                             </h3>
                         </div>
@@ -237,8 +237,8 @@ function formatPrice(value, locale) {
 }
 
 function BoolBadge({ value }) {
-    if (value === 1) return <span className="badge badge-success"><i className="fas fa-check" /></span>;
-    return <span className="badge badge-danger"><i className="fas fa-times" /></span>;
+    if (value === 1) return <span className="badge text-bg-success"><i className="fas fa-check" /></span>;
+    return <span className="badge text-bg-danger"><i className="fas fa-times" /></span>;
 }
 
 function productColumns(trans) {
@@ -261,7 +261,7 @@ function productColumns(trans) {
         { key: 'purchased_price', label: trans.purchased_price, sortable: true, align: 'right', nowrap: false,
           render: p => (p.purchased === 1 ? formatPrice(p.purchased_price, trans.locale) : <span className="text-muted">—</span>) },
         { key: 'tasks',           label: trans.tasks,           align: 'center',
-          render: p => <span className="badge badge-secondary">{p.task_count}</span> },
+          render: p => <span className="badge text-bg-secondary">{p.task_count}</span> },
         { key: 'created_at',      label: trans.created_at,      sortable: true,
           filter: 'date' },
     ];
@@ -282,7 +282,7 @@ function ProductsTable({ products, loading, sortField, sortAsc, onSort, trans })
             unsortableCursor="default"
             rowHref={p => p.url}
             rowActions={p => (
-                <a href={p.url} className="btn btn-xs btn-info" title={trans.view}>
+                <a href={p.url} className="btn btn-sm btn-info" title={trans.view}>
                     <i className="fas fa-eye" />
                 </a>
             )}
@@ -338,7 +338,7 @@ function CreateModal({ endpoints, trans, onClose }) {
     };
 
     const textField = (name, label, required = false, extra = {}) => (
-        <div className="form-group mb-2">
+        <div className="mb-3 mb-2">
             <label className="mb-1" style={{ fontSize: '0.85rem' }}>
                 {label}{required && <span className="text-danger"> *</span>}
             </label>
@@ -349,7 +349,7 @@ function CreateModal({ endpoints, trans, onClose }) {
     );
 
     const numField = (name, label, extra = {}) => (
-        <div className="form-group mb-2">
+        <div className="mb-3 mb-2">
             <label className="mb-1" style={{ fontSize: '0.85rem' }}>{label}</label>
             <input type="number" className={`form-control form-control-sm ${errors[name] ? 'is-invalid' : ''}`}
                 value={form[name]} onChange={set(name)} min="0" step="0.001" {...extra} />
@@ -358,11 +358,11 @@ function CreateModal({ endpoints, trans, onClose }) {
     );
 
     const selectField = (name, label, options, required = false) => (
-        <div className="form-group mb-2">
+        <div className="mb-3 mb-2">
             <label className="mb-1" style={{ fontSize: '0.85rem' }}>
                 {label}{required && <span className="text-danger"> *</span>}
             </label>
-            <select className={`form-control form-control-sm ${errors[name] ? 'is-invalid' : ''}`}
+            <select className={`form-select form-select-sm ${errors[name] ? 'is-invalid' : ''}`}
                 value={form[name]} onChange={set(name)}>
                 <option value="">—</option>
                 {(options ?? []).map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
@@ -378,15 +378,13 @@ function CreateModal({ endpoints, trans, onClose }) {
                 <div className="modal-content">
                     <div className="modal-header bg-success">
                         <h5 className="modal-title text-white">{trans.new_product}</h5>
-                        <button type="button" className="close text-white" onClick={onClose}>
-                            <span>×</span>
-                        </button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <div className="modal-body" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
                         <form onSubmit={handleSubmit}>
 
                             {/* Identification */}
-                            <div className="card card-body mb-3 bg-light">
+                            <div className="card card-body mb-3 bg-body-tertiary">
                                 <div className="row">
                                     <div className="col-md-4">{textField('code', trans.code, true)}</div>
                                     <div className="col-md-4">{textField('label', trans.label, true)}</div>
@@ -395,7 +393,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                             </div>
 
                             {/* Classification */}
-                            <div className="card card-body mb-3 bg-light">
+                            <div className="card card-body mb-3 bg-body-tertiary">
                                 {!selectData ? (
                                     <div className="text-center py-2">
                                         <i className="fas fa-spinner fa-spin text-muted" />
@@ -410,12 +408,12 @@ function CreateModal({ endpoints, trans, onClose }) {
                             </div>
 
                             {/* Statut + Prix */}
-                            <div className="card card-body mb-3 bg-light">
+                            <div className="card card-body mb-3 bg-body-tertiary">
                                 <div className="row">
                                     <div className="col-md-4">
-                                        <div className="form-group mb-2">
+                                        <div className="mb-3 mb-2">
                                             <label className="mb-1" style={{ fontSize: '0.85rem' }}>{trans.sold}<span className="text-danger"> *</span></label>
-                                            <select className={`form-control form-control-sm ${errors.sold ? 'is-invalid' : ''}`}
+                                            <select className={`form-select form-select-sm ${errors.sold ? 'is-invalid' : ''}`}
                                                 value={form.sold} onChange={set('sold')}>
                                                 <option value="">—</option>
                                                 <option value="2">{trans.no}</option>
@@ -425,9 +423,9 @@ function CreateModal({ endpoints, trans, onClose }) {
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <div className="form-group mb-2">
+                                        <div className="mb-3 mb-2">
                                             <label className="mb-1" style={{ fontSize: '0.85rem' }}>{trans.purchased}<span className="text-danger"> *</span></label>
-                                            <select className={`form-control form-control-sm ${errors.purchased ? 'is-invalid' : ''}`}
+                                            <select className={`form-select form-select-sm ${errors.purchased ? 'is-invalid' : ''}`}
                                                 value={form.purchased} onChange={set('purchased')}>
                                                 <option value="">—</option>
                                                 <option value="2">{trans.no}</option>
@@ -437,9 +435,9 @@ function CreateModal({ endpoints, trans, onClose }) {
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <div className="form-group mb-2">
+                                        <div className="mb-3 mb-2">
                                             <label className="mb-1" style={{ fontSize: '0.85rem' }}>{trans.tracability}<span className="text-danger"> *</span></label>
-                                            <select className={`form-control form-control-sm ${errors.tracability_type ? 'is-invalid' : ''}`}
+                                            <select className={`form-select form-select-sm ${errors.tracability_type ? 'is-invalid' : ''}`}
                                                 value={form.tracability_type} onChange={set('tracability_type')}>
                                                 <option value="">—</option>
                                                 <option value="1">{trans.no_traceability}</option>
@@ -457,7 +455,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                             </div>
 
                             {/* Propriétés physiques */}
-                            <div className="card card-body mb-3 bg-light">
+                            <div className="card card-body mb-3 bg-body-tertiary">
                                 <div className="row">
                                     <div className="col-md-4">{textField('material', trans.material)}</div>
                                     <div className="col-md-4">{numField('thickness', trans.thickness)}</div>
@@ -484,12 +482,12 @@ function CreateModal({ endpoints, trans, onClose }) {
                             </div>
 
                             {/* Autres informations */}
-                            <div className="card card-body mb-3 bg-light">
+                            <div className="card card-body mb-3 bg-body-tertiary">
                                 <div className="row">
                                     <div className="col-md-4">{numField('qty_eco_min', trans.qty_eco_min)}</div>
                                     <div className="col-md-4">{numField('qty_eco_max', trans.qty_eco_max)}</div>
                                     <div className="col-md-4">
-                                        <div className="form-group mb-2">
+                                        <div className="mb-3 mb-2">
                                             <label className="mb-1" style={{ fontSize: '0.85rem' }}>{trans.comment}</label>
                                             <textarea className="form-control form-control-sm" rows="3"
                                                 value={form.comment} onChange={set('comment')} />
@@ -502,8 +500,8 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 <button type="button" className="btn btn-secondary" onClick={onClose}>{trans.close}</button>
                                 <button type="submit" className="btn btn-success" disabled={submitting}>
                                     {submitting
-                                        ? <i className="fas fa-spinner fa-spin mr-1" />
-                                        : <i className="fas fa-save mr-1" />}
+                                        ? <i className="fas fa-spinner fa-spin me-1" />
+                                        : <i className="fas fa-save me-1" />}
                                     {trans.submit}
                                 </button>
                             </div>
@@ -615,9 +613,7 @@ function ListTab({ endpoints, trans }) {
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.75rem' }}>
                 <div className="input-group" style={{ maxWidth: 280 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control"
                         placeholder={trans.search}
                         value={search}
@@ -630,18 +626,18 @@ function ListTab({ endpoints, trans }) {
                     className={`btn btn-sm ${filterSold === '1' ? 'btn-success' : 'btn-outline-success'}`}
                     onClick={() => toggleSold('1')}
                 >
-                    <i className="fas fa-tag mr-1" />{trans.sold}
+                    <i className="fas fa-tag me-1" />{trans.sold}
                 </button>
                 <button
                     className={`btn btn-sm ${filterPurchased === '1' ? 'btn-warning' : 'btn-outline-warning'}`}
                     onClick={() => togglePurchased('1')}
                 >
-                    <i className="fas fa-shopping-cart mr-1" />{trans.purchased}
+                    <i className="fas fa-shopping-cart me-1" />{trans.purchased}
                 </button>
 
-                <div className="ml-auto">
+                <div className="ms-auto">
                     <button className="btn btn-success" onClick={() => setShowModal(true)}>
-                        <i className="fas fa-plus mr-1" />{trans.new_product}
+                        <i className="fas fa-plus me-1" />{trans.new_product}
                     </button>
                 </div>
             </div>
@@ -711,7 +707,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
     const impactRow = (label, count) => count > 0 ? (
         <div className="d-flex justify-content-between py-1 border-bottom">
             <span className="text-muted" style={{ fontSize: '0.85rem' }}>{label}</span>
-            <span className="badge badge-warning">{count}</span>
+            <span className="badge text-bg-warning">{count}</span>
         </div>
     ) : null;
 
@@ -722,10 +718,10 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                 <div className="modal-content">
                     <div className="modal-header bg-warning">
                         <h5 className="modal-title">
-                            <i className="fas fa-code-branch mr-2" />
+                            <i className="fas fa-code-branch me-2" />
                             Fusionner les doublons — code <code>{group.code}</code>
                         </h5>
-                        <button type="button" className="close" onClick={onClose}><span>×</span></button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
 
                     <div className="modal-body">
@@ -748,15 +744,15 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                                 <div>
                                                     <div style={{ fontWeight: 600 }}>{p.label}</div>
                                                     <div style={{ fontSize: '0.78rem', color: '#888' }}>
-                                                        {p.service && <span className="mr-2">{p.service}</span>}
+                                                        {p.service && <span className="me-2">{p.service}</span>}
                                                         {p.family && <span>{p.family}</span>}
                                                     </div>
                                                 </div>
                                                 {masterId === p.id && (
-                                                    <span className="badge badge-success ml-auto">Maître</span>
+                                                    <span className="badge text-bg-success ms-auto">Maître</span>
                                                 )}
                                                 {masterId !== p.id && (
-                                                    <span className="badge badge-danger ml-auto">Doublon</span>
+                                                    <span className="badge text-bg-danger ms-auto">Doublon</span>
                                                 )}
                                             </div>
                                         </div>
@@ -770,8 +766,8 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                             <div className="text-center mb-3">
                                 <button className="btn btn-outline-info btn-sm" onClick={loadPreview} disabled={loading}>
                                     {loading
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Chargement…</>
-                                        : <><i className="fas fa-eye mr-1" />Voir l'impact</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Chargement…</>
+                                        : <><i className="fas fa-eye me-1" />Voir l'impact</>
                                     }
                                 </button>
                             </div>
@@ -779,7 +775,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
 
                         {/* Aperçu */}
                         {preview && (
-                            <div className="card card-body bg-light mb-3" style={{ fontSize: '0.85rem' }}>
+                            <div className="card card-body bg-body-tertiary mb-3" style={{ fontSize: '0.85rem' }}>
                                 <h6 className="mb-2">Impact du transfert</h6>
 
                                 {impactRow('Lignes de devis', preview.impact.quote_lines)}
@@ -797,7 +793,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                 {/* Stock */}
                                 {preview.impact.stock.length > 0 && (
                                     <div className="mt-2">
-                                        <div className="font-weight-bold mb-1">Stock</div>
+                                        <div className="fw-bold mb-1">Stock</div>
                                         {preview.impact.stock.map((s, i) => (
                                             <div key={i} className="d-flex justify-content-between py-1 border-bottom">
                                                 <span className="text-muted">Emplacement #{s.location_id}</span>
@@ -805,7 +801,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                                     {s.master_qty} + {s.dup_qty}
                                                     {' → '}
                                                     <strong>{s.merged_qty}</strong>
-                                                    {s.conflict && <span className="badge badge-info ml-1">fusion</span>}
+                                                    {s.conflict && <span className="badge text-bg-info ms-1">fusion</span>}
                                                 </span>
                                             </div>
                                         ))}
@@ -814,7 +810,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
 
                                 {/* Prix clients */}
                                 <div className="alert alert-warning mt-2 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
-                                    <i className="fas fa-exclamation-triangle mr-1" />
+                                    <i className="fas fa-exclamation-triangle me-1" />
                                     <strong>Tarifs clients :</strong>{' '}
                                     {preview.impact.customer_price_lists.duplicate_count > 0
                                         ? `Les ${preview.impact.customer_price_lists.duplicate_count} tarif(s) du doublon seront supprimés. `
@@ -826,7 +822,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
 
                                 {preview.impact.quantity_prices.duplicate_count > 0 && (
                                     <div className="alert alert-warning mt-1 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
-                                        <i className="fas fa-exclamation-triangle mr-1" />
+                                        <i className="fas fa-exclamation-triangle me-1" />
                                         <strong>Tarifs quantité :</strong>{' '}
                                         {`Les ${preview.impact.quantity_prices.duplicate_count} tarif(s) quantité du doublon seront supprimés. `}
                                         {preview.impact.quantity_prices.master_count > 0
@@ -852,8 +848,8 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                 disabled={merging}
                             >
                                 {merging
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />Fusion en cours…</>
-                                    : <><i className="fas fa-code-branch mr-1" />Confirmer la fusion</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />Fusion en cours…</>
+                                    : <><i className="fas fa-code-branch me-1" />Confirmer la fusion</>
                                 }
                             </button>
                         )}
@@ -898,7 +894,7 @@ function DuplicatesTab({ endpoints }) {
     return (
         <div>
             <div className="alert alert-warning py-2 mb-3">
-                <i className="fas fa-exclamation-triangle mr-1" />
+                <i className="fas fa-exclamation-triangle me-1" />
                 <strong>{groups.length} groupe(s) de doublons</strong> détectés sur le code produit.
             </div>
 
@@ -920,9 +916,9 @@ function DuplicatesTab({ endpoints }) {
                                         <a href={p.url} target="_blank" rel="noreferrer" className="text-info">
                                             #{p.id}
                                         </a>
-                                        <span className="ml-1 text-muted" style={{ fontSize: '0.85rem' }}>
+                                        <span className="ms-1 text-muted" style={{ fontSize: '0.85rem' }}>
                                             {p.label}
-                                            {p.service && <span className="ml-1 badge badge-light">{p.service}</span>}
+                                            {p.service && <span className="ms-1 badge text-bg-light">{p.service}</span>}
                                         </span>
                                     </div>
                                 ))}
@@ -932,7 +928,7 @@ function DuplicatesTab({ endpoints }) {
                                     className="btn btn-sm btn-warning"
                                     onClick={() => setMergeGroup(group)}
                                 >
-                                    <i className="fas fa-code-branch mr-1" />Fusionner
+                                    <i className="fas fa-code-branch me-1" />Fusionner
                                 </button>
                             </td>
                         </tr>
@@ -960,7 +956,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
     const [activeTab, setActiveTab] = useIndexTab('products_index_tab', { tabs: canMerge ? ['dashboard', 'list', 'duplicates'] : ['dashboard', 'list'] });
 
     return (
-        <div className="card card-outline card-teal">
+        <div className="card card-outline card-teal mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">
@@ -969,7 +965,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
                             href="#"
                             onClick={e => { e.preventDefault(); setActiveTab('dashboard'); }}
                         >
-                            <i className="fas fa-tachometer-alt mr-1" />{trans.dashboard}
+                            <i className="fas fa-tachometer-alt me-1" />{trans.dashboard}
                         </a>
                     </li>
                     <li className="nav-item">
@@ -978,7 +974,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
                             href="#"
                             onClick={e => { e.preventDefault(); setActiveTab('list'); }}
                         >
-                            <i className="fas fa-list mr-1" />{trans.products_list}
+                            <i className="fas fa-list me-1" />{trans.products_list}
                         </a>
                     </li>
                     {canMerge && (
@@ -988,7 +984,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
                                 href="#"
                                 onClick={e => { e.preventDefault(); setActiveTab('duplicates'); }}
                             >
-                                <i className="fas fa-code-branch mr-1" />Doublons
+                                <i className="fas fa-code-branch me-1" />Doublons
                             </a>
                         </li>
                     )}

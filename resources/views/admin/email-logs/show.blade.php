@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <i class="fas fa-envelope-open-text mr-1"></i> {{ __('general_content.email_log_detail_trans_key') }}
+        <i class="fas fa-envelope-open-text me-1"></i> {{ __('general_content.email_log_detail_trans_key') }}
     </h1>
 @stop
 
@@ -40,18 +40,18 @@
                     <dd class="col-sm-9">
                         @switch($log->status)
                             @case('sent')
-                                <span class="badge badge-success">
+                                <span class="badge text-bg-success">
                                     <i class="fas fa-check"></i> {{ __('general_content.email_status_sent_trans_key') }}
                                 </span>
                                 @if($log->sent_at) — {{ $log->sent_at->format('d/m/Y H:i:s') }} @endif
                                 @break
                             @case('failed')
-                                <span class="badge badge-danger">
+                                <span class="badge text-bg-danger">
                                     <i class="fas fa-times"></i> {{ __('general_content.email_status_failed_trans_key') }}
                                 </span>
                                 @break
                             @default
-                                <span class="badge badge-secondary">
+                                <span class="badge text-bg-secondary">
                                     <i class="fas fa-clock"></i> {{ __('general_content.email_status_pending_trans_key') }}
                                 </span>
                         @endswitch
@@ -67,27 +67,27 @@
 
                 <hr>
                 <h5>{{ __('general_content.message_trans_key') }}</h5>
-                <div class="border rounded p-3 bg-light">
+                <div class="border rounded p-3 bg-body-tertiary">
                     {!! \App\Support\SafeHtml::clean($log->message) !!}
                 </div>
 
                 @if($log->status === 'failed')
                     <hr>
                     <h5 class="text-danger">{{ __('general_content.error_trans_key') }}</h5>
-                    <pre class="bg-light p-3 rounded" style="white-space: pre-wrap;">{{ $log->error }}</pre>
+                    <pre class="bg-body-tertiary p-3 rounded" style="white-space: pre-wrap;">{{ $log->error }}</pre>
                 @endif
             </x-adminlte-card>
         </div>
 
         <div class="col-md-4">
             <x-adminlte-card title="{{ __('general_content.actions_trans_key') }}" theme="info" theme-mode="outline">
-                <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary btn-block">
+                <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary w-100">
                     <i class="fas fa-arrow-left"></i> {{ __('general_content.back_trans_key') }}
                 </a>
                 @if($log->status === 'failed' && $log->emailable_type)
                     <form action="{{ route('admin.email-logs.resend', $log) }}" method="POST" class="mt-2">
                         @csrf
-                        <button type="submit" class="btn btn-warning btn-block">
+                        <button type="submit" class="btn btn-warning w-100">
                             <i class="fas fa-redo"></i> {{ __('general_content.email_resend_trans_key') }}
                         </button>
                     </form>

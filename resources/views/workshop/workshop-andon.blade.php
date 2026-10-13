@@ -74,11 +74,10 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function(){
-        // Ajoute la classe sidebar-hidden à la balise body dès que la page est chargée
-        $("body").addClass("sidebar-hidden");
+        document.addEventListener('DOMContentLoaded', function () {
+            // Écran atelier en plein écran : la sidebar est masquée (public/css/wem-shell.css).
+            document.body.classList.add('sidebar-hidden');
         });
     </script>
 

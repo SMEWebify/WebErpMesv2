@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <i class="fas fa-robot mr-1"></i> Assistant IA
+        <i class="fas fa-robot me-1"></i> Assistant IA
         <small class="text-muted">provider, clé API et modèle</small>
     </h1>
 @stop
@@ -27,23 +27,23 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-primary mb-3">
                 <div class="card-header">
                     <h3 class="card-title">Configuration</h3>
                     <div class="card-tools">
                         @if($source === 'db')
-                            <span class="badge badge-success" title="Lue depuis la base — modifiable ici.">DB</span>
+                            <span class="badge text-bg-success" title="Lue depuis la base — modifiable ici.">DB</span>
                         @else
-                            <span class="badge badge-warning" title="Lue depuis le fichier .env — cliquez sur « Importer depuis .env » pour basculer.">
+                            <span class="badge text-bg-warning" title="Lue depuis le fichier .env — cliquez sur « Importer depuis .env » pour basculer.">
                                 .env
                             </span>
                         @endif
                         @if($has_key)
-                            <span class="badge badge-info ml-1">Clé configurée</span>
+                            <span class="badge text-bg-info ms-1">Clé configurée</span>
                         @elseif(! $providers[$active]['key_required'])
-                            <span class="badge badge-secondary ml-1" title="Fonctionne sans clé, avec un débit fortement limité.">Accès anonyme</span>
+                            <span class="badge text-bg-secondary ms-1" title="Fonctionne sans clé, avec un débit fortement limité.">Accès anonyme</span>
                         @else
-                            <span class="badge badge-danger ml-1">Clé manquante</span>
+                            <span class="badge text-bg-danger ms-1">Clé manquante</span>
                         @endif
                     </div>
                 </div>
@@ -53,9 +53,9 @@
                     @method('PUT')
 
                     <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="provider">Provider</label>
-                            <select id="provider" name="provider" class="form-control" required>
+                            <select id="provider" name="provider" class="form-select" required>
                                 @foreach($providers as $key => $info)
                                     <option value="{{ $key }}"
                                             data-default-model="{{ $info['default_model'] }}"
@@ -75,7 +75,7 @@
                             </small>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="api_key">
                                 Clé API
                                 @if($has_key)
@@ -96,7 +96,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="model">Modèle</label>
                                     <input type="text"
                                            id="model"
@@ -108,7 +108,7 @@
                             </div>
 
                             <div class="col-md-3">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="max_tokens">Max tokens</label>
                                     <input type="number"
                                            id="max_tokens"
@@ -120,7 +120,7 @@
                             </div>
 
                             <div class="col-md-3">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="timeout_seconds">Timeout (s)</label>
                                     <input type="number"
                                            id="timeout_seconds"
@@ -132,7 +132,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="base_url">Base URL <small class="text-muted">(laissez vide pour l'URL officielle du provider)</small></label>
                             <input type="url"
                                    id="base_url"
@@ -142,15 +142,15 @@
                                    placeholder="{{ $providers[$active]['base_url'] }}">
                         </div>
 
-                        <div class="custom-control custom-switch">
+                        <div class="form-check form-switch">
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox"
                                    id="is_active"
                                    name="is_active"
                                    value="1"
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    @checked(old('is_active', $setting->is_active ?? true))>
-                            <label class="custom-control-label" for="is_active">Configuration active</label>
+                            <label class="form-check-label" for="is_active">Configuration active</label>
                         </div>
                     </div>
 
@@ -188,7 +188,7 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card card-outline card-info">
+            <div class="card card-outline card-info mb-3">
                 <div class="card-header">
                     <h3 class="card-title">Où se sert la config ?</h3>
                 </div>

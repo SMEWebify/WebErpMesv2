@@ -50,14 +50,12 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
     );
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             {/* Filtres */}
             <div className="row">
                 <div className="card-body col-12">
                     <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-search fa-fw"></i></span>
-                        </div>
+                        <span className="input-group-text"><i className="fas fa-search fa-fw"></i></span>
                         <input
                             type="text"
                             className="form-control"
@@ -71,11 +69,11 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
             <div className="row">
                 <div className="col-md-3">
                     <div className="card-body">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Service</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-list"></i></span></div>
-                                <select className="form-control" value={serviceId} onChange={e => setServiceId(e.target.value)}>
+                                <span className="input-group-text"><i className="fas fa-list"></i></span>
+                                <select className="form-select" value={serviceId} onChange={e => setServiceId(e.target.value)}>
                                     <option value="">-- Sélectionner --</option>
                                     {services.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                                 </select>
@@ -85,7 +83,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 </div>
                 <div className="col-md-3">
                     <div className="card-body">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Statut</label>
                             <div className="form-control overflow-auto" style={{ maxHeight: 200 }}>
                                 {statuses.map(s => (
@@ -106,11 +104,11 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 </div>
                 <div className="col-md-3">
                     <div className="card-body">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Ressource</label>
                             <div className="input-group">
-                                <div className="input-group-prepend"><span className="input-group-text"><i className="fas fa-list"></i></span></div>
-                                <select className="form-control" value={resourceId} onChange={e => setResourceId(e.target.value)}>
+                                <span className="input-group-text"><i className="fas fa-list"></i></span>
+                                <select className="form-select" value={resourceId} onChange={e => setResourceId(e.target.value)}>
                                     <option value="">-- Sélectionner --</option>
                                     {resources.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
                                 </select>
@@ -120,7 +118,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 </div>
                 <div className="col-md-3">
                     <div className="card-body">
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>Tâches génériques</label>
                             <div>
                                 <input
@@ -187,7 +185,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                                     <td style={task.service?.color ? { backgroundColor: task.service.color } : {}}>
                                         {task.service && (
                                             task.service.picture_url ? (
-                                                <p data-toggle="tooltip" data-html="true" title={`<img alt='Service' class='profile-user-img img-fluid img-circle' src='${task.service.picture_url}'>`}>
+                                                <p data-bs-toggle="tooltip" data-html="true" title={`<img alt='Service' class='profile-user-img img-fluid rounded-circle' src='${task.service.picture_url}'>`}>
                                                     <span>{task.service.label}</span>
                                                 </p>
                                             ) : task.service.label
@@ -198,7 +196,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                                             {task.resources.map((r, i) => (
                                                 <li key={i}>
                                                     {r.picture_url ? (
-                                                        <span data-toggle="tooltip" data-html="true" title={`<img alt='Ressource' class='profile-user-img' src='${r.picture_url}'>`}>{r.label}</span>
+                                                        <span data-bs-toggle="tooltip" data-html="true" title={`<img alt='Ressource' class='profile-user-img' src='${r.picture_url}'>`}>{r.label}</span>
                                                     ) : r.label}
                                                 </li>
                                             ))}
@@ -210,7 +208,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                                     <td>{task.total_time} h</td>
                                     <td>
                                         <div className="progress">
-                                            <div className="progress-bar bg-teal" style={{ width: `${task.progress}%` }}>
+                                            <div className="progress-bar text-bg-teal" style={{ width: `${task.progress}%` }}>
                                                 {task.progress}%
                                             </div>
                                         </div>

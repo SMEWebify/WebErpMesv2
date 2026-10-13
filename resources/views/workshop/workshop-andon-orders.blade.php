@@ -11,7 +11,7 @@
     <div class="row">
         <!-- Commandes en retard -->
         <div class="col-md-4">
-            <div class="card bg-danger text-white">
+            <div class="card bg-danger text-white mb-3">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> {{ __('general_content.late_orders_trans_key') }}</h3>
                 </div>
@@ -30,7 +30,7 @@
 
         <!-- Commandes à livrer aujourd'hui -->
         <div class="col-md-8">
-            <div class="card bg-primary text-white">
+            <div class="card bg-primary text-white mb-3">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-truck"></i> {{ __('general_content.orders_to_deliver_today_trans_key') }}</h3>
                 </div>
@@ -53,7 +53,7 @@
     <!-- Commandes prêtes -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card bg-success text-white">
+            <div class="card bg-success text-white mb-3">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-check-circle"></i>{{ __('general_content.ready_orders_trans_key') }}</h3>
                 </div>

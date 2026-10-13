@@ -7,9 +7,9 @@ import { formatCurrency } from '../utils';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'in_progress'  },
-    2: { badge: 'badge-warning', label: 'to_be_posted' },
-    3: { badge: 'badge-success', label: 'closed'       },
+    1: { badge: 'text-bg-info',    label: 'in_progress'  },
+    2: { badge: 'text-bg-warning', label: 'to_be_posted' },
+    3: { badge: 'text-bg-success', label: 'closed'       },
 };
 
 const STATUS_COLORS = {
@@ -81,30 +81,30 @@ function KPICards({ kpi, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.totalCount ?? 0}</h3>
                         <p>{trans.total_invoices ?? 'Total factures'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-file-invoice" /></div>
+                    <i className="small-box-icon fas fa-file-invoice" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-warning">
+                <div className="small-box text-bg-warning">
                     <div className="inner">
                         <h3>{kpi.toBePostedCount ?? 0}</h3>
                         <p>{trans.to_be_posted ?? 'À lettrer'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-clock" /></div>
+                    <i className="small-box-icon fas fa-clock" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3>{kpi.closedCount ?? 0}</h3>
                         <p>{trans.closed ?? 'Clôturées'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-check-circle" /></div>
+                    <i className="small-box-icon fas fa-check-circle" aria-hidden="true" />
                 </div>
             </div>
         </div>
@@ -287,7 +287,7 @@ function purchaseInvoiceColumns(trans) {
           render: inv => inv.companie?.label ?? '—', filterValue: inv => inv.companie?.label,
           filter: 'text', mobile: 'subtitle', mobileOrder: 1 },
         { key: 'lines_count', label: trans.lines_count ?? 'Lignes',      sortable: true, align: 'center',
-          render: inv => <span className="badge badge-secondary">{inv.lines_count}</span> },
+          render: inv => <span className="badge text-bg-secondary">{inv.lines_count}</span> },
         { key: 'statu',       label: trans.status      ?? 'Statut',      sortable: true, align: 'center',
           render: inv => <StatusBadge statu={inv.statu} config={STATUS_CONFIG} trans={trans} />, mobile: 'badge' },
         { key: 'created_at',  label: trans.created_at  ?? 'Créé le',     sortable: true, align: 'center',
@@ -400,10 +400,10 @@ export default function PurchaseInvoicesIndex({
             <div className="row">
                 {/* Charts */}
                 <div className="col-md-3">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.status_distribution ?? 'Répartition'}
                             </h3>
                         </div>
@@ -411,10 +411,10 @@ export default function PurchaseInvoicesIndex({
                             <PieChart data={chartData.purchaseInvoicesDataRate} trans={trans} />
                         </div>
                     </div>
-                    <div className="card card-warning">
+                    <div className="card card-warning mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.monthly_recap ?? 'Récap mensuel'}
                             </h3>
                         </div>
@@ -426,14 +426,12 @@ export default function PurchaseInvoicesIndex({
 
                 {/* Table */}
                 <div className="col-md-9 order-first order-md-0">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-body pb-2">
                             <div className="row align-items-end">
                                 <div className="col-md-5">
                                     <div className="input-group input-group-sm">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text"><i className="fas fa-search" /></span>
-                                        </div>
+                                        <span className="input-group-text"><i className="fas fa-search" /></span>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -442,11 +440,9 @@ export default function PurchaseInvoicesIndex({
                                             onChange={e => handleSearch(e.target.value)}
                                         />
                                         {search && (
-                                            <div className="input-group-append">
-                                                <button className="btn btn-outline-secondary btn-sm" onClick={() => handleSearch('')}>
+                                            <button className="btn btn-outline-secondary btn-sm" onClick={() => handleSearch('')}>
                                                     <i className="fas fa-times" />
                                                 </button>
-                                            </div>
                                         )}
                                     </div>
                                 </div>

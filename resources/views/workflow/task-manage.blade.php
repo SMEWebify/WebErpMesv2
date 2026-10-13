@@ -9,7 +9,7 @@
     <h1>{{ __('general_content.tasks_trans_key') }} {{ $Document->code }} - #{{  $LineInfo->id }} {{  $LineInfo->label }}</h1>
   </div>
   <div class="col-sm-6">
-      <ol class="breadcrumb float-sm-right">
+      <ol class="breadcrumb float-sm-end">
           <li class="breadcrumb-item"><a href="{{ url()->previous() }}#Lines">{{ __('general_content.back_trans_key') }}</a></li>
       </ol>
   </div>
@@ -55,9 +55,6 @@ $endpoints = [
 @section('css')
 @viteReactRefresh
 @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-<style>
-  .btn-xs { padding: 0.1rem 0.35rem; font-size: 0.72rem; line-height: 1.3; }
-</style>
 @stop
 
 @section('js')

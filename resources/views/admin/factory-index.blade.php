@@ -7,13 +7,13 @@
 @stop
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
     <div class="card-header p-2">
         <ul class="nav nav-pills">
-            <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">{{ __('general_content.factory_settings_trans_key') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">{{ __('general_content.announcements_trans_key') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#DocumentCodeTemplates" data-toggle="tab">{{ __('general_content.document_code_templates_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#Settings" data-bs-toggle="tab">{{ __('general_content.factory_settings_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Announcement" data-bs-toggle="tab">{{ __('general_content.announcements_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#CustomFields" data-bs-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#DocumentCodeTemplates" data-bs-toggle="tab">{{ __('general_content.document_code_templates_trans_key') }}</a></li>
             
         </ul>
     </div>
@@ -29,9 +29,7 @@
                             <div class="col-12">
                                 <label for="name">{{ __('general_content.name_company_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
                                     <input type="text" class="form-control" name="name"  id="name" value="{{ $Factory->name }}" placeholder="{{ __('general_content.name_company_trans_key') }}">
                                 </div>
                             </div>
@@ -41,40 +39,32 @@
                             <div class="col-12">
                                 <label for="address">{{ __('general_content.adress_name_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                     <input type="text" class="form-control" name="address"  id="address" value="{{ $Factory->address }}"  placeholder="{{ __('general_content.adress_name_trans_key') }}">
                                 </div>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-map"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-map"></i></span>
                                     <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="{{ __('general_content.postal_code_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="city">{{ __('general_content.capacity_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-city"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-city"></i></span>
                                     <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="{{ __('general_content.capacity_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="country">{{ __('general_content.country_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-globe-africa"></i></span>
-                                    </div>
-                                    <select id="country" name="country" class="form-control">
+                                    <span class="input-group-text"><i class="fas fa-globe-africa"></i></span>
+                                    <select id="country" name="country" class="form-select">
                                         @if($Factory->country)
                                         <option value="{{ $Factory->country }}">{{ $Factory->country }}</option>
                                         @endif
@@ -328,30 +318,24 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="phone_number">{{ __('general_content.phone_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                     <input type="text" class="form-control" name="phone_number"  id="phone_number"  value="{{ $Factory->phone_number }}"  placeholder="{{ __('general_content.phone_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">@</span>
-                                    </div>
+                                    <span class="input-group-text">@</span>
                                     <input type="email" class="form-control" name="mail"  id="mail" value="{{ $Factory->mail }}"  placeholder="{{ __('general_content.email_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="mb-3 col-md-4">
                                 <label for="web_site">{{ __('general_content.web_link_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                                     <input type="text" class="form-control"  name="web_site" id="web_site" value="{{ $Factory->web_site }}" placeholder="{{ __('general_content.web_link_trans_key') }}">
                                 </div>
                             </div>
@@ -385,28 +369,20 @@
 
                     <x-adminlte-card title="{{ __('general_content.default_value_trans_key') }}" theme="info" collapsible maximizable>
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <label for="add_day_validity_quote">{{ __('general_content.add_value_day_offer_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">+</span>
-                                    </div>
+                                    <span class="input-group-text">+</span>
                                     <input type="number" class="form-control" name="add_day_validity_quote" id="add_day_validity_quote" value="{{ $Factory->add_day_validity_quote }}" >
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <label for="add_delivery_delay_order">{{ __('general_content.add_value_day_delivery_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">+</span>
-                                    </div>
+                                    <span class="input-group-text">+</span>
                                     <input type="number" class="form-control" name="add_delivery_delay_order" id="add_delivery_delay_order" value="{{ $Factory->add_delivery_delay_order }}" >
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -415,10 +391,8 @@
                             <div class="col-8">
                                 <label for="accounting_vats_id">{{ __('general_content.vat_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                    </div>
-                                    <select class="form-control"  name="accounting_vats_id" id="accounting_vats_id">
+                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                    <select class="form-select"  name="accounting_vats_id" id="accounting_vats_id">
                                         <option value="" >{{ __('general_content.select_vat_trans_key') }}</option>
                                         @foreach ($VATSelect as $item)
                                         <option value="{{ $item->id }}" @if($item->id == $Factory->accounting_vats_id ) Selected @endif >{{ $item->label }}</option>
@@ -429,10 +403,8 @@
                             <div class="col-8">
                                 <label for="curency">{{ __('general_content.curency_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <select class="form-control"  name="curency" id="curency" >
+                                    <span class="input-group-text">$</span>
+                                    <select class="form-select"  name="curency" id="curency" >
                                         <option value="USD" @if('USD' == $Factory->curency ) Selected @endif>United States Dollars</option>
                                         <option value="EUR" @if('EUR' == $Factory->curency ) Selected @endif>Euro</option>
                                         <option value="CAN" @if('CAN' == $Factory->curency ) Selected @endif>Canadian</option>
@@ -443,13 +415,11 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <label for="fiscal_year_start_month">Mois de début d'exercice comptable</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                    </div>
-                                    <select class="form-control" name="fiscal_year_start_month" id="fiscal_year_start_month">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <select class="form-select" name="fiscal_year_start_month" id="fiscal_year_start_month">
                                         @php
                                             $months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
                                         @endphp
@@ -468,15 +438,15 @@
                     <x-adminlte-card title="{{ __('general_content.repots_setting_trans_key') }}" theme="teal" collapsible maximizable>
                         @php($selectedPdfTheme = old('pdf_theme', $Factory->pdf_theme ?? $pdfFallbackTheme))
                         <div class="row">
-                            <div class="form-group col-md-3">
-                                <div class="form-group">
+                            <div class="mb-3 col-md-3">
+                                <div class="mb-3">
                                     <label for="pdf_header_font_color">{{ __('general_content.header_font_color_trans_key') }}</label>
                                     <input type="color" class="form-control"  name="pdf_header_font_color" id="pdf_header_font_color" value="{{ $Factory->pdf_header_font_color }}">
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="mb-3 col-md-3">
                                 <label for="pdf_theme">{{ __('general_content.pdf_theme_trans_key') }}</label>
-                                <select class="form-control" name="pdf_theme" id="pdf_theme" required>
+                                <select class="form-select" name="pdf_theme" id="pdf_theme" required>
                                     @foreach ($pdfThemes as $theme)
                                         <option value="{{ $theme }}" @selected($selectedPdfTheme === $theme)>
                                             {{ $theme }}@if ($theme === $pdfFallbackTheme) ({{ __('general_content.pdf_theme_fallback_trans_key') }})@endif
@@ -485,30 +455,26 @@
                                 </select>
                                 <small class="form-text text-muted">{{ __('general_content.pdf_theme_help_trans_key') }}</small>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <label for="pdf_custom_css">{{ __('general_content.pdf_custom_css_trans_key') }}</label>
                                 <textarea class="form-control" name="pdf_custom_css" id="pdf_custom_css" rows="6" placeholder="{{ __('general_content.pdf_custom_css_placeholder_trans_key') }}">{{ old('pdf_custom_css', $Factory->pdf_custom_css) }}</textarea>
                                 <small class="form-text text-muted">{{ __('general_content.pdf_custom_css_help_trans_key') }}</small>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="mb-3 col-md-3">
                                 <label for="public_link_cgv">{{ __('general_content.public_link_cgv_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                                    </div>
-                                    <select class="form-control"  name="public_link_cgv" id="public_link_cgv" >
+                                    <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                                    <select class="form-select"  name="public_link_cgv" id="public_link_cgv" >
                                         <option value="1"  @if('1' == $Factory->public_link_cgv ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                                         <option value="2" @if('2' == $Factory->public_link_cgv ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="mb-3 col-md-3">
                                 <label for="add_cgv_to_pdf">{{ __('general_content.add_cgv_to_quote_order_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                                    </div>
-                                    <select class="form-control"  name="add_cgv_to_pdf" id="add_cgv_to_pdf" >
+                                    <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                                    <select class="form-select"  name="add_cgv_to_pdf" id="add_cgv_to_pdf" >
                                         <option value="1" @if('1' == $Factory->add_cgv_to_pdf ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                                         <option value="2" @if('2' == $Factory->add_cgv_to_pdf ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                     </select>
@@ -518,13 +484,9 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-image"></i></span>
-                                    </div>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="cgv_file" id="cgv_file">
-                                        <label class="custom-file-label" for="cgv_file">{{ __('general_content.choose_file_trans_key') }}  (pdf | max: 10 240 Ko)</label>
-                                    </div>
+                                    <span class="input-group-text"><i class="far fa-image"></i></span>
+                                    <input type="file" class="form-control" name="cgv_file" id="cgv_file">
+                                        <span class="input-group-text">pdf | max: 10 240 Ko</span>
                                 </div>
                             </div>
                             @if( $Factory->cgv_file)
@@ -543,25 +505,19 @@
                         @endif
                         <div class="row">
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="far fa-image"></i></span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="picture" id="picture">
-                                    <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
-                                </div>
+                                <span class="input-group-text"><i class="far fa-image"></i></span>
+                                <input type="file" class="form-control" name="picture" id="picture">
+                                    <span class="input-group-text">peg,png,jpg,gif,svg | max: 10 240 Ko</span>
                             </div>
                         </div>
                     </x-adminlte-card>
 
-                    <x-adminlte-card title="{{ __('general_content.manufacturing_information_trans_key') }}" theme="purple" collapsible maximizable>
+                    <x-adminlte-card title="{{ __('general_content.manufacturing_information_trans_key') }}" theme="violet" collapsible maximizable>
                         <div class="col-8">
                             <label for="task_barre_code">{{ __('general_content.bare_code_type_trans_key') }}</label>
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                </div>
-                                <select class="form-control"  name="task_barre_code" id="task_barre_code">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                <select class="form-select"  name="task_barre_code" id="task_barre_code">
                                     <option value="EAN2" @if('EAN2' == $Factory->task_barre_code ) Selected @endif >EAN2</option>
                                     <option value="EAN5" @if('EAN5' == $Factory->task_barre_code ) Selected @endif >EAN5</option>
                                     <option value="EAN8" @if('EAN8' == $Factory->task_barre_code ) Selected @endif >EAN8</option>
@@ -578,11 +534,11 @@
                     <x-adminlte-card title="{{ __('general_content.modules_trans_key') }}" theme="dark" collapsible maximizable>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label>{{ __('general_content.construction_site_trans_key') }}</label>
                                     <div>
                                         <input type="hidden" name="enable_construction_site" value="0">
-                                        <input type="checkbox" name="enable_construction_site" id="enable_construction_site" value="1" class="mr-2"
+                                        <input type="checkbox" name="enable_construction_site" id="enable_construction_site" value="1" class="me-2"
                                             @if($Factory->enable_construction_site) checked @endif>
                                         <label for="enable_construction_site" class="mb-0">
                                             {{ __('general_content.enable_trans_key') }}
@@ -595,7 +551,7 @@
                     </x-adminlte-card>
 
                     <div class="modal-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                     </div>
                 </form>
             </div>
@@ -608,9 +564,7 @@
                             <div class="col-3">
                                 <label for="title">{{ __('general_content.title_trans_key') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                     <input type="text" class="form-control" name="title"  id="title" placeholder="{{ __('general_content.title_trans_key') }}">
                                 </div>
                             </div>
@@ -619,7 +573,7 @@
                             </div>
                         </div>
                         <x-slot name="footerSlot">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </x-slot>
                     </x-adminlte-card>
                 </form>
@@ -708,22 +662,18 @@
                         <x-adminlte-card title="{{ __('general_content.new_family_trans_key') }}" theme="secondary" maximizable>
                             <form  method="POST" action="{{ route('admin.factory.custom.field.store') }}" class="form-horizontal">
                                 @csrf
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="code">{{ __('general_content.name_field_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         <input type="text" class="form-control" id="name" name="name" required>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="custom_field_type">{{ __('general_content.type_field_trans_key') }}  :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                                        </div>
-                                        <select class="form-control" id="custom_field_type" name="type" required>
+                                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        <select class="form-select" id="custom_field_type" name="type" required>
                                             <option value="text">Text</option>
                                             <option value="number">Number</option>
                                             <option value="checkbox">Checkbox</option>
@@ -732,18 +682,16 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group" id="custom-field-options-group" style="display: none;">
+                                <div class="mb-3" id="custom-field-options-group" style="display: none;">
                                     <label for="options">{{ __('general_content.custom_fields_options_trans_key') }} :</label>
                                     <textarea class="form-control" id="options" name="options" rows="3" placeholder="{{ __('general_content.custom_fields_options_placeholder_trans_key') }}"></textarea>
                                     <small class="form-text text-muted">{{ __('general_content.custom_fields_options_help_trans_key') }}</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="related_type">{{ __('general_content.entity_type_trans_key') }}  :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        </div>
-                                        <select class="form-control" id="related_type" name="related_type" required>
+                                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                        <select class="form-select" id="related_type" name="related_type" required>
                                             <option value="quote">{{ __('general_content.quote_trans_key') }}</option>
                                             <option value="order">{{ __('general_content.orders_trans_key') }}</option>
                                             <option value="delivery">{{ __('general_content.delivery_notes_trans_key') }}</option>
@@ -753,17 +701,15 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="category">{{ __('general_content.custom_fields_category_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-folder"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-folder"></i></span>
                                         <input type="text" class="form-control" id="category" name="category" placeholder="{{ __('general_content.custom_fields_category_placeholder_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                 </div>
                             </form>
                         </x-adminlte-card>
@@ -810,12 +756,10 @@
                                                         <form method="POST" action="{{ route('admin.document.code.template.update', ['id' => $template->id]) }}">
                                                             @csrf
                                                             <div class="card-body">
-                                                                <div class="form-group">
+                                                                <div class="mb-3">
                                                                     <label for="template">{{ __('general_content.template_trans_key') }} :</label>
                                                                     <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text"><i class="fas fa-code"></i></span>
-                                                                        </div>
+                                                                        <span class="input-group-text"><i class="fas fa-code"></i></span>
                                                                         <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" value="{{ $template->template }}" required>
                                                                     </div>
                                                                     <small class="text-muted">
@@ -823,9 +767,9 @@
                                                                         ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
                                                                     </small>
                                                                 </div>
-                                                                <div class="form-group" x-data="{ period: '{{ $template->reset_period ?? 'none' }}' }">
+                                                                <div class="mb-3" x-data="{ period: '{{ $template->reset_period ?? 'none' }}' }">
                                                                     <label for="reset_period_{{ $template->id }}">Reset :</label>
-                                                                    <select class="form-control" id="reset_period_{{ $template->id }}" name="reset_period" x-model="period" required>
+                                                                    <select class="form-select" id="reset_period_{{ $template->id }}" name="reset_period" x-model="period" required>
                                                                         <option value="none">None</option>
                                                                         <option value="daily">Daily</option>
                                                                         <option value="weekly">Weekly</option>
@@ -835,7 +779,7 @@
                                                                     <div x-show="period === 'yearly'" class="row mt-2">
                                                                         <div class="col-6">
                                                                             <label>Mois de début d'exercice</label>
-                                                                            <select class="form-control" name="yearly_reset_month">
+                                                                            <select class="form-select" name="yearly_reset_month">
                                                                                 @foreach(range(1,12) as $m)
                                                                                     <option value="{{ $m }}" {{ (int)($template->yearly_reset_month ?? 1) === $m ? 'selected' : '' }}>
                                                                                         {{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
@@ -851,7 +795,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="card-footer">
-                                                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                             </div>
                                                         </form>
                                                     </x-adminlte-modal>
@@ -879,13 +823,11 @@
                         <x-adminlte-card title="{{ __('general_content.new_document_code_template_trans_key') }}" theme="secondary" maximizable>
                             <form method="POST" action="{{ route('admin.document.code.template.store') }}" class="form-horizontal">
                                 @csrf
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="document_type">{{ __('general_content.entity_type_trans_key') }}  :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        </div>
-                                        <select class="form-control" id="document_type" name="document_type" required>
+                                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                        <select class="form-select" id="document_type" name="document_type" required>
                                             <option value="company">{{ __('general_content.companies_trans_key') }}</option>
                                             <option value="quote">{{ __('general_content.quote_trans_key') }}</option>
                                             <option value="order">{{ __('general_content.orders_trans_key') }}</option>
@@ -903,12 +845,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="template">{{ __('general_content.template_trans_key') }} :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-code"></i></span>
-                                        </div>
+                                        <span class="input-group-text"><i class="fas fa-code"></i></span>
                                         <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" required>
                                     </div>
                                     <small class="text-muted">
@@ -916,13 +856,11 @@
                                         ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
                                     </small>
                                 </div>
-                                <div class="form-group" x-data="{ period: 'none' }">
+                                <div class="mb-3" x-data="{ period: 'none' }">
                                     <label for="reset_period">Reset :</label>
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-redo"></i></span>
-                                        </div>
-                                        <select class="form-control" id="reset_period" name="reset_period" x-model="period" required>
+                                        <span class="input-group-text"><i class="fas fa-redo"></i></span>
+                                        <select class="form-select" id="reset_period" name="reset_period" x-model="period" required>
                                             <option value="none">None</option>
                                             <option value="daily">Daily</option>
                                             <option value="weekly">Weekly</option>
@@ -933,7 +871,7 @@
                                     <div x-show="period === 'yearly'" class="row mt-2">
                                         <div class="col-6">
                                             <label>Mois de début d'exercice</label>
-                                            <select class="form-control" name="yearly_reset_month">
+                                            <select class="form-select" name="yearly_reset_month">
                                                 @foreach(range(1,12) as $m)
                                                     <option value="{{ $m }}">
                                                         {{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
@@ -949,7 +887,7 @@
                                 </div>
 
                                 <div class="card-footer">
-                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                 </div>
                             </form>
                         </x-adminlte-card>

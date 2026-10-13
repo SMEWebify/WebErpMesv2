@@ -34,7 +34,7 @@ function Tile({ icon, color, label, value, hint }) {
         <div className="col-6 col-md-3 mb-3">
             <div style={{
                 display: 'flex', alignItems: 'stretch', height: '100%',
-                background: '#fff', borderRadius: 6, overflow: 'hidden',
+                background: 'var(--bs-body-bg)', borderRadius: 6, overflow: 'hidden',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.16)',
             }}>
                 <div style={{
@@ -44,13 +44,13 @@ function Tile({ icon, color, label, value, hint }) {
                     <i className={icon} style={{ fontSize: 24, color: '#fff' }} />
                 </div>
                 <div style={{ padding: '0.5rem 0.8rem', minWidth: 0 }}>
-                    <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4, color: '#6c757d' }}>
+                    <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4, color: 'var(--bs-secondary-color)' }}>
                         {label}
                     </div>
-                    <div style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: '#343a40' }}>
+                    <div style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.1, color: 'var(--bs-emphasis-color)' }}>
                         {value}
                     </div>
-                    {hint && <div style={{ fontSize: 12, color: '#6c757d' }}>{hint}</div>}
+                    {hint && <div style={{ fontSize: 12, color: 'var(--bs-secondary-color)' }}>{hint}</div>}
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@ function BarChart({ labels, series, height = 200, formatValue = fmtNum }) {
                          title={`${label} — ${series.map(s => `${s.label}: ${formatValue(s.values[i] ?? 0)}`).join(' / ')}`}
                          style={{ flex: `0 0 ${barW}%`, display: 'flex', flexDirection: 'column',
                                   justifyContent: 'flex-end', height: '100%', minWidth: 0 }}>
-                        <div style={{ fontSize: 10, textAlign: 'center', color: '#6c757d', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 10, textAlign: 'center', color: 'var(--bs-secondary-color)', whiteSpace: 'nowrap' }}>
                             {totals[i] > 0 ? formatValue(totals[i]) : ''}
                         </div>
                         {series.map(s => {
@@ -94,8 +94,8 @@ function BarChart({ labels, series, height = 200, formatValue = fmtNum }) {
                                      style={{ height: `${(value / max) * (height - 26)}px`, background: s.color }} />
                             );
                         })}
-                        <div style={{ borderTop: '1px solid #dee2e6', fontSize: 10, textAlign: 'center',
-                                      color: '#6c757d', paddingTop: 2, whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                        <div style={{ borderTop: '1px solid var(--bs-border-color)', fontSize: 10, textAlign: 'center',
+                                      color: 'var(--bs-secondary-color)', paddingTop: 2, whiteSpace: 'nowrap', overflow: 'hidden' }}>
                             {label}
                         </div>
                     </div>
@@ -109,20 +109,20 @@ function BarChart({ labels, series, height = 200, formatValue = fmtNum }) {
 
 function BreakdownCard({ title, icon, rows, showSessions = true }) {
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-header">
-                <h3 className="card-title"><i className={`${icon} mr-2`} />{title}</h3>
+                <h3 className="card-title"><i className={`${icon} me-2`} />{title}</h3>
             </div>
             <div className="card-body p-0" style={{ maxHeight: 320, overflowY: 'auto' }}>
                 <table className="table table-sm table-hover mb-0">
                     <thead>
                         <tr>
                             <th>{title.includes('opérateur') ? 'Opérateur' : 'Libellé'}</th>
-                            <th className="text-right">Heures</th>
-                            <th className="text-right">Bonnes</th>
-                            <th className="text-right">Rebuts</th>
-                            <th className="text-right">% rebut</th>
-                            {showSessions && <th className="text-right">Sessions</th>}
+                            <th className="text-end">Heures</th>
+                            <th className="text-end">Bonnes</th>
+                            <th className="text-end">Rebuts</th>
+                            <th className="text-end">% rebut</th>
+                            {showSessions && <th className="text-end">Sessions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -138,17 +138,17 @@ function BreakdownCard({ title, icon, rows, showSessions = true }) {
                                     )}
                                     {row.label}
                                 </td>
-                                <td className="text-right"><strong>{fmtHours(row.hours)}</strong></td>
-                                <td className="text-right text-success">{fmtNum(row.good)}</td>
-                                <td className="text-right text-danger">{row.bad > 0 ? fmtNum(row.bad) : '—'}</td>
-                                <td className="text-right">
+                                <td className="text-end"><strong>{fmtHours(row.hours)}</strong></td>
+                                <td className="text-end text-success">{fmtNum(row.good)}</td>
+                                <td className="text-end text-danger">{row.bad > 0 ? fmtNum(row.bad) : '—'}</td>
+                                <td className="text-end">
                                     {row.good + row.bad > 0
-                                        ? <span className={`badge ${row.scrap_rate > 5 ? 'badge-danger' : 'badge-success'}`}>
+                                        ? <span className={`badge ${row.scrap_rate > 5 ? 'text-bg-danger' : 'text-bg-success'}`}>
                                               {row.scrap_rate}&nbsp;%
                                           </span>
                                         : '—'}
                                 </td>
-                                {showSessions && <td className="text-right">{row.sessions ?? '—'}</td>}
+                                {showSessions && <td className="text-end">{row.sessions ?? '—'}</td>}
                             </tr>
                         ))}
                     </tbody>
@@ -208,17 +208,17 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
         <div>
             {/* Barre de période */}
             <div className="d-flex flex-wrap align-items-center mb-3">
-                <div className="btn-group btn-group-lg mr-3 mb-2">
+                <div className="btn-group btn-group-lg me-3 mb-2">
                     {(report.periods ?? []).map(p => (
                         <button key={p.key}
                                 type="button"
-                                className={`btn ${p.key === period ? 'btn-warning' : 'btn-default'}`}
+                                className={`btn ${p.key === period ? 'btn-warning' : 'btn-outline-secondary'}`}
                                 onClick={() => setPeriod(p.key)}>
                             {p.label}
                         </button>
                     ))}
                 </div>
-                <button type="button" className="btn btn-default btn-lg mb-2 mr-3" onClick={() => load(period)}>
+                <button type="button" className="btn btn-outline-secondary btn-lg mb-2 me-3" onClick={() => load(period)}>
                     <i className={`fas fa-sync-alt ${loading ? 'fa-spin' : ''}`} />
                 </button>
                 <div className="mb-2 text-muted">
@@ -242,10 +242,10 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
             </div>
 
             {/* En cours maintenant */}
-            <div className="card card-warning card-outline">
+            <div className="card card-warning card-outline mb-3">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-play mr-2" />En cours maintenant</h3>
-                    <span className="badge badge-warning right">{inProgress.length}</span>
+                    <h3 className="card-title"><i className="fas fa-play me-2" />En cours maintenant</h3>
+                    <span className="badge text-bg-warning right">{inProgress.length}</span>
                 </div>
                 <div className="card-body p-0" style={{ maxHeight: 300, overflowY: 'auto' }}>
                     <table className="table table-hover mb-0">
@@ -256,7 +256,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                                 <th>Ressource</th>
                                 <th>Opérateur</th>
                                 <th>Depuis</th>
-                                <th className="text-right">Durée</th>
+                                <th className="text-end">Durée</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -279,8 +279,8 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                                     <td>{row.resource ?? '—'}</td>
                                     <td>{row.user ?? '—'}</td>
                                     <td>{row.since}</td>
-                                    <td className="text-right">
-                                        <span className={`badge ${row.minutes > 480 ? 'badge-danger' : 'badge-secondary'}`}>
+                                    <td className="text-end">
+                                        <span className={`badge ${row.minutes > 480 ? 'text-bg-danger' : 'text-bg-secondary'}`}>
                                             {fmtDuration(row.minutes)}
                                         </span>
                                     </td>
@@ -294,9 +294,9 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
             {/* Courbes journalières */}
             <div className="row">
                 <div className="col-md-6">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-cubes mr-2" />Pièces par jour</h3>
+                            <h3 className="card-title"><i className="fas fa-cubes me-2" />Pièces par jour</h3>
                         </div>
                         <div className="card-body">
                             <BarChart
@@ -310,9 +310,9 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-clock mr-2" />Heures pointées par jour</h3>
+                            <h3 className="card-title"><i className="fas fa-clock me-2" />Heures pointées par jour</h3>
                         </div>
                         <div className="card-body">
                             <BarChart
@@ -337,19 +337,19 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                     <BreakdownCard title="Par service" icon="fas fa-sitemap" rows={perService} showSessions={false} />
                 </div>
                 <div className="col-md-6">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-bell mr-2" />Alertes andon</h3>
-                            <span className="badge badge-secondary right">{andon.total} sur la période</span>
+                            <h3 className="card-title"><i className="fas fa-bell me-2" />Alertes andon</h3>
+                            <span className="badge text-bg-secondary right">{andon.total} sur la période</span>
                         </div>
                         <div className="card-body p-0" style={{ maxHeight: 320, overflowY: 'auto' }}>
                             <table className="table table-sm table-hover mb-0">
                                 <thead>
                                     <tr>
                                         <th>Type</th>
-                                        <th className="text-right">Total</th>
-                                        <th className="text-right">Non résolues</th>
-                                        <th className="text-right">Résolution moy.</th>
+                                        <th className="text-end">Total</th>
+                                        <th className="text-end">Non résolues</th>
+                                        <th className="text-end">Résolution moy.</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -359,13 +359,13 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                                     {andon.by_type.map(row => (
                                         <tr key={row.label}>
                                             <td>{row.label}</td>
-                                            <td className="text-right">{fmtNum(row.count)}</td>
-                                            <td className="text-right">
+                                            <td className="text-end">{fmtNum(row.count)}</td>
+                                            <td className="text-end">
                                                 {row.open > 0
-                                                    ? <span className="badge badge-danger">{row.open}</span>
+                                                    ? <span className="badge text-bg-danger">{row.open}</span>
                                                     : '—'}
                                             </td>
-                                            <td className="text-right">
+                                            <td className="text-end">
                                                 {row.avg_minutes !== null ? fmtDuration(row.avg_minutes) : '—'}
                                             </td>
                                         </tr>
@@ -376,7 +376,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                                 <div className="p-2 border-top">
                                     <small className="text-muted d-block mb-1">Ressources les plus alertées</small>
                                     {andon.by_resource.map(r => (
-                                        <span key={r.label} className="badge badge-light mr-1" style={{ fontSize: 12 }}>
+                                        <span key={r.label} className="badge text-bg-light me-1" style={{ fontSize: 12 }}>
                                             {r.label} <strong>{r.count}</strong>
                                         </span>
                                     ))}

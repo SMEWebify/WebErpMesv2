@@ -13,11 +13,11 @@
     use App\Services\HumanResources\HabilitationService;
 
     $badges = [
-        HabilitationService::STATUS_VALID    => ['badge-success', 'fas fa-check', 'skills_status_valid_trans_key'],
-        HabilitationService::STATUS_EXPIRING => ['badge-warning', 'fas fa-hourglass-half', 'skills_status_expiring_trans_key'],
-        HabilitationService::STATUS_EXPIRED  => ['badge-danger',  'fas fa-times', 'skills_status_expired_trans_key'],
-        HabilitationService::STATUS_FAILED   => ['badge-secondary', 'fas fa-ban', 'skills_status_failed_trans_key'],
-        HabilitationService::STATUS_MISSING  => ['badge-light', 'fas fa-minus', 'skills_status_missing_trans_key'],
+        HabilitationService::STATUS_VALID    => ['text-bg-success', 'fas fa-check', 'skills_status_valid_trans_key'],
+        HabilitationService::STATUS_EXPIRING => ['text-bg-warning', 'fas fa-hourglass-half', 'skills_status_expiring_trans_key'],
+        HabilitationService::STATUS_EXPIRED  => ['text-bg-danger',  'fas fa-times', 'skills_status_expired_trans_key'],
+        HabilitationService::STATUS_FAILED   => ['text-bg-secondary', 'fas fa-ban', 'skills_status_failed_trans_key'],
+        HabilitationService::STATUS_MISSING  => ['text-bg-light', 'fas fa-minus', 'skills_status_missing_trans_key'],
     ];
 @endphp
 
@@ -26,17 +26,17 @@
     {{ __('general_content.skills_matrix_advisory_trans_key') }}
 </div>
 
-<div class="card">
+<div class="card mb-3">
     <div class="card-header p-2">
         <ul class="nav nav-pills">
-            <li class="nav-item"><a class="nav-link active" href="#Matrix" data-toggle="tab">{{ __('general_content.skills_matrix_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#Matrix" data-bs-toggle="tab">{{ __('general_content.skills_matrix_trans_key') }}</a></li>
             <li class="nav-item">
-                <a class="nav-link" href="#Alerts" data-toggle="tab">
+                <a class="nav-link" href="#Alerts" data-bs-toggle="tab">
                     {{ __('general_content.skills_alerts_trans_key') }}
-                    @if(count($Alerts) > 0)<span class="badge badge-warning">{{ count($Alerts) }}</span>@endif
+                    @if(count($Alerts) > 0)<span class="badge text-bg-warning">{{ count($Alerts) }}</span>@endif
                 </a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="#Types" data-toggle="tab">{{ __('general_content.training_types_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Types" data-bs-toggle="tab">{{ __('general_content.training_types_trans_key') }}</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -136,7 +136,7 @@
                                             <th>{{ __('general_content.code_trans_key') }}</th>
                                             <th>{{ __('general_content.label_trans_key') }}</th>
                                             <th>{{ __('general_content.ressources_trans_key') }}</th>
-                                            <th class="text-right">{{ __('general_content.training_validity_trans_key') }}</th>
+                                            <th class="text-end">{{ __('general_content.training_validity_trans_key') }}</th>
                                             <th>{{ __('general_content.status_trans_key') }}</th>
                                             <th></th>
                                         </tr>
@@ -150,7 +150,7 @@
                                             </td>
                                             <td>{{ $Type->label }}</td>
                                             <td><small>{{ $Type->resources->pluck('code')->implode(', ') ?: '—' }}</small></td>
-                                            <td class="text-right">{{ $Type->validity_months ? $Type->validity_months : '∞' }}</td>
+                                            <td class="text-end">{{ $Type->validity_months ? $Type->validity_months : '∞' }}</td>
                                             <td>
                                                 @if($Type->active)
                                                     {{ __('general_content.active_trans_key') }}
@@ -164,25 +164,25 @@
                                                     <form method="POST" action="{{ route('osh.training.type.update', ['id' => $Type->id]) }}">
                                                         @csrf
                                                         <div class="card-body">
-                                                            <div class="form-group">
+                                                            <div class="mb-3">
                                                                 <label>{{ __('general_content.code_trans_key') }}</label>
                                                                 <input type="text" class="form-control" name="code" maxlength="30" value="{{ $Type->code }}" required>
                                                             </div>
-                                                            <div class="form-group">
+                                                            <div class="mb-3">
                                                                 <label>{{ __('general_content.label_trans_key') }}</label>
                                                                 <input type="text" class="form-control" name="label" value="{{ $Type->label }}" required>
                                                             </div>
-                                                            <div class="form-group">
+                                                            <div class="mb-3">
                                                                 <label>{{ __('general_content.color_trans_key') }}</label>
                                                                 <input type="color" class="form-control" name="color" value="{{ $Type->color ?? '#6c757d' }}">
                                                             </div>
-                                                            <div class="form-group">
+                                                            <div class="mb-3">
                                                                 <label>{{ __('general_content.training_validity_trans_key') }}</label>
                                                                 <input type="number" min="0" max="600" class="form-control" name="validity_months" value="{{ $Type->validity_months }}">
                                                             </div>
-                                                            <div class="form-group">
+                                                            <div class="mb-3">
                                                                 <label>{{ __('general_content.ressources_trans_key') }}</label>
-                                                                <select class="form-control" name="resources[]" multiple size="6">
+                                                                <select class="form-select" name="resources[]" multiple size="6">
                                                                     @foreach($Resources as $Resource)
                                                                         <option value="{{ $Resource->id }}" @if($Type->resources->contains($Resource->id)) selected @endif>{{ $Resource->code }} — {{ $Resource->label }}</option>
                                                                     @endforeach
@@ -196,7 +196,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="card-footer">
-                                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                         </div>
                                                     </form>
                                                 </x-adminlte-modal>
@@ -214,25 +214,25 @@
                         <x-adminlte-card title="{{ __('general_content.training_new_type_trans_key') }}" theme="secondary" maximizable>
                             <form method="POST" action="{{ route('osh.training.type.store') }}">
                                 @csrf
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="code">{{ __('general_content.code_trans_key') }}</label>
                                     <input type="text" class="form-control" name="code" id="code" maxlength="30" required>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="label">{{ __('general_content.label_trans_key') }}</label>
                                     <input type="text" class="form-control" name="label" id="label" required>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="color">{{ __('general_content.color_trans_key') }}</label>
                                     <input type="color" class="form-control" name="color" id="color" value="#6c757d">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="validity_months">{{ __('general_content.training_validity_trans_key') }}</label>
                                     <input type="number" min="0" max="600" class="form-control" name="validity_months" id="validity_months" value="0">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="resources">{{ __('general_content.ressources_trans_key') }}</label>
-                                    <select class="form-control" name="resources[]" id="resources" multiple size="6">
+                                    <select class="form-select" name="resources[]" id="resources" multiple size="6">
                                         @foreach($Resources as $Resource)
                                             <option value="{{ $Resource->id }}">{{ $Resource->code }} — {{ $Resource->label }}</option>
                                         @endforeach
@@ -240,7 +240,7 @@
                                     <small class="text-muted">{{ __('general_content.skills_resources_hint_trans_key') }}</small>
                                 </div>
                                 <div class="card-footer">
-                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                 </div>
                             </form>
                         </x-adminlte-card>

@@ -3,7 +3,7 @@
 @section('title', 'Tokens API')
 
 @section('content_header')
-    <h1><i class="fas fa-key mr-2"></i>Tokens API</h1>
+    <h1><i class="fas fa-key me-2"></i>Tokens API</h1>
 @stop
 
 @section('content')

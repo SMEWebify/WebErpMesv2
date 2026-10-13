@@ -4,7 +4,7 @@
 
 @section('content_header')
     <h1>
-        <a href="{{ route('admin.integrations.index') }}" class="text-muted mr-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
+        <a href="{{ route('admin.integrations.index') }}" class="text-muted me-2" title="Intégrations"><i class="fas fa-arrow-left"></i></a>
         Intégrations - endpoints
     </h1>
 @stop
@@ -36,7 +36,7 @@
                             <th>Auth</th>
                             <th>Actif</th>
                             <th>Dernière activité</th>
-                            <th class="text-right">Actions</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,17 +46,17 @@
                                 <td>{{ $endpoint->name }}</td>
                                 <td>
                                     @if($endpoint->direction === 'outbound')
-                                        <span class="badge badge-info">Sortant</span>
+                                        <span class="badge text-bg-info">Sortant</span>
                                     @else
-                                        <span class="badge badge-warning">Entrant</span>
+                                        <span class="badge text-bg-warning">Entrant</span>
                                     @endif
                                 </td>
                                 <td><code>{{ $endpoint->auth_method }}</code></td>
                                 <td>
                                     @if($endpoint->is_active)
-                                        <span class="badge badge-success">Oui</span>
+                                        <span class="badge text-bg-success">Oui</span>
                                     @else
-                                        <span class="badge badge-secondary">Non</span>
+                                        <span class="badge text-bg-secondary">Non</span>
                                     @endif
                                 </td>
                                 <td>
@@ -72,7 +72,7 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="text-right">
+                                <td class="text-end">
                                     <a href="{{ route('admin.integrations.endpoints.deliveries', $endpoint) }}" class="btn btn-sm btn-outline-secondary" title="Journal">
                                         <i class="fas fa-list"></i>
                                     </a>

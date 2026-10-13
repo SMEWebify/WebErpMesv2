@@ -22,11 +22,9 @@
             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                    value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="input-group-text">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
-            </div>
 
             @error('email')
                 <span class="invalid-feedback" role="alert">
@@ -40,11 +38,9 @@
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                    placeholder="{{ __('adminlte::adminlte.password') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
-            </div>
 
             @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -59,11 +55,9 @@
                    class="form-control @error('password_confirmation') is-invalid @enderror"
                    placeholder="{{ trans('adminlte::adminlte.retype_password') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
-            </div>
 
             @error('password_confirmation')
                 <span class="invalid-feedback" role="alert">
@@ -73,7 +67,7 @@
         </div>
 
         {{-- Confirm password reset button --}}
-        <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+        <button type="submit" class="btn w-100 {{ config('adminlte.classes_auth_btn', 'rounded-0 btn-primary') }}">
             <span class="fas fa-sync-alt"></span>
             {{ __('adminlte::adminlte.reset_password') }}
         </button>

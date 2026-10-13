@@ -9,11 +9,11 @@ import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanyS
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'in_progress'     },
-    2: { badge: 'badge-warning', label: 'ordered'         },
-    3: { badge: 'badge-primary', label: 'partly_received' },
-    4: { badge: 'badge-success', label: 'received'        },
-    5: { badge: 'badge-dark',    label: 'canceled'        },
+    1: { badge: 'text-bg-info',    label: 'in_progress'     },
+    2: { badge: 'text-bg-warning', label: 'ordered'         },
+    3: { badge: 'text-bg-primary', label: 'partly_received' },
+    4: { badge: 'text-bg-success', label: 'received'        },
+    5: { badge: 'text-bg-dark',    label: 'canceled'        },
 };
 
 const STATUS_COLORS = { 1: '#17a2b8', 2: '#ffc107', 3: '#007bff', 4: '#28a745', 5: '#343a40' };
@@ -47,30 +47,30 @@ function KPICards({ kpi, trans, currency, locale }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-teal">
+                <div className="small-box text-bg-teal">
                     <div className="inner">
                         <h3>{formatCurrency(kpi.averageAmount ?? 0, currency, locale)}</h3>
                         <p>{trans.average_purchase_price ?? 'Average purchase price'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-chart-bar" /></div>
+                    <i className="small-box-icon fas fa-chart-bar" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-danger">
+                <div className="small-box text-bg-danger">
                     <div className="inner">
                         <h3>{formatCurrency(kpi.totalPurchasesAmount ?? 0, currency, locale)}</h3>
                         <p>{trans.total_price ?? 'Total purchases'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-shopping-cart" /></div>
+                    <i className="small-box-icon fas fa-shopping-cart" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-purple">
+                <div className="small-box text-bg-violet">
                     <div className="inner">
                         <h3>{kpi.totalPurchaseLineCount ?? 0}</h3>
                         <p>{trans.lines_count ?? 'Purchase lines'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-list" /></div>
+                    <i className="small-box-icon fas fa-list" aria-hidden="true" />
                 </div>
             </div>
         </div>
@@ -240,7 +240,7 @@ function LineChart({ data, trans }) {
                 ))}
             </svg>
             <div className="d-flex justify-content-center mt-1" style={{ gap: '1.5rem' }}>
-                <div className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: '#555' }}>
+                <div className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: 'var(--bs-body-color)' }}>
                     <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={CHART_BLUE} strokeWidth="2" /></svg>
                     {trans.purchase_forecast ?? 'Achats (année)'}
                 </div>
@@ -268,7 +268,7 @@ function TopSuppliersCard({ suppliers, trans }) {
                     <span style={{ fontSize: '0.82rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={s.label}>
                         {s.label}
                     </span>
-                    <span className="badge badge-warning" style={{ fontSize: '0.7rem' }}>{s.avg_rating}</span>
+                    <span className="badge text-bg-warning" style={{ fontSize: '0.7rem' }}>{s.avg_rating}</span>
                 </div>
             ))}
         </div>
@@ -286,14 +286,14 @@ function DeliveryTimesCard({ suppliers, trans }) {
             <thead>
                 <tr>
                     <th>{trans.supplier ?? 'Fournisseur'}</th>
-                    <th className="text-right">{trans.delivery_time ?? 'Délai (j)'}</th>
+                    <th className="text-end">{trans.delivery_time ?? 'Délai (j)'}</th>
                 </tr>
             </thead>
             <tbody>
                 {suppliers.map((s, i) => (
                     <tr key={i}>
                         <td style={{ fontSize: '0.82rem' }}>{s.supplier_name}</td>
-                        <td className="text-right" style={{ fontSize: '0.82rem' }}>{s.avg_reception_delay}</td>
+                        <td className="text-end" style={{ fontSize: '0.82rem' }}>{s.avg_reception_delay}</td>
                     </tr>
                 ))}
             </tbody>
@@ -312,14 +312,14 @@ function TopProductsCard({ products, trans }) {
             <thead>
                 <tr>
                     <th>{trans.product ?? 'Produit'}</th>
-                    <th className="text-right">{trans.qty_total ?? 'Qté'}</th>
+                    <th className="text-end">{trans.qty_total ?? 'Qté'}</th>
                 </tr>
             </thead>
             <tbody>
                 {products.map((p, i) => (
                     <tr key={i}>
                         <td style={{ fontSize: '0.82rem' }}>{p.label}</td>
-                        <td className="text-right" style={{ fontSize: '0.82rem' }}>{p.total_quantity}</td>
+                        <td className="text-end" style={{ fontSize: '0.82rem' }}>{p.total_quantity}</td>
                     </tr>
                 ))}
             </tbody>
@@ -395,10 +395,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
             <div className="row">
                 {/* Pie chart */}
                 <div className="col-md-3">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.purchases_by_status ?? 'Par statut'}
                             </h3>
                         </div>
@@ -410,10 +410,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
 
                 {/* Line chart */}
                 <div className="col-md-6">
-                    <div className="card card-purple">
+                    <div className="card card-violet mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.monthly_recap ?? 'Récap mensuel'}
                             </h3>
                         </div>
@@ -425,10 +425,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
 
                 {/* Top rated suppliers */}
                 <div className="col-md-3">
-                    <div className="card card-primary">
+                    <div className="card card-primary mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-star mr-1" />
+                                <i className="fas fa-star me-1" />
                                 {trans.top_rated_supplier ?? 'Top fournisseurs'}
                             </h3>
                         </div>
@@ -442,10 +442,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
             <div className="row">
                 {/* Fastest */}
                 <div className="col-md-3">
-                    <div className="card card-secondary">
+                    <div className="card card-secondary mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-bolt mr-1" />
+                                <i className="fas fa-bolt me-1" />
                                 {trans.suppliers_fastest ?? 'Délais les plus courts'}
                             </h3>
                         </div>
@@ -457,10 +457,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
 
                 {/* Slowest */}
                 <div className="col-md-3">
-                    <div className="card card-dark">
+                    <div className="card card-dark mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-hourglass-half mr-1" />
+                                <i className="fas fa-hourglass-half me-1" />
                                 {trans.suppliers_slowest ?? 'Délais les plus longs'}
                             </h3>
                         </div>
@@ -472,10 +472,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
 
                 {/* Top products */}
                 <div className="col-md-3">
-                    <div className="card card-success">
+                    <div className="card card-success mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-box mr-1" />
+                                <i className="fas fa-box me-1" />
                                 {trans.most_purchased_products ?? 'Produits les + achetés'}
                             </h3>
                         </div>
@@ -487,10 +487,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
 
                 {/* Composite indicators */}
                 <div className="col-md-3">
-                    <div className="card card-info">
+                    <div className="card card-info mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-line mr-1" />
+                                <i className="fas fa-chart-line me-1" />
                                 {trans.composite_indicators ?? 'Indicateurs composites'}
                             </h3>
                         </div>
@@ -505,10 +505,10 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
             {suppliersToRequalify?.length > 0 && (
                 <div className="row">
                     <div className="col-md-6">
-                        <div className="card card-danger">
+                        <div className="card card-danger mb-3">
                             <div className="card-header">
                                 <h3 className="card-title">
-                                    <i className="fas fa-exclamation-triangle mr-1" />
+                                    <i className="fas fa-exclamation-triangle me-1" />
                                     {trans.suppliers_to_requalify ?? 'Fournisseurs à requalifier'}
                                 </h3>
                             </div>
@@ -542,7 +542,7 @@ function purchaseColumns(trans, currency, locale) {
         { key: 'created_at',           label: trans.created_at   ?? 'Créé le',     sortable: true, align: 'center',
           filter: 'date' },
         { key: 'purchase_lines_count', label: trans.lines        ?? 'Lignes',      sortable: true, align: 'center',
-          render: p => <span className="badge badge-secondary">{p.purchase_lines_count}</span> },
+          render: p => <span className="badge text-bg-secondary">{p.purchase_lines_count}</span> },
         { key: 'total_amount',         label: trans.total_amount ?? 'Total',       sortable: true, align: 'right', bold: true,
           render: p => (p.total_amount > 0 ? formatCurrency(p.total_amount, currency, locale) : <span className="text-muted">—</span>),
           total: { value: p => p.total_amount ?? 0, format: sum => formatCurrency(sum, currency, locale) },
@@ -637,7 +637,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                     <div className="modal-content">
                         <div className="modal-header bg-success">
                             <h5 className="modal-title">{trans.new_purchase ?? 'Nouvel achat'}</h5>
-                            <button className="close" onClick={onClose}><span>×</span></button>
+                            <button onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                         </div>
                         <div className="modal-body">
                             <div className="row">
@@ -658,7 +658,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 {/* Supplier */}
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.company ?? 'Fournisseur'} *</label>
-                                    <select className={`form-control form-control-sm ${errors.companies_id ? 'is-invalid' : ''}`}
+                                    <select className={`form-select form-select-sm ${errors.companies_id ? 'is-invalid' : ''}`}
                                         value={form.companies_id} onChange={e => set('companies_id', e.target.value)}>
                                         <option value="">—</option>
                                         {(selectData?.suppliers ?? []).map(c => (
@@ -671,7 +671,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.contact ?? 'Contact'} *</label>
                                     <div className="input-group input-group-sm">
-                                        <select className={`form-control form-control-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.companies_contacts_id ? 'is-invalid' : ''}`}
                                             value={form.companies_contacts_id}
                                             onChange={e => set('companies_contacts_id', e.target.value)}
                                             disabled={!form.companies_id}>
@@ -679,9 +679,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                             {contactOptions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </select>
                                         {form.companies_id && (
-                                            <div className="input-group-append">
-                                                <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowContactModal(true)}>+</button>
-                                            </div>
+                                            <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowContactModal(true)}>+</button>
                                         )}
                                     </div>
                                     {errors.companies_contacts_id && <div className="invalid-feedback d-block">{errors.companies_contacts_id[0]}</div>}
@@ -690,7 +688,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                 <div className="col-md-6 mb-2">
                                     <label className="mb-0 small">{trans.address ?? 'Adresse'} *</label>
                                     <div className="input-group input-group-sm">
-                                        <select className={`form-control form-control-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
+                                        <select className={`form-select form-select-sm ${errors.companies_addresses_id ? 'is-invalid' : ''}`}
                                             value={form.companies_addresses_id}
                                             onChange={e => set('companies_addresses_id', e.target.value)}
                                             disabled={!form.companies_id}>
@@ -698,9 +696,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                                             {addressOptions.map(a => <option key={a.id} value={a.id}>{a.label} — {a.adress}</option>)}
                                         </select>
                                         {form.companies_id && (
-                                            <div className="input-group-append">
-                                                <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowAddressModal(true)}>+</button>
-                                            </div>
+                                            <button className="btn btn-outline-secondary btn-sm" type="button" onClick={() => setShowAddressModal(true)}>+</button>
                                         )}
                                     </div>
                                     {errors.companies_addresses_id && <div className="invalid-feedback d-block">{errors.companies_addresses_id[0]}</div>}
@@ -834,9 +830,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input type="text" className="form-control"
                         placeholder={trans.search ?? 'Rechercher…'}
                         value={search}
@@ -853,7 +847,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 
                 {/* New purchase */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
-                    <i className="fas fa-plus mr-1" />{trans.new_purchase ?? 'Nouvel achat'}
+                    <i className="fas fa-plus me-1" />{trans.new_purchase ?? 'Nouvel achat'}
                 </button>
             </div>
 
@@ -904,7 +898,7 @@ export default function PurchasesIndex({
     const locale   = trans.locale   ?? 'fr-FR';
 
     return (
-        <div className="card card-outline card-orange">
+        <div className="card card-outline card-orange mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

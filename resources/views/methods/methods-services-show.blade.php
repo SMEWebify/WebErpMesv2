@@ -42,7 +42,7 @@
         @endphp
         <div class="row text-center">
           <div class="col-6">
-            <div class="info-box bg-blue">
+            <div class="info-box text-bg-primary">
               <span class="info-box-icon"><i class="fas fa-euro-sign"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Taux horaire</span>

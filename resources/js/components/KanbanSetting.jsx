@@ -90,24 +90,20 @@ export default function KanbanSetting({ endpoints, trans }) {
             {alert && (
                 <div className={`alert alert-${alert.type} alert-dismissible`}>
                     {alert.msg}
-                    <button type="button" className="close" onClick={() => setAlert(null)}>
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" onClick={() => setAlert(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
-            <div className="card">
+            <div className="card mb-3">
                 <div className="card-body">
                     <form onSubmit={handleStore}>
                         <div className="row">
                             <div className="col-4">
                                 <label>{trans.title}</label>
                                 <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-ruler"></i></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-ruler"></i></span>
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={title}
                                         onChange={e => setTitle(e.target.value)}
                                     >
@@ -121,9 +117,7 @@ export default function KanbanSetting({ endpoints, trans }) {
                             <div className="col-4">
                                 <label>{trans.order} :</label>
                                 <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-tags"></i></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-tags"></i></span>
                                     <input
                                         type="number"
                                         className="form-control"
@@ -135,7 +129,7 @@ export default function KanbanSetting({ endpoints, trans }) {
                             </div>
                             <div className="col-2">
                                 <br />
-                                <button type="submit" className="btn btn-success btn-block" disabled={loading}>
+                                <button type="submit" className="btn btn-success w-100" disabled={loading}>
                                     {trans.add}
                                 </button>
                             </div>
@@ -144,7 +138,7 @@ export default function KanbanSetting({ endpoints, trans }) {
                 </div>
             </div>
 
-            <div className="card">
+            <div className="card mb-3">
                 <div className="card-body">
                     <div className="table-responsive p-0">
                         <table className="table table-hover">

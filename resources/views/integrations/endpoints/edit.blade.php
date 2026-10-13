@@ -38,16 +38,14 @@
 
             @foreach(session('revealed_secrets') as $key => $value)
                 <div class="mb-3">
-                    <label class="font-weight-bold">{{ $key === 'bearer_token' ? 'Bearer token' : 'Secret HMAC' }}</label>
+                    <label class="fw-bold">{{ $key === 'bearer_token' ? 'Bearer token' : 'Secret HMAC' }}</label>
                     <div class="input-group">
                         <input type="text" class="form-control font-monospace" readonly value="{{ $value }}"
                                id="reveal-{{ $key }}"
                                onclick="this.select()">
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-primary" onclick="copySecret('reveal-{{ $key }}', this)">
+                        <button type="button" class="btn btn-outline-primary" onclick="copySecret('reveal-{{ $key }}', this)">
                                 <i class="fas fa-copy"></i> Copier
                             </button>
-                        </div>
                     </div>
                 </div>
             @endforeach
@@ -99,7 +97,7 @@
                 </div>
                 <div class="col-md-3">
                     <label>Direction</label>
-                    <select name="direction" class="form-control" required @if(! $isNew) disabled @endif>
+                    <select name="direction" class="form-select" required @if(! $isNew) disabled @endif>
                         <option value="outbound" @selected(old('direction', $endpoint->direction) === 'outbound')>Sortant (ERP → externe)</option>
                         <option value="inbound"  @selected(old('direction', $endpoint->direction) === 'inbound')>Entrant (externe → ERP)</option>
                     </select>
@@ -124,7 +122,6 @@
                 </div>
                 <div class="col-md-4">
                     <x-adminlte-input-switch name="verify_ssl" label="Vérifier le certificat SSL"
-                                             data-on-text="Oui" data-off-text="Non"
                                              :checked="old('verify_ssl', $endpoint->verify_ssl ?? true)"/>
                 </div>
             </div>
@@ -134,7 +131,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <label>Méthode</label>
-                    <select name="auth_method" class="form-control" required>
+                    <select name="auth_method" class="form-select" required>
                         <option value="none"         @selected(old('auth_method', $endpoint->auth_method) === 'none')>Aucune (dev)</option>
                         <option value="bearer"      @selected(old('auth_method', $endpoint->auth_method) === 'bearer')>Bearer</option>
                         <option value="hmac"        @selected(old('auth_method', $endpoint->auth_method) === 'hmac')>HMAC-SHA256</option>
@@ -200,7 +197,7 @@ curl -sS -X POST {$inboundUrl} \\
   -d "\${BODY}"
 BASH;
 @endphp
-                <pre class="bg-light p-3 rounded"><code>{{ $curl }}</code></pre>
+                <pre class="bg-body-tertiary p-3 rounded"><code>{{ $curl }}</code></pre>
                 <small class="text-muted">
                     Résultat attendu : <code>200 {"status":"ignored", "reason":"event_type_not_subscribed"}</code>
                     (le tunnel HMAC est validé, mais <code>ping</code> n'a pas de handler - normal).
@@ -235,7 +232,7 @@ BASH;
                 <div class="row">
                     <div class="col-md-6">
                         <label>Transition — statut de départ</label>
-                        <select name="metadata[status_transition_from]" class="form-control">
+                        <select name="metadata[status_transition_from]" class="form-select">
                             @foreach($statusOptions as $val => $lbl)
                                 <option value="{{ $val }}" @selected($metaStatusFrom === $val)>{{ $lbl }}</option>
                             @endforeach
@@ -243,7 +240,7 @@ BASH;
                     </div>
                     <div class="col-md-6">
                         <label>Transition — statut d'arrivée</label>
-                        <select name="metadata[status_transition_to]" class="form-control">
+                        <select name="metadata[status_transition_to]" class="form-select">
                             @foreach($statusOptions as $val => $lbl)
                                 <option value="{{ $val }}" @selected($metaStatusTo === $val)>{{ $lbl }}</option>
                             @endforeach
@@ -254,7 +251,6 @@ BASH;
                 <div class="row mt-3">
                     <div class="col-md-4">
                         <x-adminlte-input-switch name="metadata[send_tasks]" label="Inclure les tâches dans le payload"
-                                                 data-on-text="Oui" data-off-text="Non"
                                                  :checked="$metaSendTasks"/>
                     </div>
                     <div class="col-md-4">
@@ -290,7 +286,7 @@ BASH;
 
                         @foreach($eventCatalog as $groupLabel => $events)
                             <div class="border rounded p-2 mb-2">
-                                <div class="font-weight-bold small text-muted mb-1">{{ $groupLabel }}</div>
+                                <div class="fw-bold small text-muted mb-1">{{ $groupLabel }}</div>
                                 <div class="row">
                                     @foreach($events as $eventType => $eventLabel)
                                         <div class="col-md-6 col-lg-4">
@@ -321,7 +317,7 @@ BASH;
                             <div class="alert alert-info py-2 small">
                                 <strong>Events custom conservés :</strong>
                                 @foreach($extras as $extra)
-                                    <code class="mr-1">{{ $extra }}</code>
+                                    <code class="me-1">{{ $extra }}</code>
                                     <input type="hidden" name="events[]" value="{{ $extra }}">
                                 @endforeach
                             </div>
@@ -343,7 +339,6 @@ BASH;
             <div class="row mt-3">
                 <div class="col-md-4">
                     <x-adminlte-input-switch name="is_active" label="Endpoint actif"
-                                             data-on-text="Oui" data-off-text="Non"
                                              :checked="old('is_active', $endpoint->is_active ?? false)"/>
                 </div>
                 <div class="col-md-4">
@@ -372,7 +367,7 @@ BASH;
         <x-adminlte-card title="Actions rapides" theme="secondary" theme-mode="outline" class="mt-4">
             <div class="d-flex gap-2 align-items-center flex-wrap">
                 <form method="POST" action="{{ route('admin.integrations.endpoints.regenerate', $endpoint) }}"
-                      class="d-inline mr-2"
+                      class="d-inline me-2"
                       onsubmit="return confirm('Régénérer les secrets ? Le partenaire devra être reconfiguré.');">
                     @csrf
                     <button type="submit" class="btn btn-outline-warning btn-sm">
@@ -388,7 +383,7 @@ BASH;
                             <i class="fas fa-satellite-dish"></i> Tester la connexion
                         </button>
                     </form>
-                    <small class="text-muted ml-2">POST signé sur <code>{{ rtrim($endpoint->url, '/') }}/api/plugin/ping</code></small>
+                    <small class="text-muted ms-2">POST signé sur <code>{{ rtrim($endpoint->url, '/') }}/api/plugin/ping</code></small>
                 @endif
             </div>
             <small class="text-muted d-block mt-2">
@@ -404,12 +399,12 @@ BASH;
                 Utile en setup client ou après un incident réseau. Idempotent côté N2P (upsert par <code>external_ref</code>).
             </p>
             <form method="POST" action="{{ route('admin.integrations.endpoints.resync-sheets', $endpoint) }}"
-                  class="form-inline"
+                  class="d-flex flex-wrap align-items-center gap-2"
                   onsubmit="return confirm('Lancer la resynchronisation du catalogue tôles ?');">
                 @csrf
-                <label class="mr-2 mb-0" for="resync-days">Fenêtre (jours)</label>
+                <label class="me-2 mb-0" for="resync-days">Fenêtre (jours)</label>
                 <input type="number" id="resync-days" name="days" value="30" min="1" max="365"
-                       class="form-control form-control-sm mr-2" style="width: 100px;">
+                       class="form-control form-control-sm me-2 w-auto" style="width: 100px;">
                 <button type="submit" class="btn btn-warning btn-sm">
                     <i class="fas fa-sync"></i> Resynchroniser catalogue tôles
                 </button>
@@ -418,14 +413,3 @@ BASH;
     @endif
 @stop
 
-@section('plugins.BootstrapSwitch', true)
-
-@section('js')
-<script>
-    $(function () {
-        $("input[data-bootstrap-switch]").each(function () {
-            $(this).bootstrapSwitch('state', $(this).prop('checked'));
-        });
-    });
-</script>
-@stop

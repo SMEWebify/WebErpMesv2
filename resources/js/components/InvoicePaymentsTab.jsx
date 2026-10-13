@@ -18,7 +18,7 @@ function BalanceBar({ total, paid, remaining }) {
                 <span className="text-muted small">Réglé : <strong>{fmt(paid)} €</strong></span>
                 <span className={`text-${remaining <= 0 ? 'success' : 'danger'} small`}>
                     {remaining <= 0
-                        ? <><i className="fas fa-check-circle mr-1"></i>Soldée</>
+                        ? <><i className="fas fa-check-circle me-1"></i>Soldée</>
                         : <>Reste : <strong>{fmt(remaining)} €</strong></>}
                 </span>
                 <span className="text-muted small">Total : <strong>{fmt(total)} €</strong></span>
@@ -107,18 +107,18 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
             {error && (
                 <div className="alert alert-danger alert-dismissible">
                     {error}
-                    <button type="button" className="close" onClick={() => setError(null)}><span>&times;</span></button>
+                    <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
             <div className="row">
                 {/* Formulaire de saisie */}
                 <div className="col-md-4">
-                    <div className="card card-secondary card-outline">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus mr-1"></i>Saisir un règlement</h3></div>
+                    <div className="card card-secondary card-outline mb-3">
+                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus me-1"></i>Saisir un règlement</h3></div>
                         <div className="card-body">
                             <form onSubmit={handleStore}>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Montant (€) <span className="text-danger">*</span></label>
                                     <input
                                         type="number" step="0.01" min="0.01"
@@ -128,33 +128,33 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                         placeholder={data.remaining > 0 ? fmt(data.remaining) : '0.00'}
                                     />
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Date <span className="text-danger">*</span></label>
                                     <input type="date" className="form-control" name="payment_date" value={form.payment_date} onChange={handleChange} required />
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Méthode</label>
-                                    <select className="form-control" name="payment_method_id" value={form.payment_method_id} onChange={handleChange}>
+                                    <select className="form-select" name="payment_method_id" value={form.payment_method_id} onChange={handleChange}>
                                         <option value="">— Choisir —</option>
                                         {paymentMethods.map(m => (
                                             <option key={m.id} value={m.id}>{m.label}</option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Référence</label>
                                     <input type="text" className="form-control" name="reference" value={form.reference} onChange={handleChange} placeholder="N° virement, chèque…" maxLength={100} />
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Note</label>
                                     <textarea className="form-control" name="note" value={form.note} onChange={handleChange} rows={2} maxLength={500}></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-success btn-block" disabled={saving || data.remaining <= 0}>
-                                    <i className="fas fa-check mr-1"></i>
+                                <button type="submit" className="btn btn-success w-100" disabled={saving || data.remaining <= 0}>
+                                    <i className="fas fa-check me-1"></i>
                                     {saving ? 'Enregistrement…' : 'Enregistrer'}
                                 </button>
                                 {data.remaining <= 0 && (
-                                    <p className="text-success text-center mt-2 small"><i className="fas fa-lock mr-1"></i>Facture soldée</p>
+                                    <p className="text-success text-center mt-2 small"><i className="fas fa-lock me-1"></i>Facture soldée</p>
                                 )}
                             </form>
                         </div>
@@ -163,23 +163,23 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
 
                 {/* Liste des règlements */}
                 <div className="col-md-8">
-                    <div className="card card-primary card-outline">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-list mr-1"></i>Historique des règlements</h3></div>
+                    <div className="card card-primary card-outline mb-3">
+                        <div className="card-header"><h3 className="card-title"><i className="fas fa-list me-1"></i>Historique des règlements</h3></div>
                         <div className="card-body p-0">
                             {loading ? (
-                                <div className="text-center py-4"><i className="fas fa-spinner fa-spin mr-2"></i>Chargement…</div>
+                                <div className="text-center py-4"><i className="fas fa-spinner fa-spin me-2"></i>Chargement…</div>
                             ) : data.payments.length === 0 ? (
                                 <div className="text-center text-muted py-4">
                                     <i className="fas fa-inbox fa-2x d-block mb-2"></i>Aucun règlement enregistré
                                 </div>
                             ) : (
                                 <table className="table table-sm table-hover mb-0">
-                                    <thead className="thead-light">
+                                    <thead className="table-light">
                                         <tr>
                                             <th>Date</th>
                                             <th>Méthode</th>
                                             <th>Référence</th>
-                                            <th className="text-right">Montant</th>
+                                            <th className="text-end">Montant</th>
                                             <th>Par</th>
                                             <th></th>
                                         </tr>
@@ -195,11 +195,11 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                                         : <span className="text-muted">—</span>}
                                                     {p.note && <small className="d-block text-muted">{p.note}</small>}
                                                 </td>
-                                                <td className="text-right font-weight-bold">{fmt(p.amount)} €</td>
+                                                <td className="text-end fw-bold">{fmt(p.amount)} €</td>
                                                 <td><small className="text-muted">{p.user}</small></td>
                                                 <td>
                                                     <button
-                                                        className="btn btn-xs btn-outline-danger"
+                                                        className="btn btn-sm btn-outline-danger"
                                                         onClick={() => handleDelete(p.id)}
                                                         title="Supprimer"
                                                     >
@@ -210,9 +210,9 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                         ))}
                                     </tbody>
                                     <tfoot>
-                                        <tr className="table-success font-weight-bold">
-                                            <td colSpan={3} className="text-right">Total réglé</td>
-                                            <td className="text-right">{fmt(data.paid)} €</td>
+                                        <tr className="table-success fw-bold">
+                                            <td colSpan={3} className="text-end">Total réglé</td>
+                                            <td className="text-end">{fmt(data.paid)} €</td>
                                             <td colSpan={2}></td>
                                         </tr>
                                     </tfoot>

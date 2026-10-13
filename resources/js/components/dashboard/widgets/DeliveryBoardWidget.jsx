@@ -72,7 +72,7 @@ const S = {
     empty: {
         minWidth: 180,
         fontWeight: 600,
-        color: '#6c757d',
+        color: 'var(--bs-secondary-color)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

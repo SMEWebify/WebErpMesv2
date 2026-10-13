@@ -20,20 +20,20 @@ async function apiFetch(url, body) {
 }
 
 // ---------------------------------------------------------------------------
-// Toggle Switch (Bootstrap 4 custom-switch)
+// Toggle Switch (Bootstrap 4 form-switch)
 // ---------------------------------------------------------------------------
 
 function Toggle({ id, checked, onChange, label }) {
     return (
-        <div className="custom-control custom-switch">
+        <div className="form-check form-switch">
             <input
                 type="checkbox"
-                className="custom-control-input"
+                className="form-check-input"
                 id={id}
                 checked={!!checked}
                 onChange={e => onChange(e.target.checked)}
             />
-            <label className="custom-control-label" htmlFor={id}>{label}</label>
+            <label className="form-check-label" htmlFor={id}>{label}</label>
         </div>
     );
 }
@@ -44,7 +44,7 @@ function Toggle({ id, checked, onChange, label }) {
 
 function Field({ label, children, error }) {
     return (
-        <div className="form-group">
+        <div className="mb-3">
             {label && <label className="mb-1">{label}</label>}
             {children}
             {error && <span className="text-danger small">{error}</span>}
@@ -55,9 +55,7 @@ function Field({ label, children, error }) {
 function InputGroup({ icon, children }) {
     return (
         <div className="input-group">
-            <div className="input-group-prepend">
-                <span className="input-group-text"><i className={`fas ${icon}`} /></span>
-            </div>
+            <span className="input-group-text"><i className={`fas ${icon}`} /></span>
             {children}
         </div>
     );
@@ -69,7 +67,7 @@ function InputGroup({ icon, children }) {
 
 function Card({ title, theme, children }) {
     return (
-        <div className={`card card-${theme ?? 'primary'}`}>
+        <div className={`card card-${theme ?? 'primary'} mb-3`}>
             {title && (
                 <div className="card-header">
                     <h3 className="card-title">{title}</h3>
@@ -213,26 +211,20 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             {/* Feedback */}
             {success && (
                 <div className="alert alert-success alert-dismissible">
-                    <button type="button" className="close" onClick={() => setSuccess(null)}>
-                        <span>&times;</span>
-                    </button>
-                    <i className="fas fa-check-circle mr-1" />{success}
+                    <button type="button" onClick={() => setSuccess(null)} aria-label="Close" className="btn-close float-end"></button>
+                    <i className="fas fa-check-circle me-1" />{success}
                 </div>
             )}
             {warning && (
                 <div className="alert alert-warning alert-dismissible">
-                    <button type="button" className="close" onClick={() => setWarning(null)}>
-                        <span>&times;</span>
-                    </button>
-                    <i className="fas fa-exclamation-triangle mr-1" />{warning}
+                    <button type="button" onClick={() => setWarning(null)} aria-label="Close" className="btn-close float-end"></button>
+                    <i className="fas fa-exclamation-triangle me-1" />{warning}
                 </div>
             )}
             {error && (
                 <div className="alert alert-danger alert-dismissible">
-                    <button type="button" className="close" onClick={() => setError(null)}>
-                        <span>&times;</span>
-                    </button>
-                    <i className="fas fa-times-circle mr-1" />{error}
+                    <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
+                    <i className="fas fa-times-circle me-1" />{error}
                 </div>
             )}
 
@@ -311,7 +303,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                         <Field label={trans.user_management} error={errors.user_id?.[0]}>
                             <InputGroup icon="fa-user">
                                 <select
-                                    className={`form-control ${errors.user_id ? 'is-invalid' : ''}`}
+                                    className={`form-select ${errors.user_id ? 'is-invalid' : ''}`}
                                     value={form.user_id ?? ''}
                                     onChange={setVal('user_id')}
                                 >
@@ -336,7 +328,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                         { field: 'lkdsite',     icon: 'fa-linkedin',        placeholder: 'LinkedIn' },
                     ].map(({ field, icon, placeholder }) => (
                         <div key={field} className="col-md-3">
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <InputGroup icon={icon}>
                                     <input
                                         type="text"
@@ -406,7 +398,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                     <div className="col-md-4">
                         <Field label={trans.vat_regime} error={errors.vat_regime_id?.[0]}>
                             <select
-                                className="form-control"
+                                className="form-select"
                                 value={form.vat_regime_id ?? ''}
                                 onChange={setVal('vat_regime_id')}
                             >
@@ -448,7 +440,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                     <div className="col-md-2">
                         <Field label="Annuaire" error={errors.electronic_address_scheme?.[0]}>
                             <select
-                                className="form-control"
+                                className="form-select"
                                 value={form.electronic_address_scheme ?? '0225'}
                                 onChange={setVal('electronic_address_scheme')}
                                 disabled={isIndividual}
@@ -471,8 +463,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                     disabled={isIndividual}
                                 />
                                 {pdpLookupUrl && (
-                                    <div className="input-group-append">
-                                        <button
+                                    <button
                                             type="button"
                                             className="btn btn-outline-secondary"
                                             onClick={handlePdpLookup}
@@ -481,7 +472,6 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                         >
                                             <i className={`fas ${pdpLookup.status === 'busy' ? 'fa-spinner fa-spin' : 'fa-search'}`} />
                                         </button>
-                                    </div>
                                 )}
                             </div>
                             <small className={`form-text ${pdpLookupClass}`}>
@@ -495,14 +485,14 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             </Card>
 
             {/* Customer status */}
-            <div className="card card-outline card-success">
+            <div className="card card-outline card-success mb-3">
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-3">
                             <Field label={trans.status_client} error={errors.statu_customer?.[0]}>
                                 <InputGroup icon="fa-user-check">
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={form.statu_customer ?? ''}
                                         onChange={setVal('statu_customer')}
                                     >
@@ -554,14 +544,14 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             </div>
 
             {/* Supplier status */}
-            <div className="card card-outline card-purple">
+            <div className="card card-outline card-violet mb-3">
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-3">
                             <Field label={trans.status_supplier} error={errors.statu_supplier?.[0]}>
                                 <InputGroup icon="fa-truck">
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={form.statu_supplier ?? ''}
                                         onChange={setVal('statu_supplier')}
                                     >
@@ -575,7 +565,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                         <div className="col-md-3">
                             <Field label={trans.reception_control} error={errors.recept_controle?.[0]}>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.recept_controle ?? ''}
                                     onChange={setVal('recept_controle')}
                                 >
@@ -612,7 +602,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             </div>
 
             {/* Geolocation / logistics */}
-            <div className="card card-outline card-dark">
+            <div className="card card-outline card-dark mb-3">
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-2">
@@ -641,7 +631,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                             <Field label={trans.delivery_constraint} error={errors.delivery_constraint?.[0]}>
                                 <InputGroup icon="fa-exclamation">
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={form.delivery_constraint ?? '1'}
                                         onChange={setVal('delivery_constraint')}
                                     >
@@ -686,7 +676,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             </div>
 
             {/* Comment */}
-            <div className="form-group">
+            <div className="mb-3">
                 <label className="text-primary">{trans.comment}</label>
                 <textarea
                     className="form-control"
@@ -711,8 +701,8 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
 
             {/* Submit */}
             <div className="card-footer px-0">
-                <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                    <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-1`} />
+                <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                    <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} me-1`} />
                     {saving ? trans.saving : trans.update}
                 </button>
             </div>

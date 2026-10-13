@@ -9,7 +9,7 @@ const STATUS_CONFIG = {
     2: { color: '#ffc107', labelKey: 'send'     },
     3: { color: '#28a745', labelKey: 'win'      },
     4: { color: '#dc3545', labelKey: 'lost'     },
-    5: { color: '#6c757d', labelKey: 'closed'   },
+    5: { color: 'var(--bs-secondary-color)', labelKey: 'closed'   },
     6: { color: '#007bff', labelKey: 'obsolete' },
 };
 

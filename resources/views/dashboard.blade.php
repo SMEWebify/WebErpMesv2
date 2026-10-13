@@ -8,7 +8,7 @@
 @section('content')
 
   @if($userRoleCount < 1)
-  <div class="card">
+  <div class="card mb-3">
     <div class="card-body">
         <x-adminlte-alert theme="info" title="Info">
           your account currently have no role defined and the menu has a reduced display.  Contact the administrator or use user demo login for demo page =>

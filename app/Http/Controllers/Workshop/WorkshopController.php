@@ -109,7 +109,7 @@ class WorkshopController extends Controller
             } elseif ($today > $endDate) {
                 $endDateClass = 'bg-danger';
             } elseif ($today === $endDate) {
-                $endDateClass = 'bg-orange';
+                $endDateClass = 'text-bg-orange';
             }
 
             return [

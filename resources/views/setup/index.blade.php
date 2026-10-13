@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Configuration initiale - {{ config('app.name') }}</title>
     @viteReactRefresh
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/standalone.scss', 'resources/js/app.js'])
 </head>
 <body style="margin:0;padding:0;">
 

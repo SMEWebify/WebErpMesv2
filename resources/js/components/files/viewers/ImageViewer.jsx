@@ -80,7 +80,7 @@ export default function ImageViewer({ file, t }) {
     return (
         <div className="wem-viewer">
             <div className="btn-toolbar mb-2" role="toolbar">
-                <div className="btn-group btn-group-sm mr-2">
+                <div className="btn-group btn-group-sm me-2">
                     <button type="button" className="btn btn-outline-secondary" onClick={() => zoomBy(1.25)}>
                         <i className="fas fa-search-plus" />
                     </button>
@@ -93,11 +93,11 @@ export default function ImageViewer({ file, t }) {
                 </div>
                 <div className="btn-group btn-group-sm">
                     <a className="btn btn-outline-secondary" href={file.download_url}>
-                        <i className="fas fa-download mr-1" />
+                        <i className="fas fa-download me-1" />
                         {t('download')}
                     </a>
                 </div>
-                <span className="ml-2 align-self-center small text-muted">
+                <span className="ms-2 align-self-center small text-muted">
                     {Math.round(transform.scale * 100)}%
                 </span>
             </div>

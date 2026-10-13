@@ -5,16 +5,16 @@ function getCsrf() {
 }
 
 const STATUS_CONFIG = {
-    success: { label: 'OK',      icon: 'fas fa-check-circle',        badge: 'badge-success' },
-    warning: { label: 'Alerte',  icon: 'fas fa-exclamation-triangle', badge: 'badge-warning' },
-    danger:  { label: 'Rupture', icon: 'fas fa-times-circle',         badge: 'badge-danger'  },
+    success: { label: 'OK',      icon: 'fas fa-check-circle',        badge: 'text-bg-success' },
+    warning: { label: 'Alerte',  icon: 'fas fa-exclamation-triangle', badge: 'text-bg-warning' },
+    danger:  { label: 'Rupture', icon: 'fas fa-times-circle',         badge: 'text-bg-danger'  },
 };
 
 function StatusBadge({ color }) {
     const cfg = STATUS_CONFIG[color] ?? STATUS_CONFIG.danger;
     return (
         <span className={`badge ${cfg.badge}`} style={{ fontSize: '0.8em', whiteSpace: 'nowrap' }}>
-            <i className={`${cfg.icon} mr-1`} />
+            <i className={`${cfg.icon} me-1`} />
             {cfg.label}
         </span>
     );
@@ -24,17 +24,17 @@ function TaskBreakdown({ tasks, taskUrlBase }) {
     if (!tasks.length) return null;
     return (
         <tr>
-            <td colSpan={7} className="p-0 bg-light">
-                <table className="table table-sm mb-0" style={{ background: '#fafafa' }}>
+            <td colSpan={7} className="p-0 bg-body-tertiary">
+                <table className="table table-sm mb-0" style={{ background: 'var(--bs-tertiary-bg)' }}>
                     <thead>
                         <tr>
                             <th style={{ width: '2rem' }} />
                             <th>Tâche</th>
                             <th>Commande</th>
                             <th>Échéance</th>
-                            <th className="text-right">Demandé</th>
-                            <th className="text-right">Réservé</th>
-                            <th className="text-right">Manque</th>
+                            <th className="text-end">Demandé</th>
+                            <th className="text-end">Réservé</th>
+                            <th className="text-end">Manque</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,11 +49,11 @@ function TaskBreakdown({ tasks, taskUrlBase }) {
                                 </td>
                                 <td>{t.order_code || <span className="text-muted">—</span>}</td>
                                 <td>{t.end_date || <span className="text-muted">—</span>}</td>
-                                <td className="text-right">{t.requested}</td>
-                                <td className="text-right">{t.reserved}</td>
-                                <td className="text-right">
+                                <td className="text-end">{t.requested}</td>
+                                <td className="text-end">{t.reserved}</td>
+                                <td className="text-end">
                                     {t.missing > 0
-                                        ? <span className="badge badge-danger">{t.missing}</span>
+                                        ? <span className="badge text-bg-danger">{t.missing}</span>
                                         : <span className="text-muted">0</span>}
                                 </td>
                             </tr>
@@ -99,13 +99,13 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
             <tr>
                 <td className="text-center align-middle" style={{ width: '2rem' }}>
                     {canExpand ? (
-                        <button className="btn btn-xs btn-link p-0" onClick={onToggle} title="Voir la répartition par tâche">
+                        <button className="btn btn-sm btn-link p-0" onClick={onToggle} title="Voir la répartition par tâche">
                             <i className={`fas fa-chevron-${expanded ? 'down' : 'right'}`} />
                         </button>
                     ) : null}
                 </td>
                 <td className="align-middle">
-                    <a href={product.product_url} className="font-weight-bold text-dark">{product.label}</a>
+                    <a href={product.product_url} className="fw-bold text-dark">{product.label}</a>
                     {product.code && <div className="text-muted small">{product.code}</div>}
                 </td>
                 <td className="text-center align-middle"><StatusBadge color={product.status_color} /></td>
@@ -118,11 +118,11 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                         <div className="text-muted small">OF : {product.undelivered_qty} · Tâches : {product.task_qty}</div>
                     )}
                 </td>
-                <td className="align-middle text-right">
+                <td className="align-middle text-end">
                     {product.reserved_total > 0 ? (
                         <>
                             <div>
-                                <span className="badge badge-primary">Réservé {product.reserved_total}</span>
+                                <span className="badge text-bg-primary">Réservé {product.reserved_total}</span>
                             </div>
                             <div className="text-muted small mt-1">
                                 Dispo <strong className={product.available_qty < 0 ? 'text-danger' : ''}>{product.available_qty}</strong>
@@ -142,21 +142,21 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                             <div className="d-flex flex-wrap" style={{ gap: '4px' }}>
                                 {product.locations.map((loc) => (
                                     <a key={loc.id} href={loc.url}
-                                       className={`btn btn-xs btn-${loc.color}`}
+                                       className={`btn btn-sm btn-${loc.color}`}
                                        title={`Qté : ${loc.current_stock} (min : ${loc.mini_qty})`}>
                                         {loc.code}
-                                        <span className="ml-1 badge badge-light text-dark">{loc.current_stock}</span>
+                                        <span className="ms-1 badge text-bg-light text-dark">{loc.current_stock}</span>
                                     </a>
                                 ))}
                             </div>
                         )}
                 </td>
                 <td className="align-middle text-center">
-                    <a href={product.product_url} className="btn btn-xs btn-info mr-1" title="Voir le produit">
+                    <a href={product.product_url} className="btn btn-sm btn-info me-1" title="Voir le produit">
                         <i className="fas fa-eye" />
                     </a>
                     {product.qty_need > 0 && (
-                        <button className="btn btn-xs btn-primary" onClick={createOrder} disabled={ordering}
+                        <button className="btn btn-sm btn-primary" onClick={createOrder} disabled={ordering}
                                 title="Créer une commande interne">
                             <i className={`fas ${ordering ? 'fa-spinner fa-spin' : 'fa-folder-plus'}`} />
                         </button>
@@ -201,7 +201,7 @@ export default function StockShortagesApp() {
     }, [data, statusFilter, typeFilter, search]);
 
     if (error)  return <div className="alert alert-danger">Erreur : {error}</div>;
-    if (!data)  return <div className="text-muted"><i className="fas fa-spinner fa-spin mr-1" /> Chargement...</div>;
+    if (!data)  return <div className="text-muted"><i className="fas fa-spinner fa-spin me-1" /> Chargement...</div>;
 
     const t = data.totals;
 
@@ -209,35 +209,35 @@ export default function StockShortagesApp() {
         <>
             <div className="row mb-3">
                 <div className="col-md-3">
-                    <div className="small-box bg-success">
+                    <div className="small-box text-bg-success">
                         <div className="inner"><h4>{t.ok_count}</h4><p>Stock OK</p></div>
-                        <div className="icon"><i className="fas fa-check-circle" /></div>
+                        <i className="small-box-icon fas fa-check-circle" aria-hidden="true" />
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="small-box bg-warning">
+                    <div className="small-box text-bg-warning">
                         <div className="inner"><h4>{t.warning_count}</h4><p>Seuil / alerte</p></div>
-                        <div className="icon"><i className="fas fa-exclamation-triangle" /></div>
+                        <i className="small-box-icon fas fa-exclamation-triangle" aria-hidden="true" />
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="small-box bg-danger">
+                    <div className="small-box text-bg-danger">
                         <div className="inner"><h4>{t.danger_count}</h4><p>Rupture</p></div>
-                        <div className="icon"><i className="fas fa-times-circle" /></div>
+                        <i className="small-box-icon fas fa-times-circle" aria-hidden="true" />
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="small-box bg-info">
+                    <div className="small-box text-bg-info">
                         <div className="inner">
                             <h4>{t.missing_qty}</h4>
                             <p>Qté manquante ({t.shortage_tasks} tâches)</p>
                         </div>
-                        <div className="icon"><i className="fas fa-tasks" /></div>
+                        <i className="small-box-icon fas fa-tasks" aria-hidden="true" />
                     </div>
                 </div>
             </div>
 
-            <div className="card">
+            <div className="card mb-3">
                 <div className="card-header">
                     <div className="d-flex flex-wrap align-items-center" style={{ gap: '0.75rem' }}>
                         <div className="btn-group btn-group-sm" role="group">
@@ -263,7 +263,7 @@ export default function StockShortagesApp() {
                         <input type="search" className="form-control form-control-sm" placeholder="Recherche..."
                                value={search} onChange={(e) => setSearch(e.target.value)}
                                style={{ maxWidth: '220px' }} />
-                        <span className="text-muted small ml-auto">{filtered.length} / {t.total_products} produits</span>
+                        <span className="text-muted small ms-auto">{filtered.length} / {t.total_products} produits</span>
                     </div>
                 </div>
                 <div className="card-body p-0 table-responsive">
@@ -274,7 +274,7 @@ export default function StockShortagesApp() {
                                 <th>Produit</th>
                                 <th className="text-center">Statut</th>
                                 <th>Stock / Besoin</th>
-                                <th className="text-right">Réservé / Dispo</th>
+                                <th className="text-end">Réservé / Dispo</th>
                                 <th>Emplacements</th>
                                 <th className="text-center">Actions</th>
                             </tr>

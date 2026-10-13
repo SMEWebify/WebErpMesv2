@@ -7,7 +7,7 @@ const DURATION_LABELS = {
 };
 
 function formatDate(iso) {
-    if (!iso) return <span className="badge badge-secondary">Infini</span>;
+    if (!iso) return <span className="badge text-bg-secondary">Infini</span>;
     const d = new Date(iso);
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
@@ -90,7 +90,7 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
             {/* New token revealed */}
             {newToken && (
                 <div className="alert alert-success">
-                    <strong><i className="fas fa-key mr-1" />Token créé — copiez-le maintenant, il ne sera plus affiché.</strong>
+                    <strong><i className="fas fa-key me-1" />Token créé — copiez-le maintenant, il ne sera plus affiché.</strong>
                     <div className="input-group mt-2">
                         <input
                             type="text"
@@ -99,18 +99,16 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
                             value={newToken}
                             style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}
                         />
-                        <div className="input-group-append">
-                            <button className="btn btn-outline-success" onClick={handleCopy}>
+                        <button className="btn btn-outline-success" onClick={handleCopy}>
                                 <i className={`fas ${copied ? 'fa-check' : 'fa-copy'}`} />
                                 {copied ? ' Copié !' : ' Copier'}
                             </button>
-                        </div>
                     </div>
                     <div className="mt-2">
                         <button className="btn btn-sm btn-success" onClick={() => setNewToken(null)}>
-                            <i className="fas fa-check mr-1" />J'ai copié le token
+                            <i className="fas fa-check me-1" />J'ai copié le token
                         </button>
-                        <small className="text-muted ml-2">Ce token ne sera plus jamais affiché.</small>
+                        <small className="text-muted ms-2">Ce token ne sera plus jamais affiché.</small>
                     </div>
                 </div>
             )}
@@ -118,13 +116,13 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
             <div className="row">
                 {/* Create form */}
                 <div className="col-md-4">
-                    <div className="card card-primary card-outline">
+                    <div className="card card-primary card-outline mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-plus-circle mr-1" />Nouveau token</h3>
+                            <h3 className="card-title"><i className="fas fa-plus-circle me-1" />Nouveau token</h3>
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleCreate}>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Nom <span className="text-danger">*</span></label>
                                     <input
                                         type="text"
@@ -137,10 +135,10 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
                                     />
                                     <small className="text-muted">Identifie l'intégration qui utilise ce token.</small>
                                 </div>
-                                <div className="form-group">
+                                <div className="mb-3">
                                     <label>Durée de validité</label>
                                     <select
-                                        className="form-control"
+                                        className="form-select"
                                         value={duration}
                                         onChange={e => setDuration(e.target.value)}
                                     >
@@ -150,19 +148,19 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
                                     </select>
                                 </div>
                                 {error && <div className="alert alert-danger py-2">{error}</div>}
-                                <button type="submit" className="btn btn-primary btn-block" disabled={creating}>
+                                <button type="submit" className="btn btn-primary w-100" disabled={creating}>
                                     {creating
-                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Création...</>
-                                        : <><i className="fas fa-key mr-1" />Générer le token</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />Création...</>
+                                        : <><i className="fas fa-key me-1" />Générer le token</>
                                     }
                                 </button>
                             </form>
                         </div>
                     </div>
 
-                    <div className="card card-secondary card-outline">
+                    <div className="card card-secondary card-outline mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-info-circle mr-1" />Utilisation</h3>
+                            <h3 className="card-title"><i className="fas fa-info-circle me-1" />Utilisation</h3>
                         </div>
                         <div className="card-body" style={{ fontSize: '0.875rem' }}>
                             <p>Ajoutez le token dans le header HTTP de vos requêtes :</p>
@@ -171,7 +169,7 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
                             </code>
                             <hr />
                             <p className="mb-1"><strong>Endpoints disponibles :</strong></p>
-                            <ul className="mb-0 pl-3">
+                            <ul className="mb-0 ps-3">
                                 <li><code>GET /api/clients</code></li>
                                 <li><code>POST /api/quote</code></li>
                                 <li><code>PUT /api/quote/{'{'}{'{'}id{'}'}{'}'}  </code></li>
@@ -182,9 +180,9 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
 
                 {/* Token list */}
                 <div className="col-md-8">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-list mr-1" />Tokens actifs ({tokens.length})</h3>
+                            <h3 className="card-title"><i className="fas fa-list me-1" />Tokens actifs ({tokens.length})</h3>
                         </div>
                         <div className="card-body p-0">
                             {tokens.length === 0 ? (
@@ -212,13 +210,13 @@ export default function ApiTokensPage({ initialTokens, endpoints }) {
                                                         <small className="d-block text-muted">{token.user}</small>
                                                     )}
                                                     {isExpired(token.expires_at) && (
-                                                        <span className="badge badge-warning ml-1">Expiré</span>
+                                                        <span className="badge text-bg-warning ms-1">Expiré</span>
                                                     )}
                                                 </td>
                                                 <td>{formatDate(token.created_at)}</td>
                                                 <td>{formatDate(token.expires_at)}</td>
                                                 <td>{formatLastUsed(token.last_used_at)}</td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         onClick={() => handleRevoke(token.id)}

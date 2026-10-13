@@ -1,4 +1,4 @@
-<div class="col-sm-4 invoice-col">
+<div class="col-4">
     From
     <address>
         <strong>{{ $factoryName }}</strong><br>
@@ -9,7 +9,7 @@
     </address>
 </div>
 <!-- /.col -->
-<div class="col-sm-4 invoice-col">
+<div class="col-4">
     To
     <address>
         <strong>{{ $companieLabel }}</strong> - <strong>{{ $companieCivility }} - {{ $companieFirstName }}  {{ $companieName }}</strong><br>
@@ -21,7 +21,7 @@
     </address>
 </div>
 <!-- /.col -->
-<div class="col-sm-4 invoice-col">
+<div class="col-4">
     <h1>{{  $documentName }} #{{  $code }}</h1>
     <b>Your Ref:</b> {{ $customerReference }}<br>
 </div>

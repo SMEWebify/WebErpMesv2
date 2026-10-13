@@ -39,7 +39,7 @@
     <div class="col-lg-4">
         <x-adminlte-small-box title="{{ $responseRate }}%"
                               text="{{ __('general_content.quote_response_rate') }}"
-                              icon="fas fa-chart-pie" theme="purple" />
+                              icon="fas fa-chart-pie" theme="violet" />
     </div>
 </div>
 

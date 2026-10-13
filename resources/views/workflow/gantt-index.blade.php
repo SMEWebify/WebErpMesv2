@@ -8,7 +8,7 @@
 			<h1>{{ __('general_content.gantt_trans_key') }}</h1>
 		</div>
 		<div class="col-sm-6">
-			<button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationDate">
+			<button type="button" class="btn btn-primary float-sm-end" data-bs-toggle="modal" data-bs-target="#taskCalculationDate">
 				{{ __('general_content.gantt_info_1_trans_key') }} ({{ $countTaskNullDate }})
 			</button>
 		</div>
@@ -18,18 +18,18 @@
 @section('right-sidebar')
 
 @section('content')
-	<x-adminlte-card theme="lime" theme-mode="outline">
+	<x-adminlte-card theme="success" theme-mode="outline">
 		@include('include.alert-result')
 		<form action="{{ route('production.gantt') }}" method="GET">
 			<div class="row">
-				<div class="form-group col-4">
+				<div class="mb-3 col-4">
 					<x-adminlte-select2 name="order_id" id="order_id"
 						label="{{ __('general_content.order_trans_key') }}"
 						label-class="text-secondary"
 						igroup-size="s"
 						data-placeholder="{{ __('general_content.order_trans_key') }}">
 						<x-slot name="prependSlot">
-							<div class="input-group-text bg-gradient-secondary">
+							<div class="input-group-text text-bg-secondary bg-gradient">
 								<i class="fas fa-list"></i>
 							</div>
 						</x-slot>
@@ -41,8 +41,8 @@
 						@endforeach
 					</x-adminlte-select2>
 				</div>
-				<div class="form-group col-2">
-					<x-adminlte-button class="btn-flat" type="submit"
+				<div class="mb-3 col-2">
+					<x-adminlte-button class="rounded-0" type="submit"
 						label="{{ __('general_content.submit_trans_key') }}"
 						theme="danger" icon="fas fa-lg fa-save"/>
 				</div>
@@ -50,7 +50,7 @@
 		</form>
 	</x-adminlte-card>
 
-	<x-adminlte-card theme="lime" theme-mode="outline">
+	<x-adminlte-card theme="success" theme-mode="outline">
 		<div
 			id="gantt-chart-app"
 			data-order-id="{{ $orderId ?? '' }}"

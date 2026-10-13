@@ -54,7 +54,7 @@ export default function InvoiceExportLines({ endpoints, trans }) {
     if (loading) return <div className="text-center p-3"><i className="fas fa-spinner fa-spin"></i></div>;
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-body">
                 <div className="row mb-3">
                     <div className="btn-group">
@@ -67,7 +67,7 @@ export default function InvoiceExportLines({ endpoints, trans }) {
                             CSV
                         </button>
                     </div>
-                    <div className="btn-group ml-1">
+                    <div className="btn-group ms-1">
                         <button
                             className="btn btn-danger"
                             type="button"
@@ -124,15 +124,15 @@ export default function InvoiceExportLines({ endpoints, trans }) {
                                     <td>{row.discount} %</td>
                                     <td>{row.vat_rate} %</td>
                                     <td>
-                                        <div className="custom-control custom-checkbox">
+                                        <div className="form-check ">
                                             <input
-                                                className="custom-control-input"
+                                                className="form-check-input"
                                                 type="checkbox"
                                                 id={`invoice_line_${row.id}`}
                                                 checked={!!selected[row.id]}
                                                 onChange={() => toggle(row.id)}
                                             />
-                                            <label className="custom-control-label" htmlFor={`invoice_line_${row.id}`}>
+                                            <label className="form-check-label" htmlFor={`invoice_line_${row.id}`}>
                                                 {trans.add_export}
                                             </label>
                                         </div>

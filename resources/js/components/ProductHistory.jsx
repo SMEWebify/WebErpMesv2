@@ -10,12 +10,12 @@ const TYPE_CONFIG = {
         bg:      '#e8f0fe',
         icon:    'fas fa-file-alt',
         statuses: {
-            1: { label: 'Brouillon',   badge: 'badge-secondary' },
-            2: { label: 'Envoyé',      badge: 'badge-info' },
-            3: { label: 'En révision', badge: 'badge-warning' },
-            4: { label: 'Accepté',     badge: 'badge-success' },
-            5: { label: 'Refusé',      badge: 'badge-danger' },
-            6: { label: 'Expiré',      badge: 'badge-dark' },
+            1: { label: 'Brouillon',   badge: 'text-bg-secondary' },
+            2: { label: 'Envoyé',      badge: 'text-bg-info' },
+            3: { label: 'En révision', badge: 'text-bg-warning' },
+            4: { label: 'Accepté',     badge: 'text-bg-success' },
+            5: { label: 'Refusé',      badge: 'text-bg-danger' },
+            6: { label: 'Expiré',      badge: 'text-bg-dark' },
         },
     },
     order: {
@@ -24,10 +24,10 @@ const TYPE_CONFIG = {
         bg:      '#fff3e0',
         icon:    'fas fa-shopping-cart',
         statuses: {
-            1: { label: 'Nouvelle',  badge: 'badge-info' },
-            2: { label: 'En cours',  badge: 'badge-primary' },
-            3: { label: 'Terminée', badge: 'badge-success' },
-            4: { label: 'Annulée',  badge: 'badge-danger' },
+            1: { label: 'Nouvelle',  badge: 'text-bg-info' },
+            2: { label: 'En cours',  badge: 'text-bg-primary' },
+            3: { label: 'Terminée', badge: 'text-bg-success' },
+            4: { label: 'Annulée',  badge: 'text-bg-danger' },
         },
     },
     purchase: {
@@ -36,10 +36,10 @@ const TYPE_CONFIG = {
         bg:      '#f3eeff',
         icon:    'fas fa-cart-arrow-down',
         statuses: {
-            1: { label: 'Brouillon', badge: 'badge-secondary' },
-            2: { label: 'Envoyé',   badge: 'badge-info' },
-            3: { label: 'Reçu',     badge: 'badge-success' },
-            4: { label: 'Annulé',   badge: 'badge-danger' },
+            1: { label: 'Brouillon', badge: 'text-bg-secondary' },
+            2: { label: 'Envoyé',   badge: 'text-bg-info' },
+            3: { label: 'Reçu',     badge: 'text-bg-success' },
+            4: { label: 'Annulé',   badge: 'text-bg-danger' },
         },
     },
 };
@@ -59,7 +59,7 @@ function formatDate(dateStr) {
 
 function statusInfo(type, statu) {
     const cfg = TYPE_CONFIG[type]?.statuses?.[statu];
-    return cfg ?? { label: `Statut ${statu}`, badge: 'badge-secondary' };
+    return cfg ?? { label: `Statut ${statu}`, badge: 'text-bg-secondary' };
 }
 
 // ---------------------------------------------------------------------------
@@ -83,14 +83,14 @@ function TimelineItem({ item }) {
                 }}>
                     <i className={cfg.icon ?? 'fas fa-circle'} />
                 </div>
-                <div style={{ width: 2, flexGrow: 1, background: '#dee2e6', minHeight: 8 }} />
+                <div style={{ width: 2, flexGrow: 1, background: 'var(--bs-border-color)', minHeight: 8 }} />
             </div>
 
             {/* Card */}
             <div style={{
                 flex: 1,
-                background: '#fff',
-                border: '1px solid #dee2e6',
+                background: 'var(--bs-body-bg)',
+                border: '1px solid var(--bs-border-color)',
                 borderLeft: `3px solid ${cfg.color ?? '#6c757d'}`,
                 borderRadius: 4,
                 padding: '8px 12px',
@@ -112,10 +112,10 @@ function TimelineItem({ item }) {
 
                         <div style={{ fontWeight: 600, fontSize: 13 }}>
                             {item.code && (
-                                <span style={{ marginRight: 6, color: '#495057' }}>{item.code}</span>
+                                <span style={{ marginRight: 6, color: 'var(--bs-body-color)' }}>{item.code}</span>
                             )}
                             {item.label && (
-                                <span style={{ color: '#6c757d', fontWeight: 400 }}>{item.label}</span>
+                                <span style={{ color: 'var(--bs-secondary-color)', fontWeight: 400 }}>{item.label}</span>
                             )}
                             {!item.code && !item.label && <span style={{ color: '#adb5bd' }}>—</span>}
                         </div>
@@ -126,7 +126,7 @@ function TimelineItem({ item }) {
                             {statu.label}
                         </span>
                         <small style={{ color: '#adb5bd', fontSize: 11 }}>{formatDate(item.date)}</small>
-                        <a href={item.url} className="btn btn-xs btn-outline-secondary" style={{ fontSize: 10, padding: '1px 6px' }}>
+                        <a href={item.url} className="btn btn-sm btn-outline-secondary" style={{ fontSize: 10, padding: '1px 6px' }}>
                             <i className="fas fa-external-link-alt" />
                         </a>
                     </div>
@@ -203,7 +203,7 @@ export default function ProductHistory({ endpoint, canPurchases = true }) {
                                 transition: 'all .15s',
                             }}
                         >
-                            <i className={`${cfg.icon} mr-1`} style={{ fontSize: 10 }} />
+                            <i className={`${cfg.icon} me-1`} style={{ fontSize: 10 }} />
                             {cfg.label} ({count})
                         </button>
                     );
@@ -213,7 +213,7 @@ export default function ProductHistory({ endpoint, canPurchases = true }) {
             {/* States */}
             {loading && (
                 <div className="text-center text-muted py-4">
-                    <i className="fas fa-spinner fa-spin mr-2" /> Chargement…
+                    <i className="fas fa-spinner fa-spin me-2" /> Chargement…
                 </div>
             )}
             {error && <div className="alert alert-danger">{error}</div>}
@@ -232,10 +232,10 @@ export default function ProductHistory({ endpoint, canPurchases = true }) {
                         : new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(+y, +m - 1));
                     return (
                         <div key={`sep-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '16px 0 8px' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#6c757d', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bs-secondary-color)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                                 {label}
                             </div>
-                            <div style={{ flex: 1, height: 1, background: '#dee2e6' }} />
+                            <div style={{ flex: 1, height: 1, background: 'var(--bs-border-color)' }} />
                         </div>
                     );
                 }

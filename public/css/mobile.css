@@ -13,16 +13,16 @@
 @media (max-width: 767.98px) {
 
     /* ---- Gouttières et titres ---------------------------------------- */
-    .content-wrapper > .content-header {
+    .app-main > .app-content-header {
         padding: .75rem .5rem .5rem;
     }
 
-    .content-header h1 {
+    .app-content-header h1 {
         font-size: 1.35rem;
         line-height: 1.25;
     }
 
-    .content-wrapper > .content {
+    .app-main > .app-content {
         padding: 0 .25rem;
     }
 
@@ -81,7 +81,7 @@
     input.form-control,
     select.form-control,
     textarea.form-control,
-    .custom-select,
+    select.form-select,
     .select2-container .select2-selection__rendered,
     .select2-search__field {
         font-size: 16px;

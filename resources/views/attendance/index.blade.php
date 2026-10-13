@@ -15,7 +15,7 @@
         @yield('title_postfix', config('adminlte.title_postfix', ''))
     </title>
 
-    @vite('resources/sass/app.scss')
+    @vite('resources/sass/standalone.scss')
 
     {{-- Favicon --}}
     @php($faviconDir = config('branding.favicon_dir', 'favicons'))

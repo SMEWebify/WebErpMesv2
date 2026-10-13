@@ -22,7 +22,7 @@
                 <tr>
                   <th>Opération de départ</th>
                   <th>Opération d'arrivée</th>
-                  <th class="text-right">Délai (heures atelier)</th>
+                  <th class="text-end">Délai (heures atelier)</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -38,7 +38,7 @@
                     <strong>{{ $delay->toService?->code }}</strong>
                     <span class="text-muted">— {{ $delay->toService?->label }}</span>
                   </td>
-                  <td class="text-right">{{ number_format((float) $delay->transfer_hours, 2) }}</td>
+                  <td class="text-end">{{ number_format((float) $delay->transfer_hours, 2) }}</td>
                   <td class="py-0 align-middle">
                     <x-ButtonTextEdit :modalTarget="'OperationTransitionDelay' . $delay->id" />
                     <x-adminlte-modal id="OperationTransitionDelay{{ $delay->id }}"
@@ -47,19 +47,15 @@
                       <form method="POST" action="{{ route('methods.operation-transition-delay.update', ['id' => $delay->id]) }}">
                         @csrf
                         <div class="card-body">
-                          <div class="form-group">
+                          <div class="mb-3">
                             <label for="transfer_hours_{{ $delay->id }}">Délai (heures atelier)</label>
                             <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-hourglass-half"></i></span>
-                              </div>
+                              <span class="input-group-text"><i class="fas fa-hourglass-half"></i></span>
                               <input type="number" step="0.25" min="0" max="9999.99"
                                      class="form-control" name="transfer_hours"
                                      id="transfer_hours_{{ $delay->id }}"
                                      value="{{ $delay->transfer_hours }}" required>
-                              <div class="input-group-append">
-                                <span class="input-group-text">h</span>
-                              </div>
+                              <span class="input-group-text">h</span>
                             </div>
                             <small class="form-text text-muted">
                               0 = pas de délai pour cette paire (contourne le défaut atelier).
@@ -67,7 +63,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit"
+                          <x-adminlte-button class="rounded-0" type="submit"
                                              label="{{ __('general_content.update_trans_key') }}"
                                              theme="info" icon="fas fa-lg fa-save"/>
                         </div>
@@ -97,13 +93,11 @@
         <form method="POST" action="{{ route('methods.operation-transition-delay.create') }}" class="form-horizontal">
           <x-adminlte-card title="Nouvelle paire" theme="secondary" maximizable>
             @csrf
-            <div class="form-group">
+            <div class="mb-3">
               <label for="from_service_id">Opération de départ</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-arrow-right"></i></span>
-                </div>
-                <select class="form-control" name="from_service_id" id="from_service_id" required>
+                <span class="input-group-text"><i class="fas fa-arrow-right"></i></span>
+                <select class="form-select" name="from_service_id" id="from_service_id" required>
                   <option value="">— {{ __('general_content.service_trans_key') }} —</option>
                   @foreach ($services as $service)
                     <option value="{{ $service->id }}">{{ $service->code }} — {{ $service->label }}</option>
@@ -111,13 +105,11 @@
                 </select>
               </div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
               <label for="to_service_id">Opération d'arrivée</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-arrow-right"></i></span>
-                </div>
-                <select class="form-control" name="to_service_id" id="to_service_id" required>
+                <span class="input-group-text"><i class="fas fa-arrow-right"></i></span>
+                <select class="form-select" name="to_service_id" id="to_service_id" required>
                   <option value="">— {{ __('general_content.service_trans_key') }} —</option>
                   @foreach ($services as $service)
                     <option value="{{ $service->id }}">{{ $service->code }} — {{ $service->label }}</option>
@@ -125,22 +117,18 @@
                 </select>
               </div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
               <label for="transfer_hours">Délai (heures atelier)</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-hourglass-half"></i></span>
-                </div>
+                <span class="input-group-text"><i class="fas fa-hourglass-half"></i></span>
                 <input type="number" step="0.25" min="0" max="9999.99"
                        class="form-control" name="transfer_hours" id="transfer_hours"
                        placeholder="ex. 2" required>
-                <div class="input-group-append">
-                  <span class="input-group-text">h</span>
-                </div>
+                <span class="input-group-text">h</span>
               </div>
             </div>
             <div class="card-footer">
-              <x-adminlte-button class="btn-flat" type="submit"
+              <x-adminlte-button class="rounded-0" type="submit"
                                  label="{{ __('general_content.submit_trans_key') }}"
                                  theme="danger" icon="fas fa-lg fa-save"/>
             </div>

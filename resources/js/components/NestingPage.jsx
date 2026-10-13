@@ -123,30 +123,30 @@ function NestEngineGroupPanel({ group, service, onResult }) {
 
     return (
         <div className="mb-3 border rounded">
-            <div className="d-flex align-items-center p-2 bg-light" style={{ cursor: 'pointer' }} onClick={() => setExpanded(!expanded)}>
-                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} mr-2`} />
-                <strong className="mr-2">{group.material}</strong>
-                <span className="badge badge-secondary mr-2">{group.thickness} mm</span>
+            <div className="d-flex align-items-center p-2 bg-body-tertiary" style={{ cursor: 'pointer' }} onClick={() => setExpanded(!expanded)}>
+                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} me-2`} />
+                <strong className="me-2">{group.material}</strong>
+                <span className="badge text-bg-secondary me-2">{group.thickness} mm</span>
                 {service && (
-                    <span className="badge mr-2" style={{ background: service.service_color || '#6c757d', color: '#fff' }}>
+                    <span className="badge me-2" style={{ background: service.service_color || '#6c757d', color: '#fff' }}>
                         {service.service_label}
                     </span>
                 )}
-                <span className="badge badge-info mr-2">{formatQty(totalPieces)} pièce(s)</span>
+                <span className="badge text-bg-info me-2">{formatQty(totalPieces)} pièce(s)</span>
                 {isRunning ? (
-                    <span className="badge badge-warning mr-2">
-                        <i className="fas fa-spinner fa-spin mr-1" />{meta.status}
+                    <span className="badge text-bg-warning me-2">
+                        <i className="fas fa-spinner fa-spin me-1" />{meta.status}
                     </span>
                 ) : meta.status === 'done' ? (
                     <>
-                        <span className="badge badge-primary mr-2">{sheetsCount} tôle(s)</span>
-                        <span className={`badge mr-2 ${avgUsage < 40 ? 'badge-warning' : 'badge-success'}`}>{avgUsage}%</span>
+                        <span className="badge text-bg-primary me-2">{sheetsCount} tôle(s)</span>
+                        <span className={`badge me-2 ${avgUsage < 40 ? 'text-bg-warning' : 'text-bg-success'}`}>{avgUsage}%</span>
                     </>
                 ) : meta.status === 'error' ? (
-                    <span className="badge badge-danger mr-2">Erreur</span>
+                    <span className="badge text-bg-danger me-2">Erreur</span>
                 ) : null}
-                <span className="ml-auto badge badge-dark">
-                    <i className="fas fa-star mr-1" />Forme exacte
+                <span className="ms-auto badge text-bg-dark">
+                    <i className="fas fa-star me-1" />Forme exacte
                 </span>
             </div>
 
@@ -175,18 +175,18 @@ function NestEngineGroupPanel({ group, service, onResult }) {
                     {meta.status === 'done' && (meta.files || []).map(f => {
                         const num = f.sheetIdx + 1;
                         return (
-                            <div key={num} className="mb-2 border p-1 bg-white">
+                            <div key={num} className="mb-2 border p-1 bg-body">
                                 <div className="d-flex justify-content-between align-items-center px-1 mb-1">
                                     <small>
                                         <strong>Tôle {num}</strong>
-                                        <span className="text-muted ml-2">{f.placed} pièce(s)</span>
+                                        <span className="text-muted ms-2">{f.placed} pièce(s)</span>
                                     </small>
                                     <div>
                                         <small className={f.efficiency < 40 ? 'text-warning' : 'text-success'}>
                                             Utilisation {Math.round(f.efficiency)}%
                                         </small>
                                         <a
-                                            className="btn btn-sm btn-outline-secondary ml-2 py-0"
+                                            className="btn btn-sm btn-outline-secondary ms-2 py-0"
                                             href={`/nesting/engine/download/${jobId}/${num}`}
                                             title="Télécharger le DXF"
                                         >
@@ -224,16 +224,16 @@ function SkippedGroupPanel({ group, service }) {
     return (
         <div className="mb-3 border rounded border-warning">
             <div
-                className="d-flex align-items-center p-2 bg-light"
+                className="d-flex align-items-center p-2 bg-body-tertiary"
                 style={{ cursor: 'pointer' }}
                 onClick={() => setExpanded(!expanded)}
             >
-                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} mr-2`} />
-                <strong className="mr-2">{group.material}</strong>
-                <span className="badge badge-secondary mr-2">{group.thickness} mm</span>
+                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} me-2`} />
+                <strong className="me-2">{group.material}</strong>
+                <span className="badge text-bg-secondary me-2">{group.thickness} mm</span>
                 {service && (
                     <span
-                        className="badge mr-2"
+                        className="badge me-2"
                         style={{
                             background: service.service_color || '#6c757d',
                             color: '#fff',
@@ -242,8 +242,8 @@ function SkippedGroupPanel({ group, service }) {
                         {service.service_label}
                     </span>
                 )}
-                <span className="badge badge-info mr-2">{formatQty(totalPieces)} pièce(s)</span>
-                <span className="badge badge-warning mr-2">Non imbriqué</span>
+                <span className="badge text-bg-info me-2">{formatQty(totalPieces)} pièce(s)</span>
+                <span className="badge text-bg-warning me-2">Non imbriqué</span>
             </div>
 
             {expanded && (
@@ -252,13 +252,13 @@ function SkippedGroupPanel({ group, service }) {
                         {SKIPPED_REASONS[group.engine_skipped] || SKIPPED_REASONS.files_unreadable}
                     </div>
                     <table className="table table-sm table-striped mb-0" style={{ fontSize: '0.82em' }}>
-                        <thead className="thead-light">
+                        <thead className="table-light">
                             <tr>
                                 <th>Article</th>
                                 <th>Commande</th>
-                                <th className="text-right">X mm</th>
-                                <th className="text-right">Y mm</th>
-                                <th className="text-right">Qté</th>
+                                <th className="text-end">X mm</th>
+                                <th className="text-end">Y mm</th>
+                                <th className="text-end">Qté</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -266,9 +266,9 @@ function SkippedGroupPanel({ group, service }) {
                                 <tr key={p.line_id}>
                                     <td><code>{p.product_code}</code> - {p.label}</td>
                                     <td><a href={`/orders/${p.order_id}`} target="_blank" rel="noreferrer">{p.order_code}</a></td>
-                                    <td className="text-right">{p.x_line > 0 ? Math.round(p.x_line) : '—'}</td>
-                                    <td className="text-right">{p.y_line > 0 ? Math.round(p.y_line) : '—'}</td>
-                                    <td className="text-right">{formatQty(p.qty)}</td>
+                                    <td className="text-end">{p.x_line > 0 ? Math.round(p.x_line) : '—'}</td>
+                                    <td className="text-end">{p.y_line > 0 ? Math.round(p.y_line) : '—'}</td>
+                                    <td className="text-end">{formatQty(p.qty)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -292,7 +292,7 @@ function CommercialFeature({ t }) {
     return (
         <div className="commercial-feature mt-0">
             <div className="commercial-feature__hero">
-                <span className="commercial-feature__badge"><i className="fas fa-star mr-1" />{t.badge}</span>
+                <span className="commercial-feature__badge"><i className="fas fa-star me-1" />{t.badge}</span>
                 <div className="commercial-feature__icon"><i className="fas fa-th" /></div>
                 <h2 className="commercial-feature__title">{t.title}</h2>
                 <p className="commercial-feature__lead">{t.lead}</p>
@@ -313,10 +313,10 @@ function CommercialFeature({ t }) {
 
                 <div className="text-center mt-2">
                     <a href="https://nest2prod.com/" target="_blank" rel="noopener" className="btn btn-primary btn-lg commercial-feature__cta">
-                        <i className="fas fa-envelope mr-2" />{t.contact}
+                        <i className="fas fa-envelope me-2" />{t.contact}
                     </a>
                     <div className="text-muted small mt-2">
-                        <i className="fas fa-external-link-alt mr-1" />nest2prod.com
+                        <i className="fas fa-external-link-alt me-1" />nest2prod.com
                     </div>
                 </div>
             </div>
@@ -334,11 +334,11 @@ function BarSvg({ bar, index, kerf }) {
     const waste   = length - usedLength;
 
     return (
-        <div className="mb-2 border p-1 bg-white">
+        <div className="mb-2 border p-1 bg-body">
             <div className="d-flex justify-content-between align-items-center px-1 mb-1">
                 <small>
                     <strong>Barre {index + 1}</strong> - {label}
-                    <span className="text-muted ml-2">chute {Math.round(waste)} mm</span>
+                    <span className="text-muted ms-2">chute {Math.round(waste)} mm</span>
                 </small>
                 <small className={usage < 60 ? 'text-warning' : 'text-success'}>
                     Utilisation {usage}%
@@ -419,44 +419,44 @@ function BarGroupPanel({ group, barLengths, kerf, service }) {
     return (
         <div className="mb-3 border rounded">
             <div
-                className="d-flex align-items-center p-2 bg-light"
+                className="d-flex align-items-center p-2 bg-body-tertiary"
                 style={{ cursor: 'pointer' }}
                 onClick={() => setExpanded(!expanded)}
             >
-                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} mr-2`} />
-                <i className="fas fa-grip-lines-vertical mr-2 text-muted" title="Nesting barre / tube" />
-                <strong className="mr-2">{group.material}</strong>
-                <span className="badge badge-secondary mr-2">{profileLabel(group)}</span>
+                <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} me-2`} />
+                <i className="fas fa-grip-lines-vertical me-2 text-muted" title="Nesting barre / tube" />
+                <strong className="me-2">{group.material}</strong>
+                <span className="badge text-bg-secondary me-2">{profileLabel(group)}</span>
                 {service && (
                     <span
-                        className="badge mr-2"
+                        className="badge me-2"
                         style={{ background: service.service_color || '#6c757d', color: '#fff' }}
                     >
                         {service.service_label}
                     </span>
                 )}
-                <span className="badge badge-info mr-2">{formatQty(totalPieces)} pièce(s)</span>
-                <span className="badge badge-primary mr-2">{results.length} barre(s)</span>
+                <span className="badge text-bg-info me-2">{formatQty(totalPieces)} pièce(s)</span>
+                <span className="badge text-bg-primary me-2">{results.length} barre(s)</span>
                 {results.length > 0 && (
-                    <span className={`badge mr-2 ${avgUsage < 60 ? 'badge-warning' : 'badge-success'}`}>
+                    <span className={`badge me-2 ${avgUsage < 60 ? 'text-bg-warning' : 'text-bg-success'}`}>
                         {avgUsage}%
                     </span>
                 )}
-                <span className="ml-auto text-muted small">
+                <span className="ms-auto text-muted small">
                     {Object.entries(byLength).map(([l, n]) => `${n}× ${l}`).join('  |  ')}
-                    {totalLength > 0 && <span className="ml-2">total débit {Math.round(totalLength)} mm</span>}
+                    {totalLength > 0 && <span className="ms-2">total débit {Math.round(totalLength)} mm</span>}
                 </span>
             </div>
 
             {expanded && (
                 <div className="p-2">
                     <table className="table table-sm table-striped mb-2" style={{ fontSize: '0.82em' }}>
-                        <thead className="thead-light">
+                        <thead className="table-light">
                             <tr>
                                 <th>Article</th>
                                 <th>Commande</th>
-                                <th className="text-right">Longueur mm</th>
-                                <th className="text-right">Qté</th>
+                                <th className="text-end">Longueur mm</th>
+                                <th className="text-end">Qté</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -473,8 +473,8 @@ function BarGroupPanel({ group, barLengths, kerf, service }) {
                                         <code>{p.product_code}</code> - {p.label}
                                     </td>
                                     <td><a href={`/orders/${p.order_id}`} target="_blank" rel="noreferrer">{p.order_code}</a></td>
-                                    <td className="text-right">{Math.round(p.length)}</td>
-                                    <td className="text-right">{formatQty(p.qty)}</td>
+                                    <td className="text-end">{Math.round(p.length)}</td>
+                                    <td className="text-end">{formatQty(p.qty)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -802,20 +802,20 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
         <div className="row">
             {/* ═══════ Panneau paramètres ═══════ */}
             <div className="col-lg-3">
-                <div className="card card-primary card-outline">
+                <div className="card card-primary card-outline mb-3">
                     <div className="card-header">
                         <h3 className="card-title">
-                            <i className="fas fa-cut mr-1" />Paramètres
+                            <i className="fas fa-cut me-1" />Paramètres
                         </h3>
                     </div>
                     <div className="card-body">
 
                         <p className="small text-muted mb-3">
-                            <i className="fas fa-info-circle mr-1" />
+                            <i className="fas fa-info-circle me-1" />
                             Le format tôle est choisi d'après les articles matière en stock.
                         </p>
 
-                        <label className="small font-weight-bold mb-1">Longueurs de barre</label>
+                        <label className="small fw-bold mb-1">Longueurs de barre</label>
                         <div className="mb-3">
                             {barLengths.map(b => (
                                 <div key={b.id} className="form-check">
@@ -833,7 +833,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                             ))}
                         </div>
 
-                        <label className="small font-weight-bold mb-1" htmlFor="kerf-input">
+                        <label className="small fw-bold mb-1" htmlFor="kerf-input">
                             Trait de scie (kerf)
                         </label>
                         <div className="input-group input-group-sm mb-3">
@@ -846,9 +846,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                 value={kerf}
                                 onChange={e => setKerf(Math.max(0, Number(e.target.value) || 0))}
                             />
-                            <div className="input-group-append">
-                                <span className="input-group-text">mm</span>
-                            </div>
+                            <span className="input-group-text">mm</span>
                         </div>
 
                         <div className="form-check mb-3">
@@ -866,7 +864,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
 
                         {services.length > 0 && (
                             <div className="mb-3">
-                                <label className="small font-weight-bold mb-1">Moyens de débit</label>
+                                <label className="small fw-bold mb-1">Moyens de débit</label>
                                 {services.map(s => (
                                     <div key={s.id} className="form-check">
                                         <input
@@ -896,19 +894,19 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                         )}
 
                         <button
-                            className="btn btn-primary btn-block"
+                            className="btn btn-primary w-100"
                             onClick={handleCompute}
                             disabled={loading || (engineEnabled && !serviceIds.size)}
                         >
                             {loading
-                                ? <><i className="fas fa-spinner fa-spin mr-1" />Calcul…</>
-                                : <><i className="fas fa-calculator mr-1" />Calculer le besoin</>
+                                ? <><i className="fas fa-spinner fa-spin me-1" />Calcul…</>
+                                : <><i className="fas fa-calculator me-1" />Calculer le besoin</>
                             }
                         </button>
 
                         {engineEnabled && !serviceIds.size && (
                             <small className="text-dark d-block mt-2">
-                                <i className="fas fa-info-circle mr-1" />Sélectionne au moins un moyen de débit.
+                                <i className="fas fa-info-circle me-1" />Sélectionne au moins un moyen de débit.
                             </small>
                         )}
 
@@ -928,7 +926,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
             <div className="col-lg-9">
                 {error && (
                     <div className="alert alert-danger">
-                        <i className="fas fa-exclamation-triangle mr-1" />{error}
+                        <i className="fas fa-exclamation-triangle me-1" />{error}
                     </div>
                 )}
 
@@ -942,7 +940,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                 )}
 
                 {loading && (
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-body text-center py-4">
                             <NestingAnimation />
                             <h5 className="mb-3 mt-3">Envoi au moteur d'imbrication…</h5>
@@ -961,34 +959,34 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                     <div className="card mb-3">
                         <div className="card-header py-2">
                             <h3 className="card-title h5 mb-0">
-                                <i className="fas fa-shopping-cart mr-1" />
+                                <i className="fas fa-shopping-cart me-1" />
                                 Besoin tôles
                                 {sheetStock.length > 0 && (
-                                    <small className="text-muted ml-2">
+                                    <small className="text-muted ms-2">
                                         (croisement stock — {sheetStock.length} article(s) tôle matière)
                                     </small>
                                 )}
                                 {pendingJobs > 0 && (
-                                    <small className="text-muted ml-2">
-                                        <i className="fas fa-spinner fa-spin mr-1" />{pendingJobs} imbrication(s) en cours
+                                    <small className="text-muted ms-2">
+                                        <i className="fas fa-spinner fa-spin me-1" />{pendingJobs} imbrication(s) en cours
                                     </small>
                                 )}
                             </h3>
                         </div>
                         <div className="card-body p-0">
                             <table className="table table-sm table-striped mb-0">
-                                <thead className="thead-light">
+                                <thead className="table-light">
                                     <tr>
                                         <th>Matière</th>
-                                        <th className="text-right">Épaisseur</th>
+                                        <th className="text-end">Épaisseur</th>
                                         <th>Format</th>
-                                        <th className="text-right">Besoin</th>
+                                        <th className="text-end">Besoin</th>
                                         <th>Article stock</th>
-                                        <th className="text-right">Stock</th>
-                                        <th className="text-right" title="Commandes d'achat émises non encore réceptionnées">
+                                        <th className="text-end">Stock</th>
+                                        <th className="text-end" title="Commandes d'achat émises non encore réceptionnées">
                                             En attente
                                         </th>
-                                        <th className="text-right">À commander</th>
+                                        <th className="text-end">À commander</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1001,10 +999,10 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                         return (
                                             <tr key={i}>
                                                 <td><strong>{row.material}</strong></td>
-                                                <td className="text-right">{row.thickness} mm</td>
+                                                <td className="text-end">{row.thickness} mm</td>
                                                 <td>{row.format} mm</td>
-                                                <td className="text-right">
-                                                    <span className="badge badge-primary">{row.count}</span>
+                                                <td className="text-end">
+                                                    <span className="badge text-bg-primary">{row.count}</span>
                                                 </td>
                                                 <td>
                                                     {match ? (
@@ -1018,7 +1016,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                                         <span className="text-muted small">— aucun article correspondant —</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match ? (
                                                         <span className={stockQty > 0 ? 'text-dark' : 'text-muted'}>
                                                             {stockQty}
@@ -1027,31 +1025,31 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                                         <span className="text-muted">—</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match && incomingQty > 0 ? (
-                                                        <span className="badge badge-info">{incomingQty}</span>
+                                                        <span className="badge text-bg-info">{incomingQty}</span>
                                                     ) : (
                                                         <span className="text-muted">—</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match ? (
-                                                        <span className={`badge ${covered ? 'badge-success' : 'badge-warning'}`}>
+                                                        <span className={`badge ${covered ? 'text-bg-success' : 'text-bg-warning'}`}>
                                                             {toBuy}
                                                         </span>
                                                     ) : (
-                                                        <span className="badge badge-danger">{row.count}</span>
+                                                        <span className="badge text-bg-danger">{row.count}</span>
                                                     )}
                                                 </td>
                                             </tr>
                                         );
                                     })}
                                 </tbody>
-                                <tfoot className="thead-light">
+                                <tfoot className="table-light">
                                     <tr>
-                                        <th colSpan="7" className="text-right">Total à commander</th>
-                                        <th className="text-right">
-                                            <span className="badge badge-dark">
+                                        <th colSpan="7" className="text-end">Total à commander</th>
+                                        <th className="text-end">
+                                            <span className="badge text-bg-dark">
                                                 {summary.reduce((s, row) => {
                                                     const match = lookupStock(row.material, row.thickness, row.format);
                                                     const stockQty = match ? match.stock_qty : 0;
@@ -1071,10 +1069,10 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                     <div className="card mb-3">
                         <div className="card-header py-2">
                             <h3 className="card-title h5 mb-0">
-                                <i className="fas fa-grip-lines-vertical mr-1" />
+                                <i className="fas fa-grip-lines-vertical me-1" />
                                 Besoin barres / tubes
                                 {barStock.length > 0 && (
-                                    <small className="text-muted ml-2">
+                                    <small className="text-muted ms-2">
                                         (croisement stock — {barStock.length} article(s) barre matière)
                                     </small>
                                 )}
@@ -1082,18 +1080,18 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                         </div>
                         <div className="card-body p-0">
                             <table className="table table-sm table-striped mb-0">
-                                <thead className="thead-light">
+                                <thead className="table-light">
                                     <tr>
                                         <th>Matière</th>
                                         <th>Profil</th>
                                         <th>Longueur barre</th>
-                                        <th className="text-right">Besoin</th>
+                                        <th className="text-end">Besoin</th>
                                         <th>Article stock</th>
-                                        <th className="text-right">Stock</th>
-                                        <th className="text-right" title="Commandes d'achat émises non encore réceptionnées">
+                                        <th className="text-end">Stock</th>
+                                        <th className="text-end" title="Commandes d'achat émises non encore réceptionnées">
                                             En attente
                                         </th>
-                                        <th className="text-right">À commander</th>
+                                        <th className="text-end">À commander</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1108,8 +1106,8 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                                 <td><strong>{row.material}</strong></td>
                                                 <td>{row.profile}</td>
                                                 <td>{row.bar_label}</td>
-                                                <td className="text-right">
-                                                    <span className="badge badge-primary">{row.count}</span>
+                                                <td className="text-end">
+                                                    <span className="badge text-bg-primary">{row.count}</span>
                                                 </td>
                                                 <td>
                                                     {match ? (
@@ -1123,7 +1121,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                                         <span className="text-muted small">— aucun article correspondant —</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match ? (
                                                         <span className={stockQty > 0 ? 'text-dark' : 'text-muted'}>
                                                             {stockQty}
@@ -1132,31 +1130,31 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                                         <span className="text-muted">—</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match && incomingQty > 0 ? (
-                                                        <span className="badge badge-info">{incomingQty}</span>
+                                                        <span className="badge text-bg-info">{incomingQty}</span>
                                                     ) : (
                                                         <span className="text-muted">—</span>
                                                     )}
                                                 </td>
-                                                <td className="text-right">
+                                                <td className="text-end">
                                                     {match ? (
-                                                        <span className={`badge ${covered ? 'badge-success' : 'badge-warning'}`}>
+                                                        <span className={`badge ${covered ? 'text-bg-success' : 'text-bg-warning'}`}>
                                                             {toBuy}
                                                         </span>
                                                     ) : (
-                                                        <span className="badge badge-danger">{row.count}</span>
+                                                        <span className="badge text-bg-danger">{row.count}</span>
                                                     )}
                                                 </td>
                                             </tr>
                                         );
                                     })}
                                 </tbody>
-                                <tfoot className="thead-light">
+                                <tfoot className="table-light">
                                     <tr>
-                                        <th colSpan="7" className="text-right">Total à commander</th>
-                                        <th className="text-right">
-                                            <span className="badge badge-dark">
+                                        <th colSpan="7" className="text-end">Total à commander</th>
+                                        <th className="text-end">
+                                            <span className="badge text-bg-dark">
                                                 {barSummary.reduce((s, row) => {
                                                     const match = lookupBarStock(row.material, row.profile, row.bar_length);
                                                     const stockQty = match ? match.stock_qty : 0;
@@ -1178,7 +1176,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                             borderLeft: `4px solid ${svc.service_color || '#666'}`,
                         }}>
                             <h3 className="card-title h6 mb-0">
-                                <i className="fas fa-cog mr-1" />{svc.service_label}
+                                <i className="fas fa-cog me-1" />{svc.service_label}
                             </h3>
                         </div>
                         <div className="card-body p-2">
@@ -1250,26 +1248,26 @@ function AnomalyList({ title, subtitle, rows, showMaterial = false, hideService 
                 onClick={() => setExpanded(!expanded)}
             >
                 <h3 className="card-title h6 mb-0">
-                    <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} mr-2`} />
-                    <i className="fas fa-exclamation-triangle mr-1 text-warning" />
+                    <i className={`fas fa-chevron-${expanded ? 'down' : 'right'} me-2`} />
+                    <i className="fas fa-exclamation-triangle me-1 text-warning" />
                     {title}
-                    <span className="badge badge-warning ml-2">{rows.length}</span>
+                    <span className="badge text-bg-warning ms-2">{rows.length}</span>
                 </h3>
             </div>
             {expanded && (
                 <div className="card-body p-0">
                     <p className="p-2 mb-0 small text-muted">{subtitle}</p>
                     <table className="table table-sm mb-0" style={{ fontSize: '0.82em' }}>
-                        <thead className="thead-light">
+                        <thead className="table-light">
                             <tr>
                                 <th>Article</th>
                                 <th>Commande</th>
                                 {!hideService && <th>Moyen de débit</th>}
                                 {showMaterial && <>
                                     <th>Matière</th>
-                                    <th className="text-right">Épaisseur</th>
+                                    <th className="text-end">Épaisseur</th>
                                 </>}
-                                <th className="text-right">Qté</th>
+                                <th className="text-end">Qté</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1286,9 +1284,9 @@ function AnomalyList({ title, subtitle, rows, showMaterial = false, hideService 
                                     {!hideService && <td>{r.service_label}</td>}
                                     {showMaterial && <>
                                         <td>{r.material}</td>
-                                        <td className="text-right">{r.thickness} mm</td>
+                                        <td className="text-end">{r.thickness} mm</td>
                                     </>}
-                                    <td className="text-right">{formatQty(r.qty)}</td>
+                                    <td className="text-end">{formatQty(r.qty)}</td>
                                 </tr>
                             ))}
                         </tbody>

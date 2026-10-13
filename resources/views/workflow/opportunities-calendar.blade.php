@@ -12,15 +12,13 @@
 @stop
 
 @section('content')
-<div class="card">
+<div class="card mb-3">
   <div class="card-header">
     <div class="row">
       <div class="col-md-4 col-sm-6 mb-2 mb-md-0">
         <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fas fa-user"></i></span>
-          </div>
-          <select id="calendar-user" class="form-control">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+          <select id="calendar-user" class="form-select">
             <option value="">{{ __('general_content.all_users_trans_key') }}</option>
             @foreach ($users as $user)
               <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -30,10 +28,8 @@
       </div>
       <div class="col-md-4 col-sm-6">
         <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fas fa-filter"></i></span>
-          </div>
-          <select id="calendar-kind" class="form-control">
+          <span class="input-group-text"><i class="fas fa-filter"></i></span>
+          <select id="calendar-kind" class="form-select">
             <option value="all">{{ __('general_content.activities_trans_key') }} + {{ __('general_content.events_trans_key') }}</option>
             <option value="activities">{{ __('general_content.activities_trans_key') }}</option>
             <option value="events">{{ __('general_content.events_trans_key') }}</option>
@@ -44,12 +40,12 @@
     <div class="mt-2 small">
       <strong>{{ __('general_content.activities_trans_key') }} :</strong>
       @foreach ($activityTypes as $type)
-        <span class="badge mr-1" style="background-color: {{ $type['color'] }}; color: #fff;">{{ $type['label'] }}</span>
+        <span class="badge me-1" style="background-color: {{ $type['color'] }}; color: #fff;">{{ $type['label'] }}</span>
       @endforeach
-      <span class="badge mr-3" style="background-color: #adb5bd; color: #fff;">{{ __('general_content.closed_trans_key') }}</span>
+      <span class="badge me-3" style="background-color: #adb5bd; color: #fff;">{{ __('general_content.closed_trans_key') }}</span>
       <strong>{{ __('general_content.events_trans_key') }} :</strong>
       @foreach ($eventTypes as $type)
-        <span class="badge mr-1" style="background-color: {{ $type['color'] }}; color: #fff;">{{ $type['label'] }}</span>
+        <span class="badge me-1" style="background-color: {{ $type['color'] }}; color: #fff;">{{ $type['label'] }}</span>
       @endforeach
     </div>
   </div>

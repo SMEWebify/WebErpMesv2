@@ -7,12 +7,12 @@ import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',      label: 'open' },
-    2: { badge: 'badge-warning',   label: 'send' },
-    3: { badge: 'badge-success',   label: 'win' },
-    4: { badge: 'badge-danger',    label: 'lost' },
-    5: { badge: 'badge-secondary', label: 'closed' },
-    6: { badge: 'badge-primary',   label: 'obsolete' },
+    1: { badge: 'text-bg-info',      label: 'open' },
+    2: { badge: 'text-bg-warning',   label: 'send' },
+    3: { badge: 'text-bg-success',   label: 'win' },
+    4: { badge: 'text-bg-danger',    label: 'lost' },
+    5: { badge: 'text-bg-secondary', label: 'closed' },
+    6: { badge: 'text-bg-primary',   label: 'obsolete' },
 };
 
 const LS_COL_ORDER   = 'quote_lines_table_col_order';
@@ -50,7 +50,7 @@ function quoteLineColumns(trans, currency, locale) {
         { key: 'code',          label: trans.code,          sortable: true,
           render: l => <code>{l.code}</code>, filter: 'text', mobile: 'subtitle', mobileRender: l => l.code },
         { key: 'product',       label: trans.product,
-          render: l => (l.product_url ? <a href={l.product_url} className="btn btn-xs btn-info"><i className="fas fa-eye" /></a> : '—') },
+          render: l => (l.product_url ? <a href={l.product_url} className="btn btn-sm btn-info"><i className="fas fa-eye" /></a> : '—') },
         { key: 'label',         label: trans.label,         sortable: true, bold: true, nowrap: false,
           filter: 'text', mobile: 'title' },
         { key: 'qty',           label: trans.qty,           sortable: true, align: 'right', nowrap: false,
@@ -61,7 +61,7 @@ function quoteLineColumns(trans, currency, locale) {
           render: l => (
               <strong>
                   {formatCurrency(l.selling_price, currency, locale)}
-                  {l.use_calculated_price && <i className="fas fa-calculator text-warning ml-1" title={trans.calculated_price} />}
+                  {l.use_calculated_price && <i className="fas fa-calculator text-warning ms-1" title={trans.calculated_price} />}
               </strong>
           ),
           total: { value: lineAmount, format: sum => formatCurrency(sum, currency, locale) },
@@ -80,7 +80,7 @@ function quoteLineColumns(trans, currency, locale) {
                   <>
                       <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>
                       {l.statu === 3 && l.order_url && (
-                          <a href={l.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
+                          <a href={l.order_url} className="badge text-bg-primary ms-1" target="_blank" rel="noreferrer">
                               <i className="fas fa-file-alt" /> {l.order_code}
                           </a>
                       )}
@@ -94,10 +94,10 @@ function quoteLineColumns(trans, currency, locale) {
         { key: 'actions',       label: trans.action,        hideable: false,
           render: l => (
               <div className="btn-group btn-group-sm">
-                  <a href={l.quote_url} className="btn btn-xs btn-info" title={trans.view_quote}>
+                  <a href={l.quote_url} className="btn btn-sm btn-info" title={trans.view_quote}>
                       <i className="fas fa-eye" />
                   </a>
-                  <a href={l.task_url} className="btn btn-success btn-xs" title={trans.tasks}>
+                  <a href={l.task_url} className="btn btn-success btn-sm" title={trans.tasks}>
                       <i className="fas fa-list" />
                       {' '}({l.task_count}) ({l.sub_assembly_count})
                   </a>
@@ -134,7 +134,7 @@ function QuoteLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, l
             rowHref={l => l.quote_url}
             mobileActions={l => (
                 <a href={l.task_url} className="btn btn-outline-success" style={{ minHeight: 44, lineHeight: '30px' }}>
-                    <i className="fas fa-list mr-1" />{trans.tasks} ({l.task_count})
+                    <i className="fas fa-list me-1" />{trans.tasks} ({l.task_count})
                 </a>
             )}
         />
@@ -205,7 +205,7 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
 
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-body">
                 {/* Search + status filters */}
                 <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
@@ -217,9 +217,7 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
                             onChange={e => handleSearch(e.target.value)}
                         />
                         {search && (
-                            <div className="input-group-append">
-                                <button className="btn btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
-                            </div>
+                            <button className="btn btn-outline-secondary" onClick={() => handleSearch('')}>×</button>
                         )}
                     </div>
 
@@ -229,7 +227,7 @@ export default function QuoteLinesIndex({ endpoints, trans }) {
 
                     <div className="flex-grow-1" />
 
-                    {loading && <span className="text-muted"><i className="fas fa-spinner fa-spin mr-1" /></span>}
+                    {loading && <span className="text-muted"><i className="fas fa-spinner fa-spin me-1" /></span>}
                     {meta && <small className="text-muted">{meta.total} lignes</small>}
                 </div>
 

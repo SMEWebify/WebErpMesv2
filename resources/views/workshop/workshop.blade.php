@@ -9,28 +9,28 @@
 --}}
 <div class="ws-home">
     <a class="ws-tile ws-tile--tasks" href="{{ route('workshop.task.lines') }}">
-        <span class="ws-tile__badge badge badge-danger">Beta</span>
+        <span class="ws-tile__badge badge text-bg-danger">Beta</span>
         <i class="ws-tile__icon fas fa-tasks"></i>
         <span class="ws-tile__title">{{ __('general_content.tasks_list_trans_key') }}</span>
         <span class="ws-tile__text">{{ __('general_content.note_1_trans_key') }}</span>
     </a>
 
     <a class="ws-tile ws-tile--production" href="{{ route('workshop.task.statu') }}">
-        <span class="ws-tile__badge badge badge-danger">Beta</span>
+        <span class="ws-tile__badge badge text-bg-danger">Beta</span>
         <i class="ws-tile__icon fas fa-play-circle"></i>
         <span class="ws-tile__title">{{ __('general_content.production_declaration_trans_key') }}</span>
         <span class="ws-tile__text">{{ __('general_content.note_2_trans_key') }}</span>
     </a>
 
     <a class="ws-tile ws-tile--stock" href="{{ route('workshop.stock.detail') }}">
-        <span class="ws-tile__badge badge badge-danger">Beta</span>
+        <span class="ws-tile__badge badge text-bg-danger">Beta</span>
         <i class="ws-tile__icon fas fa-barcode"></i>
         <span class="ws-tile__title">Stocks</span>
         <span class="ws-tile__text">Scannez une étiquette de mouvement de stock</span>
     </a>
 
     <a class="ws-tile ws-tile--reports" href="{{ route('workshop.reports') }}">
-        <span class="ws-tile__badge badge badge-danger">Beta</span>
+        <span class="ws-tile__badge badge text-bg-danger">Beta</span>
         <i class="ws-tile__icon fas fa-chart-line"></i>
         <span class="ws-tile__title">Reports</span>
         <span class="ws-tile__text">Réalisé pointé, rebuts, charge machine, andon</span>
@@ -42,16 +42,15 @@
 <style>
     /*
       La grille doit remplir la hauteur utile : on rend la chaîne AdminLTE flex
-      (.content-wrapper > .content > .container-fluid) et les enfants s'étirent.
+      (.app-main > .app-content > .container-fluid) et les enfants s'étirent.
 
-      Le min-height d'origine déduit navbar + footer, or ce layout ne rend aucun
-      footer (pas de section 'footer' dans le projet) : sans ce recalcul une
-      bande vide de 3,5 rem reste sous la 2e ligne de tuiles.
+      Le min-height déduit la seule navbar (3,5 rem) : sans ce recalcul une
+      bande vide reste sous la 2e ligne de tuiles.
     */
-    .content-wrapper { display: flex; flex-direction: column; }
-    .wrapper .content-wrapper { min-height: calc(100vh - 3.5rem - 1px); }
-    .content-wrapper > .content { flex: 1 1 auto; display: flex; padding: 0; }
-    .content-wrapper > .content > .container-fluid { flex: 1 1 auto; display: flex; padding: 0; }
+    .app-main { display: flex; flex-direction: column; }
+    .app-wrapper .app-main { min-height: calc(100vh - 3.5rem - 1px); }
+    .app-main > .app-content { flex: 1 1 auto; display: flex; padding: 0; }
+    .app-main > .app-content > .container-fluid { flex: 1 1 auto; display: flex; padding: 0; }
 
     .ws-home {
         flex: 1 1 auto;
@@ -110,11 +109,10 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function(){
-        // Ajoute la classe sidebar-hidden à la balise body dès que la page est chargée
-        $("body").addClass("sidebar-hidden");
+        document.addEventListener('DOMContentLoaded', function () {
+            // Écran atelier en plein écran : la sidebar est masquée (public/css/wem-shell.css).
+            document.body.classList.add('sidebar-hidden');
         });
     </script>
 @stop

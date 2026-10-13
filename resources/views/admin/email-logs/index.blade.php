@@ -3,7 +3,7 @@
 @section('title', __('general_content.email_logs_trans_key'))
 
 @section('content_header')
-    <h1><i class="fas fa-history mr-1"></i> {{ __('general_content.email_logs_trans_key') }}</h1>
+    <h1><i class="fas fa-history me-1"></i> {{ __('general_content.email_logs_trans_key') }}</h1>
 @stop
 
 @section('content')
@@ -21,28 +21,28 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="small-box bg-success">
+            <div class="small-box text-bg-success">
                 <div class="inner"><h3>{{ $counts['sent'] }}</h3><p>{{ __('general_content.email_status_sent_trans_key') }}</p></div>
-                <div class="icon"><i class="fas fa-check"></i></div>
-                <a href="{{ route('admin.email-logs.index', ['status' => 'sent']) }}" class="small-box-footer">
+                <i class="small-box-icon fas fa-check" aria-hidden="true"></i>
+                <a href="{{ route('admin.email-logs.index', ['status' => 'sent']) }}" class="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover">
                     {{ __('general_content.filter_trans_key') }} <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="small-box bg-danger">
+            <div class="small-box text-bg-danger">
                 <div class="inner"><h3>{{ $counts['failed'] }}</h3><p>{{ __('general_content.email_status_failed_trans_key') }}</p></div>
-                <div class="icon"><i class="fas fa-times"></i></div>
-                <a href="{{ route('admin.email-logs.index', ['status' => 'failed']) }}" class="small-box-footer">
+                <i class="small-box-icon fas fa-times" aria-hidden="true"></i>
+                <a href="{{ route('admin.email-logs.index', ['status' => 'failed']) }}" class="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover">
                     {{ __('general_content.filter_trans_key') }} <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="small-box bg-warning">
+            <div class="small-box text-bg-warning">
                 <div class="inner"><h3>{{ $counts['pending'] }}</h3><p>{{ __('general_content.email_status_pending_trans_key') }}</p></div>
-                <div class="icon"><i class="fas fa-clock"></i></div>
-                <a href="{{ route('admin.email-logs.index', ['status' => 'pending']) }}" class="small-box-footer">
+                <i class="small-box-icon fas fa-clock" aria-hidden="true"></i>
+                <a href="{{ route('admin.email-logs.index', ['status' => 'pending']) }}" class="small-box-footer link-underline-opacity-0 link-underline-opacity-50-hover">
                     {{ __('general_content.filter_trans_key') }} <i class="fas fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -50,10 +50,10 @@
     </div>
 
     <x-adminlte-card theme="secondary" theme-mode="outline">
-        <form method="GET" class="form-inline mb-3">
-            <input type="text" name="q" value="{{ $search }}" class="form-control mr-2"
+        <form method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <input type="text" name="q" value="{{ $search }}" class="form-control me-2 w-auto"
                    placeholder="{{ __('general_content.search_by_recipient_or_subject_trans_key') }}">
-            <select name="status" class="form-control mr-2">
+            <select name="status" class="form-select me-2 w-auto">
                 <option value="">{{ __('general_content.all_trans_key') }}</option>
                 <option value="sent"    @selected($status === 'sent')>{{ __('general_content.email_status_sent_trans_key') }}</option>
                 <option value="failed"  @selected($status === 'failed')>{{ __('general_content.email_status_failed_trans_key') }}</option>
@@ -61,7 +61,7 @@
             </select>
             <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
             @if($status || $search)
-                <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary ml-2">
+                <a href="{{ route('admin.email-logs.index') }}" class="btn btn-outline-secondary ms-2">
                     {{ __('general_content.reset_trans_key') }}
                 </a>
             @endif
@@ -96,22 +96,22 @@
                         <td>
                             @switch($log->status)
                                 @case('sent')
-                                    <span class="badge badge-success" title="{{ $log->sent_at?->format('d/m/Y H:i') }}">
+                                    <span class="badge text-bg-success" title="{{ $log->sent_at?->format('d/m/Y H:i') }}">
                                         <i class="fas fa-check"></i> {{ __('general_content.email_status_sent_trans_key') }}
                                     </span>
                                     @break
                                 @case('failed')
-                                    <span class="badge badge-danger" title="{{ $log->error }}">
+                                    <span class="badge text-bg-danger" title="{{ $log->error }}">
                                         <i class="fas fa-times"></i> {{ __('general_content.email_status_failed_trans_key') }}
                                     </span>
                                     @break
                                 @default
-                                    <span class="badge badge-secondary">
+                                    <span class="badge text-bg-secondary">
                                         <i class="fas fa-clock"></i> {{ __('general_content.email_status_pending_trans_key') }}
                                     </span>
                             @endswitch
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             <a href="{{ route('admin.email-logs.show', $log) }}" class="btn btn-sm btn-outline-info" title="{{ __('general_content.details_trans_key') }}">
                                 <i class="fas fa-eye"></i>
                             </a>

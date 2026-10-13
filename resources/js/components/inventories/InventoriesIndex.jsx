@@ -5,10 +5,10 @@ function csrf() {
 }
 
 const STATUS_LABELS = {
-    1: { key: 'status_draft',     badge: 'badge-secondary' },
-    2: { key: 'status_exported',  badge: 'badge-info' },
-    3: { key: 'status_validated', badge: 'badge-success' },
-    4: { key: 'status_cancelled', badge: 'badge-danger' },
+    1: { key: 'status_draft',     badge: 'text-bg-secondary' },
+    2: { key: 'status_exported',  badge: 'text-bg-info' },
+    3: { key: 'status_validated', badge: 'text-bg-success' },
+    4: { key: 'status_cancelled', badge: 'text-bg-danger' },
 };
 
 const SCOPE_LABEL_KEY = {
@@ -37,12 +37,12 @@ export default function InventoriesIndex({ endpoints, trans, stockLocations, cat
     const rows = useMemo(() => inventories, [inventories]);
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-header d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
-                    <label className="mr-2 mb-0">{trans.status}:</label>
+                    <label className="me-2 mb-0">{trans.status}:</label>
                     <select
-                        className="form-control form-control-sm"
+                        className="form-select form-select-sm"
                         style={{ width: 200 }}
                         value={statusFilter}
                         onChange={e => setStatusFilter(e.target.value)}
@@ -55,7 +55,7 @@ export default function InventoriesIndex({ endpoints, trans, stockLocations, cat
                     </select>
                 </div>
                 <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
-                    <i className="fas fa-plus mr-1"></i>{trans.new_inventory}
+                    <i className="fas fa-plus me-1"></i>{trans.new_inventory}
                 </button>
             </div>
 
@@ -164,15 +164,15 @@ function CreateInventoryModal({ endpoints, trans, stockLocations, categories, on
                 <form className="modal-content" onSubmit={handleSubmit}>
                     <div className="modal-header">
                         <h5 className="modal-title">{trans.new_inventory}</h5>
-                        <button type="button" className="close" onClick={onClose}>&times;</button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">
                         <div className="alert alert-warning py-2">
-                            <i className="fas fa-exclamation-triangle mr-1"></i>
+                            <i className="fas fa-exclamation-triangle me-1"></i>
                             {trans.pause_moves_warning}
                         </div>
 
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>{trans.label}</label>
                             <input
                                 type="text"
@@ -182,14 +182,14 @@ function CreateInventoryModal({ endpoints, trans, stockLocations, categories, on
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>{trans.scope}</label>
                             <div>
-                                <label className="mr-3">
+                                <label className="me-3">
                                     <input type="radio" checked={scopeType === 'all'} onChange={() => { setScopeType('all'); setScopeIds([]); }} />
                                     {' '}{trans.scope_all}
                                 </label>
-                                <label className="mr-3">
+                                <label className="me-3">
                                     <input type="radio" checked={scopeType === 'location'} onChange={() => { setScopeType('location'); setScopeIds([]); }} />
                                     {' '}{trans.scope_location}
                                 </label>
@@ -201,11 +201,11 @@ function CreateInventoryModal({ endpoints, trans, stockLocations, categories, on
                         </div>
 
                         {scopeType !== 'all' && (
-                            <div className="form-group">
+                            <div className="mb-3">
                                 <label>{scopeType === 'location' ? trans.select_locations : trans.select_categories}</label>
                                 <select
                                     multiple
-                                    className="form-control"
+                                    className="form-select"
                                     size={Math.min(8, (optionsForScope || []).length + 1)}
                                     value={scopeIds.map(String)}
                                     onChange={e => {

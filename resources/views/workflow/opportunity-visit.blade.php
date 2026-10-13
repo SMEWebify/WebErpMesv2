@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
 
     @viteReactRefresh
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/standalone.scss', 'resources/js/app.js'])
 
     <style>
         body { background: #f1f5f9; }

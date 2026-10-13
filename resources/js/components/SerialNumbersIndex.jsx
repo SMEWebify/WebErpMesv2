@@ -7,11 +7,11 @@ import { apiFetch } from '../lib/http';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',      label: 'undefined' },
-    2: { badge: 'badge-success',   label: 'sold' },
-    3: { badge: 'badge-secondary', label: 'shipped' },
-    4: { badge: 'badge-warning',   label: 'returned' },
-    5: { badge: 'badge-primary',   label: 'in_stock' },
+    1: { badge: 'text-bg-info',      label: 'undefined' },
+    2: { badge: 'text-bg-success',   label: 'sold' },
+    3: { badge: 'text-bg-secondary', label: 'shipped' },
+    4: { badge: 'text-bg-warning',   label: 'returned' },
+    5: { badge: 'text-bg-primary',   label: 'in_stock' },
 };
 
 const ALL_STATUSES = [1, 2, 3, 4, 5];
@@ -28,39 +28,39 @@ function KPICards({ kpi, trans }) {
     return (
         <div className="row">
             <div className="col-lg-3">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{total}</h3>
                         <p>{trans.total_serial_numbers}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-barcode" /></div>
+                    <i className="small-box-icon fas fa-barcode" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-3">
-                <div className="small-box bg-success">
+                <div className="small-box text-bg-success">
                     <div className="inner">
                         <h3>{kpi.soldCount ?? 0}</h3>
                         <p>{trans.sold}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-tag" /></div>
+                    <i className="small-box-icon fas fa-tag" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-3">
-                <div className="small-box bg-secondary">
+                <div className="small-box text-bg-secondary">
                     <div className="inner">
                         <h3>{kpi.shippedCount ?? 0}</h3>
                         <p>{trans.shipped}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-truck" /></div>
+                    <i className="small-box-icon fas fa-truck" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-3">
-                <div className="small-box bg-primary">
+                <div className="small-box text-bg-primary">
                     <div className="inner">
                         <h3>{kpi.inStockCount ?? 0}</h3>
                         <p>{trans.in_stock}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-warehouse" /></div>
+                    <i className="small-box-icon fas fa-warehouse" aria-hidden="true" />
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@ function serialColumns(trans) {
         { key: 'product',       label: trans.product,
           render: sn => (sn.product ? (
               <span>
-                  <a href={sn.product.url} className="btn btn-xs btn-info mr-1"><i className="fas fa-eye" /></a>
+                  <a href={sn.product.url} className="btn btn-sm btn-info me-1"><i className="fas fa-eye" /></a>
                   {sn.product.label}
               </span>
           ) : '—'),
@@ -98,17 +98,17 @@ function serialColumns(trans) {
         { key: 'order',         label: trans.order,
           render: sn => (sn.order ? (
               <span>
-                  <a href={sn.order.url} className="btn btn-xs btn-primary mr-1"><i className="fas fa-folder" /></a>
+                  <a href={sn.order.url} className="btn btn-sm btn-primary me-1"><i className="fas fa-folder" /></a>
                   <code>{sn.order.code}</code>
               </span>
           ) : '—'),
           filterValue: sn => sn.order?.code, filter: 'text', mobile: 'subtitle', mobileRender: sn => sn.order?.code },
         { key: 'task',          label: trans.task,
-          render: sn => (sn.task ? <a href={sn.task.url} className="btn btn-xs btn-success">{trans.view}</a> : '—') },
+          render: sn => (sn.task ? <a href={sn.task.url} className="btn btn-sm btn-success">{trans.view}</a> : '—') },
         { key: 'receipt',       label: trans.po_receipt,
           render: sn => (sn.receipt ? (
-              <a href={sn.receipt.url} className="btn btn-xs btn-primary">
-                  <i className="fas fa-folder mr-1" /><code>{sn.receipt.code}</code>
+              <a href={sn.receipt.url} className="btn btn-sm btn-primary">
+                  <i className="fas fa-folder me-1" /><code>{sn.receipt.code}</code>
               </a>
           ) : '—'),
           filterValue: sn => sn.receipt?.code, filter: 'text', mobile: 'subtitle', mobileRender: sn => sn.receipt?.code },
@@ -117,7 +117,7 @@ function serialColumns(trans) {
         { key: 'created_at',    label: trans.created_at,    sortable: true, nowrap: true,
           filter: 'date', filterValue: sn => sn.created_date },
         { key: 'trace',         label: trans.trace,
-          render: sn => <a href={sn.trace_url} className="btn btn-xs btn-primary">{trans.trace}</a> },
+          render: sn => <a href={sn.trace_url} className="btn btn-sm btn-primary">{trans.trace}</a> },
     ];
 }
 
@@ -155,7 +155,7 @@ function DashboardTab({ kpi, trans }) {
                     const pct   = total > 0 ? Math.round(count / total * 100) : 0;
                     return (
                         <div key={id} className="col-md-4 mb-3">
-                            <div className="card">
+                            <div className="card mb-3">
                                 <div className="card-body py-2">
                                     <div className="d-flex justify-content-between align-items-center mb-1">
                                         <span className={`badge ${cfg.badge}`}>{trans[cfg.label]}</span>
@@ -163,7 +163,7 @@ function DashboardTab({ kpi, trans }) {
                                     </div>
                                     <div className="progress" style={{ height: 6 }}>
                                         <div
-                                            className={`progress-bar ${cfg.badge.replace('badge-', 'bg-')}`}
+                                            className={`progress-bar ${cfg.badge.replace(/^(badge|text-bg)-/, 'bg-')}`}
                                             style={{ width: `${pct}%` }}
                                         />
                                     </div>
@@ -252,9 +252,7 @@ function ListTab({ endpoints, trans, productId = null }) {
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 220 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input
                         type="text"
                         className="form-control"
@@ -307,7 +305,7 @@ export default function SerialNumbersIndex({ kpi, endpoints, trans, productId = 
     }
 
     return (
-        <div className="card card-outline card-info">
+        <div className="card card-outline card-info mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

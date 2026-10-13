@@ -21,7 +21,7 @@
 
     @if($errors->any())
         <x-adminlte-alert theme="danger" title="Erreur" dismissable>
-            <ul class="mb-0 pl-3">
+            <ul class="mb-0 ps-3">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -39,7 +39,7 @@
                 <p class="mb-2">Glissez-déposez vos fichiers PDF ici.</p>
                 <p class="text-muted mb-3">ou</p>
                 <button type="button" id="pre-orders-upload-trigger" class="btn btn-primary btn-sm">Sélectionner des PDF</button>
-                <div id="pre-orders-file-list" class="mt-3 text-left small text-muted"></div>
+                <div id="pre-orders-file-list" class="mt-3 text-start small text-muted"></div>
             </div>
 
             <div class="mt-3">
@@ -72,13 +72,13 @@
                             <td>{{ $preOrder->formatted_total_price }}</td>
                             <td>
                                 @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_CONVERTED)
-                                    <span class="badge badge-success">Convertie</span>
+                                    <span class="badge text-bg-success">Convertie</span>
                                 @else
-                                    <span class="badge badge-warning">À traiter</span>
+                                    <span class="badge text-bg-warning">À traiter</span>
                                 @endif
                             </td>
-                            <td class="text-right">
-                                <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-xs btn-default text-primary">
+                            <td class="text-end">
+                                <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-sm btn-outline-secondary text-primary">
                                     <i class="fa fa-lg fa-fw fa-eye"></i>
                                 </a>
                                 @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_PENDING)
@@ -86,7 +86,7 @@
                                           onsubmit="return confirm('Supprimer cette pré-commande ?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-xs btn-default text-danger">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">
                                             <i class="fa fa-lg fa-fw fa-trash"></i>
                                         </button>
                                     </form>
@@ -137,13 +137,13 @@
                                 <td>{{ $reportRow['date'] }}</td>
                                 <td>
                                     @if($reportRow['is_error'])
-                                        <span class="badge badge-danger">Erreur</span>
+                                        <span class="badge text-bg-danger">Erreur</span>
                                     @elseif($reportRow['is_warning'])
-                                        <span class="badge badge-warning">Alerte</span>
+                                        <span class="badge text-bg-warning">Alerte</span>
                                     @else
-                                        <span class="badge badge-success">Succès</span>
+                                        <span class="badge text-bg-success">Succès</span>
                                     @endif
-                                    <span class="ml-1">{{ $reportRow['status'] }}</span>
+                                    <span class="ms-1">{{ $reportRow['status'] }}</span>
                                 </td>
                                 <td>{{ $reportRow['items_extracted'] }}</td>
                                 <td>{{ $reportRow['error_details'] }}</td>

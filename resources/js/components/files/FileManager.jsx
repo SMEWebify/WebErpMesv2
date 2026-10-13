@@ -110,7 +110,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
         <div className="wem-file-manager">
             {error && (
                 <div className="alert alert-danger alert-dismissible">
-                    <button type="button" className="close" onClick={() => setError(null)}>&times;</button>
+                    <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                     {error}
                 </div>
             )}
@@ -129,11 +129,11 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                     )}
 
                     <div className="wem-file-manager__list-header d-flex flex-wrap align-items-center justify-content-between mt-3 mb-2">
-                        <h6 className="mb-0 text-muted mr-2">
-                            {t('attached_files')} <span className="badge badge-secondary">{files.length}</span>
+                        <h6 className="mb-0 text-muted me-2">
+                            {t('attached_files')} <span className="badge text-bg-secondary">{files.length}</span>
                         </h6>
                         <select
-                            className="form-control form-control-sm w-auto"
+                            className="form-select form-select-sm w-auto"
                             value={roleFilter}
                             onChange={(event) => setRoleFilter(event.target.value)}
                         >
@@ -144,7 +144,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                         </select>
                     </div>
 
-                    {loading && <div className="text-muted small"><i className="fas fa-spinner fa-spin mr-1" />{t('loading')}</div>}
+                    {loading && <div className="text-muted small"><i className="fas fa-spinner fa-spin me-1" />{t('loading')}</div>}
 
                     {!loading && !visibleFiles.length && (
                         <div className="text-muted small">{t('no_data')}</div>
@@ -162,12 +162,12 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                         role="button"
                                     >
                                         <div className="d-flex align-items-start">
-                                            <i className={`${file.icon} mt-1 mr-2`} />
+                                            <i className={`${file.icon} mt-1 me-2`} />
                                             <div className="flex-grow-1 min-width-0">
                                                 <div className="text-truncate" title={file.name}>
                                                     {file.name}
                                                     {file.is_primary && (
-                                                        <span className="badge badge-success ml-1">{t('primary')}</span>
+                                                        <span className="badge text-bg-success ms-1">{t('primary')}</span>
                                                     )}
                                                 </div>
                                                 <div className="small text-muted">
@@ -177,12 +177,12 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                 {!!file.hashtags?.length && (
                                                     <div className="mt-1">
                                                         {file.hashtags.map((tag) => (
-                                                            <span key={tag} className="badge badge-info mr-1">#{tag}</span>
+                                                            <span key={tag} className="badge text-bg-info me-1">#{tag}</span>
                                                         ))}
                                                     </div>
                                                 )}
                                                 {file.comment && (
-                                                    <div className="small text-muted font-italic">{file.comment}</div>
+                                                    <div className="small text-muted fst-italic">{file.comment}</div>
                                                 )}
                                             </div>
                                         </div>
@@ -190,7 +190,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                         {canEdit && (
                                             <div className="d-flex align-items-center mt-2">
                                                 <select
-                                                    className="form-control form-control-sm mr-1"
+                                                    className="form-select form-select-sm me-1"
                                                     value={file.role ?? ''}
                                                     onClick={(event) => event.stopPropagation()}
                                                     onChange={(event) => handleRoleChange(file, event.target.value)}
@@ -203,7 +203,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                 {!file.is_primary && (
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline-success btn-sm mr-1"
+                                                        className="btn btn-outline-success btn-sm me-1"
                                                         title={t('set_as_primary')}
                                                         onClick={(event) => { event.stopPropagation(); handlePrimary(file); }}
                                                     >
@@ -212,7 +212,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                 )}
 
                                                 <a
-                                                    className="btn btn-outline-secondary btn-sm mr-1"
+                                                    className="btn btn-outline-secondary btn-sm me-1"
                                                     href={file.download_url}
                                                     title={t('download')}
                                                     onClick={(event) => event.stopPropagation()}

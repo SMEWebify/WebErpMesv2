@@ -8,8 +8,8 @@ import { formatDate } from '../utils';
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    1: { badge: 'badge-info',    label: 'in_progress' },
-    2: { badge: 'badge-warning', label: 'stock' },
+    1: { badge: 'text-bg-info',    label: 'in_progress' },
+    2: { badge: 'text-bg-warning', label: 'stock' },
 };
 
 const ALL_STATUSES = [1, 2];
@@ -41,30 +41,30 @@ function KPICards({ kpi, trans }) {
     return (
         <div className="row">
             <div className="col-lg-4">
-                <div className="small-box bg-teal">
+                <div className="small-box text-bg-teal">
                     <div className="inner">
                         <h3>{kpi.total ?? 0}</h3>
                         <p>{trans.total_receipts ?? 'Bons de réception'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-truck-loading" /></div>
+                    <i className="small-box-icon fas fa-truck-loading" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-info">
+                <div className="small-box text-bg-info">
                     <div className="inner">
                         <h3>{kpi.in_progress ?? 0}</h3>
                         <p>{trans.in_progress ?? 'En cours'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-spinner" /></div>
+                    <i className="small-box-icon fas fa-spinner" aria-hidden="true" />
                 </div>
             </div>
             <div className="col-lg-4">
-                <div className="small-box bg-warning">
+                <div className="small-box text-bg-warning">
                     <div className="inner">
                         <h3>{kpi.stock ?? 0}</h3>
                         <p>{trans.stock ?? 'En stock'}</p>
                     </div>
-                    <div className="icon"><i className="fas fa-boxes" /></div>
+                    <i className="small-box-icon fas fa-boxes" aria-hidden="true" />
                 </div>
             </div>
         </div>
@@ -214,10 +214,10 @@ function DashboardTab({ kpi, chartData, trans }) {
             <KPICards kpi={kpi} trans={trans} />
             <div className="row">
                 <div className="col-md-3">
-                    <div className="card card-teal">
+                    <div className="card card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.statistics ?? 'Statistiques'}
                             </h3>
                         </div>
@@ -227,10 +227,10 @@ function DashboardTab({ kpi, chartData, trans }) {
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <div className="card card-primary">
+                    <div className="card card-primary mb-3">
                         <div className="card-header">
                             <h3 className="card-title">
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.monthly_recap ?? 'Récap mensuel'}
                             </h3>
                         </div>
@@ -257,11 +257,11 @@ function receiptColumns(trans) {
         { key: 'companie',     label: trans.company ?? 'Fournisseur',   sortable: 'companies_id',
           render: r => r.companie_label, filterValue: r => r.companie_label, filter: 'text', mobile: 'subtitle', mobileOrder: 1 },
         { key: 'lines_count',  label: trans.lines_count ?? 'Lignes',    align: 'center', nowrap: false,
-          render: r => <span className="badge badge-secondary">{r.lines_count}</span> },
+          render: r => <span className="badge text-bg-secondary">{r.lines_count}</span> },
         { key: 'receipt_note', label: trans.receipt_note ?? 'Note BR',
           render: r => (r.recept_controle === 1 && r.reception_controlled === 0
-              ? <span className="badge badge-info">{trans.yes ?? 'Oui'}</span>
-              : <span className="badge badge-success">{trans.no ?? 'Non'}</span>) },
+              ? <span className="badge text-bg-info">{trans.yes ?? 'Oui'}</span>
+              : <span className="badge text-bg-success">{trans.no ?? 'Non'}</span>) },
         { key: 'statu',        label: trans.status ?? 'Statut',         sortable: true,
           render: r => <StatusBadge statu={r.statu} config={STATUS_CONFIG} trans={trans} />, mobile: 'badge' },
         { key: 'created_at',   label: trans.created_at ?? 'Créé le',    sortable: true,
@@ -285,17 +285,17 @@ function ReceiptsTable({ rows, sortField, sortAsc, onSort, trans }) {
             rowHref={r => r.url}
             rowActions={r => (
                 <div className="d-flex" style={{ gap: '2px' }}>
-                    <a href={r.url} className="btn btn-xs btn-info" title={trans.view ?? 'Voir'}>
+                    <a href={r.url} className="btn btn-sm btn-info" title={trans.view ?? 'Voir'}>
                         <i className="fas fa-eye" />
                     </a>
-                    <a href={r.pdf_url} className="btn btn-xs btn-default" title="PDF" target="_blank" rel="noreferrer">
+                    <a href={r.pdf_url} className="btn btn-sm btn-outline-secondary" title="PDF" target="_blank" rel="noreferrer">
                         <i className="fas fa-file-pdf text-danger" />
                     </a>
                 </div>
             )}
             mobileActions={r => r.pdf_url && (
                 <a href={r.pdf_url} className="btn btn-outline-secondary" style={{ minHeight: 44, lineHeight: '30px' }} target="_blank" rel="noreferrer">
-                    <i className="fas fa-file-pdf text-danger mr-1" />PDF
+                    <i className="fas fa-file-pdf text-danger me-1" />PDF
                 </a>
             )}
             actionsWidth={60}
@@ -367,9 +367,7 @@ function ListTab({ endpoints, trans }) {
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm flex-shrink-0" style={{ width: 200 }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                    </div>
+                    <span className="input-group-text"><i className="fas fa-search" /></span>
                     <input
                         type="text"
                         className="form-control"
@@ -420,7 +418,7 @@ export default function PurchaseReceiptIndex({ kpi, chartData, endpoints, trans 
     const [activeTab, setActiveTab] = useIndexTab('purchase_receipts_index_tab');
 
     return (
-        <div className="card card-outline card-orange">
+        <div className="card card-outline card-orange mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     <li className="nav-item">

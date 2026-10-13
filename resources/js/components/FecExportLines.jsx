@@ -65,24 +65,24 @@ export default function FecExportLines({ endpoints, trans, initialStartDate, ini
     };
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             <div className="card-body">
                 {/* Boutons export */}
                 <div className="row mb-2">
-                    <div className="btn-group ml-3">
+                    <div className="btn-group ms-3">
                         <button className="btn btn-info" disabled={selectedIds.length === 0} onClick={() => handleExport('csv')}>CSV</button>
                     </div>
-                    <div className="btn-group ml-1">
+                    <div className="btn-group ms-1">
                         <button className="btn btn-danger" disabled={selectedIds.length === 0} onClick={() => handleExport('xlsx')}>XLS</button>
                     </div>
-                    <div className="btn-group ml-1">
+                    <div className="btn-group ms-1">
                         <button className="btn btn-primary" disabled={selectedIds.length === 0} onClick={() => handleExport('pdf')}>PDF</button>
                     </div>
                 </div>
 
                 {/* Filtres */}
                 <div className="row mt-3">
-                    <div className="form-group col-2">
+                    <div className="mb-3 col-2">
                         <label>Journaux</label>
                         {JOURNAL_CODES.map(code => (
                             <div className="form-check" key={code}>
@@ -97,15 +97,15 @@ export default function FecExportLines({ endpoints, trans, initialStartDate, ini
                             </div>
                         ))}
                     </div>
-                    <div className="form-group col-2">
+                    <div className="mb-3 col-2">
                         <label>{trans.start_date} :</label>
                         <input type="date" className="form-control" value={startDate} onChange={e => setStartDate(e.target.value)} />
                     </div>
-                    <div className="form-group col-2">
+                    <div className="mb-3 col-2">
                         <label>{trans.end_date} :</label>
                         <input type="date" className="form-control" value={endDate} onChange={e => setEndDate(e.target.value)} />
                     </div>
-                    <div className="form-group col-2 align-self-end">
+                    <div className="mb-3 col-2 align-self-end">
                         <button className="btn btn-danger" onClick={load} disabled={loading}>
                             {loading ? <i className="fas fa-spinner fa-spin"></i> : trans.submit}
                         </button>
@@ -138,15 +138,15 @@ export default function FecExportLines({ endpoints, trans, initialStartDate, ini
                                     <td>{row.entry_lettering}</td>
                                     <td>{row.currency_code}</td>
                                     <td>
-                                        <div className="custom-control custom-checkbox">
+                                        <div className="form-check ">
                                             <input
-                                                className="custom-control-input"
+                                                className="form-check-input"
                                                 type="checkbox"
                                                 id={`fec_${row.id}`}
                                                 checked={!!selected[row.id]}
                                                 onChange={() => toggleRow(row.id)}
                                             />
-                                            <label className="custom-control-label" htmlFor={`fec_${row.id}`}>
+                                            <label className="form-check-label" htmlFor={`fec_${row.id}`}>
                                                 {trans.add_export}
                                             </label>
                                         </div>

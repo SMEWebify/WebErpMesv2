@@ -7,15 +7,15 @@ import { formatCurrencyRounded as formatCurrency } from '../utils';
 // ---------------------------------------------------------------------------
 
 const DELIVERY_STATUS = {
-    1: { badge: 'badge-info',    label: 'in_progress' },
-    2: { badge: 'badge-success', label: 'send' },
+    1: { badge: 'text-bg-info',    label: 'in_progress' },
+    2: { badge: 'text-bg-success', label: 'send' },
 };
 
 const INVOICE_STATUS = {
-    1: { badge: 'badge-info',    label: 'chargeable' },
-    2: { badge: 'badge-danger',  label: 'not_chargeable' },
-    3: { badge: 'badge-warning', label: 'partly_invoiced' },
-    4: { badge: 'badge-success', label: 'invoiced' },
+    1: { badge: 'text-bg-info',    label: 'chargeable' },
+    2: { badge: 'text-bg-danger',  label: 'not_chargeable' },
+    3: { badge: 'text-bg-warning', label: 'partly_invoiced' },
+    4: { badge: 'text-bg-success', label: 'invoiced' },
 };
 
 const MONTHS_SHORT_ALL = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
@@ -103,7 +103,7 @@ function DonutChart({ data, colors, labels }) {
             </svg>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', marginTop: '6px' }}>
                 {slices.map((s, i) => (
-                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555' }}>
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--bs-body-color)' }}>
                         <span style={{ width: 10, height: 10, background: s.color, borderRadius: 2, display: 'inline-block', flexShrink: 0 }} />
                         {s.label} <strong>({s.val})</strong>
                     </span>
@@ -193,8 +193,8 @@ function KpiCards({ deliveryKpi, trans }) {
                         <div style={{ fontSize: 12, opacity: 0.9, marginTop: 4 }}>{c.label}</div>
                         <div style={{ position: 'absolute', right: 12, top: 10, fontSize: 30, opacity: 0.25 }}>
                             <i className={c.icon} />
-                        </div>
-                    </div>
+ </div>
+ </div>
                 </div>
             ))}
         </div>
@@ -218,14 +218,14 @@ function deliveryColumns(trans) {
           filter: 'text', mobile: 'subtitle' },
         { key: 'company',        label: trans.company        ?? 'Client',      sortable: 'companies_id',
           render: r => (r.companie
-              ? <a href={`/fr/companies/${r.companie.id}`} className="btn btn-outline-secondary btn-xs" style={{ fontSize: 11 }}>{r.companie.label}</a>
+              ? <a href={`/fr/companies/${r.companie.id}`} className="btn btn-outline-secondary btn-sm" style={{ fontSize: 11 }}>{r.companie.label}</a>
               : '—'),
           filterValue: r => r.companie?.label, filter: 'text',
           mobile: 'subtitle', mobileOrder: 1, mobileRender: r => r.companie?.label },
         { key: 'lines_count',    label: trans.lines          ?? 'Lignes',      sortable: 'delivery_lines_count',
-          render: r => <span className="badge badge-secondary">{r.lines_count}</span> },
+          render: r => <span className="badge text-bg-secondary">{r.lines_count}</span> },
         { key: 'statu',          label: trans.status         ?? 'Statut',      sortable: true,
-          render: r => statusBadge(DELIVERY_STATUS, r.statu, trans, { badge: 'badge-secondary', label: '?' }), mobile: 'badge' },
+          render: r => statusBadge(DELIVERY_STATUS, r.statu, trans, { badge: 'text-bg-secondary', label: '?' }), mobile: 'badge' },
         { key: 'invoice_status', label: trans.invoice_status ?? 'Facturation',
           render: r => statusBadge(INVOICE_STATUS, r.invoice_status, trans, null),
           mobile: 'badge', mobileRender: r => (INVOICE_STATUS[r.invoice_status] ? statusBadge(INVOICE_STATUS, r.invoice_status, trans, null) : null) },
@@ -253,7 +253,7 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
             emptyText={trans.no_results ?? 'Aucun résultat'}
             rowHref={r => r.url}
             rowActions={r => (
-                <a href={r.url} className="btn btn-xs btn-info" title={trans.view ?? 'Voir'}>
+                <a href={r.url} className="btn btn-sm btn-info" title={trans.view ?? 'Voir'}>
                     <i className="fas fa-eye" />
                 </a>
             )}
@@ -372,10 +372,10 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
             <div className="row">
                 {/* ── Left column: charts ── */}
                 <div className="col-md-3">
-                    <div className="card card-outline card-info">
+                    <div className="card card-outline card-info mb-3">
                         <div className="card-header py-2">
                             <h3 className="card-title" style={{ fontSize: 13 }}>
-                                <i className="fas fa-chart-pie mr-1" />
+                                <i className="fas fa-chart-pie me-1" />
                                 {trans.statistiques ?? 'Statistiques'}
                             </h3>
                         </div>
@@ -384,10 +384,10 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                         </div>
                     </div>
 
-                    <div className="card card-outline card-warning">
+                    <div className="card card-outline card-warning mb-3">
                         <div className="card-header py-2">
                             <h3 className="card-title" style={{ fontSize: 13 }}>
-                                <i className="fas fa-chart-bar mr-1" />
+                                <i className="fas fa-chart-bar me-1" />
                                 {trans.monthly_recap ?? 'Récap mensuel'}
                             </h3>
                         </div>
@@ -404,14 +404,12 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
 
                 {/* ── Right column: table ── */}
                 <div className="col-md-9 order-first order-md-0">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-header py-2">
                             <div className="d-flex flex-wrap align-items-center" style={{ gap: 6 }}>
                                 {/* Search */}
                                 <div className="input-group" style={{ maxWidth: 240 }}>
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text"><i className="fas fa-search" /></span>
-                                    </div>
+                                    <span className="input-group-text"><i className="fas fa-search" /></span>
                                     <input
                                         type="text"
                                         className="form-control form-control-sm"
@@ -429,8 +427,8 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                                                 key={val}
                                                 type="button"
                                                 className={activeBtn(
-                                                    filters.statuses.includes(Number(val)),
-                                                    cfg.badge.replace('badge', 'btn')
+ filters.statuses.includes(Number(val)),
+ cfg.badge.replace(/^(badge|text-bg)-/, 'btn-')
                                                 )}
                                                 onClick={() => toggleStatus(Number(val))}
                                             >
@@ -446,8 +444,8 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                                                 key={val}
                                                 type="button"
                                                 className={activeBtn(
-                                                    filters.invoiceStatuses.includes(Number(val)),
-                                                    cfg.badge.replace('badge', 'btn')
+ filters.invoiceStatuses.includes(Number(val)),
+ cfg.badge.replace(/^(badge|text-bg)-/, 'btn-')
                                                 )}
                                                 onClick={() => toggleInvoiceStatus(Number(val))}
                                             >
@@ -462,7 +460,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
 
                                 {/* New delivery */}
                                 <a href={endpoints?.request ?? '#'} className="btn btn-sm btn-primary">
-                                    <i className="fas fa-plus mr-1" />
+                                    <i className="fas fa-plus me-1" />
                                     {trans.new_delivery ?? 'Nouveau BL'}
                                 </a>
                             </div>

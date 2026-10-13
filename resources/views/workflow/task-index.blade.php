@@ -19,7 +19,7 @@
   </div>
 
   <x-InfocalloutComponent note="{{ __('general_content.tasks_info_1_trans_key') }}"  />
-  <x-adminlte-card title="{{ __('general_content.add_generic_task_trans_key') }}" theme="primary" body-class="bg-white" theme-mode="full" footer-class="bg-white border-top rounded border-primary" collapsible removable maximizable>
+  <x-adminlte-card title="{{ __('general_content.add_generic_task_trans_key') }}" theme="primary" body-class="bg-body" theme-mode="full" footer-class="bg-body border-top rounded border-primary" collapsible removable maximizable>
     <div class="row">
       <div class="col-12">
         @php

@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
+        <div class="card border-0 shadow-sm mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ __('Article 17 - Droit à l\'effacement') }}</h5>
                 <p class="text-muted">

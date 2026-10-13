@@ -18,20 +18,20 @@
 
         {{-- ─────────────────────────── Qonto ─────────────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $qonto['connected'] && ! $qonto['expired'] ? 'card-success' : ($qonto['configured'] ? 'card-secondary' : 'card-warning') }}">
+            <div class="card card-outline {{ $qonto['connected'] && ! $qonto['expired'] ? 'card-success' : ($qonto['configured'] ? 'card-secondary' : 'card-warning') }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-university mr-1"></i> Qonto
+                        <i class="fas fa-university me-1"></i> Qonto
                     </h3>
                     <div class="card-tools">
                         @if(! $qonto['configured'])
-                            <span class="badge badge-warning">Non configuré</span>
+                            <span class="badge text-bg-warning">Non configuré</span>
                         @elseif(! $qonto['connected'])
-                            <span class="badge badge-secondary">Déconnecté</span>
+                            <span class="badge text-bg-secondary">Déconnecté</span>
                         @elseif($qonto['expired'])
-                            <span class="badge badge-danger">Jeton expiré</span>
+                            <span class="badge text-bg-danger">Jeton expiré</span>
                         @else
-                            <span class="badge badge-success">Connecté</span>
+                            <span class="badge text-bg-success">Connecté</span>
                         @endif
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                             <dt class="col-6">À arbitrer</dt>
                             <dd class="col-6">
                                 @if($qonto['pending_reviews'] > 0)
-                                    <span class="badge badge-warning">{{ $qonto['pending_reviews'] }}</span>
+                                    <span class="badge text-bg-warning">{{ $qonto['pending_reviews'] }}</span>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
@@ -77,7 +77,7 @@
                         </dl>
                     @endif
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <a href="{{ route('admin.integrations.qonto.index') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-cog"></i> Configurer
                     </a>
@@ -93,16 +93,16 @@
 
         {{-- ─────────────────── Endpoints webhook génériques ─────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $endpoints['failing'] > 0 ? 'card-danger' : 'card-info' }}">
+            <div class="card card-outline {{ $endpoints['failing'] > 0 ? 'card-danger' : 'card-info' }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-exchange-alt mr-1"></i> Endpoints webhook
+                        <i class="fas fa-exchange-alt me-1"></i> Endpoints webhook
                     </h3>
                     <div class="card-tools">
                         @if($endpoints['failing'] > 0)
-                            <span class="badge badge-danger">{{ $endpoints['failing'] }} en erreur</span>
+                            <span class="badge text-bg-danger">{{ $endpoints['failing'] }} en erreur</span>
                         @else
-                            <span class="badge badge-info">{{ $endpoints['active'] }} actif(s)</span>
+                            <span class="badge text-bg-info">{{ $endpoints['active'] }} actif(s)</span>
                         @endif
                     </div>
                 </div>
@@ -127,7 +127,7 @@
                         </dd>
                     </dl>
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <a href="{{ route('admin.integrations.endpoints.index') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-list"></i> Gérer les endpoints
                     </a>
@@ -137,20 +137,20 @@
 
         {{-- ─────────────────────────── n8n ─────────────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $n8n['failing'] > 0 ? 'card-danger' : ($n8n['active'] > 0 ? 'card-success' : 'card-secondary') }}">
+            <div class="card card-outline {{ $n8n['failing'] > 0 ? 'card-danger' : ($n8n['active'] > 0 ? 'card-success' : 'card-secondary') }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-project-diagram mr-1"></i> n8n
+                        <i class="fas fa-project-diagram me-1"></i> n8n
                     </h3>
                     <div class="card-tools">
                         @if($n8n['failing'] > 0)
-                            <span class="badge badge-danger">{{ $n8n['failing'] }} en erreur</span>
+                            <span class="badge text-bg-danger">{{ $n8n['failing'] }} en erreur</span>
                         @elseif($n8n['active'] > 0)
-                            <span class="badge badge-success">{{ $n8n['active'] }} actif(s)</span>
+                            <span class="badge text-bg-success">{{ $n8n['active'] }} actif(s)</span>
                         @elseif($n8n['total'] > 0)
-                            <span class="badge badge-secondary">Inactif</span>
+                            <span class="badge text-bg-secondary">Inactif</span>
                         @else
-                            <span class="badge badge-light">Non branché</span>
+                            <span class="badge text-bg-light">Non branché</span>
                         @endif
                     </div>
                 </div>
@@ -186,9 +186,9 @@
                         </dl>
                     @endif
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     @if($n8n['total'] > 0)
-                        <a href="{{ route('admin.integrations.endpoints.index') }}" class="btn btn-sm btn-default">
+                        <a href="{{ route('admin.integrations.endpoints.index') }}" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-list"></i> Voir les endpoints
                         </a>
                     @endif
@@ -201,18 +201,18 @@
 
         {{-- ─────────────────────────── Assistant IA ─────────────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $ai['configured'] && $ai['is_active'] ? 'card-success' : ($ai['configured'] ? 'card-secondary' : 'card-warning') }}">
+            <div class="card card-outline {{ $ai['configured'] && $ai['is_active'] ? 'card-success' : ($ai['configured'] ? 'card-secondary' : 'card-warning') }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-robot mr-1"></i> Assistant IA
+                        <i class="fas fa-robot me-1"></i> Assistant IA
                     </h3>
                     <div class="card-tools">
                         @if(! $ai['configured'])
-                            <span class="badge badge-warning">Non configuré</span>
+                            <span class="badge text-bg-warning">Non configuré</span>
                         @elseif(! $ai['is_active'])
-                            <span class="badge badge-secondary">Désactivé</span>
+                            <span class="badge text-bg-secondary">Désactivé</span>
                         @else
-                            <span class="badge badge-success">Actif</span>
+                            <span class="badge text-bg-success">Actif</span>
                         @endif
                     </div>
                 </div>
@@ -236,16 +236,16 @@
                         <dt class="col-6">Source de la clé</dt>
                         <dd class="col-6">
                             @if($ai['source'] === 'db')
-                                <span class="badge badge-success">Base</span>
+                                <span class="badge text-bg-success">Base</span>
                             @else
-                                <span class="badge badge-warning" title="Encore lue depuis le .env — à migrer.">
+                                <span class="badge text-bg-warning" title="Encore lue depuis le .env — à migrer.">
                                     .env (legacy)
                                 </span>
                             @endif
                         </dd>
                     </dl>
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <a href="{{ route('admin.integrations.ai.index') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-cog"></i> Configurer
                     </a>
@@ -255,18 +255,18 @@
 
         {{-- ──────────────────────── Envoi d'e-mail (SMTP) ─────────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $mail['configured'] && $mail['is_active'] ? 'card-success' : ($mail['configured'] ? 'card-secondary' : 'card-warning') }}">
+            <div class="card card-outline {{ $mail['configured'] && $mail['is_active'] ? 'card-success' : ($mail['configured'] ? 'card-secondary' : 'card-warning') }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-envelope mr-1"></i> Envoi d'e-mail
+                        <i class="fas fa-envelope me-1"></i> Envoi d'e-mail
                     </h3>
                     <div class="card-tools">
                         @if(! $mail['configured'])
-                            <span class="badge badge-warning">Non configuré</span>
+                            <span class="badge text-bg-warning">Non configuré</span>
                         @elseif(! $mail['is_active'])
-                            <span class="badge badge-secondary">Désactivé</span>
+                            <span class="badge text-bg-secondary">Désactivé</span>
                         @else
-                            <span class="badge badge-success">Actif</span>
+                            <span class="badge text-bg-success">Actif</span>
                         @endif
                     </div>
                 </div>
@@ -296,22 +296,22 @@
                         <dt class="col-6">Source</dt>
                         <dd class="col-6">
                             @if($mail['source'] === 'db')
-                                <span class="badge badge-success">Base</span>
+                                <span class="badge text-bg-success">Base</span>
                             @else
-                                <span class="badge badge-warning" title="Encore lue depuis le .env — à migrer.">.env (legacy)</span>
+                                <span class="badge text-bg-warning" title="Encore lue depuis le .env — à migrer.">.env (legacy)</span>
                             @endif
                         </dd>
 
                         <dt class="col-6">Dernières 24 h</dt>
                         <dd class="col-6">
-                            <span class="badge badge-success mr-1">{{ $mail['sent_24h'] }} envoyés</span>
+                            <span class="badge text-bg-success me-1">{{ $mail['sent_24h'] }} envoyés</span>
                             @if($mail['failed_24h'] > 0)
-                                <span class="badge badge-danger">{{ $mail['failed_24h'] }} échecs</span>
+                                <span class="badge text-bg-danger">{{ $mail['failed_24h'] }} échecs</span>
                             @endif
                         </dd>
                     </dl>
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <a href="{{ route('admin.email-logs.index') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-history"></i> Journal
                     </a>
@@ -324,18 +324,18 @@
 
         {{-- ──────────────────── Signature électronique (DocuSign) ──────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $esign['configured'] && $esign['is_active'] ? 'card-success' : ($esign['configured'] ? 'card-secondary' : 'card-warning') }}">
+            <div class="card card-outline {{ $esign['configured'] && $esign['is_active'] ? 'card-success' : ($esign['configured'] ? 'card-secondary' : 'card-warning') }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-file-signature mr-1"></i> {{ __('esignature.title') }}
+                        <i class="fas fa-file-signature me-1"></i> {{ __('esignature.title') }}
                     </h3>
                     <div class="card-tools">
                         @if(! $esign['configured'])
-                            <span class="badge badge-warning">Non configuré</span>
+                            <span class="badge text-bg-warning">Non configuré</span>
                         @elseif(! $esign['is_active'])
-                            <span class="badge badge-secondary">Désactivé</span>
+                            <span class="badge text-bg-secondary">Désactivé</span>
                         @else
-                            <span class="badge badge-success">Actif</span>
+                            <span class="badge text-bg-success">Actif</span>
                         @endif
                     </div>
                 </div>
@@ -358,7 +358,7 @@
                         <dd class="col-6">{{ $esign['completed'] }}</dd>
                     </dl>
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <a href="{{ route('admin.integrations.esignature.index') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-cog"></i> Configurer
                     </a>
@@ -368,13 +368,13 @@
 
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
-            <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }}">
+            <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-file-invoice mr-1"></i> Facturation électronique (PDP)
+                        <i class="fas fa-file-invoice me-1"></i> Facturation électronique (PDP)
                     </h3>
                     <div class="card-tools">
-                        <span class="badge badge-{{ $pdp['enabled'] ? 'success' : 'secondary' }}">
+                        <span class="badge text-bg-{{ $pdp['enabled'] ? 'success' : 'secondary' }}">
                             {{ $pdp['enabled'] ? 'Opérationnelle' : 'Indisponible' }}
                         </span>
                     </div>
@@ -401,7 +401,7 @@
                             <dt class="col-6">Par statut</dt>
                             <dd class="col-6">
                                 @foreach($pdp['counts'] as $status => $count)
-                                    <span class="badge badge-{{ in_array($status, ['rejected', 'refused'], true) ? 'danger' : 'light' }} mr-1">
+                                    <span class="badge text-bg-{{ in_array($status, ['rejected', 'refused'], true) ? 'danger' : 'light' }} me-1">
                                         {{ $status }} : {{ $count }}
                                     </span>
                                 @endforeach

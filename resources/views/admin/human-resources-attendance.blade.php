@@ -8,14 +8,14 @@
 
 @section('content')
 @include('include.alert-result')
-<div class="card">
+<div class="card mb-3">
     <div class="card-header">
         <form method="GET" action="{{ route('human.resources.attendance') }}">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                        <select class="form-control" name="user_id" id="user_id">
+                        <select class="form-select" name="user_id" id="user_id">
                             <option value="">{{ __('general_content.all_trans_key') }}</option>
                             @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}" @if($filters['user_id'] == $item->id) selected @endif>
@@ -26,19 +26,19 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="start_date" id="start_date" value="{{ $filters['start_date'] }}">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="end_date" id="end_date" value="{{ $filters['end_date'] }}">
                     </div>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.filter_trans_key') }}" theme="info" icon="fas fa-filter"/>
+                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.filter_trans_key') }}" theme="info" icon="fas fa-filter"/>
                 </div>
             </div>
         </form>
@@ -46,12 +46,12 @@
     <div class="card-body">
         <ul class="nav nav-tabs" id="attendance-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="attendance-activities-tab" data-toggle="tab" href="#attendance-activities" role="tab" aria-controls="attendance-activities" aria-selected="true">
+                <a class="nav-link active" id="attendance-activities-tab" data-bs-toggle="tab" href="#attendance-activities" role="tab" aria-controls="attendance-activities" aria-selected="true">
                     {{ __('general_content.activities_trans_key') }}
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="attendance-punches-tab" data-toggle="tab" href="#attendance-punches" role="tab" aria-controls="attendance-punches" aria-selected="false">
+                <a class="nav-link" id="attendance-punches-tab" data-bs-toggle="tab" href="#attendance-punches" role="tab" aria-controls="attendance-punches" aria-selected="false">
                     {{ __('general_content.attendance_trans_key') }}
                 </a>
             </li>

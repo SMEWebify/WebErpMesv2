@@ -2,7 +2,7 @@
     <x-auth-card>
         <x-slot name="logo">
             <a href="{{ route('customer.login') }}" class="text-center d-block text-decoration-none">
-                @if($Factory->picture)
+                @if($Factory->hasPictureFile())
                     <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="{{ $Factory->name }}" class="img-fluid" style="max-height: 4rem;">
                 @else
                     <span class="fs-3 fw-bold text-dark">{{ $Factory->name ?? config('app.name', 'WebErpMesv2') }}</span>

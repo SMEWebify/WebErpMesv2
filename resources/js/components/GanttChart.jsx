@@ -108,7 +108,7 @@ export default function GanttChart({ orderId, apiBase, trans }) {
         <div>
             {/* Boutons de zoom */}
             <div className="mb-3 d-flex align-items-center" style={{ gap: '0.4rem' }}>
-                <span className="text-muted small mr-2">{t('view_trans_key')} :</span>
+                <span className="text-muted small me-2">{t('view_trans_key')} :</span>
                 {VIEW_MODES.map((mode) => (
                     <button
                         key={mode}

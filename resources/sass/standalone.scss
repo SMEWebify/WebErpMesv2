@@ -1,0 +1,9 @@
+// Pages hors du gabarit AdminLTE (liens publics devis / commande / BL, portail
+// client, assistant d'installation, visite sur site, pointage) : elles n'ont pas
+// le Bootstrap d'AdminLTE, il est donc compilé ici.
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import 'variables';
+@import 'bootstrap/scss/bootstrap';
+@import 'file-manager';
+@import 'load-planning';
+@import 'task-statu';

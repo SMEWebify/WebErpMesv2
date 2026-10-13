@@ -13,19 +13,19 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        <div class="card">
+        <div class="card mb-3">
             <div class="card-header">
                 <h3 class="card-title">{{ __('Article 15 / 20 - Droit d\'accès et portabilité') }}</h3>
             </div>
             <div class="card-body">
                 <p>{{ __('Téléchargez l\'ensemble des données personnelles que nous détenons sur vous, au format JSON.') }}</p>
                 <a href="{{ route('me.rgpd.export') }}" class="btn btn-primary">
-                    <i class="fas fa-download mr-1"></i> {{ __('Télécharger mes données') }}
+                    <i class="fas fa-download me-1"></i> {{ __('Télécharger mes données') }}
                 </a>
             </div>
         </div>
 
-        <div class="card mt-4">
+        <div class="card mt-4 mb-3">
             <div class="card-header">
                 <h3 class="card-title">{{ __('Article 17 - Droit à l\'effacement') }}</h3>
             </div>
@@ -35,12 +35,12 @@
                 </p>
                 <form method="POST" action="{{ route('me.rgpd.erase') }}" onsubmit="return confirm('{{ __('Confirmer la demande d\'effacement ?') }}')">
                     @csrf
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="reason">{{ __('Motif (facultatif)') }}</label>
                         <textarea name="reason" id="reason" rows="3" maxlength="1000" class="form-control"></textarea>
                     </div>
                     <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-user-times mr-1"></i> {{ __('Demander l\'effacement') }}
+                        <i class="fas fa-user-times me-1"></i> {{ __('Demander l\'effacement') }}
                     </button>
                 </form>
             </div>

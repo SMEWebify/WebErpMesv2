@@ -36,12 +36,10 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
         <form onSubmit={handleSubmit}>
             <div className="row">
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.sort}</label>
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
                             <input type="number" className={`form-control ${errors.ordre ? 'is-invalid' : ''}`}
                                 value={form.ordre ?? ''} onChange={set('ordre')} placeholder={trans.sort} />
                         </div>
@@ -49,9 +47,9 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.civility}</label>
-                        <select className={`form-control ${errors.civility ? 'is-invalid' : ''}`}
+                        <select className={`form-select ${errors.civility ? 'is-invalid' : ''}`}
                             value={form.civility ?? ''} onChange={set('civility')}>
                             {CIVILITIES.map(c => (
                                 <option key={c} value={c}>{c || `— ${trans.civility} —`}</option>
@@ -63,7 +61,7 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.first_name}</label>
                         <input type="text" className={`form-control ${errors.first_name ? 'is-invalid' : ''}`}
                             value={form.first_name ?? ''} onChange={set('first_name')} placeholder={trans.first_name} />
@@ -71,7 +69,7 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.name}</label>
                         <input type="text" className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                             value={form.name ?? ''} onChange={set('name')} placeholder={trans.name} />
@@ -79,28 +77,28 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
             </div>
-            <div className="form-group">
+            <div className="mb-3">
                 <label>{trans.function}</label>
                 <input type="text" className="form-control"
                     value={form.function ?? ''} onChange={set('function')} placeholder={trans.function} />
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.phone}</label>
                         <input type="text" className="form-control"
                             value={form.number ?? ''} onChange={set('number')} placeholder={trans.phone} />
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.mobile}</label>
                         <input type="text" className="form-control"
                             value={form.mobile ?? ''} onChange={set('mobile')} placeholder={trans.mobile} />
                     </div>
                 </div>
             </div>
-            <div className="form-group">
+            <div className="mb-3">
                 <label>{trans.email}</label>
                 <input type="email" className="form-control"
                     value={form.mail ?? ''} onChange={set('mail')} placeholder={trans.email} />
@@ -109,30 +107,30 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
             <hr />
 
             {/* Global default */}
-            <div className="custom-control custom-switch mb-3">
-                <input type="checkbox" className="custom-control-input" id={`contact-default-${formId}`}
+            <div className="form-check form-switch mb-3">
+                <input type="checkbox" className="form-check-input" id={`contact-default-${formId}`}
                     checked={!!form.default}
                     onChange={e => setForm(f => ({ ...f, default: e.target.checked }))} />
-                <label className="custom-control-label" htmlFor={`contact-default-${formId}`}>{trans.by_default}</label>
+                <label className="form-check-label" htmlFor={`contact-default-${formId}`}>{trans.by_default}</label>
             </div>
 
             {/* Per-document-type defaults */}
-            <div className="form-group">
+            <div className="mb-3">
                 <label style={{ display: 'block', marginBottom: '0.4rem' }}>{trans.default_by_doc ?? 'Interlocuteur par défaut pour :'}</label>
                 <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
                     {DOC_TYPES.map(({ key, label, color }) => {
                         const checked = form.docTypes.includes(key);
                         return (
-                            <div key={key} className="custom-control custom-switch">
+                            <div key={key} className="form-check form-switch">
                                 <input
                                     type="checkbox"
-                                    className="custom-control-input"
+                                    className="form-check-input"
                                     id={`contact-doc-${key}-${formId}`}
                                     checked={checked}
                                     onChange={() => toggleDocType(key)}
                                 />
                                 <label
-                                    className="custom-control-label"
+                                    className="form-check-label"
                                     htmlFor={`contact-doc-${key}-${formId}`}
                                     style={{ fontWeight: checked ? 600 : 400, color: checked ? color : undefined }}
                                 >
@@ -144,8 +142,8 @@ function ContactForm({ initial, onSubmit, saving, errors, trans, formId }) {
                 </div>
             </div>
 
-            <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-1`} />
+            <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} me-1`} />
                 {saving ? trans.saving : trans.save}
             </button>
         </form>
@@ -246,7 +244,7 @@ export default function CompanyContacts({
         <div className="row">
             {/* Table */}
             <div className="col-md-8">
-                <div className="card card-primary">
+                <div className="card card-primary mb-3">
                     <div className="card-header">
                         <h3 className="card-title">{trans.contacts}</h3>
                     </div>
@@ -284,7 +282,7 @@ export default function CompanyContacts({
                                                 <td className="align-middle">{c.mail}</td>
                                                 <td className="align-middle">
                                                     {!!c.default && (
-                                                        <i className="fas fa-check-circle text-success mr-1" title={trans.by_default} />
+                                                        <i className="fas fa-check-circle text-success me-1" title={trans.by_default} />
                                                     )}
                                                     {DOC_TYPES.map(({ key }) => (
                                                         <DocBadge key={key} type={key} active={activeTypes.includes(key)} />
@@ -293,7 +291,7 @@ export default function CompanyContacts({
                                                 <td className="py-1 align-middle" style={{ whiteSpace: 'nowrap' }}>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-xs btn-info"
+                                                        className="btn btn-sm btn-info"
                                                         onClick={() => openEdit(c)}
                                                     >
                                                         <i className="fas fa-pen" />
@@ -311,7 +309,7 @@ export default function CompanyContacts({
 
             {/* Create form */}
             <div className="col-md-4">
-                <div className="card card-secondary">
+                <div className="card card-secondary mb-3">
                     <div className="card-header">
                         <h3 className="card-title">{trans.new_contact}</h3>
                     </div>

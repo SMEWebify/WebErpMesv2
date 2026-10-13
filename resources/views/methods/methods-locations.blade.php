@@ -39,31 +39,29 @@
                     <form method="POST" action="{{ route('methods.location.update', ['id' => $MethodsLocation->id]) }}" enctype="multipart/form-data">
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="label">{{__('general_content.label_trans_key') }}</label>
                           <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsLocation->label }}">
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="color">{{ __('general_content.color_trans_key') }}</label>
                           <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsLocation->color }}">
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                           <label for="ressource_id">{{ __('general_content.ressource_trans_key') }}</label>
-                          <select class="form-control" name="ressource_id" id="ressource_id">
+                          <select class="form-select" name="ressource_id" id="ressource_id">
                             @foreach ($RessourcesSelect as $item)
                             <option value="{{ $item->id }}" @if($MethodsLocation->ressource_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                             @endforeach
                           </select>
                         </div>
-                        <!-- /.form-group -->
+                        <!-- /.mb-3 -->
                       </div>
                       <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
                   </x-adminlte-modal>
@@ -91,38 +89,34 @@
       <form  method="POST" action="{{ route('methods.location.create') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('general_content.new_location_trans_key') }}" theme="secondary" maximizable>
           @csrf
-          <div class="form-group">
+          <div class="mb-3">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
               <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="label">{{__('general_content.label_trans_key') }}</label>
             <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
-              </div>
+              <span class="input-group-text"><i class="fas fa-tags"></i></span>
               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="color">{{ __('general_content.color_trans_key') }}</label>
             <input type="color" class="form-control"  name="color" id="color" >
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label for="ressource_id">{{ __('general_content.ressource_trans_key') }}</label>
-            <select class="form-control" name="ressource_id" id="ressource_id">
+            <select class="form-select" name="ressource_id" id="ressource_id">
               @foreach ($RessourcesSelect as $item)
               <option value="{{ $item->id }}">{{ $item->label }}</option>
               @endforeach
             </select>
           </div>
           <div class="card-footer">
-            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </div>
         </x-adminlte-card>
       </form>

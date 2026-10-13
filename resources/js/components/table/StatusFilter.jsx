@@ -36,7 +36,7 @@ export default function StatusFilter({
                     <button
                         key={id}
                         type={buttonType}
-                        className={`btn btn-sm ${active ? cfg.badge.replace('badge-', 'btn-') : 'btn-outline-secondary'}`}
+                        className={`btn btn-sm ${active ? cfg.badge.replace(/^(badge|text-bg)-/, 'btn-') : 'btn-outline-secondary'}`}
                         onClick={() => toggle(id)}
                     >
                         {trans[cfg.label] ?? (fallback === 'value' ? id : cfg.label)}

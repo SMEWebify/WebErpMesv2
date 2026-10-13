@@ -14,13 +14,13 @@
         <thead>
             <tr>
                 <th>{{ __('general_content.leave_type_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_entitled_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_carried_over_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_adjustment_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_acquired_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_taken_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_pending_trans_key') }}</th>
-                <th class="text-right">{{ __('general_content.leave_remaining_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_entitled_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_carried_over_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_adjustment_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_acquired_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_taken_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_pending_trans_key') }}</th>
+                <th class="text-end">{{ __('general_content.leave_remaining_trans_key') }}</th>
                 @if($balanceEditable)<th></th>@endif
             </tr>
         </thead>
@@ -34,19 +34,19 @@
                         <small class="text-muted">({{ __('general_content.leave_not_counted_trans_key') }})</small>
                     @endunless
                 </td>
-                <td class="text-right">{{ number_format($line['entitled'], 2, ',', ' ') }}</td>
-                <td class="text-right">{{ number_format($line['carried_over'], 2, ',', ' ') }}</td>
-                <td class="text-right">{{ number_format($line['adjustment'], 2, ',', ' ') }}</td>
-                <td class="text-right"><strong>{{ number_format($line['acquired'], 2, ',', ' ') }}</strong></td>
-                <td class="text-right">{{ number_format($line['taken'], 2, ',', ' ') }}</td>
-                <td class="text-right">
+                <td class="text-end">{{ number_format($line['entitled'], 2, ',', ' ') }}</td>
+                <td class="text-end">{{ number_format($line['carried_over'], 2, ',', ' ') }}</td>
+                <td class="text-end">{{ number_format($line['adjustment'], 2, ',', ' ') }}</td>
+                <td class="text-end"><strong>{{ number_format($line['acquired'], 2, ',', ' ') }}</strong></td>
+                <td class="text-end">{{ number_format($line['taken'], 2, ',', ' ') }}</td>
+                <td class="text-end">
                     @if($line['pending'] > 0)
                         <span class="text-warning">{{ number_format($line['pending'], 2, ',', ' ') }}</span>
                     @else
                         {{ number_format($line['pending'], 2, ',', ' ') }}
                     @endif
                 </td>
-                <td class="text-right">
+                <td class="text-end">
                     @if($line['remaining'] === null)
                         <span class="text-muted">—</span>
                     @else
@@ -65,25 +65,25 @@
                                     <input type="hidden" name="user_id" value="{{ $balanceUserId }}">
                                     <input type="hidden" name="leave_type_id" value="{{ $line['type']->id }}">
                                     <input type="hidden" name="period_start" value="{{ $summary['period_start']->toDateString() }}">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="entitled_days">{{ __('general_content.leave_entitled_trans_key') }}</label>
                                         <input type="number" step="0.5" min="0" class="form-control" name="entitled_days" value="{{ $line['entitled'] }}">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="carried_over_days">{{ __('general_content.leave_carried_over_trans_key') }}</label>
                                         <input type="number" step="0.5" class="form-control" name="carried_over_days" value="{{ $line['carried_over'] }}">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="adjustment_days">{{ __('general_content.leave_adjustment_trans_key') }}</label>
                                         <input type="number" step="0.5" class="form-control" name="adjustment_days" value="{{ $line['adjustment'] }}">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="comment">{{ __('general_content.comment_trans_key') }}</label>
                                         <input type="text" class="form-control" name="comment" value="{{ $line['balance']->comment ?? '' }}">
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                    <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                 </div>
                             </form>
                         </x-adminlte-modal>

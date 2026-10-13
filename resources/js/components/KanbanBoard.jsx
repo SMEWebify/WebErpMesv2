@@ -32,38 +32,38 @@ function TaskCard({ task }) {
             }}
             {...attributes}
             {...listeners}
-            className="card mb-2 bg-light"
+            className="card mb-2 bg-body-tertiary"
         >
             <div className="card-body p-3">
                 <a href={`/production/Task/Statu/Id/${task.id}`}>#{task.id}</a>
                 {' - '}
-                <span className="font-weight-bold">
+                <span className="fw-bold">
                     <a href={`/orders/${task.order_lines.orders_id}`}>
                         {task.order_lines.order.code}
                     </a>
                 </span>
                 {` - ${task.label} - ${task.order_lines.delivery_date}`}
                 <br />
-                <span className="font-weight-bold">
+                <span className="fw-bold">
                     {task.order_lines.label} || qty {formatQty(task.order_lines.qty)}
                 </span>
                 <br />
-                <div className="float-right">
+                <div className="float-end">
                     <div className="row">
                         <div className="col-4">
                             {task.service.picture && (
                                 <img
                                     src={`/storage/images/methods/${task.service.picture}`}
-                                    className="profile-user-img img-fluid img-circle"
+                                    className="profile-user-img img-fluid rounded-circle"
                                     alt=""
                                 />
                             )}
                         </div>
                         <div className="col-8">
-                            <span className="font-weight-bold">Setting Time:</span>{' '}
+                            <span className="fw-bold">Setting Time:</span>{' '}
                             {task.seting_time}
                             <br />
-                            <span className="font-weight-bold">Unit Time:</span> {task.unit_time}
+                            <span className="fw-bold">Unit Time:</span> {task.unit_time}
                         </div>
                     </div>
                 </div>
@@ -77,8 +77,8 @@ function KanbanColumn({ status, columnId }) {
 
     return (
         <div className="col-12 col-lg-6 col-xl-3">
-            <div className="card">
-                <div className="card-header bg-blue">
+            <div className="card mb-3">
+                <div className="card-header text-bg-primary">
                     <h5>{status.title}</h5>
                 </div>
                 <div

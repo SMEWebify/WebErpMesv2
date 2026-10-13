@@ -16,8 +16,8 @@
   </div>
 
   <div class="text-center mb-4">
-    <a href="{{ route('workshop') }}" class="btn btn-default btn-lg">
-      <i class="fas fa-arrow-left mr-2"></i>{{ __('general_content.back_trans_key') }}
+    <a href="{{ route('workshop') }}" class="btn btn-outline-secondary btn-lg">
+      <i class="fas fa-arrow-left me-2"></i>{{ __('general_content.back_trans_key') }}
     </a>
   </div>
 @stop
@@ -28,10 +28,10 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function(){
-            $("body").addClass("sidebar-hidden");
+        document.addEventListener('DOMContentLoaded', function () {
+            // Écran atelier en plein écran : la sidebar est masquée (public/css/wem-shell.css).
+            document.body.classList.add('sidebar-hidden');
         });
     </script>
 @stop

@@ -8,15 +8,15 @@
 
 @section('content')
 
-<div class="float-right">
-    <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image elevation-3 ml-2">
+<div class="float-end">
+    <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image shadow ms-2">
 </div>
 
 {{-- =====================================================================
      SECTION FRANÇAISE
      ===================================================================== --}}
 
-<x-adminlte-card title="[FR] Responsable du traitement" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[FR] Responsable du traitement" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-building text-white" collapsible="collapsed">
 
     <p>
@@ -31,14 +31,14 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Données personnelles collectées" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[FR] Données personnelles collectées" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-database text-white" collapsible="collapsed">
 
     <p>L'application collecte et traite les catégories de données suivantes :</p>
 
-    <h5 class="mt-3"><i class="fas fa-users mr-1"></i> Utilisateurs internes (employés)</h5>
+    <h5 class="mt-3"><i class="fas fa-users me-1"></i> Utilisateurs internes (employés)</h5>
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Donnée</th><th>Finalité</th><th>Chiffrement</th></tr>
         </thead>
         <tbody>
@@ -55,9 +55,9 @@
         </tbody>
     </table>
 
-    <h5 class="mt-3"><i class="fas fa-address-book mr-1"></i> Contacts B2B (clients / fournisseurs)</h5>
+    <h5 class="mt-3"><i class="fas fa-address-book me-1"></i> Contacts B2B (clients / fournisseurs)</h5>
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Donnée</th><th>Finalité</th><th>Chiffrement</th></tr>
         </thead>
         <tbody>
@@ -69,7 +69,7 @@
         </tbody>
     </table>
 
-    <h5 class="mt-3"><i class="fas fa-file-invoice mr-1"></i> Données contractuelles et comptables</h5>
+    <h5 class="mt-3"><i class="fas fa-file-invoice me-1"></i> Données contractuelles et comptables</h5>
     <p>
         Les devis, commandes, factures et bons de livraison associés à un contact sont conservés pour
         satisfaire aux obligations légales comptables (voir durées ci-dessous). Ces données ne peuvent
@@ -77,7 +77,7 @@
         d'exercice du droit à l'effacement.
     </p>
 
-    <h5 class="mt-3"><i class="fas fa-envelope mr-1"></i> Journaux de communication</h5>
+    <h5 class="mt-3"><i class="fas fa-envelope me-1"></i> Journaux de communication</h5>
     <p>
         Les emails envoyés depuis l'application (confirmations, devis, factures PDF) sont tracés dans
         un journal interne (destinataire, objet, corps du message). Ces journaux sont automatiquement
@@ -86,11 +86,11 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Durées de conservation" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[FR] Durées de conservation" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-clock text-white" collapsible="collapsed">
 
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Type de données</th><th>Durée</th><th>Base légale</th></tr>
         </thead>
         <tbody>
@@ -139,31 +139,31 @@
 
     <div class="callout callout-info mt-2">
         <p>
-            <i class="fas fa-info-circle mr-1"></i>
+            <i class="fas fa-info-circle me-1"></i>
             La purge automatique des données expirées est exécutée chaque semaine par une tâche planifiée.
         </p>
     </div>
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Vos droits RGPD" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[FR] Vos droits RGPD" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-balance-scale text-white" collapsible="collapsed">
 
     <div class="row">
         <div class="col-md-6">
-            <h5><i class="fas fa-eye mr-1 text-primary"></i> Droit d'accès (Art. 15)</h5>
+            <h5><i class="fas fa-eye me-1 text-primary"></i> Droit d'accès (Art. 15)</h5>
             <p>
                 Vous pouvez demander une copie de l'ensemble des données vous concernant.
                 L'export est fourni au format JSON dans un délai de <strong>30 jours</strong>.
             </p>
 
-            <h5><i class="fas fa-pen mr-1 text-warning"></i> Droit de rectification (Art. 16)</h5>
+            <h5><i class="fas fa-pen me-1 text-warning"></i> Droit de rectification (Art. 16)</h5>
             <p>
                 Vous pouvez corriger toute donnée inexacte directement dans l'application
                 (profil utilisateur, fiche contact) ou en contactant l'administrateur.
             </p>
 
-            <h5><i class="fas fa-trash mr-1 text-danger"></i> Droit à l'effacement (Art. 17)</h5>
+            <h5><i class="fas fa-trash me-1 text-danger"></i> Droit à l'effacement (Art. 17)</h5>
             <p>
                 Lorsqu'aucune obligation légale de conservation ne s'applique, vos données
                 sont supprimées. Dans le cas contraire (pièces comptables sur 10 ans),
@@ -172,19 +172,19 @@
             </p>
         </div>
         <div class="col-md-6">
-            <h5><i class="fas fa-pause-circle mr-1 text-secondary"></i> Droit à la limitation (Art. 18)</h5>
+            <h5><i class="fas fa-pause-circle me-1 text-secondary"></i> Droit à la limitation (Art. 18)</h5>
             <p>
                 Vous pouvez demander la suspension du traitement de vos données pendant la durée
                 d'examen d'une contestation.
             </p>
 
-            <h5><i class="fas fa-file-export mr-1 text-success"></i> Droit à la portabilité (Art. 20)</h5>
+            <h5><i class="fas fa-file-export me-1 text-success"></i> Droit à la portabilité (Art. 20)</h5>
             <p>
                 Vous pouvez obtenir vos données dans un format structuré et lisible par machine (JSON).
                 Contactez l'administrateur de votre instance pour en faire la demande.
             </p>
 
-            <h5><i class="fas fa-hand-paper mr-1 text-info"></i> Droit d'opposition (Art. 21)</h5>
+            <h5><i class="fas fa-hand-paper me-1 text-info"></i> Droit d'opposition (Art. 21)</h5>
             <p>
                 Vous pouvez vous opposer au traitement de vos données à des fins de prospection commerciale
                 à tout moment.
@@ -194,7 +194,7 @@
 
     <div class="callout callout-warning mt-2">
         <p>
-            <i class="fas fa-envelope mr-1"></i>
+            <i class="fas fa-envelope me-1"></i>
             Pour exercer vos droits, contactez l'administrateur de l'instance ou écrivez à
             <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
             Délai de réponse : <strong>30 jours maximum</strong> (Art. 12 RGPD).
@@ -203,7 +203,7 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Sécurité des données" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[FR] Sécurité des données" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-shield-alt text-white" collapsible="collapsed">
 
     <h5>Mesures techniques mises en place</h5>
@@ -219,7 +219,7 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Sous-traitants techniques" theme="warning" body-class="bg-white"
+<x-adminlte-card title="[FR] Sous-traitants techniques" theme="warning" body-class="bg-body"
     theme-mode="full" icon="fas fa-server text-white" collapsible="collapsed">
 
     <p>
@@ -229,7 +229,7 @@
     </p>
 
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Sous-traitant</th><th>Finalité</th><th>Données transmises</th><th>Localisation</th></tr>
         </thead>
         <tbody>
@@ -274,7 +274,7 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[FR] Politique de confidentialité complète" body-class="bg-white"
+<x-adminlte-card title="[FR] Politique de confidentialité complète" body-class="bg-body"
     theme="warning" theme-mode="full" collapsible="collapsed" removable>
 
     <p>Les informations recueillies dans les formulaires sont enregistrées dans un fichier informatisé par <strong>{{ config('branding.publisher_name') }}</strong>, éditeur du logiciel WebErpMesv2. Le responsable du traitement est l'entreprise qui exploite l'instance.</p>
@@ -303,7 +303,7 @@
      ENGLISH SECTION
      ===================================================================== --}}
 
-<x-adminlte-card title="[EN] Data Controller" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[EN] Data Controller" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-building text-white" collapsible="collapsed">
 
     <p>
@@ -318,12 +318,12 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[EN] Personal Data Collected" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[EN] Personal Data Collected" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-database text-white" collapsible="collapsed">
 
-    <h5 class="mt-3"><i class="fas fa-users mr-1"></i> Internal Users (Employees)</h5>
+    <h5 class="mt-3"><i class="fas fa-users me-1"></i> Internal Users (Employees)</h5>
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Data</th><th>Purpose</th><th>Encrypted</th></tr>
         </thead>
         <tbody>
@@ -340,9 +340,9 @@
         </tbody>
     </table>
 
-    <h5 class="mt-3"><i class="fas fa-address-book mr-1"></i> B2B Contacts (Customers / Suppliers)</h5>
+    <h5 class="mt-3"><i class="fas fa-address-book me-1"></i> B2B Contacts (Customers / Suppliers)</h5>
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Data</th><th>Purpose</th><th>Encrypted</th></tr>
         </thead>
         <tbody>
@@ -354,7 +354,7 @@
         </tbody>
     </table>
 
-    <h5 class="mt-3"><i class="fas fa-file-invoice mr-1"></i> Accounting & Contractual Data</h5>
+    <h5 class="mt-3"><i class="fas fa-file-invoice me-1"></i> Accounting & Contractual Data</h5>
     <p>
         Quotes, orders, invoices and delivery notes linked to a contact are retained to meet legal
         accounting obligations. These cannot be deleted; upon an erasure request, they are
@@ -363,11 +363,11 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[EN] Retention Periods" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[EN] Retention Periods" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-clock text-white" collapsible="collapsed">
 
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Data Type</th><th>Period</th><th>Legal Basis</th></tr>
         </thead>
         <tbody>
@@ -384,35 +384,35 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[EN] Your GDPR Rights" theme="primary" body-class="bg-white"
+<x-adminlte-card title="[EN] Your GDPR Rights" theme="primary" body-class="bg-body"
     theme-mode="full" icon="fas fa-balance-scale text-white" collapsible="collapsed">
 
     <div class="row">
         <div class="col-md-6">
-            <h5><i class="fas fa-eye mr-1 text-primary"></i> Right of Access (Art. 15)</h5>
+            <h5><i class="fas fa-eye me-1 text-primary"></i> Right of Access (Art. 15)</h5>
             <p>You may request a copy of all data held about you. The export is provided in JSON format within <strong>30 days</strong>.</p>
 
-            <h5><i class="fas fa-pen mr-1 text-warning"></i> Right to Rectification (Art. 16)</h5>
+            <h5><i class="fas fa-pen me-1 text-warning"></i> Right to Rectification (Art. 16)</h5>
             <p>You may correct inaccurate data directly in the application (user profile, contact record) or by contacting the administrator.</p>
 
-            <h5><i class="fas fa-trash mr-1 text-danger"></i> Right to Erasure (Art. 17)</h5>
+            <h5><i class="fas fa-trash me-1 text-danger"></i> Right to Erasure (Art. 17)</h5>
             <p>When no legal retention obligation applies, your data is deleted. Otherwise (accounting documents retained for 10 years), data is <strong>anonymised</strong>: identifying fields are erased while accounting records are preserved without a nominal link.</p>
         </div>
         <div class="col-md-6">
-            <h5><i class="fas fa-pause-circle mr-1 text-secondary"></i> Right to Restriction (Art. 18)</h5>
+            <h5><i class="fas fa-pause-circle me-1 text-secondary"></i> Right to Restriction (Art. 18)</h5>
             <p>You may request suspension of processing during the examination of a dispute.</p>
 
-            <h5><i class="fas fa-file-export mr-1 text-success"></i> Right to Portability (Art. 20)</h5>
+            <h5><i class="fas fa-file-export me-1 text-success"></i> Right to Portability (Art. 20)</h5>
             <p>You may obtain your data in a structured, machine-readable format (JSON). Contact your instance administrator to submit a request.</p>
 
-            <h5><i class="fas fa-hand-paper mr-1 text-info"></i> Right to Object (Art. 21)</h5>
+            <h5><i class="fas fa-hand-paper me-1 text-info"></i> Right to Object (Art. 21)</h5>
             <p>You may object to the processing of your data for direct marketing purposes at any time.</p>
         </div>
     </div>
 
     <div class="callout callout-warning mt-2">
         <p>
-            <i class="fas fa-envelope mr-1"></i>
+            <i class="fas fa-envelope me-1"></i>
             To exercise your rights, contact your instance administrator or write to
             <a href="mailto:{{ config('branding.contact_email') }}">{{ config('branding.contact_email') }}</a>.
             Response time: <strong>maximum 30 days</strong> (Art. 12 GDPR).
@@ -421,11 +421,11 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[EN] Technical Sub-processors" theme="warning" body-class="bg-white"
+<x-adminlte-card title="[EN] Technical Sub-processors" theme="warning" body-class="bg-body"
     theme-mode="full" icon="fas fa-server text-white" collapsible="collapsed">
 
     <table class="table table-sm table-bordered">
-        <thead class="thead-light">
+        <thead class="table-light">
             <tr><th>Sub-processor</th><th>Purpose</th><th>Data transferred</th><th>Location</th></tr>
         </thead>
         <tbody>
@@ -440,7 +440,7 @@
 
 </x-adminlte-card>
 
-<x-adminlte-card title="[EN] Privacy Policy" theme="warning" body-class="bg-white"
+<x-adminlte-card title="[EN] Privacy Policy" theme="warning" body-class="bg-body"
     theme-mode="full" collapsible="collapsed" removable>
 
     <p>Information collected through forms is recorded in a computerised file by <strong>{{ config('branding.publisher_name') }}</strong>, publisher of the WebErpMesv2 software. The data controller is the company operating the instance.</p>

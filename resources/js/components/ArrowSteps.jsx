@@ -148,7 +148,7 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
         <div className="as-track" ref={trackRef}>
             {error && (
                 <div className="alert alert-danger py-2 mb-2" role="alert">
-                    <i className="fas fa-exclamation-triangle mr-1" />{error}
+                    <i className="fas fa-exclamation-triangle me-1" />{error}
                 </div>
             )}
             <div className="as-row">

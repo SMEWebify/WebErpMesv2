@@ -12,7 +12,7 @@ function delayColor(days) {
 function complianceBadge(rate) {
     if (rate === null || rate === undefined) return null;
     const pct = Math.round(rate * 100);
-    const cls = pct >= 95 ? 'badge-success' : pct >= 85 ? 'badge-warning' : 'badge-danger';
+    const cls = pct >= 95 ? 'text-bg-success' : pct >= 85 ? 'text-bg-warning' : 'text-bg-danger';
     return <span className={`badge ${cls}`} style={{ fontSize: '0.7rem' }}>{pct}%</span>;
 }
 
@@ -69,7 +69,7 @@ export default function SupplierDelayWidget({
             <div style={{ margin: '0 -0.75rem' }}>
                 <table className="table table-sm m-0" style={{ fontSize: '0.8rem' }}>
                     <thead>
-                        <tr style={{ background: '#f8f9fa' }}>
+                        <tr style={{ background: 'var(--bs-tertiary-bg)' }}>
                             <th style={{ fontWeight: 600, padding: '0.3rem 0.75rem' }}>
                                 {trans.supplier ?? 'Fournisseur'}
                             </th>

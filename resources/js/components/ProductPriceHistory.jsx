@@ -19,7 +19,7 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
         return (
             <div className="mb-4" data-section={sectionKey}>
                 <h6 style={{ color }} className="mb-2">
-                    <i className={`${icon} mr-1`} /> {title}
+                    <i className={`${icon} me-1`} /> {title}
                 </h6>
                 <p className="text-muted small">Aucun historique.</p>
             </div>
@@ -29,7 +29,7 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
     return (
         <div className="mb-4" data-section={sectionKey}>
             <h6 style={{ color }} className="mb-2">
-                <i className={`${icon} mr-1`} /> {title}
+                <i className={`${icon} me-1`} /> {title}
             </h6>
             <div className="table-responsive">
                 <table className="table table-sm table-hover">
@@ -57,7 +57,7 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
                                     <td>{formatDate(row.started_at)}</td>
                                     <td>
                                         {isCurrent
-                                            ? <span className="badge badge-success">En cours</span>
+                                            ? <span className="badge text-bg-success">En cours</span>
                                             : formatDate(row.ended_at)}
                                     </td>
                                     <td>{formatPrice(row.price, currency)}</td>
@@ -87,7 +87,7 @@ export default function ProductPriceHistory({ endpoint, currency = '€', canPur
 
     if (loading) return (
         <div className="text-center text-muted py-4">
-            <i className="fas fa-spinner fa-spin mr-2" /> Chargement…
+            <i className="fas fa-spinner fa-spin me-2" /> Chargement…
         </div>
     );
 

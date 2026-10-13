@@ -72,7 +72,7 @@ function Modal({ title, onClose, children, size = 'md' }) {
                 borderRadius: 6,
                 overflow: 'hidden',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
-                background: '#fff',
+                background: 'var(--bs-body-bg)',
             }}>
                 <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -117,9 +117,9 @@ function KpiCard({ value, label, icon, theme }) {
             </div>
             <div className="icon" style={{ position: 'absolute', right: 10, top: 10, fontSize: '3rem', opacity: 0.3 }}>
                 <i className={icon} />
-            </div>
-        </div>
-    );
+ </div>
+ </div>
+ );
 }
 
 // ---------------------------------------------------------------------------
@@ -144,11 +144,11 @@ function StackedBar({ label, internal, external, trans }) {
                 {externalPct > 0 && (
                     <div title={`${trans.external ?? 'Externe'}: ${externalPct}%`}
                         style={{ width: `${externalPct}%`, background: 'rgb(255,205,86)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <small style={{ color: '#555', fontSize: '0.7rem', fontWeight: 600 }}>{externalPct}%</small>
+                        <small style={{ color: 'var(--bs-body-color)', fontSize: '0.7rem', fontWeight: 600 }}>{externalPct}%</small>
                     </div>
                 )}
                 {internalPct === 0 && externalPct === 0 && (
-                    <div style={{ width: '100%', background: '#dee2e6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '100%', background: 'var(--bs-border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <small style={{ color: '#999', fontSize: '0.7rem' }}>—</small>
                     </div>
                 )}
@@ -181,7 +181,7 @@ function HorizontalBarChart({ data, trans }) {
                         <small style={{ fontSize: '0.75rem', maxWidth: '70%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</small>
                         <small style={{ fontWeight: 600 }}>{values[i]}</small>
                     </div>
-                    <div style={{ height: 10, background: '#f0f0f0', borderRadius: 4, overflow: 'hidden' }}>
+                    <div style={{ height: 10, background: 'var(--bs-secondary-bg)', borderRadius: 4, overflow: 'hidden' }}>
                         <div style={{
                             height: '100%',
                             width: `${(values[i] / maxVal) * 100}%`,
@@ -290,7 +290,7 @@ function DashboardTab({ kpi, rates, statusCounts, topGenerators, trans }) {
                     <KpiCard value={kpi.totalActionsOpen ?? 0} label={`${trans.open ?? 'Ouvert'} ${trans.actions ?? 'Actions'}`} icon="fas fa-chart-bar" theme="teal" />
                 </div>
                 <div className="col-lg-2 col-md-4 col-sm-6">
-                    <KpiCard value={kpi.totalNonConformitiesOpen ?? 0} label={`${trans.open ?? 'Ouvert'} ${trans.non_conformities ?? 'Non-conformités'}`} icon="fas fa-chart-bar" theme="purple" />
+                    <KpiCard value={kpi.totalNonConformitiesOpen ?? 0} label={`${trans.open ?? 'Ouvert'} ${trans.non_conformities ?? 'Non-conformités'}`} icon="fas fa-chart-bar" theme="violet" />
                 </div>
                 <div className="col-lg-2 col-md-4 col-sm-6">
                     <KpiCard value={kpi.totalDerogationsOpen ?? 0} label={`${trans.open ?? 'Ouvert'} ${trans.derogations ?? 'Dérogations'}`} icon="fas fa-chart-bar" theme="info" />
@@ -308,7 +308,7 @@ function DashboardTab({ kpi, rates, statusCounts, topGenerators, trans }) {
             <div className="row">
                 {/* Stacked bars */}
                 <div className="col-md-4">
-                    <div className="card card-outline card-teal">
+                    <div className="card card-outline card-teal mb-3">
                         <div className="card-header">
                             <h3 className="card-title small">{trans.internal_external_rates ?? 'Taux interne / externe'}</h3>
                         </div>
@@ -337,7 +337,7 @@ function DashboardTab({ kpi, rates, statusCounts, topGenerators, trans }) {
 
                 {/* Top generators */}
                 <div className="col-md-4">
-                    <div className="card card-outline card-purple">
+                    <div className="card card-outline card-violet mb-3">
                         <div className="card-header">
                             <h3 className="card-title small">{trans.top_generators ?? 'Top générateurs NC'}</h3>
                         </div>
@@ -349,7 +349,7 @@ function DashboardTab({ kpi, rates, statusCounts, topGenerators, trans }) {
 
                 {/* Radar */}
                 <div className="col-md-4">
-                    <div className="card card-outline card-info">
+                    <div className="card card-outline card-info mb-3">
                         <div className="card-header">
                             <h3 className="card-title small">{trans.status_distribution ?? 'Distribution des statuts'}</h3>
                         </div>
@@ -412,66 +412,66 @@ function DeviceEditModal({ device, users, services, endpoints, trans, onClose, o
             <form onSubmit={handleSubmit}>
                 {errors._ && <div className="alert alert-danger py-2">{errors._}</div>}
                 <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.label ?? 'Libellé'}</label>
                         <input className="form-control" value={form.label} onChange={e => set('label', e.target.value)} required />
                         {errors.label && <small className="text-danger">{errors.label[0]}</small>}
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.service ?? 'Service'}</label>
-                        <select className="form-control" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
+                        <select className="form-select" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
                             <option value="">—</option>
                             {(services ?? []).map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                         </select>
                     </div>
                 </div>
                 <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.user ?? 'Responsable'}</label>
-                        <select className="form-control" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
+                        <select className="form-select" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                             <option value="">—</option>
                             {(users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                         </select>
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.serial_number ?? 'N° série'}</label>
                         <input className="form-control" value={form.serial_number} onChange={e => set('serial_number', e.target.value)} />
                     </div>
                 </div>
                 <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.calibrated_at ?? 'Étalonné le'}</label>
                         <input type="date" className="form-control" value={form.calibrated_at} onChange={e => set('calibrated_at', e.target.value)} />
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.calibration_due_at ?? 'Prochain étalonnage'}</label>
                         <input type="date" className="form-control" value={form.calibration_due_at} onChange={e => set('calibration_due_at', e.target.value)} />
                     </div>
                 </div>
                 <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.calibration_status ?? 'Statut étalonnage'}</label>
                         <input className="form-control" value={form.calibration_status} onChange={e => set('calibration_status', e.target.value)} />
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.calibration_provider ?? 'Prestataire'}</label>
                         <input className="form-control" value={form.calibration_provider} onChange={e => set('calibration_provider', e.target.value)} />
                     </div>
                 </div>
                 <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.location ?? 'Emplacement'}</label>
                         <input className="form-control" value={form.location} onChange={e => set('location', e.target.value)} />
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="mb-3 col-md-6">
                         <label>{trans.capability_index ?? 'Indice de capabilité'}</label>
                         <input type="number" step="0.001" min="0" className="form-control" value={form.capability_index} onChange={e => set('capability_index', e.target.value)} />
                     </div>
                 </div>
-                <div className="card-footer text-right px-0 pb-0">
-                    <button type="button" className="btn btn-secondary btn-sm mr-2" onClick={onClose}>{trans.cancel ?? 'Annuler'}</button>
+                <div className="card-footer text-end px-0 pb-0">
+                    <button type="button" className="btn btn-secondary btn-sm me-2" onClick={onClose}>{trans.cancel ?? 'Annuler'}</button>
                     <button type="submit" className="btn btn-info btn-sm" disabled={saving}>
-                        <i className="fas fa-save mr-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
+                        <i className="fas fa-save me-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
                     </button>
                 </div>
             </form>
@@ -485,7 +485,7 @@ function DeviceEditModal({ device, users, services, endpoints, trans, onClose, o
 
 function CalibrationBadge({ device }) {
     if (!device.calibration_due_at) return <span className="text-muted">—</span>;
-    const badgeClass = device.calibration_alert_class ? `badge badge-${device.calibration_alert_class}` : 'badge badge-success';
+    const badgeClass = device.calibration_alert_class ? `badge text-bg-${device.calibration_alert_class}` : 'badge text-bg-success';
     return <span className={badgeClass}>{formatDate(device.calibration_due_at)}</span>;
 }
 
@@ -494,8 +494,8 @@ function CalibrationBadge({ device }) {
 // ---------------------------------------------------------------------------
 
 function DeviceCreateForm({ users, services, endpoints, trans, onCreated }) {
-    const empty = {
-        code: '', label: '', service_id: '', user_id: '', serial_number: '',
+ const empty = {
+ code: '', label: '', service_id: '', user_id: '', serial_number: '',
         calibrated_at: '', calibration_due_at: '', calibration_status: '',
         calibration_provider: '', location: '', capability_index: '',
     };
@@ -535,7 +535,7 @@ function DeviceCreateForm({ users, services, endpoints, trans, onCreated }) {
     }
 
     return (
-        <div className="card card-secondary">
+        <div className="card card-secondary mb-3">
             <div className="card-header">
                 <h3 className="card-title">{trans.new_measuring_device ?? 'Nouvel appareil de mesure'}</h3>
             </div>
@@ -544,80 +544,73 @@ function DeviceCreateForm({ users, services, endpoints, trans, onCreated }) {
                     {errors._ && <div className="alert alert-danger py-2">{errors._}</div>}
                     {success && <div className="alert alert-success py-2">{trans.created_success ?? 'Appareil créé avec succès.'}</div>}
                     <div className="row">
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.code ?? 'Code externe'}</label>
                             <input className="form-control" value={form.code} onChange={e => set('code', e.target.value)} placeholder={trans.code ?? 'Code'} />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.label ?? 'Libellé'} *</label>
                             <input className="form-control" required value={form.label} onChange={e => set('label', e.target.value)} />
                             {errors.label && <small className="text-danger">{errors.label[0]}</small>}
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.service ?? 'Service'}</label>
-                            <select className="form-control" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
+                            <select className="form-select" value={form.service_id} onChange={e => set('service_id', e.target.value)}>
                                 <option value="">—</option>
                                 {(services ?? []).map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                             </select>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.user ?? 'Responsable'}</label>
-                            <select className="form-control" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
+                            <select className="form-select" value={form.user_id} onChange={e => set('user_id', e.target.value)}>
                                 <option value="">—</option>
                                 {(users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                             </select>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.serial_number ?? 'N° série'}</label>
                             <input className="form-control" value={form.serial_number} onChange={e => set('serial_number', e.target.value)} />
                         </div>
                     </div>
                     <div className="row">
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.calibrated_at ?? 'Étalonné le'}</label>
                             <input type="date" className="form-control" value={form.calibrated_at} onChange={e => set('calibrated_at', e.target.value)} />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.calibration_due_at ?? 'Prochain étalonnage'}</label>
                             <input type="date" className="form-control" value={form.calibration_due_at} onChange={e => set('calibration_due_at', e.target.value)} />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.calibration_status ?? 'Statut'}</label>
                             <input className="form-control" value={form.calibration_status} onChange={e => set('calibration_status', e.target.value)} />
                         </div>
                     </div>
                     <div className="row">
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.calibration_provider ?? 'Prestataire'}</label>
                             <input className="form-control" value={form.calibration_provider} onChange={e => set('calibration_provider', e.target.value)} />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.location ?? 'Emplacement'}</label>
                             <input className="form-control" value={form.location} onChange={e => set('location', e.target.value)} />
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="mb-3 col-md-4">
                             <label>{trans.capability_index ?? 'Capabilité'}</label>
                             <input type="number" step="0.001" min="0" className="form-control" value={form.capability_index} onChange={e => set('capability_index', e.target.value)} />
                         </div>
                     </div>
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.picture ?? 'Photo'}</label>
-                        <div className="input-group">
-                            <div className="custom-file">
-                                <input type="file" className="custom-file-input" accept="image/*"
-                                    onChange={e => setPicture(e.target.files[0] ?? null)} />
-                                <label className="custom-file-label">
-                                    {picture ? picture.name : (trans.choose_file ?? 'Choisir un fichier')}
-                                </label>
-                            </div>
-                        </div>
+                        <input type="file" className="form-control" accept="image/*"
+                            onChange={e => setPicture(e.target.files[0] ?? null)} />
                     </div>
                 </div>
-                <div className="card-footer text-right">
+                <div className="card-footer text-end">
                     <button type="submit" className="btn btn-danger btn-sm" disabled={saving}>
-                        <i className="fas fa-save mr-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.submit ?? 'Enregistrer')}
+                        <i className="fas fa-save me-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.submit ?? 'Enregistrer')}
                     </button>
                 </div>
             </form>
@@ -709,7 +702,7 @@ function MeasuringDevicesTab({ calibrationAlerts, endpoints, trans }) {
 
             <div className="row">
                 <div className="col-md-7">
-                    <div className="card card-primary">
+                    <div className="card card-primary mb-3">
                         <div className="card-header">
                             <h3 className="card-title">{trans.measuring_devices ?? 'Appareils de mesure'}</h3>
                         </div>
@@ -745,7 +738,7 @@ function MeasuringDevicesTab({ calibrationAlerts, endpoints, trans }) {
                                                 <td>{d.calibration_status ?? '—'}</td>
                                                 <td>{d.location ?? '—'}</td>
                                                 <td>
-                                                    <button className="btn btn-xs btn-default" onClick={() => handleEdit(d)}>
+                                                    <button className="btn btn-sm btn-outline-secondary" onClick={() => handleEdit(d)}>
                                                         <i className="fas fa-edit" />
                                                     </button>
                                                 </td>
@@ -846,7 +839,7 @@ function ReferenceList({ items, type, endpoints, trans, onUpdated }) {
                                 <td>{item.code ?? '—'}</td>
                                 <td>{item.label}</td>
                                 <td>
-                                    <button className="btn btn-xs btn-default" onClick={() => openEdit(item)}>
+                                    <button className="btn btn-sm btn-outline-secondary" onClick={() => openEdit(item)}>
                                         <i className="fas fa-edit" />
                                     </button>
                                 </td>
@@ -860,15 +853,15 @@ function ReferenceList({ items, type, endpoints, trans, onUpdated }) {
                 <Modal title={`${trans.update ?? 'Modifier'} — ${editItem.label}`} onClose={() => setEditItem(null)} size="sm">
                     <form onSubmit={handleUpdate}>
                         {errors._ && <div className="alert alert-danger py-2">{errors._}</div>}
-                        <div className="form-group">
+                        <div className="mb-3">
                             <label>{trans.label ?? 'Libellé'}</label>
                             <input className="form-control" value={editLabel} onChange={e => setEditLabel(e.target.value)} required />
                             {errors.label && <small className="text-danger">{errors.label[0]}</small>}
                         </div>
-                        <div className="text-right">
-                            <button type="button" className="btn btn-sm btn-secondary mr-2" onClick={() => setEditItem(null)}>{trans.cancel ?? 'Annuler'}</button>
+                        <div className="text-end">
+                            <button type="button" className="btn btn-sm btn-secondary me-2" onClick={() => setEditItem(null)}>{trans.cancel ?? 'Annuler'}</button>
                             <button type="submit" className="btn btn-sm btn-danger" disabled={saving}>
-                                <i className="fas fa-save mr-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
+                                <i className="fas fa-save me-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.save ?? 'Enregistrer')}
                             </button>
                         </div>
                     </form>
@@ -905,7 +898,7 @@ function ReferenceCreate({ type, endpoints, trans, onCreated }) {
     }
 
     return (
-        <div className="card card-secondary">
+        <div className="card card-secondary mb-3">
             <div className="card-header">
                 <h3 className="card-title small">{trans[`new_${type}`] ?? `Nouveau ${type}`}</h3>
             </div>
@@ -913,20 +906,20 @@ function ReferenceCreate({ type, endpoints, trans, onCreated }) {
                 <div className="card-body">
                     {errors._ && <div className="alert alert-danger py-2">{errors._}</div>}
                     {success && <div className="alert alert-success py-2">{trans.created_success ?? 'Créé avec succès.'}</div>}
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.code ?? 'Code externe'}</label>
                         <input className="form-control" value={code} onChange={e => setCode(e.target.value)} placeholder={trans.code ?? 'Code'} />
                         {errors.code && <small className="text-danger">{errors.code[0]}</small>}
                     </div>
-                    <div className="form-group">
+                    <div className="mb-3">
                         <label>{trans.label ?? 'Libellé'} *</label>
                         <input className="form-control" required value={label} onChange={e => setLabel(e.target.value)} placeholder={trans.label ?? 'Libellé'} />
                         {errors.label && <small className="text-danger">{errors.label[0]}</small>}
                     </div>
                 </div>
-                <div className="card-footer text-right">
+                <div className="card-footer text-end">
                     <button type="submit" className="btn btn-danger btn-sm" disabled={saving}>
-                        <i className="fas fa-save mr-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.submit ?? 'Enregistrer')}
+                        <i className="fas fa-save me-1" />{saving ? (trans.saving ?? 'Enregistrement…') : (trans.submit ?? 'Enregistrer')}
                     </button>
                 </div>
             </form>
@@ -940,7 +933,7 @@ function ReferenceCreate({ type, endpoints, trans, onCreated }) {
 
 const SETTINGS_TYPES = [
     { key: 'failure',    themeClass: 'card-teal',   label: 'Défaillances',    transKey: 'failure_types'    },
-    { key: 'cause',      themeClass: 'card-purple',  label: 'Causes',          transKey: 'cause_types'      },
+    { key: 'cause',      themeClass: 'card-violet',  label: 'Causes',          transKey: 'cause_types'      },
     { key: 'correction', themeClass: 'card-orange',  label: 'Corrections',     transKey: 'correction_types' },
 ];
 
@@ -965,11 +958,11 @@ function SettingsTab({ initialFailures, initialCauses, initialCorrections, endpo
     return (
         <div>
             {SETTINGS_TYPES.map(({ key, themeClass, label, transKey }) => (
-                <div key={key} className={`card card-outline ${themeClass} collapsed-card`}>
+                <div key={key} className={`card card-outline ${themeClass} collapsed-card mb-3`}>
                     <div className="card-header">
                         <h3 className="card-title">{trans[transKey] ?? label}</h3>
                         <div className="card-tools">
-                            <button type="button" className="btn btn-tool" data-card-widget="collapse">
+                            <button type="button" className="btn btn-tool" data-lte-toggle="card-collapse">
                                 <i className="fas fa-plus" />
                             </button>
                         </div>
@@ -1026,7 +1019,7 @@ export default function QualityIndex({
     ];
 
     return (
-        <div className="card card-outline card-info">
+        <div className="card card-outline card-info mb-3">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
                     {tabs.map(t => (

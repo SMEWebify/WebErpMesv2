@@ -195,7 +195,7 @@ export default function InvoicesRequest({
     // ---------------------------------------------------------------------------
 
     return (
-        <div className="card card-outline card-danger">
+        <div className="card card-outline card-danger mb-3">
             <form onSubmit={handleSubmit}>
                 <div className="card-body">
                     {errors.general && (
@@ -205,16 +205,14 @@ export default function InvoicesRequest({
                         <div className={`alert alert-${flashMsg.type}`}>{flashMsg.text}</div>
                     )}
 
-                    <div className="form-row">
+                    <div className="row gx-2">
                         {/* Company */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.company}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesId}
                                     onChange={e => setField('companiesId', e.target.value)}
                                 >
@@ -228,12 +226,10 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Date from */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.date_from}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-calendar-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-calendar-alt" /></span>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -244,12 +240,10 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Date to */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.date_to}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-calendar-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-calendar-alt" /></span>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -260,12 +254,10 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Code */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.external_id}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -277,12 +269,10 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Label */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.label}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-tags" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -294,14 +284,12 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* User */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.user}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.userId}
                                     onChange={e => setField('userId', e.target.value)}
                                 >
@@ -315,14 +303,12 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Address */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.address}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-map-marked-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-map-marked-alt" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesAddressesId}
                                     onChange={e => setField('companiesAddressesId', e.target.value)}
                                 >
@@ -336,14 +322,12 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Contact */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.contact}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className="form-control"
+                                    className="form-select"
                                     value={form.companiesContactsId}
                                     onChange={e => setField('companiesContactsId', e.target.value)}
                                 >
@@ -357,10 +341,10 @@ export default function InvoicesRequest({
                         </div>
 
                         {/* Actions */}
-                        <div className="form-group col-md-3 d-flex align-items-end flex-wrap" style={{ gap: '8px' }}>
+                        <div className="mb-3 col-md-3 d-flex align-items-end flex-wrap" style={{ gap: '8px' }}>
                             <button type="submit" className="btn btn-success" disabled={submitting}>
                                 {submitting
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.new_invoice}</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{trans.new_invoice}</>
                                     : trans.new_invoice}
                             </button>
                             {form.companiesId && (() => {
@@ -374,7 +358,7 @@ export default function InvoicesRequest({
                                         onClick={handleGenerateAll}
                                     >
                                         {generating
-                                            ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.generate_all}</>
+                                            ? <><i className="fas fa-spinner fa-spin me-1" />{trans.generate_all}</>
                                             : trans.generate_all}
                                     </button>
                                 );
@@ -391,7 +375,7 @@ export default function InvoicesRequest({
 
                     {loading ? (
                         <div className="text-center p-4">
-                            <i className="fas fa-spinner fa-spin mr-2" />Loading...
+                            <i className="fas fa-spinner fa-spin me-2" />Loading...
                         </div>
                     ) : (
                         <table className="table table-hover">
@@ -410,15 +394,15 @@ export default function InvoicesRequest({
                                     <th>
                                         {trans.action}
                                         {form.companiesId && lines.length > 0 && (
-                                            <div className="custom-control custom-checkbox mt-2">
+                                            <div className="form-check mt-2">
                                                 <input
-                                                    className="custom-control-input"
+                                                    className="form-check-input"
                                                     id="selectAllInvoiceLines"
                                                     type="checkbox"
                                                     checked={allChecked}
                                                     onChange={e => handleSelectAll(e.target.checked)}
                                                 />
-                                                <label className="custom-control-label" htmlFor="selectAllInvoiceLines">
+                                                <label className="form-check-label" htmlFor="selectAllInvoiceLines">
                                                     {allChecked ? 'Tout désélect.' : 'Tout sélect.'}
                                                 </label>
                                             </div>
@@ -443,7 +427,7 @@ export default function InvoicesRequest({
                                         <td>
                                             {line.delivery_url
                                                 ? <a href={line.delivery_url} className="btn btn-primary btn-sm">
-                                                    <i className="fas fa-folder mr-1" />{line.delivery_code}
+                                                    <i className="fas fa-folder me-1" />{line.delivery_code}
                                                   </a>
                                                 : line.delivery_code}
                                         </td>
@@ -462,15 +446,15 @@ export default function InvoicesRequest({
                                         <td>{line.discount} %</td>
                                         <td>{line.vat_label} %</td>
                                         <td>
-                                            <div className="custom-control custom-checkbox">
+                                            <div className="form-check ">
                                                 <input
-                                                    className="custom-control-input"
+                                                    className="form-check-input"
                                                     type="checkbox"
                                                     id={`inv-line-${line.id}`}
                                                     checked={selected.has(line.id)}
                                                     onChange={e => handleLineCheck(line.id, e.target.checked)}
                                                 />
-                                                <label className="custom-control-label" htmlFor={`inv-line-${line.id}`}>
+                                                <label className="form-check-label" htmlFor={`inv-line-${line.id}`}>
                                                     {trans.add_to_document}
                                                 </label>
                                             </div>

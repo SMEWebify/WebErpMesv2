@@ -18,7 +18,7 @@
                             $fieldValue = old("custom_fields.{$customField->id}", $customField->field_value);
                         @endphp
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             @if ($customField->type === 'checkbox')
                                 <input type="hidden" name="custom_fields[{{ $customField->id }}]" value="0">
                                 <div class="form-check">
@@ -30,7 +30,7 @@
                                 @php
                                     $fieldOptions = is_array($customField->options) ? $customField->options : [];
                                 @endphp
-                                <select class="form-control" id="{{ $fieldInputId }}" name="custom_fields[{{ $customField->id }}]">
+                                <select class="form-select" id="{{ $fieldInputId }}" name="custom_fields[{{ $customField->id }}]">
                                     <option value="">{{ __('general_content.custom_fields_select_placeholder_trans_key') }}</option>
                                     @foreach ($fieldOptions as $option)
                                         <option value="{{ $option }}" {{ $fieldValue === $option ? 'selected' : '' }}>{{ $option }}</option>
@@ -39,9 +39,7 @@
                             @else
                                 <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                                    </div>
+                                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                     <input class="form-control" type="{{ $customField->type }}" id="{{ $fieldInputId }}" name="custom_fields[{{ $customField->id }}]" value="{{ $fieldValue }}" placeholder="{{ __('general_content.custom_fields_placeholder_trans_key') }}">
                                 </div>
                             @endif
@@ -52,7 +50,7 @@
                 @endforelse
             </div>
             <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
         </form>
     </div>

@@ -1,7 +1,9 @@
 {{-- Navbar theme widget --}}
-{{-- Surcharge du widget dark mode d'AdminLTE : il ne bascule plus entre deux --}}
-{{-- états mais fait tourner clair -> sombre -> pro. Le mode "pro" garde un fond --}}
-{{-- clair mais neutralise le chrome coloré (voir public/css/theme-pro.css). --}}
+{{-- Surcharge du widget de mode d'AdminLTE : il fait tourner clair -> sombre -> pro --}}
+{{-- au lieu de proposer clair / sombre / auto. Le mode "pro" garde un fond clair --}}
+{{-- mais neutralise le chrome coloré (voir public/css/theme-pro.css). --}}
+{{-- La préférence vit en session (App\Support\ThemeMode) : AdminLTE v4 en déduit --}}
+{{-- l'attribut data-bs-theme de <html> au rendu suivant. --}}
 
 @php
     $themeModes = [
@@ -15,7 +17,8 @@
 
 <li class="nav-item adminlte-darkmode-widget" data-theme-mode="{{ $themeMode }}">
 
-    <a class="nav-link" href="#" role="button" title="{{ $themeModes[$themeMode]['label'] }}">
+    <a class="nav-link" href="#" role="button" title="{{ $themeModes[$themeMode]['label'] }}"
+       aria-label="{{ $themeModes[$themeMode]['label'] }}">
         <i class="{{ $themeModes[$themeMode]['icon'] }}"></i>
     </a>
 
@@ -40,27 +43,32 @@
         const modes = @json($themeModes);
         const order = @json(array_keys($themeModes));
 
-        // Applique le mode au body courant et à ceux des iframes (mode IFrame).
+        // Applique le mode au document courant et à ceux des iframes (mode IFrame).
 
         const applyMode = (mode) => {
 
             widget.dataset.themeMode = mode;
             icon.className = modes[mode].icon;
             link.setAttribute('title', modes[mode].label);
+            link.setAttribute('aria-label', modes[mode].label);
 
-            const bodies = [document.body];
+            const documents = [document];
 
             document.querySelectorAll('div.iframe-mode iframe').forEach((frame) => {
-                const body = frame.contentDocument && frame.contentDocument.querySelector('body');
-
-                if (body) {
-                    bodies.push(body);
+                if (frame.contentDocument) {
+                    documents.push(frame.contentDocument);
                 }
             });
 
-            bodies.forEach((body) => {
-                body.classList.toggle('dark-mode', mode === 'dark');
-                body.classList.toggle('theme-pro', mode === 'pro');
+            documents.forEach((doc) => {
+                const colorMode = mode === 'dark' ? 'dark' : 'light';
+
+                doc.documentElement.setAttribute('data-bs-theme', colorMode);
+                doc.documentElement.style.colorScheme = colorMode;
+
+                if (doc.body) {
+                    doc.body.classList.toggle('theme-pro', mode === 'pro');
+                }
             });
         };
 

@@ -27,7 +27,7 @@ return [
     // Commercial mode: public/img/nest2prod_logo_seul.png
     'logo_img' => $commercial
         ? 'img/nest2prod_logo_seul.png'
-        : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
+        : 'img/simple-logo -R.PNG',
 
     'logo_alt' => $commercial ? 'Nest2Prod ERP' : 'WEM',
 

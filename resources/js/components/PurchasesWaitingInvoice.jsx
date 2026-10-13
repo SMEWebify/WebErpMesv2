@@ -43,8 +43,8 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             {/* Order */}
             <td>
                 {line.order_url ? (
-                    <a href={line.order_url} className="btn btn-xs btn-secondary">
-                        <i className="fas fa-folder mr-1" />
+                    <a href={line.order_url} className="btn btn-sm btn-secondary">
+                        <i className="fas fa-folder me-1" />
                         {line.order_code}
                     </a>
                 ) : (
@@ -56,7 +56,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             <td>
                 {line.purchase_url ? (
                     <a href={line.purchase_url} className="btn btn-primary btn-sm">
-                        <i className="fas fa-folder mr-1" />
+                        <i className="fas fa-folder me-1" />
                         {line.purchase_code}
                     </a>
                 ) : '—'}
@@ -66,7 +66,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             <td>
                 {line.receipt_url ? (
                     <a href={line.receipt_url} className="btn btn-primary btn-sm">
-                        <i className="fas fa-folder mr-1" />
+                        <i className="fas fa-folder me-1" />
                         {line.receipt_code}
                     </a>
                 ) : '—'}
@@ -85,7 +85,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
                 {line.tasks_id ? (
                     <>
                         {line.task_url && (
-                            <a href={line.task_url} className="btn btn-sm btn-success mr-1">
+                            <a href={line.task_url} className="btn btn-sm btn-success me-1">
                                 {trans.view ?? 'Voir'}
                             </a>
                         )}
@@ -102,15 +102,15 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
 
             {/* Checkbox */}
             <td>
-                <div className="custom-control custom-checkbox">
+                <div className="form-check ">
                     <input
-                        className="custom-control-input"
+                        className="form-check-input"
                         type="checkbox"
                         id={`line-${line.id}`}
                         checked={selectedIds.includes(line.id)}
                         onChange={() => onToggle(line.id)}
                     />
-                    <label className="custom-control-label" htmlFor={`line-${line.id}`}>
+                    <label className="form-check-label" htmlFor={`line-${line.id}`}>
                         {trans.add_to_document ?? 'Ajouter au document'}
                     </label>
                 </div>
@@ -137,15 +137,15 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
     const matched = Math.abs(gap) < 0.01;
 
     return (
-        <div className="card bg-light mx-3 mt-3 mb-0">
+        <div className="card bg-body-tertiary mx-3 mt-3 mb-0">
             <div className="card-header py-2">
                 <h3 className="card-title">
-                    <i className="fas fa-file-invoice mr-2 text-muted" />
+                    <i className="fas fa-file-invoice me-2 text-muted" />
                     Document reçu — {incoming.seller_name}
-                    {incoming.invoice_number && <span className="ml-2 text-muted">n° {incoming.invoice_number}</span>}
+                    {incoming.invoice_number && <span className="ms-2 text-muted">n° {incoming.invoice_number}</span>}
                 </h3>
                 {incoming.issue_date && (
-                    <span className="float-right text-muted small">
+                    <span className="float-end text-muted small">
                         Émise le {incoming.issue_date}
                         {incoming.due_date && ` — échéance ${incoming.due_date}`}
                     </span>
@@ -157,8 +157,8 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
                         <thead>
                             <tr>
                                 <th>Ce que le fournisseur facture</th>
-                                <th className="text-right" style={{ width: 140 }}>Quantité</th>
-                                <th className="text-right" style={{ width: 140 }}>Total HT</th>
+                                <th className="text-end" style={{ width: 140 }}>Quantité</th>
+                                <th className="text-end" style={{ width: 140 }}>Total HT</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,26 +168,26 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
                             {incoming.lines.map((line, i) => (
                                 <tr key={i}>
                                     <td>{line.name}</td>
-                                    <td className="text-right">{line.quantity} {line.unit_code}</td>
-                                    <td className="text-right">{money(line.line_total)}</td>
+                                    <td className="text-end">{line.quantity} {line.unit_code}</td>
+                                    <td className="text-end">{money(line.line_total)}</td>
                                 </tr>
                             ))}
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colSpan={2} className="text-right">Total facturé HT</th>
-                                <th className="text-right">{money(incoming.total_ht)}</th>
+                                <th colSpan={2} className="text-end">Total facturé HT</th>
+                                <th className="text-end">{money(incoming.total_ht)}</th>
                             </tr>
                             <tr className="text-muted">
-                                <td colSpan={2} className="text-right">TVA / TTC</td>
-                                <td className="text-right">{money(incoming.total_vat)} / {money(incoming.total_ttc)}</td>
+                                <td colSpan={2} className="text-end">TVA / TTC</td>
+                                <td className="text-end">{money(incoming.total_vat)} / {money(incoming.total_ttc)}</td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
                 <div className={`alert py-2 mb-0 ${matched ? 'alert-success' : 'alert-warning'}`}>
-                    <i className={`fas ${matched ? 'fa-check' : 'fa-balance-scale-right'} mr-2`} />
+                    <i className={`fas ${matched ? 'fa-check' : 'fa-balance-scale-right'} me-2`} />
                     Réceptions sélectionnées : <strong>{money(selectedTotal)}</strong>
                     {matched
                         ? ' — le total correspond au document reçu.'
@@ -311,13 +311,11 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
         .reduce((sum, l) => sum + Number(l.line_total ?? 0), 0);
 
     return (
-        <div className="card card-outline card-orange">
+        <div className="card card-outline card-orange mb-3">
             {flashError && (
                 <div className="alert alert-danger alert-dismissible mx-3 mt-3 mb-0">
                     {flashError}
-                    <button type="button" className="close" onClick={() => setFlashError(null)}>
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" onClick={() => setFlashError(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
 
@@ -328,16 +326,14 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
             {/* Form */}
             <div className="card-body">
                 <form onSubmit={handleStore}>
-                    <div className="form-row">
+                    <div className="row gx-2">
                         {/* Company filter */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.sort_company ?? 'Trier par tiers'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
                                 <select
-                                    className={`form-control ${errors.companies_id ? 'is-invalid' : ''}`}
+                                    className={`form-select ${errors.companies_id ? 'is-invalid' : ''}`}
                                     value={companiesId}
                                     onChange={e => handleCompanyChange(e.target.value)}
                                 >
@@ -356,12 +352,10 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                         </div>
 
                         {/* Code (external ID) */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.external_id ?? 'ID externe'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                 <input
                                     type="text"
                                     className={`form-control ${errors.code ? 'is-invalid' : ''}`}
@@ -377,12 +371,10 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
 
                         {/* Numéro de la facture du fournisseur : unique par tiers,
                             c'est lui qui rattache notre écriture à son document. */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>Référence fournisseur</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-hashtag" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-hashtag" /></span>
                                 <input
                                     type="text"
                                     className={`form-control ${errors.supplier_reference ? 'is-invalid' : ''}`}
@@ -397,14 +389,12 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                         </div>
 
                         {/* User */}
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label>{trans.user ?? 'Utilisateur'}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
                                 <select
-                                    className={`form-control ${errors.user_id ? 'is-invalid' : ''}`}
+                                    className={`form-select ${errors.user_id ? 'is-invalid' : ''}`}
                                     value={userId}
                                     onChange={e => setUserId(e.target.value)}
                                 >
@@ -425,11 +415,11 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                         <div className="card-footer">
                             <button
                                 type="submit"
-                                className="btn btn-success btn-block"
+                                className="btn btn-success w-100"
                                 disabled={submitting}
                             >
                                 {submitting
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.loading ?? 'Chargement…'}</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{trans.loading ?? 'Chargement…'}</>
                                     : trans.new_invoice ?? 'Nouvelle facture'
                                 }
                             </button>

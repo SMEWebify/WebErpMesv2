@@ -49,7 +49,7 @@ function SubModalFrame({ title, color, onClose, onSubmit, saving, trans, childre
                 <div className="modal-content">
                     <div className={`modal-header bg-${color}`}>
                         <h5 className="modal-title text-white">{title}</h5>
-                        <button type="button" className="close text-white" onClick={onClose}>&times;</button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <form onSubmit={onSubmit}>
                         <div className="modal-body">
@@ -59,7 +59,7 @@ function SubModalFrame({ title, color, onClose, onSubmit, saving, trans, childre
                             <button type="button" className="btn btn-secondary" onClick={onClose}>{trans.cancel ?? 'Annuler'}</button>
                             <button type="submit" className={`btn btn-${color}`} disabled={saving}>
                                 {saving
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />{trans.saving ?? 'Enregistrement…'}</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{trans.saving ?? 'Enregistrement…'}</>
                                     : (trans.save ?? 'Enregistrer')}
                             </button>
                         </div>
@@ -82,47 +82,47 @@ export function CreateAddressSubModal({ show, onClose, companiesId, storeUrl, on
     return (
         <SubModalFrame title={trans.new_address ?? 'Nouvelle adresse'} color="primary"
                        onClose={onClose} onSubmit={handleSubmit} saving={saving} trans={trans}>
-            <div className="form-row">
-                <div className="form-group col-md-2">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.ordre ?? 'Ordre'} *</label>
                     <input type="number" className="form-control" value={form.ordre} onChange={set('ordre')} min="1" />
                     {fe('ordre')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.adress_label ?? 'Libellé'} *</label>
                     <input className="form-control" value={form.label} onChange={set('label')} />
                     {fe('label')}
                 </div>
-                <div className="form-group col-md-6">
+                <div className="mb-3 col-md-6">
                     <label>{trans.adress ?? 'Adresse'} *</label>
                     <input className="form-control" value={form.adress} onChange={set('adress')} />
                     {fe('adress')}
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group col-md-3">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-3">
                     <label>{trans.postal_code ?? 'Code postal'} *</label>
                     <input className="form-control" value={form.zipcode} onChange={set('zipcode')} />
                     {fe('zipcode')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.city ?? 'Ville'} *</label>
                     <input className="form-control" value={form.city} onChange={set('city')} />
                     {fe('city')}
                 </div>
-                <div className="form-group col-md-5">
+                <div className="mb-3 col-md-5">
                     <label>{trans.country ?? 'Pays'} *</label>
                     <input className="form-control" value={form.country} onChange={set('country')} />
                     {fe('country')}
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group col-md-6">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-6">
                     <label>{trans.phone ?? 'Téléphone'}</label>
                     <input className="form-control" value={form.number} onChange={set('number')} />
                     {fe('number')}
                 </div>
-                <div className="form-group col-md-6">
+                <div className="mb-3 col-md-6">
                     <label>{trans.email ?? 'Email'}</label>
                     <input type="email" className="form-control" value={form.mail} onChange={set('mail')} />
                     {fe('mail')}
@@ -147,50 +147,50 @@ export function CreateContactSubModal({ show, onClose, companiesId, storeUrl, on
     return (
         <SubModalFrame title={trans.new_contact ?? 'Nouveau contact'} color="info"
                        onClose={onClose} onSubmit={handleSubmit} saving={saving} trans={trans}>
-            <div className="form-row">
-                <div className="form-group col-md-2">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.ordre ?? 'Ordre'} *</label>
                     <input type="number" className="form-control" value={form.ordre} onChange={set('ordre')} min="1" />
                     {fe('ordre')}
                 </div>
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.civility ?? 'Civilité'}</label>
-                    <select className="form-control" value={form.civility} onChange={set('civility')}>
+                    <select className="form-select" value={form.civility} onChange={set('civility')}>
                         <option value="">—</option>
                         {CIVILITIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     {fe('civility')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.first_name ?? 'Prénom'} *</label>
                     <input className="form-control" value={form.first_name} onChange={set('first_name')} />
                     {fe('first_name')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.name ?? 'Nom'} *</label>
                     <input className="form-control" value={form.name} onChange={set('name')} />
                     {fe('name')}
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group col-md-4">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-4">
                     <label>{trans.function ?? 'Fonction'}</label>
                     <input className="form-control" value={form.function} onChange={set('function')} />
                     {fe('function')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.phone ?? 'Téléphone'}</label>
                     <input className="form-control" value={form.number} onChange={set('number')} />
                     {fe('number')}
                 </div>
-                <div className="form-group col-md-4">
+                <div className="mb-3 col-md-4">
                     <label>{trans.mobile ?? 'Mobile'}</label>
                     <input className="form-control" value={form.mobile} onChange={set('mobile')} />
                     {fe('mobile')}
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group col-md-6">
+            <div className="row gx-2">
+                <div className="mb-3 col-md-6">
                     <label>{trans.email ?? 'Email'}</label>
                     <input type="email" className="form-control" value={form.mail} onChange={set('mail')} />
                     {fe('mail')}

@@ -2,13 +2,34 @@
 
 {{-- Surcharge de la vue du package : le preloader affiche le sigle de la marque --}}
 {{-- (WEM en open source, N2P en commercial via APP_COMMERCIAL) au lieu du logo --}}
-{{-- "A" d'AdminLTE. Voir config/branding.php et config/adminlte.php. --}}
+{{-- d'AdminLTE. Voir config/branding.php et config/adminlte.php. --}}
 
-@php($wrapperStyle = trim($preloaderHelper->makePreloaderStyle() . ';overflow:hidden', ';'))
+@php
+    $isCWrapperMode = $preloaderHelper->isPreloaderEnabled('cwrapper');
 
-{{-- overflow:hidden car AdminLTE anime la hauteur du preloader vers 0 avant de --}}
-{{-- masquer ses enfants (200 ms) : sans ca le sigle deborde en haut de l'ecran. --}}
-<div class="{{ $preloaderHelper->makePreloaderClasses() }}" style="{{ $wrapperStyle }}">
+    // AdminLTE v4 ne fournit plus de style '.preloader' : le voile est construit
+    // avec les utilitaires Bootstrap 5.3, comme dans la vue d'origine.
+
+    $preloaderClasses = $preloaderHelper->makePreloaderClasses();
+    $preloaderClasses .= ' d-flex w-100 h-100 top-0 start-0 bg-body';
+    $preloaderClasses .= $isCWrapperMode ? '' : ' position-fixed';
+
+    $preloaderStyles = array_filter([
+        $preloaderHelper->makePreloaderStyle(),
+        $isCWrapperMode ? '' : 'z-index:9999',
+        'transition:opacity .3s ease-in-out',
+    ]);
+
+    // AdminLTE v4 ne fournit que les keyframes des effets 'animation__*' :
+    // l'animation est donc appliquée en style inline.
+
+    $effect = (string) config('adminlte.preloader.img.effect', 'animation__shake');
+    $keyframes = preg_match('/^animation__(shake|wobble|flipInX|fadeIn|fadeOut|spin)$/', $effect, $m) ? $m[1] : null;
+
+    $size = config('adminlte.preloader.img.width', 60);
+@endphp
+
+<div id="adminlte-preloader" class="{{ $preloaderClasses }}" style="{{ implode(';', $preloaderStyles) }}">
 
     @hasSection('preloader')
 
@@ -17,19 +38,53 @@
 
     @else
 
-        @php($size = config('adminlte.preloader.img.width', 60))
-
-        <div class="d-flex align-items-center justify-content-center {{ config('adminlte.preloader.img.effect', 'animation__shake') }}"
+        <div class="d-flex align-items-center justify-content-center"
              role="img"
              aria-label="{{ config('branding.app_name') }}"
              style="width:{{ $size }}px; height:{{ $size }}px; flex-shrink:0; border-radius:50%;
                     background-color:#fff; color:#343a40; font-weight:700;
                     font-size:{{ round($size / 3.5) }}px; letter-spacing:.03em;
                     box-shadow:0 0 0 3px rgba(0, 0, 0, .05);
-                    animation-iteration-count:infinite;">
+                    animation-iteration-count:infinite;
+                    @if($keyframes) animation-name:{{ $keyframes }}; animation-duration:1s; @endif">
             {{ config('branding.logo_short', 'WEM') }}
         </div>
 
     @endif
 
 </div>
+
+<style>
+    @media (prefers-reduced-motion: reduce) {
+        #adminlte-preloader {
+            transition: none !important;
+        }
+
+        #adminlte-preloader > div {
+            animation: none !important;
+        }
+    }
+</style>
+
+{{-- Masque le preloader une fois la page chargee --}}
+<script>
+    (() => {
+        'use strict';
+        const preloader = document.getElementById('adminlte-preloader');
+
+        if (! preloader) {
+            return;
+        }
+
+        const hidePreloader = () => {
+            preloader.style.opacity = '0';
+            window.setTimeout(() => preloader.remove(), 300);
+        };
+
+        if (document.readyState === 'complete') {
+            hidePreloader();
+        } else {
+            window.addEventListener('load', hidePreloader);
+        }
+    })();
+</script>

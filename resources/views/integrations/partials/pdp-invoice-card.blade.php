@@ -38,7 +38,7 @@ $canSubmit = $canSubmit && ! $numberAlreadyRegistered;
 <x-adminlte-card title="Facturation électronique — {{ $providerName }}" theme="info" theme-mode="outline" collapsible>
     <div class="mb-2">
         <span class="text-muted small">Statut :</span>
-        <span class="badge badge-{{ $statusInfo['badge'] }} ml-1">{{ $statusInfo['label'] }}</span>
+        <span class="badge text-bg-{{ $statusInfo['badge'] }} ms-1">{{ $statusInfo['label'] }}</span>
 
         @if($submission?->external_id)
             <br><small class="text-muted">Référence {{ $providerName }} : {{ $submission->external_id }}</small>
@@ -69,7 +69,7 @@ $canSubmit = $canSubmit && ! $numberAlreadyRegistered;
         <button type="button"
                 class="btn btn-sm btn-info pdp-action-btn"
                 data-url="{{ route('invoices.pdp.submit', $Invoice->id) }}">
-            <i class="fas fa-paper-plane mr-1"></i>
+            <i class="fas fa-paper-plane me-1"></i>
             {{ $submission ? 'Redéposer' : 'Déposer sur ' . $providerName }}
         </button>
         @endif
@@ -78,7 +78,7 @@ $canSubmit = $canSubmit && ! $numberAlreadyRegistered;
         <button type="button"
                 class="btn btn-sm btn-outline-secondary pdp-action-btn"
                 data-url="{{ route('invoices.pdp.poll', $Invoice->id) }}">
-            <i class="fas fa-sync-alt mr-1"></i>Actualiser le statut
+            <i class="fas fa-sync-alt me-1"></i>Actualiser le statut
         </button>
         @endif
     </div>
@@ -98,7 +98,7 @@ $canSubmit = $canSubmit && ! $numberAlreadyRegistered;
     function pdpRequest(url, btn) {
         errorBox.classList.add('d-none');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>En cours…';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>En cours…';
 
         // Authentification par cookie de session : la page est déjà
         // authentifiée, il n'y a pas de jeton porteur à transmettre.

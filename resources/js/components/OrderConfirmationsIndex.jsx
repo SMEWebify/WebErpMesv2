@@ -6,10 +6,10 @@ import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
 // ---------------------------------------------------------------------------
 
 const ARC_STATUS = {
-    1: { badge: 'badge-secondary', key: 'status_draft' },
-    2: { badge: 'badge-primary',   key: 'status_sent' },
-    3: { badge: 'badge-success',   key: 'status_accepted' },
-    4: { badge: 'badge-light',     key: 'status_superseded' },
+    1: { badge: 'text-bg-secondary', key: 'status_draft' },
+    2: { badge: 'text-bg-primary',   key: 'status_sent' },
+    3: { badge: 'text-bg-success',   key: 'status_accepted' },
+    4: { badge: 'text-bg-light',     key: 'status_superseded' },
 };
 
 const STATUS_DRAFT = 1;
@@ -60,7 +60,7 @@ function Flash({ msg, type, onClose }) {
     return (
         <div className={`alert alert-${type} alert-dismissible`} role="alert">
             {msg}
-            <button type="button" className="close" onClick={onClose}><span>&times;</span></button>
+            <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
         </div>
     );
 }
@@ -88,8 +88,8 @@ function confirmationColumns(trans) {
         { key: 'revision',   label: trans.revision,   sortable: true,
           render: r => (
               <>
-                  <span className="badge badge-dark">{r.revision}</span>
-                  {r.is_current && <i className="fas fa-check-circle text-success ml-1" title="Indice en vigueur" />}
+                  <span className="badge text-bg-dark">{r.revision}</span>
+                  {r.is_current && <i className="fas fa-check-circle text-success ms-1" title="Indice en vigueur" />}
               </>
           ),
           mobile: 'title', mobileRender: r => `ind. ${r.revision}` },
@@ -104,7 +104,7 @@ function confirmationColumns(trans) {
           mobile: 'amount' },
         { key: 'statu',      label: trans.status,     sortable: true,
           render: r => {
-              const cfg = ARC_STATUS[r.statu] ?? { badge: 'badge-secondary', key: '' };
+              const cfg = ARC_STATUS[r.statu] ?? { badge: 'text-bg-secondary', key: '' };
               return <span className={`badge ${cfg.badge}`}>{trans[cfg.key] ?? r.statu}</span>;
           },
           mobile: 'badge' },
@@ -182,18 +182,16 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
             <Flash msg={flash.msg} type={flash.type} onClose={() => setFlash({ msg: '', type: 'success' })} />
             {fetchError && (
                 <div className="alert alert-danger alert-dismissible py-2">
-                    <i className="fas fa-exclamation-triangle mr-1" />{fetchError}
-                    <button type="button" className="close py-1" onClick={() => setFetchError('')}><span>&times;</span></button>
+                    <i className="fas fa-exclamation-triangle me-1" />{fetchError}
+                    <button type="button" onClick={() => setFetchError('')} aria-label="Close" className="btn-close py-1 float-end"></button>
                 </div>
             )}
 
-            <div className="card card-outline card-primary">
+            <div className="card card-outline card-primary mb-3">
                 <div className="card-header py-2">
                     <div className="d-flex flex-wrap align-items-center" style={{ gap: 8 }}>
                         <div className="input-group" style={{ maxWidth: 240 }}>
-                            <div className="input-group-prepend">
-                                <span className="input-group-text"><i className="fas fa-search" /></span>
-                            </div>
+                            <span className="input-group-text"><i className="fas fa-search" /></span>
                             <input
                                 type="text"
                                 className="form-control form-control-sm"
@@ -231,21 +229,21 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
                         <div className="d-flex" style={{ gap: 4 }}>
                             {row.statu === STATUS_DRAFT && (
                                 <button
-                                    className="btn btn-xs btn-outline-success"
+                                    className="btn btn-sm btn-outline-success"
                                     title={trans.send}
                                     onClick={() => handleSend(row)}
                                 >
                                     <i className="fas fa-paper-plane" />
                                 </button>
                             )}
-                            <a href={row.url} className="btn btn-xs btn-outline-primary" title={trans.view}>
+                            <a href={row.url} className="btn btn-sm btn-outline-primary" title={trans.view}>
                                 <i className="fas fa-eye" />
                             </a>
                         </div>
                     )}
                     mobileActions={row => row.statu === STATUS_DRAFT && (
                         <button type="button" className="btn btn-outline-success" style={{ minHeight: 44 }} onClick={() => handleSend(row)}>
-                            <i className="fas fa-paper-plane mr-1" />{trans.send}
+                            <i className="fas fa-paper-plane me-1" />{trans.send}
                         </button>
                     )}
                 />

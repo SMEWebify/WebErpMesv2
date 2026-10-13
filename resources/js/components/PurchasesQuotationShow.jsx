@@ -126,11 +126,11 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="card card-outline card-primary">
+            <div className="card card-outline card-primary mb-3">
                 <div className="card-header">
                     <h3 className="card-title">{trans.informations}</h3>
                     <div className="card-tools">
-                        <button type="button" className="btn btn-tool" data-card-widget="maximize">
+                        <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                             <i className="fas fa-expand" />
                         </button>
                     </div>
@@ -138,19 +138,17 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                 <div className="card-body">
                     {flash && (
                         <div className={`alert alert-${flash.type} alert-dismissible`}>
-                            <button type="button" className="close" onClick={() => setFlash(null)}>
-                                <span>&times;</span>
-                            </button>
+                            <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                             {flash.msg}
                         </div>
                     )}
 
                     <div className="row">
-                        <div className="form-group col-md-3">
+                        <div className="mb-3 col-md-3">
                             <label className="text-success">{trans.external_id}</label>
-                            <span className="ml-2">{quotation.code}</span>
+                            <span className="ms-2">{quotation.code}</span>
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.name_quote}</label>
                             <input
                                 type="text"
@@ -173,13 +171,11 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                     </div>
 
                     <div className="row">
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.supplier}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-building" /></span>
-                                </div>
-                                <select className="form-control" value={companiesId} onChange={handleSupplierChange}>
+                                <span className="input-group-text"><i className="fas fa-building" /></span>
+                                <select className="form-select" value={companiesId} onChange={handleSupplierChange}>
                                     <option value="">{trans.select_supplier}</option>
                                     {suppliers.map(s => (
                                         <option key={s.id} value={s.id}>{s.code} - {s.label}</option>
@@ -190,13 +186,11 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                     </div>
 
                     <div className="row">
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.address}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-map-marker-alt" /></span>
-                                </div>
-                                <select className="form-control" value={addressId} onChange={e => setAddressId(e.target.value)}>
+                                <span className="input-group-text"><i className="fas fa-map-marker-alt" /></span>
+                                <select className="form-select" value={addressId} onChange={e => setAddressId(e.target.value)}>
                                     <option value="">{trans.select_address}</option>
                                     {localAddresses.map(a => (
                                         <option key={a.id} value={a.id}>{a.label}</option>
@@ -204,13 +198,11 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                                 </select>
                             </div>
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.contact}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-user" /></span>
-                                </div>
-                                <select className="form-control" value={contactId} onChange={e => setContactId(e.target.value)}>
+                                <span className="input-group-text"><i className="fas fa-user" /></span>
+                                <select className="form-select" value={contactId} onChange={e => setContactId(e.target.value)}>
                                     <option value="">{trans.select_contact}</option>
                                     {localContacts.map(c => (
                                         <option key={c.id} value={c.id}>{c.label}</option>
@@ -222,7 +214,7 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
 
                     <div className="row">
                         <label className="col-12">{trans.date_pay_info}</label>
-                        <div className="form-group col-md-6">
+                        <div className="mb-3 col-md-6">
                             <label>{trans.validity_date}</label>
                             <input
                                 type="date"
@@ -234,12 +226,10 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                     </div>
 
                     <div className="row">
-                        <div className="form-group col-md-12">
+                        <div className="mb-3 col-md-12">
                             <label>{trans.comment}</label>
                             <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text"><i className="fas fa-comment" /></span>
-                                </div>
+                                <span className="input-group-text"><i className="fas fa-comment" /></span>
                                 <textarea
                                     className="form-control"
                                     rows="3"
@@ -252,8 +242,8 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                     </div>
                 </div>
                 <div className="card-footer">
-                    <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
-                        <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-1`} />
+                    <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
+                        <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} me-1`} />
                         {trans.update}
                     </button>
                 </div>
@@ -274,11 +264,11 @@ function OptionsSidebar({ quotation, trans }) {
 
     return (
         <>
-            <div className="card card-outline card-secondary">
+            <div className="card card-outline card-secondary mb-3">
                 <div className="card-header">
                     <h3 className="card-title">{trans.options}</h3>
                     <div className="card-tools">
-                        <button type="button" className="btn btn-tool" data-card-widget="maximize">
+                        <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                             <i className="fas fa-expand" />
                         </button>
                     </div>
@@ -291,7 +281,7 @@ function OptionsSidebar({ quotation, trans }) {
                                 <td>
                                     {canPdf && quotation.pdf_url ? (
                                         <a href={quotation.pdf_url} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
-                                            <i className="fas fa-file-pdf mr-1" />PDF
+                                            <i className="fas fa-file-pdf me-1" />PDF
                                         </a>
                                     ) : (
                                         <span className="text-muted small">{trans.update_valid}</span>
@@ -303,7 +293,7 @@ function OptionsSidebar({ quotation, trans }) {
                                     <td>{trans.email}</td>
                                     <td>
                                         <a href={quotation.email_url} className="btn btn-outline-info btn-sm">
-                                            <i className="fas fa-envelope mr-1" />{trans.email}
+                                            <i className="fas fa-envelope me-1" />{trans.email}
                                         </a>
                                     </td>
                                 </tr>
@@ -313,7 +303,7 @@ function OptionsSidebar({ quotation, trans }) {
                                     <td>{trans.compare_rfq}</td>
                                     <td>
                                         <a href={quotation.compare_url} className="btn btn-outline-primary btn-sm">
-                                            <i className="fas fa-balance-scale mr-1" />{trans.compare_rfq}
+                                            <i className="fas fa-balance-scale me-1" />{trans.compare_rfq}
                                         </a>
                                     </td>
                                 </tr>
@@ -322,7 +312,7 @@ function OptionsSidebar({ quotation, trans }) {
                                 <td>{trans.duplicate}</td>
                                 <td>
                                     <a href={quotation.duplicate_url} className="btn btn-outline-secondary btn-sm">
-                                        <i className="fas fa-copy mr-1" />{trans.duplicate}
+                                        <i className="fas fa-copy me-1" />{trans.duplicate}
                                     </a>
                                 </td>
                             </tr>
@@ -333,7 +323,7 @@ function OptionsSidebar({ quotation, trans }) {
 
             {/* Email logs */}
             {quotation.email_logs && quotation.email_logs.length > 0 && (
-                <div className="card card-outline card-secondary">
+                <div className="card card-outline card-secondary mb-3">
                     <div className="card-header">
                         <h3 className="card-title">{trans.email_history}</h3>
                     </div>
@@ -343,7 +333,7 @@ function OptionsSidebar({ quotation, trans }) {
                                 {quotation.email_logs.map(log => (
                                     <tr key={log.id}>
                                         <td>
-                                            <i className="fas fa-envelope text-muted mr-1" />
+                                            <i className="fas fa-envelope text-muted me-1" />
                                             {log.subject}
                                         </td>
                                         <td className="text-muted small">{log.created_at}</td>
@@ -450,14 +440,12 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="form-row">
+            <div className="row gx-2">
                 {/* Sort */}
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.sort}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
-                        </div>
+                        <span className="input-group-text"><i className="fas fa-sort-numeric-down" /></span>
                         <input
                             type="number"
                             className={`form-control${errors.ordre ? ' is-invalid' : ''}`}
@@ -470,14 +458,12 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Product */}
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.product}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text bg-gradient-info"><i className="fas fa-barcode" /></span>
-                        </div>
+                        <span className="input-group-text text-bg-info bg-gradient"><i className="fas fa-barcode" /></span>
                         <select
-                            className="form-control"
+                            className="form-select"
                             value={productId}
                             onChange={handleProductChange}
                         >
@@ -490,12 +476,10 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Code */}
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.external_id}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
-                        </div>
+                        <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                         <input
                             type="text"
                             className={`form-control${errors.code ? ' is-invalid' : ''}`}
@@ -506,12 +490,10 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Label */}
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.description}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-tags" /></span>
-                        </div>
+                        <span className="input-group-text"><i className="fas fa-tags" /></span>
                         <input
                             type="text"
                             className={`form-control${errors.label ? ' is-invalid' : ''}`}
@@ -523,12 +505,10 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Qty */}
-                <div className="form-group col-md-1">
+                <div className="mb-3 col-md-1">
                     <label>{trans.qty}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fas fa-times" /></span>
-                        </div>
+                        <span className="input-group-text"><i className="fas fa-times" /></span>
                         <input
                             type="number"
                             className={`form-control${errors.qty_to_order ? ' is-invalid' : ''}`}
@@ -541,12 +521,10 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Unit price */}
-                <div className="form-group col-md-2">
+                <div className="mb-3 col-md-2">
                     <label>{trans.price}</label>
                     <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">{currency}</span>
-                        </div>
+                        <span className="input-group-text">{currency}</span>
                         <input
                             type="number"
                             className={`form-control${errors.unit_price ? ' is-invalid' : ''}`}
@@ -560,15 +538,15 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
                 </div>
 
                 {/* Submit */}
-                <div className="form-group col-md-1 d-flex align-items-end">
-                    <button type="submit" className="btn btn-success btn-block" disabled={saving}>
+                <div className="mb-3 col-md-1 d-flex align-items-end">
+                    <button type="submit" className="btn btn-success w-100" disabled={saving}>
                         {saving ? <i className="fas fa-spinner fa-spin" /> : trans.submit}
                     </button>
                 </div>
 
                 {isEditing && (
-                    <div className="form-group col-md-1 d-flex align-items-end">
-                        <button type="button" className="btn btn-secondary btn-block" onClick={onCancelEdit}>
+                    <div className="mb-3 col-md-1 d-flex align-items-end">
+                        <button type="button" className="btn btn-secondary w-100" onClick={onCancelEdit}>
                             {trans.cancel}
                         </button>
                     </div>
@@ -602,7 +580,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
         <div id="PurchaseQuotationLines">
             <div className="row">
                 <div className="col-12">
-                    <div className="card">
+                    <div className="card mb-3">
                         <div className="card-body">
                             {canEdit ? (
                                 <LineForm
@@ -618,7 +596,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
                                 />
                             ) : (
                                 <div className="alert alert-info">
-                                    <i className="fas fa-info-circle mr-1" />{trans.info_statu}
+                                    <i className="fas fa-info-circle me-1" />{trans.info_statu}
                                 </div>
                             )}
                         </div>
@@ -671,7 +649,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
                                         <td>
                                             {line.task_id ? (
                                                 <>
-                                                    <a href={line.task_url} className="btn btn-sm btn-success mr-1">{trans.view}</a>
+                                                    <a href={line.task_url} className="btn btn-sm btn-success me-1">{trans.view}</a>
                                                     #{line.task_id} - {line.task_label}
                                                     {line.component_label ? ` - ${line.component_label}` : ''}
                                                 </>
@@ -679,12 +657,12 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
                                         </td>
                                         <td>
                                             {line.component_url && (
-                                                <a href={line.component_url} className="btn btn-xs btn-info mr-1">
+                                                <a href={line.component_url} className="btn btn-sm btn-info me-1">
                                                     <i className="fas fa-eye" />
                                                 </a>
                                             )}
                                             {!line.component_url && line.product_url && (
-                                                <a href={line.product_url} className="btn btn-xs btn-info">
+                                                <a href={line.product_url} className="btn btn-sm btn-info">
                                                     <i className="fas fa-eye" />
                                                 </a>
                                             )}
@@ -703,17 +681,17 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
                                                 </button>
                                             )}
                                             {line.qty_to_order > line.qty_accepted && (
-                                                <div className="form-group mb-0">
-                                                    <div className="custom-control custom-checkbox">
+                                                <div className="mb-3 mb-0">
+                                                    <div className="form-check ">
                                                         <input type="hidden" value={line.task_id ?? 0} name="PurchaseQuotationLineTaskid[]" />
                                                         <input
-                                                            className="custom-control-input"
+                                                            className="form-check-input"
                                                             type="checkbox"
                                                             id={`line-${line.id}`}
                                                             value={line.id}
                                                             name="PurchaseQuotationLine[]"
                                                         />
-                                                        <label className="custom-control-label" htmlFor={`line-${line.id}`}>+</label>
+                                                        <label className="form-check-label" htmlFor={`line-${line.id}`}>+</label>
                                                     </div>
                                                     <label htmlFor={`price-${line.id}`} className="small">{trans.proposed_purchase_price}</label>
                                                     <input
@@ -804,7 +782,7 @@ export default function PurchasesQuotationShow({
     }
 
     return (
-        <div className="card">
+        <div className="card mb-3">
             {/* Tabs header */}
             <div className="card-header p-2">
                 <ul className="nav nav-pills">

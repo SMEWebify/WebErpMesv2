@@ -67,7 +67,7 @@ function Drawer({ open, title, onClose, children, footer }) {
                 style={{
                     position: 'fixed', top: 0, right: 0, bottom: 0,
                     width: 500, maxWidth: '95vw',
-                    background: '#fff', zIndex: 1050,
+                    background: 'var(--bs-body-bg)', zIndex: 1050,
                     display: 'flex', flexDirection: 'column',
                     transform: open ? 'translateX(0)' : 'translateX(100%)',
                     transition: 'transform 0.25s ease',
@@ -75,7 +75,7 @@ function Drawer({ open, title, onClose, children, footer }) {
                 }}
             >
                 {/* Header */}
-                <div style={{ padding: '14px 20px', borderBottom: '1px solid #dee2e6', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#343a40' }}>
+                <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--bs-border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#343a40' }}>
                     <h6 style={{ margin: 0, color: '#fff', fontWeight: 600 }}>{title}</h6>
                     <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#adb5bd', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>×</button>
                 </div>
@@ -85,7 +85,7 @@ function Drawer({ open, title, onClose, children, footer }) {
                 </div>
                 {/* Footer */}
                 {footer && (
-                    <div style={{ padding: '12px 20px', borderTop: '1px solid #dee2e6', display: 'flex', justifyContent: 'flex-end', gap: 8, background: '#f8f9fa' }}>
+                    <div style={{ padding: '12px 20px', borderTop: '1px solid var(--bs-border-color)', display: 'flex', justifyContent: 'flex-end', gap: 8, background: 'var(--bs-tertiary-bg)' }}>
                         {footer}
                     </div>
                 )}
@@ -101,7 +101,7 @@ function Drawer({ open, title, onClose, children, footer }) {
 function Field({ label, error, children }) {
     return (
         <div style={{ marginBottom: 14 }}>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#495057' }}>{label}</label>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--bs-body-color)' }}>{label}</label>
             {children}
             {error && <div style={{ color: '#dc3545', fontSize: 11, marginTop: 2 }}>{error}</div>}
         </div>
@@ -119,7 +119,7 @@ function Input({ error, ...props }) {
 
 function Select({ error, children, ...props }) {
     return (
-        <select className={`form-control form-control-sm${error ? ' is-invalid' : ''}`} {...props}>
+        <select className={`form-select form-select-sm${error ? ' is-invalid' : ''}`} {...props}>
             {children}
         </select>
     );
@@ -133,7 +133,7 @@ function CostFormula({ setigTime, unitTime, lineQty, hourlyRate, currency }) {
     if (!hourlyRate) return null;
     const cost = ((parseFloat(setigTime) || 0) / (parseFloat(lineQty) || 1) + (parseFloat(unitTime) || 0)) * parseFloat(hourlyRate);
     return (
-        <small style={{ color: '#6c757d', display: 'block', marginTop: 2 }}>
+        <small style={{ color: 'var(--bs-secondary-color)', display: 'block', marginTop: 2 }}>
             ({setigTime || 0} h / {lineQty} + {unitTime || 0} h) × {hourlyRate} {currency}/h = <strong>{cost.toFixed(2)} {currency}</strong>
         </small>
     );
@@ -240,7 +240,7 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
         <form id="techcut-form" ref={formRef} onSubmit={handleSubmit}>
             {errors._global && <div className="alert alert-danger py-2">{errors._global}</div>}
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-3">
                     <Field label="N° ordre" error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
@@ -268,7 +268,7 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
             <Field label="Outil (optionnel)" error={errors.methods_tools_id?.[0]}>
                 {toolWarning && (
                     <div className="alert alert-warning py-1 mb-1" style={{ fontSize: 12 }}>
-                        <i className="fas fa-exclamation-triangle mr-1" />
+                        <i className="fas fa-exclamation-triangle me-1" />
                         Cet outil est déjà réservé sur cette période.
                     </div>
                 )}
@@ -281,9 +281,9 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
                 </Select>
             </Field>
 
-            <div style={{ background: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: 4, padding: '12px 14px', marginBottom: 14 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#6c757d', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Temps</div>
-                <div className="form-row">
+            <div style={{ background: 'var(--bs-tertiary-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 4, padding: '12px 14px', marginBottom: 14 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bs-secondary-color)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Temps</div>
+                <div className="row gx-2">
                     <div className="col-6">
                         <Field label="Temps de réglage (h)" error={errors.seting_time?.[0]}>
                             <Input type="number" step="0.001" min="0" value={form.seting_time} error={errors.seting_time?.[0]}
@@ -303,7 +303,7 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
                 )}
             </div>
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-6">
                     <Field label={`Coût unitaire (${context.currency})`} error={errors.unit_cost?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_cost} error={errors.unit_cost?.[0]}
@@ -315,14 +315,14 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
                         <Input type="number" step="0.01" min="0" value={form.unit_price} error={errors.unit_price?.[0]}
                                onChange={e => set('unit_price', e.target.value)} />
                         {selectedService?.margin > 0 && (
-                            <small style={{ color: '#6c757d', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
+                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
                         )}
                     </Field>
                 </div>
             </div>
 
             {context.idType !== 'quote_lines_id' && (
-                <div className="form-row">
+                <div className="row gx-2">
                     <div className="col-6">
                         <Field label="Date début" error={errors.start_date?.[0]}>
                             <Input type="datetime-local" value={form.start_date} error={errors.start_date?.[0]}
@@ -341,7 +341,7 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter l\'opération')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter l\'opération')}
                 </button>
             </div>
         </form>
@@ -430,7 +430,7 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
         <form id="bom-form" onSubmit={handleSubmit}>
             {errors._global && <div className="alert alert-danger py-2">{errors._global}</div>}
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-3">
                     <Field label="N° ordre" error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
@@ -464,13 +464,13 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
                     ))}
                 </Select>
                 {selectedProduct && (
-                    <small style={{ color: '#6c757d', fontSize: 11 }}>
+                    <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>
                         Prix d'achat: {selectedProduct.purchased_price?.toFixed(2)} {context.currency}
                     </small>
                 )}
             </Field>
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-4">
                     <Field label="Quantité" error={errors.qty?.[0]}>
                         <Input type="number" step="0.001" min="0" value={form.qty} error={errors.qty?.[0]}
@@ -488,7 +488,7 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
                         <Input type="number" step="0.01" min="0" value={form.unit_price} error={errors.unit_price?.[0]}
                                onChange={e => set('unit_price', e.target.value)} />
                         {selectedService?.margin > 0 && (
-                            <small style={{ color: '#6c757d', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
+                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
                         )}
                     </Field>
                 </div>
@@ -497,7 +497,7 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
                 <button type="submit" className="btn btn-success btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le composant')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le composant')}
                 </button>
             </div>
         </form>
@@ -564,7 +564,7 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
         <form id="subassembly-form" onSubmit={handleSubmit}>
             {errors._global && <div className="alert alert-danger py-2">{errors._global}</div>}
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-3">
                     <Field label="N° ordre" error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
@@ -582,13 +582,13 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
                     ))}
                 </Select>
                 {selectedChild && (
-                    <small style={{ color: '#6c757d', fontSize: 11 }}>
+                    <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>
                         Label: {selectedChild.label}
                     </small>
                 )}
             </Field>
 
-            <div className="form-row">
+            <div className="row gx-2">
                 <div className="col-6">
                     <Field label="Quantité" error={errors.qty?.[0]}>
                         <Input type="number" step="0.001" min="0" value={form.qty} error={errors.qty?.[0]}
@@ -606,7 +606,7 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
                 <button type="submit" className="btn btn-warning btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le sous-ensemble')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le sous-ensemble')}
                 </button>
             </div>
         </form>
@@ -645,14 +645,14 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Importer BOM depuis CSV</h5>
-                        <button type="button" className="close" onClick={onClose}><span>×</span></button>
+                        <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="modal-body">
-                            <p style={{ fontSize: 12, color: '#6c757d' }}>
+                            <p style={{ fontSize: 12, color: 'var(--bs-secondary-color)' }}>
                                 Colonnes attendues : <code>ordre, service_code, label, component_code, unit_code, qty, unit_cost, unit_price</code>
                             </p>
-                            <input type="file" accept=".csv,.txt" className="form-control-file"
+                            <input type="file" accept=".csv,.txt" className="form-control"
                                    onChange={e => setFile(e.target.files[0])} />
                             {result && (
                                 <div className="mt-3">
@@ -666,7 +666,7 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Fermer</button>
                             <button type="submit" className="btn btn-success btn-sm" disabled={loading || !file}>
-                                {loading ? <><i className="fas fa-spinner fa-spin mr-1" />Import…</> : 'Importer'}
+                                {loading ? <><i className="fas fa-spinner fa-spin me-1" />Import…</> : 'Importer'}
                             </button>
                         </div>
                     </form>
@@ -692,7 +692,7 @@ function endDateColor(dateStr) {
 }
 
 function ServiceBadge({ service }) {
-    if (!service) return <span className="badge badge-secondary">—</span>;
+    if (!service) return <span className="badge text-bg-secondary">—</span>;
     const bg = service.color || '#6c757d';
     return (
         <span className="badge" style={{ background: bg, color: '#fff', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block' }}
@@ -706,7 +706,7 @@ function ProgressBar({ value }) {
     const pct = Math.min(100, Math.max(0, Math.round(value)));
     const color = pct >= 100 ? '#28a745' : pct >= 50 ? '#17a2b8' : '#ffc107';
     return (
-        <div style={{ background: '#e9ecef', borderRadius: 3, height: 6, minWidth: 60 }}>
+        <div style={{ background: 'var(--bs-secondary-bg)', borderRadius: 3, height: 6, minWidth: 60 }}>
             <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3 }} />
         </div>
     );
@@ -716,11 +716,11 @@ function ProgressBar({ value }) {
 function statusBadge(status) {
     if (!status) return <span className="text-muted" style={{ fontSize: 11 }}>—</span>;
     const low = (status.title || '').toLowerCase();
-    let cls = 'badge-secondary';
-    if (/(finish|done|terminé|supplied|fourni)/.test(low))            cls = 'badge-success';
-    else if (/(progress|started|cours|outsourced|sous.?traité)/.test(low)) cls = 'badge-warning';
-    else if (/(suspend|cancel|rejet)/.test(low))                       cls = 'badge-danger';
-    else if (/(rfq)/.test(low))                                        cls = 'badge-info';
+    let cls = 'text-bg-secondary';
+    if (/(finish|done|terminé|supplied|fourni)/.test(low))            cls = 'text-bg-success';
+    else if (/(progress|started|cours|outsourced|sous.?traité)/.test(low)) cls = 'text-bg-warning';
+    else if (/(suspend|cancel|rejet)/.test(low))                       cls = 'text-bg-danger';
+    else if (/(rfq)/.test(low))                                        cls = 'text-bg-info';
     return <span className={`badge ${cls}`} style={{ fontSize: 10 }} title={status.title}>{status.title}</span>;
 }
 
@@ -733,7 +733,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
 
     return (
         <tr>
-            <td style={{ color: '#6c757d', fontSize: 12 }}>{task.ordre}</td>
+            <td style={{ color: 'var(--bs-secondary-color)', fontSize: 12 }}>{task.ordre}</td>
             <td><ServiceBadge service={task.service} /></td>
             <td style={{ maxWidth: 150 }}>
                 {statuUrl ? (
@@ -741,7 +741,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                        title={`${task.label} — écran de suivi`}
                        style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {task.label}
-                        <i className="fas fa-external-link-alt ml-1" style={{ fontSize: 10, opacity: 0.6 }} />
+                        <i className="fas fa-external-link-alt ms-1" style={{ fontSize: 10, opacity: 0.6 }} />
                     </a>
                 ) : (
                     <span title={task.label} style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -765,7 +765,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                     </td>
                 </>
             )}
-            <td style={{ textAlign: 'right', fontSize: 12, color: '#6c757d' }}>
+            <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--bs-secondary-color)' }}>
                 {totalCost.toFixed(2)} {currency}
             </td>
             <td style={{ textAlign: 'right', fontSize: 12 }}>
@@ -783,7 +783,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
             {canEdit && (
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <div className="dropdown" style={{ display: 'inline-block', position: 'relative' }}>
-                        <button className="btn btn-xs btn-outline-secondary" onClick={() => setMenuOpen(o => !o)}
+                        <button className="btn btn-sm btn-outline-secondary" onClick={() => setMenuOpen(o => !o)}
                                 style={{ padding: '1px 6px' }}>
                             <i className="fas fa-ellipsis-v" />
                         </button>
@@ -792,14 +792,14 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                                 <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 900 }} />
                                 <div className="dropdown-menu show" style={{ right: 0, left: 'auto', zIndex: 901 }}>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onEdit(task); }}>
-                                        <i className="fas fa-edit mr-2" />Modifier
+                                        <i className="fas fa-edit me-2" />Modifier
                                     </button>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onDuplicate(task.id); }}>
-                                        <i className="fas fa-copy mr-2" />Dupliquer
+                                        <i className="fas fa-copy me-2" />Dupliquer
                                     </button>
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item text-danger" onClick={() => { setMenuOpen(false); onDelete(task.id); }}>
-                                        <i className="fas fa-trash mr-2" />Supprimer
+                                        <i className="fas fa-trash me-2" />Supprimer
                                     </button>
                                 </div>
                             </>
@@ -819,7 +819,7 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
     const [menuOpen, setMenuOpen] = useState(false);
     return (
         <tr>
-            <td style={{ color: '#6c757d', fontSize: 12 }}>{sa.ordre}</td>
+            <td style={{ color: 'var(--bs-secondary-color)', fontSize: 12 }}>{sa.ordre}</td>
             <td>{sa.child ? <code style={{ fontSize: 11 }}>{sa.child.code}</code> : '—'}</td>
             <td style={{ maxWidth: 150 }}>
                 <span title={sa.child?.label} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
@@ -834,7 +834,7 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
             {canEdit && (
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <div className="dropdown" style={{ display: 'inline-block', position: 'relative' }}>
-                        <button className="btn btn-xs btn-outline-secondary" onClick={() => setMenuOpen(o => !o)}
+                        <button className="btn btn-sm btn-outline-secondary" onClick={() => setMenuOpen(o => !o)}
                                 style={{ padding: '1px 6px' }}>
                             <i className="fas fa-ellipsis-v" />
                         </button>
@@ -843,14 +843,14 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
                                 <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 900 }} />
                                 <div className="dropdown-menu show" style={{ right: 0, left: 'auto', zIndex: 901 }}>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onEdit(sa); }}>
-                                        <i className="fas fa-edit mr-2" />Modifier
+                                        <i className="fas fa-edit me-2" />Modifier
                                     </button>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onDuplicate(sa.id); }}>
-                                        <i className="fas fa-copy mr-2" />Dupliquer
+                                        <i className="fas fa-copy me-2" />Dupliquer
                                     </button>
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item text-danger" onClick={() => { setMenuOpen(false); onDelete(sa.id); }}>
-                                        <i className="fas fa-trash mr-2" />Supprimer
+                                        <i className="fas fa-trash me-2" />Supprimer
                                     </button>
                                 </div>
                             </>
@@ -871,7 +871,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
         const total = items.reduce((s, sa) => s + (sa.qty ?? 0) * (sa.unit_price ?? 0), 0);
         return (
             <tfoot>
-                <tr style={{ background: '#f8f9fa', fontWeight: 600 }}>
+                <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
                     <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>Total sous-ensembles</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{total.toFixed(2)} {currency}</td>
                     {canEdit && <td />}
@@ -885,7 +885,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
         const margin     = totalCost > 0 ? Math.round((totalPrice / totalCost - 1) * 100) : 0;
         return (
             <tfoot>
-                <tr style={{ background: '#f8f9fa', fontWeight: 600 }}>
+                <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
                     <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>Total nomenclature</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
                     <td style={{ textAlign: 'right', fontSize: 12, color: margin >= 0 ? '#28a745' : '#dc3545' }}>{margin}%</td>
@@ -904,7 +904,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
     const margin       = totalCost > 0 ? Math.round((totalPrice / totalCost - 1) * 100) : 0;
     return (
         <tfoot>
-            <tr style={{ background: '#f8f9fa', fontWeight: 600 }}>
+            <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
                 <td colSpan={3} style={{ textAlign: 'right', fontSize: 12 }}>Total gamme</td>
                 <td />
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalSeting.toFixed(3)}h</td>
@@ -930,7 +930,7 @@ function SectionCard({ title, icon, colorClass, extra, children }) {
         <div className="card mb-3">
             <div className="card-header d-flex align-items-center justify-content-between" style={{ padding: '8px 16px' }}>
                 <h6 className="mb-0">
-                    <i className={`${icon} mr-2 ${colorClass}`} />{title}
+                    <i className={`${icon} me-2 ${colorClass}`} />{title}
                 </h6>
                 {extra && <div>{extra}</div>}
             </div>
@@ -1008,7 +1008,7 @@ function NomenclatureTemplatesCard({ templates, canEdit, onApply, loading }) {
     return (
         <div className="card mb-3">
             <div className="card-header" style={{ padding: '8px 16px' }}>
-                <h6 className="mb-0"><i className="fas fa-clone mr-2 text-secondary" />Modèles standards</h6>
+                <h6 className="mb-0"><i className="fas fa-clone me-2 text-secondary" />Modèles standards</h6>
             </div>
             <div className="card-body" style={{ padding: '10px 16px' }}>
                 <div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -1020,9 +1020,9 @@ function NomenclatureTemplatesCard({ templates, canEdit, onApply, loading }) {
                             disabled={loading}
                             title={`Copie ${tpl.task_count} opération(s) dans la gamme`}
                         >
-                            {loading ? <i className="fas fa-spinner fa-spin mr-1" /> : <i className="fas fa-file-import mr-1" />}
+                            {loading ? <i className="fas fa-spinner fa-spin me-1" /> : <i className="fas fa-file-import me-1" />}
                             {tpl.label}
-                            <span className="badge badge-secondary ml-1">{tpl.task_count}</span>
+                            <span className="badge text-bg-secondary ms-1">{tpl.task_count}</span>
                         </button>
                     ))}
                 </div>
@@ -1041,14 +1041,14 @@ function ContextHeader({ line, isLocked }) {
         <>
             {isLocked && (
                 <div className="alert alert-warning alert-dismissible py-2 mb-3">
-                    <i className="fas fa-lock mr-2" />
+                    <i className="fas fa-lock me-2" />
                     Document verrouillé — consultation uniquement.
                 </div>
             )}
             {line.custom_requirements?.length > 0 && (
                 <div className="card mb-3">
                     <div className="card-header" style={{ padding: '8px 16px' }}>
-                        <h6 className="mb-0"><i className="fas fa-swatchbook mr-2 text-secondary" />Exigences client</h6>
+                        <h6 className="mb-0"><i className="fas fa-swatchbook me-2 text-secondary" />Exigences client</h6>
                     </div>
                     <div className="card-body py-2">
                         <ul className="mb-0" style={{ fontSize: 13 }}>
@@ -1253,7 +1253,7 @@ export default function TaskManagePage({ context, endpoints }) {
                 ) : (
                     <div className="table-responsive">
                         <table className="table table-sm table-hover mb-0" style={{ fontSize: 13 }}>
-                            <thead className="thead-light">
+                            <thead className="table-light">
                                 <tr>
                                     <th style={{ width: 40 }}>N°</th>
                                     <th style={{ width: 90 }}>Service</th>
@@ -1295,7 +1295,7 @@ export default function TaskManagePage({ context, endpoints }) {
                 colorClass="text-success"
                 extra={canEdit && (
                     <button className="btn btn-sm btn-outline-success" onClick={() => setCsvModalOpen(true)}>
-                        <i className="fas fa-file-csv mr-1" />CSV
+                        <i className="fas fa-file-csv me-1" />CSV
                     </button>
                 )}
             >
@@ -1307,7 +1307,7 @@ export default function TaskManagePage({ context, endpoints }) {
                 ) : (
                     <div className="table-responsive">
                         <table className="table table-sm table-hover mb-0" style={{ fontSize: 13 }}>
-                            <thead className="thead-light">
+                            <thead className="table-light">
                                 <tr>
                                     <th style={{ width: 40 }}>N°</th>
                                     <th style={{ width: 90 }}>Service</th>
@@ -1352,7 +1352,7 @@ export default function TaskManagePage({ context, endpoints }) {
                     ) : (
                         <div className="table-responsive">
                             <table className="table table-sm table-hover mb-0" style={{ fontSize: 13 }}>
-                                <thead className="thead-light">
+                                <thead className="table-light">
                                     <tr>
                                         <th style={{ width: 40 }}>N°</th>
                                         <th style={{ width: 90 }}>Code</th>
