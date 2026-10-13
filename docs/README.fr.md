@@ -486,9 +486,9 @@ Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SE
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
 - 📝 **2 200+** Commits
-- 🎉 **21** Releases (dernière : v1.19)
+- 🎉 **24** Releases (dernière : v2.1.0)
 - 🧪 **85+** fichiers de tests PHPUnit
-- 📦 **Open Source** sous licence MIT
+- 📦 **Open Source** sous licence LGPL v3
 
 ## 📚 Documentation
 
@@ -519,13 +519,15 @@ Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 
 ## 📄 Licence
 
-Projet sous licence **MIT** - Voir [LICENSE](../LICENSE)
+Depuis la **v2.2.0**, le projet est sous licence **GNU LGPL v3 ou ultérieure** - Voir [LICENSE](../LICENSE), [COPYING](../COPYING) et [NOTICE](../NOTICE).
+Les versions jusqu'à la v2.1.0 ont été publiées sous licence MIT et le restent.
+Le nom et les logos Nest2Prod sont des marques et ne sont pas couverts par la licence du code - Voir [TRADEMARKS.md](../TRADEMARKS.md).
 
 Vous êtes libre de :
-- ✅ Utiliser commercialement
+- ✅ L'utiliser commercialement, en interne comme pour vos clients
 - ✅ Modifier le code
-- ✅ Distribuer
-- ✅ Utiliser en privé
+- ✅ Le distribuer, à condition de fournir le code source de vos modifications du code lui-même
+- ✅ Développer des extensions séparées sous la licence de votre choix
 
 ## 🙏 Remerciements
 
