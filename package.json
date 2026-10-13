@@ -26,7 +26,7 @@
         "lodash": "^4.18.1",
         "overlayscrollbars": "^2.16.0",
         "postcss": "^8.5.29",
-        "postcss-import": "^16.1.0",
+        "postcss-import": "^17.0.0",
         "pusher-js": "^8.6.0",
         "sass": "^1.105.1",
         "vite": "^8.3.4",
