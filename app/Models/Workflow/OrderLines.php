@@ -29,7 +29,8 @@ class OrderLines extends Model
 {
     use HasFactory, LogsActivity, HasSalesLineType;
 
-    // Fillable attributes for mass assignment
+    // Fillable attributes for mass assignment.
+    // promised_delivery_date n'y figure pas : posée par OrderLinesObserver à la création, jamais modifiée.
     protected $fillable= ['orders_id',
                             'quote_lines_id',
                             'ordre',
@@ -138,6 +139,12 @@ class OrderLines extends Model
     }
 
     // GED — plans DXF, images, SVG, PDF... attachés à la ligne via le pivot polymorphe.
+    /** Reports successifs de delivery_date / internal_delay, du plus ancien au plus récent. */
+    public function delayHistories()
+    {
+        return $this->hasMany(OrderLineDelayHistory::class, 'order_lines_id')->orderBy('id');
+    }
+
     public function files()
     {
         return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);

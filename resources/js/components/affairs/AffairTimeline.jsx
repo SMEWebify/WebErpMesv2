@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-    request, fmt, formatDateTime, formatAmount, parseDate, statusBadge,
+    request, fmt, formatDate, formatDateTime, formatAmount, parseDate, statusBadge,
 } from './affairShared.jsx';
 
 /**
@@ -26,6 +26,7 @@ const TYPE_ICONS = {
     invoice:      { icon: 'fas fa-file-invoice-dollar',   bg: 'text-bg-success' },
     payment:      { icon: 'fas fa-euro-sign',             bg: 'text-bg-success' },
     email:        { icon: 'fas fa-envelope',              bg: 'text-bg-secondary' },
+    line_rescheduled: { icon: 'fas fa-calendar-times',    bg: 'text-bg-warning' },
 };
 const DEFAULT_ICON = { icon: 'fas fa-circle', bg: 'text-bg-secondary' };
 
@@ -54,6 +55,7 @@ function monthLabel(value, locale) {
 
 function TimelineItem({ item, trans, locale, currency }) {
     const tl = trans.timeline ?? {};
+    const delays = trans.delays ?? {};
     const family = STATUS_FAMILY[item.type];
     const badge = family ? statusBadge(trans, family, item.statu) : null;
     const icon = TYPE_ICONS[item.type] ?? DEFAULT_ICON;
@@ -89,6 +91,16 @@ function TimelineItem({ item, trans, locale, currency }) {
                     {extra}
                 </div>
                 {item.label && <div className="small text-break mt-1">{item.label}</div>}
+                {item.type === 'line_rescheduled' && (
+                    <div className="small mt-1">
+                        <span className="text-body-secondary me-1">{delays.fields?.[item.field] ?? item.field}</span>
+                        {item.old_value ? formatDate(item.old_value, locale) : '—'}
+                        <i className="fas fa-arrow-right mx-1 text-body-secondary" aria-hidden="true" />
+                        {item.new_value ? formatDate(item.new_value, locale) : '—'}
+                        {item.origin && <span className="text-body-secondary"> · {delays.origins?.[item.origin] ?? item.origin}</span>}
+                        {item.reason && <div className="text-break">{item.reason}</div>}
+                    </div>
+                )}
                 {item.type === 'email' && item.to && (
                     <div className="small text-body-secondary text-break">{tl.to ?? 'à'} {item.to}</div>
                 )}

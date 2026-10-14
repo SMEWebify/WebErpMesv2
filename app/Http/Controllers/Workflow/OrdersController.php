@@ -23,6 +23,9 @@ use App\Services\OrderCalculatorService;
 use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\OrderLineDelayHistory;
+use App\Support\OrderLineDelayContext;
+use Illuminate\Support\Facades\DB;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
@@ -279,7 +282,14 @@ class OrdersController extends Controller
                 $updates['internal_delay'] = $internalDelay;
             }
 
-            OrderLines::where('orders_id', $order->id)->update($updates);
+            // Ligne par ligne et non par une requête de masse : OrderLinesObserver
+            // doit voir chaque report pour l'historiser.
+            OrderLineDelayContext::run(OrderLineDelayHistory::ORIGIN_ORDER, function () use ($order, $updates) {
+                DB::transaction(function () use ($order, $updates) {
+                    OrderLines::where('orders_id', $order->id)->get()
+                        ->each(fn (OrderLines $line) => $line->update($updates));
+                });
+            });
 
             Cache::forget(CalculateTaskDates::cacheKeyForOrder($order->id));
             CalculateTaskDates::dispatchAfterResponse($order->id);

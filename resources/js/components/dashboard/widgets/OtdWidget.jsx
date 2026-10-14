@@ -35,6 +35,43 @@ function RadialGauge({ pct, size = 180 }) {
     );
 }
 
+function rateClass(pct) {
+    return pct >= 85 ? 'text-success' : pct >= 70 ? 'text-warning' : 'text-danger';
+}
+
+/**
+ * Les deux mesures côte à côte : la jauge garde la mesure historique (dernière
+ * date saisie) tant que la bascule vers la date promise n'est pas décidée.
+ */
+function PromisedComparison({ current, promised, trans }) {
+    const currentRate  = parseFloat(current.rate ?? 0);
+    const promisedRate = parseFloat(promised.rate ?? 0);
+    const fallback     = Number(promised.fallback ?? 0);
+
+    return (
+        <div className="mt-2 pt-2 border-top" style={{ fontSize: '0.8rem' }}>
+            <div className="d-flex justify-content-around text-center">
+                <div>
+                    <div className="text-muted">{trans.otd_current ?? 'Date actuelle'}</div>
+                    <strong className={rateClass(currentRate)}>{Math.round(currentRate)} %</strong>
+                    <div className="text-muted">{current.onTime} / {current.total}</div>
+                </div>
+                <div title={trans.otd_promised_help ?? ''}>
+                    <div className="text-muted">{trans.otd_promised ?? 'Date promise'}</div>
+                    <strong className={rateClass(promisedRate)}>{Math.round(promisedRate)} %</strong>
+                    <div className="text-muted">{promised.onTime} / {promised.total}</div>
+                </div>
+            </div>
+            {fallback > 0 && (
+                <div className="text-muted text-center mt-1">
+                    <i className="fas fa-info-circle me-1" />
+                    {(trans.otd_fallback ?? ':count ligne(s) sans date promise').replace(':count', fallback)}
+                </div>
+            )}
+        </div>
+    );
+}
+
 /**
  * OtdWidget — taux de service / On-Time Delivery
  *
@@ -111,6 +148,11 @@ export default function OtdWidget({
                             style={{ width: `${clamp(rate, 0, 100)}%`, transition: 'width 0.6s ease' }}
                         />
                     </div>
+
+                    {/* Comparaison : date actuelle (mesure historique) / date promise au client */}
+                    {data.promised && (
+                        <PromisedComparison current={data} promised={data.promised} trans={trans} />
+                    )}
                 </>
             )}
         </WidgetCard>

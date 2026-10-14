@@ -40,7 +40,72 @@ const EMPTY_FORM = {
     discount: 0,
     accounting_vats_id: '',
     delivery_date: '',
+    delay_reason: '',
 };
+
+// Une date de ligne peut arriver avec une heure (« 2026-12-15 00:00:00 ») : on compare le jour.
+const dayOf = (value) => String(value ?? '').slice(0, 10);
+
+// ---------------------------------------------------------------------------
+// DelayHistory — reports de date d'une ligne (delivery_date / internal_delay)
+// ---------------------------------------------------------------------------
+
+function DelayHistory({ lineId, endpoint, t }) {
+    const [data, setData]   = useState(null);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        if (!lineId || !endpoint) return;
+        let cancelled = false;
+        setData(null);
+        setError(false);
+        fetch(endpoint.replace('__ID__', lineId), { headers: { Accept: 'application/json' } })
+            .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then((d) => { if (!cancelled) setData(d); })
+            .catch(() => { if (!cancelled) setError(true); });
+        return () => { cancelled = true; };
+    }, [lineId, endpoint]);
+
+    if (!endpoint) return null;
+
+    return (
+        <div className="mt-3 pt-2 border-top">
+            <div className="d-flex align-items-center justify-content-between mb-2">
+                <span className="small fw-bold"><i className="fas fa-history me-1" />{t.history_title ?? 'Historique des reports'}</span>
+                {data?.promised_delivery_date && (
+                    <span className="small text-body-secondary">
+                        {t.promised_label ?? 'Promise le'} {formatDate(data.promised_delivery_date)}
+                    </span>
+                )}
+            </div>
+            {error && <div className="small text-danger">{t.load_error ?? "Impossible de charger l'historique."}</div>}
+            {!error && data === null && <div className="small text-body-secondary"><i className="fas fa-spinner fa-spin me-1" />{t.loading ?? 'Chargement…'}</div>}
+            {data && data.history.length === 0 && <div className="small text-body-secondary">{t.no_history ?? 'Aucun report.'}</div>}
+            {data && data.history.length > 0 && (
+                <ul className="list-unstyled small mb-0">
+                    {data.history.map((h) => (
+                        <li key={h.id} className="border rounded px-2 py-1 mb-1 bg-body-tertiary">
+                            <div className="d-flex flex-wrap column-gap-2">
+                                <span className="fw-semibold">{t.fields?.[h.field] ?? h.field}</span>
+                                <span>
+                                    {h.old_value ? formatDate(h.old_value) : '—'}
+                                    <i className="fas fa-arrow-right mx-1 text-body-secondary" />
+                                    {h.new_value ? formatDate(h.new_value) : '—'}
+                                </span>
+                            </div>
+                            {h.reason && <div className="text-break">{h.reason}</div>}
+                            <div className="text-body-secondary">
+                                {formatDate(dayOf(h.created_at))}
+                                {h.user_name ? ` ${t.by ?? 'par'} ${h.user_name}` : ''}
+                                {' · '}{t.origins?.[h.origin] ?? h.origin}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
 
 // ---------------------------------------------------------------------------
 // PriceGrid
@@ -232,7 +297,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
 // LineDrawer
 // ---------------------------------------------------------------------------
 
-function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, isReadOnly }) {
+function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, isReadOnly, t = {} }) {
     const [form, setForm]                   = useState(EMPTY_FORM);
     const [priceList, setPriceList]         = useState([]);
     const [saving, setSaving]               = useState(false);
@@ -255,6 +320,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 discount:           editingLine.discount           ?? 0,
                 accounting_vats_id: editingLine.accounting_vats_id ?? '',
                 delivery_date:      editingLine.delivery_date      ?? '',
+                delay_reason:       '',
             });
             setProductSearch(
                 editingLine.product_code
@@ -310,6 +376,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
     };
 
     const filteredProducts = useProductSearch(endpoints.productSearch, productSearch, open && showProductList);
+    const dateChanged = !!editingLine && dayOf(form.delivery_date) !== dayOf(editingLine.delivery_date);
 
     const resetFormForCreate = (nextOrdre) => {
         const defaultUnit = selectData.units?.find((u) => u.default) ?? selectData.units?.[0];
@@ -336,8 +403,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         const url    = isEdit
             ? endpoints.update.replace('__ID__', editingLine.id)
             : endpoints.store;
+        // Le motif ne part que si la date a réellement changé.
+        const payload = { ...form, delay_reason: isEdit && dateChanged ? form.delay_reason : '' };
         try {
-            const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify(form) });
+            const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
             if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
             onSaved(data.line, isEdit);
@@ -574,9 +643,24 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                             </div>
                         </div>
 
+                        {/* Motif du report : facultatif, seulement quand la date change */}
+                        {dateChanged && !isReadOnly && (
+                            <div className="mb-3">
+                                <label className="mb-1 small fw-bold" htmlFor="line-delay-reason">{t.reason_label ?? 'Motif du report'}</label>
+                                <input id="line-delay-reason" type="text" className="form-control form-control-sm"
+                                    maxLength={255} value={form.delay_reason}
+                                    placeholder={t.reason_placeholder ?? 'Facultatif'}
+                                    onChange={(e) => set('delay_reason', e.target.value)} />
+                            </div>
+                        )}
+
                         <PriceGrid priceList={priceList} currentQty={form.qty}
                             onApplyPrice={(price) => set('selling_price', price)} />
                     </form>
+
+                    {open && editingLine && isArticle(editingLine) && (
+                        <DelayHistory lineId={editingLine.id} endpoint={endpoints.delayHistory} t={t} />
+                    )}
                 </div>
 
                 {/* Footer */}
@@ -698,7 +782,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
-    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
+    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -808,7 +892,14 @@ function LineRow({
             <td className="small">{line.vat_label ?? '—'}</td>
 
             {/* Delivery date */}
-            <td className="small" style={{ whiteSpace: 'nowrap' }}>{formatDate(line.delivery_date)}</td>
+            <td className="small" style={{ whiteSpace: 'nowrap' }}>
+                {formatDate(line.delivery_date)}
+                {line.promised_delivery_date && dayOf(line.promised_delivery_date) !== dayOf(line.delivery_date) && (
+                    <div className="text-body-secondary" title={t.postponed ?? 'Reportée'}>
+                        <i className="fas fa-history me-1" />{t.promised_label ?? 'Promise le'} {formatDate(line.promised_delivery_date)}
+                    </div>
+                )}
+            </td>
 
             {/* Tasks status */}
             <td><span className={`badge ${tasksCfg.badge}`}>{tasksCfg.label}</span></td>
@@ -896,7 +987,8 @@ function LineRow({
 // OrderLinesPage
 // ---------------------------------------------------------------------------
 
-export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orderType: initialType, canManageStock, endpoints }) {
+export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orderType: initialType, canManageStock, endpoints, trans = {} }) {
+    const delaysTrans = trans.delays ?? {};
     const [lines, setLines]             = useState([]);
     const [orderStatu, setOrderStatu]   = useState(Number(initialStatu));
     const [orderType]                   = useState(Number(initialType));
@@ -1422,6 +1514,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 onOpenTaskModal={setTaskModalLine}
                                 onToggleSelect={handleToggleSelect}
                                 selected={selected.has(line.id)}
+                                t={delaysTrans}
                                 onDragStart={(e) => handleDragStart(e, index)}
                                 onDragEnter={(e) => handleDragEnter(e, index)}
                                 onDragEnd={handleDragEnd}
@@ -1450,6 +1543,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 endpoints={endpoints}
                 onSaved={handleSaved}
                 isReadOnly={isReadOnly}
+                t={delaysTrans}
             />
 
             {/* Task modal */}

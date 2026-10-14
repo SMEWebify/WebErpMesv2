@@ -171,7 +171,7 @@ $oppSteps = json_encode([
       <div class="tab-pane" id="TimeLine">
         <div data-react="affair-timeline"
              data-endpoint="{{ $affairEndpoints['timeline'] }}"
-             data-trans='@json(__('affairs'), JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-trans='@json(__('affairs') + ['delays' => __('order_delays')], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
              data-locale="{{ app()->getLocale() }}"
              data-currency="{{ app('Factory')->curency ?? 'EUR' }}"></div>
       </div>

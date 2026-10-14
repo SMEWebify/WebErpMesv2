@@ -25,6 +25,8 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\OrderLineDetails;
+use App\Models\Workflow\OrderLineDelayHistory;
+use App\Support\OrderLineDelayContext;
 use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\Products;
 use App\Models\Products\CustomerPriceList;
@@ -380,7 +382,9 @@ class OrderLinesController extends Controller
             'delivery_date'      => 'nullable|date',
         ]);
 
-        $line->update($validated);
+        // Motif du report : facultatif, tronqué plutôt que refusé (jamais bloquant).
+        $reason = is_scalar($request->input('delay_reason')) ? (string) $request->input('delay_reason') : null;
+        OrderLineDelayContext::run(OrderLineDelayHistory::ORIGIN_MANUAL, fn () => $line->update($validated), $reason);
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
@@ -388,6 +392,37 @@ class OrderLinesController extends Controller
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
+    }
+
+    /**
+     * Reports de la ligne (delivery_date et internal_delay), du plus récent au plus ancien.
+     */
+    public function delayHistoryJson($orderId, $id)
+    {
+        abort_unless(auth()->check(), 403);
+        $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        $history = OrderLineDelayHistory::with('user:id,name')
+            ->where('order_lines_id', $line->id)
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn (OrderLineDelayHistory $h) => [
+                'id'         => $h->id,
+                'field'      => $h->field,
+                'old_value'  => $h->old_value,
+                'new_value'  => $h->new_value,
+                'reason'     => $h->reason,
+                'origin'     => $h->origin,
+                'user_name'  => $h->user?->name,
+                'created_at' => $h->created_at?->format('Y-m-d H:i'),
+            ]);
+
+        return response()->json([
+            'promised_delivery_date' => $line->promised_delivery_date,
+            'delivery_date'          => $line->delivery_date,
+            'internal_delay'         => $line->internal_delay,
+            'history'                => $history,
+        ]);
     }
 
     public function destroyLineJson($orderId, $id)
@@ -446,6 +481,8 @@ class OrderLinesController extends Controller
             $newLine->delivery_status         = 1;
             $newLine->invoice_status          = 1;
             $newLine->tasks_status            = 1;
+            // Nouvelle ligne : sa date promise est sa date de livraison actuelle (OrderLinesObserver::creating).
+            $newLine->promised_delivery_date  = null;
             $newLine->save();
 
             $details = OrderLineDetails::where('order_lines_id', $line->id)->first();
@@ -616,6 +653,7 @@ class OrderLinesController extends Controller
             'accounting_vats_id'   => $l->accounting_vats_id,
             'vat_label'            => $l->VAT?->label,
             'delivery_date'        => $l->delivery_date,
+            'promised_delivery_date' => $l->promised_delivery_date,
             'tasks_status'         => $l->tasks_status,
             'delivery_status'      => $l->delivery_status,
             'invoice_status'       => $l->invoice_status,

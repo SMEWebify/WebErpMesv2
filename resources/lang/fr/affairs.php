@@ -41,6 +41,7 @@ return [
         'purchase_partial' => 'Achat :ref reçu en partie (:received / :qty) — :label',
         'task_suspended' => 'Tâche suspendue sur :ref — :label',
         'order_late' => 'Commande :ref en retard de :days j',
+        'order_postponed' => 'Commande :ref reportée : date promise du :date dépassée de :days j',
         'invoice_overdue' => 'Facture :ref échue depuis :days j, reste :amount',
         'visit_unvalidated' => 'Visite du :date non validée',
     ],
@@ -126,6 +127,7 @@ return [
             'invoice' => 'Facture',
             'payment' => 'Règlement',
             'email' => 'E-mail envoyé',
+            'line_rescheduled' => 'Report de date',
         ],
         'filters' => [
             'opportunity' => 'Affaire',

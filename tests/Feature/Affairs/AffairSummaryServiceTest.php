@@ -18,11 +18,13 @@ use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\OpportunityVisits;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\OrderLineDelayHistory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
 use App\Services\Affairs\AffairSummaryService;
 use App\Services\Affairs\AffairTimelineService;
+use App\Support\OrderLineDelayContext;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -398,6 +400,28 @@ class AffairSummaryServiceTest extends TestCase
         $this->assertSame(6, $summary['blockers'][0]['params']['days']);
     }
 
+    public function test_order_postponed_past_its_promised_date_is_flagged(): void
+    {
+        $quote = $this->quote(['statu' => 3]);
+        $line = $this->order($quote, [], ['delivery_date' => '2026-10-01']);
+        $line->update(['delivery_date' => '2026-10-30']); // reportée : plus en retard sur la date actuelle
+
+        $summary = $this->summary();
+        $this->assertSame(['order_postponed'], $this->blockerCodes($summary));
+        $this->assertSame('warning', $summary['blockers'][0]['severity']);
+        $this->assertSame('2026-10-01', $summary['blockers'][0]['date']);
+        $this->assertSame(6, $summary['blockers'][0]['params']['days']);
+    }
+
+    public function test_late_order_is_not_also_flagged_as_postponed(): void
+    {
+        $quote = $this->quote(['statu' => 3]);
+        $line = $this->order($quote, [], ['delivery_date' => '2026-09-20']);
+        $line->update(['delivery_date' => '2026-10-01']);
+
+        $this->assertSame(['order_late'], $this->blockerCodes($this->summary()));
+    }
+
     public function test_delivered_or_canceled_order_is_not_late(): void
     {
         $quote = $this->quote(['statu' => 3]);
@@ -488,6 +512,26 @@ class AffairSummaryServiceTest extends TestCase
         $restricted = array_column((new AffairTimelineService())->timeline($this->opportunity->fresh(), ['quotes']), 'type');
         $this->assertNotContains('invoice', $restricted);
         $this->assertNotContains('order', $restricted);
+    }
+
+    public function test_timeline_lists_line_postponements_in_the_orders_section(): void
+    {
+        $line = $this->order($this->quote(['statu' => 3]), [], ['delivery_date' => '2026-10-01']);
+        OrderLineDelayContext::run(OrderLineDelayHistory::ORIGIN_MANUAL,
+            fn () => $line->update(['delivery_date' => '2026-10-30']), 'Tôle en rupture');
+
+        $items = (new AffairTimelineService())->timeline($this->opportunity->fresh());
+        $delay = collect($items)->firstWhere('type', 'line_rescheduled');
+
+        $this->assertNotNull($delay);
+        $this->assertSame('orders', $delay['section']);
+        $this->assertSame('delivery_date', $delay['field']);
+        $this->assertSame('2026-10-01', $delay['old_value']);
+        $this->assertSame('2026-10-30', $delay['new_value']);
+        $this->assertSame('Tôle en rupture', $delay['reason']);
+
+        $restricted = array_column((new AffairTimelineService())->timeline($this->opportunity->fresh(), ['quotes']), 'type');
+        $this->assertNotContains('line_rescheduled', $restricted);
     }
 
     public function test_task_log_time_pairs_start_and_stop(): void

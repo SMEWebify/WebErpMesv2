@@ -136,6 +136,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné ». Filet de la notification DocuSign (instance non publiée en HTTPS) |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
+| `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
 | `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables pour les appareils de contrôle qualité à étalonner |
 | `php artisan ldap:import-users` | Importe les utilisateurs depuis l'Active Directory LDAP |
@@ -411,6 +412,24 @@ contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
 - Devis modifié après l'envoi (total TTC différent) ou mode changé → l'enveloppe en
   attente est annulée (`voided`) et une nouvelle part au clic suivant.
 - Tests : `tests/Feature/ESignature/` (API DocuSign simulée, clé RSA jetable en fixture).
+
+## Reports de date des lignes de commande
+
+`delivery_date` / `internal_delay` ne gardent que la dernière valeur saisie ; chaque
+changement est historisé dans `order_line_delay_histories` (ancienne/nouvelle valeur, motif,
+origine, auteur) par `OrderLinesObserver::updated`. `order_lines.promised_delivery_date` est
+la date promise au client : posée à la création, **jamais modifiée** (l'observer annule toute
+écriture, colonne hors `$fillable`).
+- **Une écriture de masse contourne l'observer** : `OrderLines::where(...)->update(['delivery_date' => …])`
+  ou `DB::table('order_lines')` ne laissent aucune trace. Mettre à jour ligne par ligne.
+- Origine et motif : `App\Support\OrderLineDelayContext::run($origin, fn () => …, $motif)` ;
+  par défaut `manual` (web), `api` (/api), `system` (console).
+- Lignes de présentation non historisées.
+- **OTD** : `OrderKPIService::getPromisedDateServiceRate()` (date promise) est servi **à côté**
+  de la mesure historique (dernière date) par `kpi.otd` — bascule non décidée.
+- Dossier d'affaire : blocage `order_postponed` (date promise dépassée, date actuelle non) et
+  entrées `line_rescheduled` dans la chronologie.
+- Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
 ## Nesting (imbrication tôle)
 

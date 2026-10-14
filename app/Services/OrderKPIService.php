@@ -515,6 +515,48 @@ class OrderKPIService
     }
 
     /**
+     * Taux de service mesuré par rapport à la date PROMISE au client
+     * (promised_delivery_date), et non à la dernière date saisie.
+     *
+     * Mêmes règles que getServiceRate() / KpiController::otd() pour que les
+     * deux mesures se comparent : lignes article livrées (delivery_status 3),
+     * à l'heure si au moins une ligne de BL est créée au plus tard à la date
+     * de référence. Seule la date de référence change.
+     *
+     * Une ligne sans date promise (antérieure à la colonne, pas encore reprise
+     * par wem:orders:backfill-promised-dates) retombe sur delivery_date ; elle
+     * est comptée dans `fallback` pour que l'écart reste visible.
+     *
+     * @return array{rate: float, onTime: int, total: int, fallback: int}
+     */
+    public function getPromisedDateServiceRate($companyId = null): array
+    {
+        $delivered = function () use ($companyId) {
+            $query = OrderLines::articles()->where('order_lines.delivery_status', 3);
+            if ($companyId) {
+                $query->whereHas('order', fn ($q) => $q->where('companies_id', $companyId));
+            }
+
+            return $query;
+        };
+
+        $total    = $delivered()->count();
+        $fallback = $delivered()->whereNull('order_lines.promised_delivery_date')->count();
+        $onTime   = $delivered()
+            ->whereHas('DeliveryLines', function ($query) {
+                $query->whereRaw('delivery_lines.created_at <= COALESCE(order_lines.promised_delivery_date, order_lines.delivery_date)');
+            })
+            ->count();
+
+        return [
+            'rate'     => $total > 0 ? round(($onTime / $total) * 100, 2) : 0,
+            'onTime'   => $onTime,
+            'total'    => $total,
+            'fallback' => $fallback,
+        ];
+    }
+
+    /**
      * Calculate the average processing cost of a customer's orders for a given period and service.
      *
      * This method filters orders by company and date range, retrieves the related tasks for the

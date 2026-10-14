@@ -443,6 +443,7 @@ if (!$orderHasInvoicedLines) {
           'move'            => route('orders.lines.json.move',             ['orderId' => $Order->id, 'id' => '__ID__']),
           'reorder'         => route('orders.lines.json.reorder',          ['orderId' => $Order->id]),
           'tasks'           => route('orders.lines.json.tasks',            ['orderId' => $Order->id, 'id' => '__ID__']),
+          'delayHistory'    => route('orders.lines.json.delay-history',    ['orderId' => $Order->id, 'id' => '__ID__']),
           'calculatedPrice' => route('orders.lines.json.calculated-price', ['orderId' => $Order->id, 'id' => '__ID__']),
           'priceIncrease'   => route('orders.lines.json.price-increase',   ['orderId' => $Order->id]),
           'storeDelivery'   => route('orders.lines.json.store-delivery',   ['orderId' => $Order->id]),
@@ -464,6 +465,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

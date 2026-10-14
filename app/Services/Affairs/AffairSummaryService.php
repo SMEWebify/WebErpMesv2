@@ -51,6 +51,7 @@ class AffairSummaryService
         'purchase_partial'  => 'chase_supplier',
         'task_suspended'    => 'resume_task',
         'order_late'        => 'update_delivery_date',
+        'order_postponed'   => 'update_delivery_date',
         'invoice_overdue'   => 'chase_payment',
         'visit_unvalidated' => 'finish_visit',
     ];
@@ -287,6 +288,7 @@ class AffairSummaryService
     /**
      * Lignes article : une ligne de présentation ne se livre ni ne se facture.
      * due_date = date de livraison de la ligne, à défaut celle de la commande.
+     * promised_date = date promise au client à la création de la ligne.
      *
      * @param int[] $orderIds
      */
@@ -304,6 +306,7 @@ class AffairSummaryService
                 order_lines.delivery_status, order_lines.invoice_status, orders.statu as order_statu,
                 orders.code as order_code,
                 COALESCE(order_lines.delivery_date, orders.validity_date) as due_date,
+                order_lines.promised_delivery_date as promised_date,
                 ROUND(order_lines.qty * order_lines.selling_price * (1 - COALESCE(order_lines.discount, 0) / 100.0), 2) as amount')
             ->toBase()
             ->get();
@@ -492,6 +495,20 @@ class AffairSummaryService
             $blockers[] = $this->blocker('order_late', 'danger', 'orders', $group->first()->order_code,
                 $dueDate, route('orders.show', $orderId),
                 ['days' => (int) Carbon::parse($dueDate)->startOfDay()->diffInDays($today), 'lines' => $group->count()]);
+        }
+
+        // Commande reportée au-delà de la date promise : la ligne n'est pas encore
+        // en retard sur sa date actuelle (sinon « order_late » ci-dessus), mais la
+        // date promise au client est passée. Un blocage par commande.
+        $postponedLines = $lines->filter(fn ($l) => (int) $l->delivery_status < 3
+            && !in_array((int) $l->order_statu, self::ORDER_INACTIVE, true)
+            && $l->promised_date && Carbon::parse($l->promised_date)->lt($today)
+            && !($l->due_date && Carbon::parse($l->due_date)->lt($today)));
+        foreach ($postponedLines->groupBy('orders_id') as $orderId => $group) {
+            $promised = $group->min('promised_date');
+            $blockers[] = $this->blocker('order_postponed', 'warning', 'orders', $group->first()->order_code,
+                $promised, route('orders.show', $orderId),
+                ['days' => (int) Carbon::parse($promised)->startOfDay()->diffInDays($today), 'lines' => $group->count()]);
         }
 
         // Facture échue impayée.

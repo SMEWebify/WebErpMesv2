@@ -40,6 +40,7 @@ return [
         'purchase_late' => 'Purchase :ref is late (expected :date) — :label',
         'purchase_partial' => 'Purchase :ref partly received (:received / :qty) — :label',
         'task_suspended' => 'Suspended task on :ref — :label',
+        'order_postponed' => 'Order :ref postponed: promised date :date passed by :days d',
         'order_late' => 'Order :ref is :days days late',
         'invoice_overdue' => 'Invoice :ref overdue for :days days, :amount outstanding',
         'visit_unvalidated' => 'Visit of :date not validated',
@@ -125,6 +126,7 @@ return [
             'delivery' => 'Delivery',
             'invoice' => 'Invoice',
             'payment' => 'Payment',
+            'line_rescheduled' => 'Date changed',
             'email' => 'E-mail sent',
         ],
         'filters' => [

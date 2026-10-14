@@ -14,6 +14,7 @@ use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\OpportunitiesEventsLogs;
 use App\Models\Workflow\OpportunityVisits;
+use App\Models\Workflow\OrderLineDelayHistory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use Carbon\Carbon;
@@ -90,6 +91,28 @@ class AffairTimelineService
                     route('orders.show', $order->id));
             }
             $emailTargets[Orders::class] = ['orders', $scope->orderIds(), $orders->map->code];
+
+            // Reports de date des lignes : ancienne → nouvelle date, motif, origine.
+            if ($scope->orderLineIds() !== []) {
+                $delays = OrderLineDelayHistory::query()
+                    ->join('order_lines', 'order_lines.id', '=', 'order_line_delay_histories.order_lines_id')
+                    ->whereIn('order_line_delay_histories.order_lines_id', $scope->orderLineIds())
+                    ->toBase()
+                    ->get(['order_line_delay_histories.field', 'order_line_delay_histories.old_value',
+                        'order_line_delay_histories.new_value', 'order_line_delay_histories.reason',
+                        'order_line_delay_histories.origin', 'order_line_delay_histories.created_at',
+                        'order_lines.orders_id', 'order_lines.label']);
+                foreach ($delays as $delay) {
+                    $items[] = $this->item('line_rescheduled', 'orders', $delay->created_at, $orders->get($delay->orders_id)->code ?? null,
+                        $delay->label, null, null, route('orders.show', $delay->orders_id)) + [
+                            'field'     => $delay->field,
+                            'old_value' => $delay->old_value ? Carbon::parse($delay->old_value)->toDateString() : null,
+                            'new_value' => $delay->new_value ? Carbon::parse($delay->new_value)->toDateString() : null,
+                            'reason'    => $delay->reason,
+                            'origin'    => $delay->origin,
+                        ];
+                }
+            }
         }
 
         if (isset($visible['purchases']) && $scope->purchaseLineIds() !== []) {

@@ -366,6 +366,11 @@ class HomeController extends Controller
                     'mood_happy'   => __('general_content.mood_happy_trans_key'),
                     'mood_neutral' => __('general_content.mood_neutral_trans_key'),
                     'mood_sad'     => __('general_content.mood_sad_trans_key'),
+                    // taux de service : date actuelle / date promise
+                    'otd_current'       => __('order_delays.otd_current'),
+                    'otd_promised'      => __('order_delays.otd_promised'),
+                    'otd_promised_help' => __('order_delays.otd_promised_help'),
+                    'otd_fallback'      => __('order_delays.otd_fallback'),
                 ]
             ),
         ];

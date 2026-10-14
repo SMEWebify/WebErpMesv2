@@ -387,10 +387,13 @@ class KpiController extends Controller
 
         $rate = $total > 0 ? round(($onTime / $total) * 100, 2) : 0;
 
+        // Mesure par rapport à la date promise, servie À CÔTÉ de la mesure
+        // historique (rate/onTime/total, inchangés) le temps de comparer les deux.
         return response()->json([
-            'rate'   => $rate,
-            'onTime' => $onTime,
-            'total'  => $total,
+            'rate'     => $rate,
+            'onTime'   => $onTime,
+            'total'    => $total,
+            'promised' => $service->getPromisedDateServiceRate(),
         ]);
     }
 }

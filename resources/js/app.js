@@ -748,6 +748,7 @@ async function mountOrderLinesPage() {
             orderType:      parseInt(element.dataset.orderType, 10),
             canManageStock: element.dataset.canManageStock === 'true',
             endpoints:      parse('endpoints') ?? {},
+            trans:          parse('trans') ?? {},
         })
     );
 }
