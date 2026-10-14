@@ -56,7 +56,7 @@ class CreditNotes extends Model
 
     public function invoice()
     {
-        return $this->belongsTo(Invoices::class);
+        return $this->belongsTo(Invoices::class, 'invoices_id');
     }
 
     public function companie()

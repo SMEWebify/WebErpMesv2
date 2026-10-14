@@ -254,10 +254,10 @@ class ImportCsvService
             $data[$request->label] ?? null,
             $data[$request->customer_reference] ?? null,
             $company->id,
-            $defaultAddress->id,
             $defaultContact->id,
+            $defaultAddress->id,
             $data[$request->validity_date] ?? null,
-            null,
+            1, // Ouverte (orders.statu n'accepte pas null)
             $user->id,
             $defaultSettings['payment_conditions']->id,
             $defaultSettings['payment_methods']->id,

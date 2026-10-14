@@ -885,6 +885,7 @@ class InvoicesController extends Controller
         } elseif ($paid > 0) {
             $invoice->statu = 3; // Partiellement réglée (en attente)
         }
+        $this->syncPaymentDate($invoice, $remaining);
         $invoice->save();
         event(new InvoiceStatusChanged($invoice, $invoice->statu));
 
@@ -909,9 +910,21 @@ class InvoicesController extends Controller
         } else {
             $invoice->statu = 2; // Envoyée — plus de règlement
         }
+        $this->syncPaymentDate($invoice, $remaining);
         $invoice->save();
         event(new InvoiceStatusChanged($invoice, $invoice->statu));
 
         return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
+    }
+
+    /**
+     * payment_date = date du règlement qui solde la facture (le plus récent),
+     * vidée tant qu'il reste un montant dû. Lue par le délai moyen de paiement.
+     */
+    private function syncPaymentDate(Invoices $invoice, float $remaining): void
+    {
+        $invoice->payment_date = $remaining <= 0
+            ? InvoicePayment::where('invoice_id', $invoice->id)->max('payment_date')
+            : null;
     }
 }

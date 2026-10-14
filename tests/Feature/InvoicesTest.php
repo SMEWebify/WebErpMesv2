@@ -195,6 +195,34 @@ class InvoicesTest extends TestCase
         $this->assertDatabaseMissing('invoice_payments', ['id' => $payment->id]);
     }
 
+    public function test_payment_date_follows_the_settling_payment(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+        InvoiceLines::create([
+            'invoices_id' => $invoice->id,
+            'label'       => 'Prestation',
+            'ordre'       => 10,
+            'qty'         => 1,
+            'unit_price'  => 100,
+            'discount'    => 0,
+            'vat_rate'    => 20,
+        ]);
+
+        $this->postJson(route('invoices.payments.store', $invoice->id), [
+            'amount' => 50, 'payment_date' => '2026-10-01',
+        ])->assertOk();
+        $this->assertNull($invoice->fresh()->payment_date);
+
+        $this->postJson(route('invoices.payments.store', $invoice->id), [
+            'amount' => 70, 'payment_date' => '2026-10-10',
+        ])->assertOk();
+        $this->assertSame('2026-10-10', \Illuminate\Support\Carbon::parse($invoice->fresh()->payment_date)->toDateString());
+
+        $last = InvoicePayment::where('invoice_id', $invoice->id)->latest('id')->first();
+        $this->deleteJson(route('invoices.payments.destroy', [$invoice->id, $last->id]))->assertOk();
+        $this->assertNull($invoice->fresh()->payment_date);
+    }
+
     public function test_can_add_free_line_to_draft_invoice(): void
     {
         $vat     = AccountingVat::factory()->create(['rate' => 20]);

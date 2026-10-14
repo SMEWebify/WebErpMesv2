@@ -44,6 +44,14 @@ class CreditNotesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_credit_note_resolves_its_invoice(): void
+    {
+        $invoice    = Invoices::factory()->create();
+        $creditNote = CreditNotes::factory()->create(['invoices_id' => $invoice->id]);
+
+        $this->assertSame($invoice->id, $creditNote->fresh()->invoice?->id);
+    }
+
     public function test_json_list_returns_paginated_data(): void
     {
         CreditNotes::factory()->count(3)->create();

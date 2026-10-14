@@ -95,9 +95,8 @@ class EmailLogsController extends Controller
             ));
 
             // Nouveau log pour tracer la re-tentative (on ne réécrit pas l'ancien).
-            EmailLog::create([
-                'emailable_type'           => $log->emailable_type,
-                'emailable_id'             => $log->emailable_id,
+            // Passer par la relation : emailable_type/id ne sont pas fillable.
+            $document->emailLogs()->create([
                 'to'                       => $log->to,
                 'subject'                  => $log->subject,
                 'message'                  => $log->message,
@@ -111,9 +110,7 @@ class EmailLogsController extends Controller
             return redirect()->route('admin.email-logs.index')
                 ->with('success', __('general_content.email_resend_success_trans_key'));
         } catch (Throwable $e) {
-            EmailLog::create([
-                'emailable_type'  => $log->emailable_type,
-                'emailable_id'    => $log->emailable_id,
+            $document->emailLogs()->create([
                 'to'              => $log->to,
                 'subject'         => $log->subject,
                 'message'         => $log->message,
