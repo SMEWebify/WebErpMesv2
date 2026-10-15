@@ -16,6 +16,11 @@ const INVOICE_STATUS = {
 // Utilities
 // ---------------------------------------------------------------------------
 
+function formatWeight(value) {
+    const n = Number(value) || 0;
+    return `${n.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} kg`;
+}
+
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
@@ -225,6 +230,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
     const [flash, setFlash]           = useState('');
     const [error, setError]           = useState('');
     const [busyId, setBusyId]         = useState(null);
+    const totalWeight = lines.reduce((sum, l) => sum + (Number(l.weight) || 0), 0);
 
     function openDrawer(line) {
         setActiveLine(line);
@@ -295,6 +301,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                             <th>{trans.unit ?? 'Unité'}</th>
                             <th>{trans.delivered_qty ?? 'Livré'}</th>
                             <th>{trans.remaining_qty ?? 'Restant'}</th>
+                            <th className="text-end">{trans.weight ?? 'Poids'}</th>
                             <th>{trans.invoice_status ?? 'Facturation'}</th>
                             <th style={{ width: 110 }} className="text-end">{trans.return ?? 'Retour'}</th>
                         </tr>
@@ -302,7 +309,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                     <tbody>
                         {lines.length === 0 ? (
                             <tr>
-                                <td colSpan={9} className="text-center text-muted py-3">
+                                <td colSpan={10} className="text-center text-muted py-3">
                                     {trans.no_data ?? 'Aucune ligne'}
                                 </td>
                             </tr>
@@ -321,6 +328,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                     <td><small>{line.unit}</small></td>
                                     <td>{formatQty(line.delivered_qty)}</td>
                                     <td>{formatQty(line.remaining_qty)}</td>
+                                    <td className="text-end text-nowrap">{formatWeight(line.weight)}</td>
                                     <td>
                                         {inv && (
                                             <span className={`badge ${inv.badge}`}>{inv.label}</span>
@@ -360,6 +368,9 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                             <th>{trans.unit ?? 'Unité'}</th>
                             <th>{trans.delivered_qty ?? 'Livré'}</th>
                             <th>{trans.remaining_qty ?? 'Restant'}</th>
+                            <th className="text-end text-nowrap" title={trans.total_weight ?? 'Poids total'}>
+                                {formatWeight(totalWeight)}
+                            </th>
                             <th>{trans.invoice_status ?? 'Facturation'}</th>
                             <th />
                         </tr>

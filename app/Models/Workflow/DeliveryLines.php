@@ -36,6 +36,14 @@ class DeliveryLines extends Model
     {
         return $this->belongsTo(OrderLines::class, 'order_line_id');
     }
+
+    // Poids de la quantité livrée sur ce BL (poids unitaire du détail de la ligne de commande)
+    public function getWeightAttribute()
+    {
+        $unitWeight = optional(optional($this->OrderLine)->OrderLineDetails)->weight ?? 0;
+
+        return (float) $unitWeight * (float) $this->qty;
+    }
     public function InvoiceLines()
     {
         return $this->belongsTo(InvoiceLines::class, 'delivery_line_id');

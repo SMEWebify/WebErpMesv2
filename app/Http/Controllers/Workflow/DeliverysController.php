@@ -328,7 +328,7 @@ class DeliverysController extends Controller
     {
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Deliverys(), $id->id);
 
-        $id->load(['returns.qualityNonConformity', 'QualityNonConformity']);
+        $id->load(['returns.qualityNonConformity', 'QualityNonConformity', 'DeliveryLines.OrderLine.OrderLineDetails']);
 
         $PruchasesSelect = $this->SelectDataService->getPurchases();
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('delivery', $id->id);

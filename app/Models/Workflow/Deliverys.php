@@ -86,6 +86,12 @@ class Deliverys extends Model
         return $this->hasMany(DeliveryLines::class)->orderBy('ordre');
     }
 
+    // Poids livré : poids unitaire de la ligne de commande × quantité de ce BL
+    public function getTotalWeightAttribute()
+    {
+        return $this->DeliveryLines->sum(fn ($deliveryLine) => $deliveryLine->weight);
+    }
+
     // Relationship with the files associated with the delevery
     public function files()
     {

@@ -53,6 +53,7 @@ $deliverySteps = [
                   <div class="mb-3 col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Delivery->GetshortCreatedAttribute() }}</p>
+                    <p><label class="text-success">{{ __('general_content.total_weight_trans_key') }}</label>  {{ number_format($Delivery->total_weight, 3, '.', ' ') }} kg</p>
                   </div>
                   <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Delivery->label])
@@ -185,6 +186,7 @@ $deliverySteps = [
                   'unit'           => $dl->OrderLine->Unit['label'] ?? '',
                   'delivered_qty'  => $dl->qty,
                   'remaining_qty'  => $dl->OrderLine['delivered_remaining_qty'] ?? '',
+                  'weight'         => $dl->weight,
                   'invoice_status' => $dl->invoice_status,
               ];
           }
@@ -204,6 +206,8 @@ $deliverySteps = [
               'unit'           => __('general_content.unit_trans_key'),
               'delivered_qty'  => __('general_content.delivered_qty_trans_key'),
               'remaining_qty'  => __('general_content.remaining_qty_trans_key'),
+              'weight'         => __('general_content.weight_trans_key'),
+              'total_weight'   => __('general_content.total_weight_trans_key'),
               'invoice_status' => __('general_content.invoice_status_trans_key'),
               'mark_not_chargeable'    => __('general_content.mark_not_chargeable_trans_key'),
               'confirm_not_chargeable' => __('general_content.confirm_not_chargeable_trans_key'),
