@@ -42,6 +42,8 @@ class PermissionTableSeeder  extends Seeder
                         'asset-menu',
                         'audit-menu',
                         'returns-menu',
+                        'credit-limit-override',
+                        'invoice-reminders-send',
                         ];
     
                         foreach ($permissions as $permission) {

@@ -13,6 +13,8 @@ use App\Services\Cad\CadImportService;
 use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
+use App\Services\Receivables\CreditLimitGuard;
+use App\Services\Receivables\ReceivablesService;
 use App\Services\Quotes\QuoteLineCopier;
 use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Quotes\QuoteLineToOrderLineConverter;
@@ -773,6 +775,16 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
         }
 
+        // La commande ajoute à l'encours le montant des lignes converties.
+        $creditGuard = app(CreditLimitGuard::class);
+        $creditCheck = $creditGuard->check(
+            $quote->companies_id,
+            app(ReceivablesService::class)->quoteLinesTotal($quote->id, $lineIds)
+        );
+        if ($refusal = $creditGuard->guardJson($request, $creditCheck)) {
+            return $refusal;
+        }
+
         $converter = app(QuoteLineToOrderLineConverter::class);
 
         $order = DB::transaction(function () use ($quote, $lineIds, $converter, $presentation) {
@@ -828,6 +840,7 @@ class QuoteLinesController extends Controller
             return $newOrder;
         });
 
+        $creditGuard->recordOverride($creditCheck, $order, $quote->companies_id);
         event(new OrderCreated($order));
 
         return response()->json([

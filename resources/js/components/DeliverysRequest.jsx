@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetchWithStatus as apiFetch } from '../lib/http';
+import { askCreditOverride } from '../lib/creditLimit';
 import { SortIcon } from './table';
 
 // ---------------------------------------------------------------------------
@@ -130,8 +131,8 @@ export default function DeliverysRequest({
     // Submit
     // ---------------------------------------------------------------------------
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+    async function handleSubmit(e, creditOverride = null) {
+        e?.preventDefault();
         setErrors({});
 
         const selectedLines = lines
@@ -157,11 +158,18 @@ export default function DeliverysRequest({
                     remove_from_stock:       form.removeFromStock,
                     create_serial_number:    form.createSerialNumber,
                     lines:                   selectedLines,
+                    ...creditOverride,
                 }),
             });
             window.location.href = data.redirect;
         } catch (err) {
-            if (err.status === 422 && err.data?.errors) {
+            if (err.data?.credit_limit) {
+                // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
+                setSubmitting(false);
+                const override = await askCreditOverride(err.data.credit_limit);
+                if (override) return handleSubmit(null, override);
+                return;
+            } else if (err.status === 422 && err.data?.errors) {
                 setErrors(err.data.errors);
             } else {
                 setErrors({ general: 'An error occurred. Please try again.' });

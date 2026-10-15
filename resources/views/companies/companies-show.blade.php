@@ -170,6 +170,9 @@
     'order_status_email'        => (bool) $Companie->order_status_email,
     'comment'                   => $Companie->comment,
     'barcode_value'             => $Companie->barcode_value,
+    'credit_limit'              => $Companie->credit_limit,
+    'credit_block_level'        => $Companie->credit_block_level ?? 'none',
+    'can_edit_credit'           => auth()->user()->can(\App\Services\Receivables\CreditLimitGuard::OVERRIDE_PERMISSION),
   ];
 
   $companyFormUsers = $userSelect->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
@@ -225,6 +228,14 @@
     'vat_regime_default'     => __('vat.default_option'),
     'vat_attestation_ref'    => __('vat.attestation_ref'),
     'vat_attestation_valid_until' => __('vat.attestation_valid_until'),
+    'credit_card_title'  => __('receivables.credit.card_title'),
+    'credit_limit'       => __('receivables.credit.limit'),
+    'credit_limit_help'  => __('receivables.credit.limit_help'),
+    'credit_block_level' => __('receivables.credit.block_level'),
+    'credit_level_none'  => __('receivables.credit.level_none'),
+    'credit_level_warn'  => __('receivables.credit.level_warn'),
+    'credit_level_block' => __('receivables.credit.level_block'),
+    'credit_read_only'   => __('receivables.credit.read_only'),
   ];
 
   $reactInvoicesEndpoints = [
@@ -334,6 +345,8 @@
     'paidInvoices'           => $paidInvoices,
     'unpaidInvoices'         => $unpaidInvoices,
     'since'                  => $Companie->GetPrettyCreatedAttribute(),
+    'credit'                 => $creditExposure,
+    'creditOverrides'        => $creditOverrides,
   ];
 
   $dashboardCharts = [
@@ -360,6 +373,7 @@
     'lost'                     => __('general_content.lost_trans_key'),
     'closed'                   => __('general_content.closed_trans_key'),
     'obsolete'                 => __('general_content.obsolete_trans_key'),
+    'credit'                   => __('receivables.credit'),
     'currency'                 => app('Factory')->curency ?? 'EUR',
     'locale'                   => str_replace('_', '-', config('app.locale')),
     'jan' => 'Jan', 'feb' => 'Fév', 'mar' => 'Mar',

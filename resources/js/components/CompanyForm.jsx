@@ -108,6 +108,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             'account_general_customer', 'account_auxiliary_customer',
             'account_general_supplier', 'account_auxiliary_supplier',
             'latitude', 'longitude', 'comment', 'barcode_value',
+            'credit_limit',
         ];
         const result = { ...data };
         nullableFields.forEach(f => {
@@ -539,6 +540,52 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                 />
                             </Field>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Plafond d'encours : modifiable avec credit-limit-override seulement */}
+            <div className="card card-outline card-danger mb-3">
+                <div className="card-header">
+                    <h3 className="card-title"><i className="fas fa-hand-holding-usd me-1" />{trans.credit_card_title}</h3>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-md-4">
+                            <Field label={trans.credit_limit} error={errors.credit_limit?.[0]}>
+                                <InputGroup icon="fa-euro-sign">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        className={`form-control ${errors.credit_limit ? 'is-invalid' : ''}`}
+                                        value={form.credit_limit ?? ''}
+                                        onChange={setVal('credit_limit')}
+                                        disabled={!form.can_edit_credit}
+                                    />
+                                </InputGroup>
+                                <small className="form-text">{trans.credit_limit_help}</small>
+                            </Field>
+                        </div>
+                        <div className="col-md-4">
+                            <Field label={trans.credit_block_level} error={errors.credit_block_level?.[0]}>
+                                <select
+                                    className="form-select"
+                                    value={form.credit_block_level ?? 'none'}
+                                    onChange={setVal('credit_block_level')}
+                                    disabled={!form.can_edit_credit}
+                                >
+                                    <option value="none">{trans.credit_level_none}</option>
+                                    <option value="warn">{trans.credit_level_warn}</option>
+                                    <option value="block">{trans.credit_level_block}</option>
+                                </select>
+                            </Field>
+                        </div>
+                        {!form.can_edit_credit && (
+                            <div className="col-md-4 d-flex align-items-center">
+                                <small className="text-body-secondary">{trans.credit_read_only}</small>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

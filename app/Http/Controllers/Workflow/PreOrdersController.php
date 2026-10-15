@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Receivables\CreditCheck;
+use App\Services\Receivables\CreditLimitGuard;
 use App\Http\Controllers\Controller;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -428,7 +430,26 @@ class PreOrdersController extends Controller
             $defaultContactId = $defaultContact->id;
         }
 
-        DB::transaction(function () use ($preOrder, $data, $defaultAddressId, $defaultContactId) {
+        // Plafond d'encours : la commande ajoute le montant de ses lignes.
+        $creditGuard = app(CreditLimitGuard::class);
+        $creditCheck = CreditCheck::clear();
+        if ((int) $data['type'] === 1 && ! empty($data['companies_id'])) {
+            $vatRate = (float) (AccountingVat::whereKey($data['accounting_vats_id'])->value('rate') ?? 0);
+            $amount  = $preOrder->lines->sum(fn ($line) => max((int) $line->quantity, 1)
+                * (float) ($line->matching_unit_price ?? $line->unit_price ?? 0)
+                * (1 - (float) ($data['discount'] ?? 0) / 100)
+                * (1 + $vatRate / 100));
+
+            $creditCheck = $creditGuard->check((int) $data['companies_id'], $amount);
+            if ($refusal = $creditGuard->guardForm($request, $creditCheck)) {
+                return redirect()->route('pre-orders.show', $preOrder)
+                    ->withInput()
+                    ->withErrors($refusal)
+                    ->with('credit_block', $creditGuard->payload($creditCheck, $request->user()));
+            }
+        }
+
+        $order = DB::transaction(function () use ($preOrder, $data, $defaultAddressId, $defaultContactId) {
             $order = Orders::create([
                 'uuid' => Str::uuid(),
                 'code' => $data['code'],
@@ -458,6 +479,10 @@ class PreOrdersController extends Controller
                     'product_id' => $line->linked_product_id,
                     'label' => $matchedProduct?->label ?: ($line->product ?: $line->reference),
                     'qty' => max((int) $line->quantity, 1),
+                    // Sans défaut en base depuis le passage en décimal : MySQL
+                    // non strict met 0, une base stricte refuse l'insertion.
+                    'delivered_qty' => 0,
+                    'invoiced_qty' => 0,
                     'delivered_remaining_qty' => max((int) $line->quantity, 1),
                     'invoiced_remaining_qty' => max((int) $line->quantity, 1),
                     'methods_units_id' => $data['methods_units_id'],
@@ -477,7 +502,10 @@ class PreOrdersController extends Controller
                 'converted_order_id' => $order->id,
                 'converted_at' => now(),
             ]);
+
+            return $order;
         });
+        $creditGuard->recordOverride($creditCheck, $order, $order->companies_id);
 
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Pré-commande convertie en commande.');
     }

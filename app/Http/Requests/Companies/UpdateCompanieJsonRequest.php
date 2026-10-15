@@ -17,6 +17,10 @@ class UpdateCompanieJsonRequest extends UpdateCompanieRequest
             'recept_controle'      => 'nullable',
             'delivery_constraint'  => 'nullable|numeric',
             'tolerance_days'       => 'nullable|numeric',
+            // Plafond d'encours : retiré à l'enregistrement si l'utilisateur
+            // n'a pas credit-limit-override (CompaniesController::updateJson).
+            'credit_limit'         => 'nullable|numeric|min:0|max:9999999999999',
+            'credit_block_level'   => 'nullable|in:none,warn,block',
         ]);
     }
 }

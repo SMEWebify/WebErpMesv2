@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, MobileFilters, useIndexTab } from './table';
 import { apiFetch } from '../lib/http';
+import CreditBadge from './receivables/CreditBadge';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -308,6 +309,11 @@ function companyColumns(trans) {
           mobile: 'badge', mobileRender: c => (c.statu_supplier === 2 ? <span className="badge text-bg-info">{trans.supplier ?? trans.status_supplier}</span> : null) },
         { key: 'created_at',     label: trans.created_at,      sortable: true, sortIconSize: 'sm',
           render: c => c.created_at ?? '—', filter: 'date' },
+        // Encours / plafond, seulement pour les sociétés plafonnées.
+        { key: 'credit',         label: trans.credit,          align: 'center',
+          render: c => <CreditBadge credit={c.credit} currency={trans.currency} locale={trans.locale} />,
+          mobile: 'badge',
+          mobileRender: c => (c.credit?.ratio >= 0.8 ? <CreditBadge credit={c.credit} currency={trans.currency} locale={trans.locale} /> : null) },
     ];
 }
 

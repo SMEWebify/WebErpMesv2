@@ -3,6 +3,11 @@
             {{ session('success')}}
         </x-adminlte-alert>
         @endif
+        @if(session('warning'))
+        <x-adminlte-alert theme="warning" title="Warning">
+            {{ session('warning') }}
+        </x-adminlte-alert>
+        @endif
         @if($errors->count())
         <x-adminlte-alert theme="warning" title="Warning">
             <ul>

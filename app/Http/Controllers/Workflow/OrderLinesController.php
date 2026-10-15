@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\Cad\CadImportService;
 use App\Services\ImportCsvService;
 use App\Services\DeliveryService;
+use App\Services\Receivables\CreditLimitGuard;
 use App\Services\DeliveryLineService;
 use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
@@ -720,6 +721,13 @@ class OrderLinesController extends Controller
         $order = Orders::findOrFail($orderId);
         abort_if($order->statu == 6, 422, __('general_content.order_canceled_no_document_trans_key'));
 
+        // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).
+        $creditGuard = app(CreditLimitGuard::class);
+        $creditCheck = $creditGuard->check($order->companies_id);
+        if ($refusal = $creditGuard->guardJson($request, $creditCheck)) {
+            return $refusal;
+        }
+
         $lineIds           = $request->input('line_ids');
         $removeFromStock   = (bool) $request->input('remove_from_stock', false);
         $createSerialNumber= (bool) $request->input('create_serial_number', false);
@@ -776,6 +784,7 @@ class OrderLinesController extends Controller
             $delivery->delete();
             return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement livrées.'], 422);
         }
+        $creditGuard->recordOverride($creditCheck, $delivery, $order->companies_id);
 
         return response()->json([
             'redirect' => route('deliverys.show', ['id' => $delivery->id]),

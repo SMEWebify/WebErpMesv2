@@ -16,6 +16,10 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if(session('warning'))
+        <div class="alert alert-warning">{{ session('warning') }}</div>
+    @endif
+
     @if($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -212,6 +216,17 @@
                         </x-adminlte-select>
 
                         <x-adminlte-textarea name="comment" label="Commentaire" rows=3>{{ old('comment') }}</x-adminlte-textarea>
+
+                        @php
+                            $creditBlock = session('credit_block');
+                        @endphp
+                        @if($creditBlock && $creditBlock['can_override'])
+                            <div class="border border-danger rounded p-2 mb-3">
+                                <input type="hidden" name="credit_override" value="1">
+                                <x-adminlte-textarea name="credit_override_reason" label="{{ $creditBlock['texts']['reason_label'] }} *" rows=2>{{ old('credit_override_reason') }}</x-adminlte-textarea>
+                                <small class="text-body-secondary">{{ $creditBlock['texts']['reason_help'] }}</small>
+                            </div>
+                        @endif
 
                         @if($duplicateWarning)
                             <button type="submit" class="btn btn-warning w-100">Créer quand même la commande</button>

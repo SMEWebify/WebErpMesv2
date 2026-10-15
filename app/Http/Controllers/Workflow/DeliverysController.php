@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Receivables\CreditLimitGuard;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
@@ -225,6 +226,13 @@ class DeliverysController extends Controller
 
         $removeFromStock = $validated['remove_from_stock'] ?? false;
 
+        // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).
+        $creditGuard = app(CreditLimitGuard::class);
+        $creditCheck = $creditGuard->check((int) $validated['companies_id']);
+        if ($refusal = $creditGuard->guardJson($request, $creditCheck)) {
+            return $refusal;
+        }
+
         $delivery = DB::transaction(function () use ($validated, $removeFromStock) {
             $delivery = $this->deliveryService->createDelivery(
                 $validated['code'],
@@ -253,6 +261,7 @@ class DeliverysController extends Controller
         if ($validated['create_serial_number'] ?? false) {
             CreateDeliverySerialNumbersJob::dispatch($delivery->id);
         }
+        $creditGuard->recordOverride($creditCheck, $delivery, (int) $validated['companies_id']);
 
         return response()->json([
             'redirect' => route('deliverys.show', ['id' => $delivery->id]),

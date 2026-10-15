@@ -4,6 +4,7 @@ import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
+import { askCreditOverride } from '../lib/creditLimit';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1181,7 +1182,9 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         setSelected((s) => { const ns = new Set(s); ns.has(id) ? ns.delete(id) : ns.add(id); return ns; });
     };
 
-    const handleStoreDelivery = async () => {
+    const handleStoreDelivery = async (creditOverride = null) => {
+        // Appelé directement par onClick : l'événement n'est pas un passe-droit.
+        if (creditOverride && !('credit_override' in creditOverride)) creditOverride = null;
         const ids = [...selected].filter(id => {
             const line = lines.find(l => l.id === id);
             return line && line.delivered_remaining_qty > 0;
@@ -1194,15 +1197,19 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         const msg = skipped > 0
             ? `Créer un BL à partir des ${ids.length} ligne(s) à livrer ? (${skipped} ligne(s) déjà livrée(s) ignorée(s))`
             : `Créer un BL à partir des ${ids.length} ligne(s) sélectionnée(s) ?`;
-        if (!confirm(msg)) return;
+        if (!creditOverride && !confirm(msg)) return;
         try {
             const res  = await apiFetch(endpoints.storeDelivery, {
                 method: 'POST',
-                body: JSON.stringify({ line_ids: ids, remove_from_stock: removeFromStock, create_serial_number: createSerialNumber }),
+                body: JSON.stringify({ line_ids: ids, remove_from_stock: removeFromStock, create_serial_number: createSerialNumber, ...creditOverride }),
             });
             const data = await res.json();
             if (res.ok && data.redirect) {
                 window.location.href = data.redirect;
+            } else if (data.credit_limit) {
+                // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
+                const override = await askCreditOverride(data.credit_limit);
+                if (override) return handleStoreDelivery(override);
             } else {
                 showFlash('danger', data.error ?? 'Erreur lors de la création du BL');
             }

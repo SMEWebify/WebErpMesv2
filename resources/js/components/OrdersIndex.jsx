@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // useRef used by ListTab debounce
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
-import { apiFetchOrThrow as apiFetch } from '../lib/http';
+import { apiFetchOrThrow as apiFetch, apiRequest } from '../lib/http';
+import { askCreditOverride } from '../lib/creditLimit';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 
@@ -582,14 +583,23 @@ function CreateModal({ endpoints, trans, onClose }) {
     }, [form.companies_id]);
 
     const set  = (k, v) => setForm(f => ({ ...f, [k]: v }));
-    const save = async () => {
+    const submit = async (extra) => {
         setSaving(true); setErrors({});
         try {
-            const data = await apiFetch(endpoints.store, { method: 'POST', body: JSON.stringify({ ...form, type }) });
-            if (data.redirect) window.location.href = data.redirect;
-        } catch (e) { setErrors(e.errors ?? {}); }
+            const res  = await apiRequest(endpoints.store, { method: 'POST', body: JSON.stringify({ ...form, type, ...extra }) });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok) {
+                if (data.redirect) window.location.href = data.redirect;
+                return;
+            }
+            // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
+            const override = data.credit_limit ? await askCreditOverride(data.credit_limit) : null;
+            if (override) return submit(override);
+            setErrors(data.errors ?? {});
+        } catch { setErrors({}); }
         finally { setSaving(false); }
     };
+    const save = () => submit({});
 
     if (loadingData) return (
         <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1050 }}>

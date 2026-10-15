@@ -12,6 +12,7 @@ use App\Models\Planning\Status;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Services\OrderService;
+use App\Services\Receivables\CreditLimitGuard;
 use App\Services\OrderConfirmationService;
 use App\Services\DocumentCodeGenerator;
 use App\Traits\NextPreviousTrait;
@@ -397,6 +398,13 @@ class OrdersController extends Controller
 
         $validated = $request->validate($rules);
 
+        // Commande vide à la création : l'encours actuel seul est contrôlé.
+        $creditGuard = app(CreditLimitGuard::class);
+        $creditCheck = $creditGuard->check($type === 1 ? (int) $validated['companies_id'] : null);
+        if ($refusal = $creditGuard->guardJson($request, $creditCheck)) {
+            return $refusal;
+        }
+
         $orderService = app(OrderService::class);
         $order = $orderService->createOrder(
             $validated['code'],
@@ -416,6 +424,7 @@ class OrdersController extends Controller
             null,
             null
         );
+        $creditGuard->recordOverride($creditCheck, $order, $order->companies_id);
 
         return response()->json([
             'redirect' => route('orders.show', ['id' => $order->id]),

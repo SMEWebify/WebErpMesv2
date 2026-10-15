@@ -14,6 +14,9 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
 use App\Models\Purchases\Purchases;
 use App\Services\CompanyService;
+use App\Services\Receivables\CreditLimitGuard;
+use App\Services\Receivables\ReceivablesService;
+use App\Models\Companies\CreditLimitOverride;
 use App\Services\OrderKPIService;
 use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
@@ -145,6 +148,9 @@ class CompaniesController extends Controller
             'cancel'           => __('general_content.cancel_trans_key'),
             'view_all'         => __('general_content.view_all_trans_key'),
             'code'             => __('general_content.id_trans_key'),
+            'credit'           => __('receivables.credit.outstanding'),
+            'currency'         => app('Factory')->curency ?? 'EUR',
+            'locale'           => str_replace('_', '-', config('app.locale')),
             'jan' => 'Jan', 'feb' => 'Fév', 'mar' => 'Mar',
             'apr' => 'Avr', 'may' => 'Mai', 'jun' => 'Jun',
             'jul' => 'Jul', 'aug' => 'Aoû', 'sep' => 'Sep',
@@ -186,6 +192,11 @@ class CompaniesController extends Controller
 
         $companies = $query->orderBy($sortField, $dir)->paginate(15);
 
+        // Encours des seules sociétés plafonnées de la page, en une requête.
+        $credits = app(ReceivablesService::class)->exposures(
+            $companies->getCollection()->whereNotNull('credit_limit')->pluck('id')->all()
+        );
+
         return response()->json([
             'data' => $companies->map(fn($c) => [
                 'id'             => $c->id,
@@ -195,6 +206,7 @@ class CompaniesController extends Controller
                 'active'         => $c->active,
                 'statu_customer' => $c->statu_customer,
                 'statu_supplier' => $c->statu_supplier,
+                'credit'         => isset($credits[$c->id]) ? $credits[$c->id]->toArray() : null,
                 'url'            => route('companies.show', ['id' => $c->id]),
             ]),
             'meta' => [
@@ -310,6 +322,21 @@ class CompaniesController extends Controller
 
         $documentDefaults = CompanyDocumentDefault::forCompany($id->id);
 
+        $creditExposure  = app(ReceivablesService::class)->exposure($id->id)->toArray();
+        $creditOverrides = CreditLimitOverride::with('user:id,name')
+            ->where('companies_id', $id->id)
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($o) => [
+                'date'      => $o->created_at?->format('d/m/Y H:i'),
+                'user'      => $o->user?->name,
+                'reason'    => $o->reason,
+                'projected' => (float) $o->projected,
+                'limit'     => (float) $o->credit_limit,
+            ])
+            ->all();
+
         return view('companies/companies-show', compact('Companie',
                                                         'userSelect',
                                                         'previousUrl',
@@ -328,7 +355,9 @@ class CompaniesController extends Controller
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',
                                                         'purchasesForEvaluation',
-                                                        'documentDefaults',));
+                                                        'documentDefaults',
+                                                        'creditExposure',
+                                                        'creditOverrides',));
     }
 
     /**
@@ -352,7 +381,14 @@ class CompaniesController extends Controller
             }
         }
 
-        $company->update($request->validated());
+        $data = $request->validated();
+        // Relever son propre plafond viderait le contrôle de son sens : même
+        // permission que le passe-droit.
+        if (! $request->user()?->can(CreditLimitGuard::OVERRIDE_PERMISSION)) {
+            unset($data['credit_limit'], $data['credit_block_level']);
+        }
+
+        $company->update($data);
         $company->active               = $request->boolean('active');
         $company->quoted_delivery_note = $request->boolean('quoted_delivery_note');
         $company->order_status_email   = $request->boolean('order_status_email');

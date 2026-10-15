@@ -81,17 +81,20 @@ class Companies extends Model
                             'quoted_delivery_note',
                             'order_status_email',
                             'csv_file_name',
+                            'credit_limit',
+                            'credit_block_level',
                         ];
 
     // La fiche lit cette date via ->format() : sans cast, une chaîne → erreur 500.
     protected $casts = [
         'vat_attestation_valid_until' => 'date',
+        'credit_limit'                => 'decimal:2',
     ];
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['label', 'last_name', 'client_type', 'active', 'statu_customer', 'statu_supplier'])
+            ->logOnly(['label', 'last_name', 'client_type', 'active', 'statu_customer', 'statu_supplier', 'credit_limit', 'credit_block_level'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->setDescriptionForEvent(fn (string $event) => "Entreprise {$event}");

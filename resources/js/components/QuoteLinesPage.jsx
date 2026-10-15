@@ -4,6 +4,7 @@ import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout, moveLine } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
+import { askCreditOverride } from '../lib/creditLimit';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1378,16 +1379,20 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
     const hasPresentation = lines.some((l) => !isArticle(l));
 
-    const handleStoreOrder = async (presentation = 'keep') => {
+    const handleStoreOrder = async (presentation = 'keep', creditOverride = null) => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!creditOverride && !hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
         setConvertOpen(false);
         try {
-            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation }) });
+            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation, ...creditOverride }) });
             const data = await res.json();
             if (res.ok && data.redirect) {
                 window.location.href = data.redirect;
+            } else if (data.credit_limit) {
+                // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
+                const override = await askCreditOverride(data.credit_limit);
+                if (override) return handleStoreOrder(presentation, override);
             } else {
                 showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
             }
