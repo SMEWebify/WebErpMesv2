@@ -452,6 +452,24 @@ async function mountCreditNotesIndex() {
     );
 }
 
+async function mountInvoiceReminders() {
+    const element = document.getElementById('invoice-reminders-app');
+    if (!element) return;
+
+    const { default: InvoiceRemindersApp } = await import('./components/InvoiceRemindersApp.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InvoiceRemindersApp, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+            canSend:   element.dataset.canSend === '1',
+        })
+    );
+}
+
 async function mountInvoicesIndex() {
     const element = document.getElementById('invoices-index-app');
     if (!element) return;
@@ -1366,6 +1384,7 @@ mountPurchasesQuotationIndex();
 mountPurchasesQuotationShow();
 mountPurchasesRequest();
 mountInvoicesIndex();
+mountInvoiceReminders();
 mountIncomingInvoicesIndex();
 mountProductsIndex();
 mountQualityIndex();

@@ -90,6 +90,16 @@ class Invoices extends Model
         return $this->hasMany(InvoiceLines::class)->orderBy('ordre');
     }
 
+    public function reminders()
+    {
+        return $this->hasMany(InvoiceReminder::class, 'invoice_id')->latest('reminded_at');
+    }
+
+    public function reminderLevel()
+    {
+        return $this->belongsTo(InvoiceReminderLevel::class, 'reminder_level_id');
+    }
+
     public function payments()
     {
         return $this->hasMany(InvoicePayment::class, 'invoice_id')->orderBy('payment_date');

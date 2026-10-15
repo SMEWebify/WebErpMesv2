@@ -35,6 +35,7 @@ return [
     'invoices_trans_key'                       => 'Invoices',
     'proformas_trans_key'                        => 'Proformas',
     'credit_notes_trans_key'                   => 'Credit notes',
+    'invoice_reminders_trans_key'              => 'Invoices to chase',
     'invoices_request_trans_key'               => 'Request lines',
     'invoices_list_trans_key'                  => 'Invoices  list',
     'export_invoices_lines_list_trans_key'     => 'Export invoices line',

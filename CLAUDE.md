@@ -431,6 +431,63 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
+## Encours client et relances de factures
+
+Un seul calcul sert aux deux : `App\Services\Receivables\ReceivablesService`.
+- **Reste dû d'une facture** = TTC (recalculé depuis les lignes, comme partout) − règlements
+  (`invoice_payments`) − avoirs émis sur cette facture (`credit_notes.invoices_id`, hors
+  refusés — `config/receivables.php`). Il n'existe pas d'imputation d'avoir : l'avoir corrige
+  la facture qu'il cite. Un trop-perçu compte pour zéro.
+- **`invoices.statu` n'est jamais lu** : modifiable à la main ou par la PDP, et aveugle aux
+  avoirs. Une facture « soldée » au sens du service peut donc rester « en attente ».
+- **Encours d'une société** = factures non soldées (brouillons compris : leurs lignes de
+  commande ne sont plus « à facturer ») + commandes non facturées si
+  `receivables.include_open_orders` (lignes article, `invoiced_remaining_qty`, commandes
+  type 1 hors statuts 0/5/6, au `selling_price` stocké). Une requête par appel, y compris
+  pour une page entière de sociétés (`exposures()`) — couvert par un test de comptage.
+- Seuil « soldée » écrit en littéral dans le SQL (`EPSILON`) : lié en paramètre, SQLite le
+  compare comme du texte.
+
+### Plafond d'encours
+`companies.credit_limit` (TTC, null = pas de plafond) et `credit_block_level`
+(`none` | `warn` | `block`, `App\Enums\CreditBlockLevel`). Une société sans plafond n'est
+jamais calculée. `CreditLimitGuard` est appelé à la **création** (il n'existe pas d'étape de
+validation) :
+- commande manuelle (`orders.json.store`, montant ajouté 0), conversion de devis (montant des
+  lignes converties), conversion de pré-commande (formulaire Blade), BL (`deliverys-request.store`
+  et `orders.lines.json.store-delivery`, montant ajouté 0 : déjà compté dans la commande) ;
+- **non contrôlés** : import CSV, proforma (statut 0, payée avant), commandes internes,
+  BL automatique de la facturation directe (bloquer la facturation dégraderait la trésorerie).
+- `warn` : le document est créé, avertissement flashé en session (`include/alert-result`).
+  `block` : réponse 409 portant `credit_limit` (montants + textes) →
+  `resources/js/lib/creditLimit.jsx` ouvre la fenêtre ; un porteur de
+  `credit-limit-override` saisit un motif et l'écran renvoie la requête avec
+  `credit_override` / `credit_override_reason`. Le passe-droit vaut **pour ce seul document**
+  (`credit_limit_overrides`, polymorphe), affiché sur le tableau de bord de la fiche société.
+- Le plafond lui-même n'est modifiable qu'avec `credit-limit-override` (`updateJson` retire
+  les champs sinon).
+
+### Relances
+Écran `invoices/reminders` (React `InvoiceRemindersApp`), lecture pour tout le module
+factures, envoi et paramétrage sous `invoice-reminders-send`.
+- `invoice_reminder_levels` (3 niveaux insérés par migration : J+1, J+15, J+30, avec leurs
+  modèles `email_templates.document_type = invoice-reminder`). Variables remplacées par
+  `InvoiceReminderService` uniquement : `{client}`, `{factures}`, `{total_du}`, `{retard}`,
+  `{entreprise}`.
+- **Niveau proposé** = le plus bas de (niveau atteint par le retard, niveau suivant la
+  dernière relance) : jamais de saut de niveau, et une facture déjà relancée au niveau que
+  justifie son retard n'est plus proposée.
+- Seules les factures `invoice_type = 1`, hors brouillons, échues et non soldées. Proformas
+  (pas une créance), avoirs (déjà déduits) et acomptes (aucun code n'en crée) sont exclus.
+- **Aucun envoi automatique.** Un e-mail par client (`InvoiceReminderMail`, PDF de chaque
+  facture joint, envoi synchrone comme `EmailController`), une ligne `email_logs` **et** une
+  ligne `invoice_reminders` par facture. Un e-mail en échec est tracé mais ne fait pas monter
+  le niveau. Appel / courrier : relance tracée sans e-mail, qui compte comme une relance.
+- Une facture soldée entre l'affichage et l'envoi fait refuser l'envoi (422).
+- Une tâche planifiée viendra plus tard : sous Windows en production → Planificateur de
+  tâches, pas de cron.
+- Tests : `tests/Feature/Receivables/`.
+
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul
@@ -777,6 +834,11 @@ Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
 - **Retirer StockCurrentApp** (composant + mount app.js + endpoint `stockCurrentJson`) une fois l'écran Statut du stock validé en usage réel
 
 ### ⚠️ À vérifier
+- `order_lines` : la migration de passage en décimal (`2026_04_21_000004`) a fait tomber le
+  `default(0)` des quantités (`->change()` ne reprend pas les modificateurs). Invisible en
+  production (MySQL `strict => false` met 0), mais toute insertion qui omet `delivered_qty` /
+  `invoiced_qty` échoue sur une base stricte (SQLite des tests). Rétablir les défauts par une
+  migration additive.
 - password exclu des logs d'activité User
 - rgpd:purge passe par RgpdAnonymizationService avant force-delete
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage

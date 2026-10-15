@@ -34,6 +34,7 @@ return [
     'invoices_trans_key'                       => '发票',
     'proformas_trans_key'                        => '形式发票',
     'credit_notes_trans_key'                   => '贷项单',
+    'invoice_reminders_trans_key'              => '待催收发票',
     'invoices_request_trans_key'               => '待处理行',
     'invoices_list_trans_key'                  => '发票列表',
     'export_invoices_lines_list_trans_key'     => '导出发票明细',

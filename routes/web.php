@@ -493,6 +493,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/pdp/poll', 'App\Http\Controllers\Workflow\InvoicesController@pdpPoll')->name('invoices.pdp.poll');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
+        // Relances : liste en lecture pour tout le module, envoi et niveaux sous permission.
+        Route::get('/reminders', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'index'])->name('invoices.reminders');
+        Route::get('/reminders/json/list', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'listJson'])->name('invoices.reminders.json.list');
+        Route::middleware('permission:invoice-reminders-send')->prefix('reminders')->name('invoices.reminders.')->group(function () {
+            Route::post('/preview', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'preview'])->name('preview');
+            Route::post('/send', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'send'])->name('send');
+            Route::post('/log', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'logManual'])->name('log');
+            Route::get('/levels', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'levels'])->name('levels');
+            Route::post('/levels', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'storeLevel'])->name('levels.store');
+            Route::put('/levels/{level}', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'updateLevel'])->name('levels.update');
+            Route::delete('/levels/{level}', [\App\Http\Controllers\Workflow\InvoiceRemindersController::class, 'destroyLevel'])->name('levels.destroy');
+        });
         // JSON endpoint for company address/contact selects on invoice show page
         Route::get('/company-ac', 'App\Http\Controllers\Workflow\InvoicesController@companyAddressContact')->name('invoices.company-ac');
         // Règlements

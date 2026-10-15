@@ -1040,6 +1040,11 @@ return [
                     'url'  => 'credit-notes',
                     'icon_color' => 'primary',
                 ],
+                [
+                    'text' => 'invoice_reminders_trans_key',
+                    'url'  => 'invoices/reminders',
+                    'icon_color' => 'danger',
+                ],
             ]
         ],
         [

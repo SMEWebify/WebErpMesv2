@@ -171,6 +171,41 @@ $invoiceSteps = [
             @endif
 
             @include('include.email-list', ['mailsList'=> $Invoice->emailLogs,])
+
+            @php
+              $invoiceReminders = $Invoice->reminders()->with(['level', 'user:id,name'])->get();
+            @endphp
+            @if($invoiceReminders->isNotEmpty())
+            <div class="card card-outline card-danger mb-3">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-bell me-1"></i>{{ __('receivables.reminders.history_title') }}</h3>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    @foreach($invoiceReminders as $reminder)
+                      <tr>
+                        <td class="text-nowrap">{{ $reminder->reminded_at?->format('d/m/Y H:i') }}</td>
+                        <td>
+                          @if($reminder->level)
+                            <span class="badge text-bg-{{ $reminder->level->color }}">{{ $reminder->level->label }}</span>
+                          @endif
+                          {{ __('receivables.reminders.channels.' . $reminder->channel) }}
+                          @if($reminder->channel === 'email' && ! $reminder->email_sent)
+                            <span class="badge text-bg-danger">{{ __('receivables.reminders.email_failed') }}</span>
+                          @endif
+                          @if($reminder->note)
+                            <div class="small text-body-secondary">{{ $reminder->note }}</div>
+                          @endif
+                        </td>
+                        <td class="text-nowrap small">{{ $reminder->user?->name }}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            @endif
           </div>
         </div>
       </div>       

@@ -69,6 +69,7 @@ class EmailTemplateController extends Controller
         if (auth()->user()->can('invoices-menu')) {
             $documentTypes['invoice'] = 'general_content.invoice_trans_key';
             $documentTypes['creditnote'] = 'general_content.credit_note_trans_key';
+            $documentTypes['invoice-reminder'] = 'receivables.reminders.template_type';
         }
 
         if (auth()->user()->can('purchases-menu')) {

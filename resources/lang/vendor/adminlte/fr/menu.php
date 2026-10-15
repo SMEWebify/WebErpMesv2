@@ -35,6 +35,7 @@ return [
     'invoices_trans_key'                       => 'Factures',
     'proformas_trans_key'                        => 'Proformas',
     'credit_notes_trans_key'                   => 'Avoirs',
+    'invoice_reminders_trans_key'              => 'Factures à relancer',
     'invoices_request_trans_key'               => 'Lignes en attente(s)',
     'invoices_list_trans_key'                  => 'Factures',
     'export_invoices_lines_list_trans_key'     => 'Export des ligne de facture',
