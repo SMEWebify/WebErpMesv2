@@ -319,6 +319,7 @@ export default function InvoiceRemindersApp({ endpoints, trans, canSend }) {
                         trans={{ ...trans, no_results: trans.empty, total: trans.total_due }}
                         storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
                         rowHref={r => urlFor(endpoints.invoice, r.id)}
+                        rowClickable={false}
                         renderGroupHeader={groupHeader}
                         actionsColumn={false}
                         emptyText={trans.empty}

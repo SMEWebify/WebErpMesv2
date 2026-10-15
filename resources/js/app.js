@@ -1,6 +1,10 @@
 import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
+import { installRowLinks } from './lib/rowLink.js';
+
+// Tableaux Blade : <tr data-row-href="…"> s'ouvre au clic sur la ligne
+installRowLinks();
 
 function parseJsonAttribute(value) {
     if (!value) return null;

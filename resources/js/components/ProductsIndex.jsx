@@ -281,13 +281,6 @@ function ProductsTable({ products, loading, sortField, sortAsc, onSort, trans })
             unsortableIcon={false}
             unsortableCursor="default"
             rowHref={p => p.url}
-            rowActions={p => (
-                <a href={p.url} className="btn btn-sm btn-info" title={trans.view}>
-                    <i className="fas fa-eye" />
-                </a>
-            )}
-            actionsWidth={60}
-            actionsCellStyle={{ whiteSpace: 'nowrap' }}
         />
     );
 }

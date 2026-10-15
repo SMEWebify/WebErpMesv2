@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusFilter, MobileFilters, RowOpenLink } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -497,9 +497,7 @@ const [rows, setRows]         = useState([]);
                             >
                                 <i className="fas fa-check" />
                             </button>
-                            <a href={row.url} className="btn btn-sm btn-info" title={trans.view}>
-                                <i className="fas fa-eye" />
-                            </a>
+                            <RowOpenLink href={row.url} title={trans.view} />
                         </div>
                     )}
                     mobileActions={row => (

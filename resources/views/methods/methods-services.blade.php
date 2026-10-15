@@ -32,7 +32,7 @@
             </thead>
             <tbody>
               @forelse ($MethodsServices as $MethodsService)
-              <tr>
+              <tr data-row-href="{{ route('methods.service.show', ['id' => $MethodsService->id]) }}">
                 <td>
                   @if($MethodsService->picture )
                   <img alt="Service" class="profile-user-img img-fluid rounded-circle" src="{{ asset('storage/images/methods/'.$MethodsService->picture) }}">
@@ -61,10 +61,10 @@
                     <span class="text-muted">-</span>
                   @endif
                 </td>
-                <td class="py-0 align-middle">
-                  <x-ButtonTextView route="{{ route('methods.service.show', ['id' => $MethodsService->id])}}" />
+                <td class="py-0 align-middle text-nowrap">
                   <!-- Button Modal -->
                   <x-ButtonTextEdit :modalTarget="'MethodsService' . $MethodsService->id" />
+                  <a href="{{ route('methods.service.show', ['id' => $MethodsService->id]) }}" class="d-inline-block px-2 text-body-secondary" title="{{ __('general_content.view_trans_key') }}" aria-label="{{ __('general_content.view_trans_key') }}"><i class="fas fa-chevron-right"></i></a>
                   <!-- Modal {{ $MethodsService->id }} -->
                   <x-adminlte-modal id="MethodsService{{ $MethodsService->id }}" title="Update {{ $MethodsService->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                     <form method="POST" action="{{ route('methods.service.update', ['id' => $MethodsService->id]) }}" enctype="multipart/form-data">
@@ -280,6 +280,7 @@
 @stop
 
 @section('css')
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

@@ -252,11 +252,6 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
             loadingContent={<><i className="fas fa-spinner fa-spin" /> {trans.loading ?? 'Chargement…'}</>}
             emptyText={trans.no_results ?? 'Aucun résultat'}
             rowHref={r => r.url}
-            rowActions={r => (
-                <a href={r.url} className="btn btn-sm btn-info" title={trans.view ?? 'Voir'}>
-                    <i className="fas fa-eye" />
-                </a>
-            )}
         />
     );
 }

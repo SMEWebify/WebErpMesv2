@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, Pagination, StatusFilter, MobileFilters } from './table';
+import { DataTable, Pagination, StatusFilter, MobileFilters, RowOpenLink } from './table';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -236,9 +236,7 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
                                     <i className="fas fa-paper-plane" />
                                 </button>
                             )}
-                            <a href={row.url} className="btn btn-sm btn-outline-primary" title={trans.view}>
-                                <i className="fas fa-eye" />
-                            </a>
+                            <RowOpenLink href={row.url} title={trans.view} />
                         </div>
                     )}
                     mobileActions={row => row.statu === STATUS_DRAFT && (

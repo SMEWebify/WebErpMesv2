@@ -92,25 +92,36 @@ function getStatusConfig(mode) {
 
 const MODES_WITH_LABEL = ['orders', 'invoices', 'deliveries'];
 
-function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
+function ItemRow({ item, mode, trans, urlShow }) {
     const statusConfig = getStatusConfig(mode);
     const dateValue    = (mode === 'quotes' || mode === 'invoices' || mode === 'purchases')
         ? item.created_at_human
         : formatDate(item.validity_date);
     const isInternal   = mode === 'orders' && item.type !== 1;
     const showLabel    = MODES_WITH_LABEL.includes(mode);
+    const href         = urlShow ? `${urlShow}${item.id}` : null;
+
+    // Toute la ligne ouvre la fiche ; Ctrl/⌘ + clic ou clic molette l'ouvre dans un nouvel onglet
+    const open = (e, newTab) => {
+        if (!href) return;
+        if (newTab || e.ctrlKey || e.metaKey) window.open(href, '_blank');
+        else window.location.href = href;
+    };
+
+    const rowProps = href ? {
+        role: 'link',
+        tabIndex: 0,
+        style: { cursor: 'pointer' },
+        onClick: e => open(e, false),
+        onAuxClick: e => { if (e.button === 1) open(e, true); },
+        onKeyDown: e => { if (e.key === 'Enter') open(e, false); },
+    } : {};
 
     return (
-        <tr>
+        <tr {...rowProps}>
             {/* Code */}
             <td style={{ whiteSpace: 'nowrap' }}>
-                {urlShow ? (
-                    <a href={`${urlShow}${item.id}`} className="fw-bold" style={{ fontSize: '0.85rem' }}>
-                        {item.code}
-                    </a>
-                ) : (
-                    <span className="fw-bold" style={{ fontSize: '0.85rem' }}>{item.code}</span>
-                )}
+                <span className="fw-bold" style={{ fontSize: '0.85rem' }}>{item.code}</span>
             </td>
 
             {/* Société */}
@@ -120,13 +131,7 @@ function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
                         {trans.internal_order ?? 'Interne'}
                     </span>
                 ) : item.companie_label ? (
-                    urlCompany ? (
-                        <a href={`${urlCompany}${item.companies_id}`} style={{ fontSize: '0.82rem' }} title={item.companie_label}>
-                            {item.companie_label}
-                        </a>
-                    ) : (
-                        <span style={{ fontSize: '0.82rem' }} title={item.companie_label}>{item.companie_label}</span>
-                    )
+                    <span style={{ fontSize: '0.82rem' }} title={item.companie_label}>{item.companie_label}</span>
                 ) : (
                     <span className="text-muted">—</span>
                 )}
@@ -249,7 +254,7 @@ export default function RecentItemsWidget({
             onRemove={onRemove}
         >
             <div className="table-responsive" style={{ margin: '0 -0.75rem' }}>
-                <table className="table table-sm m-0" style={{ fontSize: '0.83rem' }}>
+                <table className={`table table-sm m-0${urls.show ? ' table-hover' : ''}`} style={{ fontSize: '0.83rem' }}>
                     <tbody>
                         {(items ?? []).map((item, i) => (
                             <ItemRow
@@ -258,7 +263,6 @@ export default function RecentItemsWidget({
                                 mode={mode}
                                 trans={trans}
                                 urlShow={urls.show}
-                                urlCompany={urls.company}
                             />
                         ))}
                     </tbody>

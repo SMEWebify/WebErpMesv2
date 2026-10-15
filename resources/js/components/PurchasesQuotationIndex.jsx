@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable, StatusFilter, MobileFilters } from './table';
+import { DataTable, StatusFilter, MobileFilters, RowOpenLink } from './table';
 import { apiFetchWithStatus as apiFetch } from '../lib/http';
 
 // ---------------------------------------------------------------------------
@@ -286,14 +286,12 @@ export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }
                         rowStyle={q => (q.rfq_group_id ? { borderLeft: '4px solid #6c757d' } : undefined)}
                         rowActions={q => (
                             <>
-                                <a href={q.show_url} className="btn btn-sm btn-info me-1">
-                                    <i className="fas fa-eye" />
-                                </a>
                                 {q.pdf_url && (
                                     <a href={q.pdf_url} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
                                         <i className="fas fa-file-pdf" />
                                     </a>
                                 )}
+                                <RowOpenLink href={q.show_url} title={trans.view} />
                             </>
                         )}
                         mobileActions={q => q.pdf_url && (

@@ -30,7 +30,7 @@
                     </thead>
                     <tbody>
                         @foreach ($Users as $User)
-                        <tr>
+                        <tr data-row-href="{{ route('human.resources.show.user', ['id' => $User->id]) }}">
                             <td>
                                 @if(Cache::has('user-is-online-' . $User->id))
                                     <span class="badge text-bg-success">{{__('general_content.online_trans_key') }}</span>
@@ -68,7 +68,7 @@
                                 @if(2 == $User->statu )  <span class="badge text-bg-danger">{{__('general_content.inactive_trans_key') }}</span>@endif
                             </td>
                             <td>
-                                <x-ButtonTextView route="{{ route('human.resources.show.user', ['id' => $User->id])}}" />
+                                <a href="{{ route('human.resources.show.user', ['id' => $User->id]) }}" class="d-inline-block px-2 text-body-secondary" title="{{ __('general_content.view_trans_key') }}" aria-label="{{ __('general_content.view_trans_key') }}"><i class="fas fa-chevron-right"></i></a>
                             </td>
                             <td>{{ $User->GetPrettyCreatedAttribute() }}</td>
                             <td>{{ $User->banned_until }}</td>
@@ -106,6 +106,7 @@
 
 
 @section('css')
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

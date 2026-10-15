@@ -3,6 +3,7 @@ import SortIcon from './SortIcon.jsx';
 import useColumnLayout from './useColumnLayout.js';
 import useMediaQuery from './useMediaQuery.js';
 import { toISODate } from './dates.js';
+import { rowLinkProps, shouldIgnoreRowClick } from '../../lib/rowLink.js';
 
 /*
  * Tableau d'index déclaratif. L'écran garde sa récupération de données (fetch, tri et
@@ -25,7 +26,11 @@ import { toISODate } from './dates.js';
  *     hideable:  false,                       // colonne déplaçable mais jamais masquée
  *   }
  *
- * rowClickable : sur PC, un clic sur la ligne ouvre rowHref (hors liens et boutons).
+ * rowClickable (vrai par défaut) : sur PC, un clic sur la ligne ouvre rowHref (hors liens,
+ * boutons, champs et sélection de texte ; Ctrl/⌘ + clic ou molette = nouvel onglet). Le
+ * bouton par défaut est alors un chevron (`RowOpenLink`). `false` quand un clic perdu
+ * coûterait cher (sélection par cases à cocher).
+ * onRowClick(row) : clic de ligne qui n'ouvre pas une page (fenêtre de détail…).
  * renderGroupHeader(row, prevRow) : en-tête de groupe inséré avant la ligne (ou null).
  * rowStyle(row) : style propre à une ligne (et à sa carte).
  * renderExpanded(row) : contenu déplié sous la ligne (formulaire en ligne…), sur toute la
@@ -71,7 +76,19 @@ function joinNodes(nodes, separator) {
         .map((node, i) => <React.Fragment key={i}>{node}</React.Fragment>);
 }
 
-function DefaultRowAction({ href, title }) {
+// Ligne cliquable : la ligne fait déjà le travail, un chevron discret suffit à le signaler.
+// Reste un vrai lien (clic droit « nouvel onglet », clavier). À placer en dernier dans un
+// rowActions propre à l'écran, à la place de l'ancien bouton « voir ».
+export function RowOpenLink({ href, title }) {
+    return (
+        <a href={href} className="d-inline-block px-2 text-body-secondary" title={title} aria-label={title}>
+            <i className="fas fa-chevron-right" />
+        </a>
+    );
+}
+
+function DefaultRowAction({ href, title, chevron = false }) {
+    if (chevron) return <RowOpenLink href={href} title={title} />;
     return (
         <a href={href} className="btn btn-sm btn-info" title={title}>
             <i className="fas fa-eye" />
@@ -201,7 +218,8 @@ export default function DataTable({
     colFilters: controlledFilters,
     onColFiltersChange,
     rowHref,
-    rowClickable = false,
+    rowClickable = true,
+    onRowClick,
     rowActions,
     mobileActions,
     renderExpanded,
@@ -244,7 +262,17 @@ export default function DataTable({
         sum: filtered.reduce((s, row) => s + (Number(col.total.value ? col.total.value(row) : row[col.key]) || 0), 0),
     }));
     const hasFilters = visible.some(c => c.filter);
-    const actions    = rowActions ?? (rowHref ? row => <DefaultRowAction href={rowHref(row)} /> : null);
+    const actions    = rowActions ?? (rowHref ? row => <DefaultRowAction href={rowHref(row)} chevron={rowClickable} title={trans.view} /> : null);
+
+    // Clic sur la ligne (règles communes : lib/rowLink.js)
+    const rowProps = row => {
+        if (onRowClick) return {
+            style:   { cursor: 'pointer', ...rowStyle?.(row) },
+            onClick: e => { if (!shouldIgnoreRowClick(e)) onRowClick(row); },
+        };
+        if (rowClickable && rowHref) return rowLinkProps(rowHref(row), rowStyle?.(row));
+        return { style: rowStyle?.(row) };
+    };
 
     if (isMobile) {
         return (
@@ -391,15 +419,7 @@ export default function DataTable({
                             return (
                                 <React.Fragment key={row[rowKey]}>
                                     {header && <tr className="table-active"><td colSpan={colSpan}>{header}</td></tr>}
-                                    <tr style={rowStyle?.(row)} {...(rowClickable && rowHref ? {
-                                        style: { cursor: 'pointer', ...rowStyle?.(row) },
-                                        onClick: e => {
-                                            // un lien, un bouton ou un champ de la ligne garde son propre comportement
-                                            if (!e.target.closest('a, button, input, select, textarea, [role="button"]')) {
-                                                window.location.href = rowHref(row);
-                                            }
-                                        },
-                                    } : {})}>
+                                    <tr {...rowProps(row)}>
                                         {visible.map(col => (
                                             <td
                                                 key={col.key}

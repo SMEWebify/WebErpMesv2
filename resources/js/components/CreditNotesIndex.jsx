@@ -239,11 +239,6 @@ function CreditNotesTable({ rows, loading, sort, onSort, trans, currency, locale
             emptyText={trans.no_results ?? 'Aucun résultat'}
             totalLabel={trans.total ?? 'Total'}
             rowHref={r => r.url}
-            rowActions={r => (
-                <a href={r.url} className="btn btn-sm btn-info" title={trans.view ?? 'Voir'}>
-                    <i className="fas fa-eye" />
-                </a>
-            )}
         />
     );
 }

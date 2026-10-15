@@ -5,3 +5,8 @@
 @import 'file-manager';
 @import 'load-planning';
 @import 'task-statu';
+
+// Ligne de tableau Blade cliquable (resources/js/lib/rowLink.js)
+tr[data-row-href] {
+    cursor: pointer;
+}

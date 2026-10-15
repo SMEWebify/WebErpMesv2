@@ -664,11 +664,9 @@ export default function NonConformitiesIndex({
                         actionsHeader={t('actions')}
                         actionsWidth={110}
                         actionsCellStyle={{ whiteSpace: 'nowrap' }}
+                        onRowClick={nc => setViewNc(nc)}
                         rowActions={nc => (
                             <>
-                                <button className="btn btn-sm btn-info me-1" onClick={() => setViewNc(nc)} title={t('view')}>
-                                    <i className="fas fa-eye" />
-                                </button>
                                 <button className="btn btn-sm btn-teal me-1" onClick={() => setEditNc(nc)} title={t('edit')}>
                                     <i className="fas fa-edit" />
                                 </button>

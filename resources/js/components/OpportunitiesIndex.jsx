@@ -267,7 +267,7 @@ function DashboardTab({ kpi, chart, activities, byCompany, byAmount, trans, curr
 function opportunityColumns(trans, currency, locale) {
     return [
         { key: 'label',      label: trans.label       ?? 'Label',       sortable: true,
-          render: o => <a href={o.url}>{o.label}</a>, filter: 'text', mobile: 'title', mobileRender: o => o.label },
+          filter: 'text', mobile: 'title' },
         { key: 'companie',   label: trans.company     ?? 'Company',     sortable: true,
           render: o => (o.companie ? <span>{o.companie.label}</span> : '—'), filterValue: o => o.companie?.label,
           filter: 'text', mobile: 'subtitle', mobileRender: o => o.companie?.label },

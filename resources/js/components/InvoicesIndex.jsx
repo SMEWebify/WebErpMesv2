@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, RowOpenLink } from './table';
 import { apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 
@@ -430,9 +430,6 @@ function invoiceColumns(trans, pdpEnabled) {
 function InvoiceActions({ inv, trans }) {
     return (
         <>
-            <a href={inv.url} className="btn btn-sm btn-info me-1" title={trans.view}>
-                <i className="fas fa-eye" />
-            </a>
             {/* Un brouillon n'est pas émis : ni PDF légal ni Factur-X.
                 Les routes le refusent (403), on n'affiche donc pas
                 des boutons qui mènent à une page d'erreur. */}
@@ -446,6 +443,7 @@ function InvoiceActions({ inv, trans }) {
                     </a>
                 </>
             )}
+            <RowOpenLink href={inv.url} title={trans.view} />
         </>
     );
 }

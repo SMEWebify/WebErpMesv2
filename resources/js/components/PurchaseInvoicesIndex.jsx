@@ -307,13 +307,6 @@ function PurchaseInvoicesTable({ invoices, trans, onSort, sortField, sortAsc }) 
             storage={{ order: LS_COL_ORDER, hidden: LS_HIDDEN_COLS }}
             emptyText={trans.no_data ?? 'Aucune donnée'}
             rowHref={inv => inv.url}
-            rowActions={inv => (
-                <a href={inv.url} className="btn btn-sm btn-outline-primary" title={trans.view ?? 'Voir'}>
-                    <i className="fas fa-folder-open" />
-                </a>
-            )}
-            actionsWidth={80}
-            actionsHeader={trans.action ?? 'Action'}
         />
     );
 }

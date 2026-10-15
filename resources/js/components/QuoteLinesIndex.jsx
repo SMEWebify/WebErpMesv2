@@ -94,9 +94,6 @@ function quoteLineColumns(trans, currency, locale) {
         { key: 'actions',       label: trans.action,        hideable: false,
           render: l => (
               <div className="btn-group btn-group-sm">
-                  <a href={l.quote_url} className="btn btn-sm btn-info" title={trans.view_quote}>
-                      <i className="fas fa-eye" />
-                  </a>
                   <a href={l.task_url} className="btn btn-success btn-sm" title={trans.tasks}>
                       <i className="fas fa-list" />
                       {' '}({l.task_count}) ({l.sub_assembly_count})

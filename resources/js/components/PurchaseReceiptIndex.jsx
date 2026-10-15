@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, RowOpenLink } from './table';
 import { apiFetch } from '../lib/http';
 import { formatDate } from '../utils';
 
@@ -285,12 +285,10 @@ function ReceiptsTable({ rows, sortField, sortAsc, onSort, trans }) {
             rowHref={r => r.url}
             rowActions={r => (
                 <div className="d-flex" style={{ gap: '2px' }}>
-                    <a href={r.url} className="btn btn-sm btn-info" title={trans.view ?? 'Voir'}>
-                        <i className="fas fa-eye" />
-                    </a>
                     <a href={r.pdf_url} className="btn btn-sm btn-outline-secondary" title="PDF" target="_blank" rel="noreferrer">
                         <i className="fas fa-file-pdf text-danger" />
                     </a>
+                    <RowOpenLink href={r.url} title={trans.view ?? 'Voir'} />
                 </div>
             )}
             mobileActions={r => r.pdf_url && (

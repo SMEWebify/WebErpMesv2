@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { formatQty } from '../utils';
+import { rowLinkProps } from '../lib/rowLink.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -91,9 +92,6 @@ function colDefs(t) {
             align:     '',
             render:    (task) => (
                 <>
-                    <a href={`/production/Task/Statu/Id/${task.id}`} className="btn btn-sm btn-success me-1">
-                        {t('view_trans_key')}
-                    </a>
                     <span className="text-muted small">#{task.id}</span>
                     {' — '}
                     {task.label}
@@ -500,7 +498,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                             </tr>
                         )}
                         {filtered.map((task) => (
-                            <tr key={task.id}>
+                            <tr key={task.id} {...rowLinkProps(`/production/Task/Statu/Id/${task.id}`)}>
                                 {visibleCols.map((colId) => {
                                     const col      = COLS[colId];
                                     const alignCls = col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : '';
