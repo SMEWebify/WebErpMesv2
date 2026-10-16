@@ -64,8 +64,8 @@ class TaskWorkedSecondsTest extends TestCase
 
     public function test_double_demarrer_du_meme_couple_n_ouvre_pas_de_seconde_session(): void
     {
-        // Remarque de Kevin : un second « Démarrer » du même opérateur/ressource
-        // ne doit pas créer de session fantôme. Ici le 2e START est ignoré, la
+        // Un second « Démarrer » du même opérateur/ressource ne doit pas créer
+        // de session fantôme. Ici le 2e START est ignoré, la
         // FIN referme l'unique session : 2 h, et aucune session ne reste ouverte.
         $seconds = Task::workedSecondsFrom([
             $this->activity(TaskActivities::TYPE_START, '2026-01-05 08:00:00', user: 1, resource: 10),
@@ -86,6 +86,24 @@ class TaskWorkedSecondsTest extends TestCase
         ]);
 
         $this->assertSame(1 * 3600, $seconds);
+    }
+
+    public function test_finish_referme_toutes_les_sessions_ouvertes(): void
+    {
+        // Le bureau (user 7, qui n'a rien pointé) déclare la fin : les deux
+        // sessions ouvertes doivent s'arrêter à ce FINISH, pas courir jusqu'à now().
+        Carbon::setTestNow(Carbon::parse('2026-01-10 08:00:00'));
+
+        $seconds = Task::workedSecondsFrom([
+            $this->activity(TaskActivities::TYPE_START,  '2026-01-05 08:00:00', user: 1, resource: 10),
+            $this->activity(TaskActivities::TYPE_START,  '2026-01-05 08:30:00', user: 2, resource: 10),
+            $this->activity(TaskActivities::TYPE_FINISH, '2026-01-05 10:00:00', user: 7, resource: 10),
+        ]);
+
+        Carbon::setTestNow();
+
+        // OP1 : 2 h, OP2 : 1 h 30, plus rien d'ouvert après la fin.
+        $this->assertSame((int) (3.5 * 3600), $seconds);
     }
 
     public function test_session_ouverte_comptee_jusqu_a_maintenant(): void

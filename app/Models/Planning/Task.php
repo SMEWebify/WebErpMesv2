@@ -547,13 +547,15 @@ class Task extends Model
      * activités en une requête au lieu d'une par tâche.
      *
      * L'appariement se fait PAR COUPLE (opérateur, ressource) : deux opérateurs
-     * — ou un opérateur sur deux ressources — qui pointent la même tâche en même
-     * temps sont comptés chacun, au lieu de n'en retenir qu'un seul (l'ancienne
-     * boucle n'ouvrait qu'une session globale). Un second START d'un couple déjà
-     * ouvert est ignoré : un double « Démarrer » (double-clic, oubli de pointer
-     * la fin) ne crée pas de session fantôme qui grossirait d'heure en heure. Une
-     * FIN sans START du même couple referme la session ouverte la plus ancienne.
-     * Sans simultanéité, le résultat est identique au comportement précédent.
+     * qui pointent la même tâche en même temps sont comptés chacun, au lieu de
+     * n'en retenir qu'un seul (l'ancienne boucle n'ouvrait qu'une session
+     * globale). Un second START d'un couple déjà ouvert est ignoré : un double
+     * « Démarrer » (double-clic, oubli de pointer la fin) ne crée pas de session
+     * fantôme qui grossirait d'heure en heure. Un END sans START du même couple
+     * referme la session ouverte la plus ancienne. Un FINISH (tâche terminée)
+     * referme TOUTES les sessions ouvertes, quel que soit l'opérateur qui le
+     * déclare. Sans simultanéité, le résultat est identique au comportement
+     * précédent.
      *
      * @param iterable<object{type:int|string,timestamp:mixed,user_id?:mixed,methods_ressources_id?:mixed}> $activities
      */
@@ -575,7 +577,18 @@ class Task extends Model
                 continue;
             }
 
-            // FIN : referme la session du même couple ; à défaut (FIN orpheline),
+            if ((int) $activity->type === TaskActivities::TYPE_FINISH) {
+                // Tâche terminée : plus aucune session ne peut rester ouverte,
+                // quel que soit l'opérateur qui déclare la fin (souvent le bureau,
+                // via closeTasks() ou le tableau GTD, qui n'a rien pointé).
+                foreach ($open as $openAt) {
+                    $worked += (int) max(0, $openAt->diffInSeconds($ts));
+                }
+                $open = [];
+                continue;
+            }
+
+            // FIN de session (END) : referme la session du même couple ; à défaut (FIN orpheline),
             // la session ouverte la plus ancienne. Carbon 3 : écart signé,
             // $debut->diffInSeconds($fin) est positif.
             if (isset($open[$key])) {
