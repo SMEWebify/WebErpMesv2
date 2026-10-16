@@ -137,6 +137,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
+| `php artisan wem:purchases:backfill-line-totals [--dry-run] [-v]` | **À lancer une fois après déploiement.** Recalcule `purchase_lines.unit_price_after_discount` / `total_selling_price` (prix × qté × (1 − remise)) des lignes où ils diffèrent : l'écran React des lignes d'achat ne les renseignait pas, d'où 0 € sur « En attente de facturation ». Les écritures comptables passées ne sont pas touchées |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
 | `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables pour les appareils de contrôle qualité à étalonner |
 | `php artisan ldap:import-users` | Importe les utilisateurs depuis l'Active Directory LDAP |

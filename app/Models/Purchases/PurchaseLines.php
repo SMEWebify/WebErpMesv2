@@ -76,6 +76,24 @@ class PurchaseLines extends Model
         return $this->belongsTo(StockLocation::class, 'stock_locations_id');
     }
 
+    /**
+     * Prix unitaire remisé et total de ligne, tels que les stockent
+     * unit_price_after_discount / total_selling_price (decimal 10,3).
+     *
+     * Même formule que l'affichage (getTotalAttribute, PurchaseCalculatorService) :
+     * ces colonnes ne sont qu'un cache, lu par l'écran « En attente de
+     * facturation », le dossier d'affaire et les KPI achats.
+     */
+    public static function netPrices($sellingPrice, $qty, $discount): array
+    {
+        $unit = (float) $sellingPrice * (1 - ((float) ($discount ?? 0) / 100));
+
+        return [
+            'unit_price_after_discount' => round($unit, 3),
+            'total_selling_price'       => round($unit * (float) $qty, 3),
+        ];
+    }
+
     public function getTotalAttribute()
     {
         $factory = app('Factory'); 

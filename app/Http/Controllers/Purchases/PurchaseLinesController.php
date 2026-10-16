@@ -107,6 +107,7 @@ class PurchaseLinesController extends Controller
 
         $line = PurchaseLines::create([
             'purchases_id'       => $purchaseId,
+            'tasks_id'           => 0, // ligne sans tâche (MySQL non strict mettait déjà 0)
             'ordre'              => $validated['ordre'],
             'code'               => $validated['code'] ?? '',
             'product_id'         => $validated['product_id'] ?? null,
@@ -118,7 +119,7 @@ class PurchaseLinesController extends Controller
             'discount'           => $validated['discount'],
             'accounting_vats_id' => $validated['accounting_vats_id'] ?? $defaultVat->id,
             'delivery_date'      => $validated['delivery_date'] ?? null,
-        ]);
+        ] + PurchaseLines::netPrices($validated['selling_price'], $validated['qty'], $validated['discount']));
 
         $line->load([
             'unit:id,label,code',
@@ -157,7 +158,7 @@ class PurchaseLinesController extends Controller
             'delivery_date'      => 'nullable|date',
         ]);
 
-        $line->update($validated);
+        $line->update($validated + PurchaseLines::netPrices($validated['selling_price'], $validated['qty'], $validated['discount']));
         $line->load([
             'unit:id,label,code',
             'VAT:id,label,rate',
