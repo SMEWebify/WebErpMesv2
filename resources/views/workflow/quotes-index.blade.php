@@ -76,6 +76,7 @@
     'contact'               => __('general_content.contact_trans_key'),
     'address'               => __('general_content.new_address_trans_key'),
     'validity_date'         => __('general_content.validity_date_trans_key'),
+    'expired'               => __('general_content.expired_trans_key'),
     'status'                => __('general_content.status_trans_key'),
     'lines'                 => __('general_content.quote_line_trans_key'),
     'created_at'            => __('general_content.created_at_trans_key'),

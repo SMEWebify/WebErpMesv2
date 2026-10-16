@@ -79,6 +79,7 @@
     'lines'                  => __('general_content.order_line_trans_key'),
     'created_at'             => __('general_content.created_at_trans_key'),
     'customer_reference'     => __('general_content.customer_reference_trans_key'),
+    'days_late'              => __('general_content.days_late_trans_key'),
     'total_amount'           => __('general_content.total_trans_key'),
     'payment_condition'      => __('general_content.payment_conditions_trans_key'),
     'payment_method'         => __('general_content.payment_method_trans_key'),

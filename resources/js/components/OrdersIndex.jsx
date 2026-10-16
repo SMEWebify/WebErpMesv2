@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // useRef used by ListTab debounce
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { apiFetchOrThrow as apiFetch, apiRequest } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { formatDate, formatCurrency } from '../utils';
@@ -431,35 +431,35 @@ function OrdersTable({ orders, loading, trans, onSort, sortField, sortAsc, curre
 // OrderCards (card view)
 // ---------------------------------------------------------------------------
 
+// Commande pas encore entièrement livrée dont la date de livraison est passée.
+const UNDELIVERED_STATUSES = [1, 2, 4];
+
 function OrderCards({ orders, loading, trans, currency, locale }) {
-    if (loading) {
-        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
-    }
-    if (orders.length === 0) {
-        return <div className="text-center text-muted py-4">{trans.no_results ?? 'No results'}</div>;
-    }
+    const today = todayIso();
     return (
-        <div className="row">
-            {orders.map(o => (
-                <div key={o.id} className="col-md-3 mb-3">
-                    <div className="card h-100 mb-3">
-                        <div className="card-body p-2">
-                            <div className="d-flex justify-content-between align-items-start mb-1">
-                                <a href={o.url} className="fw-bold text-primary"><code>{o.code}</code></a>
-                                <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />
-                            </div>
-                            <div className="text-truncate small" title={o.label}>{o.label}</div>
-                            {o.companie && <div className="text-muted" style={{ fontSize: '0.72rem' }}>{o.companie.label}</div>}
-                            {o.contact  && <div className="text-muted" style={{ fontSize: '0.72rem' }}>{o.contact.name}</div>}
-                            <div className="mt-2 d-flex justify-content-between">
-                                <span className="text-muted small">{formatDate(o.validity_date, locale)}</span>
-                                <span className="fw-bold small">{formatCurrency(o.total_amount, currency, locale)}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
+        <IndexCardGrid items={orders} loading={loading} emptyText={trans.no_results ?? 'No results'} renderCard={o => {
+            const late = UNDELIVERED_STATUSES.includes(o.statu) ? daysPast(o.validity_date, today) : 0;
+            return (
+                <IndexCard
+                    href={o.url}
+                    status={STATUS_CONFIG[o.statu]?.badge}
+                    code={o.code}
+                    badges={<StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />}
+                    title={o.label}
+                    details={[
+                        { icon: 'fa-building', text: o.companie?.label ?? '—', title: o.companie?.label },
+                        { icon: 'fa-user',     text: o.contact?.name, title: o.contact?.name },
+                        { icon: 'fa-hashtag',  text: o.customer_reference, title: trans.customer_reference },
+                    ]}
+                    meta={[
+                        { icon: late ? 'fa-exclamation-triangle' : 'fa-truck', danger: late > 0, title: trans.validity_date,
+                          text: <>{o.validity_date ? formatDate(o.validity_date, locale) : '—'}{late > 0 && trans.days_late && <span className="ms-1">({trans.days_late.replace(':days', late)})</span>}</> },
+                        { icon: 'fa-list', text: String(o.order_lines_count ?? 0), title: trans.lines },
+                    ]}
+                    amount={o.total_amount > 0 ? formatCurrency(o.total_amount, currency, locale) : null}
+                />
+            );
+        }} />
     );
 }
 

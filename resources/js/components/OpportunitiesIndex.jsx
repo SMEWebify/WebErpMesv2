@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
 
@@ -312,56 +312,24 @@ function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc,
 // ---------------------------------------------------------------------------
 
 function OpportunityCards({ items, loading, trans, currency, locale }) {
-    if (loading) {
-        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
-    }
-    if (items.length === 0) {
-        return <div className="text-center text-muted py-4">{trans.no_data ?? '—'}</div>;
-    }
     return (
-        <div className="row">
-            {items.map(o => {
-                const cfg = STATUS_CONFIG[o.statu] ?? {};
-                const bg  = cfg.badge?.replace(/^(badge|text-bg)-/, 'bg-') ?? 'bg-secondary';
-                return (
-                    <div key={o.id} className="col-md-3 mb-3">
-                        <div className="card h-100 mb-3">
-                            <div className={`card-header ${bg} py-2`}>
-                                <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
-                                    {o.user && (
-                                        <span className="badge text-bg-light" style={{ fontSize: '0.65rem' }}>
-                                            {o.user.name.charAt(0).toUpperCase()}
-                                        </span>
-                                    )}
-                                    <span className="text-white fw-bold text-truncate" style={{ fontSize: '0.82rem' }}>
-                                        {o.label}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="card-body py-2">
-                                <p className="mb-1" style={{ fontSize: '0.78rem' }}>
-                                    <strong>{trans.probability ?? 'Prob.'}</strong> {o.probality ?? '—'} %
-                                </p>
-                                <p className="mb-1" style={{ fontSize: '0.78rem' }}>
-                                    <strong>{trans.budget ?? 'Budget'}</strong> {formatCurrency(o.budget, currency, locale)}
-                                </p>
-                                <p className="mb-0" style={{ fontSize: '0.78rem' }}>
-                                    <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />
-                                </p>
-                            </div>
-                            <div className="card-footer bg-secondary py-1 d-flex justify-content-between align-items-center">
-                                <span className="text-white" style={{ fontSize: '0.72rem' }}>
-                                    {o.companie?.label ?? '—'}
-                                </span>
-                                <a href={o.url} className="btn btn-sm btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
-                                    <i className="fas fa-eye" />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+        <IndexCardGrid items={items} loading={loading} emptyText={trans.no_data ?? '—'} renderCard={o => (
+            <IndexCard
+                href={o.url}
+                status={STATUS_CONFIG[o.statu]?.badge}
+                badges={<StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />}
+                title={o.label}
+                details={[
+                    { icon: 'fa-building', text: o.companie?.label ?? '—', title: o.companie?.label },
+                    { icon: 'fa-user-tie', text: o.user?.name, title: trans.user },
+                ]}
+                meta={[
+                    { icon: 'fa-percentage', text: o.probality != null ? `${o.probality} %` : null, title: trans.probability },
+                    { icon: 'fa-clock',      text: o.created_at, title: trans.created_at },
+                ]}
+                amount={o.budget > 0 ? formatCurrency(o.budget, currency, locale) : null}
+            />
+        )} />
     );
 }
 

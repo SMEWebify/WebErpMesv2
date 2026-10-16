@@ -9,3 +9,4 @@ export { listFirstOnMobile } from './viewport.js';
 export { default as useIndexTab } from './useIndexTab.js';
 export { toISODate } from './dates.js';
 export { default as MobileFilters } from './MobileFilters.jsx';
+export { IndexCard, IndexCardGrid, todayIso, daysPast } from './IndexCards.jsx';

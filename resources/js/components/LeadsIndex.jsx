@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate } from '../utils';
 
@@ -330,60 +330,26 @@ function LeadsTable({ items, loading, trans, onSort, sortField, sortAsc, locale 
 // ---------------------------------------------------------------------------
 
 function LeadCards({ items, loading, trans }) {
-    if (loading) {
-        return <div className="text-center py-4"><i className="fas fa-spinner fa-spin" /></div>;
-    }
-    if (items.length === 0) {
-        return <div className="text-center text-muted py-4">{trans.no_data ?? '—'}</div>;
-    }
     return (
-        <div className="row">
-            {items.map(l => {
-                const sCfg = STATUS_CONFIG[l.statu]   ?? {};
-                const pCfg = PRIORITY_CONFIG[l.priority] ?? {};
-                const bg   = sCfg.badge?.replace(/^(badge|text-bg)-/, 'bg-') ?? 'bg-secondary';
-                return (
-                    <div key={l.id} className="col-md-3 mb-3">
-                        <div className="card h-100 mb-3">
-                            <div className={`card-header ${bg} py-2`}>
-                                <div className="d-flex align-items-center justify-content-between">
-                                    <span className="text-white fw-bold text-truncate" style={{ fontSize: '0.82rem' }}>
-                                        {l.companie?.label ?? '—'}
-                                    </span>
-                                    <span className={`badge ${pCfg.badge}`} style={{ fontSize: '0.65rem' }}>
-                                        {trans[pCfg.label] ?? ''}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="card-body py-2">
-                                <p className="mb-1" style={{ fontSize: '0.78rem' }}>
-                                    <strong>{trans.contact ?? 'Contact'}</strong> {l.contact?.name ?? '—'}
-                                </p>
-                                <p className="mb-1" style={{ fontSize: '0.78rem' }}>
-                                    <strong>{trans.source ?? 'Source'}</strong> {l.source ?? '—'}
-                                </p>
-                                {l.campaign && (
-                                    <p className="mb-1" style={{ fontSize: '0.78rem' }}>
-                                        <strong>{trans.campaign ?? 'Campaign'}</strong> {l.campaign}
-                                    </p>
-                                )}
-                                <p className="mb-0" style={{ fontSize: '0.78rem' }}>
-                                    <StatusBadge statu={l.statu} config={STATUS_CONFIG} trans={trans} />
-                                </p>
-                            </div>
-                            <div className="card-footer bg-secondary py-1 d-flex justify-content-between align-items-center">
-                                <span className="text-white" style={{ fontSize: '0.72rem' }}>
-                                    {l.user?.name ?? '—'}
-                                </span>
-                                <a href={l.url} className="btn btn-sm btn-light" style={{ fontSize: '0.7rem', padding: '1px 6px' }}>
-                                    <i className="fas fa-eye" />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+        <IndexCardGrid items={items} loading={loading} emptyText={trans.no_data ?? '—'} renderCard={l => (
+            <IndexCard
+                href={l.url}
+                status={STATUS_CONFIG[l.statu]?.badge}
+                badges={<>
+                    {PRIORITY_CONFIG[l.priority] && <StatusBadge statu={l.priority} config={PRIORITY_CONFIG} trans={trans} />}
+                    <StatusBadge statu={l.statu} config={STATUS_CONFIG} trans={trans} />
+                </>}
+                title={l.companie?.label ?? '—'}
+                details={[
+                    { icon: 'fa-user',     text: l.contact?.name, title: trans.contact },
+                    { icon: 'fa-bullhorn', text: [l.source, l.campaign].filter(Boolean).join(' · '), title: trans.source },
+                ]}
+                meta={[
+                    { icon: 'fa-user-tie', text: l.user?.name, title: trans.user },
+                    { icon: 'fa-clock',    text: l.created_at, title: trans.created_at },
+                ]}
+            />
+        )} />
     );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QuoteRateWidget from './dashboard/widgets/QuoteRateWidget.jsx';
-import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab } from './table';
+import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { csrfToken, apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
@@ -379,36 +379,35 @@ function QuotesTable({ quotes, loading, sortField, sortAsc, onSort, trans }) {
 // Quote Cards
 // ---------------------------------------------------------------------------
 
+// Devis ouvert ou envoyé dont la date de validité est passée : le client ne peut plus
+// l'accepter en l'état, c'est l'information à voir en premier sur la carte.
+const OPEN_STATUSES = [1, 2];
+
 function QuoteCards({ quotes, loading, trans }) {
+    const today = todayIso();
     return (
-        <div className="row">
-            {loading ? (
-                <div className="col-12 text-center py-4"><i className="fas fa-spinner fa-spin" /></div>
-            ) : quotes.length === 0 ? (
-                <div className="col-12 text-center text-muted py-3">{trans.no_results}</div>
-            ) : null}
-            {!loading && quotes.map(q => (
-                <div key={q.id} className="col-md-4 col-lg-3 mb-3">
-                    <div className="card h-100 mb-3">
-                        <div className="card-header py-1 px-2 d-flex justify-content-between align-items-center">
-                            <code className="small">{q.code}</code>
-                            <StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />
-                        </div>
-                        <div className="card-body py-2 px-2">
-                            <p className="mb-1 fw-bold">{q.label}</p>
-                            <p className="mb-0 small text-muted">{q.companie?.label ?? '—'}</p>
-                            <p className="mb-0 small text-muted">{q.contact?.name ?? '—'}</p>
-                        </div>
-                        <div className="card-footer py-1 px-2 d-flex justify-content-between align-items-center">
-                            <small className="text-muted">{q.created_at}</small>
-                            <a href={q.url} className="btn btn-sm btn-info">
-                                <i className="fas fa-eye" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
+        <IndexCardGrid items={quotes} loading={loading} emptyText={trans.no_results} renderCard={q => {
+            const expired = OPEN_STATUSES.includes(q.statu) && daysPast(q.validity_date, today) > 0;
+            return (
+                <IndexCard
+                    href={q.url}
+                    status={STATUS_CONFIG[q.statu]?.badge}
+                    code={q.code}
+                    badges={<StatusBadge statu={q.statu} config={STATUS_CONFIG} trans={trans} fallback="value" />}
+                    title={q.label}
+                    details={[
+                        { icon: 'fa-building', text: q.companie?.label ?? '—', title: q.companie?.label },
+                        { icon: 'fa-user',     text: q.contact?.name, title: q.contact?.name },
+                    ]}
+                    meta={[
+                        { icon: expired ? 'fa-exclamation-triangle' : 'fa-calendar-alt', danger: expired, title: trans.validity_date,
+                          text: <>{q.validity_date ? formatDate(q.validity_date, trans.locale) : '—'}{expired && trans.expired && <span className="ms-1">({trans.expired})</span>}</> },
+                        { icon: 'fa-list', text: String(q.quote_lines_count ?? 0), title: trans.lines },
+                    ]}
+                    amount={q.total_amount > 0 ? formatCurrency(q.total_amount, trans.currency, trans.locale) : null}
+                />
+            );
+        }} />
     );
 }
 

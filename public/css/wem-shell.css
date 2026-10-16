@@ -95,3 +95,19 @@ body.sidebar-hidden .app-sidebar {
 .small-box > .small-box-footer {
     text-decoration: none;
 }
+
+/* Carte cliquable (vue cartes des index) : la carte entière ouvre la fiche
+   (stretched-link), le survol le signale comme le fait la ligne de tableau. */
+.wem-card-link {
+    transition: box-shadow .15s ease-in-out, transform .15s ease-in-out;
+}
+.wem-card-link:hover {
+    box-shadow: var(--bs-box-shadow) !important;
+    transform: translateY(-1px);
+}
+.wem-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
