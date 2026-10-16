@@ -1,0 +1,324 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "A-commercial": {
+                "path": "::A-commercial",
+                "id": "6f72c7f2a8aaacb9a314b534caab1c78",
+                "groups": {},
+                "checks": {
+                        "quotes/list < 400": {
+                            "name": "quotes/list < 400",
+                            "path": "::A-commercial::quotes/list < 400",
+                            "id": "fef5b569de353358efde29d5e3e9772d",
+                            "passes": 327,
+                            "fails": 0
+                        },
+                        "quotes/show < 400": {
+                            "name": "quotes/show < 400",
+                            "path": "::A-commercial::quotes/show < 400",
+                            "id": "20fa29cb45499c89d6fd0bccd165cf2d",
+                            "passes": 327,
+                            "fails": 0
+                        },
+                        "orders/list < 400": {
+                            "name": "orders/list < 400",
+                            "path": "::A-commercial::orders/list < 400",
+                            "id": "d4e363bb5c8736530536977faa340686",
+                            "passes": 327,
+                            "fails": 0
+                        },
+                        "orders/show < 400": {
+                            "name": "orders/show < 400",
+                            "path": "::A-commercial::orders/show < 400",
+                            "id": "3e2902a996c72c2f1bb8c8df1cd3e3ca",
+                            "passes": 327,
+                            "fails": 0
+                        },
+                        "companies/show < 400": {
+                            "passes": 327,
+                            "fails": 0,
+                            "name": "companies/show < 400",
+                            "path": "::A-commercial::companies/show < 400",
+                            "id": "258ffdfe8222a5cc9872932e5e7c58e5"
+                        },
+                        "companies/timeline < 400": {
+                            "name": "companies/timeline < 400",
+                            "path": "::A-commercial::companies/timeline < 400",
+                            "id": "b4b05d1f265f9936aab097b278e25a4b",
+                            "passes": 327,
+                            "fails": 0
+                        }
+                    },
+                "name": "A-commercial"
+            },
+            "B-atelier": {
+                "name": "B-atelier",
+                "path": "::B-atelier",
+                "id": "929d0f259e1b9f1d4c24154791fb81ed",
+                "groups": {},
+                "checks": {
+                        "production/tasks < 400": {
+                            "id": "67600d92d25d2dd9766fd6bb946713a8",
+                            "passes": 196,
+                            "fails": 0,
+                            "name": "production/tasks < 400",
+                            "path": "::B-atelier::production/tasks < 400"
+                        },
+                        "load-planning < 400": {
+                            "name": "load-planning < 400",
+                            "path": "::B-atelier::load-planning < 400",
+                            "id": "d20a51a0575059bffc56b5dd73243b5d",
+                            "passes": 196,
+                            "fails": 0
+                        },
+                        "gantt/order < 400": {
+                            "name": "gantt/order < 400",
+                            "path": "::B-atelier::gantt/order < 400",
+                            "id": "740dcf1dabd45b60b2bf0050ca114bb0",
+                            "passes": 196,
+                            "fails": 0
+                        }
+                    }
+            },
+            "C-compta": {
+                "groups": {},
+                "checks": {
+                        "dashboard < 400": {
+                            "id": "3c3024d567979d8a3ef25cf313979544",
+                            "passes": 79,
+                            "fails": 0,
+                            "name": "dashboard < 400",
+                            "path": "::C-compta::dashboard < 400"
+                        },
+                        "kpi/recent-orders < 400": {
+                            "path": "::C-compta::kpi/recent-orders < 400",
+                            "id": "2c36ee5d58ae11611a59445af3f6c978",
+                            "passes": 79,
+                            "fails": 0,
+                            "name": "kpi/recent-orders < 400"
+                        },
+                        "kpi/otd < 400": {
+                            "fails": 0,
+                            "name": "kpi/otd < 400",
+                            "path": "::C-compta::kpi/otd < 400",
+                            "id": "f4f3bcdd23ba1b2e4a6f73dbfb4945dc",
+                            "passes": 79
+                        },
+                        "kpi/nc-stats < 400": {
+                            "path": "::C-compta::kpi/nc-stats < 400",
+                            "id": "73ec367ae4a81b61f3fa43cc12e7ef73",
+                            "passes": 79,
+                            "fails": 0,
+                            "name": "kpi/nc-stats < 400"
+                        },
+                        "kpi/top-clients < 400": {
+                            "passes": 79,
+                            "fails": 0,
+                            "name": "kpi/top-clients < 400",
+                            "path": "::C-compta::kpi/top-clients < 400",
+                            "id": "b4f16d51732c05ad2b59e3c1abbe8d57"
+                        },
+                        "invoices/list < 400": {
+                            "id": "1d1b2d7f2955c0107092264ea14b29c2",
+                            "passes": 79,
+                            "fails": 0,
+                            "name": "invoices/list < 400",
+                            "path": "::C-compta::invoices/list < 400"
+                        },
+                        "invoices/show < 400": {
+                            "name": "invoices/show < 400",
+                            "path": "::C-compta::invoices/show < 400",
+                            "id": "89d142b715330e08e34b016f8cc00a5e",
+                            "passes": 79,
+                            "fails": 0
+                        },
+                        "products/show < 400": {
+                            "name": "products/show < 400",
+                            "path": "::C-compta::products/show < 400",
+                            "id": "867f20796425daacf4216a9324fe621f",
+                            "passes": 77,
+                            "fails": 0
+                        }
+                    },
+                "name": "C-compta",
+                "path": "::C-compta",
+                "id": "29d64a394eb8baaac84ddc587dda6334"
+            }
+        },
+        "checks": {
+            "login OK (pas sur /login)": {
+                "path": "::login OK (pas sur /login)",
+                "id": "b14a9fd87d35f4dc3851d7f78b3dd429",
+                "passes": 30,
+                "fails": 0,
+                "name": "login OK (pas sur /login)"
+            }
+        }
+    },
+    "metrics": {
+        "http_req_receiving": {
+            "p(95)": 2.999475,
+            "avg": 1.8380045645645624,
+            "min": 0,
+            "med": 0.4868,
+            "max": 1133.6733,
+            "p(90)": 1.8918099999999998
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 724.1768383183181,
+            "min": 41.5417,
+            "med": 352.0278,
+            "max": 8138.6779,
+            "p(90)": 1811.4242899999992,
+            "p(95)": 3093.848509999999
+        },
+        "data_sent": {
+            "count": 2707574,
+            "rate": 2829.266947710788
+        },
+        "vus": {
+            "value": 1,
+            "min": 0,
+            "max": 30
+        },
+        "http_reqs": {
+            "count": 3330,
+            "rate": 3.479668122044651
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 253.0977,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.11032702702702703
+        },
+        "http_req_sending": {
+            "avg": 0.0977215615615616,
+            "min": 0,
+            "med": 0,
+            "max": 164.7783,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "checks": {
+            "passes": 3210,
+            "fails": 0,
+            "value": 1
+        },
+        "group_duration": {
+            "med": 35635.1272,
+            "max": 87961.7159,
+            "p(90)": 71155.44242,
+            "p(95)": 78078.39102,
+            "avg": 38758.426491231025,
+            "min": 23152.3923
+        },
+        "data_received": {
+            "count": 640333417,
+            "rate": 669113.4470314789
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 3330,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_waiting": {
+            "min": 41.5417,
+            "med": 351.27864999999997,
+            "max": 8137.2685,
+            "p(90)": 1811.4242899999992,
+            "p(95)": 3092.720214999999,
+            "avg": 722.2411121921912
+        },
+        "http_req_duration": {
+            "p(90)": 1811.4242899999992,
+            "p(95)": 3093.848509999999,
+            "avg": 724.1768383183181,
+            "min": 41.5417,
+            "med": 352.0278,
+            "max": 8138.6779,
+            "thresholds": {
+                "p(95)<1000": true,
+                "p(99)<3000": true
+            }
+        },
+        "iteration_duration": {
+            "max": 87961.7159,
+            "p(90)": 71155.53834000001,
+            "p(95)": 78078.39102,
+            "avg": 38848.55508853291,
+            "min": 23152.3923,
+            "med": 35668.9176
+        },
+        "http_req_blocked": {
+            "avg": 0.1199515015015015,
+            "min": 0,
+            "med": 0,
+            "max": 253.0977,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "rt_atelier": {
+            "max": 8138.6779,
+            "p(90)": 3988.402410000001,
+            "p(95)": 4599.050924999999,
+            "avg": 1931.4275365646272,
+            "min": 352.4942,
+            "med": 1086.6563500000002,
+            "thresholds": {
+                "p(50)<500": true,
+                "p(95)<1000": true,
+                "p(99)<3000": true
+            }
+        },
+        "vus_max": {
+            "min": 30,
+            "max": 30,
+            "value": 30
+        },
+        "rt_commercial": {
+            "avg": 506.01813389398575,
+            "min": 56.7972,
+            "med": 308.5837,
+            "max": 5314.927,
+            "p(90)": 1204.4044000000001,
+            "p(95)": 1632.7372149999974,
+            "thresholds": {
+                "p(50)<500": false,
+                "p(95)<1000": true,
+                "p(99)<3000": false
+            }
+        },
+        "iterations": {
+            "rate": 0.6196526115232667,
+            "count": 593
+        },
+        "rt_compta": {
+            "med": 254.66905000000003,
+            "max": 3568.919,
+            "p(90)": 817.4520900000002,
+            "p(95)": 1144.14674,
+            "avg": 366.0275350793651,
+            "min": 47.831,
+            "thresholds": {
+                "p(50)<1000": false,
+                "p(95)<2000": false
+            }
+        }
+    }
+}

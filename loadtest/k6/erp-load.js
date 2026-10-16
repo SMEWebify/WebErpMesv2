@@ -11,6 +11,9 @@
 //   $env:TEST_EMAIL="loadtest@example.test"; $env:TEST_PASSWORD="password"
 //   k6 run loadtest/k6/erp-load.js
 //
+//   # équipe de 30 personnes, résultats conservés (cf. loadtest/results/)
+//   $env:PROFILE="team30"; k6 run --summary-export loadtest/results/<date>-team30-summary.json loadtest/k6/erp-load.js
+//
 //   # activer les écritures (kanban, pointage, facturation, FEC) — À FAIRE EXPRÈS :
 //   $env:ENABLE_WRITES="true"; k6 run loadtest/k6/erp-load.js
 
@@ -49,16 +52,26 @@ const TREND = { A: rtCommercial, B: rtAtelier, C: rtCompta };
 
 // --- Montée en charge + seuils ---------------------------------------------
 // PROFILE=smoke → ramp court (artisan serve mono-thread / validation harness)
+// PROFILE=team30 → équipe de 30 personnes : palier 15 puis 30 VUs tenus 10 min
 // PROFILE=full (défaut) → ramp 10→300 VUs (vhost + PHP-FPM multi-workers)
-const STAGES = (__ENV.PROFILE || 'full') === 'smoke'
-  ? [
-      { duration: '30s', target: 3 },
-      { duration: '1m', target: 3 },
-      { duration: '45s', target: 8 },
-      { duration: '1m30s', target: 8 },
-      { duration: '30s', target: 0 },
-    ]
-  : [
+const PROFILES = {
+  smoke: [
+    { duration: '30s', target: 3 },
+    { duration: '1m', target: 3 },
+    { duration: '45s', target: 8 },
+    { duration: '1m30s', target: 8 },
+    { duration: '30s', target: 0 },
+  ],
+  team30: [
+    { duration: '1m', target: 15 },
+    { duration: '3m', target: 15 },
+    { duration: '1m', target: 30 },
+    { duration: '10m', target: 30 },
+    { duration: '30s', target: 0 },
+  ],
+};
+const STAGES = PROFILES[__ENV.PROFILE || 'full']
+  || [
       { duration: '1m', target: 10 },
       { duration: '2m', target: 10 },
       { duration: '1m', target: 50 },
@@ -73,6 +86,9 @@ const STAGES = (__ENV.PROFILE || 'full') === 'smoke'
     ];
 
 export const options = {
+  // la connexion n'a lieu qu'une fois par VU : sans ça k6 vide les cookies à chaque
+  // itération et tout le parcours suivant mesure la page de login
+  noCookiesReset: true,
   scenarios: {
     erp: {
       executor: 'ramping-vus',
@@ -119,8 +135,15 @@ function req(profile, name, method, url, body, extra) {
     ? http.get(url, params)
     : http.post(url, body, params);
   TREND[profile].add(res.timings.duration);
-  const ok = check(res, { [`${name} < 400`]: (r) => r.status > 0 && r.status < 400 });
-  if (!ok) errByProfile.add(1, { profile });
+  // une session perdue (ou un compte non vérifié) renvoie une page de garde en 200 :
+  // c'est un échec, pas une réponse rapide
+  const ok = check(res, {
+    [`${name} < 400`]: (r) => r.status > 0 && r.status < 400 && !/\/(login|verify-email)$/.test(r.url),
+  });
+  if (!ok) {
+    errByProfile.add(1, { profile });
+    if (__ENV.DEBUG) console.warn(`${name} → ${res.status} ${res.url}`);
+  }
   return res;
 }
 
