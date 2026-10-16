@@ -88,3 +88,10 @@ body.sidebar-hidden .app-sidebar {
 .wem-iframe-tab .wem-launcher {
     display: none !important;
 }
+
+/* Cartes small-box : AdminLTE 4 ne retire pas le soulignement du lien de pied
+   (« Voir détail »), qui reprend celui de tous les liens. Le pied coloré suffit
+   à le signaler, comme en AdminLTE 3. */
+.small-box > .small-box-footer {
+    text-decoration: none;
+}
