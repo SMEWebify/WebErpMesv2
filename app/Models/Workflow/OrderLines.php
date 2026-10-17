@@ -31,7 +31,7 @@ class OrderLines extends Model
 
     // Fillable attributes for mass assignment.
     // promised_delivery_date n'y figure pas : posée par OrderLinesObserver à la création, jamais modifiée.
-    protected $fillable= ['orders_id',
+    protected $fillable= ['ind', 'orders_id',
                             'quote_lines_id',
                             'ordre',
                             'code',

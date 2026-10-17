@@ -126,7 +126,7 @@
                     <tr>
                         <td align="center">
                             {{ $DocumentLine->label }}<br>
-                            <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
+                            <span style="color: #6c757d">{{ $DocumentLine->code }}@if(!empty($DocumentLine->ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</span>
                         </td>
                         <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
                         <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>
@@ -141,7 +141,7 @@
                     <tr class="line-package">
                         <td align="center">
                             <strong>{{ $DocumentLine->label }}</strong>
-                            @if($DocumentLine->code)<br><span style="color: #6c757d">{{ $DocumentLine->code }}</span>@endif
+                            @if($DocumentLine->code)<br><span style="color: #6c757d">{{ $DocumentLine->code }}@if(!empty($DocumentLine->ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</span>@endif
                         </td>
                         <td align="center">-</td>
                         <td align="center">-</td>
@@ -163,7 +163,7 @@
                     <tr>
                         <td align="center">
                             {{ $DocumentLine->label }}<br>
-                            <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
+                            <span style="color: #6c757d">{{ $DocumentLine->code }}@if(!empty($DocumentLine->ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</span>
                         </td>
                         <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
                         <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>

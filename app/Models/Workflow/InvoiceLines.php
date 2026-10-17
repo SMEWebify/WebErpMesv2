@@ -41,7 +41,7 @@ class InvoiceLines extends Model
     }
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['invoices_id',
+    protected $fillable= ['ind', 'invoices_id',
                             'order_line_id',
                             'delivery_line_id',
                             'label',
@@ -109,6 +109,15 @@ class InvoiceLines extends Model
     public function getDisplayLabelAttribute(): string
     {
         return $this->label ?? $this->orderLine?->label ?? '';
+    }
+
+    /**
+     * Indice du plan : celui figé sur la ligne, sinon celui de la ligne de commande
+     * (lignes antérieures au snapshot). Null si aucun indice n'a été saisi.
+     */
+    public function getDisplayIndAttribute(): ?string
+    {
+        return $this->ind ?? $this->orderLine?->ind;
     }
 
     public function getDisplayCodeAttribute(): string

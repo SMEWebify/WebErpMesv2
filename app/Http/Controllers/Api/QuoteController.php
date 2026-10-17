@@ -195,7 +195,7 @@ class QuoteController extends Controller
             $lineId = $lineData['id'] ?? null;
 
             $linePayload = collect($lineData)->only([
-                'ordre', 'code', 'product_id', 'label', 'qty',
+                'ordre', 'code', 'ind', 'product_id', 'label', 'qty',
                 'methods_units_id', 'selling_price', 'discount',
                 'accounting_vats_id', 'delivery_date', 'statu', 'use_calculated_price',
             ])->all();

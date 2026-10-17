@@ -124,6 +124,7 @@
                                     <th rowspan="2" class="align-middle">
                                         {{ $DocumentLine->code }} <br/>
                                         {{ $DocumentLine->label }}
+                                        @if(!empty($DocumentLine->ind))<br/>{{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif
                                     </th>
                                     <th>{{ __('general_content.qty_trans_key') }} : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
                                     <th>Délai interne :

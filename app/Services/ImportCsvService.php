@@ -731,6 +731,7 @@ class ImportCsvService
                         'orders_id'=>$idOrder,
                         //'ordre'=> array_key_exists($request->ordre,  $importData) ? $importData[$request->ordre] : null,
                         'code'=>utf8_encode($data[$request->code]),
+                        'ind'=>(isset($request->ind) && array_key_exists($request->ind, $importData) && trim((string) $data[$request->ind]) !== '') ? trim($data[$request->ind]) : null,
                         'label'=>array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
                         'qty'=>array_key_exists($request->qty,  $importData) ? $data[$request->qty] : null,
                         'delivered_remaining_qty'=>array_key_exists($request->qty,  $importData) ? $data[$request->qty] : null,

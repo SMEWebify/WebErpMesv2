@@ -293,6 +293,7 @@ class StockController extends Controller
             'orders_id'               => $order->id,
             'ordre'                   => 10,
             'code'                    => $product->code,
+            'ind'                     => $product->ind,
             'product_id'              => $product->id,
             'label'                   => $product->label,
             'qty'                     => $productQuantity,

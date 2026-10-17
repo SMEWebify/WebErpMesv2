@@ -138,6 +138,7 @@ class SalesOrderExportService
             'orders_id' => $this->castInt($line->orders_id),
             'ordre' => $this->castInt($line->ordre),
             'code' => $line->code,
+            'ind' => $line->ind,
             'product_id' => $line->product_id,
             'product' => $this->mapProduct($line->Product),
             'label' => $line->label,

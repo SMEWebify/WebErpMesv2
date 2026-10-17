@@ -100,6 +100,7 @@ class QuoteLineToOrderLineConverter
             'quote_lines_id'          => $quoteLine->id,
             'ordre'                   => $quoteLine->ordre,
             'code'                    => $quoteLine->code,
+            'ind'                     => $quoteLine->ind,
             'product_id'              => $quoteLine->product_id,
             'label'                   => $quoteLine->label,
             'qty'                     => $quoteLine->qty,

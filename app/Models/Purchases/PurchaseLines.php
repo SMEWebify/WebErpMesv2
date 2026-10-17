@@ -21,7 +21,7 @@ class PurchaseLines extends Model
     use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['purchases_id', 
+    protected $fillable= ['ind', 'purchases_id', 
                             'tasks_id', 
                             'ordre',
                             'code',

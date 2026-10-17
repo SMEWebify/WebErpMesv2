@@ -23,7 +23,7 @@ class OrderConfirmationLines extends Model
     use HasFactory, LogsActivity, HasSalesLineType;
 
     // Fillable attributes for mass assignment
-    protected $fillable = ['order_confirmation_id',
+    protected $fillable = ['ind', 'order_confirmation_id',
                             'order_line_id',
                             'ordre',
                             'code',
