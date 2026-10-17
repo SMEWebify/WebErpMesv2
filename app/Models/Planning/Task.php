@@ -54,6 +54,7 @@ class Task extends Model
                             'delay',
                             'due_date',
                             'qty',
+                            'planned_qty',
                             'qty_init',
                             'qty_aviable',
                             'unit_cost',
@@ -501,6 +502,36 @@ class Task extends Model
     public function TotalTime()
     {
         return round($this->ProductTime() + $this->seting_time, 2);
+    }
+
+    /**
+     * Durée planifiée de l'opération, en heures : TotalTime() quand aucune
+     * quantité propre n'est saisie, sinon réglage + quantité de l'opération ×
+     * temps unitaire (lot partagé entre deux machines). Sert à ordonnancer et à
+     * mesurer la charge ; coûts, prix et avancement restent sur TotalTime().
+     */
+    public function plannedHours(): float
+    {
+        if ($this->planned_qty === null || $this->planned_qty === '') {
+            return (float) $this->TotalTime();
+        }
+
+        return round(((float) $this->planned_qty * $this->unit_time) + $this->seting_time, 2);
+    }
+
+    /**
+     * Liens vers les opérations dont celle-ci dépend (elle en est le successeur),
+     * dans l'ordre de saisie : la notation relue reste celle qui a été écrite.
+     */
+    public function predecessorLinks()
+    {
+        return $this->hasMany(TaskDependency::class, 'task_id')->orderBy('id');
+    }
+
+    /** Liens des opérations qui dépendent de celle-ci. */
+    public function successorLinks()
+    {
+        return $this->hasMany(TaskDependency::class, 'predecessor_task_id');
     }
 
     /**
