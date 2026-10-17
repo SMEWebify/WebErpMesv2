@@ -4,6 +4,7 @@ namespace App\Services\Planning;
 
 use App\Models\Planning\SubAssembly;
 use App\Models\Planning\Task;
+use App\Models\Planning\TaskDependency;
 
 /**
  * Copie la gamme et la nomenclature d'un porteur (ligne de devis, ligne de
@@ -14,6 +15,9 @@ use App\Models\Planning\Task;
  * qui portent la clé de la ligne ne copie que le premier niveau, et les
  * niveaux inférieurs restent branchés sur la nomenclature d'origine. Chaque
  * `sub_assembly_id` est donc réécrit vers sa copie.
+ *
+ * Les liens entre opérations (task_dependencies) suivent : ceux dont les deux
+ * bouts ont été copiés sont recréés entre les copies.
  */
 class BillOfMaterialsCopier
 {
@@ -26,6 +30,9 @@ class BillOfMaterialsCopier
 
     /** @var array<int, true> sous-ensembles déjà copiés, garde-fou contre un cycle */
     private array $copied;
+
+    /** @var array<int, int> id d'origine → id de la copie, pour recréer les liens */
+    private array $taskMap;
 
     public const KEYS = ['quote_lines_id', 'order_lines_id', 'products_id'];
 
@@ -49,6 +56,7 @@ class BillOfMaterialsCopier
         $this->origin        = $origin;
         $this->taskOverrides = $taskOverrides;
         $this->copied        = [];
+        $this->taskMap       = [];
 
         $count = 0;
 
@@ -61,6 +69,8 @@ class BillOfMaterialsCopier
         foreach (SubAssembly::where($sourceKey, $sourceId)->get() as $sub) {
             $count += $this->copySubAssembly($sub, ['sub_assembly_id' => null] + $this->lineKeys($sub));
         }
+
+        $this->copyDependencies();
 
         return $count;
     }
@@ -94,6 +104,8 @@ class BillOfMaterialsCopier
         }
         $newTask->save();
 
+        $this->taskMap[$task->id] = $newTask->id;
+
         $resources = $task->resources->mapWithKeys(fn ($resource) => [
             $resource->id => [
                 'role'        => $resource->pivot->role,
@@ -105,6 +117,30 @@ class BillOfMaterialsCopier
         if (!empty($resources)) {
             $newTask->resources()->attach($resources);
         }
+    }
+
+    /**
+     * Recrée entre les copies les liens dont les deux opérations ont été copiées.
+     */
+    private function copyDependencies(): void
+    {
+        if ($this->taskMap === []) {
+            return;
+        }
+
+        $ids = array_keys($this->taskMap);
+
+        TaskDependency::query()
+            ->whereIn('task_id', $ids)
+            ->whereIn('predecessor_task_id', $ids)
+            ->get()
+            ->each(fn (TaskDependency $link) => TaskDependency::create([
+                'task_id'             => $this->taskMap[$link->task_id],
+                'predecessor_task_id' => $this->taskMap[$link->predecessor_task_id],
+                'type'                => $link->type,
+                'lag_value'           => $link->lag_value,
+                'lag_unit'            => $link->lag_unit,
+            ]));
     }
 
     /**

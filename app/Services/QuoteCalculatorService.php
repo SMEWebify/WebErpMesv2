@@ -107,7 +107,7 @@ class QuoteCalculatorService
         $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
-                $TotalServiceProductTimeForQuoteCurentLine =  $TechnicalCutLine->unit_time*$quoteLine->qty ;
+                $TotalServiceProductTimeForQuoteCurentLine =  $TechnicalCutLine->unit_time*$TechnicalCutLine->operationQty($quoteLine->qty) ;
                 if(array_key_exists($TechnicalCutLine->label, $tableauService)){
                     $tableauService[$TechnicalCutLine->label][1] += $TotalServiceProductTimeForQuoteCurentLine;
                 }
@@ -169,7 +169,7 @@ class QuoteCalculatorService
         $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
-                $TotalServiceCostForQuoteCurentLine =  $TechnicalCutLine->unit_cost*$quoteLine->qty ;
+                $TotalServiceCostForQuoteCurentLine =  $TechnicalCutLine->unit_cost*$TechnicalCutLine->operationQty($quoteLine->qty) ;
                 if(array_key_exists($TechnicalCutLine->label, $tableauService)){
                     $tableauService[$TechnicalCutLine->label][1] += $TotalServiceCostForQuoteCurentLine;
                 }
@@ -201,7 +201,7 @@ class QuoteCalculatorService
         $quoteLines = $this->quote->quoteLines->filter->isArticle();
         foreach ($quoteLines as $quoteLine) {
             foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
-                $TotalServicePriceForQuoteCurentLine =  $TechnicalCutLine->unit_price*$quoteLine->qty ;
+                $TotalServicePriceForQuoteCurentLine =  $TechnicalCutLine->unit_price*$TechnicalCutLine->operationQty($quoteLine->qty) ;
                 if(array_key_exists($TechnicalCutLine->label, $tableauService)){
                     $tableauService[$TechnicalCutLine->label][1] += $TotalServicePriceForQuoteCurentLine;
                 }
