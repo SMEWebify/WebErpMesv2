@@ -137,7 +137,7 @@ class CalculateTaskResources implements ShouldQueue
 
             foreach ($resource->tasks->sortBy('id') as $task) {
                 $factor = (float) ($task->pivot->load_factor ?? 1);
-                $this->book($resource, Carbon::parse($task->start_date), $task->TotalTime() * $factor, $map);
+                $this->book($resource, Carbon::parse($task->start_date), $task->plannedHours() * $factor, $map);
             }
         });
 
@@ -155,7 +155,7 @@ class CalculateTaskResources implements ShouldQueue
         $taskDate   = $task->start_date
             ? Carbon::parse($task->start_date)
             : Carbon::today();
-        $taskHours  = $task->TotalTime();
+        $taskHours  = $task->plannedHours();
 
         // Ressources capables de réaliser le service, par ordre de préférence.
         // Une même machine peut servir plusieurs services : le capacityMap est

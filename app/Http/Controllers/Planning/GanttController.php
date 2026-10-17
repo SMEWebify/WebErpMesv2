@@ -82,7 +82,7 @@ class GanttController extends Controller
                     'resource'     => $task->service?->name ?? null,
                     'start_date'   => $task->start_date ? new \DateTime($task->start_date) : null,
                     'end_date'     => $task->end_date ? new \DateTime($task->end_date) : null,
-                    'duration'     => $task->TotalTime(),
+                    'duration'     => $task->plannedHours(),
                     'progress'     => $task->progress(),
                     'dependencies' => $previousId,
                 ];

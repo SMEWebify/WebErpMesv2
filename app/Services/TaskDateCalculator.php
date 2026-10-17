@@ -135,7 +135,7 @@ class TaskDateCalculator
             }
 
             $end = $cursor->copy();
-            $duration = (float) $task->TotalTime();
+            $duration = (float) $task->plannedHours();
             $start = WorkingTime::subtractWorkingHours($cursor, $duration);
 
             $result[] = ['task' => $task, 'start' => $start, 'end' => $end];
@@ -180,7 +180,7 @@ class TaskDateCalculator
             }
 
             $start = $cursor->copy();
-            $duration = (float) $task->TotalTime();
+            $duration = (float) $task->plannedHours();
             $end = WorkingTime::addWorkingHours($cursor, $duration);
 
             $result[] = ['task' => $task, 'start' => $start, 'end' => $end];
