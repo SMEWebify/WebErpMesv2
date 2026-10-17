@@ -23,6 +23,7 @@ const EMPTY_FORM = {
     ordre:              1,
     product_id:         '',
     code:               '',
+    ind:                '',
     supplier_ref:       '',
     label:              '',
     qty:                1,
@@ -151,6 +152,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 ordre:              editingLine.ordre              ?? 1,
                 product_id:         editingLine.product_id         ?? '',
                 code:               editingLine.code               ?? '',
+                ind:                editingLine.ind                ?? '',
                 supplier_ref:       editingLine.supplier_ref        ?? '',
                 label:              editingLine.label              ?? '',
                 qty:                editingLine.qty                ?? 1,
@@ -356,7 +358,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Code externe + Réf fournisseur + Ordre */}
                         <div className="row gx-2">
-                            <div className="mb-3 col-5 mb-2">
+                            <div className="mb-3 col-4 mb-2">
                                 <label className="mb-1 small fw-bold">Réf. interne</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-tag" /></span>
@@ -365,7 +367,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
-                            <div className="mb-3 col-5 mb-2">
+                            <div className="mb-3 col-4 mb-2">
                                 <label className="mb-1 small fw-bold">Réf. fournisseur</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
@@ -373,6 +375,12 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                         placeholder="Réf. fournisseur" value={form.supplier_ref}
                                         onChange={(e) => set('supplier_ref', e.target.value)} disabled={isReadOnly} />
                                 </div>
+                            </div>
+                            <div className="mb-3 col-2 mb-2">
+                                <label className="mb-1 small fw-bold">Ind. plan</label>
+                                <input type="text" className={`form-control form-control-sm ${errors.ind ? 'is-invalid' : ''}`}
+                                    maxLength={50} placeholder="A, B…" value={form.ind ?? ''}
+                                    onChange={(e) => set('ind', e.target.value)} disabled={isReadOnly} />
                             </div>
                             <div className="mb-3 col-2 mb-2">
                                 <label className="mb-1 small fw-bold">Ordre</label>
@@ -558,7 +566,7 @@ function LineRow({
             </td>
 
             {/* Réf. interne */}
-            <td className="small text-muted">{line.code || '—'}</td>
+            <td className="small text-muted">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
 
             {/* Réf. fournisseur */}
             <td className="small text-muted">{line.supplier_ref || '—'}</td>

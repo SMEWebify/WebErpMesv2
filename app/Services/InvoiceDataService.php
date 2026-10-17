@@ -79,6 +79,7 @@ class InvoiceDataService
             'invoice_status'   => $line->invoice_status,
             'is_free_line'     => $line->is_free_line,
             'order_line_code'  => $line->display_code,
+            'order_line_ind'   => $line->display_ind,
             'order_line_label' => $line->display_label,
             'unit_label'       => $line->display_unit_label,
             'order_code'       => $order?->code,
