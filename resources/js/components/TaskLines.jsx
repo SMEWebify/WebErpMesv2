@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { formatQty } from '../utils';
+import { formatDuration } from '../lib/duration.js';
 
 export default function TaskLines({ endpoints, services, statuses, resources, defaultStatusIds }) {
     const [rows, setRows]               = useState([]);
@@ -203,9 +204,9 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                                         </ul>
                                     </td>
                                     <td>{task.qty_required}</td>
-                                    <td>{task.seting_time} h</td>
-                                    <td>{task.unit_time} h</td>
-                                    <td>{task.total_time} h</td>
+                                    <td>{formatDuration(task.seting_time)}</td>
+                                    <td>{formatDuration(task.unit_time)}</td>
+                                    <td>{formatDuration(task.total_time)}</td>
                                     <td>
                                         <div className="progress">
                                             <div className="progress-bar text-bg-teal" style={{ width: `${task.progress}%` }}>

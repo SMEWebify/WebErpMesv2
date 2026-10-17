@@ -1831,4 +1831,12 @@ return [
     'no_templates_yet_trans_key' => 'Aucune trame pour l\'instant. Ouvrez un devis et utilisez « Enregistrer comme trame » dans le cadre Options.',
     'applications_trans_key' => 'Applications',
     'search_menu_trans_key' => 'Rechercher un menu…',
+    'time_unit_settings_trans_key' => 'Unité des temps',
+    'time_unit_label_trans_key' => "Unité d'affichage des temps opératoires",
+    'time_unit_hours_trans_key' => 'Heures',
+    'time_unit_minutes_trans_key' => 'Minutes',
+    'time_unit_saved_trans_key' => 'Unité des temps enregistrée.',
+    'time_unit_note_trans_key' => "Choisit l'unité de saisie et d'affichage des temps de réglage et unitaires. Le stockage reste en heures ; l'API, les exports et les capacités ne changent pas. Par défaut : heures.",
+    'time_unit_hours_short_trans_key' => 'h',
+    'time_unit_minutes_short_trans_key' => 'min',
 ];
