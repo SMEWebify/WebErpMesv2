@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Planning\Task;
+use App\Models\Planning\TaskActivities;
+use App\Models\Planning\TaskDependency;
 use App\Models\Workflow\OrderLines;
 use App\Services\Planning\FiniteCapacityScheduler;
 use App\Services\Planning\InterOperationDelayResolver;
@@ -113,6 +116,12 @@ class CalculateTaskDates implements ShouldQueue
         $scheduler = app(FiniteCapacityScheduler::class);
         $scheduler->reset();
 
+        // Lignes dont une opération porte un lien saisi : une seule requête. Les
+        // autres gardent exactement le chaînage historique par `ordre`.
+        $linkedLines = config('planning.dependencies_enabled', true)
+            ? TaskDependency::linkedOrderLineIds()
+            : [];
+
         $processed = 0;
         $messages = [];
 
@@ -123,8 +132,17 @@ class CalculateTaskDates implements ShouldQueue
         // partent du même instant, quelle que soit la durée du calcul.
         $asapFrom     = Carbon::now();
 
-        $orderLines->lazy()->each(function ($line) use ($scheduler, $delayCallback, $direction, $capacityMode, $suffix, $asapFrom, $countLines, &$processed, &$messages) {
-            $chained = $scheduler->chainOrderLine($line, $direction, $capacityMode, $delayCallback, $asapFrom);
+        $orderLines->lazy()->each(function ($line) use ($scheduler, $delayCallback, $direction, $capacityMode, $suffix, $asapFrom, $countLines, $linkedLines, $taskWith, &$processed, &$messages) {
+            $chained = isset($linkedLines[$line->id])
+                ? $scheduler->chainOrderLineWithDependencies(
+                    $line,
+                    $this->dependencyTasks($line, $taskWith),
+                    $direction,
+                    $capacityMode,
+                    $delayCallback,
+                    $asapFrom,
+                )
+                : $scheduler->chainOrderLine($line, $direction, $capacityMode, $delayCallback, $asapFrom);
 
             foreach ($chained as $entry) {
                 $entry['task']->end_date   = $entry['end'];
@@ -142,15 +160,36 @@ class CalculateTaskDates implements ShouldQueue
             }
         });
 
-        // Ajoute les débordements en queue de log — utile pour prévenir
-        // l'utilisateur que certaines tâches n'ont pas trouvé de créneau.
-        $unfitted = $scheduler->unfittedMessages();
-        if ($unfitted !== []) {
-            $tail = array_slice($unfitted, -20);
-            $this->updateProgress($processed, $countLines, $tail);
+        // Ajoute les débordements et les liens non tenus en queue de log — utile
+        // pour prévenir l'utilisateur que certaines tâches n'ont pas trouvé de
+        // créneau ou qu'un lien n'a pas pu être respecté.
+        $tail = array_merge($scheduler->unfittedMessages(), $scheduler->conflictMessages());
+        if ($tail !== []) {
+            $this->updateProgress($processed, $countLines, array_slice($tail, -20));
         }
 
         $this->markFinished();
+    }
+
+    /**
+     * Opérations d'une ligne à liens : les mêmes que le chaînage historique,
+     * plus les tâches figées (« Ne pas recalculer », démarrées ou terminées),
+     * qui servent de points fixes à leurs voisines.
+     */
+    private function dependencyTasks(OrderLines $line, array $taskWith)
+    {
+        return Task::with(array_merge(['predecessorLinks'], $taskWith))
+            ->withExists(['taskActivities as has_started' => function (Builder $query) {
+                return $query->whereIn('type', [TaskActivities::TYPE_START, TaskActivities::TYPE_FINISH]);
+            }])
+            ->where('order_lines_id', $line->id)
+            ->where(function (Builder $query) {
+                return $query->where('tasks.type', 1)
+                            ->orWhere('tasks.type', 7);
+            })
+            ->orderBy('ordre')
+            ->orderBy('id')
+            ->get();
     }
 
     private function initializeProgress(): void

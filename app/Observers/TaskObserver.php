@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Planning\Task;
+use App\Models\Planning\TaskDependency;
 use App\Services\StockReservationService;
 
 class TaskObserver
@@ -42,5 +43,9 @@ class TaskObserver
         if ($task->component_id) {
             $this->reservations->recomputeForProduct((int) $task->component_id);
         }
+
+        // La suppression douce ne déclenche pas la cascade SQL : ses liens partent
+        // ici. Une opération sans lien restant retrouve l'enchaînement par `ordre`.
+        TaskDependency::deleteForTask((int) $task->id);
     }
 }

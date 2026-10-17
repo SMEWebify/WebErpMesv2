@@ -134,21 +134,21 @@ class QuoteLines extends Model
     public function getTechnicalCutTotalUnitTimeAttribute()
     {
         return $this->TechnicalCut->reduce(function ($TotalUnitTime, $TechnicalCut) {
-        return $TotalUnitTime + $TechnicalCut->unit_time;
+        return $TotalUnitTime + $TechnicalCut->unit_time * $TechnicalCut->lineShare($this->qty);
         },0);
     }
 
     public function getTechnicalCutTotalUnitPricettribute()
     {
         return $this->TechnicalCut->reduce(function ($totalUnitPrice, $TechnicalCut) {
-        return $totalUnitPrice + $TechnicalCut->unit_price;
+        return $totalUnitPrice + $TechnicalCut->unit_price * $TechnicalCut->lineShare($this->qty);
         },0);
     }
 
     public function getTechnicalCutTotalUnitCostAttribute()
     {
         return $this->TechnicalCut->reduce(function ($totalUnitCost, $TechnicalCut) {
-        return $totalUnitCost + $TechnicalCut->unit_cost;
+        return $totalUnitCost + $TechnicalCut->unit_cost * $TechnicalCut->lineShare($this->qty);
         },0);
     }
 

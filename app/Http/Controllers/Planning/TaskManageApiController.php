@@ -16,8 +16,18 @@ use App\Models\Products\Products;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
+use App\Enums\TaskDependencyLagUnit;
+use App\Enums\TaskDependencyType;
+use App\Models\Planning\TaskDependency;
+use App\Services\Planning\BillOfMaterialsCopier;
+use App\Services\Planning\DependencyEdge;
+use App\Services\Planning\DependencyGraph;
+use App\Support\Planning\DependencyNotation;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class TaskManageApiController extends Controller
 {
@@ -351,6 +361,7 @@ class TaskManageApiController extends Controller
             'seting_time'         => 'nullable|numeric|min:0',
             'unit_time'           => 'nullable|numeric|min:0',
             'qty'                 => 'nullable|numeric|min:0',
+            'planned_qty'         => 'nullable|numeric|min:0',
             'unit_cost'           => 'required|numeric|gt:0',
             'unit_price'          => 'required|numeric|gt:0',
             'methods_units_id'    => 'nullable|exists:methods_units,id',
@@ -414,6 +425,7 @@ class TaskManageApiController extends Controller
             'seting_time'         => 'nullable|numeric|min:0',
             'unit_time'           => 'nullable|numeric|min:0',
             'qty'                 => 'nullable|numeric|min:0',
+            'planned_qty'         => 'nullable|numeric|min:0',
             'unit_cost'           => 'required|numeric|gt:0',
             'unit_price'          => 'required|numeric|gt:0',
             'methods_units_id'    => 'nullable|exists:methods_units,id',
@@ -473,6 +485,19 @@ class TaskManageApiController extends Controller
         $new->origin = '5';
         $new->save();
 
+        // Le double démarre dans les mêmes conditions que l'original (le second
+        // tour d'un lot partagé) : ses liens entrants saisis sont recopiés, pas
+        // les sortants.
+        foreach (TaskDependency::where('task_id', $task->id)->get() as $link) {
+            TaskDependency::create([
+                'task_id'             => $new->id,
+                'predecessor_task_id' => $link->predecessor_task_id,
+                'type'                => $link->type,
+                'lag_value'           => $link->lag_value,
+                'lag_unit'            => $link->lag_unit,
+            ]);
+        }
+
         if ($new->order_lines_id) {
             $this->promoteOrderLineTaskStatus('order_lines_id', (string) $new->order_lines_id);
         }
@@ -482,6 +507,236 @@ class TaskManageApiController extends Controller
         $new->load(['service', 'component', 'MethodsTools', 'status']);
 
         return response()->json(['task' => $this->formatTask($new, $currency)], 201);
+    }
+
+    // -------------------------------------------------------------------------
+    // GET / PUT — liens entre opérations (task_dependencies)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Liens entrants d'une opération et liens de toute sa gamme. Une opération
+     * sans lien saisi suit la précédente (fin-début implicite).
+     */
+    public function dependenciesJson(string $idType, string $idPage, int $id)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $task = Task::findOrFail($id);
+
+        return response()->json($this->formatDependencies($task, DependencyGraph::fromTasks($this->routingTasks($task))));
+    }
+
+    /**
+     * Remplace l'ensemble des liens entrants d'une opération. Accepte une liste
+     * `links` ou la notation courte `notation` (« 20FD;30DD+2h »), vide pour
+     * revenir à l'enchaînement sur l'opération précédente.
+     *
+     * Refusé si : autre gamme, opération d'achat, décalage en pièces sur un
+     * fin-début, doublon, ou boucle dans le graphe effectif (liens implicites
+     * compris).
+     */
+    public function updateDependenciesJson(string $idType, string $idPage, int $id, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+        $this->abortIfDocumentLocked($idType, $idPage);
+
+        $validated = $request->validate([
+            'notation'                    => 'nullable|string|max:500',
+            'links'                       => 'nullable|array',
+            'links.*.predecessor_task_id' => 'required|integer',
+            'links.*.type'                => ['required', Rule::enum(TaskDependencyType::class)],
+            'links.*.lag_value'           => 'nullable|numeric|min:0',
+            'links.*.lag_unit'            => ['nullable', Rule::enum(TaskDependencyLagUnit::class)],
+        ]);
+
+        $task    = Task::findOrFail($id);
+        $routing = $this->routingTasks($task)->keyBy('id');
+
+        try {
+            $links = $request->has('notation')
+                ? DependencyNotation::parse((string) ($validated['notation'] ?? ''), $this->taskIdByOrdre($routing))
+                : array_map(fn (array $link) => [
+                    'predecessor_task_id' => (int) $link['predecessor_task_id'],
+                    'type'                => TaskDependencyType::from($link['type']),
+                    'lag_value'           => (float) ($link['lag_value'] ?? 0),
+                    'lag_unit'            => TaskDependencyLagUnit::from($link['lag_unit'] ?? TaskDependencyLagUnit::Hour->value),
+                ], $validated['links'] ?? []);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['errors' => ['links' => [$e->getMessage()]]], 422);
+        }
+
+        $errors = $this->dependencyErrors($task, $links, $routing);
+        if ($errors !== []) {
+            return response()->json(['errors' => ['links' => $errors]], 422);
+        }
+
+        DB::transaction(function () use ($task, $links) {
+            TaskDependency::where('task_id', $task->id)->delete();
+
+            foreach ($links as $link) {
+                TaskDependency::create(['task_id' => $task->id] + $link);
+            }
+        });
+
+        return response()->json($this->formatDependencies($task, DependencyGraph::fromTasks($this->routingTasks($task))));
+    }
+
+    /**
+     * Opérations planifiables (fabrication, sous-traitance) de la même gamme :
+     * même porteur (ligne de devis, ligne de commande ou article) et même
+     * sous-ensemble.
+     */
+    private function routingTasks(Task $task): EloquentCollection
+    {
+        $query = Task::with('predecessorLinks')
+            ->whereIn('type', [1, 7])
+            ->orderBy('ordre')
+            ->orderBy('id');
+
+        $carrier = collect(BillOfMaterialsCopier::KEYS)->first(fn (string $key) => ! empty($task->{$key}));
+
+        if ($carrier === null && empty($task->sub_assembly_id)) {
+            return $query->whereKey($task->id)->get();
+        }
+
+        if ($carrier !== null) {
+            $query->where($carrier, $task->{$carrier});
+        }
+
+        return empty($task->sub_assembly_id)
+            ? $query->whereNull('sub_assembly_id')->get()
+            : $query->where('sub_assembly_id', $task->sub_assembly_id)->get();
+    }
+
+    /** Numéro d'opération → id ; à numéro égal, la première opération de la gamme. */
+    private function taskIdByOrdre($routing): array
+    {
+        $map = [];
+        foreach ($routing as $task) {
+            $map[(string) $task->ordre] ??= (int) $task->id;
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param  array<int, array{predecessor_task_id: int, type: TaskDependencyType, lag_value: float, lag_unit: TaskDependencyLagUnit}>  $links
+     * @return string[]
+     */
+    private function dependencyErrors(Task $task, array $links, $routing): array
+    {
+        if (! in_array((int) $task->type, [1, 7], true)) {
+            return [__('planning.dependency_not_schedulable')];
+        }
+
+        $errors = [];
+        $seen   = [];
+
+        foreach ($links as $link) {
+            $predecessorId = $link['predecessor_task_id'];
+
+            if ($predecessorId === (int) $task->id) {
+                $errors[] = __('planning.dependency_self');
+                continue;
+            }
+
+            if (! $routing->has($predecessorId)) {
+                $other = Task::find($predecessorId);
+                $errors[] = $other && ! in_array((int) $other->type, [1, 7], true)
+                    ? __('planning.dependency_not_schedulable')
+                    : __('planning.dependency_other_routing', ['ordre' => $other->ordre ?? ('#' . $predecessorId)]);
+                continue;
+            }
+
+            if ($link['lag_unit'] === TaskDependencyLagUnit::Piece && ! $link['type']->acceptsPieceLag()) {
+                $errors[] = __('planning.dependency_piece_lag');
+            }
+
+            $key = $predecessorId . $link['type']->value;
+            if (isset($seen[$key])) {
+                $errors[] = __('planning.dependency_duplicate', ['link' => $routing[$predecessorId]->ordre . $link['type']->shortLabel()]);
+            }
+            $seen[$key] = true;
+        }
+
+        if ($errors !== []) {
+            return $errors;
+        }
+
+        // Graphe effectif une fois les liens remplacés : une boucle peut passer
+        // par un lien implicite (« 10 après 20 » quand 20 suit encore 10).
+        $candidate = $routing->values()->map(function (Task $other) use ($task, $links) {
+            if ((int) $other->id !== (int) $task->id) {
+                return $other;
+            }
+
+            $copy = clone $other;
+            $copy->setRelation('predecessorLinks', new EloquentCollection(array_map(
+                fn (array $link) => new TaskDependency(['task_id' => $task->id] + $link),
+                $links
+            )));
+
+            return $copy;
+        });
+
+        $graph = DependencyGraph::fromTasks($candidate);
+
+        return $graph->hasCycle()
+            ? [__('planning.dependency_cycle', ['cycle' => $graph->describeCycle()])]
+            : [];
+    }
+
+    /**
+     * Liens de chaque opération de la gamme, par id : implicite ou non, notation
+     * saisie, texte affiché (« après 20 » ou la notation) et détail des liens.
+     *
+     * @return array<int, array{implicit: bool, notation: string, display: string, links: array}>
+     */
+    private function routingLinks(DependencyGraph $graph): array
+    {
+        $ordre = array_map(fn (Task $t) => $t->ordre, $graph->tasks());
+        $out   = [];
+
+        foreach ($graph->tasks() as $id => $t) {
+            $incoming = $graph->incoming($id);
+            $implicit = $incoming !== [] && $incoming[0]->implicit;
+            $notation = $implicit ? '' : DependencyNotation::format($incoming, $ordre);
+
+            $out[$id] = [
+                'implicit' => $implicit,
+                'notation' => $notation,
+                'display'  => $implicit
+                    ? __('planning.dependency_implicit', ['ordre' => $ordre[$incoming[0]->from] ?? ''])
+                    : $notation,
+                'links'    => array_map(fn (DependencyEdge $edge) => [
+                    'predecessor_task_id' => $edge->from,
+                    'predecessor_ordre'   => $ordre[$edge->from] ?? null,
+                    'type'                => $edge->type->value,
+                    'type_label'          => $edge->type->shortLabel(),
+                    'lag_value'           => $edge->lagValue,
+                    'lag_unit'            => $edge->lagUnit->value,
+                    'implicit'            => $edge->implicit,
+                ], $incoming),
+            ];
+        }
+
+        return $out;
+    }
+
+    private function formatDependencies(Task $task, DependencyGraph $graph): array
+    {
+        $links = $this->routingLinks($graph);
+
+        return [
+            'task_id' => $task->id,
+            'cycle'   => $graph->hasCycle() ? $graph->describeCycle() : null,
+            'task'    => $links[$task->id] ?? ['implicit' => false, 'notation' => '', 'display' => '', 'links' => []],
+            'routing' => array_values(array_map(fn (Task $t) => [
+                'id'    => $t->id,
+                'ordre' => $t->ordre,
+                'label' => $t->label,
+            ] + $links[$t->id], $graph->tasks())),
+        ];
     }
 
     // -------------------------------------------------------------------------
