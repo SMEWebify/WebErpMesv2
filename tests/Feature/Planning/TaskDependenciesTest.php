@@ -173,6 +173,9 @@ class TaskDependenciesTest extends TestCase
 
         $routing = collect($response->json('routing'))->keyBy('ordre');
         $this->assertTrue($routing[20]['implicit'], 'la 20, sans lien saisi, suit la 10');
+        $this->assertSame('after 10', $routing[20]['display']);
+        $this->assertSame($tasks[20]->label, $routing[20]['label'], 'le libellé de l\'opération n\'est pas écrasé');
+        $this->assertSame('20SS+10pc;20FF+10pc', $routing[30]['display']);
         $this->assertCount(2, $routing[40]['links']);
         $this->assertSame(4, TaskDependency::count());
 

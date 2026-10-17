@@ -686,20 +686,28 @@ class TaskManageApiController extends Controller
             : [];
     }
 
-    private function formatDependencies(Task $task, DependencyGraph $graph): array
+    /**
+     * Liens de chaque opération de la gamme, par id : implicite ou non, notation
+     * saisie, texte affiché (« après 20 » ou la notation) et détail des liens.
+     *
+     * @return array<int, array{implicit: bool, notation: string, display: string, links: array}>
+     */
+    private function routingLinks(DependencyGraph $graph): array
     {
         $ordre = array_map(fn (Task $t) => $t->ordre, $graph->tasks());
+        $out   = [];
 
-        $describe = function (int $taskId) use ($graph, $ordre): array {
-            $incoming = $graph->incoming($taskId);
+        foreach ($graph->tasks() as $id => $t) {
+            $incoming = $graph->incoming($id);
             $implicit = $incoming !== [] && $incoming[0]->implicit;
+            $notation = $implicit ? '' : DependencyNotation::format($incoming, $ordre);
 
-            return [
+            $out[$id] = [
                 'implicit' => $implicit,
-                'notation' => $implicit ? '' : DependencyNotation::format($incoming, $ordre),
-                'label'    => $implicit
+                'notation' => $notation,
+                'display'  => $implicit
                     ? __('planning.dependency_implicit', ['ordre' => $ordre[$incoming[0]->from] ?? ''])
-                    : DependencyNotation::format($incoming, $ordre),
+                    : $notation,
                 'links'    => array_map(fn (DependencyEdge $edge) => [
                     'predecessor_task_id' => $edge->from,
                     'predecessor_ordre'   => $ordre[$edge->from] ?? null,
@@ -710,17 +718,24 @@ class TaskManageApiController extends Controller
                     'implicit'            => $edge->implicit,
                 ], $incoming),
             ];
-        };
+        }
+
+        return $out;
+    }
+
+    private function formatDependencies(Task $task, DependencyGraph $graph): array
+    {
+        $links = $this->routingLinks($graph);
 
         return [
             'task_id' => $task->id,
             'cycle'   => $graph->hasCycle() ? $graph->describeCycle() : null,
-            'task'    => $describe((int) $task->id),
+            'task'    => $links[$task->id] ?? ['implicit' => false, 'notation' => '', 'display' => '', 'links' => []],
             'routing' => array_values(array_map(fn (Task $t) => [
                 'id'    => $t->id,
                 'ordre' => $t->ordre,
                 'label' => $t->label,
-            ] + $describe((int) $t->id), $graph->tasks())),
+            ] + $links[$t->id], $graph->tasks())),
         ];
     }
 
