@@ -525,7 +525,8 @@ class TaskManageApiController extends Controller
     /**
      * Quantité de l'opération quand un lot est partagé entre deux machines ;
      * vide = quantité de la ligne. Aucun contrôle de la somme : c'est un choix
-     * d'atelier. Ne change que la durée planifiée (Task::plannedHours()).
+     * d'atelier. Temps, coût et prix de l'opération suivent (Task::operationQty()) ;
+     * le coût unitaire saisi n'est pas recalculé ici.
      */
     public function updatePlannedQtyJson(string $idType, string $idPage, int $id, Request $request)
     {

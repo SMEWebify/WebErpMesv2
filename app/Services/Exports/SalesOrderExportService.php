@@ -207,9 +207,9 @@ class SalesOrderExportService
                     'end_date' => $this->formatDateTime($task->end_date, $dateTimeFormat),
                     'not_recalculate' => $this->castInt($task->not_recalculate),
                     // Planification : quantité propre de l'opération (vide = celle de la
-                    // ligne), durée planifiée et liens amont en notation courte (« 20FS;30SS+2h »).
+                    // ligne), sa durée et ses liens amont en notation courte (« 20FS;30SS+2h »).
                     'planned_qty' => $this->castFloat($task->planned_qty, 3),
-                    'planned_hours' => $this->castFloat($task->setRelation('OrderLines', $line)->plannedHours(), 3),
+                    'planned_hours' => $this->castFloat($task->setRelation('OrderLines', $line)->TotalTime(), 3),
                     'predecessors' => DependencyNotation::formatLinks($task->predecessorLinks),
                     'material' => $task->material,
                     'thickness' => $this->castFloat($task->thickness, 3),

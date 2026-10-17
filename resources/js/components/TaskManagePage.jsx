@@ -1465,7 +1465,9 @@ export default function TaskManagePage({ context, endpoints }) {
                         selectData={selectData}
                         endpoints={endpoints}
                         context={context}
-                        lineQty={line?.qty ?? 1}
+                        // Coût par pièce traitée : le réglage se répartit sur la quantité
+                        // propre de l'opération quand elle est saisie.
+                        lineQty={editingItem?.planned_qty ?? line?.qty ?? 1}
                         onSaved={handleTaskSaved}
                         onClose={closeDrawer}
                     />

@@ -262,7 +262,7 @@ Crée un devis avec ses lignes, détails techniques et tâches.
 | `x_size`…`z_oversize` | numeric | Non              |                                          |
 | `to_schedule`         | boolean | Non               |                                          |
 | `not_recalculate`     | boolean | Non               |                                          |
-| `planned_qty`         | numeric | Non               | Quantité traitée par l'opération (lot partagé entre deux machines) ; absent ou `null` = quantité de la ligne. Ne change que la durée planifiée |
+| `planned_qty`         | numeric | Non               | Quantité traitée par l'opération (lot partagé entre deux machines) ; absent ou `null` = quantité de la ligne. Temps, coût et prix de l'opération se calculent sur cette quantité (`unit_cost` et `unit_price` s'entendent par pièce traitée) |
 | `predecessors`        | array   | Non               | Liens vers les opérations amont, voir ci-dessous |
 
 **Liens entre opérations (`lines[].tasks[].predecessors[]`)**
@@ -974,7 +974,7 @@ Export des commandes en JSON pour intégration comptable ou ERP externe.
 | `include_lines`   | boolean | Non    | Inclure les lignes de commande          |
 
 Avec `include_lines`, chaque tâche porte aussi, pour un outil de planification : `planned_qty`
-(quantité propre de l'opération, `null` = celle de la ligne), `planned_hours` (réglage + quantité ×
+(quantité propre de l'opération, `null` = celle de la ligne), `planned_hours` (réglage + quantité de l'opération ×
 temps unitaire) et `predecessors` (liens amont en notation courte, par exemple `20FS;30SS+2h;20FF+10pc` ;
 vide = l'opération suit la précédente).
 
