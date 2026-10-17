@@ -44,24 +44,6 @@ class DependencySchedulingTest extends TestCase
         }
     }
 
-    public function test_planned_hours_equal_total_time_without_operation_quantity(): void
-    {
-        foreach ([[0, 0, 1], [1.5, 0.25, 4], [0.333, 0.017, 37], [2, 0.75, 1], [0, 1.2, 3]] as [$setup, $unit, $qty]) {
-            $task = PlanningScenarios::task(1, 10, $setup, $unit, $qty, null, []);
-
-            $this->assertSame((float) $task->TotalTime(), $task->plannedHours());
-        }
-    }
-
-    public function test_operation_quantity_changes_planned_hours_only(): void
-    {
-        $task = PlanningScenarios::task(1, 10, 1, 0.1, 100, null, []);
-        $task->planned_qty = 60;
-
-        $this->assertSame(7.0, $task->plannedHours());
-        $this->assertSame(11.0, (float) $task->TotalTime(), 'les coûts et l\'avancement restent sur la quantité de la ligne');
-    }
-
     // ------------------------------------------------------------------
     // Le tableau de l'atelier
     // ------------------------------------------------------------------

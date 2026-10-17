@@ -280,7 +280,7 @@ class QuotesController extends Controller
         $requiredByService = $quoteTasks
             ->filter(fn (Task $task) => !is_null($task->methods_services_id))
             ->groupBy('methods_services_id')
-            ->map(fn ($tasks) => round($tasks->sum(fn (Task $task) => $task->plannedHours()), 2))
+            ->map(fn ($tasks) => round($tasks->sum(fn (Task $task) => $task->TotalTime()), 2))
             ->toArray();
 
         if ($requiredByService === []) {
@@ -315,7 +315,7 @@ class QuotesController extends Controller
             }
             $day = Carbon::parse($task->end_date)->toDateString();
             $serviceId = $task->methods_services_id;
-            $loadByServiceDay[$serviceId][$day] = ($loadByServiceDay[$serviceId][$day] ?? 0) + $task->plannedHours();
+            $loadByServiceDay[$serviceId][$day] = ($loadByServiceDay[$serviceId][$day] ?? 0) + $task->TotalTime();
         }
 
         $capacityPerDay = 16;

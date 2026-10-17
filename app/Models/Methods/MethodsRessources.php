@@ -272,7 +272,7 @@ class MethodsRessources extends Model
             ->wherePivot('role', $this->role())
             ->whereDate('start_date', $date->toDateString())
             ->get()
-            ->sum(fn (Task $task) => $task->plannedHours());
+            ->sum(fn (Task $task) => $task->TotalTime());
 
         return max(0, $this->dailyCapacity($date) - $usedCapacity);
     }

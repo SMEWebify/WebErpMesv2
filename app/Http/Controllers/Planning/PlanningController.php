@@ -213,7 +213,7 @@ class PlanningController extends Controller
 
             if ($tache->resources->isEmpty()) {
                 $hoursPerRowDay[self::ROW_UNASSIGNED][$jour] = ($hoursPerRowDay[self::ROW_UNASSIGNED][$jour] ?? 0)
-                    + $tache->plannedHours();
+                    + $tache->TotalTime();
                 $tasksPerRowDay[self::ROW_UNASSIGNED][$jour][] = $tache->id;
                 continue;
             }
@@ -223,7 +223,7 @@ class PlanningController extends Controller
                 $factor = (float) ($resource->pivot->load_factor ?? 1);
 
                 $hoursPerRowDay[$key][$jour] = ($hoursPerRowDay[$key][$jour] ?? 0)
-                    + $tache->plannedHours() * $factor;
+                    + $tache->TotalTime() * $factor;
                 $tasksPerRowDay[$key][$jour][] = $tache->id;
             }
         }
@@ -348,7 +348,7 @@ class PlanningController extends Controller
             $jour      = (new Carbon($tache['end_date']))->format('Y-m-d');
 
             $hoursPerServiceDay[$serviceId][$jour] = ($hoursPerServiceDay[$serviceId][$jour] ?? 0)
-                + $tache->plannedHours();
+                + $tache->TotalTime();
 
             $tasksPerServiceDay[$serviceId][$jour][] = $tache->id;
         }

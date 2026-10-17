@@ -226,7 +226,7 @@ class FiniteCapacityScheduler
             TaskDependencyType::StartToStart   => $this->addHours($this->addHours($from['start'], $shift), $lag),
             TaskDependencyType::FinishToFinish => WorkingTime::subtractWorkingHours(
                 $this->addHours($this->addHours($from['end'], $shift), $lag),
-                $successor->plannedHours(),
+                $successor->TotalTime(),
             ),
             default                            => $this->addHours($this->addHours($from['end'], $shift), $lag),
         };
@@ -246,7 +246,7 @@ class FiniteCapacityScheduler
         return match ($edge->type) {
             TaskDependencyType::StartToStart   => WorkingTime::addWorkingHours(
                 $this->subtractHours($this->subtractHours($to['start'], $lag), $shift),
-                $predecessor->plannedHours(),
+                $predecessor->TotalTime(),
             ),
             TaskDependencyType::FinishToFinish => $this->subtractHours($this->subtractHours($to['end'], $lag), $shift),
             default                            => $this->subtractHours($this->subtractHours($to['start'], $lag), $shift),
@@ -346,7 +346,7 @@ class FiniteCapacityScheduler
             }
         }
 
-        return ['start' => WorkingTime::subtractWorkingHours($end, $task->plannedHours()), 'end' => $end];
+        return ['start' => WorkingTime::subtractWorkingHours($end, $task->TotalTime()), 'end' => $end];
     }
 
     /**
@@ -505,7 +505,7 @@ class FiniteCapacityScheduler
      */
     private function naivePlace(Task $task, Carbon $cursor, bool $isAsap): array
     {
-        $duration = (float) $task->plannedHours();
+        $duration = (float) $task->TotalTime();
 
         if ($isAsap) {
             $start = $cursor->copy();
@@ -639,7 +639,7 @@ class FiniteCapacityScheduler
             'OF #%s — tâche %s (%.1f h) débordée : capacité insuffisante sur %s',
             $orderId,
             $task->label ?? ('#' . $task->id),
-            (float) $task->plannedHours(),
+            (float) $task->TotalTime(),
             $this->taskResources($task)->pluck('label')->implode(', ') ?: 'ressource inconnue',
         );
     }

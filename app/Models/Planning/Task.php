@@ -377,15 +377,51 @@ class Task extends Model
     }
 
     /**
+     * Quantité traitée par l'opération : sa quantité propre (`planned_qty`, lot
+     * partagé entre deux machines) si elle est saisie, sinon celle de la ligne.
+     * Temps, coût, prix, quantité à produire et performance s'y rapportent.
+     *
+     * @param  float|int|string|null  $lineQty  quantité de la ligne, si l'appelant l'a déjà
+     */
+    public function operationQty($lineQty = null): float
+    {
+        if ($this->hasOperationQty()) {
+            return (float) $this->planned_qty;
+        }
+
+        return (float) ($lineQty ?? $this->GetOrderQtyLine());
+    }
+
+    /**
+     * Part de la ligne traitée par l'opération, 1 sans quantité propre : pondère
+     * ses temps, coût et prix unitaires dans ceux de la ligne.
+     *
+     * @param  float|int|string|null  $lineQty
+     */
+    public function lineShare($lineQty): float
+    {
+        if (! $this->hasOperationQty() || (float) $lineQty <= 0) {
+            return 1.0;
+        }
+
+        return (float) $this->planned_qty / (float) $lineQty;
+    }
+
+    private function hasOperationQty(): bool
+    {
+        return $this->planned_qty !== null && $this->planned_qty !== '';
+    }
+
+    /**
      * Calculate the product time.
      *
-     * This method calculates the product time by multiplying the order quantity by the unit time.
+     * This method calculates the product time by multiplying the operation quantity by the unit time.
      *
      * @return float The product time.
      */
     public function ProductTime()
     {
-        return $this->GetOrderQtyLine()*$this->unit_time;
+        return $this->operationQty()*$this->unit_time;
     }
 
     /**
@@ -424,14 +460,14 @@ class Task extends Model
     /**
      * Calculate the total cost.
      *
-     * This method calculates the total cost by multiplying the order quantity by the unit cost.
+     * This method calculates the total cost by multiplying the operation quantity by the unit cost.
      * The result is rounded to 2 decimal places.
      *
      * @return float The total cost.
      */
     public function TotalCost()
     {
-        return round($this->GetOrderQtyLine()*$this->unit_cost,2);
+        return round($this->operationQty()*$this->unit_cost,2);
     }
 
     /**
@@ -453,14 +489,14 @@ class Task extends Model
     /**
      * Calculate the total price.
      *
-     * This method calculates the total price by multiplying the order quantity by the unit price.
+     * This method calculates the total price by multiplying the operation quantity by the unit price.
      * The result is rounded to 2 decimal places.
      *
      * @return float The total price.
      */
     public function TotalPrice()
     {
-        return round($this->GetOrderQtyLine()*$this->unit_price,2);
+        return round($this->operationQty()*$this->unit_price,2);
     }
 
     /**
@@ -504,20 +540,6 @@ class Task extends Model
         return round($this->ProductTime() + $this->seting_time, 2);
     }
 
-    /**
-     * Durée planifiée de l'opération, en heures : TotalTime() quand aucune
-     * quantité propre n'est saisie, sinon réglage + quantité de l'opération ×
-     * temps unitaire (lot partagé entre deux machines). Sert à ordonnancer et à
-     * mesurer la charge ; coûts, prix et avancement restent sur TotalTime().
-     */
-    public function plannedHours(): float
-    {
-        if ($this->planned_qty === null || $this->planned_qty === '') {
-            return (float) $this->TotalTime();
-        }
-
-        return round(((float) $this->planned_qty * $this->unit_time) + $this->seting_time, 2);
-    }
 
     /**
      * Liens vers les opérations dont celle-ci dépend (elle en est le successeur),
@@ -787,7 +809,7 @@ class Task extends Model
     public function getPerformanceAttribute()
     {
         $producedQty = $this->getTotalLogGoodQt();
-        $theoreticalQty = $this->GetOrderQtyLine(); 
+        $theoreticalQty = $this->operationQty(); 
         if ($theoreticalQty <= 0) {
             return 0;
         }
@@ -808,9 +830,9 @@ class Task extends Model
     // Quality calculation
     public function getQualityRequiredAttribute()
     {
-        $qualityRequired = $this->qty * $this->GetOrderQtyLine();
+        $qualityRequired = $this->qty * $this->operationQty();
         if ($qualityRequired <= 0) {
-            return $this->GetOrderQtyLine();
+            return $this->operationQty();
         }
         return $qualityRequired;
     }
