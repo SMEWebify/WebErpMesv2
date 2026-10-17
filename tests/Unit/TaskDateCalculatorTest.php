@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Carbon\Carbon;
 use App\Services\TaskDateCalculator;
+use App\Support\WorkingTime;
 use App\Services\Planning\InterOperationDelayResolver;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsUnits;
@@ -126,6 +127,38 @@ class TaskDateCalculatorTest extends TestCase
         $date = Carbon::create(2024, 5, 6, 10, 0, 0); // Monday 10:00
         $adjusted = $calculator->adjustForWorkingHours($date, 6 * 3600);
         $this->assertEquals('2024-05-03 14:00:00', $adjusted->format('Y-m-d H:i:s'));
+    }
+
+    public function test_subtract_working_hours_keeps_fractional_hours(): void
+    {
+        // Régression #1200 : le paramètre était typé int, 2,5 h devenait 2 h
+        // et 0,75 h devenait 0 h en ALAP.
+        $friday18 = Carbon::create(2024, 5, 3, 18, 0, 0);
+
+        $this->assertSame('2024-05-03 15:30:00', WorkingTime::subtractWorkingHours($friday18, 2.5)->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-05-03 17:15:00', WorkingTime::subtractWorkingHours($friday18, 0.75)->format('Y-m-d H:i:s'));
+
+        // Fraction qui passe la nuit et le week-end : lundi 8h − 0,5 h = vendredi 17h30.
+        $monday8 = Carbon::create(2024, 5, 6, 8, 0, 0);
+        $this->assertSame('2024-05-03 17:30:00', WorkingTime::subtractWorkingHours($monday8, 0.5)->format('Y-m-d H:i:s'));
+    }
+
+    public function test_alap_and_asap_agree_on_fractional_durations(): void
+    {
+        $service = MethodsServicesFactory::new()->create();
+        $unit = MethodsUnitsFactory::new()->create();
+        $task = TaskTestFactory::new()->create([
+            'methods_services_id' => $service->id, 'methods_units_id' => $unit->id,
+            'ordre' => 10, 'seting_time' => 0.25, 'unit_time' => 0.5, 'qty' => 3,
+        ]); // 1,75 h
+
+        $calculator = new TaskDateCalculator();
+
+        $alap = $calculator->chainTasks(collect([$task]), Carbon::create(2024, 5, 3, 18, 0, 0));
+        $this->assertSame('2024-05-03 16:15:00', $alap[0]['start']->format('Y-m-d H:i:s'));
+
+        $asap = $calculator->chainTasksForward(collect([$task]), Carbon::create(2024, 5, 6, 8, 0, 0));
+        $this->assertSame('2024-05-06 09:45:00', $asap[0]['end']->format('Y-m-d H:i:s'));
     }
 
     public function test_calculates_start_and_end_for_simple_task(): void

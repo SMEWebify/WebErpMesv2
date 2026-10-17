@@ -18,10 +18,13 @@ class WorkingTime
      * The method walks backwards hour by hour using CarbonPeriod and
      * skips hours outside the working range (8h-18h), weekends and
      * bank holidays defined by TimesBanckHoliday::isBankHoliday.
+     *
+     * Accepte des heures décimales comme addWorkingHours : typé `int`, PHP
+     * tronquait 2,5 h en 2 h et 0,75 h en 0 h (tâche de durée nulle en ALAP).
      */
-    public static function subtractWorkingHours(Carbon $from, int $hours): Carbon
+    public static function subtractWorkingHours(Carbon $from, int|float $hours): Carbon
     {
-        $remaining = (int) round($hours * 3600);
+        $remaining = (int) round(((float) $hours) * 3600);
         $current = $from->copy();
 
         $period = CarbonPeriod::create($from, '-1 hour');
