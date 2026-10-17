@@ -119,8 +119,9 @@ class FiniteCapacityScheduler
      *
      * Une opération sans lien saisi suit la précédente (fin-début implicite) :
      * sur une gamme sans aucun lien, le résultat est celui de chainOrderLine(),
-     * à la seconde près. Une tâche « Ne pas recalculer » datée est un point fixe :
-     * ses voisines la respectent, elle-même ne bouge pas et n'est pas renvoyée.
+     * à la seconde près. Une tâche datée « Ne pas recalculer », démarrée ou
+     * terminée est un point fixe : ses voisines la respectent, elle-même ne
+     * bouge pas et n'est pas renvoyée.
      * Liens circulaires : retour au chaînage par `ordre`, et message.
      *
      * @param  Collection<int, Task>  $tasks  opérations planifiables de la ligne,
@@ -205,63 +206,71 @@ class FiniteCapacityScheduler
             $results[] = ['task' => $task, 'start' => $placement['start'], 'end' => $placement['end']];
         }
 
-        $this->checkFrozenLinks($graph, $placed, $line, $delayFn);
+        $this->checkFrozenLinks($graph, $placed, $line, $delayFn, $isAsap);
 
         return $results;
     }
 
     /**
-     * Début au plus tôt que le lien impose au successeur.
+     * Début au plus tôt que le lien impose au successeur : délai
+     * inter-opérations, puis décalage, quel que soit le type de lien.
      *
      * @param  array{start: Carbon, end: Carbon}  $from
      */
     private function earliestStart(DependencyEdge $edge, Task $predecessor, Task $successor, array $from, ?callable $delayFn): Carbon
     {
-        $lag = $this->lagHours($edge, $predecessor, $successor);
+        $shift = $this->transferHours($predecessor, $successor, $delayFn, true);
+        $lag   = $this->lagHours($edge, $predecessor, $successor);
 
-        if ($edge->type === TaskDependencyType::StartToStart) {
-            return $this->addHours($from['start'], $lag);
-        }
-
-        if ($edge->type === TaskDependencyType::FinishToFinish) {
-            return WorkingTime::subtractWorkingHours($this->addHours($from['end'], $lag), $successor->plannedHours());
-        }
-
-        // Fin-début : délai inter-opérations (règle historique : omis si le
-        // service de l'opération amont est inconnu), puis décalage.
-        $start = $from['end']->copy();
-        if ($delayFn !== null && $predecessor->methods_services_id !== null) {
-            $start = $this->addHours($start, (float) $delayFn($predecessor->methods_services_id, $successor->methods_services_id ?? null));
-        }
-
-        return $this->addHours($start, $lag);
+        return match ($edge->type) {
+            TaskDependencyType::StartToStart   => $this->addHours($this->addHours($from['start'], $shift), $lag),
+            TaskDependencyType::FinishToFinish => WorkingTime::subtractWorkingHours(
+                $this->addHours($this->addHours($from['end'], $shift), $lag),
+                $successor->plannedHours(),
+            ),
+            default                            => $this->addHours($this->addHours($from['end'], $shift), $lag),
+        };
     }
 
     /**
-     * Fin au plus tard que le lien impose au prédécesseur.
+     * Fin au plus tard que le lien impose au prédécesseur : même règle, en
+     * remontant le temps.
      *
      * @param  array{start: Carbon, end: Carbon}  $to
      */
     private function latestEnd(DependencyEdge $edge, Task $predecessor, Task $successor, array $to, ?callable $delayFn): Carbon
     {
-        $lag = $this->lagHours($edge, $predecessor, $successor);
+        $shift = $this->transferHours($predecessor, $successor, $delayFn, false);
+        $lag   = $this->lagHours($edge, $predecessor, $successor);
 
-        if ($edge->type === TaskDependencyType::StartToStart) {
-            return WorkingTime::addWorkingHours($this->subtractHours($to['start'], $lag), $predecessor->plannedHours());
+        return match ($edge->type) {
+            TaskDependencyType::StartToStart   => WorkingTime::addWorkingHours(
+                $this->subtractHours($this->subtractHours($to['start'], $lag), $shift),
+                $predecessor->plannedHours(),
+            ),
+            TaskDependencyType::FinishToFinish => $this->subtractHours($this->subtractHours($to['end'], $lag), $shift),
+            default                            => $this->subtractHours($this->subtractHours($to['start'], $lag), $shift),
+        };
+    }
+
+    /**
+     * Délai inter-opérations entre deux opérations liées, pour tout type de
+     * lien. Règle historique d'omission : en avançant (ASAP), pas de délai si
+     * le service amont est inconnu ; en remontant (ALAP), si le service aval
+     * l'est. Sur un fin-début, c'est exactement le délai du chaînage par `ordre`.
+     */
+    private function transferHours(Task $predecessor, Task $successor, ?callable $delayFn, bool $isAsap): float
+    {
+        if ($delayFn === null) {
+            return 0.0;
         }
 
-        if ($edge->type === TaskDependencyType::FinishToFinish) {
-            return $this->subtractHours($to['end'], $lag);
+        $known = $isAsap ? $predecessor->methods_services_id : $successor->methods_services_id;
+        if ($known === null) {
+            return 0.0;
         }
 
-        // Fin-début : en remontant, la règle historique omet le délai si le
-        // service de l'opération aval est inconnu.
-        $end = $this->subtractHours($to['start'], $lag);
-        if ($delayFn !== null && $successor->methods_services_id !== null) {
-            $end = $this->subtractHours($end, (float) $delayFn($predecessor->methods_services_id ?? null, $successor->methods_services_id));
-        }
-
-        return $end;
+        return max(0.0, (float) $delayFn($predecessor->methods_services_id ?? null, $successor->methods_services_id ?? null));
     }
 
     /**
@@ -308,9 +317,16 @@ class FiniteCapacityScheduler
         return ['start' => $start, 'end' => $end];
     }
 
+    /**
+     * Point fixe : tâche « Ne pas recalculer », ou déjà pointée en atelier
+     * (début ou fin déclarés, attribut `has_started` chargé par l'appelant).
+     * Sans date de fin, elle n'a pas de repère et se planifie normalement.
+     */
     private function isFrozen(Task $task): bool
     {
-        return (bool) $task->not_recalculate && ! empty($task->end_date);
+        $started = (bool) ($task->getAttributes()['has_started'] ?? false);
+
+        return ((bool) $task->not_recalculate || $started) && ! empty($task->end_date);
     }
 
     /**
@@ -339,7 +355,7 @@ class FiniteCapacityScheduler
      *
      * @param  array<int, array{start: Carbon, end: Carbon}>  $placed
      */
-    private function checkFrozenLinks(DependencyGraph $graph, array $placed, OrderLines $line, ?callable $delayFn): void
+    private function checkFrozenLinks(DependencyGraph $graph, array $placed, OrderLines $line, ?callable $delayFn, bool $isAsap): void
     {
         foreach ($graph->edges() as $edge) {
             $predecessor = $graph->task($edge->from);
@@ -349,14 +365,15 @@ class FiniteCapacityScheduler
                 continue;
             }
 
-            $from = $placed[$edge->from];
-            $to   = $placed[$edge->to];
-            $lag  = $this->lagHours($edge, $predecessor, $successor);
+            $from  = $placed[$edge->from];
+            $to    = $placed[$edge->to];
+            $shift = $this->transferHours($predecessor, $successor, $delayFn, $isAsap);
+            $lag   = $this->lagHours($edge, $predecessor, $successor);
 
             $held = match ($edge->type) {
-                TaskDependencyType::StartToStart   => $to['start']->gte($this->addHours($from['start'], $lag)),
-                TaskDependencyType::FinishToFinish => $to['end']->gte($this->addHours($from['end'], $lag)),
-                default                            => $to['start']->gte($this->earliestStart($edge, $predecessor, $successor, $from, $delayFn)),
+                TaskDependencyType::StartToStart   => $to['start']->gte($this->addHours($this->addHours($from['start'], $shift), $lag)),
+                TaskDependencyType::FinishToFinish => $to['end']->gte($this->addHours($this->addHours($from['end'], $shift), $lag)),
+                default                            => $to['start']->gte($this->addHours($this->addHours($from['end'], $shift), $lag)),
             };
 
             if (! $held) {

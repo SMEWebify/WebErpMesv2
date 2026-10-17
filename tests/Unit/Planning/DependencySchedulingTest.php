@@ -116,14 +116,14 @@ class DependencySchedulingTest extends TestCase
     }
 
     /** @return array<int, array{0: string, 1: string}> id => [début, fin] */
-    private function schedule(array $tasks, string $direction, string $mode = 'infinite', string $anchor = '2026-11-16 08:00:00', ?FiniteCapacityScheduler $scheduler = null): array
+    private function schedule(array $tasks, string $direction, string $mode = 'infinite', string $anchor = '2026-11-16 08:00:00', ?FiniteCapacityScheduler $scheduler = null, ?callable $delayFn = null): array
     {
         $scheduler ??= PlanningScenarios::scheduler([]);
         $line = $this->line(1, $tasks, $anchor);
         $dates = [];
 
         // ASAP : départ du calcul = l'ancre (le job fige « maintenant » pour tout le run).
-        foreach ($scheduler->chainOrderLineWithDependencies($line, $line->Task, $direction, $mode, null, Carbon::parse($anchor)) as $entry) {
+        foreach ($scheduler->chainOrderLineWithDependencies($line, $line->Task, $direction, $mode, $delayFn, Carbon::parse($anchor)) as $entry) {
             $dates[$entry['task']->id] = [$entry['start']->format(self::FORMAT), $entry['end']->format(self::FORMAT)];
         }
         ksort($dates);
@@ -265,8 +265,111 @@ class DependencySchedulingTest extends TestCase
     }
 
     // ------------------------------------------------------------------
+    // Délai inter-opérations
+    // ------------------------------------------------------------------
+
+    /** Une heure entre deux services, quels qu'ils soient. */
+    private function oneHourDelay(): callable
+    {
+        return fn (?int $from, ?int $to): float => 1.0;
+    }
+
+    /** 10 (2 h, service 1) puis 20 (1 h, service 2), liés par $type. */
+    private function twoServices(string $type, ?int $firstService = 1, ?int $secondService = 2): array
+    {
+        $tasks = [
+            1 => PlanningScenarios::task(1, 10, 2, 0, 1, $firstService, []),
+            2 => PlanningScenarios::task(2, 20, 1, 0, 1, $secondService, []),
+        ];
+        $this->addLinks($tasks, [2 => [[1, $type]]]);
+
+        return $tasks;
+    }
+
+    public function test_the_transfer_delay_applies_to_every_link_type_forward(): void
+    {
+        foreach ([
+            'FS' => ['2026-11-16 11:00:00', '2026-11-16 12:00:00'],
+            'SS' => ['2026-11-16 09:00:00', '2026-11-16 10:00:00'],
+            'FF' => ['2026-11-16 10:00:00', '2026-11-16 11:00:00'],
+        ] as $type => $expected) {
+            $dates = $this->schedule($this->twoServices($type), 'asap', delayFn: $this->oneHourDelay());
+
+            $this->assertSame(['2026-11-16 08:00:00', '2026-11-16 10:00:00'], $dates[1]);
+            $this->assertSame($expected, $dates[2], "une heure de délai sur un lien {$type}");
+        }
+    }
+
+    public function test_the_transfer_delay_applies_to_every_link_type_backward(): void
+    {
+        foreach ([
+            'FS' => ['2026-11-20 14:00:00', '2026-11-20 16:00:00'],
+            'SS' => ['2026-11-20 16:00:00', '2026-11-20 18:00:00'],
+            'FF' => ['2026-11-20 15:00:00', '2026-11-20 17:00:00'],
+        ] as $type => $expected) {
+            $dates = $this->schedule($this->twoServices($type), 'alap', anchor: '2026-11-20 18:00:00', delayFn: $this->oneHourDelay());
+
+            $this->assertSame(['2026-11-20 17:00:00', '2026-11-20 18:00:00'], $dates[2]);
+            $this->assertSame($expected, $dates[1], "une heure de délai sur un lien {$type}");
+        }
+    }
+
+    public function test_the_delay_is_skipped_when_the_service_it_depends_on_is_unknown(): void
+    {
+        // Règle historique : en avançant, il faut le service amont ; en remontant, le service aval.
+        $forward = $this->schedule($this->twoServices('SS', firstService: null), 'asap', delayFn: $this->oneHourDelay());
+        $this->assertSame('2026-11-16 08:00:00', $forward[2][0]);
+
+        $backward = $this->schedule($this->twoServices('FF', secondService: null), 'alap', anchor: '2026-11-20 18:00:00', delayFn: $this->oneHourDelay());
+        $this->assertSame($backward[2][1], $backward[1][1], 'sans délai, les deux finissent ensemble');
+    }
+
+    // ------------------------------------------------------------------
     // Tâches figées, boucles
     // ------------------------------------------------------------------
+
+    public function test_a_started_task_is_a_fixed_point_like_a_frozen_one(): void
+    {
+        // Pointée en atelier (début ou fin déclarés) : on ne la replanifie plus.
+        $tasks = [
+            1 => PlanningScenarios::task(1, 10, 2, 0, 1, null, []),
+            2 => PlanningScenarios::task(2, 20, 3, 0, 1, null, []),
+            3 => PlanningScenarios::task(3, 30, 1, 0, 1, null, []),
+        ];
+        $tasks[2]->has_started = true;
+        $tasks[2]->start_date = '2026-11-18 09:00:00';
+        $tasks[2]->end_date = '2026-11-18 12:00:00';
+        $this->addLinks($tasks, [3 => [[2, 'FS']]]);
+
+        $dates = $this->schedule($tasks, 'asap');
+
+        $this->assertArrayNotHasKey(2, $dates, 'une tâche démarrée n\'est ni déplacée ni réécrite');
+        $this->assertSame('2026-11-18 12:00:00', $dates[3][0]);
+    }
+
+    public function test_a_started_task_without_end_date_is_planned_normally(): void
+    {
+        $tasks = $this->workshopTasks([3 => [[2, 'SS']]]);
+        $tasks[2]->has_started = true;
+
+        $this->assertArrayHasKey(2, $this->schedule($tasks, 'asap'), 'sans date de fin, pas de repère : elle se planifie');
+    }
+
+    public function test_the_frozen_link_check_counts_the_transfer_delay(): void
+    {
+        // 10 démarre lundi 8 h ; 20, figée, doit attendre 8 h + 1 h de délai (DD).
+        foreach (['2026-11-16 09:00:00' => 0, '2026-11-16 08:30:00' => 1] as $start => $conflicts) {
+            $tasks = $this->twoServices('SS');
+            $tasks[2]->not_recalculate = 1;
+            $tasks[2]->start_date = $start;
+            $tasks[2]->end_date = Carbon::parse($start)->addHour()->format(self::FORMAT);
+
+            $scheduler = PlanningScenarios::scheduler([]);
+            $this->schedule($tasks, 'asap', scheduler: $scheduler, delayFn: $this->oneHourDelay());
+
+            $this->assertCount($conflicts, $scheduler->conflictMessages(), "20 figée à {$start}");
+        }
+    }
 
     public function test_a_frozen_task_is_a_fixed_point_for_its_successors(): void
     {

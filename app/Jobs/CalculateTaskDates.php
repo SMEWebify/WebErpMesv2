@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Planning\Task;
+use App\Models\Planning\TaskActivities;
 use App\Models\Planning\TaskDependency;
 use App\Models\Workflow\OrderLines;
 use App\Services\Planning\FiniteCapacityScheduler;
@@ -172,11 +173,15 @@ class CalculateTaskDates implements ShouldQueue
 
     /**
      * Opérations d'une ligne à liens : les mêmes que le chaînage historique,
-     * plus les tâches figées, qui servent de points fixes à leurs voisines.
+     * plus les tâches figées (« Ne pas recalculer », démarrées ou terminées),
+     * qui servent de points fixes à leurs voisines.
      */
     private function dependencyTasks(OrderLines $line, array $taskWith)
     {
         return Task::with(array_merge(['predecessorLinks'], $taskWith))
+            ->withExists(['taskActivities as has_started' => function (Builder $query) {
+                return $query->whereIn('type', [TaskActivities::TYPE_START, TaskActivities::TYPE_FINISH]);
+            }])
             ->where('order_lines_id', $line->id)
             ->where(function (Builder $query) {
                 return $query->where('tasks.type', 1)

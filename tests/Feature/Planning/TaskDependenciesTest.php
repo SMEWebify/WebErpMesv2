@@ -4,6 +4,7 @@ namespace Tests\Feature\Planning;
 
 use App\Jobs\CalculateTaskDates;
 use App\Models\Planning\Task;
+use App\Models\Planning\TaskActivities;
 use App\Models\Planning\TaskDependency;
 use App\Models\Products\Products;
 use App\Models\User;
@@ -257,6 +258,33 @@ class TaskDependenciesTest extends TestCase
         (new CalculateTaskDates(null, 'alap', 'infinite'))->handle();
 
         $this->assertSame((string) $tasks[30]->fresh()->start_date, (string) $tasks[20]->fresh()->end_date, 'chaîne historique');
+    }
+
+    public function test_a_started_operation_keeps_its_dates_on_a_line_with_links_only(): void
+    {
+        $start = function (Task $task): void {
+            $task->update(['start_date' => '2026-11-02 08:00:00', 'end_date' => '2026-11-02 15:00:00']);
+            TaskActivities::create([
+                'task_id'   => $task->id,
+                'user_id'   => auth()->id(),
+                'type'      => TaskActivities::TYPE_START,
+                'timestamp' => now(),
+            ]);
+        };
+
+        $linked = $this->openOrderLine();
+        $tasks  = $this->routing('order_lines_id', $linked->id);
+        $this->link($tasks[30], $tasks[20], 'SS');
+        $start($tasks[20]);
+
+        $plain      = $this->openOrderLine();
+        $plainTasks = $this->routing('order_lines_id', $plain->id);
+        $start($plainTasks[20]);
+
+        (new CalculateTaskDates(null, 'alap', 'infinite'))->handle();
+
+        $this->assertSame('2026-11-02 15:00:00', (string) $tasks[20]->fresh()->end_date, 'ligne à liens : la tâche démarrée est un point fixe');
+        $this->assertNotSame('2026-11-02 15:00:00', (string) $plainTasks[20]->fresh()->end_date, 'ligne sans lien : calcul historique, inchangé');
     }
 
     public function test_operation_quantity_is_saved_with_the_task(): void
