@@ -6,6 +6,7 @@ use App\Models\Workflow\OrderLines;
 use App\Services\Planning\FiniteCapacityScheduler;
 use App\Services\Planning\InterOperationDelayResolver;
 use App\Services\TaskDateCalculator;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,9 +84,11 @@ class CalculateTaskDates implements ShouldQueue
 
         // ALAP : on traite d'abord les commandes les plus urgentes (ancrage
         // au plus tard). ASAP : les plus anciennes en premier — c'est l'ordre
-        // dans lequel elles se placeraient devant les postes.
+        // dans lequel elles se placeraient devant les postes. La ligne de
+        // commande n'a pas de date de début : c'est la première tâche qui la
+        // porte, et c'est justement ce que ce calcul écrit.
         $orderLines = $this->direction === TaskDateCalculator::DIRECTION_ASAP
-            ? $orderLines->orderBy('order_lines.start_date')
+            ? $orderLines->orderBy('orders.created_at')->orderBy('order_lines.id')
             : $orderLines->orderBy('order_lines.internal_delay');
 
         if ($this->orderId !== null) {
@@ -116,9 +119,12 @@ class CalculateTaskDates implements ShouldQueue
         $direction    = $this->direction;
         $capacityMode = $this->capacityMode;
         $suffix       = strtoupper($direction) . ($capacityMode === FiniteCapacityScheduler::MODE_FINITE ? ' · Capacité finie' : '');
+        // Un seul « maintenant » pour tout le run : toutes les lignes ASAP
+        // partent du même instant, quelle que soit la durée du calcul.
+        $asapFrom     = Carbon::now();
 
-        $orderLines->lazy()->each(function ($line) use ($scheduler, $delayCallback, $direction, $capacityMode, $suffix, $countLines, &$processed, &$messages) {
-            $chained = $scheduler->chainOrderLine($line, $direction, $capacityMode, $delayCallback);
+        $orderLines->lazy()->each(function ($line) use ($scheduler, $delayCallback, $direction, $capacityMode, $suffix, $asapFrom, $countLines, &$processed, &$messages) {
+            $chained = $scheduler->chainOrderLine($line, $direction, $capacityMode, $delayCallback, $asapFrom);
 
             foreach ($chained as $entry) {
                 $entry['task']->end_date   = $entry['end'];

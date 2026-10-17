@@ -543,7 +543,7 @@ function ScenarioCard({
                     disabled={running}
                     onClick={() => calc.triggerDates(direction, capacityMode)}
                     title={
-                        (direction === 'asap' ? 'Au plus tôt (ASAP) depuis start_date' : 'Au plus tard (ALAP) depuis internal_delay')
+                        (direction === 'asap' ? 'Au plus tôt (ASAP) à partir d’aujourd’hui' : 'Au plus tard (ALAP) depuis internal_delay')
                         + ' · ' + (capacityMode === 'finite' ? 'capacité finie partagée' : 'capacité infinie')
                     }
                 >

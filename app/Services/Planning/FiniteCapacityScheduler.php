@@ -78,8 +78,9 @@ class FiniteCapacityScheduler
         string $direction,
         string $mode,
         ?callable $delayFn = null,
+        ?Carbon $asapFrom = null,
     ): array {
-        $anchor = $this->resolveAnchor($line, $direction);
+        $anchor = $this->resolveAnchor($line, $direction, $asapFrom);
         $tasks  = $direction === TaskDateCalculator::DIRECTION_ASAP
             ? $line->Task->sortBy('ordre')
             : $line->Task->sortByDesc('ordre');
@@ -95,11 +96,15 @@ class FiniteCapacityScheduler
 
     /**
      * Ancre d'une ligne selon le sens.
+     *
+     * ASAP : la ligne de commande ne porte pas de date de début (c'est la
+     * première tâche qui la reçoit, calculée ici) — on part donc de
+     * `$asapFrom`, figé une fois par run par le job, à défaut de maintenant.
      */
-    private function resolveAnchor(OrderLines $line, string $direction): Carbon
+    private function resolveAnchor(OrderLines $line, string $direction, ?Carbon $asapFrom = null): Carbon
     {
         if ($direction === TaskDateCalculator::DIRECTION_ASAP) {
-            return $line->start_date ? Carbon::parse($line->start_date) : Carbon::now();
+            return $asapFrom ? $asapFrom->copy() : Carbon::now();
         }
 
         return Carbon::parse($line->internal_delay);

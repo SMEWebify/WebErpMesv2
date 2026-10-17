@@ -102,7 +102,6 @@ class FiniteCapacityScheduler_Test extends TestCase
         $line->id             = $id;
         $line->orders_id      = $orderId;
         $line->internal_delay = $anchor->toDateTimeString();
-        $line->start_date     = $anchor->copy()->subDays(2)->toDateTimeString();
         $line->exists         = true;
 
         $collection = Collection::make($tasks);
@@ -180,13 +179,10 @@ class FiniteCapacityScheduler_Test extends TestCase
         $line1  = $this->makeOrderLine(1, 100, $anchor, [$task1]);
         $line2  = $this->makeOrderLine(2, 200, $anchor, [$task2]);
 
-        // Les deux ancres = lundi, mais start_date = anchor pour l'ASAP dans
-        // notre stub d'OrderLine. On force via l'anchor du makeOrderLine.
-        $line1->start_date = $anchor->toDateTimeString();
-        $line2->start_date = $anchor->toDateTimeString();
-
-        $r1 = $scheduler->chainOrderLine($line1, 'asap', FiniteCapacityScheduler::MODE_FINITE);
-        $r2 = $scheduler->chainOrderLine($line2, 'asap', FiniteCapacityScheduler::MODE_FINITE);
+        // ASAP : la ligne n'a pas de date de début, l'ancre est le point de
+        // départ du run (figé par le job) — ici lundi 8h pour les deux OF.
+        $r1 = $scheduler->chainOrderLine($line1, 'asap', FiniteCapacityScheduler::MODE_FINITE, null, $anchor);
+        $r2 = $scheduler->chainOrderLine($line2, 'asap', FiniteCapacityScheduler::MODE_FINITE, null, $anchor);
 
         // OF1 : rempli le lundi entier.
         $this->assertSame('2024-05-06', $r1[0]['start']->toDateString());
