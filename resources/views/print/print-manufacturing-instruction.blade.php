@@ -155,7 +155,7 @@
                                                             <td>Poste / Machine :</td>
                                                             <td>...............</td>
                                                             <td>{{ __('general_content.total_time_trans_key') }}</td>
-                                                            <td>{{ $TechnicalCut->TotalTime() }}</td>
+                                                            <td>{{ \App\Support\TimeDisplay::isMinutes() ? \App\Support\TimeDisplay::format($TechnicalCut->TotalTime()) : $TechnicalCut->TotalTime() }}</td>
                                                             <td rowspan="3">
                                                                 {{ __('general_content.visa_trans_key') }} :
                                                             </td>

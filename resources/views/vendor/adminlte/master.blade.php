@@ -185,6 +185,12 @@
     <meta name="user-permissions" content="{{ json_encode(auth()->user()->getAllPermissions()->pluck('name')->values()) }}">
     @endauth
 
+    {{-- Unité d'affichage des temps opératoires (JS : resources/js/lib/duration.js) --}}
+    @auth
+    <meta name="time-unit" content="{{ \App\Support\TimeDisplay::unit() }}">
+    <meta name="time-unit-decimals" content="{{ \App\Support\TimeDisplay::minutesDecimals() }}">
+    @endauth
+
     {{-- Custom Meta Tags --}}
     @yield('meta_tags')
 

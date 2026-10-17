@@ -1435,6 +1435,11 @@ return [
                     'icon_color' => 'danger',
                 ],
                 [
+                    'text' => 'time_unit_settings_trans_key',
+                    'url'  => 'admin/time-unit-settings',
+                    'icon_color' => 'teal',
+                ],
+                [
                     'text' => 'workflow_settings_trans_key',
                     'url'  => 'admin/kanban-settings',
                     'icon_color' => 'orange',

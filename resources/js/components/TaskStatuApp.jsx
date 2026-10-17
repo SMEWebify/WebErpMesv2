@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { getTimeUnit, hoursToUnit, unitLabel } from '../lib/duration.js';
 
 // Le viewer embarque three.js / OCCT-WASM : chargé à la demande uniquement,
 // pour ne pas alourdir l'écran quand la tâche n'a aucun plan lié.
@@ -48,6 +49,13 @@ function Card({ title, action, children, tight }) {
         </section>
     );
 }
+
+// Temps opératoires prévus : stockés en heures, affichés dans l'unité du réglage.
+function timeValue(hours) {
+    if (hours === null || hours === undefined) return hours;
+    return getTimeUnit() === 'minutes' ? hoursToUnit(hours) : hours;
+}
+const timeUnitSuffix = () => ` ${unitLabel()}`;
 
 function Spec({ label, value, unit }) {
     return (
@@ -961,9 +969,9 @@ function TaskDetail({
                                     <Spec label={t('margin_trans_key')} value={task.margin} unit=" %" />
                                     {isInternal && (
                                         <>
-                                            <Spec label={t('setting_time_trans_key')} value={task.seting_time} unit=" s" />
-                                            <Spec label={t('unit_time_trans_key')} value={task.unit_time} unit=" s" />
-                                            <Spec label={t('total_time_trans_key')} value={task.total_time} unit=" h" />
+                                            <Spec label={t('setting_time_trans_key')} value={timeValue(task.seting_time)} unit={timeUnitSuffix()} />
+                                            <Spec label={t('unit_time_trans_key')} value={timeValue(task.unit_time)} unit={timeUnitSuffix()} />
+                                            <Spec label={t('total_time_trans_key')} value={timeValue(task.total_time)} unit={timeUnitSuffix()} />
                                             <Spec label={t('trs_trans_key')} value={task.trs} unit=" %" />
                                         </>
                                     )}
