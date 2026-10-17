@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { formatQty } from '../utils';
+import { LinksCell, PlannedQtyCell } from './planning/RoutingCells';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -724,7 +725,8 @@ function statusBadge(status) {
     return <span className={`badge ${cls}`} style={{ fontSize: 10 }} title={status.title}>{status.title}</span>;
 }
 
-function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM, showDates, statuUrl }) {
+function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM, showDates, statuUrl,
+                   links, showLinks, onSaveLinks, showQty, lineQty, onSaveQty }) {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const totalCost  = isBOM ? task.unit_cost * task.qty : task.unit_cost;
@@ -734,6 +736,9 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
     return (
         <tr>
             <td style={{ color: 'var(--bs-secondary-color)', fontSize: 12 }}>{task.ordre}</td>
+            {showLinks && !isBOM && (
+                <LinksCell info={links} canEdit={canEdit} onSave={(notation) => onSaveLinks(task.id, notation)} />
+            )}
             <td><ServiceBadge service={task.service} /></td>
             <td style={{ maxWidth: 150 }}>
                 {statuUrl ? (
@@ -759,6 +764,10 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.tool ? task.tool.code : '—'}</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.seting_time}h</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.unit_time}h</td>
+                    {showQty && (
+                        <PlannedQtyCell plannedQty={task.planned_qty} lineQty={lineQty} canEdit={canEdit}
+                                        onSave={(value) => onSaveQty(task.id, value)} />
+                    )}
                     <td>{statusBadge(task.status)}</td>
                     <td>
                         <ProgressBar value={task.progress} />
@@ -866,7 +875,7 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
 // Section footer totals
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
+function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit, showLinks, showQty }) {
     if (isSubAssembly) {
         const total = items.reduce((s, sa) => s + (sa.qty ?? 0) * (sa.unit_price ?? 0), 0);
         return (
@@ -905,10 +914,11 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit }) {
     return (
         <tfoot>
             <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
-                <td colSpan={3} style={{ textAlign: 'right', fontSize: 12 }}>Total gamme</td>
+                <td colSpan={showLinks ? 4 : 3} style={{ textAlign: 'right', fontSize: 12 }}>Total gamme</td>
                 <td />
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalSeting.toFixed(3)}h</td>
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalUnit.toFixed(3)}h</td>
+                {showQty && <td />}
                 <td />{/* Statut */}
                 <td />{/* Avance */}
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
@@ -1085,6 +1095,14 @@ export default function TaskManagePage({ context, endpoints }) {
 
     const canEdit = context.statu === 1 || context.idType === 'nomenclature_lines_id';
 
+    // Liens entre opérations et quantité par opération : gammes de ligne de devis,
+    // de ligne de commande et d'article (un article n'a pas de lot : pas de Qté).
+    const [links, setLinks] = useState({});
+    const showLinks = !!endpoints.task_dependencies
+        && ['quote_lines_id', 'order_lines_id', 'products_id', 'sub_assembly_id'].includes(context.idType);
+    const showQty = !!endpoints.task_planned_qty
+        && ['quote_lines_id', 'order_lines_id'].includes(context.idType);
+
     // L'écran de suivi opérateur n'existe que pour les tâches rattachées à une
     // ligne de commande : un devis n'a ni pointage ni déclaration de quantité.
     const statuUrlFor = (taskId) => (
@@ -1108,6 +1126,7 @@ export default function TaskManagePage({ context, endpoints }) {
                 setTechCutTasks(data.tasks.technical_cut ?? []);
                 setBomTasks(data.tasks.bom ?? []);
                 setSubAssemblies(data.sub_assemblies ?? []);
+                setLinks(data.dependencies ?? {});
                 setSelectData(selects);
             } catch (e) {
                 setError(e.message);
@@ -1158,6 +1177,49 @@ export default function TaskManagePage({ context, endpoints }) {
         const data = await res.json();
         if (res.ok && data.task) handleTaskSaved(data.task, false);
     }, [endpoints, handleTaskSaved]);
+
+    // ── Liens et quantité par opération ─────────────────────────────────────
+
+    const refreshLinks = useCallback(async () => {
+        if (!showLinks) return;
+        const res = await apiFetch(endpoints.initial_data);
+        if (!res.ok) return;
+        const data = await res.json();
+        setLinks(data.dependencies ?? {});
+    }, [endpoints, showLinks]);
+
+    const handleSaveLinks = useCallback(async (taskId, notation) => {
+        const res  = await apiFetch(endpoints.task_dependencies.replace('__ID__', taskId), {
+            method: 'PUT', body: JSON.stringify({ notation }),
+        });
+        const data = await res.json();
+        if (!res.ok) return { ok: false, error: data.errors?.links?.[0] ?? data.message ?? 'Erreur' };
+        setLinks(Object.fromEntries((data.routing ?? []).map(r => [r.id, r])));
+        return { ok: true };
+    }, [endpoints]);
+
+    const handleSavePlannedQty = useCallback(async (taskId, value) => {
+        const res  = await apiFetch(endpoints.task_planned_qty.replace('__ID__', taskId), {
+            method: 'PATCH', body: JSON.stringify({ planned_qty: value }),
+        });
+        const data = await res.json();
+        if (!res.ok) return { ok: false, error: data.errors?.planned_qty?.[0] ?? data.message ?? 'Erreur' };
+        setTechCutTasks(prev => prev.map(t => t.id === taskId ? data.task : t));
+        return { ok: true };
+    }, [endpoints]);
+
+    // Une opération ajoutée, supprimée, dupliquée ou renumérotée change les liens
+    // implicites (« après 20 ») : on relit les liens de la gamme.
+    const routingKey = techCutTasks.map(t => `${t.id}:${t.ordre}`).join(',');
+    const linksKey   = useRef(null);
+    useEffect(() => {
+        if (loading) return;
+        if (linksKey.current === null) { linksKey.current = routingKey; return; }
+        if (linksKey.current !== routingKey) {
+            linksKey.current = routingKey;
+            refreshLinks();
+        }
+    }, [routingKey, loading, refreshLinks]);
 
     // ── SubAssembly CRUD ────────────────────────────────────────────────────
 
@@ -1256,11 +1318,17 @@ export default function TaskManagePage({ context, endpoints }) {
                             <thead className="table-light">
                                 <tr>
                                     <th style={{ width: 40 }}>N°</th>
+                                    {showLinks && (
+                                        <th style={{ width: 130 }} title="Opérations amont : 20FD;30FD · 20DD+2h · 20DD+10pc;20FF+10pc — vide = après la précédente">Liens</th>
+                                    )}
                                     <th style={{ width: 90 }}>Service</th>
                                     <th>Libellé</th>
                                     <th style={{ width: 70, textAlign: 'right' }}>Outil</th>
                                     <th style={{ width: 60, textAlign: 'right' }}>Régl.</th>
                                     <th style={{ width: 60, textAlign: 'right' }}>Unit.</th>
+                                    {showQty && (
+                                        <th style={{ width: 60, textAlign: 'right' }} title="Quantité traitée par l'opération — vide = quantité de la ligne">Qté</th>
+                                    )}
                                     <th style={{ width: 90 }}>Statut</th>
                                     <th style={{ width: 80 }}>Avance</th>
                                     <th style={{ width: 80, textAlign: 'right' }}>Coût</th>
@@ -1275,6 +1343,8 @@ export default function TaskManagePage({ context, endpoints }) {
                                 {techCutTasks.map(task => (
                                     <TaskRow key={task.id} task={task} canEdit={canEdit} currency={currency}
                                              isBOM={false}
+                                             links={links[task.id]} showLinks={showLinks} onSaveLinks={handleSaveLinks}
+                                             showQty={showQty} lineQty={line?.qty} onSaveQty={handleSavePlannedQty}
                                              showDates={context.idType !== 'quote_lines_id'}
                                              statuUrl={statuUrlFor(task.id)}
                                              onEdit={t => openEdit(DRAWER.TECHCUT, t)}
@@ -1282,7 +1352,8 @@ export default function TaskManagePage({ context, endpoints }) {
                                              onDuplicate={handleTaskDuplicate} />
                                 ))}
                             </tbody>
-                            <SectionTotals items={techCutTasks} currency={currency} isBOM={false} canEdit={canEdit} />
+                            <SectionTotals items={techCutTasks} currency={currency} isBOM={false} canEdit={canEdit}
+                                           showLinks={showLinks} showQty={showQty} />
                         </table>
                     </div>
                 )}

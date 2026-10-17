@@ -262,6 +262,37 @@ Crée un devis avec ses lignes, détails techniques et tâches.
 | `x_size`…`z_oversize` | numeric | Non              |                                          |
 | `to_schedule`         | boolean | Non               |                                          |
 | `not_recalculate`     | boolean | Non               |                                          |
+| `planned_qty`         | numeric | Non               | Quantité traitée par l'opération (lot partagé entre deux machines) ; absent ou `null` = quantité de la ligne. Ne change que la durée planifiée |
+| `predecessors`        | array   | Non               | Liens vers les opérations amont, voir ci-dessous |
+
+**Liens entre opérations (`lines[].tasks[].predecessors[]`)**
+
+Sans lien, une opération suit la précédente de la gamme (fin-début) : c'est le comportement par
+défaut. Les opérations amont sont désignées par leur `ordre` dans la même ligne.
+
+| Champ       | Type    | Requis | Notes                                                              |
+|-------------|---------|--------|--------------------------------------------------------------------|
+| `ordre`     | integer | Oui    | Numéro de l'opération amont dans la ligne                          |
+| `type`      | string  | Non    | `FS` fin-début (défaut), `SS` début-début, `FF` fin-fin            |
+| `lag_value` | numeric | Non    | Décalage (≥ 0), 0 par défaut                                       |
+| `lag_unit`  | string  | Non    | `hour` (défaut) ou `piece` (`SS` et `FF` seulement : lot de transfert) |
+
+Exemple : deux tours en chevauchement puis un fraisage qui attend les deux.
+
+```json
+"tasks": [
+  { "label": "Tournage côté 1", "ordre": 20, "type": 1, "seting_time": 1, "unit_time": 0.06 },
+  { "label": "Tournage côté 2", "ordre": 30, "type": 1, "seting_time": 1, "unit_time": 0.04,
+    "predecessors": [ { "ordre": 20, "type": "SS", "lag_value": 1, "lag_unit": "piece" },
+                      { "ordre": 20, "type": "FF", "lag_value": 1, "lag_unit": "piece" } ] },
+  { "label": "Fraisage", "ordre": 40, "type": 1, "seting_time": 1.5, "unit_time": 0.05,
+    "predecessors": [ { "ordre": 20 }, { "ordre": 30 } ] }
+]
+```
+
+Un numéro inconnu, des pièces sur un `FS` ou une boucle entre opérations renvoient `422` et rien
+n'est enregistré. En réponse, chaque tâche porte `planned_qty` et `predecessors` (avec `ordre`,
+`task_id`, `type`, `lag_value`, `lag_unit`).
 
 **Exemple de payload complet**
 
@@ -350,6 +381,8 @@ Met à jour un devis existant. Même payload que `POST`.
 | Tâche avec `id`                            | Mise à jour                            |
 | Tâche sans `id`                            | Création                               |
 | Tâche existante absente de `tasks[]`       | Soft-delete                            |
+| Clé `predecessors` absente d'une tâche     | Liens de la tâche inchangés            |
+| `predecessors: []`                         | Liens supprimés : la tâche suit la précédente |
 
 **Réponse `200`** → même structure que `POST`
 
@@ -939,6 +972,11 @@ Export des commandes en JSON pour intégration comptable ou ERP externe.
 | `date_format`     | string  | Non    | Format des dates (défaut `Y-m-d`)       |
 | `datetime_format` | string  | Non    | Format des datetimes (défaut `Y-m-d H:i:s`) |
 | `include_lines`   | boolean | Non    | Inclure les lignes de commande          |
+
+Avec `include_lines`, chaque tâche porte aussi, pour un outil de planification : `planned_qty`
+(quantité propre de l'opération, `null` = celle de la ligne), `planned_hours` (réglage + quantité ×
+temps unitaire) et `predecessors` (liens amont en notation courte, par exemple `20FS;30SS+2h;20FF+10pc` ;
+vide = l'opération suit la précédente).
 
 **Réponse `200`**
 ```json

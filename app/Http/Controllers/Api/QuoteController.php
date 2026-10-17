@@ -17,6 +17,11 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\QuoteLineDetails;
 use App\Models\Planning\Task;
+use App\Models\Planning\TaskDependency;
+use App\Enums\TaskDependencyLagUnit;
+use App\Enums\TaskDependencyType;
+use App\Services\Planning\DependencyGraph;
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Http\Requests\Api\UpsertQuoteRequest;
@@ -35,7 +40,7 @@ class QuoteController extends Controller
 
     public function show(Quotes $quote)
     {
-        $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+        $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task.predecessorLinks.predecessor']);
 
         return new QuoteResource($quote);
     }
@@ -86,7 +91,7 @@ class QuoteController extends Controller
                     $this->syncLines($quote, $lines);
                 }
 
-                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task.predecessorLinks.predecessor']);
 
                 return [$quote, count($lines)];
             });
@@ -141,7 +146,7 @@ class QuoteController extends Controller
                     $this->syncLines($quote, $lines);
                 }
 
-                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task.predecessorLinks.predecessor']);
 
                 return [$quote, count($lines)];
             });
@@ -362,6 +367,7 @@ class QuoteController extends Controller
     private function syncTasks(QuoteLines $line, array $tasks): void
     {
         $submittedTaskIds = [];
+        $submitted        = [];
         $logger           = Log::channel('quote_import');
         $servicesMap      = $this->resolveServicesMap($tasks);
         $nextOrdre        = 1;
@@ -376,7 +382,7 @@ class QuoteController extends Controller
                 'status_id', 'priority', 'delay', 'due_date',
                 'material', 'thickness', 'weight',
                 'x_size', 'y_size', 'z_size', 'x_oversize', 'y_oversize', 'z_oversize',
-                'diameter', 'diameter_oversize', 'to_schedule', 'not_recalculate',
+                'diameter', 'diameter_oversize', 'to_schedule', 'not_recalculate', 'planned_qty',
             ])->all();
 
             // 1. Résolution du service : operation_code prioritaire, sinon code
@@ -416,11 +422,75 @@ class QuoteController extends Controller
             }
 
             $submittedTaskIds[] = $task->id;
+            $submitted[]        = ['task' => $task, 'data' => $taskData];
         }
 
         // Soft-delete tasks not present in the submitted payload
         $line->Task()
             ->when(!empty($submittedTaskIds), fn ($q) => $q->whereNotIn('id', $submittedTaskIds))
             ->each(fn (Task $task) => $task->delete());
+
+        $this->syncDependencies($line, $submitted);
+    }
+
+    /**
+     * Liens reçus par l'API : `predecessors` désigne les opérations amont par leur
+     * `ordre` dans la ligne. Clé absente : liens inchangés ; tableau vide : retour
+     * à l'enchaînement sur l'opération précédente. Un numéro inconnu, des pièces
+     * sur un fin-début ou une boucle annulent tout l'envoi (422).
+     *
+     * @param  array<int, array{task: Task, data: array}>  $submitted
+     */
+    private function syncDependencies(QuoteLines $line, array $submitted): void
+    {
+        $withLinks = array_filter($submitted, fn (array $s) => \array_key_exists('predecessors', $s['data']));
+        if ($withLinks === []) {
+            return;
+        }
+
+        $routing = Task::where('quote_lines_id', $line->id)
+            ->whereIn('type', [1, 7])
+            ->orderBy('ordre')
+            ->orderBy('id')
+            ->get();
+
+        $idByOrdre = [];
+        foreach ($routing as $task) {
+            $idByOrdre[(string) $task->ordre] ??= (int) $task->id;
+        }
+
+        foreach ($withLinks as $s) {
+            $task = $s['task'];
+            TaskDependency::where('task_id', $task->id)->delete();
+
+            foreach ($s['data']['predecessors'] ?? [] as $p) {
+                $type = TaskDependencyType::from($p['type'] ?? TaskDependencyType::FinishToStart->value);
+                $unit = TaskDependencyLagUnit::from($p['lag_unit'] ?? TaskDependencyLagUnit::Hour->value);
+                $from = $idByOrdre[(string) ($p['ordre'] ?? '')] ?? null;
+
+                if (! \in_array((int) $task->type, [1, 7], true)) {
+                    throw ValidationException::withMessages(['predecessors' => __('planning.dependency_not_schedulable')]);
+                }
+                if ($from === null) {
+                    throw ValidationException::withMessages(['predecessors' => __('planning.notation_unknown_operation', ['ordre' => $p['ordre'] ?? '?'])]);
+                }
+                if ($from === (int) $task->id) {
+                    throw ValidationException::withMessages(['predecessors' => __('planning.dependency_self')]);
+                }
+                if ($unit === TaskDependencyLagUnit::Piece && ! $type->acceptsPieceLag()) {
+                    throw ValidationException::withMessages(['predecessors' => __('planning.dependency_piece_lag')]);
+                }
+
+                TaskDependency::firstOrCreate(
+                    ['task_id' => $task->id, 'predecessor_task_id' => $from, 'type' => $type->value],
+                    ['lag_value' => (float) ($p['lag_value'] ?? 0), 'lag_unit' => $unit->value],
+                );
+            }
+        }
+
+        $graph = DependencyGraph::fromTasks(Task::with('predecessorLinks')->whereKey($routing->pluck('id'))->get());
+        if ($graph->hasCycle()) {
+            throw ValidationException::withMessages(['predecessors' => __('planning.dependency_cycle', ['cycle' => $graph->describeCycle()])]);
+        }
     }
 }

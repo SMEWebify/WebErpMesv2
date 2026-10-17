@@ -89,13 +89,15 @@ final class DependencyNotation
     /**
      * @param  DependencyEdge[]  $edges  liens entrants d'une opération
      * @param  array<int, int|string>  $ordreByTaskId  id de tâche → numéro d'opération
+     * @param  bool  $canonical  codes FS/SS/FF quelle que soit la langue (API, export)
      */
-    public static function format(array $edges, array $ordreByTaskId): string
+    public static function format(array $edges, array $ordreByTaskId, bool $canonical = false): string
     {
         $items = [];
 
         foreach ($edges as $edge) {
-            $item = ($ordreByTaskId[$edge->from] ?? '#' . $edge->from) . $edge->type->shortLabel();
+            $code = $canonical ? $edge->type->value : $edge->type->shortLabel();
+            $item = ($ordreByTaskId[$edge->from] ?? '#' . $edge->from) . $code;
 
             if ($edge->lagValue > 0) {
                 $value = rtrim(rtrim(number_format($edge->lagValue, 3, '.', ''), '0'), '.');
@@ -106,5 +108,30 @@ final class DependencyNotation
         }
 
         return implode(';', $items);
+    }
+
+    /**
+     * Liens saisis (TaskDependency, relation `predecessor` chargée) en notation
+     * courte : « 20FS;30SS+2h » pour l'API et les exports.
+     *
+     * @param  iterable<\App\Models\Planning\TaskDependency>  $links
+     */
+    public static function formatLinks(iterable $links, bool $canonical = true): string
+    {
+        $edges = [];
+        $ordre = [];
+
+        foreach ($links as $link) {
+            $edges[] = new DependencyEdge(
+                (int) $link->predecessor_task_id,
+                (int) $link->task_id,
+                $link->type,
+                (float) $link->lag_value,
+                $link->lag_unit,
+            );
+            $ordre[(int) $link->predecessor_task_id] = $link->predecessor?->ordre;
+        }
+
+        return self::format($edges, $ordre, $canonical);
     }
 }

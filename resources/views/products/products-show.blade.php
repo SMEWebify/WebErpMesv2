@@ -504,6 +504,7 @@
               'task_update'           => route('task.manage.json.task.update',  ['products_id', $Product->id, '__ID__']),
               'task_destroy'          => route('task.manage.json.task.destroy', ['products_id', $Product->id, '__ID__']),
               'task_duplicate'        => route('task.manage.json.task.duplicate', ['products_id', $Product->id, '__ID__']),
+              'task_dependencies'     => route('task.manage.json.task.dependencies', ['products_id', $Product->id, '__ID__']),
               'subassembly_store'     => route('task.manage.json.subassembly.store',     ['products_id', $Product->id, $Product->id]),
               'subassembly_update'    => route('task.manage.json.subassembly.update',    ['products_id', $Product->id, '__ID__']),
               'subassembly_destroy'   => route('task.manage.json.subassembly.destroy',   ['products_id', $Product->id, '__ID__']),

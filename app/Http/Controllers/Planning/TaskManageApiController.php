@@ -134,6 +134,7 @@ class TaskManageApiController extends Controller
             'seting_time'          => (float) $task->seting_time,
             'unit_time'            => (float) $task->unit_time,
             'qty'                  => (float) ($task->qty ?? 0),
+            'planned_qty'          => $task->planned_qty !== null ? (float) $task->planned_qty : null,
             'unit_cost'            => (float) $task->unit_cost,
             'unit_price'           => (float) $task->unit_price,
             'start_date'           => $task->start_date,
@@ -241,6 +242,9 @@ class TaskManageApiController extends Controller
             ->filter(fn($r) => !empty($r['label'] ?? null) || !empty($r['value'] ?? null))
             ->values();
 
+        // Liens de la gamme technique, par opération (gammes de ligne et d'article).
+        $dependencies = [];
+
         // Tasks
         if ($idType === 'nomenclature_lines_id') {
             // Standard tasks from MethodsStandardTask
@@ -255,7 +259,7 @@ class TaskManageApiController extends Controller
             $subAssembliesData = collect();
         } else {
             $fk = $idType; // e.g. 'quote_lines_id'
-            $techCut = Task::with(['service', 'Component', 'MethodsTools', 'status'])
+            $techCut = Task::with(['service', 'Component', 'MethodsTools', 'status', 'predecessorLinks'])
                 ->where($fk, $idLine)
                 ->whereIn('type', [1, 7])
                 ->orderBy('ordre')
@@ -273,6 +277,10 @@ class TaskManageApiController extends Controller
             $technicalCutData = $techCut->map(fn($t) => $this->formatTask($t, $currency))->values();
             $bomData          = $bom->map(fn($t) => $this->formatTask($t, $currency))->values();
             $subAssembliesData = $subAssemblies->map(fn($sa) => $this->formatSubAssembly($sa))->values();
+
+            if (in_array($idType, ['quote_lines_id', 'order_lines_id', 'products_id', 'sub_assembly_id'], true)) {
+                $dependencies = $this->routingLinks(DependencyGraph::fromTasks($techCut));
+            }
         }
 
         return response()->json([
@@ -287,6 +295,7 @@ class TaskManageApiController extends Controller
                 'bom'           => $bomData,
             ],
             'sub_assemblies' => $subAssembliesData,
+            'dependencies'   => $dependencies,
         ]);
     }
 
@@ -507,6 +516,39 @@ class TaskManageApiController extends Controller
         $new->load(['service', 'component', 'MethodsTools', 'status']);
 
         return response()->json(['task' => $this->formatTask($new, $currency)], 201);
+    }
+
+    // -------------------------------------------------------------------------
+    // PATCH — quantité traitée par une opération
+    // -------------------------------------------------------------------------
+
+    /**
+     * Quantité de l'opération quand un lot est partagé entre deux machines ;
+     * vide = quantité de la ligne. Aucun contrôle de la somme : c'est un choix
+     * d'atelier. Ne change que la durée planifiée (Task::plannedHours()).
+     */
+    public function updatePlannedQtyJson(string $idType, string $idPage, int $id, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+        $this->abortIfDocumentLocked($idType, $idPage);
+
+        $validated = $request->validate([
+            'planned_qty' => 'nullable|numeric|min:0',
+        ]);
+
+        $task = Task::findOrFail($id);
+
+        if (! in_array((int) $task->type, [1, 7], true)) {
+            return response()->json(['errors' => ['planned_qty' => [__('planning.dependency_not_schedulable')]]], 422);
+        }
+
+        $task->update(['planned_qty' => $validated['planned_qty'] ?? null]);
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        $task->load(['service', 'component', 'MethodsTools', 'status']);
+
+        return response()->json(['task' => $this->formatTask($task, $currency)]);
     }
 
     // -------------------------------------------------------------------------
