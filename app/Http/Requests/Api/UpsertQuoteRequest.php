@@ -44,6 +44,7 @@ class UpsertQuoteRequest extends FormRequest
             'lines.*.selling_price'              => 'nullable|numeric|min:0',
             'lines.*.discount'                   => 'nullable|numeric|min:0|max:100',
             'lines.*.accounting_vats_id'         => 'nullable|exists:accounting_vats,id',
+            'lines.*.ind'                        => 'nullable|string|max:50',
             'lines.*.delivery_date'              => 'nullable|date',
             'lines.*.statu'                      => 'nullable|integer',
             'lines.*.use_calculated_price'       => 'nullable|boolean',

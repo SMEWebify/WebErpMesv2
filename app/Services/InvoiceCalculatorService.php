@@ -179,6 +179,7 @@ class InvoiceCalculatorService
             $lines[] = [
                 'label'          => $invoicesLine->display_label,
                 'code'           => $invoicesLine->display_code,
+                'ind'            => $invoicesLine->display_ind,
                 'qty'            => (float) $invoicesLine->qty,
                 'unit_price'     => (float) $unitPrice,
                 'discount'       => (float) $discount,

@@ -88,6 +88,7 @@ class QuoteLinesController extends Controller
                 'quote_url'            => route('quotes.show', ['id' => $l->quotes_id]),
                 'ordre'                => $l->ordre,
                 'code'                 => $l->code,
+                'ind'                  => $l->ind,
                 'product_id'           => $l->product_id,
                 'product_url'          => $l->product_id ? route('products.show', ['id' => $l->product_id]) : null,
                 'label'                => $l->label,
@@ -335,6 +336,7 @@ class QuoteLinesController extends Controller
             'discount'           => 'required|numeric|min:0|max:100',
             'product_id'         => 'nullable|exists:products,id',
             'code'               => 'nullable|string|max:255',
+            'ind'                => 'nullable|string|max:50',
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
@@ -351,6 +353,7 @@ class QuoteLinesController extends Controller
             'quotes_id'          => $quoteId,
             'ordre'              => $validated['ordre'],
             'code'               => $validated['code'] ?? '',
+            'ind'                => $validated['ind'] ?? (!empty($validated['product_id']) ? Products::whereKey($validated['product_id'])->value('ind') : null),
             'product_id'         => $validated['product_id'] ?? null,
             'label'              => $validated['label'],
             'qty'                => $validated['qty'],
@@ -402,6 +405,7 @@ class QuoteLinesController extends Controller
             'discount'           => 'required|numeric|min:0|max:100',
             'product_id'         => 'nullable|exists:products,id',
             'code'               => 'nullable|string|max:255',
+            'ind'                => 'nullable|string|max:50',
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
@@ -645,6 +649,7 @@ class QuoteLinesController extends Controller
             'quotes_id'            => $l->quotes_id,
             'ordre'                => $l->ordre,
             'code'                 => $l->code,
+            'ind'                  => $l->ind,
             'product_id'           => $l->product_id,
             'product_code'         => $l->Product?->code,
             'product_url'          => $l->product_id ? route('products.show', ['id' => $l->product_id]) : null,
@@ -918,6 +923,7 @@ class QuoteLinesController extends Controller
 
         $product = Products::create([
             'code'                => $line->code,
+            'ind'                 => $line->ind,
             'label'               => $line->label,
             'methods_services_id' => $service->id,
             'methods_families_id' => $family->id,
@@ -999,6 +1005,7 @@ class QuoteLinesController extends Controller
 
             $product = Products::create([
                 'code'                => $line->code,
+                'ind'                 => $line->ind,
                 'label'               => $line->label,
                 'methods_services_id' => $service->id,
                 'methods_families_id' => $family->id,

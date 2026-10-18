@@ -4,7 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
+use App\Models\Planning\Task;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Workflow\OrderLines;
 use App\Models\Quality\QualityNonConformity;
 use App\Notifications\NonConformityNotification;
 
@@ -25,6 +27,11 @@ class QualityNonConformityService
      */
     public function createNonConformity(array $data)
     {
+        // L'indice du plan suit la ligne de commande quand il n'est pas saisi.
+        if (empty($data['ind']) && !empty($data['order_lines_id'])) {
+            $data['ind'] = OrderLines::whereKey($data['order_lines_id'])->value('ind');
+        }
+
         // Create non-conformity
         $nonConformity = QualityNonConformity::create($data);
 
@@ -60,6 +67,7 @@ class QualityNonConformityService
             'user_id' => $deliveryLine->delivery->user_id,
             'companie_id' => $deliveryLine->delivery->companies_id,
             'order_lines_id' => $deliveryLine->OrderLine->id,
+            'ind' => $deliveryLine->ind ?? $deliveryLine->OrderLine->ind,
             'deliverys_id' => $deliveryLine->deliverys_id,
             'delivery_line_id' => $deliveryLineId,
         ]);
@@ -94,8 +102,10 @@ class QualityNonConformityService
         if ($type === 'task') {
             $data['methods_services_id'] = $serviceId;
             $data['task_id'] = $id;
+            $data['ind'] = Task::find($id)?->OrderLines?->ind;
         } else {
             $data['order_lines_id'] = $id;
+            $data['ind'] = OrderLines::whereKey($id)->value('ind');
         }
 
         // Create non-conformity

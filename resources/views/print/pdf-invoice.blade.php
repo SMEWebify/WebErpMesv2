@@ -122,7 +122,7 @@
                         <td align="center">{{ $DocumentLine->deliveryLine?->delivery?->code ?? $DocumentLine->OrderLine?->order['code'] ?? '-' }}</td>
                         <td>
                             {{ $DocumentLine->display_label }}<br>
-                            <span style="color: #6c757d">{{ $DocumentLine->display_code }}</span>
+                            <span style="color: #6c757d">{{ $DocumentLine->display_code }}@if(!empty($DocumentLine->display_ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->display_ind }}@endif</span>
                         </td>
                         <td>{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->display_unit_label }}</td>

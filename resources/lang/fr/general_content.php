@@ -1118,6 +1118,8 @@ return [
     'duplicate_purchase_quotation_trans_key'   => 'Dupliquer la demande de devis',
     'other_information_trans_key'              => 'Autre information',
     'index_trans_key'                          => 'Ind',
+    'plan_index_trans_key'                     => 'Ind. plan',
+    'plan_index_short_trans_key'               => 'ind.',
     'new_product_trans_key'                    => 'Nouveau produit',
     'price_by_qty_trans_key'                   => 'Prix par quantité',
     'weighted_average_price_trans_key'         => 'Prix ​​moyen pondéré',

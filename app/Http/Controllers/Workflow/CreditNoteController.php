@@ -91,6 +91,7 @@ class CreditNoteController extends Controller
                     // Snapshot descriptif : une ligne libre n'a pas de ligne de
                     // commande où retrouver ces informations.
                     'label'              => $invoiceLine->display_label,
+                    'ind'                => $invoiceLine->display_ind,
                     'qty'                => $invoiceLine->qty,
                     // Utilise le snapshot stocké sur la ligne de facture (fix immutabilité)
                     'unit_price'         => $invoiceLine->resolved_unit_price,

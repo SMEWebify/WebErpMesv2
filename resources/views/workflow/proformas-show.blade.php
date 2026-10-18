@@ -178,7 +178,7 @@
                       <x-OrderButton id="{{ $line->orderLine->order->id }}" code="{{ $line->orderLine->order->code }}" />
                     @endif
                   </td>
-                  <td>{{ $line->display_code }}</td>
+                  <td>{{ $line->display_code }}@if(!empty($line->display_ind)) <span class="badge text-bg-light" title="{{ __('general_content.plan_index_trans_key') }}">{{ __('general_content.plan_index_short_trans_key') }} {{ $line->display_ind }}</span>@endif</td>
                   <td>{{ $line->display_label }}</td>
                   <td>{{ format_qty($line->qty) }}</td>
                   <td>{{ $line->display_unit_label }}</td>

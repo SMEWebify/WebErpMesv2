@@ -17,7 +17,7 @@ class CreditNoteLines extends Model
     use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
-    protected $fillable= [
+    protected $fillable= ['ind', 
         'credit_note_id',
         'order_line_id',
         'invoice_line_id',

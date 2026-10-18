@@ -476,6 +476,7 @@ class PreOrdersController extends Controller
                     'orders_id' => $order->id,
                     'ordre' => $index + 1,
                     'code' => $matchedProduct?->code ?: $line->reference,
+                    'ind' => $matchedProduct?->ind,
                     'product_id' => $line->linked_product_id,
                     'label' => $matchedProduct?->label ?: ($line->product ?: $line->reference),
                     'qty' => max((int) $line->quantity, 1),

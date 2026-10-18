@@ -48,7 +48,7 @@
                                         @endif
                                         {{ $DocumentLine->OrderLine->order['code'] }}
                                     </td>
-                                    <td>{{ $DocumentLine->OrderLine['code'] }}</td>
+                                    <td>{{ $DocumentLine->OrderLine['code'] }}@if(!empty($DocumentLine->ind)) <span class="badge text-bg-light" title="{{ __('general_content.plan_index_trans_key') }}">{{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}</span>@endif</td>
                                     <td>{{ $DocumentLine->OrderLine['label'] }}</td>
                                     <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
                                     <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>

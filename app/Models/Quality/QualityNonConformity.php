@@ -25,7 +25,7 @@ class QualityNonConformity extends Model
     use HasFactory, SoftDeletes;
     
     // Fillable attributes for mass assignment
-    protected $fillable= ['code',
+    protected $fillable= ['ind', 'code',
                         'label', 
                         'statu',
                         'type', 

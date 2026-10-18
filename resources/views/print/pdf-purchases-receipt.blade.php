@@ -117,7 +117,7 @@
                         </td>
                         <td>
                             @if($DocumentLine->purchaseLines->tasks_id ?? null)
-                            #{{ $DocumentLine->purchaseLines->tasks->id }} {{ $DocumentLine->purchaseLines->tasks->code }} {{ $DocumentLine->purchaseLines->tasks->label }}
+                            #{{ $DocumentLine->purchaseLines->tasks->id }} {{ $DocumentLine->purchaseLines->tasks->code }} {{ $DocumentLine->purchaseLines->tasks->label }}@if(!empty($DocumentLine->purchaseLines->ind)) — {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->purchaseLines->ind }}@endif
                             @else
                                 {{ $DocumentLine->purchaseLines->label }}
                             @endif

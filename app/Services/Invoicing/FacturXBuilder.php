@@ -241,6 +241,11 @@ class FacturXBuilder
                 ->setDocumentPositionProductDetails($line['label'] ?: $line['code'], null, $line['code'])
                 ->setDocumentPositionGrossPrice(round($line['unit_price'], 2));
 
+            // Indice du plan : attribut d'article (BT-160 / BT-161), seulement s'il existe.
+            if (!empty($line['ind'])) {
+                $zugferddatas->addDocumentPositionProductCharacteristic('Indice', (string) $line['ind']);
+            }
+
             if ($line['discount'] > 0) {
                 $zugferddatas->addDocumentPositionGrossPriceAllowanceCharge(
                     round($line['unit_price'] * $line['discount'] / 100, 2),
