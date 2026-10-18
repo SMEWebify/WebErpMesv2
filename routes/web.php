@@ -1065,6 +1065,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/document-code-template/store', 'App\Http\Controllers\Admin\DocumentCodeTemplateController@store')->middleware(['auth'])->name('admin.document.code.template.store');
         Route::post('/document-code-template/update/{id}', 'App\Http\Controllers\Admin\DocumentCodeTemplateController@update')->middleware(['auth'])->name('admin.document.code.template.update');
         
+        Route::get('/time-unit-settings', [\App\Http\Controllers\Admin\TimeUnitSettingsController::class, 'index'])->middleware(['auth'])->name('admin.time.unit.settings');
+        Route::put('/time-unit-settings', [\App\Http\Controllers\Admin\TimeUnitSettingsController::class, 'update'])->middleware(['auth'])->name('admin.time.unit.settings.update');
         Route::get('/estimated-budgets-settings', 'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsSettingView')->middleware(['auth'])->name('admin.estimated.budgets.settings');
         Route::get('/estimated-budgets/json/list',         'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonList')->middleware(['auth'])->name('admin.estimated.budgets.json.list');
         Route::post('/estimated-budgets/json/store',       'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonStore')->middleware(['auth'])->name('admin.estimated.budgets.json.store');

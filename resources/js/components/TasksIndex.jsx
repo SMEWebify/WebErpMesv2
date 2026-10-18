@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { formatQty } from '../utils';
 import { rowLinkProps } from '../lib/rowLink.js';
+import { formatDuration } from '../lib/duration.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -165,19 +166,19 @@ function colDefs(t) {
             label:     t('setting_time_trans_key'),
             sortField: 'seting_time',
             align:     'right',
-            render:    (task) => `${parseFloat(task.seting_time ?? 0).toFixed(2)} h`,
+            render:    (task) => formatDuration(task.seting_time ?? 0, { hoursDecimals: 2 }),
         },
         unit_time: {
             label:     t('unit_time_trans_key'),
             sortField: 'unit_time',
             align:     'right',
-            render:    (task) => `${parseFloat(task.unit_time ?? 0).toFixed(2)} h`,
+            render:    (task) => formatDuration(task.unit_time ?? 0, { hoursDecimals: 2 }),
         },
         total_time: {
             label:     t('total_time_trans_key'),
             sortField: 'total_time',
             align:     'right',
-            render:    (task) => `${parseFloat(task.total_time ?? 0).toFixed(2)} h`,
+            render:    (task) => formatDuration(task.total_time ?? 0, { hoursDecimals: 2 }),
         },
         progress: {
             label:     t('progress_trans_key'),

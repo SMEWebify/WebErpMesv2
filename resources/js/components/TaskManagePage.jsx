@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { formatQty } from '../utils';
 import { LinksCell, PlannedQtyCell } from './planning/RoutingCells';
+import { formatDuration, unitLabel } from '../lib/duration.js';
+import TimeInput from './TimeInput.jsx';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -135,7 +137,7 @@ function CostFormula({ setigTime, unitTime, lineQty, hourlyRate, currency }) {
     const cost = ((parseFloat(setigTime) || 0) / (parseFloat(lineQty) || 1) + (parseFloat(unitTime) || 0)) * parseFloat(hourlyRate);
     return (
         <small style={{ color: 'var(--bs-secondary-color)', display: 'block', marginTop: 2 }}>
-            ({setigTime || 0} h / {lineQty} + {unitTime || 0} h) × {hourlyRate} {currency}/h = <strong>{cost.toFixed(2)} {currency}</strong>
+            ({formatDuration(setigTime || 0)} / {lineQty} + {formatDuration(unitTime || 0)}) × {hourlyRate} {currency}/h = <strong>{cost.toFixed(2)} {currency}</strong>
         </small>
     );
 }
@@ -286,15 +288,15 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bs-secondary-color)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Temps</div>
                 <div className="row gx-2">
                     <div className="col-6">
-                        <Field label="Temps de réglage (h)" error={errors.seting_time?.[0]}>
-                            <Input type="number" step="0.001" min="0" value={form.seting_time} error={errors.seting_time?.[0]}
-                                   onChange={e => handleTimeChange('seting_time', e.target.value)} />
+                        <Field label={`Temps de réglage (${unitLabel()})`} error={errors.seting_time?.[0]}>
+                            <TimeInput as={Input} value={form.seting_time} error={errors.seting_time?.[0]}
+                                   onChange={v => handleTimeChange('seting_time', v)} />
                         </Field>
                     </div>
                     <div className="col-6">
-                        <Field label="Temps unitaire (h)" error={errors.unit_time?.[0]}>
-                            <Input type="number" step="0.001" min="0" value={form.unit_time} error={errors.unit_time?.[0]}
-                                   onChange={e => handleTimeChange('unit_time', e.target.value)} />
+                        <Field label={`Temps unitaire (${unitLabel()})`} error={errors.unit_time?.[0]}>
+                            <TimeInput as={Input} value={form.unit_time} error={errors.unit_time?.[0]}
+                                   onChange={v => handleTimeChange('unit_time', v)} />
                         </Field>
                     </div>
                 </div>
@@ -762,8 +764,8 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
             ) : (
                 <>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{task.tool ? task.tool.code : '—'}</td>
-                    <td style={{ textAlign: 'right', fontSize: 12 }}>{task.seting_time}h</td>
-                    <td style={{ textAlign: 'right', fontSize: 12 }}>{task.unit_time}h</td>
+                    <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(task.seting_time, { hoursSuffix: 'h' })}</td>
+                    <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(task.unit_time, { hoursSuffix: 'h' })}</td>
                     {showQty && (
                         <PlannedQtyCell plannedQty={task.planned_qty} lineQty={lineQty} canEdit={canEdit}
                                         onSave={(value) => onSaveQty(task.id, value)} />
@@ -916,8 +918,8 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit, showLin
             <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
                 <td colSpan={showLinks ? 4 : 3} style={{ textAlign: 'right', fontSize: 12 }}>Total gamme</td>
                 <td />
-                <td style={{ textAlign: 'right', fontSize: 12 }}>{totalSeting.toFixed(3)}h</td>
-                <td style={{ textAlign: 'right', fontSize: 12 }}>{totalUnit.toFixed(3)}h</td>
+                <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(totalSeting, { hoursDecimals: 3, hoursSuffix: 'h' })}</td>
+                <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(totalUnit, { hoursDecimals: 3, hoursSuffix: 'h' })}</td>
                 {showQty && <td />}
                 <td />{/* Statut */}
                 <td />{/* Avance */}

@@ -1831,4 +1831,12 @@ return [
     'no_templates_yet_trans_key' => 'No template yet. Open a quote and use "Save as template" in the Options box.',
     'applications_trans_key' => 'Applications',
     'search_menu_trans_key' => 'Search a menu…',
+    'time_unit_settings_trans_key' => 'Time unit',
+    'time_unit_label_trans_key' => 'Display unit for operation times',
+    'time_unit_hours_trans_key' => 'Hours',
+    'time_unit_minutes_trans_key' => 'Minutes',
+    'time_unit_saved_trans_key' => 'Time unit saved.',
+    'time_unit_note_trans_key' => 'Sets how setting and unit times are typed and displayed. Storage stays in hours; the API, exports and capacities are not affected. Default: hours.',
+    'time_unit_hours_short_trans_key' => 'h',
+    'time_unit_minutes_short_trans_key' => 'min',
 ];

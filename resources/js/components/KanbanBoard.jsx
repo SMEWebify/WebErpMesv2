@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { formatQty } from '../utils';
+import { formatDuration } from '../lib/duration.js';
 import {
     DndContext,
     DragOverlay,
@@ -61,9 +62,9 @@ function TaskCard({ task }) {
                         </div>
                         <div className="col-8">
                             <span className="fw-bold">Setting Time:</span>{' '}
-                            {task.seting_time}
+                            {formatDuration(task.seting_time, { hoursSuffix: '' })}
                             <br />
-                            <span className="fw-bold">Unit Time:</span> {task.unit_time}
+                            <span className="fw-bold">Unit Time:</span> {formatDuration(task.unit_time, { hoursSuffix: '' })}
                         </div>
                     </div>
                 </div>

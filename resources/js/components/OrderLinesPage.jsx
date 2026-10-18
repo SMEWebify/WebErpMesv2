@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty, formatDate } from '../utils';
+import { formatDuration } from '../lib/duration.js';
 import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
@@ -258,7 +259,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                                         <td style={{ background: t.service?.color ?? undefined }}>
                                             {t.service?.label ?? '—'}
                                         </td>
-                                        <td className="text-end">{t.total_time} h</td>
+                                        <td className="text-end">{formatDuration(t.total_time)}</td>
                                         <td className="text-end">{formatQty(t.qty)}</td>
                                         <td className="text-end">{t.unit_cost}</td>
                                         <td className="text-end">{t.margin != null ? `${t.margin} %` : '—'}</td>

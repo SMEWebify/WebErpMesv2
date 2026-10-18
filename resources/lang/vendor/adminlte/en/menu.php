@@ -118,4 +118,5 @@ return [
     'methods_overview_trans_key'               => 'Methods overview',
     'assets_trans_key'                         => 'Assets',
     'returns_trans_key'                        => 'Customer returns',
+    'time_unit_settings_trans_key' => 'Time unit',
 ];
