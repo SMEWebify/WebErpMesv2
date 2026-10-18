@@ -7,6 +7,8 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
+use App\Services\Planning\DependencyEdge;
+use App\Services\Planning\DependencyGraph;
 use Illuminate\Database\Eloquent\Builder;
 
 class GanttController extends Controller
@@ -65,17 +67,26 @@ class GanttController extends Controller
                 'dependencies' => $previousId,
             ];
 
-            $previousId = 'ol_' . $orderLine->id;
-
             // Tasks of this order line (type 1 or 7), ordered by ordre
-            $tasks = Task::where('order_lines_id', $orderLine->id)
+            $tasks = Task::with(['service', 'predecessorLinks'])
+                ->where('order_lines_id', $orderLine->id)
                 ->where(function (Builder $query) {
                     $query->where('tasks.type', 1)->orWhere('tasks.type', 7);
                 })
                 ->orderBy('ordre')
+                ->orderBy('id')
                 ->get();
 
-            foreach ($tasks as $task) {
+            // Flèches = liens effectifs du calcul des dates (CalculateTaskDates) :
+            // liens saisis, sinon l'opération précédente. Liens désactivés : chaîne.
+            if (! config('planning.dependencies_enabled', true)) {
+                $tasks->each(fn (Task $task) => $task->setRelation('predecessorLinks', collect()));
+            }
+            $graph = DependencyGraph::fromTasks($tasks);
+
+            foreach ($graph->tasks() as $id => $task) {
+                $from = array_map(fn (DependencyEdge $edge) => 'task_' . $edge->from, $graph->incoming($id));
+
                 $formattedTasks[] = [
                     'id'           => 'task_' . $task->id,
                     'label'        => '#' . $task->id . ' — ' . $task->label,
@@ -84,10 +95,9 @@ class GanttController extends Controller
                     'end_date'     => $task->end_date ? new \DateTime($task->end_date) : null,
                     'duration'     => $task->TotalTime(),
                     'progress'     => $task->progress(),
-                    'dependencies' => $previousId,
+                    // Sans amont, l'opération part de la ligne de commande.
+                    'dependencies' => $from !== [] ? implode(',', array_unique($from)) : 'ol_' . $orderLine->id,
                 ];
-
-                $previousId = 'task_' . $task->id;
             }
         }
 
