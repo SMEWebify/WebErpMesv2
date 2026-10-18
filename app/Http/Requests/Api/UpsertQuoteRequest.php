@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Enums\TaskDependencyLagUnit;
+use App\Enums\TaskDependencyType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpsertQuoteRequest extends FormRequest
 {
@@ -107,6 +110,14 @@ class UpsertQuoteRequest extends FormRequest
             'lines.*.tasks.*.diameter_oversize'  => 'nullable|numeric',
             'lines.*.tasks.*.to_schedule'        => 'nullable|boolean',
             'lines.*.tasks.*.not_recalculate'    => 'nullable|boolean',
+            'lines.*.tasks.*.planned_qty'        => 'nullable|numeric|min:0',
+
+            // Liens vers les opérations amont, désignées par leur `ordre` dans la ligne
+            'lines.*.tasks.*.predecessors'              => 'nullable|array',
+            'lines.*.tasks.*.predecessors.*.ordre'      => 'required|integer',
+            'lines.*.tasks.*.predecessors.*.type'       => ['nullable', Rule::enum(TaskDependencyType::class)],
+            'lines.*.tasks.*.predecessors.*.lag_value'  => 'nullable|numeric|min:0',
+            'lines.*.tasks.*.predecessors.*.lag_unit'   => ['nullable', Rule::enum(TaskDependencyLagUnit::class)],
         ];
     }
 }

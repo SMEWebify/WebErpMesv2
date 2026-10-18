@@ -926,6 +926,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id_type}/{id_page}/json/task/{id}/duplicate',                   'App\Http\Controllers\Planning\TaskManageApiController@duplicateTaskJson')->name('task.manage.json.task.duplicate');
         Route::get('/{id_type}/{id_page}/json/task/{id}/dependencies',                 'App\Http\Controllers\Planning\TaskManageApiController@dependenciesJson')->name('task.manage.json.task.dependencies');
         Route::put('/{id_type}/{id_page}/json/task/{id}/dependencies',                 'App\Http\Controllers\Planning\TaskManageApiController@updateDependenciesJson')->name('task.manage.json.task.dependencies.update');
+        Route::patch('/{id_type}/{id_page}/json/task/{id}/planned-qty',                'App\Http\Controllers\Planning\TaskManageApiController@updatePlannedQtyJson')->name('task.manage.json.task.planned-qty');
         Route::post('/{id_type}/{id_page}/json/{id_line}/sub-assembly',                'App\Http\Controllers\Planning\TaskManageApiController@storeSubAssemblyJson')->name('task.manage.json.subassembly.store');
         Route::put('/{id_type}/{id_page}/json/sub-assembly/{id}',                      'App\Http\Controllers\Planning\TaskManageApiController@updateSubAssemblyJson')->name('task.manage.json.subassembly.update');
         Route::delete('/{id_type}/{id_page}/json/sub-assembly/{id}',                   'App\Http\Controllers\Planning\TaskManageApiController@destroySubAssemblyJson')->name('task.manage.json.subassembly.destroy');

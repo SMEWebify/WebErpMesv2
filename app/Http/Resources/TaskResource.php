@@ -47,6 +47,15 @@ class TaskResource extends JsonResource
             'to_schedule'=> $this->to_schedule,
             'end_date'=> $this->end_date,
             'not_recalculate'=> $this->not_recalculate,
+            'planned_qty'=> $this->planned_qty,
+            // Liens vers les opérations amont, désignées par leur `ordre` dans la ligne.
+            'predecessors' => $this->whenLoaded('predecessorLinks', fn () => $this->predecessorLinks->map(fn ($link) => [
+                'ordre'     => $link->predecessor?->ordre,
+                'task_id'   => $link->predecessor_task_id,
+                'type'      => $link->type->value,
+                'lag_value' => $link->lag_value,
+                'lag_unit'  => $link->lag_unit->value,
+            ])->values()),
             'material'=> $this->material, 
             'thickness'=> $this->thickness, 
             'weight' => $this->weight, 

@@ -14,6 +14,7 @@ use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\Status;
 use App\Models\Planning\Task;
+use App\Support\Planning\DependencyNotation;
 use App\Models\Products\Products;
 use App\Models\User;
 use App\Models\Workflow\OrderLines;
@@ -61,6 +62,7 @@ class SalesOrderExportService
                                         'Products',
                                         'Component',
                                         'status',
+                                        'predecessorLinks.predecessor',
                                     ]);
                             },
                         ]);
@@ -165,7 +167,7 @@ class SalesOrderExportService
     private function mapTasks(OrderLines $line, string $dateFormat, string $dateTimeFormat): array
     {
         return ($line->Task ?? collect())
-            ->map(function (Task $task) use ($dateFormat, $dateTimeFormat) {
+            ->map(function (Task $task) use ($line, $dateFormat, $dateTimeFormat) {
                 return [
                     'id' => $task->id,
                     'code' => $task->code,
@@ -204,6 +206,11 @@ class SalesOrderExportService
                     'start_date' => $this->formatDateTime($task->start_date, $dateTimeFormat),
                     'end_date' => $this->formatDateTime($task->end_date, $dateTimeFormat),
                     'not_recalculate' => $this->castInt($task->not_recalculate),
+                    // Planification : quantité propre de l'opération (vide = celle de la
+                    // ligne), sa durée et ses liens amont en notation courte (« 20FS;30SS+2h »).
+                    'planned_qty' => $this->castFloat($task->planned_qty, 3),
+                    'planned_hours' => $this->castFloat($task->setRelation('OrderLines', $line)->TotalTime(), 3),
+                    'predecessors' => DependencyNotation::formatLinks($task->predecessorLinks),
                     'material' => $task->material,
                     'thickness' => $this->castFloat($task->thickness, 3),
                     'weight' => $this->castFloat($task->weight, 3),
