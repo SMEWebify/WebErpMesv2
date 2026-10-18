@@ -21,6 +21,7 @@ return [
     'dependency_other_routing'     => 'L\'opération :ordre n\'appartient pas à la même gamme.',
     'dependency_not_schedulable'   => 'Seules les opérations de fabrication et de sous-traitance peuvent être liées.',
     'dependency_piece_lag'         => 'Un décalage en pièces n\'est possible qu\'en début-début ou fin-fin.',
-    'dependency_duplicate'         => 'Le lien :link est saisi deux fois.',
+    'dependency_lag_too_large'     => 'Décalage trop grand : :max au maximum.',
+    'dependency_duplicate'         =>'Le lien :link est saisi deux fois.',
     'dependency_cycle'             => 'Liens circulaires : :cycle.',
 ];

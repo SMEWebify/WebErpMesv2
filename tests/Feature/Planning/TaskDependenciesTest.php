@@ -207,6 +207,12 @@ class TaskDependenciesTest extends TestCase
             ['predecessor_task_id' => $other[20]->id, 'type' => 'FS'],
         ]])->assertStatus(422);
 
+        // Décalage hors de la colonne decimal(10,3) : refusé, pas une erreur SQL.
+        $this->putJson($this->dependenciesUrl($line, $tasks[30]), ['notation' => '20DD+99999999h'])->assertStatus(422);
+        $this->putJson($this->dependenciesUrl($line, $tasks[30]), ['links' => [
+            ['predecessor_task_id' => $tasks[20]->id, 'type' => 'SS', 'lag_value' => 99999999],
+        ]])->assertStatus(422);
+
         $this->assertSame(0, TaskDependency::count());
     }
 

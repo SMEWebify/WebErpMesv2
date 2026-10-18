@@ -21,6 +21,7 @@ return [
     'dependency_other_routing'     => 'Operation :ordre does not belong to the same routing.',
     'dependency_not_schedulable'   => 'Only production and subcontracting operations can be linked.',
     'dependency_piece_lag'         => 'A lag in pieces is only possible on start-to-start or finish-to-finish links.',
-    'dependency_duplicate'         => 'Link :link is entered twice.',
+    'dependency_lag_too_large'     => 'Lag too large: :max at most.',
+    'dependency_duplicate'         =>'Link :link is entered twice.',
     'dependency_cycle'             => 'Circular links: :cycle.',
 ];

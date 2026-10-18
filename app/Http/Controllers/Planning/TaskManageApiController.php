@@ -479,24 +479,30 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $task = Task::findOrFail($id);
-        $new  = $task->replicate();
-        $new->ordre  = $task->ordre + 1;
-        $new->label  = $task->label . ' #copy';
-        $new->origin = '5';
-        $new->save();
 
-        // Le double démarre dans les mêmes conditions que l'original (le second
-        // tour d'un lot partagé) : ses liens entrants saisis sont recopiés, pas
-        // les sortants.
-        foreach (TaskDependency::where('task_id', $task->id)->get() as $link) {
-            TaskDependency::create([
-                'task_id'             => $new->id,
-                'predecessor_task_id' => $link->predecessor_task_id,
-                'type'                => $link->type,
-                'lag_value'           => $link->lag_value,
-                'lag_unit'            => $link->lag_unit,
-            ]);
-        }
+        // Copie et liens ensemble : pas de double à moitié lié si un lien échoue.
+        $new = DB::transaction(function () use ($task) {
+            $new  = $task->replicate();
+            $new->ordre  = $task->ordre + 1;
+            $new->label  = $task->label . ' #copy';
+            $new->origin = '5';
+            $new->save();
+
+            // Le double démarre dans les mêmes conditions que l'original (le second
+            // tour d'un lot partagé) : ses liens entrants saisis sont recopiés, pas
+            // les sortants.
+            foreach (TaskDependency::where('task_id', $task->id)->get() as $link) {
+                TaskDependency::create([
+                    'task_id'             => $new->id,
+                    'predecessor_task_id' => $link->predecessor_task_id,
+                    'type'                => $link->type,
+                    'lag_value'           => $link->lag_value,
+                    'lag_unit'            => $link->lag_unit,
+                ]);
+            }
+
+            return $new;
+        });
 
         if ($new->order_lines_id) {
             $this->promoteOrderLineTaskStatus('order_lines_id', (string) $new->order_lines_id);
@@ -650,6 +656,11 @@ class TaskManageApiController extends Controller
 
             if ($link['lag_unit'] === TaskDependencyLagUnit::Piece && ! $link['type']->acceptsPieceLag()) {
                 $errors[] = __('planning.dependency_piece_lag');
+            }
+
+            // Saisie en liste comme en notation : au-delà, la colonne refuse l'écriture.
+            if ($link['lag_value'] > TaskDependency::MAX_LAG) {
+                $errors[] = __('planning.dependency_lag_too_large', ['max' => TaskDependency::MAX_LAG]);
             }
 
             $key = $predecessorId . $link['type']->value;

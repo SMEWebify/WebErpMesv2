@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Quantité traitée par une opération, quand un lot est partagé entre deux
- * machines. Vide = quantité de la ligne, comme aujourd'hui. Ne sert qu'à la
- * durée planifiée : coûts, prix et avancement restent sur la quantité de ligne.
+ * machines. Vide = quantité de la ligne, comme aujourd'hui. Renseignée, elle
+ * sert au temps, au coût, au prix et à la performance de l'opération
+ * (Task::operationQty()), qui pondèrent ceux de la ligne.
  */
 return new class extends Migration
 {

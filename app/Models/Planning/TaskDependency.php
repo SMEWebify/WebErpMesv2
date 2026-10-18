@@ -18,6 +18,9 @@ class TaskDependency extends Model
 {
     protected $table = 'task_dependencies';
 
+    /** Plus grand décalage que la colonne `lag_value` (decimal 10,3) peut stocker, arrondi. */
+    public const MAX_LAG = 9999999;
+
     protected $fillable = ['task_id', 'predecessor_task_id', 'type', 'lag_value', 'lag_unit'];
 
     protected $attributes = [
