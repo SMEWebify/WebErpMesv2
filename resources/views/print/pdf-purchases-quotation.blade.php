@@ -113,7 +113,7 @@
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
                         <td>{{ data_get($DocumentLine, 'tasks.OrderLines.order.code', '-') }}</td>
-                        <td>#{{ data_get($DocumentLine, 'tasks.id', '-') }}  {{ data_get($DocumentLine, 'tasks.label', '') }}</td>
+                        <td>#{{ data_get($DocumentLine, 'tasks.id', '-') }}  {{ data_get($DocumentLine, 'tasks.label', '') }}@if(!empty($DocumentLine->ind)) — {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</td>
                         <td>{{ $DocumentLine->qty_to_order }}</td>
                         <td>.............{{ $Factory->curency }}</td>
                         <td>.............{{ $Factory->curency }}</td>

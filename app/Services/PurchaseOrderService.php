@@ -92,6 +92,7 @@ class PurchaseOrderService
             'tasks_id' => $task->id,
             'ordre' => $ordre,
             'code' => $task->code,
+            'ind' => $task->OrderLines?->ind ?? $task->QuoteLines?->ind,
             'product_id' => $task->component_id,
             'label' => $task->label,
             //'supplier_ref' => , can be null
@@ -132,6 +133,7 @@ class PurchaseOrderService
             'tasks_id' => 0,
             'ordre' => $ordre,
             'code' => $quotationLine->code,
+            'ind' => $quotationLine->ind,
             'product_id' => $quotationLine->product_id,
             'label' => $quotationLine->label ?? 'Generic line',
             'qty' => $quotationLine->qty_to_order,

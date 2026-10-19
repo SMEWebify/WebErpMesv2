@@ -128,6 +128,12 @@
                 @endif
             </td>
         </tr>
+        @if(!empty($Document->ind))
+        <tr>
+            <td>{{ __('general_content.plan_index_trans_key') }}</td>
+            <td>{{ $Document->ind }}</td>
+        </tr>
+        @endif
     </table>
     <hr style="color: #6c757d">
     <table width="90%" style="border-block-color: rgb(139, 131, 131); border: dashed; border-radius: 5px">

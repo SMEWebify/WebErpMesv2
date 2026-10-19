@@ -262,6 +262,7 @@ class OrderConfirmationService
                 'order_line_id'         => $line->id,
                 'ordre'                 => $line->ordre,
                 'code'                  => $line->code,
+                'ind'                   => $line->ind,
                 'label'                 => $line->label,
                 'qty'                   => $line->qty,
                 'methods_units_id'      => $line->methods_units_id,

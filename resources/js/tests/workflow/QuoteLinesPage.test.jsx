@@ -112,3 +112,19 @@ describe('QuoteLinesPage — lignes de présentation', () => {
         });
     });
 });
+
+describe('QuoteLinesPage — indice du plan', () => {
+    beforeEach(() => vi.restoreAllMocks());
+
+    it('shows the drawing index next to the code, only when one is set', async () => {
+        mockFetch([
+            line({ id: 10, ordre: 1, code: 'PIECE-A', ind: 'B', label: 'Avec indice', qty: 1, effective_price: 10 }),
+            line({ id: 11, ordre: 2, code: 'PIECE-B', ind: null, label: 'Sans indice', qty: 1, effective_price: 10 }),
+        ]);
+        renderPage();
+
+        expect(await screen.findByText('Avec indice')).toBeInTheDocument();
+        expect(screen.getAllByText('ind. B')).toHaveLength(1);
+        expect(screen.queryByText(/ind\. null/)).toBeNull();
+    });
+});

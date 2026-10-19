@@ -20,7 +20,7 @@ class DeliveryLines extends Model
     }
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['deliverys_id', 
+    protected $fillable= ['ind', 'deliverys_id', 
                             'order_line_id', 
                             'ordre',
                             'qty',

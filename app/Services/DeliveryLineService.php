@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\TaskService;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Workflow\OrderLines;
 
 class DeliveryLineService
 {
@@ -33,6 +34,7 @@ class DeliveryLineService
             'order_line_id' => $key,
             'ordre' => $ordre,
             'qty' => $qty,
+            'ind' => OrderLines::whereKey($key)->value('ind'),
             'statu' => 1
         ]);
 

@@ -274,7 +274,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                           </a>
                                         : <span className="text-muted small">Sans BL</span>}
                                 </td>
-                                <td className="small">{line.order_line_code}</td>
+                                <td className="small">{line.order_line_code}{line.order_line_ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.order_line_ind}</span> : null}</td>
                                 <td>{line.order_line_label}</td>
 
                                 {isDraft ? (

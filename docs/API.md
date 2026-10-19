@@ -201,6 +201,7 @@ Crée un devis avec ses lignes, détails techniques et tâches.
 | `label`               | string  | Oui               |                                |
 | `qty`                 | numeric | Oui               |                                |
 | `code`                | string  | Non               |                                |
+| `ind`                 | string  | Non               | Indice du plan, 50 car. max    |
 | `product_id`          | integer | Non               |                                |
 | `methods_units_id`    | integer | Non               |                                |
 | `selling_price`       | numeric | Non               |                                |

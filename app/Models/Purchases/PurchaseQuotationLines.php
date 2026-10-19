@@ -14,7 +14,7 @@ class PurchaseQuotationLines extends Model
     use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['purchases_quotation_id', 
+    protected $fillable= ['ind', 'purchases_quotation_id', 
         'tasks_id',
         'code',
         'product_id',

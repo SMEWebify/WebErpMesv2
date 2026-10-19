@@ -53,6 +53,18 @@ class FacturXAttachmentTest extends TestCase
         $this->assertMatchesRegularExpression('#<ram:ShipToTradeParty>.*?<ram:CountryID>FR</ram:CountryID>#s', $xml);
     }
 
+    public function test_the_drawing_index_is_an_item_attribute_only_when_it_exists(): void
+    {
+        $with = $this->app->make(FacturXBuilder::class)->buildXml($this->makeInvoice('B'));
+        $this->assertMatchesRegularExpression('#<ram:ApplicableProductCharacteristic>\s*<ram:Description>Indice</ram:Description>\s*<ram:Value>B</ram:Value>#s', $with);
+    }
+
+    public function test_an_invoice_without_drawing_index_has_no_item_attribute(): void
+    {
+        $xml = $this->app->make(FacturXBuilder::class)->buildXml($this->makeInvoice());
+        $this->assertStringNotContainsString('ApplicableProductCharacteristic', $xml);
+    }
+
     public function test_the_document_can_be_read_back(): void
     {
         // Un aller-retour complet : ce que nous émettons doit être lisible par
@@ -73,7 +85,7 @@ class FacturXAttachmentTest extends TestCase
         return $this->app->make(FacturXBuilder::class)->buildPdf($this->makeInvoice());
     }
 
-    private function makeInvoice(): Invoices
+    private function makeInvoice(?string $ind = null): Invoices
     {
         // TestCase crée déjà une ligne « Test Factory » : c'est elle qu'on renseigne.
         ($factory = Factory::first() ?? new Factory())->fill([
@@ -122,6 +134,7 @@ class FacturXAttachmentTest extends TestCase
             'invoices_id'    => $invoice->id,
             'order_line_id'  => OrderLines::factory()->create(['code' => 'PART-1', 'label' => 'Tôle pliée 3mm'])->id,
             'ordre'          => 10,
+            'ind'            => $ind,
             'qty'            => 2,
             'unit_price'     => 100,
             'discount'       => 0,

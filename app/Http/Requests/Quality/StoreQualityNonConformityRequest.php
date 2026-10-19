@@ -39,6 +39,7 @@ class StoreQualityNonConformityRequest extends FormRequest
             'correction_comment' => 'nullable|string',
             'companie_id'       => 'nullable|exists:companies,id',
             'order_lines_id'    => 'nullable|exists:order_lines,id',
+            'ind'               => 'nullable|string|max:50',
             'task_id'           => 'nullable|exists:tasks,id',
             'qty'               => 'nullable|numeric|min:1',
             'resolution_date'   => 'nullable|date',

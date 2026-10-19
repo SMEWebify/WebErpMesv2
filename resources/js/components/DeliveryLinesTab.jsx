@@ -322,7 +322,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                             {line.order_code}
                                         </a>
                                     </td>
-                                    <td><small>{line.code}</small></td>
+                                    <td><small>{line.code}</small>{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
                                     <td>{line.label}</td>
                                     <td>{formatQty(line.qty)}</td>
                                     <td><small>{line.unit}</small></td>

@@ -25,7 +25,7 @@ class QuoteLines extends Model
     use HasFactory, SoftDeletes, LogsActivity, HasSalesLineType;
     
     // Fillable attributes for mass assignment
-    protected $fillable= ['quotes_id', 
+    protected $fillable= ['ind', 'quotes_id', 
                             'ordre', 
                             'code',
                             'product_id',

@@ -181,6 +181,7 @@ $deliverySteps = [
                   'order_code'     => $dl->OrderLine->order['code'] ?? '',
                   'order_url'      => ($dl->OrderLine->order['id'] ?? null) ? route('orders.show', ['id' => $dl->OrderLine->order['id']]) : '#',
                   'code'           => $dl->OrderLine['code'] ?? '',
+                   'ind'            => $dl->ind ?? $dl->OrderLine['ind'] ?? null,
                   'label'          => $dl->OrderLine['label'] ?? '',
                   'qty'            => $dl->OrderLine['qty'] ?? '',
                   'unit'           => $dl->OrderLine->Unit['label'] ?? '',

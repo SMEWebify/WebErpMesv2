@@ -24,6 +24,7 @@ const EMPTY_FORM = {
     ordre: 1,
     product_id: '',
     code: '',
+    ind: '',
     label: '',
     qty: 1,
     methods_units_id: '',
@@ -242,6 +243,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 ordre:              editingLine.ordre              ?? 1,
                 product_id:         editingLine.product_id         ?? '',
                 code:               editingLine.code               ?? '',
+                ind:                editingLine.ind                ?? '',
                 label:              editingLine.label              ?? '',
                 qty:                editingLine.qty                ?? 1,
                 methods_units_id:   editingLine.methods_units_id   ?? '',
@@ -290,6 +292,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             ...f,
             product_id:       product.id,
             code:             product.code,
+            ind:              product.ind ?? '',
             label:            product.label ?? f.label,
             methods_units_id: product.methods_units_id ?? f.methods_units_id,
             selling_price:    product.selling_price     ?? f.selling_price,
@@ -474,7 +477,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Code + Ordre */}
                         <div className="row gx-2">
-                            <div className="mb-3 col-8 mb-2">
+                            <div className="mb-3 col-5 mb-2">
                                 <label className="mb-1 small fw-bold">Réf. externe</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
@@ -482,6 +485,12 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                         placeholder="Code externe" value={form.code}
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
+                            </div>
+                            <div className="mb-3 col-3 mb-2">
+                                <label className="mb-1 small fw-bold">Ind. plan</label>
+                                <input type="text" className={`form-control form-control-sm ${errors.ind ? 'is-invalid' : ''}`}
+                                    maxLength={50} placeholder="A, B…" value={form.ind ?? ''}
+                                    onChange={(e) => set('ind', e.target.value)} disabled={isReadOnly} />
                             </div>
                             <div className="mb-3 col-4 mb-2">
                                 <label className="mb-1 small fw-bold">Ordre</label>
@@ -842,7 +851,7 @@ function LineRow({
             </td>
 
             {/* Code */}
-            <td className="small">{line.code || '—'}</td>
+            <td className="small">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
 
             {/* Product link */}
             <td style={{ width: 36 }}>
@@ -1493,6 +1502,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             const q = search.toLowerCase();
             return !q || (l.label ?? '').toLowerCase().includes(q)
                        || (l.code  ?? '').toLowerCase().includes(q)
+                       || (l.ind   ?? '').toLowerCase().includes(q)
                        || (l.product_code ?? '').toLowerCase().includes(q);
         })
         .sort((a, b) => a.ordre - b.ordre);

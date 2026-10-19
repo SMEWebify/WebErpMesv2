@@ -122,7 +122,7 @@
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
                         <td align="center">{{ $DocumentLine->OrderLine->order['code'] }}</td>
-                        <td align="center">{{ $DocumentLine->OrderLine['code'] }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine['code'] }}@if(!empty($DocumentLine->ind))<br> {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</td>
                         <td align="center">{{ $DocumentLine->OrderLine['label'] }}</td>
                         <td align="center">{{ $DocumentLine->OrderLine['qty'] }}</td>
                         <td align="center">{{ $DocumentLine->OrderLine->Unit['label'] }}</td>

@@ -43,7 +43,7 @@
                                                 <div class="d-flex mb-2">
                                                     <div class="flex-lg-grow-1">
                                                         <h6 class="small mb-0">{{ $DocumentLine->display_label }}</h6>
-                                                        <span class="text-muted">{{ $DocumentLine->display_code }}</span>
+                                                        <span class="text-muted">{{ $DocumentLine->display_code }}@if(!empty($DocumentLine->display_ind)) <span class="badge text-bg-light" title="{{ __('general_content.plan_index_trans_key') }}">{{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->display_ind }}</span>@endif</span>
                                                     </div>
                                                 </div>
                                             </td>

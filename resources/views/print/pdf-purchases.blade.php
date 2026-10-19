@@ -126,9 +126,9 @@
                         </td>
                         <td>
                             @if($DocumentLine->tasks_id ?? null)
-                            #{{ $DocumentLine->tasks->id }} {{ $DocumentLine->code }} {{ $DocumentLine->label }}
+                            #{{ $DocumentLine->tasks->id }} {{ $DocumentLine->code }} {{ $DocumentLine->label }}@if(!empty($DocumentLine->ind)) — {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif
                             @else
-                                {{ $DocumentLine->label }}
+                                {{ $DocumentLine->label }}@if(!empty($DocumentLine->ind)) — {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif
                             @endif
                         </td>
                         <td>{{ $DocumentLine->supplier_ref }}</td>

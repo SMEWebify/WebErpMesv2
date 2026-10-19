@@ -108,6 +108,7 @@ function ViewModal({ nc, trans, onClose }) {
         <Modal show={!!nc} onClose={onClose} title={`${t('info')} — ${nc.label}`} size="lg">
             <div className="row">
                 <div className="col-md-4">
+                    {nc.ind ? <p><strong>Ind. plan :</strong> {nc.ind}</p> : null}
                     <p><strong>{t('failure')} :</strong> {nc.failure_label ?? 'N/A'}</p>
                     <p><strong>{t('failure_comment')} :</strong> {nc.failure_comment || '—'}</p>
                 </div>
@@ -151,6 +152,7 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
             service_id:         nc.service_id ?? '',
             companie_id:        nc.companie_id ?? '',
             qty:                nc.qty ?? '',
+            ind:                nc.ind ?? '',
             failure_id:         nc.failure_id ?? '',
             failure_comment:    nc.failure_comment ?? '',
             causes_id:          nc.causes_id ?? '',
@@ -182,6 +184,7 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
                     service_id:         form.service_id || null,
                     companie_id:        (nc.order_lines_id || nc.task_id) ? nc.companie_id : (form.companie_id || null),
                     qty:                form.qty || null,
+                    ind:                form.ind || null,
                     failure_id:         form.failure_id || null,
                     failure_comment:    form.failure_comment || null,
                     causes_id:          form.causes_id || null,
@@ -253,6 +256,10 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
                     <div className="mb-3 col-md-4">
                         <label>{t('qty')}</label>
                         <input type="number" className="form-control form-control-sm" value={form.qty} onChange={e => set('qty', e.target.value)} min="1" />
+                    </div>
+                    <div className="mb-3 col-md-4">
+                        <label>Ind. plan</label>
+                        <input className="form-control form-control-sm" value={form.ind ?? ''} onChange={e => set('ind', e.target.value)} maxLength={50} />
                     </div>
                 </div>
 
@@ -354,7 +361,7 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
     const [open, setOpen]     = useState(false);
     const [form, setForm]     = useState({
         code: nextCode, label: nextCode, statu: '1', type: '1',
-        user_id: '', service_id: '', companie_id: '', qty: '',
+        user_id: '', service_id: '', companie_id: '', qty: '', ind: '',
         failure_id: '', failure_comment: '',
         causes_id: '', causes_comment: '',
         correction_id: '', correction_comment: '',
@@ -383,6 +390,7 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
                     service_id:         form.service_id || null,
                     companie_id:        form.companie_id || null,
                     qty:                form.qty || null,
+                    ind:                form.ind || null,
                     failure_id:         form.failure_id || null,
                     failure_comment:    form.failure_comment || null,
                     causes_id:          form.causes_id || null,
@@ -398,7 +406,7 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
             }
             onCreated(json.data);
             setOpen(false);
-            setForm(f => ({ ...f, code: '', label: '', service_id: '', companie_id: '', qty: '', failure_id: '', failure_comment: '', causes_id: '', causes_comment: '', correction_id: '', correction_comment: '' }));
+            setForm(f => ({ ...f, code: '', label: '', service_id: '', companie_id: '', qty: '', ind: '', failure_id: '', failure_comment: '', causes_id: '', causes_comment: '', correction_id: '', correction_comment: '' }));
         } catch (err) {
             setError(err.message);
         } finally {
@@ -494,6 +502,10 @@ function CreateForm({ trans, users, services, companies, failures, causes, corre
                             <div className="mb-3 col-md-3">
                                 <label>{t('qty')}</label>
                                 <input type="number" className="form-control form-control-sm" value={form.qty} onChange={e => set('qty', e.target.value)} min="1" />
+                            </div>
+                            <div className="mb-3 col-md-3">
+                                <label>Ind. plan</label>
+                                <input className="form-control form-control-sm" value={form.ind} onChange={e => set('ind', e.target.value)} maxLength={50} />
                             </div>
                         </div>
                         <button type="submit" className="btn btn-danger btn-sm" disabled={saving}>

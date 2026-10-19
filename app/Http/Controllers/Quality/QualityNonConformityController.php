@@ -201,6 +201,7 @@ class QualityNonConformityController extends Controller
             'correction_comment' => 'nullable|string',
             'companie_id'        => 'nullable|exists:companies,id',
             'qty'                => 'nullable|numeric|min:1',
+            'ind'                => 'nullable|string|max:50',
         ]);
 
         // The service uses isset($data['type']) to distinguish internal/external.
@@ -232,6 +233,7 @@ class QualityNonConformityController extends Controller
             'correction_comment' => 'nullable|string',
             'companie_id'        => 'nullable|exists:companies,id',
             'qty'                => 'nullable|numeric|min:1',
+            'ind'                => 'nullable|string|max:50',
         ]);
 
         $nc->label              = $data['label'];
@@ -247,6 +249,9 @@ class QualityNonConformityController extends Controller
         $nc->correction_comment = $data['correction_comment'] ?? null;
         $nc->companie_id        = array_key_exists('companie_id', $data) ? $data['companie_id'] : $nc->companie_id;
         $nc->qty                = $data['qty'] ?? null;
+        if (array_key_exists('ind', $data)) {
+            $nc->ind = $data['ind'];
+        }
         $nc->save();
 
         $nc->load(['UserManagement', 'Failure', 'Cause', 'Correction', 'service', 'companie', 'orderLine.order', 'delivery', 'task']);
@@ -304,6 +309,7 @@ class QualityNonConformityController extends Controller
             'deliverys_id'       => $nc->deliverys_id,
             'delivery_code'      => $nc->delivery?->code,
             'qty'                => $nc->qty,
+            'ind'                => $nc->ind,
             'resolution_date'    => $nc->resolution_date,
             'created_pretty'     => $nc->GetPrettyCreatedAttribute(),
             // Date comparable pour le filtre par plage de dates de la liste (created_pretty est en toutes lettres).

@@ -98,6 +98,7 @@ class PurchaseQuotationService
             'purchases_quotation_id' => $purchaseQuotation->id,
             'tasks_id' => $task->id,
             'code' => $task->Component?->code ?? $task->code,
+            'ind' => $task->OrderLines?->ind ?? $task->QuoteLines?->ind,
             'product_id' => $task->component_id,
             'label' => $task->label,
             'ordre' => $ordre, 
