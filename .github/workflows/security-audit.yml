@@ -37,7 +37,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
 
       # --locked lit composer.lock sans rien installer. Toutes severites :
       # c'est une alerte, pas une porte de merge (le seuil du CI reste a part).

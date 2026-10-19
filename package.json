@@ -14,9 +14,8 @@
         "@testing-library/react": "^16.3.3",
         "@testing-library/user-event": "^14.6.7",
         "@vitejs/plugin-react": "^6.1.2",
-        "@vitest/coverage-v8": "^4.1.11",
+        "@vitest/coverage-v8": "^5.0.5",
         "alpinejs": "^3.17.4",
-        "autoprefixer": "^10.6.1",
         "axios": "^1.16.1",
         "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.13.2",
@@ -26,11 +25,10 @@
         "lodash": "^4.18.1",
         "overlayscrollbars": "^2.16.0",
         "postcss": "^8.5.29",
-        "postcss-import": "^16.1.0",
         "pusher-js": "^8.6.0",
         "sass": "^1.105.1",
         "vite": "^8.3.4",
-        "vitest": "^4.1.11"
+        "vitest": "^5.0.5"
     },
     "overrides": {
         "protobufjs": "^7.6.1"

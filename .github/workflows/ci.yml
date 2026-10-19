@@ -64,7 +64,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
 
       # NE PAS remplacer par "npm ci" : package-lock.json est genere sous
       # Windows et ne contient que les binaires natifs win32 de rollup
