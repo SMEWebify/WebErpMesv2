@@ -39,7 +39,6 @@
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
-        "@fortawesome/fontawesome-free": "^6.7.2",
         "@popperjs/core": "^2.11.8",
         "@univerjs/core": "^1.0.3",
         "@univerjs/design": "^1.0.3",
