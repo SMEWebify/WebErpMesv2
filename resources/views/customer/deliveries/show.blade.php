@@ -71,7 +71,7 @@
                                     <td>
                                         @if($DocumentLine->QualityNonConformity)
                                             <a class="btn btn-danger btn-sm" href="#">
-                                                <i class="fa fa-light fa-fw fa-exclamation"></i>
+                                                <i class="fa fa-fw fa-exclamation"></i>
                                                 {{ $DocumentLine->QualityNonConformity->label }}
                                             </a>
                                             @if($DocumentLine->QualityNonConformity->statu == 1)
@@ -88,7 +88,7 @@
                                             @endif
                                         @else
                                             <a class="btn btn-warning btn-sm" href="{{ route('guest.nonConformitie.create', ['id' => $DocumentLine->id]) }}">
-                                                <i class="fa fa-light fa-fw fa-exclamation"></i>
+                                                <i class="fa fa-fw fa-exclamation"></i>
                                                 {{ __('general_content.new_non_conformitie_trans_key') }}
                                             </a>
                                         @endif

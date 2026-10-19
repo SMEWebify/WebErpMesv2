@@ -120,7 +120,7 @@ class RelationalBreadcrumb extends Component
             'label' => $creditNote->code,
             'url'   => route('credit.notes.show', ['id' => $creditNote->id]),
             'color' => 'dark',
-            'icon'  => 'fas fa-file-minus',
+            'icon'  => 'fas fa-file-circle-minus',
         ];
     }
 
@@ -321,7 +321,7 @@ class RelationalBreadcrumb extends Component
         $this->current = [
             'label' => $creditNote->code,
             'color' => 'dark',
-            'icon'  => 'fas fa-file-minus',
+            'icon'  => 'fas fa-file-circle-minus',
         ];
 
         if ($creditNote->invoices_id && $creditNote->invoice) {

@@ -88,8 +88,10 @@ de compatibilité Bootstrap 4 n'est chargée.
   (cf. `include/form/company-address-contact-sync`, société → adresse/contact sur proforma,
   facture, BL). Une option `value=""` devient un simple placeholder : passer
   `:config="['allowEmptyOption' => true]"` quand « aucun » est un vrai choix.
-- **Font Awesome** reste la bibliothèque d'icônes (plugin `FontAwesome`) ; les vues du paquet
-  utilisent Bootstrap Icons, chargées par AdminLTE.
+- **Font Awesome 6.7.2** reste la bibliothèque d'icônes (plugin `FontAwesome`) ; les vues du
+  paquet utilisent Bootstrap Icons, chargées par AdminLTE. La copie `public/vendor/fontawesome-free`
+  est la nôtre (AdminLTE 4 ne la publie plus) : aucun paquet npm. Les noms v5 (`fas fa-times`,
+  `fa-edit`…) restent valides comme alias v6 ; écrire les noms v6 dans le nouveau code.
 
 ### Balisage
 - Classes **Bootstrap 5** uniquement ; `tools/bs5-codemod.cjs` convertit une vue Bootstrap 4
@@ -769,13 +771,10 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   comportement du glisser-redimensionner reste à observer en navigateur.
 - **Fichiers morts** : `public/js/{app,bootstrap,node_modules_vue…,three*,OrbitControls,STLLoader}.js`
   et `public/css/app.css` (anciens builds Laravel Mix), composant `components/header-print`.
-- **Font Awesome 5.15.4 → 6/7** (non prioritaire, aucune faille connue) : les icônes viennent
-  de la seule copie `public/vendor/fontawesome-free` (le paquet npm, jamais importé, a été
-  retiré — #1189). ~2 080 références `fas|far|fab fa-*` dans 263 fichiers (vues, React,
-  `config/adminlte.php`, `FileKindResolver::icon()`) ; FA 6/7 renomment des icônes
-  (`fa-times` → `fa-xmark`…) et les préfixes (`fas` → `fa-solid`). Étapes : choisir la
-  source (copie `public/vendor` ou Vite), inventorier les noms renommés, remplacement en
-  masse, contrôle visuel, suppression de l'ancienne copie.
+- **Font Awesome 6 → 7** (non prioritaire) : seule `fa-vector-square`
+  (`FileKindResolver::icon()`) disparaît, et la v7 rend toutes les icônes à largeur fixe
+  (contrôle visuel). Remplacer `public/vendor/fontawesome-free/{css,webfonts}` par ceux du
+  paquet npm, comme pour le passage 5 → 6 (#1189).
 
 #### RH — reste à faire
 - **Notification d'absence** : le workflow de validation existe (voir plus haut), mais aucune
