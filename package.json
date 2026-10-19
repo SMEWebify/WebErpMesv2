@@ -30,7 +30,7 @@
         "pusher-js": "^8.6.0",
         "sass": "^1.105.1",
         "vite": "^8.3.4",
-        "vitest": "^4.1.11"
+        "vitest": "^5.0.5"
     },
     "overrides": {
         "protobufjs": "^7.6.1"
