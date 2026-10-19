@@ -33,6 +33,7 @@ class AffairSummaryEndpointTest extends TestCase
             'companies_contacts_id'  => CompaniesContacts::factory()->create(['companies_id' => $company->id])->id,
             'companies_addresses_id' => CompaniesAddresses::factory()->create(['companies_id' => $company->id])->id,
             'leads_id'               => null,
+            'statu'                  => 1,
         ]);
         Quotes::factory()->create([
             'opportunities_id' => $this->opportunity->id,
