@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', __('general_content.products_trans_key'))
+@section('plugins.Quill', true)
 
 @section('content_header')
   <x-Content-header-previous-button  h1="{{ $Product->label }}" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}"/>

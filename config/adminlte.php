@@ -1633,6 +1633,24 @@ return [
                 ],
             ],
         ],
+        // <x-adminlte-text-editor> (commentaires article / lead / opportunité,
+        // e-mails) : Quill 2, remplaçant de Summernote en AdminLTE 4. Chargé
+        // seulement par les vues qui posent @section('plugins.Quill', true).
+        'Quill' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/quill/js/quill.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/quill/css/quill.snow.css',
+                ],
+            ],
+        ],
     ],
 
     /*

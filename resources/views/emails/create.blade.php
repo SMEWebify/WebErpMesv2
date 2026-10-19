@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', __('general_content.email_trans_key'))
+@section('plugins.Quill', true)
 
 @section('content_header')
 <h1>{{ __('general_content.email_trans_key') }}</h1>

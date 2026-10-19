@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', __('general_content.lead_trans_key'))
+@section('plugins.Quill', true)
 
 @php
 $leadSteps = json_encode([

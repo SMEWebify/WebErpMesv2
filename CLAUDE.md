@@ -763,9 +763,10 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 ### 📋 Roadmap
 
 #### Frontend — suite AdminLTE 4
-- **Éditeur riche jamais chargé** : Summernote n'est inclus nulle part, donc
-  `<x-adminlte-text-editor>` (e-mail, commentaires article / lead / opportunité) et l'éditeur
-  des modèles d'e-mail (`admin/templates-index`) sont de simples zones de texte. La v4 propose Quill (`@section('plugins.Quill', true)`).
+- **Éditeur des modèles d'e-mail** (`admin/templates-index`) : reste une simple zone de texte.
+  Les `<x-adminlte-text-editor>` (e-mail, commentaires article / lead / opportunité) utilisent
+  Quill 2 (plugin `Quill`, `public/vendor/quill`, chargé par `@section('plugins.Quill', true)`
+  sur ces seules vues) ; les `$config` Summernote de ces vues sont ignorés par le composant.
 - **Sauvegarde de la disposition du tableau de bord** à revérifier après le passage de
   `react-grid-layout` en 2.3.0 (Dependabot) : l'enregistrement serveur fonctionne, le
   comportement du glisser-redimensionner reste à observer en navigateur.

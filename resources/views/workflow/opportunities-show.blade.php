@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', __('general_content.opportunity_trans_key')  . ' - ' . $Opportunity->label)
+@section('plugins.Quill', true)
 
 @php
 $affairEndpoints = [

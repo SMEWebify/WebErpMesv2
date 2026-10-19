@@ -124,3 +124,33 @@ body.sidebar-hidden .app-sidebar {
     border-color: var(--bs-border-color);
     z-index: 1000;
 }
+
+/* Quill (<x-adminlte-text-editor>) : le thème « snow » écrit icônes, listes
+   déroulantes et infobulle de lien en gris et blanc fixes, illisibles en mode
+   sombre. La palette de couleurs du texte, elle, reste telle quelle. */
+.ql-snow .ql-stroke,
+.ql-snow .ql-stroke-miter {
+    stroke: var(--bs-body-color);
+}
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+    fill: var(--bs-body-color);
+}
+.ql-snow .ql-picker {
+    color: var(--bs-body-color);
+}
+.ql-snow .ql-picker-options,
+.ql-snow .ql-tooltip {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+    box-shadow: none;
+}
+.ql-snow .ql-tooltip input[type=text] {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+.ql-snow .ql-picker-options {
+    z-index: 1000;
+}
