@@ -690,7 +690,7 @@
                 @csrf
                   <input type="hidden" name="product_id" value="{{ $Product->id }}">
                   <div class="mb-3">
-                      <x-adminlte-select2 name="companies_id" id="companies_id" label="{{ __('general_content.supplier_trans_key') }}" label-class="text-info"
+                      <x-adminlte-select-bs name="companies_id" id="companies_id" label="{{ __('general_content.supplier_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.supplier_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -701,7 +701,7 @@
                         @foreach ($CompanieSelect as $item)
                         <option value="{{ $item->id }}" >{{ $item->code }} - {{ $item->label }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <x-slot name="footerSlot">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

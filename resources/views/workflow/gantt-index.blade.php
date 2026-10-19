@@ -23,7 +23,7 @@
 		<form action="{{ route('production.gantt') }}" method="GET">
 			<div class="row">
 				<div class="mb-3 col-4">
-					<x-adminlte-select2 name="order_id" id="order_id"
+					<x-adminlte-select-bs :config="['allowEmptyOption' => true]" name="order_id" id="order_id"
 						label="{{ __('general_content.order_trans_key') }}"
 						label-class="text-secondary"
 						igroup-size="s"
@@ -39,7 +39,7 @@
 								{{ $order->code }}{{ $order->label ? ' - ' . $order->label : '' }}
 							</option>
 						@endforeach
-					</x-adminlte-select2>
+					</x-adminlte-select-bs>
 				</div>
 				<div class="mb-3 col-2">
 					<x-adminlte-button class="rounded-0" type="submit"

@@ -236,7 +236,7 @@
             </div>
           </div>
           <div class="mb-3">
-              <x-adminlte-select2 name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
+              <x-adminlte-select-bs name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
                 igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                 <x-slot name="prependSlot">
                     <div class="input-group-text text-bg-secondary bg-gradient">
@@ -247,10 +247,10 @@
                 @foreach ($OrderLineList as $item)
                 <option value="{{ $item->id }}">#{{ $item->id }} {{ $item->label }} - {{ $item->Order->code }}</option>
                 @endforeach
-              </x-adminlte-select2>
+              </x-adminlte-select-bs>
           </div>
           <div class="mb-3">
-              <x-adminlte-select2 name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-sky"
+              <x-adminlte-select-bs name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-sky"
                 igroup-size="s" data-placeholder="{{ __('general_content.select_task_trans_key') }}">
                 <x-slot name="prependSlot">
                     <div class="input-group-text text-bg-info bg-gradient">
@@ -261,7 +261,7 @@
                 @foreach ($TaskList as $item)
                 <option value="{{ $item->id }}">#{{ $item->id }}</option>
                 @endforeach
-              </x-adminlte-select2>
+              </x-adminlte-select-bs>
           </div>
           <div class="mb-3">
             <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
@@ -284,7 +284,7 @@
           <input type="hidden" name="user_id" value="{{ Auth::id() }}">
 
           <div class="mb-3">
-            <x-adminlte-select2 name="destination_stock_locations_id" id="destination_stock_locations_id"
+            <x-adminlte-select-bs :config="['allowEmptyOption' => true]" name="destination_stock_locations_id" id="destination_stock_locations_id"
               label="{{ __('general_content.transfer_destination_trans_key') }}" label-class="text-info"
               igroup-size="s" data-placeholder="{{ __('general_content.transfer_select_destination_trans_key') }}">
               <x-slot name="prependSlot">
@@ -296,7 +296,7 @@
               @foreach ($AllStockLocations as $location)
                 <option value="{{ $location->id }}">{{ $location->label }} ({{ $location->Stocks->label ?? '' }})</option>
               @endforeach
-            </x-adminlte-select2>
+            </x-adminlte-select-bs>
           </div>
 
           <div class="mb-3">

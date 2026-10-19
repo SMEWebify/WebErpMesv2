@@ -1,4 +1,4 @@
-<x-adminlte-select2 name="companies_contacts_id" id="companies_contacts_id" label="{{ __('general_content.contact_trans_key') }}" label-class="text-info"
+<x-adminlte-select-bs name="companies_contacts_id" id="companies_contacts_id" label="{{ __('general_content.contact_trans_key') }}" label-class="text-info"
     igroup-size="s" data-placeholder="{{ __('general_content.contact_trans_key') }}">
     <x-slot name="prependSlot">
         <div class="input-group-text text-bg-info bg-gradient">
@@ -8,4 +8,4 @@
     @foreach ($ContactSelect as $item)
     <option value="{{ $item->id }}" @if($item->id == $contactId ) Selected @endif>{{ $item->first_name }} - {{ $item->name }}</option>
     @endforeach
-</x-adminlte-select2>
+</x-adminlte-select-bs>

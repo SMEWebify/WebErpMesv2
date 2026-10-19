@@ -62,7 +62,7 @@ $deliverySteps = [
                 </div>
                 <div class="row">
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_id" id="delivery_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_id" id="delivery_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.companie_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -72,10 +72,10 @@ $deliverySteps = [
                         @foreach($companies as $company)
                             <option value="{{ $company->id }}" {{ $company->id == $Delivery->companies_id ? 'selected' : '' }}>{{ $company->label }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_addresses_id" id="delivery_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_addresses_id" id="delivery_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -85,10 +85,10 @@ $deliverySteps = [
                         @foreach($addresses as $address)
                             <option value="{{ $address->id }}" {{ $address->id == $Delivery->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' - ' . $address->adress : '' }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_contacts_id" id="delivery_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_contacts_id" id="delivery_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.contact_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -98,12 +98,12 @@ $deliverySteps = [
                         @foreach($contacts as $contact)
                             <option value="{{ $contact->id }}" {{ $contact->id == $Delivery->companies_contacts_id ? 'selected' : '' }}>{{ $contact->first_name }} {{ $contact->name }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                 </div>
                 <div class="row">
                   <div class="mb-3 col-md-6">
-                    <x-adminlte-select2 name="purchases_id" id="purchases_id" label="{{ __('general_content.name_purchase_trans_key') }}" label-class="text-secondary"
+                    <x-adminlte-select-bs :config="['allowEmptyOption' => true]" name="purchases_id" id="purchases_id" label="{{ __('general_content.name_purchase_trans_key') }}" label-class="text-secondary"
                       igroup-size="s" data-placeholder="{{ __('general_content.name_purchase_trans_key') }}">
                       <x-slot name="prependSlot">
                           <div class="input-group-text text-bg-secondary bg-gradient">
@@ -114,7 +114,7 @@ $deliverySteps = [
                         @foreach ($PruchasesSelect as $item)
                         <option value="{{ $item->id }}" @if($item->id == $Delivery->purchases_id) Selected @endif>{{ $item->code }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-6">
                     <label for="tracking_number">{{ __('general_content.tracking_number_note_trans_key') }}</label>
@@ -668,26 +668,11 @@ $deliverySteps = [
       // Optionally, you can show a message indicating that the text has been copied
       // alert("Lien copié dans le presse-papier !");
   }
-
-  (function ($) {
-      var acUrl = '{{ $companyAcUrl }}';
-
-      $('#delivery_company_id').on('change', function () {
-          var companyId = $(this).val();
-          $.getJSON(acUrl, { company_id: companyId }, function (data) {
-              var $addr = $('#delivery_address_id').empty();
-              $.each(data.addresses, function (_, a) {
-                  $addr.append($('<option>', { value: a.id, text: a.label }));
-              });
-              $addr.trigger('change');
-
-              var $contact = $('#delivery_contact_id').empty();
-              $.each(data.contacts, function (_, c) {
-                  $contact.append($('<option>', { value: c.id, text: c.label }));
-              });
-              $contact.trigger('change');
-          });
-      });
-  }(jQuery));
 </script>
+@include('include.form.company-address-contact-sync', [
+    'url' => $companyAcUrl,
+    'companyId' => 'delivery_company_id',
+    'addressId' => 'delivery_address_id',
+    'contactId' => 'delivery_contact_id',
+])
 @stop

@@ -1542,18 +1542,6 @@ return [
     */
 
     'plugins' => [
-        // AdminLTE v4 ne charge plus jQuery. Il reste requis par Select2 et par
-        // le code jQuery des vues : chargé en tête, avant les autres plugins.
-        'JQuery' => [
-            'active' => true,
-            'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/jquery/jquery.min.js',
-                ],
-            ],
-        ],
         // AdminLTE v4 utilise Bootstrap Icons ; l'application garde Font Awesome
         // (menu, vues, composants React).
         'FontAwesome' => [
@@ -1627,25 +1615,21 @@ return [
                 ],
             ],
         ],
-        // <x-adminlte-select2> (sélecteurs société, adresse, contact...). Le
-        // thème Bootstrap 4 est remplacé par celui d'AdminLTE v4.
-        'Select2' => [
+        // <x-adminlte-select-bs> (sélecteurs société, adresse, contact...) :
+        // Tom Select, en JavaScript natif. Remplace Select2, dernière dépendance
+        // à jQuery, qui n'est plus chargé.
+        'TomSelect' => [
             'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/select2/js/select2.full.min.js',
+                    'location' => 'vendor/tom-select/js/tom-select.complete.min.js',
                 ],
                 [
                     'type' => 'css',
                     'asset' => true,
-                    'location' => 'vendor/select2/css/select2.min.css',
-                ],
-                [
-                    'type' => 'css',
-                    'asset' => true,
-                    'location' => 'vendor/adminlte/dist/css/adminlte-select2.min.css',
+                    'location' => 'vendor/tom-select/css/tom-select.bootstrap5.min.css',
                 ],
             ],
         ],

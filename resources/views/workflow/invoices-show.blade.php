@@ -81,7 +81,7 @@ $invoiceSteps = [
                 </div>
                 <div class="row">
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_id" id="invoice_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_id" id="invoice_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.companie_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -91,10 +91,10 @@ $invoiceSteps = [
                         @foreach($companies as $company)
                             <option value="{{ $company->id }}" {{ $company->id == $Invoice->companies_id ? 'selected' : '' }}>{{ $company->label }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_addresses_id" id="invoice_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_addresses_id" id="invoice_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -104,10 +104,10 @@ $invoiceSteps = [
                         @foreach($addresses as $address)
                             <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' - ' . $address->adress : '' }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_contacts_id" id="invoice_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
+                    <x-adminlte-select-bs name="companies_contacts_id" id="invoice_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
                         igroup-size="s" data-placeholder="{{ __('general_content.contact_name_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-info bg-gradient">
@@ -117,7 +117,7 @@ $invoiceSteps = [
                         @foreach($contacts as $contact)
                             <option value="{{ $contact->id }}" {{ $contact->id == $Invoice->companies_contacts_id ? 'selected' : '' }}>{{ $contact->first_name }} {{ $contact->name }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                 </div>
                 <div class="row">
@@ -307,26 +307,10 @@ $invoiceSteps = [
 @stop
 
 @section('js')
-<script>
-(function ($) {
-    var acUrl = '{{ $companyAcUrl }}';
-
-    $('#invoice_company_id').on('change', function () {
-        var companyId = $(this).val();
-        $.getJSON(acUrl, { company_id: companyId }, function (data) {
-            var $addr = $('#invoice_address_id').empty();
-            $.each(data.addresses, function (_, a) {
-                $addr.append($('<option>', { value: a.id, text: a.label }));
-            });
-            $addr.trigger('change');
-
-            var $contact = $('#invoice_contact_id').empty();
-            $.each(data.contacts, function (_, c) {
-                $contact.append($('<option>', { value: c.id, text: c.label }));
-            });
-            $contact.trigger('change');
-        });
-    });
-}(jQuery));
-</script>
+@include('include.form.company-address-contact-sync', [
+    'url' => $companyAcUrl,
+    'companyId' => 'invoice_company_id',
+    'addressId' => 'invoice_address_id',
+    'contactId' => 'invoice_contact_id',
+])
 @stop

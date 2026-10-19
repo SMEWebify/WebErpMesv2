@@ -111,3 +111,16 @@ body.sidebar-hidden .app-sidebar {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* Tom Select (<x-adminlte-select-bs>) : son thème Bootstrap 5 écrit le texte
+   en #343a40, illisible en mode sombre. La liste reprend le z-index des menus
+   déroulants Bootstrap (Select2 l'ouvrait au niveau du body). */
+.ts-control,
+.ts-control input,
+.ts-dropdown {
+    color: var(--bs-body-color);
+}
+.ts-dropdown {
+    border-color: var(--bs-border-color);
+    z-index: 1000;
+}

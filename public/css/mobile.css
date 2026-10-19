@@ -82,8 +82,8 @@
     select.form-control,
     textarea.form-control,
     select.form-select,
-    .select2-container .select2-selection__rendered,
-    .select2-search__field {
+    .ts-control,
+    .ts-control input {
         font-size: 16px;
     }
 

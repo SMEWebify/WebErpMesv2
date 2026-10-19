@@ -1,5 +1,5 @@
 
-<x-adminlte-select2 name="user_id" id="user_id" label="{{ __('general_content.user_trans_key') }}" label-class="text-info"
+<x-adminlte-select-bs :config="['allowEmptyOption' => true]" name="user_id" id="user_id" label="{{ __('general_content.user_trans_key') }}" label-class="text-info"
     igroup-size="s" data-placeholder="{{ __('general_content.user_trans_key') }}">
     <x-slot name="prependSlot">
         <div class="input-group-text text-bg-info bg-gradient">
@@ -10,4 +10,4 @@
     @foreach ($userSelect as $item)
     <option value="{{ $item->id }}" @if($item->id == $userId ) Selected @endif>{{ $item->name }}</option>
     @endforeach
-</x-adminlte-select2>
+</x-adminlte-select-bs>

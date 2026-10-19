@@ -1,5 +1,5 @@
 
-<x-adminlte-select2 name="quality_non_conformitie_id" id="quality_non_conformitie_id" label="{{ __('general_content.non_conformitie_trans_key') }}" label-class="text-info"
+<x-adminlte-select-bs name="quality_non_conformitie_id" id="quality_non_conformitie_id" label="{{ __('general_content.non_conformitie_trans_key') }}" label-class="text-info"
     igroup-size="s" data-placeholder="{{ __('general_content.non_conformitie_trans_key') }}">
     <x-slot name="prependSlot">
         <div class="input-group-text text-bg-info bg-gradient">
@@ -10,4 +10,4 @@
     @foreach ($NonConformitysSelect as $item)
     <option value="{{ $item->id }}" @if($item->id == $ncId ) Selected @endif>{{ $item->code }}</option>
     @endforeach
-</x-adminlte-select2>
+</x-adminlte-select-bs>

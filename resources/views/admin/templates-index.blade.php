@@ -39,7 +39,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label>{{ __('general_content.message_trans_key') }} :</label> 
-                                                <textarea name="content" class="form-control summernote" required>{{ $template->content }}</textarea>
+                                                <textarea name="content" class="form-control" rows="12" required>{{ $template->content }}</textarea>
                                             </div>
                                             <div class="card-footer">
                                                 <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="mb-3">
                     <label>{{ __('general_content.message_trans_key') }} :</label>
-                    <textarea name="content" class="form-control summernote" required></textarea>
+                    <textarea name="content" class="form-control" rows="12" required></textarea>
                 </div>
                 <div class="card-footer">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" :disabled="empty($availableDocumentTypes)"/>
@@ -90,18 +90,3 @@
 
 @section('css')
 @stop
-
-@section('js')
-<script>
-    $(document).ready(function () {
-        $('.summernote').summernote({
-            height: 300,
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture']],
-            ]
-        });
-    });
-</script>
-@endsection

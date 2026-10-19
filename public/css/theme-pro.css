@@ -531,13 +531,13 @@ body.theme-pro .dropdown-item:active {
     color: var(--pro-ink) !important;
 }
 
-/* Select2 (plugin actif dans config/adminlte.php) */
-body.theme-pro .select2-container--default .select2-results__option--highlighted[aria-selected] {
+/* Tom Select (<x-adminlte-select-bs>, plugin actif dans config/adminlte.php) */
+body.theme-pro .ts-dropdown .active {
     background-color: var(--pro-accent-soft) !important;
     color: var(--pro-ink) !important;
 }
 
-body.theme-pro .select2-container--default .select2-selection {
+body.theme-pro .ts-wrapper .ts-control {
     border-color: var(--pro-border-strong) !important;
 }
 

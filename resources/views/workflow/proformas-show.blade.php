@@ -68,28 +68,28 @@
                 </div>
                 <div class="row">
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_id" id="proforma_company_id" label="Client" label-class="text-info" igroup-size="s">
+                    <x-adminlte-select-bs name="companies_id" id="proforma_company_id" label="Client" label-class="text-info" igroup-size="s">
                       <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-building"></i></div></x-slot>
                       @foreach($companies as $company)
                         <option value="{{ $company->id }}" {{ $company->id == $Proforma->companies_id ? 'selected' : '' }}>{{ $company->label }}</option>
                       @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_addresses_id" id="proforma_address_id" label="Adresse" label-class="text-info" igroup-size="s">
+                    <x-adminlte-select-bs name="companies_addresses_id" id="proforma_address_id" label="Adresse" label-class="text-info" igroup-size="s">
                       <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-map-marked-alt"></i></div></x-slot>
                       @foreach($addresses as $address)
                         <option value="{{ $address->id }}" {{ $address->id == $Proforma->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}</option>
                       @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                   <div class="mb-3 col-md-4">
-                    <x-adminlte-select2 name="companies_contacts_id" id="proforma_contact_id" label="Contact" label-class="text-info" igroup-size="s">
+                    <x-adminlte-select-bs name="companies_contacts_id" id="proforma_contact_id" label="Contact" label-class="text-info" igroup-size="s">
                       <x-slot name="prependSlot"><div class="input-group-text text-bg-info bg-gradient"><i class="fas fa-user"></i></div></x-slot>
                       @foreach($contacts as $contact)
                         <option value="{{ $contact->id }}" {{ $contact->id == $Proforma->companies_contacts_id ? 'selected' : '' }}>{{ $contact->first_name }} {{ $contact->name }}</option>
                       @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                   </div>
                 </div>
                 <div class="row">
@@ -217,44 +217,47 @@
 @stop
 
 @section('js')
+@include('include.form.company-address-contact-sync', [
+    'url' => $companyAcUrl,
+    'companyId' => 'proforma_company_id',
+    'addressId' => 'proforma_address_id',
+    'contactId' => 'proforma_contact_id',
+])
 <script>
-(function ($) {
-    var acUrl = '{{ $companyAcUrl }}';
-
-    $('#proforma_company_id').on('change', function () {
-        var companyId = $(this).val();
-        $.getJSON(acUrl, { company_id: companyId }, function (data) {
-            var $addr = $('#proforma_address_id').empty();
-            $.each(data.addresses, function (_, a) { $addr.append($('<option>', { value: a.id, text: a.label })); });
-            $addr.trigger('change');
-
-            var $contact = $('#proforma_contact_id').empty();
-            $.each(data.contacts, function (_, c) { $contact.append($('<option>', { value: c.id, text: c.label })); });
-            $contact.trigger('change');
-        });
-    });
-
-    $('#btn-activate-order').on('click', function () {
-        if (!confirm('Confirmer la réception du paiement ? La commande sera activée et entrera en production.')) return;
-        $.ajax({
-            url: '{{ route('proformas.activate.order', $Proforma->id) }}',
+(function () {
+    function post(url) {
+        return fetch(url, {
             method: 'POST',
-            data: { _token: '{{ csrf_token() }}' },
-            success: function () { window.location.reload(); },
-            error: function () { alert('Erreur lors de l\'activation.'); }
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': @json(csrf_token()),
+            },
+        }).then(function (response) {
+            if (!response.ok) throw new Error(response.status);
+            return response.json();
         });
-    });
+    }
 
-    $('#btn-convert-proforma').on('click', function () {
-        if (!confirm('Convertir cette proforma en facture réelle ? Un nouveau numéro de facture lui sera attribué.')) return;
-        $.ajax({
-            url: '{{ route('proformas.convert', $Proforma->id) }}',
-            method: 'POST',
-            data: { _token: '{{ csrf_token() }}' },
-            success: function (res) { window.location.href = res.redirect; },
-            error: function () { alert('Erreur lors de la conversion.'); }
+    var activate = document.getElementById('btn-activate-order');
+    if (activate) {
+        activate.addEventListener('click', function () {
+            if (!confirm('Confirmer la réception du paiement ? La commande sera activée et entrera en production.')) return;
+            post(@json(route('proformas.activate.order', $Proforma->id)))
+                .then(function () { window.location.reload(); })
+                .catch(function () { alert("Erreur lors de l'activation."); });
         });
-    });
-}(jQuery));
+    }
+
+    var convert = document.getElementById('btn-convert-proforma');
+    if (convert) {
+        convert.addEventListener('click', function () {
+            if (!confirm('Convertir cette proforma en facture réelle ? Un nouveau numéro de facture lui sera attribué.')) return;
+            post(@json(route('proformas.convert', $Proforma->id)))
+                .then(function (res) { window.location.href = res.redirect; })
+                .catch(function () { alert('Erreur lors de la conversion.'); });
+        });
+    }
+})();
 </script>
 @stop

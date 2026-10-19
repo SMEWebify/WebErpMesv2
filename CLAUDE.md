@@ -63,7 +63,7 @@
 5. ✅ Migrer OrderLine vers React
 6. ✅ Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 7. ✅ AdminLTE 3 / Bootstrap 4 → AdminLTE 4 / Bootstrap 5.3 (v3.0.0)
-8. ⬜ Select2 → Tom Select (`<x-adminlte-select-bs>`), puis retrait de jQuery
+8. ✅ Select2 → Tom Select (`<x-adminlte-select-bs>`), puis retrait de jQuery
 
 ## Shell AdminLTE 4 (v3.0.0)
 
@@ -80,10 +80,14 @@ de compatibilité Bootstrap 4 n'est chargée.
 - **Bootstrap JS** : uniquement le bundle chargé par AdminLTE (`window.bootstrap`). Ne jamais
   `import 'bootstrap'` ni `import { Tooltip } from 'bootstrap'` dans Vite (le paquet n'a pas de
   `sideEffects` : tout le module serait embarqué, avec des écouteurs globaux en double).
-- **jQuery** n'est plus chargé par AdminLTE ; il l'est par le plugin `JQuery` de
-  `config/adminlte.php`, **uniquement pour Select2**. Pas de nouveau code jQuery : les blocs
-  qui écoutent un Select2 (société → adresse/contact sur proforma, facture, BL) restent en
-  jQuery car Select2 ne déclenche `change` que via jQuery.
+- **jQuery n'est plus chargé du tout** (ni AdminLTE, ni Vite, ni plugin). Les listes
+  déroulantes à recherche sont des `<x-adminlte-select-bs>` (**Tom Select**, plugin `TomSelect`
+  de `config/adminlte.php`, assets dans `public/vendor/tom-select`). Tom Select déclenche
+  l'événement natif `change` sur le `<select>` d'origine ; pour en remplacer les options :
+  `el.tomselect.clear(true)`, `clearOptions()`, reconstruire les `<option>`, puis `sync()`
+  (cf. `include/form/company-address-contact-sync`, société → adresse/contact sur proforma,
+  facture, BL). Une option `value=""` devient un simple placeholder : passer
+  `:config="['allowEmptyOption' => true]"` quand « aucun » est un vrai choix.
 - **Font Awesome** reste la bibliothèque d'icônes (plugin `FontAwesome`) ; les vues du paquet
   utilisent Bootstrap Icons, chargées par AdminLTE.
 
@@ -757,13 +761,9 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 ### 📋 Roadmap
 
 #### Frontend — suite AdminLTE 4
-- **Select2 → Tom Select** (`<x-adminlte-select-bs>`, recommandé par la v4) : dernière
-  dépendance à jQuery. Les blocs société → adresse/contact (proforma, facture, BL) pourront
-  alors passer en JS natif, et le plugin `JQuery` disparaître.
 - **Éditeur riche jamais chargé** : Summernote n'est inclus nulle part, donc
   `<x-adminlte-text-editor>` (e-mail, commentaires article / lead / opportunité) et l'éditeur
-  des modèles d'e-mail (`admin/templates-index`, appel `$('.summernote')` en erreur) sont de
-  simples zones de texte. La v4 propose Quill (`@section('plugins.Quill', true)`).
+  des modèles d'e-mail (`admin/templates-index`) sont de simples zones de texte. La v4 propose Quill (`@section('plugins.Quill', true)`).
 - **Sauvegarde de la disposition du tableau de bord** à revérifier après le passage de
   `react-grid-layout` en 2.3.0 (Dependabot) : l'enregistrement serveur fonctionne, le
   comportement du glisser-redimensionner reste à observer en navigateur.

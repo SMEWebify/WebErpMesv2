@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <x-adminlte-select2 name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
+                                    <x-adminlte-select-bs name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
                                         igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                                         <x-slot name="prependSlot">
                                             <div class="input-group-text text-bg-secondary bg-gradient">
@@ -131,7 +131,7 @@
                                         @foreach ($OrderLineList as $item)
                                         <option value="{{ $item->id }}" @if($Expense->order_id == $item->id  ) Selected @endif>#{{ $item->id }} - {{ $item->code }}</option>
                                         @endforeach
-                                    </x-adminlte-select2>
+                                    </x-adminlte-select-bs>
                                 </div>
                                 <div class="card-footer">
                                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -227,7 +227,7 @@
                 </div>
                 
                 <div class="mb-3">
-                    <x-adminlte-select2 name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
+                    <x-adminlte-select-bs :config="['allowEmptyOption' => true]" name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
                         igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text text-bg-secondary bg-gradient">
@@ -238,7 +238,7 @@
                         @foreach ($OrderLineList as $item)
                         <option value="{{ $item->id }}">#{{ $item->id }} - {{ $item->code }}</option>
                         @endforeach
-                    </x-adminlte-select2>
+                    </x-adminlte-select-bs>
                 </div>
                 <div class="mb-3">
                     <label for="scan_file">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
