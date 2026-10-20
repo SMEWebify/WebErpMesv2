@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Planning;
 use App\Http\Controllers\Controller;
 use App\Models\File;
 use App\Models\Methods\MethodsServices;
+use App\Models\Planning\Status;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
@@ -225,8 +226,11 @@ class NestingController extends Controller
         $lineIds    = $lines->pluck('id');
         $productIds = $lines->pluck('product_id')->filter()->unique()->values();
 
-        // First is_nesting service task encountered on each line
-        $nestingTasks = Task::query()
+        // First is_nesting service task still to do on each line. A line whose
+        // cutting tasks are all finished is already cut: it leaves the
+        // requirement instead of being reported as missing a service.
+        $finishedStatusId = Status::where('title', 'Finished')->value('id');
+        $allNestingTasks = Task::query()
             ->whereIn('tasks.order_lines_id', $lineIds)
             ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
             ->where('methods_services.is_nesting', true)
@@ -234,11 +238,15 @@ class NestingController extends Controller
             ->select(
                 'tasks.order_lines_id',
                 'tasks.methods_services_id',
+                'tasks.status_id',
                 'methods_services.label as service_label',
                 'methods_services.color as service_color',
             )
             ->orderBy('tasks.ordre')
-            ->get()
+            ->get();
+        $linesWithNestingTask = $allNestingTasks->pluck('order_lines_id')->flip();
+        $nestingTasks = $allNestingTasks
+            ->reject(fn ($t) => $finishedStatusId && (int) $t->status_id === (int) $finishedStatusId)
             ->groupBy('order_lines_id')
             ->map->first();
 
@@ -312,6 +320,7 @@ class NestingController extends Controller
 
             $nestingTask = $nestingTasks[$line->id] ?? null;
             if (!$nestingTask) {
+                if (isset($linesWithNestingTask[$line->id])) continue; // already cut
                 $missingService[] = $baseEntry;
                 continue;
             }
