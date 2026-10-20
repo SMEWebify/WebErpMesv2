@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <x-InfocalloutComponent note="{{ __('general_content.kanban_setting_note_trans_key') }}" />
+    <x-InfocalloutComponent :note="__('general_content.kanban_setting_note_trans_key')" />
 
     @php
     $trans = [

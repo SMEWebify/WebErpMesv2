@@ -9,7 +9,7 @@
 @section('right-sidebar')
 
 @section('content')
-    <x-InfocalloutComponent note="{{ __('general_content.workflow_info_1_trans_key') }}"  />
+    <x-InfocalloutComponent :note="__('general_content.workflow_info_1_trans_key')"  />
 
     <!-- Formulaire de sélection du service -->
     <form method="GET" action="{{ route('production.kanban') }}" class="mb-4">

@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <x-InfocalloutComponent note="{{ __('general_content.time_unit_note_trans_key') }}" />
+    <x-InfocalloutComponent :note="__('general_content.time_unit_note_trans_key')" />
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

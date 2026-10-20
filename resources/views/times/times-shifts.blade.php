@@ -8,7 +8,7 @@
 
 @section('content')
   @include('include.alert-result')
-  <x-InfocalloutComponent note="{{ __('general_content.shift_pattern_info_trans_key') }}" />
+  <x-InfocalloutComponent :note="__('general_content.shift_pattern_info_trans_key')" />
   <div class="row">
     <div class="col-md-8">
       @forelse ($ShiftPatterns as $ShiftPattern)
@@ -118,7 +118,7 @@
           </x-adminlte-modal>
         </x-adminlte-card>
       @empty
-        <x-InfocalloutComponent note="{{ __('general_content.no_data_trans_key') }}" />
+        <x-InfocalloutComponent :note="__('general_content.no_data_trans_key')" />
       @endforelse
     </div>
 

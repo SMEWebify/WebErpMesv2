@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <x-InfocalloutComponent note="{{ __('general_content.non_conformitie_note_trans_key') }}" />
+    <x-InfocalloutComponent :note="__('general_content.non_conformitie_note_trans_key')" />
 
     <div
         id="non-conformities-index-app"

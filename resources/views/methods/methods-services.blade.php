@@ -10,7 +10,7 @@
 
 @section('content')
   @include('include.alert-result')
-  <x-InfocalloutComponent note="{{ __('general_content.service_info_trans_key') }}"  />
+  <x-InfocalloutComponent :note="__('general_content.service_info_trans_key')"  />
   <div class="row">
     <div class="col-md-8">
       <x-adminlte-card title="{{ __('general_content.service_trans_key') }}" theme="warning" maximizable>

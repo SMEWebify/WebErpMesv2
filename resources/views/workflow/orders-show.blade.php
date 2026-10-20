@@ -689,7 +689,7 @@ if (!$orderHasInvoicedLines) {
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Order->statu == 1)
-        <x-InfocalloutComponent note="{{ __('general_content.csv_quote_info_trans_key') }}"  />
+        <x-InfocalloutComponent :note="__('general_content.csv_quote_info_trans_key')"  />
 
         <form method="POST" action="{{ route('orders.lines.import', ['idOrder'=>  $Order->id]) }}" enctype="multipart/form-data">
           <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>

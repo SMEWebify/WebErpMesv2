@@ -12,7 +12,7 @@
 
   @include('include.alert-result')
   <div class="tab-pane" id="OperationTransitionDelays">
-    <x-InfocalloutComponent note="Tampon appliqué entre deux tâches consécutives d'une même ligne. Une paire non listée retombe sur le défaut atelier ({{ number_format($defaultHours, 2) }} h). Le zéro d'une paire force l'absence de délai (jamais neutre). Écart minimum toujours ajouté : {{ number_format($minGapHours, 2) }} h. Se règle dans <code>config/planning.php</code>." />
+    <x-InfocalloutComponent note="Tampon appliqué entre deux tâches consécutives d'une même ligne. Une paire non listée retombe sur le défaut atelier ({{ number_format($defaultHours, 2) }} h). Le zéro d'une paire force l'absence de délai (jamais neutre). Écart minimum toujours ajouté : {{ number_format($minGapHours, 2) }} h. Se règle dans config/planning.php." />
     <div class="row">
       <div class="col-md-8">
         <x-adminlte-card title="Paires d'opérations" theme="teal" maximizable>

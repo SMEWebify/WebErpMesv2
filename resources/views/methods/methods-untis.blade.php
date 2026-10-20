@@ -12,7 +12,7 @@
 
   @include('include.alert-result')
   <div class="tab-pane" id="Units">
-    <x-InfocalloutComponent note="{{ __('general_content.unit_info_trans_key') }}"  />
+    <x-InfocalloutComponent :note="__('general_content.unit_info_trans_key')"  />
     <div class="row">
       <div class="col-md-6">
         <x-adminlte-card title="{{ __('general_content.units_trans_key') }}" theme="teal" maximizable>

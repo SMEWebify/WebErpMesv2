@@ -18,7 +18,7 @@
        data-trans='@json($trans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
   </div>
 
-  <x-InfocalloutComponent note="{{ __('general_content.tasks_info_1_trans_key') }}"  />
+  <x-InfocalloutComponent :note="__('general_content.tasks_info_1_trans_key')"  />
   <x-adminlte-card title="{{ __('general_content.add_generic_task_trans_key') }}" theme="primary" body-class="bg-body" theme-mode="full" footer-class="bg-body border-top rounded border-primary" collapsible removable maximizable>
     <div class="row">
       <div class="col-12">

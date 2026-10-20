@@ -10,7 +10,7 @@
 
 @section('content')
 
-      <x-InfocalloutComponent note="{{ __('general_content.action_note_trans_key') }}"  />
+      <x-InfocalloutComponent :note="__('general_content.action_note_trans_key')"  />
       @include('include.alert-result')
       <x-adminlte-card theme="info" theme-mode="outline">
         <div class="table-responsive p-0">
