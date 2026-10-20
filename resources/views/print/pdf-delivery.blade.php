@@ -47,7 +47,7 @@
                 <tr>
                     <td align="left" style="width: 50%; background-color: {{ $Factory->pdf_header_font_color }}">
                         @if($image)
-                            <img src="data:image/png;base64,{{ $image }}" alt="Logo" style="height: 120px;"/>
+                            <img src="data:image/png;base64,{{ $image }}" alt="Logo" style="{{ \App\Support\PdfLogo::style($image, 300, 120) }}"/>
                         @endif
                     </td>
                     <td colspan="2" align="center" style="width: 400%; background-color: {{ $Factory->pdf_header_font_color }}">
