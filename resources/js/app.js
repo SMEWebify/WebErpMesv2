@@ -89,6 +89,7 @@ async function mountNestingPage() {
     createRoot(element).render(React.createElement(NestingPage, {
         engineEnabled: element.dataset.engineEnabled === '1',
         commercial: parseJsonAttribute(element.dataset.commercial) || {},
+        reorderUrl: element.dataset.reorderUrl || null,
     }));
 }
 
@@ -114,6 +115,7 @@ async function mountReorderPage() {
         endpoints: parseJsonAttribute(element.dataset.endpoints) || {},
         scope:     element.dataset.scope,
         products:  parseJsonAttribute(element.dataset.products) || [],
+        quantities: parseJsonAttribute(element.dataset.quantities) || {},
         currency:  element.dataset.currency,
     }));
 }

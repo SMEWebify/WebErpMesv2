@@ -14,7 +14,8 @@
          data-commercial="{{ json_encode([
              'badge'   => __('commercial.badge'),
              'contact' => __('commercial.contact'),
-         ] + __('commercial.nesting')) }}"></div>
+         ] + __('commercial.nesting')) }}"
+         @can('purchases-menu') data-reorder-url="{{ route('purchases.reorder') }}" @endcan></div>
 @stop
 
 @section('css')

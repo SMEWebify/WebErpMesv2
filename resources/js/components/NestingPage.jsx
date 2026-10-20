@@ -653,7 +653,33 @@ function NestingAnimation() {
 }
 
 // ─── Composant principal ────────────────────────────────────────────────────
-export default function NestingPage({ engineEnabled = false, commercial = {} }) {
+/** Ouvre l'écran de réapprovisionnement pré-rempli (nouvel onglet : le résultat reste affiché). */
+function PurchaseNeedsButton({ needs, pending }) {
+    if (!needs.url && !needs.unmatched) return null;
+    return (
+        <span className="ms-auto d-flex align-items-center gap-2">
+            {needs.unmatched > 0 && (
+                <small className="text-danger" title="Créez l'article de stock correspondant pour pouvoir le commander">
+                    <i className="fas fa-exclamation-triangle me-1" />{needs.unmatched} sans article de stock
+                </small>
+            )}
+            {needs.url && (
+                pending ? (
+                    <button type="button" className="btn btn-sm btn-warning" disabled title="Attendez la fin des imbrications">
+                        <i className="fas fa-cart-plus me-1" />Commander
+                    </button>
+                ) : (
+                    <a href={needs.url} target="_blank" rel="noreferrer" className="btn btn-sm btn-warning"
+                        title="Préparer les commandes d'achat (brouillon) avec les quantités à commander">
+                        <i className="fas fa-cart-plus me-1" />Commander
+                    </a>
+                )
+            )}
+        </span>
+    );
+}
+
+export default function NestingPage({ engineEnabled = false, commercial = {}, reorderUrl = null }) {
     const [barLengths, setBarLengths] = useState(DEFAULT_BAR_LENGTHS);
     const [kerf, setKerf]             = useState(DEFAULT_KERF_MM);
     const [includeOpen, setIncludeOpen] = useState(false);
@@ -863,6 +889,29 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
         return barStockIndex.get(`${mat}|${profileKey}|${barLength}`) || null;
     }, [barStockIndex]);
 
+    // Quantités « À commander » par article de stock, pour pré-remplir l'écran de
+    // réapprovisionnement (une commande d'achat brouillon par fournisseur).
+    // Une ligne sans article correspondant ne peut pas être commandée : comptée à part.
+    const purchaseNeeds = useCallback((rows, lookup) => {
+        const qty = new Map();
+        let unmatched = 0;
+        (rows || []).forEach((row) => {
+            const match = lookup(row);
+            if (!match) { unmatched += row.count; return; }
+            const toBuy = Math.max(0, row.count - match.stock_qty - match.incoming_qty);
+            if (toBuy <= 0 || !match.products.length) return;
+            const id = match.products[0].id;
+            qty.set(id, (qty.get(id) || 0) + toBuy);
+        });
+        let url = null;
+        if (qty.size > 0 && reorderUrl) {
+            const params = new URLSearchParams({ from: 'nesting' });
+            qty.forEach((n, id) => params.set(`qty[${id}]`, n));
+            url = `${reorderUrl}?${params}`;
+        }
+        return { url, unmatched };
+    }, [reorderUrl]);
+
     return (
         <div className="row">
             {/* ═══════ Panneau paramètres ═══════ */}
@@ -1022,7 +1071,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
 
                 {data && (summary?.length > 0 || pendingJobs > 0) && (
                     <div className="card mb-3">
-                        <div className="card-header py-2">
+                        <div className="card-header py-2 d-flex align-items-center">
                             <h3 className="card-title h5 mb-0">
                                 <i className="fas fa-shopping-cart me-1" />
                                 Besoin tôles
@@ -1037,6 +1086,12 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                     </small>
                                 )}
                             </h3>
+                            {reorderUrl && (
+                                <PurchaseNeedsButton
+                                    pending={pendingJobs > 0}
+                                    needs={purchaseNeeds(summary, (r) => lookupStock(r.material, r.thickness, r.format))}
+                                />
+                            )}
                         </div>
                         <div className="card-body p-0">
                             <table className="table table-sm table-striped mb-0">
@@ -1132,7 +1187,7 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
 
                 {data && barSummary && barSummary.length > 0 && (
                     <div className="card mb-3">
-                        <div className="card-header py-2">
+                        <div className="card-header py-2 d-flex align-items-center">
                             <h3 className="card-title h5 mb-0">
                                 <i className="fas fa-grip-lines-vertical me-1" />
                                 Besoin barres / tubes
@@ -1142,6 +1197,12 @@ export default function NestingPage({ engineEnabled = false, commercial = {} }) 
                                     </small>
                                 )}
                             </h3>
+                            {reorderUrl && (
+                                <PurchaseNeedsButton
+                                    pending={false}
+                                    needs={purchaseNeeds(barSummary, (r) => lookupBarStock(r.material, r.profile, r.bar_length))}
+                                />
+                            )}
                         </div>
                         <div className="card-body p-0">
                             <table className="table table-sm table-striped mb-0">

@@ -5,7 +5,11 @@
 @section('content_header')
     <div class="d-flex align-items-center">
         <h1 class="mb-0"><i class="fas fa-cart-plus me-2"></i>Réapprovisionnement{{ $scope === 'tools' ? ' — outils' : '' }}</h1>
-        @if($scope === 'tools' || $products)
+        @if($from === 'nesting')
+            <a href="{{ route('nesting.index') }}" class="btn btn-sm btn-outline-secondary ms-auto">
+                <i class="fas fa-arrow-left me-1"></i>Nesting
+            </a>
+        @elseif($scope === 'tools' || $products)
             <a href="{{ route('methods.tool') }}" class="btn btn-sm btn-outline-secondary ms-auto">
                 <i class="fas fa-arrow-left me-1"></i>{{ __('adminlte::menu.methods_tools_trans_key') }}
             </a>
@@ -25,6 +29,7 @@
          ]) }}"
          data-scope="{{ $scope }}"
          data-products="{{ json_encode($products) }}"
+         data-quantities="{{ json_encode($quantities) }}"
          data-currency="{{ $Factory->curency }}"></div>
 @stop
 

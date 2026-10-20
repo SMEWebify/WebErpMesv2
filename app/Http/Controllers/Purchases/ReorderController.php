@@ -15,6 +15,7 @@ use RuntimeException;
  * stock − en commande) et création de commandes d'achat brouillon par fournisseur.
  * ?scope=tools restreint aux articles de stock des outils (Méthodes › Outils).
  * ?products[]=… restreint à des articles précis (bouton « Commander » d'une ligne).
+ * ?qty[id]=n restreint aux articles donnés avec une quantité imposée (« Commander » du nesting).
  */
 class ReorderController extends Controller
 {
@@ -24,9 +25,18 @@ class ReorderController extends Controller
 
     public function index(Request $request)
     {
+        // ?qty[id]=n impose la quantité à commander (besoin calculé ailleurs, ex. imbrication)
+        $quantities = collect((array) $request->query('qty', []))
+            ->mapWithKeys(fn ($qty, $id) => [(int) $id => (float) $qty])
+            ->filter(fn ($qty, $id) => $id > 0 && $qty > 0);
+
+        $products = array_map('intval', (array) $request->query('products', []));
+
         return view('purchases/purchases-reorder', [
-            'scope'    => $request->query('scope') === 'tools' ? 'tools' : 'all',
-            'products' => array_values(array_map('intval', (array) $request->query('products', []))),
+            'scope'      => $request->query('scope') === 'tools' ? 'tools' : 'all',
+            'products'   => array_values(array_unique(array_merge($products, $quantities->keys()->all()))),
+            'quantities' => $quantities->isEmpty() ? new \stdClass() : $quantities->all(),
+            'from'       => $request->query('from') === 'nesting' ? 'nesting' : null,
         ]);
     }
 

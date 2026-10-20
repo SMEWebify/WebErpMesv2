@@ -19,7 +19,9 @@ function priceFor(row, supplierId, qty) {
     return breaks.length ? breaks[0].price : row.purchased_price;
 }
 
-export default function ReorderPage({ endpoints, scope = 'all', products = [], currency = '€' }) {
+export default function ReorderPage({ endpoints, scope = 'all', products = [], quantities = {}, currency = '€' }) {
+    // quantities : { product_id: qté } imposée par l'écran appelant (besoin du nesting)
+    const imposed = Object.keys(quantities).length > 0;
     const [rows, setRows] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -37,19 +39,25 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], c
             if (!res.ok) throw new Error(`Erreur ${res.status}`);
             const data = await res.json();
             setSuppliers(data.suppliers);
-            setRows(data.rows.map((r) => ({
-                ...r,
-                selected: r.suggested_qty > 0,
-                qty: r.suggested_qty,
-                supplier: r.supplier_id ?? '',
-                price: priceFor(r, r.supplier_id, r.suggested_qty),
-                priceTouched: false,
-            })));
+            setRows(data.rows.map((r) => {
+                const qty = quantities[r.product_id] ?? r.suggested_qty;
+                return {
+                    ...r,
+                    selected: qty > 0,
+                    qty,
+                    supplier: r.supplier_id ?? '',
+                    price: priceFor(r, r.supplier_id, qty),
+                    priceTouched: false,
+                };
+            }));
         } catch (e) {
             setError(e.message || String(e));
         }
         setLoading(false);
-    }, [endpoints.json, scope, products]);
+    }, [endpoints.json, scope, products, quantities]);
+
+    // Articles demandés mais absents de l'analyse : seuls les articles « Acheté » sont proposés.
+    const notPurchasable = loading ? 0 : products.filter((id) => !rows.some((r) => r.product_id === id)).length;
 
     useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -122,12 +130,20 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], c
         <div className="card mb-3">
             <div className="card-header d-flex align-items-center py-2">
                 <span className="small text-muted">
-                    À commander = seuil mini + besoins réservés − stock − déjà en commande (arrondi à la qté éco. d'achat).
+                    {imposed
+                        ? 'À commander = besoin de l\'imbrication − stock − déjà en commande.'
+                        : 'À commander = seuil mini + besoins réservés − stock − déjà en commande (arrondi à la qté éco. d\'achat).'}
                 </span>
                 <button type="button" className="btn btn-sm btn-link ms-auto" onClick={load} disabled={loading}><i className="fas fa-sync me-1" />Recalculer</button>
             </div>
             <div className="card-body p-0">
-                {loading && <div className="p-3 text-muted"><i className="fas fa-spinner fa-spin me-2" />Analyse du stock…</div>}
+                {notPurchasable > 0 && (
+                    <div className="alert alert-warning py-2 small m-2">
+                        <i className="fas fa-exclamation-triangle me-1" />
+                        {notPurchasable} article(s) demandé(s) ne sont pas proposés : cochez « Acheté » sur leur fiche article pour pouvoir les commander.
+                    </div>
+                )}
+                {loading &&<div className="p-3 text-muted"><i className="fas fa-spinner fa-spin me-2" />Analyse du stock…</div>}
                 {!loading && rows.length === 0 && !error && (
                     <div className="p-4 text-center text-muted">
                         <i className="fas fa-check-circle text-success fa-2x mb-2 d-block" />
