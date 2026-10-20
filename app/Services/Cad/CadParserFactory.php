@@ -5,6 +5,7 @@ namespace App\Services\Cad;
 use App\Services\Cad\Parsers\DrgParser;
 use App\Services\Cad\Parsers\DxfParser;
 use App\Services\Cad\Parsers\GeoParser;
+use App\Services\Cad\Parsers\PdfParser;
 use App\Services\Cad\Parsers\StepParser;
 use App\Services\Cad\Parsers\SvgParser;
 use App\Services\Cad\Parsers\SymParser;
@@ -26,6 +27,7 @@ class CadParserFactory
         DxfParser::class,
         StepParser::class,
         SvgParser::class,
+        PdfParser::class,
     ];
 
     public static function for(string $extension): ?CadParser

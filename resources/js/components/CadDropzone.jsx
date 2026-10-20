@@ -9,7 +9,7 @@ import React, { useRef, useState } from 'react';
 
 // Kept in sync with App\Services\Cad\CadParserFactory, which is the authority:
 // anything else is rejected server side with an explicit message.
-const ACCEPTED = ['sym', 'drg', 'geo', 'dxf', 'step', 'stp', 'svg'];
+const ACCEPTED = ['sym', 'drg', 'geo', 'dxf', 'step', 'stp', 'svg', 'pdf'];
 
 const ACCEPT_ATTRIBUTE = ACCEPTED.map((extension) => `.${extension}`).join(',');
 
@@ -126,6 +126,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                             Le plan déposé est rattaché à la ligne dans la GED (hors .sym et .drg, entièrement lus à l'import).
                             Un .geo produit en plus un SVG exploitable par l'imbrication.
                             Une imbrication RADAN (.drg) crée une ligne par pièce, quantité = pièces par tôle × nombre de tôles.
+                            Un plan .pdf est lu par l'IA (Intégrations → IA) : cartouche à vérifier sur la ligne créée.
                         </div>
                     </>
                 )}

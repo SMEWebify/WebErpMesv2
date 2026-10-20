@@ -6,6 +6,7 @@ use App\Services\Cad\CadParserFactory;
 use App\Services\Cad\Parsers\DrgParser;
 use App\Services\Cad\Parsers\DxfParser;
 use App\Services\Cad\Parsers\GeoParser;
+use App\Services\Cad\Parsers\PdfParser;
 use App\Services\Cad\Parsers\StepParser;
 use App\Services\Cad\Parsers\SvgParser;
 use App\Services\Cad\Parsers\SymParser;
@@ -34,7 +35,8 @@ class CadParsersTest extends TestCase
         $this->assertInstanceOf(StepParser::class, CadParserFactory::for('STP'));
         $this->assertInstanceOf(SvgParser::class, CadParserFactory::for('.svg'));
         $this->assertInstanceOf(GeoParser::class, CadParserFactory::for('geo'));
-        $this->assertNull(CadParserFactory::for('pdf'));
+        $this->assertInstanceOf(PdfParser::class, CadParserFactory::for('pdf'));
+        $this->assertNull(CadParserFactory::for('docx'));
         $this->assertStringContainsString('.dxf', CadParserFactory::accept());
     }
 

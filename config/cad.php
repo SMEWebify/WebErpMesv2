@@ -7,7 +7,7 @@ return [
     | Import CAO par glisser-déposer sur les lignes
     |--------------------------------------------------------------------------
     |
-    | Active le dépôt de fichiers CAO (.sym, .drg, .geo, .dxf, .step, .svg) sur les
+    | Active le dépôt de fichiers CAO (.sym, .drg, .geo, .dxf, .step, .svg, .pdf) sur les
     | écrans de lignes de devis et de commande pour créer les lignes.
     |
     | La valeur est lue par config() et non par env() : avec php artisan
@@ -20,5 +20,19 @@ return [
     */
 
     'line_import' => (bool) env('CAD_LINE_IMPORT', env('RADAN_SYM_IMPORT', false)),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Plans PDF lus par l'IA
+    |--------------------------------------------------------------------------
+    |
+    | Un PDF déposé est envoyé au provider choisi dans /admin/integrations/ai
+    | (le document entier pour Claude, sa couche texte pour OVH). Taille
+    | maximale en Ko : Claude refuse les requêtes de plus de 32 Mo, et le PDF
+    | y grossit d'un tiers en base64.
+    |
+    */
+
+    'pdf_ai_max_size' => (int) env('CAD_PDF_AI_MAX_SIZE', 10240),
 
 ];

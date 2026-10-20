@@ -1075,7 +1075,7 @@ class QuoteLinesController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // CAD import — .sym, .drg, .geo, .dxf, .step and .svg dropped on the lines table
+    // CAD import — .sym, .drg, .geo, .dxf, .step, .svg and .pdf dropped on the lines table
     // -------------------------------------------------------------------------
 
     public function importCadJson(Request $request, int $quoteId, CadImportService $cad)
