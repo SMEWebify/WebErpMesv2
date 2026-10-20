@@ -89,6 +89,46 @@ class QuoteApiTest extends TestCase
     }
 
     /**
+     * RadQuote n'envoie pas d'adresse : la colonne est NOT NULL, MySQL non strict
+     * insérait 0 et la clé étrangère faisait une 500.
+     */
+    public function test_store_without_address_falls_back_to_company_default_address(): void
+    {
+        \Laravel\Sanctum\Sanctum::actingAs(\App\Models\User::factory()->create());
+        $company = \App\Models\Companies\Companies::factory()->create();
+        $contact = \App\Models\Companies\CompaniesContacts::factory()->create(['companies_id' => $company->id]);
+        \App\Models\Companies\CompaniesAddresses::factory()->create(['companies_id' => $company->id, 'default' => 0]);
+        $default = \App\Models\Companies\CompaniesAddresses::factory()->create(['companies_id' => $company->id, 'default' => 1]);
+
+        $response = $this->postJson('/api/quote', [
+            'label'                 => 'Devis sans adresse',
+            'companies_id'          => $company->id,
+            'companies_contacts_id' => $contact->id,
+            'accounting_payment_conditions_id' => \App\Models\Accounting\AccountingPaymentConditions::value('id'),
+            'accounting_payment_methods_id'    => \App\Models\Accounting\AccountingPaymentMethod::value('id'),
+            'accounting_deliveries_id'         => \App\Models\Accounting\AccountingDelivery::value('id'),
+        ]);
+
+        $response->assertCreated();
+        $quote = Quotes::findOrFail($response->json('data.id'));
+        $this->assertSame($default->id, (int) $quote->companies_addresses_id);
+        $this->assertSame($contact->id, (int) $quote->companies_contacts_id);
+    }
+
+    public function test_store_without_address_on_company_without_any_address_returns_422(): void
+    {
+        \Laravel\Sanctum\Sanctum::actingAs(\App\Models\User::factory()->create());
+        $company = \App\Models\Companies\Companies::factory()->create();
+        $contact = \App\Models\Companies\CompaniesContacts::factory()->create(['companies_id' => $company->id]);
+
+        $this->postJson('/api/quote', [
+            'label'                 => 'Devis sans adresse',
+            'companies_id'          => $company->id,
+            'companies_contacts_id' => $contact->id,
+        ])->assertStatus(422)->assertJsonValidationErrors('companies_addresses_id');
+    }
+
+    /**
      * Un contenu que ni SvgSanitizer ni GD ne reconnaissent ne laisse ni vignette
      * ni fichier : avant, il était écrit en .bin et affiché comme image cassée.
      */

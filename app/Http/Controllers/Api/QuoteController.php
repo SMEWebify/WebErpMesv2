@@ -26,6 +26,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Http\Requests\Api\UpsertQuoteRequest;
 use App\Services\Files\SvgSanitizer;
+use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompanyDocumentDefault;
 
 class QuoteController extends Controller
 {
@@ -68,6 +71,15 @@ class QuoteController extends Controller
                 if (empty($data['code'])) {
                     $data['code'] = $codeGenerator->generateDocumentCode('quote');
                 }
+
+                // Colonnes NOT NULL en base mais facultatives dans l'API : sans repli,
+                // MySQL non strict insère 0 et la clé étrangère casse (500).
+                $data['companies_addresses_id'] ??= $this->resolveCompanyDefault(
+                    CompaniesAddresses::class, 'companies_addresses_id', (int) $data['companies_id']
+                );
+                $data['companies_contacts_id'] ??= $this->resolveCompanyDefault(
+                    CompaniesContacts::class, 'companies_contacts_id', (int) $data['companies_id']
+                );
 
                 if (empty($data['accounting_payment_conditions_id'])) {
                     $data['accounting_payment_conditions_id'] = AccountingPaymentConditions::where('default', 1)->value('id');
@@ -116,6 +128,32 @@ class QuoteController extends Controller
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * Adresse ou contact d'un devis non fourni par l'appelant : défaut « devis » de la
+     * société, sinon son élément par défaut, sinon le premier. Aucun → 422.
+     */
+    private function resolveCompanyDefault(string $model, string $field, int $companyId): int
+    {
+        $id = CompanyDocumentDefault::where('companies_id', $companyId)
+            ->where('document_type', 'quote')
+            ->value($field);
+
+        $id = $id && $model::whereKey($id)->where('companies_id', $companyId)->exists()
+            ? $id
+            : ($model::getDefault(['companies_id' => $companyId])?->id
+                ?? $model::where('companies_id', $companyId)->orderBy('id')->value('id'));
+
+        if (!$id) {
+            throw ValidationException::withMessages([
+                $field => $field === 'companies_addresses_id'
+                    ? "La société #{$companyId} n'a aucune adresse : renseignez companies_addresses_id ou créez une adresse."
+                    : "La société #{$companyId} n'a aucun contact : renseignez companies_contacts_id ou créez un contact.",
+            ]);
+        }
+
+        return (int) $id;
     }
 
     public function update(UpsertQuoteRequest $request, Quotes $quote)
