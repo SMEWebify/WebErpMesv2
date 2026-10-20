@@ -23,6 +23,12 @@ class NestingController extends Controller
     private const STOCK_ENTRY_TYPES   = [1, 3, 5, 12, 14];
     private const STOCK_SORTING_TYPES = [2, 4, 6, 9, 15];
 
+    /** One colour per order on the NestEngine previews (same palette as NestingPage.jsx). */
+    private const ORDER_COLORS = [
+        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f',
+        '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ac',
+    ];
+
     public function index()
     {
         return view('planning.nesting-index');
@@ -256,11 +262,9 @@ class NestingController extends Controller
             ->groupBy('order_lines_id')
             ->map->first();
 
-        // DXF/SVG files attached to products or order lines. All candidates are
-        // returned to the front-end; the browser tries them in order until one
-        // parses to a real geometry. SVG is preferred: the flat-pattern export
-        // holds only the cutting contour, whereas DXF often carries bend lines
-        // on dedicated layers that poison the outer-loop reconstruction.
+        // DXF/SVG files attached to products or order lines. Only a DXF is sent
+        // to NestEngine (preferredDxfFor); a piece that carries nothing but an
+        // SVG is reported in its group's `excluded_pieces`.
         $cadKinds = [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR];
         $kindOrder = "FIELD(files.kind, '" . FileKindResolver::KIND_VECTOR . "', '" . FileKindResolver::KIND_CAD2D . "')";
 
@@ -300,6 +304,10 @@ class NestingController extends Controller
                 'product_code' => $line->Product?->code,
                 'label'        => $line->label ?: $line->Product?->label,
                 'qty'          => (int) ($line->qty ?? 1),
+                // Line detail screen: material, thickness, dimensions and the
+                // line's own files (read before the product's) — where a piece
+                // in error gets fixed.
+                'detail_url'   => route('orders.lines.detail.edit', ['idOrder' => $line->orders_id, 'id' => $line->id]),
             ];
 
             $nestingTask = $nestingTasks[$line->id] ?? null;
@@ -439,9 +447,12 @@ class NestingController extends Controller
     /**
      * For each sheet group, copy the DXF files of every piece into a shared
      * inputs directory and POST a NestEngine v1 job. Enriches each group with
-     * `job_id`, `sheet_format` and `parts_prepared`, or with `engine_skipped`
-     * (no_cad_file | files_unreadable | job_failed) when the group could not be
-     * sent — there is no local fallback, the front shows the reason instead.
+     * `job_id`, `sheet_format`, `parts_prepared` and `order_colors`, or with
+     * `engine_skipped` (no_cad_file | no_dxf_file | files_unreadable |
+     * job_failed) when the group could not be sent — there is no local
+     * fallback, the front shows the reason instead. Pieces left out of a job
+     * (no file, SVG only, unreadable file) are listed in `excluded_pieces`:
+     * NestEngine reads DXF only, and one bad file fails the whole job.
      */
     private function dispatchNestEngineJobs(NestEngineClient $client, array &$services): void
     {
@@ -454,6 +465,19 @@ class NestingController extends Controller
         $rotations = (int) config('services.nestengine.rotations', 36);
         $spacing   = (float) config('services.nestengine.spacing', 5);
         $maxSheets = (int) config('services.nestengine.max_sheets', 50);
+
+        // An order keeps the same colour in every group, so its pieces are
+        // recognisable from one sheet to the next.
+        $orderColors = [];
+        foreach ($services as $svc) {
+            foreach ($svc['groups'] as $group) {
+                foreach ($group['pieces'] ?? [] as $p) {
+                    if (($group['nest_type'] ?? 'sheet') === 'sheet' && !isset($orderColors[$p['order_id']])) {
+                        $orderColors[$p['order_id']] = self::ORDER_COLORS[count($orderColors) % count(self::ORDER_COLORS)];
+                    }
+                }
+            }
+        }
 
         foreach ($services as &$svc) {
             foreach ($svc['groups'] as &$group) {
@@ -472,6 +496,13 @@ class NestingController extends Controller
                     continue;
                 }
 
+                $excluded = [];
+                foreach ($group['pieces'] as $piece) {
+                    if (empty($piece['files'])) {
+                        $excluded[] = $this->excludedPiece($piece, 'no_file');
+                    }
+                }
+
                 $sheetFormat = $this->resolveSheetFormat($group['material'] ?? '', (float) ($group['thickness'] ?? 0));
 
                 $jobFolder = Str::uuid()->toString();
@@ -482,12 +513,19 @@ class NestingController extends Controller
                 }
 
                 $parts = [];
+                $jobOrders = [];
                 foreach ($piecesWithFile as $piece) {
                     $sourceFile = $this->preferredDxfFor($piece);
-                    if (!$sourceFile) continue;
+                    if (!$sourceFile) {
+                        $excluded[] = $this->excludedPiece($piece, 'not_dxf');
+                        continue;
+                    }
 
                     $sourcePath = $this->resolveFilePath($sourceFile['file_id']);
-                    if (!$sourcePath || !is_file($sourcePath)) continue;
+                    if (!$sourcePath || !is_file($sourcePath)) {
+                        $excluded[] = $this->excludedPiece($piece, 'file_missing');
+                        continue;
+                    }
 
                     $destName = sprintf('%d_%s.%s',
                         $piece['line_id'],
@@ -495,21 +533,35 @@ class NestingController extends Controller
                         $sourceFile['file_ext']
                     );
                     $destAbs = $jobInputs.DIRECTORY_SEPARATOR.$destName;
-                    if (!@copy($sourcePath, $destAbs)) continue;
+                    if (!@copy($sourcePath, $destAbs)) {
+                        $excluded[] = $this->excludedPiece($piece, 'file_missing');
+                        continue;
+                    }
+
+                    $color = $orderColors[$piece['order_id']];
+                    $jobOrders[$piece['order_id']] = [
+                        'order_id'   => $piece['order_id'],
+                        'order_code' => $piece['order_code'],
+                        'color'      => $color,
+                    ];
 
                     $parts[] = [
                         'id'       => 'line-'.$piece['line_id'],
                         'name'     => (string) ($piece['label'] ?? $piece['line_id']),
                         'qty'      => max(1, (int) ($piece['qty'] ?? 1)),
-                        'color'    => '#7aa2f7',
+                        'color'    => $color,
                         'gradeId'  => (string) ($group['material'] ?? ''),
                         'dxfFile'  => $jobFolder.'/'.$destName,
                     ];
                 }
 
+                $group['excluded_pieces'] = $excluded;
+                $group['order_colors']    = array_values($jobOrders);
+
                 if (empty($parts)) {
                     @rmdir($jobInputs);
-                    $group['engine_skipped'] = 'files_unreadable';
+                    $onlyNotDxf = collect($excluded)->every(fn ($e) => in_array($e['reason'], ['not_dxf', 'no_file'], true));
+                    $group['engine_skipped'] = $onlyNotDxf ? 'no_dxf_file' : 'files_unreadable';
                     continue;
                 }
 
@@ -542,17 +594,31 @@ class NestingController extends Controller
         unset($svc, $group);
     }
 
-    /** DXF preferred (ezdxf resolves everything). Falls back to SVG. */
+    /**
+     * The piece's DXF. NestEngine parses DXF only (ezdxf): an SVG would fail
+     * the whole job with "is not a DXF file", so a piece without DXF is left out.
+     */
     private function preferredDxfFor(array $piece): ?array
     {
-        $files = $piece['files'] ?? [];
-        foreach ($files as $f) {
+        foreach ($piece['files'] ?? [] as $f) {
             if (($f['file_kind'] ?? null) === FileKindResolver::KIND_CAD2D) return $f;
         }
-        foreach ($files as $f) {
-            if (($f['file_kind'] ?? null) === FileKindResolver::KIND_VECTOR) return $f;
-        }
         return null;
+    }
+
+    /** @return array{line_id: int, order_id: int, order_code: ?string, product_code: ?string, label: ?string, qty: int, detail_url: string, reason: string} */
+    private function excludedPiece(array $piece, string $reason): array
+    {
+        return [
+            'line_id'      => $piece['line_id'],
+            'order_id'     => $piece['order_id'],
+            'order_code'   => $piece['order_code'],
+            'product_code' => $piece['product_code'],
+            'label'        => $piece['label'],
+            'qty'          => $piece['qty'],
+            'detail_url'   => $piece['detail_url'],
+            'reason'       => $reason,
+        ];
     }
 
     private function resolveFilePath(int $fileId): ?string

@@ -81,6 +81,26 @@ function nestBars(pieces, barLengths, kerf) {
     }));
 }
 
+// Lien vers le détail de la ligne de commande : matière, épaisseur, cotes et
+// fichiers propres à la ligne (lus avant ceux de l'article) — là où se corrige
+// une pièce en erreur.
+function LineDetailLink({ url }) {
+    if (!url) return null;
+    return (
+        <a href={url} target="_blank" rel="noreferrer" className="ms-1"
+            title="Détail de la ligne : matière, épaisseur, cotes, DXF">
+            <i className="fas fa-pen-to-square" />
+        </a>
+    );
+}
+
+// Pièce d'un groupe envoyé à NestEngine mais laissée hors du job.
+const EXCLUDED_REASONS = {
+    no_file:      'ni DXF ni SVG attaché',
+    not_dxf:      'SVG seulement, joindre le DXF',
+    file_missing: 'fichier DXF introuvable sur le serveur',
+};
+
 // ─── Groupe rendu par NestEngine (forme exacte, calcul serveur asynchrone) ──
 function NestEngineGroupPanel({ group, service, onResult }) {
     const [expanded, setExpanded] = useState(false);
@@ -121,6 +141,13 @@ function NestEngineGroupPanel({ group, service, onResult }) {
         : 0;
     const isRunning = meta.status === 'pending' || meta.status === 'running';
 
+    // Les fichiers transmis au moteur sont nommés « {line_id}_{libellé}.dxf » :
+    // une erreur qui cite un fichier désigne donc sa ligne de commande.
+    const failedLineId = Number(/[\\/](\d+)_[^\\/]*\.(?:dxf|svg)/i.exec(meta.error || '')?.[1]);
+    const failedPiece = failedLineId
+        ? (group.pieces || []).find(p => p.line_id === failedLineId)
+        : null;
+
     return (
         <div className="mb-3 border rounded">
             <div className="d-flex align-items-center p-2 bg-body-tertiary" style={{ cursor: 'pointer' }} onClick={() => setExpanded(!expanded)}>
@@ -155,6 +182,43 @@ function NestEngineGroupPanel({ group, service, onResult }) {
                     {meta.status === 'error' && (
                         <div className="alert alert-danger py-1 px-2 small mb-2">
                             NestEngine : {meta.error || 'erreur inconnue'}
+                            {failedPiece && (
+                                <div className="mt-1">
+                                    Pièce en cause : {failedPiece.order_code} — {failedPiece.label}
+                                    <LineDetailLink url={failedPiece.detail_url} />
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {group.excluded_pieces?.length > 0 && (
+                        <div className="alert alert-warning py-1 px-2 small mb-2">
+                            <div className="mb-1">
+                                {group.excluded_pieces.length} pièce(s) écartée(s) de l'imbrication — NestEngine ne lit que les DXF :
+                            </div>
+                            <ul className="mb-0 ps-3">
+                                {group.excluded_pieces.map(p => (
+                                    <li key={p.line_id}>
+                                        <a href={`/orders/${p.order_id}`} target="_blank" rel="noreferrer">{p.order_code}</a>
+                                        {' '}— {p.product_code && <code>{p.product_code}</code>} {p.label} (×{formatQty(p.qty)}) :
+                                        {' '}{EXCLUDED_REASONS[p.reason] || p.reason}
+                                        <LineDetailLink url={p.detail_url} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {meta.status === 'done' && group.order_colors?.length > 0 && (
+                        <div className="d-flex flex-wrap gap-2 small mb-2">
+                            {group.order_colors.map(o => (
+                                <a key={o.order_id} href={`/orders/${o.order_id}`} target="_blank" rel="noreferrer"
+                                    className="d-inline-flex align-items-center text-decoration-none">
+                                    <span className="d-inline-block me-1 rounded-1 border"
+                                        style={{ width: 14, height: 14, background: o.color }} />
+                                    {o.order_code}
+                                </a>
+                            ))}
                         </div>
                     )}
 
@@ -212,6 +276,7 @@ function NestEngineGroupPanel({ group, service, onResult }) {
 // Plus de calcul local de repli : le groupe est listé avec la raison.
 const SKIPPED_REASONS = {
     no_cad_file:      'Aucun fichier DXF / SVG attaché à ces pièces : NestEngine imbrique sur le contour réel, les cotes de la ligne ne suffisent pas.',
+    no_dxf_file:      'Aucune de ces pièces n\'a de fichier DXF : NestEngine ne lit pas les SVG. Joindre le DXF de la pièce (article ou ligne de commande).',
     files_unreadable: 'Les fichiers DXF / SVG n\'ont pas pu être transmis au moteur d\'imbrication.',
     job_failed:       'Le moteur d\'imbrication a refusé le calcul de ce groupe (voir le journal Laravel).',
 };
@@ -264,7 +329,7 @@ function SkippedGroupPanel({ group, service }) {
                         <tbody>
                             {pieces.map(p => (
                                 <tr key={p.line_id}>
-                                    <td><code>{p.product_code}</code> - {p.label}</td>
+                                    <td><code>{p.product_code}</code> - {p.label}<LineDetailLink url={p.detail_url} /></td>
                                     <td><a href={`/orders/${p.order_id}`} target="_blank" rel="noreferrer">{p.order_code}</a></td>
                                     <td className="text-end">{p.x_line > 0 ? Math.round(p.x_line) : '—'}</td>
                                     <td className="text-end">{p.y_line > 0 ? Math.round(p.y_line) : '—'}</td>
@@ -1275,6 +1340,7 @@ function AnomalyList({ title, subtitle, rows, showMaterial = false, hideService 
                                 <tr key={r.line_id}>
                                     <td>
                                         <code>{r.product_code}</code> - {r.label}
+                                        <LineDetailLink url={r.detail_url} />
                                     </td>
                                     <td>
                                         <a href={`/orders/${r.order_id}`} target="_blank" rel="noreferrer">
