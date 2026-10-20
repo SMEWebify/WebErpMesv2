@@ -7,7 +7,7 @@ return [
     | Import CAO par glisser-déposer sur les lignes
     |--------------------------------------------------------------------------
     |
-    | Active le dépôt de fichiers CAO (.sym, .geo, .dxf, .step, .svg) sur les
+    | Active le dépôt de fichiers CAO (.sym, .drg, .geo, .dxf, .step, .svg) sur les
     | écrans de lignes de devis et de commande pour créer les lignes.
     |
     | La valeur est lue par config() et non par env() : avec php artisan

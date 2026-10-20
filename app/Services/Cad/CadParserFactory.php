@@ -2,6 +2,7 @@
 
 namespace App\Services\Cad;
 
+use App\Services\Cad\Parsers\DrgParser;
 use App\Services\Cad\Parsers\DxfParser;
 use App\Services\Cad\Parsers\GeoParser;
 use App\Services\Cad\Parsers\StepParser;
@@ -20,6 +21,7 @@ class CadParserFactory
      */
     private const PARSERS = [
         SymParser::class,
+        DrgParser::class,
         GeoParser::class,
         DxfParser::class,
         StepParser::class,

@@ -3,10 +3,12 @@
 namespace Tests\Unit;
 
 use App\Services\Cad\CadParserFactory;
+use App\Services\Cad\Parsers\DrgParser;
 use App\Services\Cad\Parsers\DxfParser;
 use App\Services\Cad\Parsers\GeoParser;
 use App\Services\Cad\Parsers\StepParser;
 use App\Services\Cad\Parsers\SvgParser;
+use App\Services\Cad\Parsers\SymParser;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -167,6 +169,149 @@ class CadParsersTest extends TestCase
         $this->expectExceptionMessage('GEO non reconnu');
 
         (new GeoParser())->parse($this->upload('note.geo', "hello\nworld\n"));
+    }
+
+    public function test_sym_reads_the_radan_attributes(): void
+    {
+        $result = (new SymParser())->parse($this->upload('BRIDE-01.sym', $this->sym()));
+
+        $this->assertSame('BRIDE-01', $result['code']);
+        $this->assertSame('INOX', $result['material']);
+        $this->assertSame(1.5, $result['thickness']);
+        $this->assertSame('BRIDE-01 - INOX 1.5mm - 120x80mm', $result['label']);
+        $this->assertSame(0.113, $result['weight']);
+        $this->assertContains(['label' => 'Nombre de plis', 'value' => '2'], $result['extra']);
+        $this->assertContains(['label' => 'Source', 'value' => 'RADAN .sym'], $result['extra']);
+    }
+
+    public function test_drg_gives_one_line_per_nested_part(): void
+    {
+        $this->assertInstanceOf(DrgParser::class, CadParserFactory::for('DRG'));
+
+        $parts = (new DrgParser())->parseParts($this->upload('P1 08072026.drg', $this->drg()));
+
+        $this->assertCount(2, $parts);
+
+        // Each part reads exactly as its .sym would.
+        $this->assertSame('CAT-AL-01 (6)', $parts[0]['code']);
+        $this->assertSame('CAT-AL-01 (6) - INOX 1mm - 385.5x53mm', $parts[0]['label']);
+        $this->assertSame(0.156, $parts[0]['weight']);
+        $this->assertSame('CAT-AL-01 (6).sym', $parts[0]['cad_file']);
+        $this->assertContains(['label' => 'Source', 'value' => 'RADAN .drg P1 08072026'], $parts[0]['extra']);
+
+        // Quantity = parts per sheet × number of sheets.
+        $this->assertSame(20, $parts[0]['qty']);
+        $this->assertSame(60, $parts[1]['qty']);
+        $this->assertContains(['label' => 'Imbrication', 'value' => '3 par tôle × 20 tôle(s)'], $parts[1]['extra']);
+    }
+
+    public function test_drg_falls_back_on_the_setup_sheet_for_the_sheet_count(): void
+    {
+        $drg = str_replace('type="i" value="20"', 'type="i"', $this->drg());
+
+        $parts = (new DrgParser())->parseParts($this->upload('nest.drg', $drg));
+
+        // NumberSheets of the machine setup sheet says 4.
+        $this->assertSame(4, $parts[0]['qty']);
+    }
+
+    public function test_drg_without_parts_is_rejected(): void
+    {
+        $this->expectExceptionMessage('Aucune pièce');
+
+        (new DrgParser())->parseParts($this->upload('empty.drg', '<?xml version="1.0"?><RadanCompoundDocument xmlns="http://www.radan.com/ns/rcd"><SetupSheet><Parts/></SetupSheet></RadanCompoundDocument>'));
+    }
+
+    private function sym(): string
+    {
+        return <<<'SYM'
+<?xml version="1.0" encoding="UTF-8"?>
+<RadanCompoundDocument xmlns="http://www.radan.com/ns/rcd">
+  <RadanAttributes>
+    <Group class="custom" name="Fabrication" ord="3">
+      <Attr num="119" name="Matière" type="s" value="INOX"/>
+      <Attr num="120" name="Epaisseur" type="r" value="1.5"/>
+      <Attr num="121" name="Unité de l'épaisseur" type="s" value="mm"/>
+      <Attr num="164" name="Poids" type="r" value="0.11304"/>
+    </Group>
+    <Group class="custom" name="Geometry" ord="5">
+      <Attr num="165" name="Encombrement X" type="r" value="120"/>
+      <Attr num="166" name="Encombrement en Y" type="r" value="80"/>
+      <Attr num="169" name="Unité géométrique" type="s" value="mm"/>
+    </Group>
+    <Group class="custom" name="Utilisateur" ord="14">
+      <Attr num="500" name="Nb de plis" type="r" value="2"/>
+      <Attr num="510" name="Lg de coupe laser" type="r" value=""/>
+    </Group>
+  </RadanAttributes>
+</RadanCompoundDocument>
+SYM;
+    }
+
+    /**
+     * A nest of two symbols, cut 20 times: 1 and 3 parts per sheet.
+     *
+     * Same layout as a RADAN 2025 .drg, cut down to what the import reads.
+     */
+    private function drg(): string
+    {
+        return <<<'DRG'
+<?xml version="1.0" encoding="UTF-8"?>
+<RadanCompoundDocument xmlns="http://www.radan.com/ns/rcd">
+  <RadanAttributes>
+    <Group class="custom" name="Fabrication" ord="3">
+      <Attr num="119" name="Matière" type="s" value="INOX"/>
+      <Attr num="124" name="Dim X" type="r" value="3000"/>
+      <Attr num="125" name="Dim Y" type="r" value="1500"/>
+      <Attr num="137" name="Nombre de tôle" type="i" value="20"/>
+    </Group>
+  </RadanAttributes>
+  <SetupSheet>
+    <Parts>
+      <Part num="1">
+        <FilePath>C:\Users\atelier\Desktop\TEST\CAT-AL-01 (6).sym</FilePath>
+        <NumOff>1</NumOff>
+        <RadanAttributes>
+          <Group class="system" name="Fichier" ord="1">
+            <Attr num="110" name="Nom de fichier" type="s" value="CAT-AL-01 (6)"/>
+          </Group>
+          <Group class="custom" name="Fabrication" ord="3">
+            <Attr num="119" name="Matière" type="s" value="INOX"/>
+            <Attr num="120" name="Epaisseur" type="r" value="1"/>
+            <Attr num="121" name="Unité de l'épaisseur" type="s" value="mm"/>
+            <Attr num="164" name="Poids" type="r" value="0.156045"/>
+          </Group>
+          <Group class="custom" name="Geometry" ord="5">
+            <Attr num="165" name="Encombrement X" type="r" value="385.5"/>
+            <Attr num="166" name="Encombrement en Y" type="r" value="53"/>
+            <Attr num="169" name="Unité géométrique" type="s" value="mm"/>
+          </Group>
+        </RadanAttributes>
+      </Part>
+      <Part num="2">
+        <FilePath>C:\Users\atelier\Desktop\TEST\Symétrie2 (2).sym</FilePath>
+        <NumOff>3</NumOff>
+        <RadanAttributes>
+          <Group class="system" name="Fichier" ord="1">
+            <Attr num="110" name="Nom de fichier" type="s" value="Symétrie2 (2)"/>
+          </Group>
+          <Group class="custom" name="Fabrication" ord="3">
+            <Attr num="119" name="Matière" type="s" value="INOX"/>
+            <Attr num="120" name="Epaisseur" type="r" value="1"/>
+          </Group>
+        </RadanAttributes>
+      </Part>
+    </Parts>
+    <Machines>
+      <Machine ncpattern="trulaser">
+        <SettingInformation>
+          <NumberSheets>4</NumberSheets>
+        </SettingInformation>
+      </Machine>
+    </Machines>
+  </SetupSheet>
+</RadanCompoundDocument>
+DRG;
     }
 
     /**

@@ -1066,7 +1066,7 @@ class OrderLinesController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // CAD import — .sym, .geo, .dxf, .step and .svg dropped on the lines table
+    // CAD import — .sym, .drg, .geo, .dxf, .step and .svg dropped on the lines table
     // -------------------------------------------------------------------------
 
     public function importCadJson(Request $request, int $orderId, CadImportService $cad)
@@ -1103,7 +1103,8 @@ class OrderLinesController extends Controller
 
         foreach ($request->file('files') as $file) {
             try {
-                $data = $cad->parse($file);
+                // A nest (.drg) gives one line per part, all or none.
+                $parts = $cad->parse($file);
 
                 $internalDelay = $order->validity_date
                     ? Carbon::parse($order->validity_date)
@@ -1111,45 +1112,53 @@ class OrderLinesController extends Controller
                         ->format('Y-m-d')
                     : null;
 
-                $line = DB::transaction(function () use ($order, $orderId, &$nextOrdre, $data, $defaultUnit, $defaultVat, $internalDelay, $file, $cad) {
-                    $line = OrderLines::create([
-                        'orders_id'                 => $orderId,
-                        'ordre'                     => $nextOrdre++,
-                        'code'                      => $data['code'],
-                        'label'                     => $data['label'],
-                        'qty'                       => 1,
-                        'delivered_remaining_qty'   => 1,
-                        'invoiced_remaining_qty'    => 1,
-                        'methods_units_id'          => $defaultUnit->id,
-                        'selling_price'             => 0,
-                        'discount'                  => 0,
-                        'accounting_vats_id'        => $defaultVat->id,
-                        'delivery_date'             => $order->validity_date,
-                        'internal_delay'            => $internalDelay,
-                    ]);
+                $lines = DB::transaction(function () use ($order, $orderId, &$nextOrdre, $parts, $defaultUnit, $defaultVat, $internalDelay, $file, $cad) {
+                    $lines = [];
 
-                    OrderLineDetails::create([
-                        'order_lines_id'      => $line->id,
-                        'material'            => $data['material'],
-                        'thickness'           => $data['thickness'],
-                        'x_size'              => $data['x_size'],
-                        'y_size'              => $data['y_size'],
-                        'weight'              => $data['weight'],
-                        'cad_file'            => $file->getClientOriginalName(),
-                        'picture'             => $data['picture'],
-                        'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
-                    ]);
+                    foreach ($parts as $data) {
+                        $line = OrderLines::create([
+                            'orders_id'                 => $orderId,
+                            'ordre'                     => $nextOrdre++,
+                            'code'                      => $data['code'],
+                            'label'                     => $data['label'],
+                            'qty'                       => $data['qty'],
+                            'delivered_remaining_qty'   => $data['qty'],
+                            'invoiced_remaining_qty'    => $data['qty'],
+                            'methods_units_id'          => $defaultUnit->id,
+                            'selling_price'             => 0,
+                            'discount'                  => 0,
+                            'accounting_vats_id'        => $defaultVat->id,
+                            'delivery_date'             => $order->validity_date,
+                            'internal_delay'            => $internalDelay,
+                        ]);
 
-                    // Keep the source drawing on the line, in the GED.
-                    $cad->attachToGed($file, $line, $data);
+                        OrderLineDetails::create([
+                            'order_lines_id'      => $line->id,
+                            'material'            => $data['material'],
+                            'thickness'           => $data['thickness'],
+                            'x_size'              => $data['x_size'],
+                            'y_size'              => $data['y_size'],
+                            'weight'              => $data['weight'],
+                            'cad_file'            => $data['cad_file'],
+                            'picture'             => $data['picture'],
+                            'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
+                        ]);
 
-                    return $line;
+                        // Keep the source drawing on the line, in the GED.
+                        $cad->attachToGed($file, $line, $data);
+
+                        $lines[] = $line;
+                    }
+
+                    return $lines;
                 });
 
-                $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
-                $line->loadCount(['Task', 'SubAssembly']);
+                foreach ($lines as $line) {
+                    $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
+                    $line->loadCount(['Task', 'SubAssembly']);
 
-                $createdLines[] = $this->formatLineJson($line, $currency, $locale);
+                    $createdLines[] = $this->formatLineJson($line, $currency, $locale);
+                }
             } catch (\Throwable $e) {
                 $errors[] = $file->getClientOriginalName() . ' : ' . $e->getMessage();
             }

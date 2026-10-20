@@ -36,6 +36,21 @@ class SymParser extends BaseCadParser
 
     public function parse(UploadedFile $file): array
     {
+        $xml = $this->loadRadanXml($file);
+
+        return $this->fromAttributes(
+            $xml->RadanAttributes,
+            $this->baseName($file),
+            isset($xml->Thumbnail) ? (string) $xml->Thumbnail : null,
+            'RADAN .sym',
+        );
+    }
+
+    /**
+     * Read a RADAN compound document, .sym or .drg alike.
+     */
+    protected function loadRadanXml(UploadedFile $file): \SimpleXMLElement
+    {
         $content = $file->get();
 
         // Strip the namespace so SimpleXML finds the elements without a prefix.
@@ -48,19 +63,43 @@ class SymParser extends BaseCadParser
             throw new \RuntimeException('Fichier XML invalide');
         }
 
+        return $xml;
+    }
+
+    /**
+     * Index the attributes of a RadanAttributes block by their number.
+     *
+     * @return array<int, ?string>
+     */
+    protected function attributes(?\SimpleXMLElement $radanAttributes): array
+    {
         $attrs = [];
 
-        foreach ($xml->RadanAttributes->Group ?? [] as $group) {
+        foreach ($radanAttributes?->Group ?? [] as $group) {
             foreach ($group->Attr ?? [] as $attr) {
                 $num = (int) $attr['num'];
                 $attrs[$num] = isset($attr['value']) ? (string) $attr['value'] : null;
             }
         }
 
-        $get = fn (int $num) => $attrs[$num] ?? null;
-        $float = fn (int $num) => $get($num) !== null ? (float) $get($num) : null;
+        return $attrs;
+    }
 
-        $code = $get(self::ATTR_FILENAME) ?? $this->baseName($file);
+    /**
+     * Turn the attributes of one symbol into the fields of a line.
+     *
+     * A .drg embeds a full copy of the attributes of every symbol it nests,
+     * which is why the nest parser goes through here too: a part read from a
+     * nest gives the very line its .sym would have given.
+     */
+    protected function fromAttributes(?\SimpleXMLElement $radanAttributes, string $fallbackCode, ?string $thumbnail, string $source): array
+    {
+        $attrs = $this->attributes($radanAttributes);
+
+        $get = fn (int $num) => $attrs[$num] ?? null;
+        $float = fn (int $num) => $get($num) !== null && $get($num) !== '' ? (float) $get($num) : null;
+
+        $code = $get(self::ATTR_FILENAME) ?? $fallbackCode;
         $material = $get(self::ATTR_MATERIAL);
         $thickness = $float(self::ATTR_THICKNESS);
         $thicknessUnit = $get(self::ATTR_THICKNESS_UNIT) ?? 'mm';
@@ -85,7 +124,7 @@ class SymParser extends BaseCadParser
             'x_size' => $xSize,
             'y_size' => $ySize,
             'weight' => $weight !== null ? round($weight, 3) : null,
-            'picture' => $this->extractThumbnail($xml),
+            'picture' => $thumbnail !== null ? $this->storeThumbnail($thumbnail) : null,
             'extra' => $this->requirements([
                 $this->requirement('Périmètre extérieur', $float(self::ATTR_PERIMETER_EXT), $geoUnit),
                 $this->requirement('Périmètre total', $float(self::ATTR_PERIMETER_TOTAL), $geoUnit),
@@ -94,21 +133,18 @@ class SymParser extends BaseCadParser
                 $this->requirement('Longueur de coupe', $float(self::ATTR_LASER_CUT_LENGTH), $geoUnit),
                 $this->requirement('Perçages laser', $get(self::ATTR_LASER_PIERCINGS)),
                 $this->requirement('Nombre de plis', $get(self::ATTR_BEND_COUNT)),
-                $this->requirement('Source', 'RADAN .sym'),
+                $this->requirement('Source', $source),
             ]),
         ]);
     }
 
     /**
-     * Decode the embedded thumbnail and keep it next to the other line images.
+     * Decode an embedded thumbnail (BMP in a .sym, PNG in a .drg) and keep it
+     * next to the other line images.
      */
-    private function extractThumbnail(\SimpleXMLElement $xml): ?string
+    private function storeThumbnail(string $base64): ?string
     {
-        if (! isset($xml->Thumbnail)) {
-            return null;
-        }
-
-        $base64 = trim((string) $xml->Thumbnail);
+        $base64 = trim($base64);
 
         if ($base64 === '') {
             return null;

@@ -27,10 +27,14 @@ class CadImportService
     }
 
     /**
-     * Read an upload into the fields of a line.
+     * Read an upload into the fields of the lines it creates.
      *
-     * The returned array is the parser output plus the GED role the source
-     * file has to be stored under, null when it is not worth keeping.
+     * One entry per line: a single one for a part file, one per part for a
+     * nest. Each entry is the parser output plus the GED role the source file
+     * has to be stored under (null when it is not worth keeping), the quantity
+     * of the line and the file name recorded on it.
+     *
+     * @return array<int, array<string, mixed>>
      *
      * @throws \RuntimeException on an unsupported or unreadable file
      */
@@ -43,7 +47,15 @@ class CadImportService
             throw new \RuntimeException('Format non pris en charge (' . CadParserFactory::accept() . ')');
         }
 
-        return $parser->parse($file) + ['ged_role' => $parser->gedRole()];
+        $parts = $parser instanceof CadMultiPartParser
+            ? $parser->parseParts($file)
+            : [$parser->parse($file)];
+
+        return array_map(fn (array $data) => [
+            'qty' => $data['qty'] ?? 1,
+            'cad_file' => $data['cad_file'] ?? $file->getClientOriginalName(),
+            'ged_role' => $parser->gedRole(),
+        ] + $data, $parts);
     }
 
     /**

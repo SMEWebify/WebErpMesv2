@@ -1075,7 +1075,7 @@ class QuoteLinesController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // CAD import — .sym, .geo, .dxf, .step and .svg dropped on the lines table
+    // CAD import — .sym, .drg, .geo, .dxf, .step and .svg dropped on the lines table
     // -------------------------------------------------------------------------
 
     public function importCadJson(Request $request, int $quoteId, CadImportService $cad)
@@ -1112,43 +1112,52 @@ class QuoteLinesController extends Controller
 
         foreach ($request->file('files') as $file) {
             try {
-                $data = $cad->parse($file);
+                // A nest (.drg) gives one line per part, all or none.
+                $parts = $cad->parse($file);
 
-                $line = DB::transaction(function () use ($quoteId, &$nextOrdre, $data, $defaultUnit, $defaultVat, $file, $cad) {
-                    $line = QuoteLines::create([
-                        'quotes_id'          => $quoteId,
-                        'ordre'              => $nextOrdre++,
-                        'code'               => $data['code'],
-                        'label'              => $data['label'],
-                        'qty'                => 1,
-                        'methods_units_id'   => $defaultUnit->id,
-                        'selling_price'      => 0,
-                        'discount'           => 0,
-                        'accounting_vats_id' => $defaultVat->id,
-                    ]);
+                $lines = DB::transaction(function () use ($quoteId, &$nextOrdre, $parts, $defaultUnit, $defaultVat, $file, $cad) {
+                    $lines = [];
 
-                    QuoteLineDetails::create([
-                        'quote_lines_id'      => $line->id,
-                        'material'            => $data['material'],
-                        'thickness'           => $data['thickness'],
-                        'x_size'              => $data['x_size'],
-                        'y_size'              => $data['y_size'],
-                        'weight'              => $data['weight'],
-                        'cad_file'            => $file->getClientOriginalName(),
-                        'picture'             => $data['picture'],
-                        'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
-                    ]);
+                    foreach ($parts as $data) {
+                        $line = QuoteLines::create([
+                            'quotes_id'          => $quoteId,
+                            'ordre'              => $nextOrdre++,
+                            'code'               => $data['code'],
+                            'label'              => $data['label'],
+                            'qty'                => $data['qty'],
+                            'methods_units_id'   => $defaultUnit->id,
+                            'selling_price'      => 0,
+                            'discount'           => 0,
+                            'accounting_vats_id' => $defaultVat->id,
+                        ]);
 
-                    // Keep the source drawing on the line, in the GED.
-                    $cad->attachToGed($file, $line, $data);
+                        QuoteLineDetails::create([
+                            'quote_lines_id'      => $line->id,
+                            'material'            => $data['material'],
+                            'thickness'           => $data['thickness'],
+                            'x_size'              => $data['x_size'],
+                            'y_size'              => $data['y_size'],
+                            'weight'              => $data['weight'],
+                            'cad_file'            => $data['cad_file'],
+                            'picture'             => $data['picture'],
+                            'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
+                        ]);
 
-                    return $line;
+                        // Keep the source drawing on the line, in the GED.
+                        $cad->attachToGed($file, $line, $data);
+
+                        $lines[] = $line;
+                    }
+
+                    return $lines;
                 });
 
-                $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
-                $line->loadCount(['Task', 'SubAssembly']);
+                foreach ($lines as $line) {
+                    $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+                    $line->loadCount(['Task', 'SubAssembly']);
 
-                $createdLines[] = $this->formatLineJson($line, $currency, $locale);
+                    $createdLines[] = $this->formatLineJson($line, $currency, $locale);
+                }
             } catch (\Throwable $e) {
                 $errors[] = $file->getClientOriginalName() . ' : ' . $e->getMessage();
             }
