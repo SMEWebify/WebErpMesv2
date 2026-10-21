@@ -97,7 +97,7 @@ function LineDetailLink({ url }) {
 // Pièce d'un groupe envoyé à NestEngine mais laissée hors du job.
 const EXCLUDED_REASONS = {
     no_file:      'ni DXF ni SVG attaché',
-    not_dxf:      'SVG seulement, joindre le DXF',
+    not_dxf:      'SVG seulement, que le moteur installé ne lit pas : joindre le DXF ou mettre NestEngine à jour',
     file_missing: 'fichier DXF introuvable sur le serveur',
 };
 
@@ -194,7 +194,7 @@ function NestEngineGroupPanel({ group, service, onResult }) {
                     {group.excluded_pieces?.length > 0 && (
                         <div className="alert alert-warning py-1 px-2 small mb-2">
                             <div className="mb-1">
-                                {group.excluded_pieces.length} pièce(s) écartée(s) de l'imbrication — NestEngine ne lit que les DXF :
+                                {group.excluded_pieces.length} pièce(s) écartée(s) de l'imbrication :
                             </div>
                             <ul className="mb-0 ps-3">
                                 {group.excluded_pieces.map(p => (
@@ -276,7 +276,7 @@ function NestEngineGroupPanel({ group, service, onResult }) {
 // Plus de calcul local de repli : le groupe est listé avec la raison.
 const SKIPPED_REASONS = {
     no_cad_file:      'Aucun fichier DXF / SVG attaché à ces pièces : NestEngine imbrique sur le contour réel, les cotes de la ligne ne suffisent pas.',
-    no_dxf_file:      'Aucune de ces pièces n\'a de fichier DXF : NestEngine ne lit pas les SVG. Joindre le DXF de la pièce (article ou ligne de commande).',
+    no_dxf_file:      'Aucune de ces pièces n\'a de fichier DXF, et le moteur installé ne lit pas les SVG : joindre le DXF de la pièce (article ou ligne de commande) ou mettre NestEngine à jour.',
     files_unreadable: 'Les fichiers DXF / SVG n\'ont pas pu être transmis au moteur d\'imbrication.',
     job_failed:       'Le moteur d\'imbrication a refusé le calcul de ce groupe (voir le journal Laravel).',
 };

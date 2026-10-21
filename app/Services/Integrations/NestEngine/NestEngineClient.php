@@ -122,6 +122,23 @@ class NestEngineClient
     }
 
     /**
+     * Whether the engine reads SVG parts (`svgFile`). Read from /version
+     * (`inputFormats`); an older engine has no such list, reads DXF only, and
+     * would reject the whole job on an unknown `svgFile` part.
+     */
+    public function supportsSvg(): bool
+    {
+        try {
+            $response = Http::timeout(3)->acceptJson()->get($this->baseUrl.'/version');
+        } catch (ConnectionException) {
+            return false;
+        }
+
+        return $response->successful()
+            && in_array('svg', (array) $response->json('inputFormats', []), true);
+    }
+
+    /**
      * Poll /healthz — used at startup to decide if the toggle is actionable.
      */
     public function isReachable(): bool

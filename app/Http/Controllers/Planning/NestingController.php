@@ -270,9 +270,9 @@ class NestingController extends Controller
             ->groupBy('order_lines_id')
             ->map->first();
 
-        // DXF/SVG files attached to products or order lines. Only a DXF is sent
-        // to NestEngine (preferredDxfFor); a piece that carries nothing but an
-        // SVG is reported in its group's `excluded_pieces`.
+        // DXF/SVG files attached to products or order lines. The DXF is sent to
+        // NestEngine, the SVG only when there is no DXF and the engine reads SVG
+        // (cutFileFor); otherwise the piece is reported in `excluded_pieces`.
         $cadKinds = [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR];
         $kindOrder = "FIELD(files.kind, '" . FileKindResolver::KIND_VECTOR . "', '" . FileKindResolver::KIND_CAD2D . "')";
 
@@ -474,6 +474,7 @@ class NestingController extends Controller
         $rotations = (int) config('services.nestengine.rotations', 36);
         $spacing   = (float) config('services.nestengine.spacing', 5);
         $maxSheets = (int) config('services.nestengine.max_sheets', 50);
+        $svgAccepted = null; // asked to the engine once, on the first SVG-only piece
 
         // An order keeps the same colour in every group, so its pieces are
         // recognisable from one sheet to the next.
@@ -524,7 +525,12 @@ class NestingController extends Controller
                 $parts = [];
                 $jobOrders = [];
                 foreach ($piecesWithFile as $piece) {
-                    $sourceFile = $this->preferredDxfFor($piece);
+                    $sourceFile = $this->cutFileFor($piece);
+                    $isSvg = ($sourceFile['file_kind'] ?? null) === FileKindResolver::KIND_VECTOR;
+                    if ($isSvg) {
+                        $svgAccepted ??= $client->supportsSvg();
+                        if (!$svgAccepted) $sourceFile = null;
+                    }
                     if (!$sourceFile) {
                         $excluded[] = $this->excludedPiece($piece, 'not_dxf');
                         continue;
@@ -560,7 +566,7 @@ class NestingController extends Controller
                         'qty'      => max(1, (int) ($piece['qty'] ?? 1)),
                         'color'    => $color,
                         'gradeId'  => (string) ($group['material'] ?? ''),
-                        'dxfFile'  => $jobFolder.'/'.$destName,
+                        ($isSvg ? 'svgFile' : 'dxfFile') => $jobFolder.'/'.$destName,
                     ];
                 }
 
@@ -604,13 +610,18 @@ class NestingController extends Controller
     }
 
     /**
-     * The piece's DXF. NestEngine parses DXF only (ezdxf): an SVG would fail
-     * the whole job with "is not a DXF file", so a piece without DXF is left out.
+     * The file sent to NestEngine for a piece: its DXF, else its SVG. The DXF
+     * wins because the engine re-emits its true arcs in the output DXF, where
+     * an SVG only yields polylines. The caller drops the SVG when the engine
+     * does not read SVG (supportsSvg): it would fail the whole job.
      */
-    private function preferredDxfFor(array $piece): ?array
+    private function cutFileFor(array $piece): ?array
     {
-        foreach ($piece['files'] ?? [] as $f) {
-            if (($f['file_kind'] ?? null) === FileKindResolver::KIND_CAD2D) return $f;
+        $files = $piece['files'] ?? [];
+        foreach ([FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR] as $kind) {
+            foreach ($files as $f) {
+                if (($f['file_kind'] ?? null) === $kind) return $f;
+            }
         }
         return null;
     }

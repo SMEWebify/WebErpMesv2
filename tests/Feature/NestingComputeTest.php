@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\Integrations\NestEngine\NestEngineClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -67,5 +68,25 @@ class NestingComputeTest extends TestCase
             ->assertOk()
             ->assertJsonPath('engine', 'nestengine')
             ->assertJsonPath('services', []);
+    }
+
+    /**
+     * An SVG goes to the engine only if /version lists it: an older engine
+     * ignores `svgFile` and would reject the whole group's job.
+     *
+     * @test
+     */
+    public function svg_parts_are_sent_only_to_an_engine_that_reads_them(): void
+    {
+        $client = new NestEngineClient('http://nestengine.test');
+
+        Http::fakeSequence('nestengine.test/version')
+            ->push(['inputFormats' => ['dxf', 'svg']])
+            ->push(['engine' => 'NestEngine'])
+            ->push('', 404);
+
+        $this->assertTrue($client->supportsSvg());
+        $this->assertFalse($client->supportsSvg(), 'engine without inputFormats');
+        $this->assertFalse($client->supportsSvg(), 'engine without /version');
     }
 }
