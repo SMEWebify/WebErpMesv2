@@ -6,7 +6,8 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\File;
-use App\Services\Files\FileKindResolver;
+use App\Models\Products\Products;
+use App\Services\Cad\DxfToSvg;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
 use Illuminate\Support\Collection;
@@ -23,7 +24,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class ProductionSheetBuilder
 {
-    public function __construct(private FileStorageService $files)
+    private const RASTER = ['png', 'jpg', 'jpeg', 'gif'];
+
+    public function __construct(private FileStorageService $files, private DxfToSvg $dxfToSvg)
     {
     }
 
@@ -32,7 +35,7 @@ class ProductionSheetBuilder
         $lines = $order->OrderLines()
             ->articles()
             ->with([
-                'Product:id,code,label,picture',
+                'Product:id,code,label,picture,svg_file,drawing_file',
                 'Product.files',
                 'files',
                 'Unit:id,label',
@@ -89,7 +92,7 @@ class ProductionSheetBuilder
             'cad_file' => $details?->cad_file,
             'notes' => $details?->internal_comment,
             'image_src' => $this->gedImage($line->files) ?? $this->gedImage($line->Product?->files)
-                ?? $this->image($details?->picture, $line->Product?->picture),
+                ?? $this->image($details?->picture, $line->Product),
             'planned_start' => $operations->pluck('start_date')->filter()->sort()->first(),
             'planned_end' => $operations->pluck('end_date')->filter()->sort()->last(),
             'operations' => $operations->map(fn (Task $task) => [
@@ -138,69 +141,154 @@ class ProductionSheetBuilder
     }
 
     /**
-     * Photo rangée dans la GED : rôle « photo » d'abord, puis la principale,
-     * parmi les fichiers image que DomPDF sait afficher.
+     * Aperçu de la pièce rangé dans la GED : une photo d'abord, sinon le dessin
+     * vectoriel (SVG), sinon le plan DXF converti en SVG. À rang égal, le
+     * fichier marqué principal l'emporte.
      */
     private function gedImage(?Collection $files): ?string
     {
-        $file = ($files ?? collect())
-            ->filter(fn (File $file) => $file->kind === FileKindResolver::KIND_IMAGE
-                && in_array(strtolower((string) $file->extension), ['png', 'jpg', 'jpeg', 'gif'], true))
-            ->sortByDesc(fn (File $file) => [$file->pivot?->role === FileRole::PHOTO, (bool) $file->pivot?->is_primary])
-            ->first();
+        $rank = static function (File $file): ?int {
+            $extension = strtolower((string) $file->extension);
 
-        $located = $file ? $this->files->locate($file) : null;
+            return match (true) {
+                in_array($extension, self::RASTER, true) => $file->pivot?->role === FileRole::PHOTO ? 0 : 1,
+                $extension === 'svg' => 2,
+                $extension === 'dxf' => 3,
+                default => null,
+            };
+        };
 
-        if (! $located) {
-            return null;
-        }
+        $candidates = ($files ?? collect())
+            ->filter(fn (File $file) => $rank($file) !== null)
+            ->sortBy(fn (File $file) => [$rank($file), $file->pivot?->is_primary ? 0 : 1]);
 
-        [$disk, $path] = $located;
+        foreach ($candidates as $file) {
+            $located = $this->files->locate($file);
 
-        return $this->dataUri((string) Storage::disk($disk)->get($path), $path . '.' . $file->extension);
-    }
-
-    /**
-     * Image de la ligne, sinon celle de l'article. Les anciennes images publiques
-     * ont pu être déplacées dans le stockage privé (wem:files:import).
-     */
-    private function image(?string $linePicture, ?string $productPicture): ?string
-    {
-        $candidates = array_filter([
-            $linePicture ? public_path('images/order-lines/' . basename($linePicture)) : null,
-            $productPicture ? public_path('images/products/' . basename($productPicture)) : null,
-        ]);
-
-        foreach ($candidates as $path) {
-            if (is_file($path)) {
-                return $this->dataUri((string) @file_get_contents($path), $path);
+            if ($located && ($uri = $this->dataUri((string) Storage::disk($located[0])->get($located[1]), $file->extension))) {
+                return $uri;
             }
-        }
-
-        $located = $this->files->locateLegacy($productPicture, 'images/products');
-
-        if ($located) {
-            [$disk, $path] = $located;
-
-            return $this->dataUri((string) Storage::disk($disk)->get($path), $path);
         }
 
         return null;
     }
 
-    private function dataUri(string $contents, string $path): ?string
+    /**
+     * Anciennes colonnes : image de la ligne, sinon de l'article, puis son SVG
+     * et son plan. Les fichiers publics ont pu être déplacés dans le stockage
+     * privé (wem:files:import).
+     */
+    private function image(?string $linePicture, ?Products $product): ?string
+    {
+        $candidates = array_filter([
+            $linePicture ? public_path('images/order-lines/' . basename($linePicture)) : null,
+            $product?->picture ? public_path('images/products/' . basename($product->picture)) : null,
+        ]);
+
+        foreach ($candidates as $path) {
+            if (is_file($path) && ($uri = $this->dataUri((string) @file_get_contents($path), pathinfo($path, PATHINFO_EXTENSION)))) {
+                return $uri;
+            }
+        }
+
+        foreach ([$product?->picture, $product?->svg_file, $product?->drawing_file] as $name) {
+            $located = $this->files->locateLegacy($name);
+
+            if ($located && ($uri = $this->dataUri((string) Storage::disk($located[0])->get($located[1]), pathinfo($located[1], PATHINFO_EXTENSION)))) {
+                return $uri;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * php-svg-lib (moteur SVG de DomPDF) dessine toujours en unités du viewBox,
+     * sans appliquer le changement d'échelle vers width / height : un export
+     * CAO en width="100%" ou en mm débordait du cadre. On aligne donc width /
+     * height sur le viewBox (origine ramenée à 0 0) ; la réduction au cadre
+     * « Pièce » est laissée au max-width / max-height CSS de l'image.
+     */
+    private function fitSvg(string $svg): string
+    {
+        if (! preg_match('/<svg\b[^>]*>/i', $svg, $match)) {
+            return $svg;
+        }
+
+        $tag = $match[0];
+        $width = $height = null;
+        $offset = null;
+
+        if (preg_match('/viewBox\s*=\s*["\']\s*([-\d.e]+)[\s,]+([-\d.e]+)[\s,]+([\d.e]+)[\s,]+([\d.e]+)\s*["\']/i', $tag, $box)) {
+            [$width, $height] = [(float) $box[3], (float) $box[4]];
+
+            // php-svg-lib ignore l'origine du viewBox : un export CAO en
+            // « -4.9 -79.9 … » sortait du cadre. On ramène l'origine à 0 0 en
+            // décalant le dessin d'autant.
+            if ((float) $box[1] != 0.0 || (float) $box[2] != 0.0) {
+                $offset = [-(float) $box[1], -(float) $box[2]];
+                $tag = str_replace($box[0], 'viewBox="0 0 ' . $box[3] . ' ' . $box[4] . '"', $tag);
+            }
+        } elseif (preg_match('/\swidth\s*=\s*["\']\s*([\d.]+)(?![\d.]*\s*%)/i', $tag, $w)
+            && preg_match('/\sheight\s*=\s*["\']\s*([\d.]+)(?![\d.]*\s*%)/i', $tag, $h)) {
+            [$width, $height] = [(float) $w[1], (float) $h[1]];
+            // Sans viewBox, la taille fixe tronquerait le dessin au lieu de le réduire.
+            $tag = preg_replace('/^<svg\b/i', '<svg viewBox="0 0 ' . $width . ' ' . $height . '"', $tag, 1);
+        }
+
+        if (! $width || ! $height) {
+            return $svg;
+        }
+
+        $size = sprintf(' width="%s" height="%s"', $width, $height);
+
+        $fitted = preg_replace('/\s(width|height)\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $tag);
+        $fitted = preg_replace('/^<svg\b/i', '<svg' . $size, $fitted, 1);
+
+        if ($offset !== null) {
+            $closing = strripos($svg, '</svg>');
+
+            if ($closing === false) {
+                return $svg;
+            }
+
+            $svg = substr($svg, 0, $closing) . '</g>' . substr($svg, $closing);
+            $fitted .= sprintf('<g transform="translate(%s %s)">', $offset[0], $offset[1]);
+        }
+
+        return str_replace($match[0], $fitted, $svg);
+    }
+
+    private function dataUri(string $contents, ?string $extension): ?string
     {
         if ($contents === '') {
             return null;
         }
 
-        $mime = match (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
+        $extension = strtolower((string) $extension);
+
+        if ($extension === 'dxf') {
+            try {
+                $contents = (string) $this->dxfToSvg->render($contents);
+            } catch (\Throwable) {
+                return null;
+            }
+
+            $extension = 'svg';
+        }
+
+        if ($extension === 'svg') {
+            $contents = $this->fitSvg($contents);
+        }
+
+        $mime = match ($extension) {
             'png' => 'image/png',
             'gif' => 'image/gif',
             'jpg', 'jpeg' => 'image/jpeg',
-            default => null, // svg/webp mal rendus par DomPDF : on s'abstient
+            'svg' => 'image/svg+xml',
+            default => null, // webp, bmp… : DomPDF ne les affiche pas
         };
 
-        return $mime ? 'data:' . $mime . ';base64,' . base64_encode($contents) : null;
+        return $mime && $contents !== '' ? 'data:' . $mime . ';base64,' . base64_encode($contents) : null;
     }
 }

@@ -100,6 +100,24 @@ class ProductionSheetRenderingTest extends TestCase
         $this->assertNull($gedImage(collect()));
     }
 
+    public function test_a_cad_svg_is_resized_on_its_viewbox_with_origin_at_zero(): void
+    {
+        // Export CAO réel : width="100%", origine négative, Y retourné.
+        $svg = '<?xml version="1.0"?><svg viewBox="-4.9 -79.9 499.8 84.8" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">'
+            . '<g transform="scale(1,-1)"><path d="M 0,0 L 0,75 L 490,75 L 490,0 Z"/></g></svg>';
+
+        $builder = app(ProductionSheetBuilder::class);
+        $fitted = (new \ReflectionMethod($builder, 'fitSvg'))->getClosure($builder)($svg);
+
+        // php-svg-lib dessine en unités du viewBox : width / height doivent
+        // lui être égaux, et son origine nulle.
+        $this->assertStringContainsString('width="499.8" height="84.8"', $fitted);
+        $this->assertStringContainsString('viewBox="0 0 499.8 84.8"', $fitted);
+        $this->assertStringNotContainsString('100%', $fitted);
+        $this->assertStringContainsString('<g transform="translate(4.9 79.9)">', $fitted);
+        $this->assertStringEndsWith('</g></g></svg>', $fitted);
+    }
+
     private function gedFile(string $name, string $role, bool $primary): File
     {
         $file = new File([
