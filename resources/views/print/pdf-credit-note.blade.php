@@ -156,12 +156,12 @@
                         <table width="80%">
                             <tr>
                                 <th align="right" style="width:50%">{{ __('general_content.sub_total_trans_key') }}:</th> 
-                                <td align="right" style="width:30%">{{ number_format( $subPrice, 2, '.', ',') }} {{ $Factory->curency }} </td>
+                                <td align="right" style="width:30%">{{ $normalizeCurrency($formattedSubPrice) }} </td>
                             </tr>
                             @forelse($vatPrice as $key => $value)
                             <tr>
-                                <td align="right" style="width:50%">{{ __('general_content.tax_trans_key') }} <?= $vatPrice[$key][0] ?> %</td> 
-                                <td align="right" style="width:30%"><?=  number_format( $vatPrice[$key][1], 2, '.', ',') ?> {{ $Factory->curency }}</td>
+                                <td align="right" style="width:50%">{{ __('general_content.tax_trans_key') }} {{ number_format((float) $vatPrice[$key][0], 2, '.', '') }} %</td>
+                                <td align="right" style="width:30%">{{ $normalizeCurrency(number_format((float) $vatPrice[$key][1], 2, '.', '')) }}</td>
                             </tr>
                             @empty
                             <tr>
@@ -171,7 +171,7 @@
                             @endforelse
                             <tr  style=" background-color: {{ $Factory->pdf_header_font_color }}">
                                 <th align="right" style="width:50%">{{ __('general_content.total_trans_key') }} :</th> 
-                                <td align="right" style="width:30%">{{ number_format( $totalPrices, 2, '.', ',') }} {{ $Factory->curency }}</td>
+                                <td align="right" style="width:30%">{{ $normalizeCurrency($formattedTotalPrice) }}</td>
                             </tr>
                         </table>
                     </td>

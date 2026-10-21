@@ -7,7 +7,7 @@
         <title>{{ $typeDocumentName}} - #{{ $Document->code }}</title>
         <style type="text/css">
             @page {
-                margin: 350px 25px 50px 25px;
+                margin: 370px 25px 50px 25px;
             }
             body {
                 margin: 0px; 
@@ -33,7 +33,7 @@
                 padding: 10px;
                 margin-top:30px;
             }
-            header { position: fixed; top: -350px; left: 0px; right: 0px; ; height: 350px; }
+            header { position: fixed; top: -370px; left: 0px; right: 0px; ; height: 370px; }
             footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: {{ $Factory->pdf_header_font_color }}; height: 50px; }
             footer .pagenum:before {
                 content: counter(page);
