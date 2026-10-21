@@ -25,6 +25,8 @@ class UpdateCompanyStatusForOrder implements ShouldQueue
      */
     public function handle(OrderCreated $event)
     {
-        Companies::where('id', $event->order->companies_id)->update(['statu_customer' => 3]);
+        // statu_customer : 1 = Inactif, 2 = Actif, 3 = Prospect.
+        // Une commande fait de la société un client actif.
+        Companies::where('id', $event->order->companies_id)->update(['statu_customer' => 2]);
     }
 }

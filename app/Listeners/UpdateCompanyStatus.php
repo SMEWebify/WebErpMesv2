@@ -25,6 +25,10 @@ class UpdateCompanyStatus implements ShouldQueue
      */
     public function handle(QuoteCreated $event)
     {
-        Companies::where('id', $event->quote->companies_id)->update(['statu_customer' => 2]);
+        // statu_customer : 1 = Inactif, 2 = Actif, 3 = Prospect.
+        // Un devis fait d'une société un prospect, sans rétrograder un client actif.
+        Companies::where('id', $event->quote->companies_id)
+            ->where(fn ($q) => $q->whereNull('statu_customer')->orWhere('statu_customer', '!=', 2))
+            ->update(['statu_customer' => 3]);
     }
 }
