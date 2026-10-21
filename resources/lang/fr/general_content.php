@@ -955,7 +955,7 @@ return [
     'name_order_trans_key'                     => 'Nom de la commande',
     'historical_trans_key'                     => 'Historique',
     'order_create_from_trans_key'              => 'Commande créée à partir de ',
-    'mnaufacturing_instruction_trans_key'      => 'Instruction de fabrication',
+    'mnaufacturing_instruction_trans_key'      => 'Fiche suiveuse',
     'order_type_trans_key'                     => 'Type de commande',
     'customer_type_order_trans_key'            => 'Commande client',
     'internal_type_order_trans_key'            => 'Commande interne',

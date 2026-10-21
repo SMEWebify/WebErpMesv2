@@ -24,6 +24,7 @@ use App\Services\CreditNoteCalculatorService;
 use App\Services\PdfThemeResolver;
 use App\Services\Invoicing\FacturXBuilder;
 use App\Services\Documents\SalesPrintLayout;
+use App\Services\Documents\ProductionSheetBuilder;
 
 class PrintController extends Controller
 {
@@ -68,15 +69,20 @@ class PrintController extends Controller
     }
 
     /**
+     * Fiche suiveuse (ex-« instruction de fabrication ») : page de garde de la
+     * commande, puis une fiche par ligne article. Même route qu'avant.
+     *
      * @param Orders $Document
-     * @return \Illuminate\Contracts\View\View
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function printOrderManufacturingInstruction(Orders $Document)
+    public function printOrderManufacturingInstruction(Orders $Document, ProductionSheetBuilder $builder)
     {
-        $typeDocumentName = 'Order Manufacturing Instruction';
-        $Factory = $this->getFactory();
-        $this->getDocumentLines($Document, 'OrderLines');
-        return view('print/print-manufacturing-instruction', compact('typeDocumentName', 'Document', 'Factory'));
+        $pdf = PDF::loadView('print/production-sheet', $builder->build($Document));
+
+        return $pdf->stream(sprintf(
+            __('production_sheet.file_name'),
+            str_replace(['/', '\\'], '-', $Document->code)
+        ));
     }
 
     /**

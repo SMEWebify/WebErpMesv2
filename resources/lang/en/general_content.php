@@ -955,7 +955,7 @@ return [
     'name_order_trans_key'                     => 'Name of order',
     'historical_trans_key'                     => 'Historical',
     'order_create_from_trans_key'              => 'Order Create from',
-    'mnaufacturing_instruction_trans_key'      => 'Manufacturing instruction',
+    'mnaufacturing_instruction_trans_key'      => 'Job traveler',
     'order_type_trans_key'                     => 'Order type',
     'customer_type_order_trans_key'            => 'Customer sales order',
     'internal_type_order_trans_key'            => 'Internal sales order',

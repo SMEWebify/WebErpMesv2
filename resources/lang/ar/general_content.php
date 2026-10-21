@@ -746,7 +746,7 @@ return [
     'name_order_trans_key'                     => 'اسم الطلب',
     'historical_trans_key'                     => 'تاريخي',
     'order_create_from_trans_key'              => 'إنشاء طلب من',
-    'mnaufacturing_instruction_trans_key'      => 'تعليمات التصنيع',
+    'mnaufacturing_instruction_trans_key'      => 'بطاقة متابعة الإنتاج',
     'order_type_trans_key'                     => 'نوع الطلب',
     'customer_type_order_trans_key'            => 'طلب مبيعات العملاء',
     'internal_type_order_trans_key'            => 'طلب مبيعات داخلي',

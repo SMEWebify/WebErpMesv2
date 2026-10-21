@@ -850,7 +850,7 @@ return [
     'name_order_trans_key'                     => '订单名称',
     'historical_trans_key'                     => '历史',
     'order_create_from_trans_key'              => '订单创建自 ',
-    'mnaufacturing_instruction_trans_key'      => '制造指令',
+    'mnaufacturing_instruction_trans_key'      => '生产跟踪单',
     'order_type_trans_key'                     => '订单类型',
     'customer_type_order_trans_key'            => '客户订单',
     'internal_type_order_trans_key'            => '内部订单',

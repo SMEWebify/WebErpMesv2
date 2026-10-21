@@ -746,7 +746,7 @@ return [
     'name_order_trans_key'                     => 'Nombre de la orden',
     'historical_trans_key'                     => 'Histórico',
     'order_create_from_trans_key'              => 'Crear orden desde',
-    'mnaufacturing_instruction_trans_key'      => 'Instrucción de fabricación',
+    'mnaufacturing_instruction_trans_key'      => 'Hoja de ruta de fabricación',
     'order_type_trans_key'                     => 'Tipo de orden',
     'customer_type_order_trans_key'            => 'Orden de venta al cliente',
     'internal_type_order_trans_key'            => 'Orden de venta interna',
