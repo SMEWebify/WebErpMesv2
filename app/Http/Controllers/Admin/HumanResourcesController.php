@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\UserExpense;
+use Illuminate\Http\JsonResponse;
+use RuntimeException;
+use App\Services\HumanResources\ExpenseReceiptReader;
 use Illuminate\Http\Request;
 use App\Models\Workflow\Orders;
 use App\Models\UserExpenseReport;
@@ -11,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\UserExpenseCategory;
 use App\Services\SelectDataService;
+use App\Services\Files\FileConfidentiality;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -278,6 +283,7 @@ class HumanResourcesController extends Controller
     {
         // updpate Line
         $userExpenseReport = UserExpenseReport::findOrFail($request->id);
+        $this->authorizeExpenseReport($userExpenseReport);
         $userExpenseReport->update($request->only([
             'label',
             'status',
@@ -296,6 +302,7 @@ class HumanResourcesController extends Controller
     public function ShowExpenseUser($id)
     {
         $UserExpenseReports = UserExpenseReport::findOrFail($id);
+        $this->authorizeExpenseReport($UserExpenseReports);
         $UserExpenseCategoriesSelect = UserExpenseCategory::All();
         $userSelect = $this->SelectDataService->getUsers();
         $OrderLineList = Orders::orderby('created_at', 'desc')->get();
@@ -316,6 +323,14 @@ class HumanResourcesController extends Controller
      */
     public function storeExpenseUser(StoreUserExpenseRequest $request, int $report_id)
     {
+        $report = UserExpenseReport::findOrFail($report_id);
+        $this->authorizeExpenseReport($report);
+
+        // Only a receipt of this very report can be linked to the line.
+        $fileId = $request->filled('file_id') && $report->files()->whereKey($request->integer('file_id'))->exists()
+            ? $request->integer('file_id')
+            : null;
+
         // Create Line
         $UserExpense = UserExpense::create([
                                                 'report_id'=>$report_id, 
@@ -327,7 +342,8 @@ class HumanResourcesController extends Controller
                                                 'amount'=>$request->amount, 
                                                 'payer_id'=>$request->payer_id, 
                                                 'tax'=>$request->tax, 
-                                                'order_id'=>$request->order_id, 
+                                                'order_id'=>$request->order_id,
+                                                'file_id'=>$fileId,
                                             ]);
 
         if ($request->hasFile('scan_file')) {
@@ -343,7 +359,13 @@ class HumanResourcesController extends Controller
 
     public function serveExpenseFile(string $filename)
     {
-        $path = 'expenses/' . basename($filename);
+        $filename = basename($filename);
+        $path = 'expenses/' . $filename;
+
+        // The scan is only readable by the employee of the report and by HR.
+        $expense = UserExpense::with('report')->where('scan_file', $filename)->first();
+        abort_if($expense === null || $expense->report === null, 404);
+        $this->authorizeExpenseReport($expense->report);
 
         if (!Storage::disk('local')->exists($path)) {
             abort(404);
@@ -361,6 +383,7 @@ class HumanResourcesController extends Controller
     public function updateExpenseUser(UpdateUserExpenseRequest $request)
     {
         $userExpense = UserExpense::findOrFail($request->id);
+        $this->authorizeExpenseReport($userExpense->report);
         $userExpense->update($request->only([
             'category_id',
             'expense_date',
@@ -376,6 +399,61 @@ class HumanResourcesController extends Controller
     }
 
     /**
+     * Receipts of a report that no expense line has been entered from yet.
+     */
+    public function expenseReceiptsJson(int $report_id): JsonResponse
+    {
+        $report = UserExpenseReport::findOrFail($report_id);
+        $this->authorizeExpenseReport($report);
+
+        $used = $report->expenses()->whereNotNull('file_id')->pluck('file_id');
+
+        $receipts = $report->files()
+            ->whereNotIn('files.id', $used)
+            ->orderBy('files.created_at')
+            ->get(['files.id', 'files.original_file_name', 'files.name', 'files.created_at'])
+            ->map(fn (File $file) => [
+                'id' => $file->id,
+                'name' => $file->original_file_name ?: $file->name,
+            ])
+            ->values();
+
+        return response()->json(['receipts' => $receipts]);
+    }
+
+    /**
+     * Read a receipt with the AI provider and propose the expense fields.
+     * Nothing is saved: the employee reviews the form before submitting it.
+     */
+    public function readExpenseReceipt(ExpenseReceiptReader $reader, int $report_id, int $file_id): JsonResponse
+    {
+        $report = UserExpenseReport::findOrFail($report_id);
+        $this->authorizeExpenseReport($report);
+
+        $file = $report->files()->whereKey($file_id)->firstOrFail();
+
+        try {
+            return response()->json(['expense' => $reader->read($file)]);
+        } catch (RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    /**
+     * An expense report holds personal data: only its employee and HR may
+     * open or change it.
+     */
+    private function authorizeExpenseReport(UserExpenseReport $report): void
+    {
+        $user = Auth::user();
+
+        abort_unless(
+            $user !== null && ((int) $report->user_id === (int) $user->id || FileConfidentiality::isHr($user)),
+            403
+        );
+    }
+
+    /**
      * Validate the user's expense report.
      *
      * @param \Illuminate\Http\Request $request
@@ -383,6 +461,9 @@ class HumanResourcesController extends Controller
      */
     public function valideExpenseUser(Request $request)
     {
+        // Approving or returning a report is an HR decision, never the employee's.
+        abort_unless(FileConfidentiality::isHr(Auth::user()), 403);
+
         // valide Line
         $UserExpenseReport = UserExpenseReport::findOrFail($request->id);
         $UserExpenseReport->status =$request->status;

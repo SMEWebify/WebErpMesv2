@@ -11,6 +11,7 @@ use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\Purchases;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\User;
+use App\Models\UserExpenseReport;
 use App\Models\Workflow\CreditNotes;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
@@ -52,6 +53,8 @@ class FileableRegistry
         // Employee folder: confidential, see FilePolicy / self::CONFIDENTIAL.
         'user' => User::class,
         'employment-contract' => UserEmploymentContracts::class,
+        // Expense receipts: confidential as well.
+        'expense-report' => UserExpenseReport::class,
     ];
 
     /**
@@ -64,6 +67,7 @@ class FileableRegistry
     private const CONFIDENTIAL = [
         'user',
         'employment-contract',
+        'expense-report',
     ];
 
     /**

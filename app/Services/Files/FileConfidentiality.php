@@ -5,6 +5,7 @@ namespace App\Services\Files;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\File;
 use App\Models\User;
+use App\Models\UserExpenseReport;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -83,7 +84,7 @@ class FileConfidentiality
             return (int) $entity->id;
         }
 
-        if ($entity instanceof UserEmploymentContracts) {
+        if ($entity instanceof UserEmploymentContracts || $entity instanceof UserExpenseReport) {
             return (int) $entity->user_id;
         }
 
@@ -107,7 +108,7 @@ class FileConfidentiality
         }
 
         $owners = [];
-        $contractIds = [];
+        $ownedIds = [];
 
         foreach ($attachments as $attachment) {
             if ($attachment->fileable_type === User::class) {
@@ -115,14 +116,13 @@ class FileConfidentiality
                 continue;
             }
 
-            if ($attachment->fileable_type === UserEmploymentContracts::class) {
-                $contractIds[] = (int) $attachment->fileable_id;
-            }
+            // Contract, expense report... : the owner is their user_id.
+            $ownedIds[$attachment->fileable_type][] = (int) $attachment->fileable_id;
         }
 
-        if ($contractIds !== []) {
-            $owners = array_merge($owners, UserEmploymentContracts::query()
-                ->whereIn('id', $contractIds)
+        foreach ($ownedIds as $class => $ids) {
+            $owners = array_merge($owners, $class::query()
+                ->whereIn('id', $ids)
                 ->pluck('user_id')
                 ->map(static fn ($id) => (int) $id)
                 ->all());

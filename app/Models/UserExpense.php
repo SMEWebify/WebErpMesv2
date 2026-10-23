@@ -23,6 +23,7 @@ class UserExpense extends Model
         'amount',
         'payer_id',
         'scan_file',
+        'file_id',
         'tax',
         'order_id'
     ];
@@ -65,6 +66,14 @@ class UserExpense extends Model
     public function payer()
     {
         return $this->belongsTo(User::class, 'payer_id');
+    }
+
+    /**
+     * Receipt (GED file of the report) this expense was entered from.
+     */
+    public function receipt()
+    {
+        return $this->belongsTo(File::class, 'file_id');
     }
 
     /**

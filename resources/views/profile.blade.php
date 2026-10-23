@@ -521,7 +521,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="date">{{ __('general_content.date_trans_key') }}</label>
-                                    <input type="date" class="form-control" name="date"  id="date" >
+                                    <input type="date" class="form-control" name="date"  id="date" value="{{ old('date', now()->toDateString()) }}">
                                 </div>
                                 <x-slot name="footerSlot">
                                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

@@ -47,7 +47,11 @@
                         @endif
                     </td>
                     <td>
-                        @if($Expense->scan_file)
+                        @if($Expense->receipt)
+                        <a href="{{ route('files.raw', ['file' => $Expense->file_id]) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary" title="{{ $Expense->receipt->original_file_name ?: $Expense->receipt->name }}">
+                            <i class="fas fa-receipt"></i>
+                        </a>
+                        @elseif($Expense->scan_file)
                         <div class="btn-group btn-group-sm">
                             <x-button-text-view :route="route('human.resources.expense.file', ['filename' => $Expense->scan_file])" :downloadFile="$Expense->scan_file" />
                         </div>
@@ -163,12 +167,33 @@
         </div>
     </x-adminlte-card>
     <!-- /.card secondary -->
+    @unless($UserExpenseReports->status  == 1 || $UserExpenseReports->status  == 2 || $UserExpenseReports->status  == 4)
+        @include('admin.partials.expense-receipts', ['canEdit' => false])
+    @endunless
     </div>
     @if($UserExpenseReports->status  == 1 || $UserExpenseReports->status  == 2 || $UserExpenseReports->status  == 4)
     <div class="col-md-4">
+        @include('admin.partials.expense-receipts', ['canEdit' => true])
         <x-adminlte-card title="{{ __('general_content.new_expense_report_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('human.resources.create.expense.line', ['report_id' => $UserExpenseReports->id])  }}" class="form-horizontal" enctype="multipart/form-data">
+            <form  method="POST" action="{{ route('human.resources.create.expense.line', ['report_id' => $UserExpenseReports->id])  }}" class="form-horizontal" enctype="multipart/form-data"
+                   id="expense-line-form"
+                   data-receipts-url="{{ route('human.resources.expense.receipts.json', ['report_id' => $UserExpenseReports->id]) }}"
+                   data-read-url="{{ route('human.resources.expense.receipts.read', ['report_id' => $UserExpenseReports->id, 'file_id' => '__ID__']) }}">
                 @csrf
+                <div class="mb-3">
+                    <label for="receipt_file_id">{{ __('general_content.expense_receipt_trans_key') }}</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-receipt"></i></span>
+                        <select class="form-select" name="file_id" id="receipt_file_id">
+                            <option value="">{{ __('general_content.expense_receipt_none_trans_key') }}</option>
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" id="receipt-read" disabled>
+                            <i class="fas fa-wand-magic-sparkles"></i> {{ __('general_content.expense_receipt_read_trans_key') }}
+                        </button>
+                    </div>
+                    <div class="form-text">{{ __('general_content.expense_receipt_ai_notice_trans_key') }}</div>
+                    <div id="receipt-feedback" class="small mt-1" role="status"></div>
+                </div>
                 <div class="mb-3">
                     <label for="category_id">{{ __('general_content.categories_trans_key') }}</label>
                     <div class="input-group">
@@ -184,7 +209,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="expense_date">{{ __('general_content.date_trans_key') }}</label>
-                    <input type="date" class="form-control" name="expense_date"  id="expense_date" >
+                    <input type="date" class="form-control" name="expense_date"  id="expense_date" value="{{ old('expense_date', now()->toDateString()) }}">
                 </div>
                 <div class="mb-3">
                     <label for="location">{{__('general_content.location_expense_trans_key') }}</label>
@@ -240,14 +265,6 @@
                         @endforeach
                     </x-adminlte-select-bs>
                 </div>
-                <div class="mb-3">
-                    <label for="scan_file">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="far fa-image"></i></span>
-                        <input type="file" class="form-control" name="scan_file" id="scan_file">
-                    </div>
-                </div>
-                    
                 <div class="card-footer">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
@@ -263,7 +280,85 @@
 @stop
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
+<script>
+(() => {
+    const form = document.getElementById('expense-line-form');
+    if (!form) return;
+
+    const select = document.getElementById('receipt_file_id');
+    const button = document.getElementById('receipt-read');
+    const feedback = document.getElementById('receipt-feedback');
+    const labels = {
+        read: @json(__('general_content.expense_receipt_read_trans_key')),
+        reading: @json(__('general_content.expense_receipt_reading_trans_key')),
+        done: @json(__('general_content.expense_receipt_read_done_trans_key')),
+        failed: @json(__('general_content.expense_receipt_failed_trans_key')),
+    };
+
+    const say = (text, tone) => {
+        feedback.textContent = text || '';
+        feedback.className = 'small mt-1 ' + (tone ? 'text-' + tone : '');
+    };
+
+    // Les justificatifs se déposent dans la carte voisine sans recharger la
+    // page : la liste est relue à chaque ouverture du menu.
+    const refresh = async () => {
+        try {
+            const response = await fetch(form.dataset.receiptsUrl, { headers: { Accept: 'application/json' } });
+            if (!response.ok) return;
+            const { receipts } = await response.json();
+            const current = select.value;
+            [...select.options].slice(1).forEach((option) => option.remove());
+            receipts.forEach(({ id, name }) => select.add(new Option(name, id)));
+            select.value = receipts.some((r) => String(r.id) === current) ? current : '';
+            button.disabled = select.value === '';
+        } catch (e) { /* liste inchangée */ }
+    };
+
+    const fill = (name, value) => {
+        const field = form.elements[name];
+        if (field && value !== null && value !== undefined && value !== '') {
+            field.value = value;
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    };
+
+    select.addEventListener('focus', refresh);
+    select.addEventListener('change', () => { button.disabled = select.value === ''; say(''); });
+
+    button.addEventListener('click', async () => {
+        if (!select.value) return;
+        button.disabled = true;
+        button.lastChild.textContent = ' ' + labels.reading;
+        say('');
+        try {
+            const response = await fetch(form.dataset.readUrl.replace('__ID__', select.value), {
+                method: 'POST',
+                headers: { Accept: 'application/json', 'X-CSRF-TOKEN': form.elements._token.value },
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                say(data.message || labels.failed, 'danger');
+                return;
+            }
+            const expense = data.expense || {};
+            ['expense_date', 'amount', 'tax', 'location', 'description', 'category_id']
+                .forEach((name) => fill(name, expense[name]));
+            say(labels.done, 'success');
+        } catch (e) {
+            say(labels.failed, 'danger');
+        } finally {
+            button.disabled = select.value === '';
+            button.lastChild.textContent = ' ' + labels.read;
+        }
+    });
+
+    refresh();
+})();
+</script>
 @stop

@@ -48,4 +48,10 @@ class UserExpenseReport extends Model
     {
         return $this->expenses()->sum('amount');
     }
+
+    // Receipts (photos, scans), served through the unified document manager
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
 }

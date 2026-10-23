@@ -4,6 +4,7 @@ namespace App\Services\Files;
 
 use App\Models\File;
 use App\Models\Products\Products;
+use App\Models\UserExpenseReport;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -94,7 +95,10 @@ class FileStorageService
      */
     public function attach(File $file, Model $entity, ?string $role = null, bool $isPrimary = false): void
     {
-        $role ??= FileRole::guessFromKind($file->kind ?? FileKindResolver::KIND_OTHER);
+        // On an expense report, a photo or a PDF is a receipt, not a photo / plan.
+        $role ??= $entity instanceof UserExpenseReport
+            ? FileRole::RECEIPT
+            : FileRole::guessFromKind($file->kind ?? FileKindResolver::KIND_OTHER);
 
         if ($isPrimary) {
             $this->demoteRole($entity, $role);

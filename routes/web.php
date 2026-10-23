@@ -1174,6 +1174,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/update/expense/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateExpenseUser')->name('human.resources.update.expense.line');
              // Valide Expense  User
             Route::post('/valide/report', 'App\Http\Controllers\Admin\HumanResourcesController@valideExpenseUser')->name('human.resources.valide.expense.report');
+            // Receipts (GED) not yet entered, and AI reading of one of them
+            Route::get('/receipts/{report_id}', 'App\Http\Controllers\Admin\HumanResourcesController@expenseReceiptsJson')->name('human.resources.expense.receipts.json')->whereNumber('report_id');
+            Route::post('/receipts/{report_id}/read/{file_id}', 'App\Http\Controllers\Admin\HumanResourcesController@readExpenseReceipt')->name('human.resources.expense.receipts.read')->whereNumber(['report_id', 'file_id'])->middleware('throttle:20,1');
             // Serve Expense scan file (stored outside web root)
             Route::get('/file/{filename}', 'App\Http\Controllers\Admin\HumanResourcesController@serveExpenseFile')->name('human.resources.expense.file')->where('filename', '[a-f0-9\-]+\.(jpeg|jpg|png|gif|pdf)');
         });

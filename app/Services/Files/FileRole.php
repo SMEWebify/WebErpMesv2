@@ -26,6 +26,8 @@ class FileRole
     public const SICK_NOTE = 'arret_travail';
     public const DIPLOMA = 'diplome';
     public const IDENTITY = 'identite';
+    // Ticket, facture ou reçu d'une note de frais
+    public const RECEIPT = 'justificatif';
     public const OTHER = 'autre';
 
     /**
@@ -47,6 +49,20 @@ class FileRole
             self::SICK_NOTE,
             self::DIPLOMA,
             self::IDENTITY,
+            self::RECEIPT,
+            self::OTHER,
+        ];
+    }
+
+    /**
+     * Roles offered on an expense report, in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forExpenses(): array
+    {
+        return [
+            self::RECEIPT,
             self::OTHER,
         ];
     }

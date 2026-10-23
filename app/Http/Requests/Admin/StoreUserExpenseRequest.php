@@ -29,6 +29,7 @@ class StoreUserExpenseRequest extends FormRequest
             'amount'  => 'required',
             'payer_id'  => 'required|numeric|gt:0',
             'tax'  => 'required|numeric|gt:0',
+            'file_id' => 'nullable|integer',
             'scan_file' => [
                 'nullable',
                 'file',

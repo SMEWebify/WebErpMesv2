@@ -691,6 +691,20 @@ Ce qui manque encore : aucune notification (pas d'`AbsenceNotification`, le vali
 aller voir l'écran), et `users.supervisor_id` est saisi sur la fiche salarié mais ne route
 aucune validation — c'est « les RH valident », pas « mon manager valide ».
 
+### Notes de frais — justificatifs et lecture IA
+- **Justificatifs dans la GED**, alias `expense-report` (`UserExpenseReport`), **confidentiel**
+  comme le dossier salarié (`FileConfidentiality` : salarié de la note + RH). Rôle
+  `justificatif` par défaut. Carte « Justificatifs » séparée du formulaire de dépense.
+  L'ancien `user_expenses.scan_file` (stockage `expenses/`) reste lu pour l'existant.
+- **Accès** : écran, lignes, anciens scans → salarié de la note ou RH
+  (`authorizeExpenseReport`) ; valider / retourner une note → RH uniquement.
+- **Lecture IA** (`App\Services\HumanResources\ExpenseReceiptReader`, provider actif de
+  l'écran IA, appel direct sans outils comme le compte rendu de visite) : **pré-remplit
+  le formulaire, n'enregistre rien**. Photo réduite à 1600 px et redressée (EXIF) ; PDF lu
+  par Claude seulement (OVH : image uniquement). Montant = TTC, TVA = taux principal.
+- `user_expenses.file_id` relie la ligne à son justificatif ; la liste ne propose que les
+  justificatifs pas encore saisis. Tests : `tests/Feature/HumanResources/ExpenseReceipt*`.
+
 ### Export paie
 Il n'existe **pas** de format d'export standard : la DSN est produite par le logiciel de
 paie, pas par l'ERP, et chaque éditeur (Silae, Sage, Cegid, Quadra…) importe sa propre
