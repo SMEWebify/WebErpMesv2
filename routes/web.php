@@ -810,6 +810,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/supplier/price/qty/{id}', 'App\Http\Controllers\Products\ProductsController@StoreSupplierPriceQty')->name('products.supplier.qty.price.create');
 
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
+            Route::post('/{id}/selling-price/from-last-sale', 'App\Http\Controllers\Products\ProductsController@updateSellingPriceFromLastSale')->name('products.selling-price.from-last-sale');
             Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
 
             // JSON API endpoints for React ProductsIndex

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\InvoiceLines;
 use App\Services\StockCalculationService;
 use App\Services\StockReservationService;
 use App\Services\ABC_MFR_CalculatorService;
@@ -260,6 +261,81 @@ class ProductsController extends Controller
     }
 
     /**
+     * Dernier prix de vente pratiqué : ligne de commande client (type 1, hors annulée) ou ligne
+     * de facture (invoice_type 1), la plus récente des deux. Prix brut, avant remise.
+     *
+     * Une ligne de facture issue d'une commande peut ne pas porter product_id
+     * (lignes antérieures au snapshot) : le produit est alors lu sur la ligne de commande.
+     *
+     * @return array{price: float, type: string, code: ?string, date: string, url: string}|null
+     */
+    private function latestSale(int $productId): ?array
+    {
+        $orderLine = OrderLines::where('product_id', $productId)
+            ->articles()
+            ->whereHas('order', fn ($q) => $q->where('type', 1)->where('statu', '!=', 6))
+            ->with('order:id,code')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->first();
+
+        $invoiceLine = InvoiceLines::where(fn ($q) => $q->where('product_id', $productId)
+                ->orWhere(fn ($q) => $q->whereNull('product_id')
+                    ->whereHas('orderLine', fn ($q) => $q->where('product_id', $productId))))
+            ->whereHas('invoice', fn ($q) => $q->where('invoice_type', 1))
+            ->with(['invoice:id,code', 'orderLine:id,selling_price'])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->first();
+
+        if ($invoiceLine && (!$orderLine || $invoiceLine->created_at >= $orderLine->created_at)) {
+            return [
+                'price' => $invoiceLine->resolved_unit_price,
+                'type'  => 'invoice',
+                'code'  => $invoiceLine->invoice?->code,
+                'date'  => $invoiceLine->created_at->format('d/m/Y'),
+                'url'   => route('invoices.show', ['id' => $invoiceLine->invoices_id]),
+            ];
+        }
+
+        if ($orderLine) {
+            return [
+                'price' => (float) $orderLine->selling_price,
+                'type'  => 'order',
+                'code'  => $orderLine->order?->code,
+                'date'  => $orderLine->created_at->format('d/m/Y'),
+                'url'   => route('orders.show', ['id' => $orderLine->orders_id]),
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Reprend comme prix de vente du produit le dernier prix pratiqué
+     * (recalculé ici : le prix n'est jamais lu dans la requête).
+     * L'ancien prix est historisé par ProductsObserver.
+     */
+    public function updateSellingPriceFromLastSale(int $id)
+    {
+        $Product = Products::findOrFail($id);
+        $lastSale = $this->latestSale($id);
+
+        if (!$lastSale) {
+            return redirect()->route('products.show', ['id' => $id])
+                ->withErrors(['message' => __('general_content.no_last_sale_price_trans_key')]);
+        }
+
+        $Product->update(['selling_price' => $lastSale['price']]);
+
+        return redirect()->route('products.show', ['id' => $id])
+            ->with('success', __('general_content.selling_price_updated_from_last_sale_trans_key', [
+                'price' => $lastSale['price'],
+                'code'  => $lastSale['code'],
+            ]));
+    }
+
+    /**
      * Calculate the average cost for a product.
      *
      * @param int $productId
@@ -314,6 +390,7 @@ class ProductsController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Products(), $Product->id);
         $finalAnalysis = $this->abcFMRService->calculateABC_FMR($Product->id);
         $lastPurchasePrice = $this->calculateLastPurchasePrice($id);
+        $lastSale = $this->latestSale($id);
         $averageCost = $this->calculateAverageCost($id);
         $averageSupplyDelay = null;
         $reservationSummary = null;
@@ -339,6 +416,7 @@ class ProductsController extends Controller
             'StockLocationsProducts' => $StockLocationsProducts,
             'finalAnalysis' => $finalAnalysis,
             'lastPurchasePrice' => $lastPurchasePrice,
+            'lastSale' => $lastSale,
             'averageCost' => $averageCost,
             'averageSupplyDelay' => $averageSupplyDelay,
             'reservationSummary' => $reservationSummary,

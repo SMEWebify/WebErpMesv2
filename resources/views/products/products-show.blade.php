@@ -160,7 +160,30 @@
                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priceHistoryModal" data-focus-type="sale" title="Historique des prix de vente">
                                     <i class="fas fa-history"></i>
                                 </button>
+                            @if($lastSale)
+                            @php
+                              $lastSaleText = __($lastSale['type'] === 'invoice'
+                                      ? 'general_content.last_sale_price_invoice_trans_key'
+                                      : 'general_content.last_sale_price_order_trans_key', [
+                                  'price' => $lastSale['price'] . ' ' . $Factory->curency,
+                                  'code' => $lastSale['code'],
+                                  'date' => $lastSale['date'],
+                              ]);
+                            @endphp
+                            {{-- Formulaire hors de celui de la fiche (pas de formulaire imbriqué) : attribut form. --}}
+                            <button type="submit" form="selling-price-from-last-sale-form" class="btn btn-outline-primary"
+                                    title="{{ $lastSaleText }}" data-bs-toggle="tooltip"
+                                    @disabled((float) $Product->selling_price === $lastSale['price'])
+                                    onclick="return confirm(@js(__('general_content.apply_last_sale_price_confirm_trans_key', ['detail' => $lastSaleText])));">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            @endif
                         </div>
+                        @if($lastSale)
+                        <small class="text-muted">
+                          <a href="{{ $lastSale['url'] }}">{{ $lastSaleText }}</a>
+                        </small>
+                        @endif
                     </div>
                 </div>
               </div>
@@ -917,6 +940,12 @@
     </x-adminlte-card>
   </div>
 </div>
+
+@if($lastSale)
+<form method="POST" id="selling-price-from-last-sale-form" action="{{ route('products.selling-price.from-last-sale', ['id' => $Product->id]) }}" class="d-none">
+  @csrf
+</form>
+@endif
 
 {{-- Modal historique des prix --}}
 @php $canPurchasesPriceHist = auth()->user()?->can('purchases-menu') ? 'true' : 'false'; @endphp

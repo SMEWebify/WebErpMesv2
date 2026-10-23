@@ -1854,4 +1854,9 @@ return [
     'time_unit_note_trans_key' => "Choisit l'unité de saisie et d'affichage des temps de réglage et unitaires. Le stockage reste en heures ; l'API, les exports et les capacités ne changent pas. Par défaut : heures.",
     'time_unit_hours_short_trans_key' => 'h',
     'time_unit_minutes_short_trans_key' => 'min',
+    'last_sale_price_order_trans_key' => 'Dernier prix : :price (commande :code du :date)',
+    'last_sale_price_invoice_trans_key' => 'Dernier prix : :price (facture :code du :date)',
+    'apply_last_sale_price_confirm_trans_key' => "Remplacer le prix de vente par le dernier prix pratiqué ?\n:detail",
+    'selling_price_updated_from_last_sale_trans_key' => 'Prix de vente mis à jour : :price (:code).',
+    'no_last_sale_price_trans_key' => 'Aucune commande ni facture ne porte ce produit.',
 ];

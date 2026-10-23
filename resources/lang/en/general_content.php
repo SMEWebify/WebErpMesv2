@@ -1854,4 +1854,9 @@ return [
     'time_unit_note_trans_key' => 'Sets how setting and unit times are typed and displayed. Storage stays in hours; the API, exports and capacities are not affected. Default: hours.',
     'time_unit_hours_short_trans_key' => 'h',
     'time_unit_minutes_short_trans_key' => 'min',
+    'last_sale_price_order_trans_key' => 'Last price: :price (order :code, :date)',
+    'last_sale_price_invoice_trans_key' => 'Last price: :price (invoice :code, :date)',
+    'apply_last_sale_price_confirm_trans_key' => "Replace the selling price with the last price charged?\n:detail",
+    'selling_price_updated_from_last_sale_trans_key' => 'Selling price updated: :price (:code).',
+    'no_last_sale_price_trans_key' => 'No order or invoice carries this product.',
 ];
