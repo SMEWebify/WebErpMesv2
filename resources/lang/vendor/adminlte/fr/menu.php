@@ -94,6 +94,7 @@ return [
     'leave_balances_trans_key'                  => 'Soldes de congés',
     'payroll_export_trans_key'                  => 'Export paie',
     'documents_trans_key'                      => 'Documents',
+    'guides_trans_key'                         => 'Guides',
     'osh_trans_key'                            => 'Risque et santé',
     'incidents_trans_key'                      => 'Incidents',
     'risques_trans_key'                        => 'Risque',

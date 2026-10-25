@@ -315,6 +315,21 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 `TaskStatuApp` continuent de les lire sans modification.
 
 ## Plans de contrôle (bullage) — lot 1 du chantier FAI
+## Guides utilisateur (menu « Guides »)
+
+`/guides` liste les pas à pas illustrés, `/guides/{slug}` en affiche un. **Un guide = un dossier**
+`resources/guides/{slug}/` : `guide.md` (en-tête YAML `title`, `summary`, `category`, `order`,
+`duration`, `icon`, `can`, `updated` + Markdown), traduction facultative `guide.{locale}.md`,
+captures dans `img/`. Ajouter un guide = déposer un dossier : ni route, ni migration, ni code.
+- `App\Services\Guides\GuideLibrary` lit, filtre (`can` : une permission suffit) et rend le
+  Markdown (`html_input => escape`) avec deux extensions : bloc ```` ```steps ```` (frise
+  d'étapes) et citations `> ⚠️` / `> 💡` (encadrés). Les `## ` forment le sommaire latéral.
+- Captures servies par `guides.media` (images du dossier `img/` seulement, `nosniff`).
+- Production des guides : agent `training-writer` + Playwright (`tools/training/`, scénarios
+  rejoués sur l'instance **locale**, données préfixées `[FORMATION]`, identifiants
+  `TRAINING_EMAIL` / `TRAINING_PASSWORD` du `.env`). Jamais sur une instance client.
+- Tests : `tests/Feature/GuidesTest.php`.
+
 
 Écran « Plans qualité » (`/quality/plans`, menu Qualité → Inspection), bulleur
 (`/quality/plans/{plan}/bubbler`) et onglet « Plans de contrôle » de la fiche article.

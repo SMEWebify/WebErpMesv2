@@ -1488,6 +1488,12 @@ return [
         ],
         ['header' => env('APP_COMMERCIAL', false) ? 'NEST2PROD' : 'W.E.M.'],
         [
+            'text' => 'guides_trans_key',
+            'url'  => 'guides',
+            'icon' => 'nav-icon fas fa-book-open',
+            'icon_color' => 'info',
+        ],
+        [
             'text' => 'licence_trans_key',
             'url'  => 'licence',
             'icon' => 'nav-icon fas fa-file-contract',

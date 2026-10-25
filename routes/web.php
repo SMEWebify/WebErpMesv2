@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\EnergyConsumptionController;
 use App\Http\Controllers\Files\FileApiController;
 use App\Http\Controllers\Files\LegacyFileController;
@@ -164,6 +165,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/documents', [DocumentController::class, 'index'])
         ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
         ->name('documents.index');
+
+    // Guides utilisateur : un dossier par guide sous resources/guides (App\Services\Guides\GuideLibrary).
+    Route::middleware(['auth', 'verified', 'has.role'])->prefix('guides')->name('guides.')->group(function () {
+        Route::get('/', [GuideController::class, 'index'])->name('index');
+        Route::get('/{slug}', [GuideController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('show');
+        Route::get('/{slug}/media/{file}', [GuideController::class, 'media'])
+            ->where(['slug' => '[a-z0-9-]+', 'file' => '[A-Za-z0-9._-]+'])
+            ->name('media');
+    });
 
     Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu']], function () {
         Route::get('/', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');

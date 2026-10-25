@@ -1,0 +1,181 @@
+// Guides utilisateur (resources/views/guides, contenu rendu par App\Services\Guides\GuideLibrary).
+// Variables Bootstrap uniquement : le mode sombre suit sans règle dédiée.
+
+.guide-search {
+    position: relative;
+    min-width: 260px;
+
+    .form-control { padding-left: 2.2rem; }
+}
+
+.guide-search__icon {
+    position: absolute;
+    left: .8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--bs-secondary-color);
+}
+
+.guide-card {
+    transition: transform .15s ease, box-shadow .15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08);
+    }
+
+    &:hover .guide-card__read { color: var(--bs-primary); }
+}
+
+.guide-card__icon {
+    flex: 0 0 2.75rem;
+    height: 2.75rem;
+    border-radius: .6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+.guide-content {
+    max-width: 920px;
+    line-height: 1.65;
+
+    h2 {
+        font-size: 1.4rem;
+        margin: 2.25rem 0 1rem;
+        padding-bottom: .4rem;
+        border-bottom: 1px solid var(--bs-border-color);
+        scroll-margin-top: 4.5rem;
+
+        &:first-child { margin-top: 0; }
+    }
+
+    h3 {
+        font-size: 1.1rem;
+        margin: 1.75rem 0 .75rem;
+    }
+
+    hr { margin: 2rem 0; }
+
+    .guide-img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: .75rem 0 1.25rem;
+        border: 1px solid var(--bs-border-color);
+        border-radius: .5rem;
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .06);
+    }
+
+    code {
+        color: inherit;
+        background: var(--bs-tertiary-bg);
+        padding: .1rem .35rem;
+        border-radius: .25rem;
+    }
+}
+
+// Bloc ```steps : frise d'étapes numérotées.
+.guide-steps {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.guide-steps__item {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .35rem .8rem .35rem .35rem;
+    border-radius: 2rem;
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    font-size: .9rem;
+
+    &:not(:last-child)::after {
+        content: '\f061'; // fa-arrow-right
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: .7rem;
+        margin-left: .4rem;
+        color: var(--bs-secondary-color);
+    }
+}
+
+.guide-steps__num {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+// Citations ⚠️ / 💡 : encadrés attention / astuce.
+.guide-callout {
+    margin: 1rem 0 1.5rem;
+    padding: .75rem 1rem;
+    border-left: 4px solid;
+    border-radius: .375rem;
+
+    p:last-child { margin-bottom: 0; }
+
+    &--warning {
+        border-color: var(--bs-warning);
+        background: var(--bs-warning-bg-subtle);
+        color: var(--bs-warning-text-emphasis);
+    }
+
+    &--tip {
+        border-color: var(--bs-info);
+        background: var(--bs-info-bg-subtle);
+        color: var(--bs-info-text-emphasis);
+    }
+}
+
+.guide-callout__icon { margin-right: .25rem; }
+
+// AdminLTE 4 met `overflow: auto` sur .app-main alors que c'est la page qui défile :
+// le sommaire collant n'accrocherait jamais. Levé sur les seules pages de guide.
+body.layout-fixed .app-wrapper .app-main:has(.guide-toc) {
+    overflow: visible;
+}
+
+.guide-toc__card {
+    position: sticky;
+    top: 4.5rem;
+
+    .nav-link {
+        color: var(--bs-secondary-color);
+        font-size: .875rem;
+
+        &:hover { color: var(--bs-primary); }
+    }
+}
+
+@media print {
+    .app-sidebar,
+    .app-header,
+    .app-footer,
+    .guide-toc,
+    .guide-actions .btn,
+    .guide-actions > div > a {
+        display: none !important;
+    }
+
+    .app-main { margin: 0 !important; }
+
+    .guide-content { max-width: none; }
+
+    .guide-content .guide-img { break-inside: avoid; box-shadow: none; }
+}

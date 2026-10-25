@@ -88,6 +88,7 @@ return [
     'leave_balances_trans_key'                  => '假期余额',
     'payroll_export_trans_key'                  => '薪资导出',
     'documents_trans_key'                      => '文档',
+    'guides_trans_key'                         => '指南',
     'osh_trans_key'                            => '职业健康与安全',
     'incidents_trans_key'                      => '事件',
     'risques_trans_key'                        => '风险',

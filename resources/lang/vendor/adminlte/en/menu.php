@@ -94,6 +94,7 @@ return [
     'leave_balances_trans_key'                  => 'Leave balances',
     'payroll_export_trans_key'                  => 'Payroll export',
     'documents_trans_key'                      => 'Documents',
+    'guides_trans_key'                         => 'Guides',
     'osh_trans_key'                            => 'OSH',
     'incidents_trans_key'                      => 'Incidents',
     'risques_trans_key'                        => 'Risks',
