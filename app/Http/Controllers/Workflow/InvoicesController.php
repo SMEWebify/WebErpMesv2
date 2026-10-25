@@ -864,6 +864,12 @@ class InvoicesController extends Controller
 
     public function paymentsStore(Request $request, Invoices $invoice): \Illuminate\Http\JsonResponse
     {
+        // Un brouillon n'est pas une créance : le régler le faisait passer « En attente » ou
+        // « Payé » sans avoir été émis, lignes encore modifiables.
+        if ((int) $invoice->statu === 1) {
+            return response()->json(['message' => 'Émettez la facture avant d\'enregistrer un règlement.'], 422);
+        }
+
         $validated = $request->validate([
             'amount'            => 'required|numeric|min:0.01',
             'payment_date'      => 'required|date',
