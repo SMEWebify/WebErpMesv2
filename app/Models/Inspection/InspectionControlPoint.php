@@ -95,6 +95,45 @@ class InspectionControlPoint extends Model
         return ['result' => $ok ? 'ok' : 'nok', 'deviation' => $deviation];
     }
 
+    /**
+     * Exigence en clair, pour une NC ou le rapport : « ⌀12 ±0.1 », « Planéité 0.05 A,B »…
+     * Le pendant JS est describe() de characteristics.js.
+     */
+    public function requirementText(bool $printable = false): string
+    {
+        $n = fn ($v) => $v === null ? '' : rtrim(rtrim(number_format((float) $v, 4, '.', ''), '0'), '.');
+        // Le PDF (police DejaVu) n'a pas tous les glyphes ISO : Ø et (M) y sont sûrs.
+        $diameter = $printable ? 'Ø' : '⌀';
+        $modifiers = $printable ? ['M' => '(M)', 'L' => '(L)'] : ['M' => 'Ⓜ', 'L' => 'Ⓛ'];
+
+        if ($this->characteristic_type === 'note') {
+            return (string) $this->label;
+        }
+
+        if ($this->characteristic_type === 'gdt') {
+            $symbol = $this->gdt_symbol ? __('inspection.gdt_' . $this->gdt_symbol) : 'GD&T';
+
+            return trim($symbol . ' ' . ($this->diameter_zone ? $diameter : '') . $n($this->tol_max)
+                . ($this->material_modifier ? ' ' . $modifiers[$this->material_modifier] : '')
+                . ($this->datums ? ' ' . $this->datums : ''));
+        }
+
+        $prefix = ['diameter' => $diameter, 'radius' => 'R', 'thread' => 'M', 'roughness' => 'Ra '][$this->characteristic_type] ?? '';
+        $suffix = $this->characteristic_type === 'angle' ? '°' : '';
+        $tolerance = '';
+        if ($this->tol_min !== null && $this->tol_max !== null && abs($this->tol_min + $this->tol_max) < 1e-9 && $this->tol_max != 0) {
+            $tolerance = ' ±' . $n($this->tol_max);
+        } elseif ($this->tol_min !== null || $this->tol_max !== null) {
+            $sign = fn ($v) => ($v >= 0 ? '+' : '') . $n($v);
+            $tolerance = ' ' . implode(' / ', array_filter([
+                $this->tol_max !== null ? $sign($this->tol_max) : null,
+                $this->tol_min !== null ? $sign($this->tol_min) : null,
+            ]));
+        }
+
+        return trim($prefix . $n($this->nominal_value) . $suffix . $tolerance . ($this->unit && $this->unit !== '°' ? ' ' . $this->unit : ''));
+    }
+
     /** La valeur est-elle jugée par les tolérances, ou par l'opérateur ? */
     public function hasTolerance(): bool
     {

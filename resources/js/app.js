@@ -1092,23 +1092,6 @@ async function mountGmaoDashboard() {
     );
 }
 
-async function mountInspectionProjectsApp() {
-    const element = document.getElementById('inspection-projects-app');
-    if (!element) return;
-
-    const { default: InspectionProjectsApp } = await import('./components/InspectionProjectsApp.jsx');
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(InspectionProjectsApp, {
-            endpoints:  parse('endpoints') ?? {},
-            canApprove: parse('canApprove') ?? false,
-        })
-    );
-}
-
 // Plans de contrôle : liste « Plans qualité », bulleur, onglet de la fiche article.
 async function mountQualityPlans() {
     const mounts = [
@@ -1118,6 +1101,13 @@ async function mountQualityPlans() {
         })],
         ['product-control-plans-app', () => import('./components/inspection/ProductControlPlans.jsx'), (d) => ({
             productId: parseInt(d.productId, 10),
+        })],
+        // Contrôle libre : même saisie que l'onglet Contrôle de l'écran tâche.
+        ['inspection-dossier-app', () => import('./components/inspection/TaskInspection.jsx'), (d) => ({
+            baseUrl: d.baseUrl,
+        })],
+        ['inspection-report-app', () => import('./components/inspection/InspectionReport.jsx'), (d) => ({
+            dossierId: parseInt(d.dossierId, 10),
         })],
     ];
 
@@ -1444,7 +1434,6 @@ mountTaskStatuApp();
 mountGanttChart();
 mountNonConformitiesIndex();
 mountGmaoDashboard();
-mountInspectionProjectsApp();
 mountQualityPlans();
 mountTaskManagePage();
 mountProcessDiagramApp();

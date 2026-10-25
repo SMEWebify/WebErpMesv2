@@ -318,7 +318,10 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 
 Écran « Plans qualité » (`/quality/plans`, menu Qualité → Inspection), bulleur
 (`/quality/plans/{plan}/bubbler`) et onglet « Plans de contrôle » de la fiche article.
-L'ancien écran d'inspection reste servi (`quality.inspection.projects`) jusqu'au lot 2.
+L'ancien écran d'inspection est **supprimé** : son URL (`quality.inspection.projects`, citée
+par d'anciennes notifications) redirige vers Plans qualité ; ses tables `inspection_documents`,
+`inspection_instruments`, `inspection_nonconformities` sont supprimées par migration **si
+vides** (sinon conservées, orphelines, avec un avertissement).
 - **Plan de contrôle** = `inspection_plans` : article + révision (= `products.ind`, ou l'indice
   de la ligne de commande) + fichier plan **de la GED de l'article**. Brouillon → validé (figé,
   409 sur toute écriture) ; « Nouvelle version » recopie les cotes, et sa validation rend
@@ -359,6 +362,21 @@ L'ancien écran d'inspection reste servi (`quality.inspection.projects`) jusqu'a
   grille, appareils `quality_control_devices`) et **simple avertissement** à la déclaration de
   pièces bonnes tant que la pièce 1 n'est pas mesurée — **jamais de blocage serveur** (test).
   Onglets « En cours » / « Terminés » de Plans qualité.
+- **Contrôle libre** (article choisi à la main, sans commande ni tâche : réception, audit) :
+  bouton « Contrôler » d'un plan validé → `TaskInspection::createFree()`, page
+  `/quality/inspections/{dossier}`, même composant de saisie (`TaskInspection.jsx`, prop
+  `baseUrl`). Un dossier est donc identifié par lui-même, pas par une tâche
+  (`InspectionDossierController` sert les deux portes).
+- **NC depuis une mesure** hors tolérance : `TaskInspection::declareNonConformity()` crée une
+  NC du module qualité (`quality_non_conformities`, code `NC-CTRL-{mesure}`) pré-remplie
+  (exigence via `InspectionControlPoint::requirementText()`, valeur, pièce, appareil,
+  opérateur, commande, tâche) et la relie à la mesure ; une seule NC par mesure.
+- **Rapport premier article (lot 3)** : `App\Services\Inspection\FaiReport` (formulaires 1-3
+  sur le modèle AS9102, tout déduit de l'ERP sauf `FaiReport::EDITABLE`), page
+  `/quality/inspections/{dossier}/report`, signatures « vérifié » (`inspection-plans-edit`)
+  puis « approuvé » (`inspection-plans-approve`, fige le rapport), PDF `print/inspection-fai`
+  rangé dans la GED de la commande (sinon de l'article), rôle `controle`. Format neutre ou
+  AS9102 : `config('inspection.report_format')` / `INSPECTION_REPORT_FORMAT`.
 - Tests : `tests/Feature/Inspection/`. Suite (lots 2-4) : mémoire `project_quality_plans_fai_chantier`.
 
 ## Visite sur site (opportunité, mobile)

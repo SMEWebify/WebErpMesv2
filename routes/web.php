@@ -973,9 +973,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/Task/Statu/Api/{id}/resource',      'App\Http\Controllers\Api\TaskStatuController@updateResource')->name('production.task.statu.api.resource');
         Route::post('/Task/Statu/Api/{id}/nc',           'App\Http\Controllers\Api\TaskStatuController@createNc')->name('production.task.statu.api.nc');
         // Onglet Contrôle : mesures du plan de contrôle validé de l'article
-        Route::get('/Task/Statu/Api/{id}/inspection',           'App\Http\Controllers\Inspection\InspectionTaskController@show')->name('production.task.statu.api.inspection');
-        Route::post('/Task/Statu/Api/{id}/inspection/measure',  'App\Http\Controllers\Inspection\InspectionTaskController@measure')->name('production.task.statu.api.inspection.measure');
-        Route::post('/Task/Statu/Api/{id}/inspection/close',    'App\Http\Controllers\Inspection\InspectionTaskController@close')->name('production.task.statu.api.inspection.close');
+        Route::get('/Task/Statu/Api/{id}/inspection',           'App\Http\Controllers\Inspection\InspectionDossierController@taskShow')->name('production.task.statu.api.inspection');
+        Route::post('/Task/Statu/Api/{id}/inspection/measure',  'App\Http\Controllers\Inspection\InspectionDossierController@taskMeasure')->name('production.task.statu.api.inspection.measure');
+        Route::post('/Task/Statu/Api/{id}/inspection/close',    'App\Http\Controllers\Inspection\InspectionDossierController@taskClose')->name('production.task.statu.api.inspection.close');
+        Route::post('/Task/Statu/Api/{id}/inspection/measures/{measure}/nc', 'App\Http\Controllers\Inspection\InspectionDossierController@taskNonConformity')->name('production.task.statu.api.inspection.nc');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -1190,9 +1191,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
-        Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
+        // Ancien écran d'inspection retiré : l'URL (favoris, notifications) mène aux plans qualité.
+        Route::redirect('/inspection-projects', 'plans')->name('quality.inspection.projects');
         Route::get('/plans', 'App\Http\Controllers\Inspection\InspectionPlanController@indexView')->name('quality.plans');
         Route::get('/plans/{plan}/bubbler', 'App\Http\Controllers\Inspection\InspectionPlanController@bubbler')->name('inspection.plans.bubbler');
+        Route::get('/inspections/{dossier}', 'App\Http\Controllers\Inspection\InspectionDossierController@page')->name('quality.inspections.show');
+        Route::get('/inspections/{dossier}/report', 'App\Http\Controllers\Inspection\InspectionReportController@page')->name('quality.inspections.report');
 
         // Routes for Process Diagrams
         Route::get('/process-diagrams', 'App\Http\Controllers\Quality\ProcessDiagramController@indexView')->name('quality.process-diagrams');
@@ -1307,24 +1311,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/points/{point}', [$points, 'destroy'])->middleware($edit)->name('inspection.plans.points.destroy');
     });
 
-    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Inspection\InspectionProjectController@index')->name('inspection.projects.index');
-        Route::post('/', 'App\Http\Controllers\Inspection\InspectionProjectController@store')->name('inspection.projects.store');
-        Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
-        Route::put('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@update')->name('inspection.projects.update');
-        Route::post('/{id}/documents', 'App\Http\Controllers\Inspection\InspectionDocumentController@store')->name('inspection.projects.documents.store');
-        Route::get('/documents/{id}/download', 'App\Http\Controllers\Inspection\InspectionDocumentController@download')->name('inspection.documents.download');
-        Route::post('/documents/{id}/submit', 'App\Http\Controllers\Inspection\InspectionDocumentController@submit')->name('inspection.documents.submit');
-        Route::post('/documents/{id}/approve', 'App\Http\Controllers\Inspection\InspectionDocumentController@approve')->name('inspection.documents.approve');
-        Route::post('/documents/{id}/obsolete', 'App\Http\Controllers\Inspection\InspectionDocumentController@obsolete')->name('inspection.documents.obsolete');
-        Route::post('/{id}/control-points', 'App\Http\Controllers\Inspection\InspectionControlPointController@store')->name('inspection.projects.points.store');
-        Route::put('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@update')->name('inspection.points.update');
-        Route::delete('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@destroy')->name('inspection.points.destroy');
-        Route::post('/{id}/sessions', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@store')->name('inspection.projects.sessions.store');
-        Route::post('/sessions/{id}/submit', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@submit')->name('inspection.sessions.submit');
-        Route::post('/sessions/{id}/close', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@close')->name('inspection.sessions.close');
-        Route::get('/{id}/export/pdf', 'App\Http\Controllers\Inspection\InspectionProjectController@exportPdf')->name('inspection.projects.export.pdf');
-        Route::get('/{id}/export/xlsx', 'App\Http\Controllers\Inspection\InspectionProjectController@exportXlsx')->name('inspection.projects.export.xlsx');
+    // Contrôle libre : article choisi à la main, sans tâche (même fiche que l'onglet Contrôle).
+    Route::group(['prefix' => 'inspection-dossiers', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        $dossiers = \App\Http\Controllers\Inspection\InspectionDossierController::class;
+
+        Route::post('/', [$dossiers, 'store'])->name('inspection.dossiers.store');
+        Route::get('/{dossier}', [$dossiers, 'show'])->name('inspection.dossiers.show');
+        Route::post('/{dossier}/measure', [$dossiers, 'measure'])->name('inspection.dossiers.measure');
+        Route::post('/{dossier}/close', [$dossiers, 'close'])->name('inspection.dossiers.close');
+        Route::post('/{dossier}/measures/{measure}/nc', [$dossiers, 'nonConformity'])->name('inspection.dossiers.nc');
+
+        // Rapport premier article : signatures sous permission (contrôlées dans le contrôleur).
+        $reports = \App\Http\Controllers\Inspection\InspectionReportController::class;
+        Route::get('/{dossier}/report', [$reports, 'show'])->name('inspection.reports.show');
+        Route::patch('/{dossier}/report', [$reports, 'update'])->name('inspection.reports.update');
+        Route::post('/{dossier}/report/sign', [$reports, 'sign'])->name('inspection.reports.sign');
+        Route::post('/{dossier}/report/pdf', [$reports, 'generate'])->name('inspection.reports.generate');
     });
 
     Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

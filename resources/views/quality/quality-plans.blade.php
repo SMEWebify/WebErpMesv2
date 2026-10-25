@@ -3,12 +3,7 @@
 @section('title', __('inspection.title'))
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>{{ __('inspection.title') }}</h1>
-        <a class="btn btn-sm btn-outline-secondary" href="{{ route('quality.inspection.projects') }}">
-            <i class="fas fa-clock-rotate-left me-1"></i>{{ __('inspection.old_screen') }}
-        </a>
-    </div>
+    <h1>{{ __('inspection.title') }}</h1>
 @stop
 
 @section('content')

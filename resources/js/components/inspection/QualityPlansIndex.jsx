@@ -104,6 +104,65 @@ function dossierColumns(tab, trans, locale) {
 }
 
 /**
+ * Contrôle libre d'un article (réception, audit, pièce prélevée) : sans commande
+ * ni tâche, sur le plan validé choisi. Ouvre ensuite la page de saisie.
+ */
+function NewControlDialog({ plan, endpoints, trans, onClose }) {
+    const [qty, setQty] = useState(1);
+    const [title, setTitle] = useState('');
+    const [isFai, setIsFai] = useState(false);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState(null);
+
+    const submit = (e) => {
+        e.preventDefault();
+        setBusy(true);
+        apiFetch(endpoints.dossierStore, {
+            method: 'POST',
+            body: JSON.stringify({ products_id: plan.product_id, revision: plan.revision, qty: Number(qty) || 1, title: title || null, is_fai: isFai }),
+        })
+            .then(data => { window.location.href = data.url; })
+            .catch(err => { setError(err?.message ?? trans.save_error); setBusy(false); });
+    };
+
+    return (
+        <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,.4)' }} onClick={onClose}>
+            <div className="modal-dialog" onClick={e => e.stopPropagation()}>
+                <form className="modal-content" onSubmit={submit}>
+                    <div className="modal-header">
+                        <h5 className="modal-title">{trans.new_control} — {plan.product_code} {plan.revision ? `(${trans.revision} ${plan.revision})` : ''}</h5>
+                        <button type="button" className="btn-close" onClick={onClose} />
+                    </div>
+                    <div className="modal-body">
+                        <p className="small text-secondary">{trans.new_control_hint}</p>
+                        <div className="mb-2">
+                            <label className="form-label">{trans.parts_to_inspect}</label>
+                            <input type="number" min="1" className="form-control" value={qty} onChange={e => setQty(e.target.value)} required />
+                        </div>
+                        <div className="mb-2">
+                            <label className="form-label">{trans.label}</label>
+                            <input type="text" className="form-control" maxLength={255} placeholder={trans.free_control_placeholder}
+                                   value={title} onChange={e => setTitle(e.target.value)} />
+                        </div>
+                        <div className="form-check form-switch">
+                            <input className="form-check-input" type="checkbox" id="new-control-fai" checked={isFai} onChange={e => setIsFai(e.target.checked)} />
+                            <label className="form-check-label" htmlFor="new-control-fai">{trans.control_fai}</label>
+                        </div>
+                        {error && <div className="alert alert-danger py-1 small mt-2 mb-0">{error}</div>}
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-outline-secondary" onClick={onClose}>{trans.cancel}</button>
+                        <button type="submit" className="btn btn-primary" disabled={busy}>
+                            <i className={`fas ${busy ? 'fa-spinner fa-spin' : 'fa-ruler-combined'} me-1`} />{trans.start_control}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+/**
  * « Nouveau plan de contrôle » : n'importe quel article, sans attendre qu'une
  * commande le fasse apparaître dans « À bullé ». Ouvre le bulleur sur le
  * brouillon créé (ou rouvert) à l'indice courant de l'article.
@@ -187,6 +246,7 @@ export default function QualityPlansIndex({ endpoints, trans, canEdit = false })
     const [loading, setLoading] = useState(false);
     const [error, setError]     = useState(null);
     const [busyRow, setBusyRow] = useState(null);
+    const [controlOf, setControlOf] = useState(null);
     const [search, setSearch]   = useState('');
     const [page, setPage]       = useState(1);
     const timer = useRef(null);
@@ -229,18 +289,30 @@ export default function QualityPlansIndex({ endpoints, trans, canEdit = false })
 
     const rowAction = (row) => {
         if (DOSSIER_TABS.includes(activeTab)) {
-            return row.task_url ? (
-                <a className="btn btn-sm btn-outline-primary text-nowrap" href={row.task_url}>
-                    <i className="fas fa-ruler-combined me-1" />{trans.control_tab}
-                </a>
-            ) : null;
+            return (
+                <div className="d-flex gap-1">
+                    <a className="btn btn-sm btn-outline-primary text-nowrap" href={row.open_url}>
+                        <i className="fas fa-ruler-combined me-1" />{trans.control_tab}
+                    </a>
+                    <a className="btn btn-sm btn-outline-secondary text-nowrap" href={row.report_url} title={trans.report}>
+                        <i className="fas fa-file-signature" />
+                    </a>
+                </div>
+            );
         }
         if (activeTab !== 'needs') {
             return (
-                <a className="btn btn-sm btn-outline-primary text-nowrap" href={url(endpoints.bubbler, row.id)}>
-                    <i className={`fas ${activeTab === 'draft' && canEdit ? 'fa-pen-ruler' : 'fa-eye'} me-1`} />
-                    {activeTab === 'draft' && canEdit ? trans.open_bubbler : trans.view}
-                </a>
+                <div className="d-flex gap-1">
+                    <a className="btn btn-sm btn-outline-primary text-nowrap" href={url(endpoints.bubbler, row.id)}>
+                        <i className={`fas ${activeTab === 'draft' && canEdit ? 'fa-pen-ruler' : 'fa-eye'} me-1`} />
+                        {activeTab === 'draft' && canEdit ? trans.open_bubbler : trans.view}
+                    </a>
+                    {activeTab === 'approved' && (
+                        <button type="button" className="btn btn-sm btn-primary text-nowrap" onClick={() => setControlOf(row)} title={trans.new_control_hint}>
+                            <i className="fas fa-ruler-combined me-1" />{trans.new_control}
+                        </button>
+                    )}
+                </div>
             );
         }
         if (!row.file) {
@@ -310,6 +382,7 @@ export default function QualityPlansIndex({ endpoints, trans, canEdit = false })
                 />
                 <Pagination meta={meta} around={2} boundaries ulClassName="pagination pagination-sm justify-content-end mb-0" onPage={setPage} />
             </div>
+            {controlOf && <NewControlDialog plan={controlOf} endpoints={endpoints} trans={trans} onClose={() => setControlOf(null)} />}
         </div>
     );
 }

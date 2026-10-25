@@ -338,7 +338,12 @@ class InspectionPlanController extends Controller
             'thumbnail_url' => $plan ? InspectionPlanPresenter::plan($plan)['thumbnail_url'] : null,
             'created_at'    => $dossier->created_at?->toIso8601String(),
             'closed_at'     => $dossier->closed_at?->toIso8601String(),
-            'task_url'      => $dossier->first_task_id ? route('production.task.statu.id', ['id' => $dossier->first_task_id]) : null,
+            'is_free'       => $dossier->order_lines_id === null,
+            // Contrôle d'une tâche : son écran ; contrôle libre : sa page.
+            'open_url'      => $dossier->first_task_id
+                ? route('production.task.statu.id', ['id' => $dossier->first_task_id])
+                : route('quality.inspections.show', ['dossier' => $dossier->id]),
+            'report_url'    => route('quality.inspections.report', ['dossier' => $dossier->id]),
         ];
     }
 
@@ -366,6 +371,7 @@ class InspectionPlanController extends Controller
         return [
             'productPlans'   => route('inspection.plans.product', ['product' => '__ID__']),
             'productSearch'  => route('products.json.search'),
+            'dossierStore'   => route('inspection.dossiers.store'),
             'list'           => route('inspection.plans.index'),
             'store'          => route('inspection.plans.store'),
             'show'           => route('inspection.plans.show', ['plan' => '__ID__']),

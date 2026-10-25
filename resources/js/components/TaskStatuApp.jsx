@@ -956,7 +956,7 @@ function TaskDetail({
                     {stage === 'control' && inspection ? (
                         <section className="ts-card">
                             <Suspense fallback={<div className="ts-stage__empty"><i className="fas fa-spinner fa-spin" /></div>}>
-                                <TaskInspection key={task.id} taskId={task.id} apiBase={apiBase} onSummary={onInspectionSummary} />
+                                <TaskInspection key={task.id} baseUrl={`${apiBase}/${task.id}/inspection`} onSummary={onInspectionSummary} />
                             </Suspense>
                         </section>
                     ) : (

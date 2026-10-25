@@ -28,12 +28,26 @@ class InspectionProject extends Model
         'created_by',
         'closed_at',
         'closed_by',
+        'fai_type',
+        'report_fields',
+        'report_comment',
+        'verified_by',
+        'verified_at',
+        'approved_by',
+        'approved_at',
+        'customer_approval',
+        'customer_approved_at',
+        'report_file_id',
     ];
 
     protected $casts = [
-        'is_fai'          => 'boolean',
-        'serial_tracking' => 'boolean',
-        'closed_at'       => 'datetime',
+        'is_fai'               => 'boolean',
+        'serial_tracking'      => 'boolean',
+        'closed_at'            => 'datetime',
+        'report_fields'        => 'array',
+        'verified_at'          => 'datetime',
+        'approved_at'          => 'datetime',
+        'customer_approved_at' => 'date',
     ];
 
     public function Plan()
@@ -62,23 +76,28 @@ class InspectionProject extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function Documents()
-    {
-        return $this->hasMany(InspectionDocument::class);
-    }
-
-    public function ControlPoints()
-    {
-        return $this->hasMany(InspectionControlPoint::class)->orderBy('order');
-    }
-
     public function MeasureSessions()
     {
         return $this->hasMany(InspectionMeasureSession::class);
     }
 
-    public function NonConformities()
+    public function OrderLine()
     {
-        return $this->hasMany(InspectionNonconformity::class);
+        return $this->belongsTo(\App\Models\Workflow\OrderLines::class, 'order_lines_id');
+    }
+
+    public function VerifiedBy()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function ApprovedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function ReportFile()
+    {
+        return $this->belongsTo(\App\Models\File::class, 'report_file_id');
     }
 }

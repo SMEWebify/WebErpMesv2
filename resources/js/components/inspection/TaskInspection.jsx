@@ -123,7 +123,32 @@ function PlanView({ plan, points, selectedId, onSelect, onlyThisOperation, heigh
 // Case de saisie d'une pièce
 // ---------------------------------------------------------------------------
 
-function MeasureCell({ point, part, measure, disabled, onSave, inputRef, onEnter, trans }) {
+/**
+ * Mesure hors tolérance : bouton « NC » qui déclare une non-conformité du module
+ * qualité pré-remplie (cote, valeur, pièce, appareil, opérateur), puis son code.
+ */
+function NcButton({ measure, onDeclare, trans }) {
+    const [busy, setBusy] = useState(false);
+    if (measure?.result !== 'nok') return null;
+
+    if (measure.nc) {
+        return (
+            <a className="badge text-bg-danger text-decoration-none" href={measure.nc_url ?? '#'} target="_blank" rel="noreferrer"
+               title={trans.nc_declared}>
+                {typeof measure.nc === 'string' ? measure.nc : 'NC'}
+            </a>
+        );
+    }
+
+    return (
+        <button type="button" className="btn btn-sm btn-outline-danger px-1 py-0" disabled={busy} title={trans.declare_nc}
+                onClick={async () => { setBusy(true); try { await onDeclare(measure); } finally { setBusy(false); } }}>
+            NC
+        </button>
+    );
+}
+
+function MeasureCell({ point, part, measure, disabled, onSave, onDeclareNc, inputRef, onEnter, trans }) {
     const [value, setValue] = useState(measure?.value ?? '');
     const [busy, setBusy] = useState(false);
     const isNote = point.characteristic_type === 'note';
@@ -156,6 +181,7 @@ function MeasureCell({ point, part, measure, disabled, onSave, inputRef, onEnter
                             className={`btn ${measure?.result === 'nok' ? 'btn-danger' : 'btn-outline-danger'}`}
                             onClick={() => save({ result: 'nok' })}><i className="fas fa-xmark" /></button>
                 </div>
+                <div className="text-center mt-1"><NcButton measure={measure} onDeclare={onDeclareNc} trans={trans} /></div>
             </td>
         );
     }
@@ -178,6 +204,7 @@ function MeasureCell({ point, part, measure, disabled, onSave, inputRef, onEnter
                         <i className="fas fa-xmark" />
                     </button>
                 )}
+                <NcButton measure={measure} onDeclare={onDeclareNc} trans={trans} />
             </div>
         </td>
     );
@@ -187,7 +214,12 @@ function MeasureCell({ point, part, measure, disabled, onSave, inputRef, onEnter
 // Onglet Contrôle
 // ---------------------------------------------------------------------------
 
-export default function TaskInspection({ taskId, apiBase, onSummary }) {
+/**
+ * Saisie des mesures d'un dossier de contrôle. `baseUrl` : la fiche du dossier,
+ * depuis l'écran tâche (…/Task/Statu/Api/{id}/inspection) ou un contrôle libre
+ * (/inspection-dossiers/{id}) ; mesures, clôture et NC en sont des sous-adresses.
+ */
+export default function TaskInspection({ baseUrl, onSummary }) {
     const [sheet, setSheet] = useState(null);
     const [error, setError] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
@@ -206,7 +238,7 @@ export default function TaskInspection({ taskId, apiBase, onSummary }) {
         return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = previous; };
     }, [full]);
 
-    const base = `${apiBase}/${taskId}/inspection`;
+    const base = baseUrl;
 
     const load = useCallback(() => apiFetch(base)
         .then(data => { setSheet(data); setError(null); })
@@ -263,10 +295,23 @@ export default function TaskInspection({ taskId, apiBase, onSummary }) {
             .catch(err => setError(err?.message ?? 'Erreur'));
     };
 
-    const declareNc = () => {
-        apiFetch(`${apiBase}/${taskId}/nc`, { method: 'POST' })
-            .then(data => { if (data.redirect_url) window.location.href = data.redirect_url; })
-            .catch(err => setError(err?.message ?? 'Erreur'));
+    const declareNc = async (measure) => {
+        try {
+            const data = await apiFetch(`${base}/measures/${measure.id}/nc`, { method: 'POST' });
+            setSheet(s => ({
+                ...s,
+                points: s.points.map(p => {
+                    const measures = Array.isArray(p.measures) ? {} : { ...p.measures };
+                    Object.keys(measures).forEach(part => {
+                        if (measures[part]?.id === measure.id) measures[part] = { ...measures[part], nc: data.nc.code, nc_url: data.url };
+                    });
+                    return { ...p, measures };
+                }),
+            }));
+            window.open(data.url, '_blank', 'noopener');
+        } catch (err) {
+            setError(err?.message ?? 'Erreur');
+        }
     };
 
     if (error && !sheet) return <div className="alert alert-warning m-2">{error}</div>;
@@ -298,10 +343,10 @@ export default function TaskInspection({ taskId, apiBase, onSummary }) {
                     <option value="">{t.no_device}</option>
                     {sheet.devices.map(d => <option key={d.id} value={d.id}>{d.label}{d.overdue ? ' ⚠' : ''}</option>)}
                 </select>
-                {dossier.nok > 0 && (
-                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={declareNc}>
-                        <i className="fas fa-triangle-exclamation me-1" />{t.declare_nc}
-                    </button>
+                {dossier.report_url && (
+                    <a className="btn btn-sm btn-outline-primary" href={dossier.report_url} target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-signature me-1" />{t.report}
+                    </a>
                 )}
                 {!closed && (
                     <button type="button" className="btn btn-sm btn-success" onClick={closeControl}>
@@ -363,7 +408,7 @@ export default function TaskInspection({ taskId, apiBase, onSummary }) {
                                     {columns.map(n => (p.parts.includes(n) ? (
                                         <MeasureCell key={n} point={p} part={n} measure={p.measures?.[n]} disabled={closed} trans={t}
                                                      inputRef={el => { inputs.current[`${p.id}-${n}`] = el; }}
-                                                     onSave={save} onEnter={() => focusNext(p, n)} />
+                                                     onSave={save} onDeclareNc={declareNc} onEnter={() => focusNext(p, n)} />
                                     ) : <td key={n} className="bg-body-tertiary" />))}
                                 </tr>
                             );

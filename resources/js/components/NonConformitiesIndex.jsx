@@ -586,7 +586,8 @@ export default function NonConformitiesIndex({
     const [items,    setItems]    = useState([]);
     const [meta,     setMeta]     = useState(null);
     const [loading,  setLoading]  = useState(false);
-    const [search,   setSearch]   = useState('');
+    // ?search= : lien direct vers une NC (déclarée depuis une mesure hors tolérance).
+    const [search,   setSearch]   = useState(() => new URLSearchParams(window.location.search).get('search') ?? '');
     const [statuses, setStatuses] = useState([]);
     const [types,    setTypes]    = useState([]);
     const [sortField, setSortField] = useState('id');

@@ -23,6 +23,7 @@ class InspectionMeasure extends Model
         'measured_at',
         'instrument_id',
         'quality_control_device_id',
+        'quality_non_conformity_id',
     ];
 
     protected $casts = [
@@ -42,9 +43,15 @@ class InspectionMeasure extends Model
         return $this->belongsTo(InspectionControlPoint::class, 'inspection_control_point_id');
     }
 
-    public function Instrument()
+    /** Appareil du module qualité (avec ses étalonnages). */
+    public function Device()
     {
-        return $this->belongsTo(InspectionInstrument::class, 'instrument_id');
+        return $this->belongsTo(\App\Models\Quality\QualityControlDevice::class, 'quality_control_device_id');
+    }
+
+    public function NonConformity()
+    {
+        return $this->belongsTo(\App\Models\Quality\QualityNonConformity::class, 'quality_non_conformity_id');
     }
 
     public function MeasuredBy()

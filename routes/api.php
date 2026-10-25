@@ -119,11 +119,4 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/invoices/{invoiceId}/submit', [PdpIntegrationController::class, 'submitInvoice'])->name('invoices.submit');
         Route::post('/invoices/{invoiceId}/poll', [PdpIntegrationController::class, 'pollInvoice'])->name('invoices.poll');
     });
-
-    // inspection...
-    Route::get('/inspection-projects/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show');
-    Route::get('/inspection-sessions/{id}', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@show');
-    Route::post('/inspection-measures', 'App\Http\Controllers\Inspection\InspectionMeasureController@store');
-    Route::put('/inspection-measures/{id}', 'App\Http\Controllers\Inspection\InspectionMeasureController@update');
-    Route::post('/inspection-nonconformities', 'App\Http\Controllers\Inspection\InspectionNonconformityController@store');
 });
