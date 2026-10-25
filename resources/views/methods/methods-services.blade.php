@@ -111,7 +111,7 @@
                           <label for="margin">{{ __('general_content.margin_trans_key') }} :</label>
                           <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                            <input type="number" class="form-control" name="margin" id="margin" placeholder="10%" step=".001" value="{{ $MethodsService->hourly_rate }}">
+                            <input type="number" class="form-control" name="margin" id="margin" placeholder="10%" step=".001" value="{{ $MethodsService->margin }}">
                           </div>
                         </div>
                         <div class="mb-3">
