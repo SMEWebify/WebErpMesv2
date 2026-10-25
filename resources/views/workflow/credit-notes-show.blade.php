@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <x-FormTextareaComment  comment="{{ $CreditNotes->reason }}" />
+                                <x-FormTextareaComment name="reason" comment="{{ $CreditNotes->reason }}" />
                             </div>
                             <x-slot name="footerSlot">
                                 <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>

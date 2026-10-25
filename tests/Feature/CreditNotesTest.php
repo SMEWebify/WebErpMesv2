@@ -181,6 +181,18 @@ class CreditNotesTest extends TestCase
         $this->assertDatabaseCount('credit_notes', 0);
     }
 
+    public function test_the_show_form_posts_the_comment_as_reason(): void
+    {
+        // Le champ s'appelait « comment » alors que le contrôleur lit « reason » :
+        // le commentaire saisi n'était jamais enregistré.
+        $creditNote = CreditNotes::factory()->create(['reason' => 'Rayure à la livraison']);
+
+        $this->get(route('credit.notes.show', ['id' => $creditNote->id]))
+            ->assertOk()
+            ->assertSee('name="reason"', false)
+            ->assertSee('Rayure à la livraison');
+    }
+
     public function test_can_update_credit_note(): void
     {
         $creditNote = CreditNotes::factory()->create(['statu' => 1]);
