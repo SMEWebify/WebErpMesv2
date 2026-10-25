@@ -59,7 +59,7 @@ class PurchasesInvoiceController extends Controller
      */
     public function waintingInvoice()
     {
-        $initialCode  = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
+        $initialCode  = $this->nextFreeInvoiceCode();
 
         $reactEndpoints = [
             'init'  => route('purchases.waiting.invoice.json.init'),
@@ -103,7 +103,7 @@ class PurchasesInvoiceController extends Controller
         $companies  = $this->SelectDataService->getSupplier($companyIds);
         $users      = $this->SelectDataService->getUsers();
 
-        $initialCode = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
+        $initialCode = $this->nextFreeInvoiceCode();
 
         $lines = $this->purchaseInvoiceService->getPurchasesWaintingInvoiceLines($companiesId);
 
@@ -198,6 +198,23 @@ class PurchasesInvoiceController extends Controller
     }
 
     /**
+     * Prochain code de facture d'achat libre. Le compteur a pu rester en retard (le code proposé
+     * n'était jamais consommé) : on saute alors les codes déjà pris plutôt que d'en proposer un
+     * que la validation refusera.
+     */
+    private function nextFreeInvoiceCode(): string
+    {
+        $code = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
+
+        for ($i = 0; $i < 1000 && PurchaseInvoice::where('code', $code)->exists(); $i++) {
+            $this->documentCodeGenerator->generateDocumentCode('purchase-invoice');
+            $code = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
+        }
+
+        return $code;
+    }
+
+    /**
      * JSON store — create a purchase invoice from selected receipt lines.
      */
     public function storeInvoiceJson(Request $request)
@@ -216,6 +233,12 @@ class PurchasesInvoiceController extends Controller
                 ),
             ],
         ]);
+
+        // Le code proposé est consommé : sans ça le compteur ne bouge pas et la facture suivante
+        // se voit proposer le même code, refusé car déjà pris. Un code saisi à la main n'y touche pas.
+        if ($validated['code'] === $this->documentCodeGenerator->peekNextCode('purchase-invoice')) {
+            $this->documentCodeGenerator->generateDocumentCode('purchase-invoice');
+        }
 
         $invoice = PurchaseInvoice::create([
             'code'               => $validated['code'],
