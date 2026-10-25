@@ -11,6 +11,7 @@ use App\Services\Files\FileableRegistry;
 use App\Services\Files\FileConfidentiality;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
+use App\Services\Files\ThumbnailStore;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -175,6 +176,35 @@ class FileApiController extends Controller
         $this->authorize('view', $file);
 
         return $this->storage->response($file, download: true);
+    }
+
+    /**
+     * Stream the thumbnail of a file, rendered earlier by a browser.
+     */
+    public function thumbnail(File $file, ThumbnailStore $thumbnails): StreamedResponse
+    {
+        $this->authorize('view', $file);
+
+        return $thumbnails->response($file->thumbnail_path);
+    }
+
+    /**
+     * Store the thumbnail a browser just rendered (pdf.js, first page).
+     *
+     * A thumbnail is derived from the file, so anyone allowed to see the file
+     * may provide it; ThumbnailStore only accepts a small image.
+     */
+    public function storeThumbnail(Request $request, File $file, ThumbnailStore $thumbnails): JsonResponse
+    {
+        $this->authorize('view', $file);
+
+        $request->validate(['thumbnail' => ['required', 'file']]);
+
+        $file->forceFill([
+            'thumbnail_path' => $thumbnails->store($request->file('thumbnail'), 'files', $file->id, $file->thumbnail_path),
+        ])->save();
+
+        return response()->json(['thumbnail_url' => $file->thumbnail_url]);
     }
 
     /**

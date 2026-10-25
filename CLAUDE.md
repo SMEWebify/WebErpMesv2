@@ -314,6 +314,53 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Plans de contrôle (bullage) — lot 1 du chantier FAI
+
+Écran « Plans qualité » (`/quality/plans`, menu Qualité → Inspection), bulleur
+(`/quality/plans/{plan}/bubbler`) et onglet « Plans de contrôle » de la fiche article.
+L'ancien écran d'inspection reste servi (`quality.inspection.projects`) jusqu'au lot 2.
+- **Plan de contrôle** = `inspection_plans` : article + révision (= `products.ind`, ou l'indice
+  de la ligne de commande) + fichier plan **de la GED de l'article**. Brouillon → validé (figé,
+  409 sur toute écriture) ; « Nouvelle version » recopie les cotes, et sa validation rend
+  obsolète le plan validé **de la même révision** seulement (des commandes à l'ancien indice
+  peuvent tourner).
+- **Cotes** = `inspection_control_points` avec `inspection_plan_id` (l'ancien
+  `inspection_project_id` est devenu facultatif) : rectangle et bulle en **proportions de la
+  page** (0–1), tolérancement géométrique, `is_fai`, opération (`methods_services_id`).
+  `tol_min` / `tol_max` restent des **écarts signés** ; une tolérance géométrique = nominal 0,
+  tol_max = zone. Coordonnées toujours dans le **repère de la page d'origine** :
+  `inspection_plans.rotation` (0/90/180/270, en plus du /Rotate du PDF) n'est qu'un affichage,
+  converti à l'écran (`toView` / `toPage` du bulleur, `InspectionPlan::toView()` pour la
+  renumérotation).
+- **Onglet « À bullé »** : `App\Services\Inspection\ControlPlanNeeds` (2 requêtes, test de
+  comptage). Besoin = `companies.requires_control_plan`, sauf forçage
+  `products.control_plan_mode` (`always` / `never`).
+- **Droits** : lecture pour tous ; `inspection-plans-edit` (créer, bullé) et
+  `inspection-plans-approve` (valider), posés en middleware de route.
+- **Lecture de la zone tracée** (pré-remplit la fiche, n'enregistre rien d'autre que ce
+  pré-remplissage, l'utilisateur relit) : texte du PDF dans le rectangle (`textIn`, décodé par
+  `parseDimensionText` de `characteristics.js`, tests Vitest), sinon image découpée envoyée à
+  `App\Services\Inspection\CharacteristicReader` (provider IA actif, même patron que les
+  justificatifs de notes de frais ; seule la zone part, jamais le plan ; route throttlée 30/min).
+- **pdf.js** (`pdfjs-dist`, chargé à la demande, `resources/js/lib/pdf/pdfRender.js`) dessine
+  le plan sous les bulles. Le lecteur PDF de la GED reste celui du navigateur.
+- **Miniatures** : rendues par le navigateur puis déposées (`files.thumbnail_path`,
+  `inspection_plans.thumbnail_path`, `App\Services\Files\ThumbnailStore` : PNG/WebP/JPEG
+  ≤ 480 px relus dans les octets). Aucun moteur PDF côté serveur.
+- **Contrôle en fabrication (lot 2)** : `App\Services\Inspection\TaskInspection`. Un dossier
+  (`inspection_projects` avec `inspection_plan_id`) par ligne de commande dont l'article a un
+  plan **validé à l'indice commandé**, créé au démarrage de la tâche ou à l'ouverture de
+  l'onglet ; premier dossier d'un article à un indice = premier article (`is_fai`). Une
+  session de mesure par tâche, une mesure par (session, cote, pièce `part_index`), la grille
+  affiche la dernière toutes tâches confondues. Pièces à mesurer selon l'échantillonnage
+  (`partsFor`, grille plafonnée à 50 pièces) ; une cote FAI d'un dossier FAI exige la pièce 1.
+  Jugement par `InspectionControlPoint::evaluate()` ; sans tolérance, l'opérateur juge.
+  Écran tâche : onglet « Contrôle » (`components/inspection/TaskInspection.jsx`, plan bullé +
+  grille, appareils `quality_control_devices`) et **simple avertissement** à la déclaration de
+  pièces bonnes tant que la pièce 1 n'est pas mesurée — **jamais de blocage serveur** (test).
+  Onglets « En cours » / « Terminés » de Plans qualité.
+- Tests : `tests/Feature/Inspection/`. Suite (lots 2-4) : mémoire `project_quality_plans_fai_chantier`.
+
 ## Visite sur site (opportunité, mobile)
 
 `/opportunities/{id}/visit` : page autonome sans sidebar (`opportunity-visit.blade.php` →

@@ -32,6 +32,7 @@
           @endcan
           
           <li class="nav-item"><a class="nav-link" href="#Documents" data-bs-toggle="tab"><i class="far fa-folder-open"></i> {{ __('general_content.documents_trans_key') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="#ControlPlans" data-bs-toggle="tab"><i class="fas fa-pen-ruler"></i> {{ __('inspection.product_tab') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#Logs" data-bs-toggle="tab"><i class="fas fa-history"></i> Logs</a></li>
         </ul>
       <!-- /.card-header -->
@@ -140,6 +141,15 @@
                             <option value="1" @if($Product->tracability_type == 1 ) Selected @endif>{{ __('general_content.no_traceability_trans_key') }}</option>
                             <option value="2" @if($Product->tracability_type == 2 ) Selected @endif>{{ __('general_content.with_batch_number_trans_key') }}</option>
                             <option value="3" @if($Product->tracability_type == 3 ) Selected @endif>{{ __('general_content.with_serial_number_trans_key') }}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 col-md-4">
+                        <label for="control_plan_mode">{{ __('inspection.control_plan_mode') }}</label>
+                        <select class="form-select" name="control_plan_mode" id="control_plan_mode">
+                            <option value="">{{ __('inspection.control_plan_mode_follow') }}</option>
+                            <option value="always" @selected($Product->control_plan_mode === 'always')>{{ __('inspection.control_plan_mode_always') }}</option>
+                            <option value="never" @selected($Product->control_plan_mode === 'never')>{{ __('inspection.control_plan_mode_never') }}</option>
                         </select>
                     </div>
                 </div>
@@ -810,6 +820,21 @@
             'fileableType' => 'product',
             'fileableId'   => $Product->id,
           ])
+        </div>
+        <div class="tab-pane" id="ControlPlans">
+          @php
+            // @json découpe son argument aux virgules : les expressions sont calculées ici.
+            $controlPlanEndpoints = \App\Http\Controllers\Inspection\InspectionPlanController::endpoints();
+            $controlPlanTrans = \App\Http\Controllers\Inspection\InspectionPlanController::trans();
+            $controlPlanCanEdit = auth()->user()->can(\App\Http\Controllers\Inspection\InspectionPlanController::EDIT_PERMISSION);
+          @endphp
+          <div
+            id="product-control-plans-app"
+            data-product-id="{{ $Product->id }}"
+            data-endpoints='@json($controlPlanEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+            data-trans='@json($controlPlanTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+            data-can-edit='@json($controlPlanCanEdit)'
+          ></div>
         </div>
         <div class="tab-pane " id="Logs">
           @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Products\Products', 'logsSubjectId' => $Product->id])

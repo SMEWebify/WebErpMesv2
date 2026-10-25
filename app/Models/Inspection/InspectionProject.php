@@ -18,11 +18,39 @@ class InspectionProject extends Model
         'orders_id',
         'order_lines_id',
         'of_id',
+        'inspection_plan_id',
+        'products_id',
+        'revision',
+        'is_fai',
         'status',
         'quantity_planned',
         'serial_tracking',
         'created_by',
+        'closed_at',
+        'closed_by',
     ];
+
+    protected $casts = [
+        'is_fai'          => 'boolean',
+        'serial_tracking' => 'boolean',
+        'closed_at'       => 'datetime',
+    ];
+
+    public function Plan()
+    {
+        return $this->belongsTo(InspectionPlan::class, 'inspection_plan_id');
+    }
+
+    public function Order()
+    {
+        return $this->belongsTo(\App\Models\Workflow\Orders::class, 'orders_id');
+    }
+
+    public function Measures()
+    {
+        return $this->hasManyThrough(InspectionMeasure::class, InspectionMeasureSession::class,
+            'inspection_project_id', 'inspection_measure_session_id');
+    }
 
     public function Company()
     {

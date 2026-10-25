@@ -12,6 +12,7 @@ class InspectionMeasureSession extends Model
 
     protected $fillable = [
         'inspection_project_id',
+        'tasks_id',
         'session_code',
         'type',
         'quantity_to_measure',

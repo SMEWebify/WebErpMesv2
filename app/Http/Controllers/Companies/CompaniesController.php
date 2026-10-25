@@ -392,6 +392,7 @@ class CompaniesController extends Controller
         $company->active               = $request->boolean('active');
         $company->quoted_delivery_note = $request->boolean('quoted_delivery_note');
         $company->order_status_email   = $request->boolean('order_status_email');
+        $company->requires_control_plan = $request->boolean('requires_control_plan');
         $company->save();
 
         return response()->json([

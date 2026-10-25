@@ -33,6 +33,8 @@ class FileResource extends JsonResource
             'is_viewable' => $this->is_viewable,
             'view_url' => $this->view_url,
             'download_url' => $this->download_url,
+            'thumbnail_url' => $this->thumbnail_url,
+            'thumbnail_store_url' => route('files.json.thumbnail', ['file' => $this->id]),
             'uploaded_by' => $this->whenLoaded('UserManagement', fn () => $this->UserManagement?->name),
             'created_at' => $this->created_at?->toIso8601String(),
             'role' => $this->whenPivotLoaded('fileables', fn () => $this->pivot->role),

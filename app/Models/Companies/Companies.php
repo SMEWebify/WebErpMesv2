@@ -83,12 +83,14 @@ class Companies extends Model
                             'csv_file_name',
                             'credit_limit',
                             'credit_block_level',
+                            'requires_control_plan',
                         ];
 
     // La fiche lit cette date via ->format() : sans cast, une chaîne → erreur 500.
     protected $casts = [
         'vat_attestation_valid_until' => 'date',
         'credit_limit'                => 'decimal:2',
+        'requires_control_plan'       => 'boolean',
     ];
 
     public function getActivitylogOptions(): LogOptions

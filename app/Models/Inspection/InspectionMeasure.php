@@ -14,6 +14,7 @@ class InspectionMeasure extends Model
         'inspection_measure_session_id',
         'inspection_control_point_id',
         'serial_number',
+        'part_index',
         'measured_value',
         'result',
         'deviation',
@@ -21,10 +22,14 @@ class InspectionMeasure extends Model
         'measured_by',
         'measured_at',
         'instrument_id',
+        'quality_control_device_id',
     ];
 
     protected $casts = [
-        'measured_at' => 'datetime',
+        'measured_at'    => 'datetime',
+        'measured_value' => 'float',
+        'deviation'      => 'float',
+        'part_index'     => 'integer',
     ];
 
     public function Session()

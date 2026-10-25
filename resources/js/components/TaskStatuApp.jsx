@@ -4,6 +4,8 @@ import { getTimeUnit, hoursToUnit, unitLabel } from '../lib/duration.js';
 // Le viewer embarque three.js / OCCT-WASM : chargé à la demande uniquement,
 // pour ne pas alourdir l'écran quand la tâche n'a aucun plan lié.
 const FileViewer = lazy(() => import('./files/FileViewer.jsx'));
+// Onglet Contrôle (plan bullé + grille de mesures) : pdf.js chargé à la demande.
+const TaskInspection = lazy(() => import('./inspection/TaskInspection.jsx'));
 
 // ---------------------------------------------------------------------------
 // API helpers
@@ -330,11 +332,13 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
 // ---------------------------------------------------------------------------
 // QtyDeclare — one column of the declaration panel (good or rejected)
 // ---------------------------------------------------------------------------
-function QtyDeclare({ label, endpoint, tone, sign, task, apiBase, onReload }) {
+function QtyDeclare({ label, endpoint, tone, sign, task, apiBase, onReload, confirmMessage }) {
     const [qty, setQty] = useState(0);
     const [busy, setBusy] = useState(false);
 
     async function declare(amount) {
+        // Avertit sans bloquer (premier article pas encore mesuré, par exemple).
+        if (confirmMessage && !window.confirm(confirmMessage)) return;
         setBusy(true);
         try {
             await apiFetch(`${apiBase}/${task.id}/${endpoint}`, 'POST', { qty: amount });
@@ -851,6 +855,7 @@ function TaskDetail({
     andonStoreUrl,
     purchasesRequestUrl,
     onNavigate,
+    onInspectionSummary,
     trans,
     fileTrans,
     searchSlot,
@@ -859,6 +864,12 @@ function TaskDetail({
     const [tab, setTab] = useState('activity');
     const reload = () => onNavigate(task.id);
     const isInternal = task.service?.type === 1;
+    // Article avec plan de contrôle validé : les cotes restent sous les yeux, onglet Contrôle d'abord.
+    const inspection = task.inspection;
+    const [stage, setStage] = useState(inspection ? 'control' : 'drawing');
+    const faiWarning = inspection && inspection.is_fai && inspection.fai_pending && !inspection.closed
+        ? inspection.labels?.fai_warning
+        : null;
 
     if (!task.order_lines_id) {
         return (
@@ -907,6 +918,7 @@ function TaskDetail({
                                 task={task}
                                 apiBase={apiBase}
                                 onReload={reload}
+                                confirmMessage={faiWarning}
                             />
                             <QtyDeclare
                                 label={t('quantity_rejected_trans_key')}
@@ -925,7 +937,31 @@ function TaskDetail({
 
                 {/* Centre — le plan */}
                 <div className="ts-shop__stage">
-                    <DocumentStage documents={task.documents ?? []} fileTrans={fileTrans} trans={trans} />
+                    {inspection && (
+                        <div className="ts-tabs mb-2">
+                            <button type="button" className={`ts-tab${stage === 'drawing' ? ' is-active' : ''}`} onClick={() => setStage('drawing')}>
+                                <i className="fas fa-drafting-compass me-1" />{t('drawing_trans_key')}
+                            </button>
+                            <button type="button" className={`ts-tab${stage === 'control' ? ' is-active' : ''}`} onClick={() => setStage('control')}>
+                                <i className="fas fa-ruler-combined me-1" />{inspection.labels?.tab ?? 'Contrôle'}
+                                {inspection.required != null && (
+                                    <span className={`badge ms-2 ${inspection.nok > 0 ? 'text-bg-danger' : inspection.done >= inspection.required ? 'text-bg-success' : 'text-bg-secondary'}`}>
+                                        {inspection.done}/{inspection.required}
+                                    </span>
+                                )}
+                                {faiWarning && <span className="badge text-bg-warning ms-1">FAI</span>}
+                            </button>
+                        </div>
+                    )}
+                    {stage === 'control' && inspection ? (
+                        <section className="ts-card">
+                            <Suspense fallback={<div className="ts-stage__empty"><i className="fas fa-spinner fa-spin" /></div>}>
+                                <TaskInspection key={task.id} taskId={task.id} apiBase={apiBase} onSummary={onInspectionSummary} />
+                            </Suspense>
+                        </section>
+                    ) : (
+                        <DocumentStage documents={task.documents ?? []} fileTrans={fileTrans} trans={trans} />
+                    )}
                 </div>
 
                 {/* Rail droit — contexte */}
@@ -1091,6 +1127,7 @@ export default function TaskStatuApp({
                     andonStoreUrl={andonStoreUrl}
                     purchasesRequestUrl={purchasesRequestUrl}
                     onNavigate={handleNavigate}
+                    onInspectionSummary={(summary) => summary && setTask((current) => ({ ...current, inspection: { ...current.inspection, ...summary } }))}
                     trans={trans}
                     fileTrans={fileTrans}
                     searchSlot={searchForm(true)}

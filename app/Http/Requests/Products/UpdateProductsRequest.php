@@ -44,6 +44,7 @@ class UpdateProductsRequest extends FormRequest
             'z_oversize' => 'nullable|numeric',
             'comment' => 'nullable|string',
             'tracability_type' => 'nullable|numeric|max:255',
+            'control_plan_mode' => 'nullable|in:always,never',
             'qty_eco_min' => 'nullable|numeric',
             'qty_eco_max' => 'nullable|numeric',
             'diameter' => 'nullable|numeric',

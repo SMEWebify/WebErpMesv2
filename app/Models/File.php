@@ -38,6 +38,7 @@ class File extends Model
         'comment',
         'hashtags',
         'as_photo',
+        'thumbnail_path',
     ];
 
     /**
@@ -84,6 +85,16 @@ class File extends Model
     public function getDownloadUrlAttribute(): string
     {
         return route('files.download', ['file' => $this->id]);
+    }
+
+    /**
+     * Thumbnail rendered by a browser, null until one has been stored.
+     */
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        return filled($this->thumbnail_path)
+            ? route('files.thumbnail', ['file' => $this->id, 'v' => substr(md5($this->thumbnail_path), 0, 8)])
+            : null;
     }
 
     /**

@@ -64,7 +64,8 @@ class Products extends Model
                             'svg_file',
                             'cad_file_path',
                             'cam_file_path',
-                            'csv_file_name',];
+                            'csv_file_name',
+                            'control_plan_mode',];
 
     // Only log changes
     protected static $logOnlyDirty = true;

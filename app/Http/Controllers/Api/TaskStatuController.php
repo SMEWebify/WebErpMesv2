@@ -15,6 +15,7 @@ use App\Models\Products\StockReservation;
 use App\Models\Products\SerialNumbers;
 use App\Services\QualityNonConformityService;
 use App\Services\Files\FileKindResolver;
+use App\Services\Inspection\TaskInspection;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -194,6 +195,8 @@ class TaskStatuController extends Controller
             'timeline'            => $timeline,
             // documents (plan, 3D, DXF...) shown by the operator viewer
             'documents'           => $this->buildDocuments($task),
+            // contrôle : plan de contrôle validé de l'article, dossier de la ligne
+            'inspection'          => app(TaskInspection::class)->summary($task),
         ]);
     }
 
@@ -356,6 +359,14 @@ class TaskStatuController extends Controller
         if ($status) {
             Task::where('id', $id)->update(['status_id' => $status->id]);
             event(new \App\Events\TaskChangeStatu($id));
+        }
+
+        // Dossier de contrôle créé au démarrage quand l'article a un plan validé.
+        // Un échec ici ne doit jamais empêcher de démarrer la production.
+        try {
+            app(TaskInspection::class)->dossierFor(Task::with('OrderLines.Product', 'OrderLines.order')->find($id), create: true);
+        } catch (\Throwable $e) {
+            report($e);
         }
 
         return response()->json(['success' => true]);

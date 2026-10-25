@@ -718,6 +718,14 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                 label={trans.order_status_email}
                             />
                         </div>
+                        <div className="col-md-3 d-flex align-items-center" title={trans.requires_control_plan_help}>
+                            <Toggle
+                                id="requires_control_plan"
+                                checked={!!form.requires_control_plan}
+                                onChange={set('requires_control_plan')}
+                                label={trans.requires_control_plan}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

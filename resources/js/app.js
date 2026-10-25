@@ -1109,6 +1109,38 @@ async function mountInspectionProjectsApp() {
     );
 }
 
+// Plans de contrôle : liste « Plans qualité », bulleur, onglet de la fiche article.
+async function mountQualityPlans() {
+    const mounts = [
+        ['quality-plans-app', () => import('./components/inspection/QualityPlansIndex.jsx'), (d) => ({})],
+        ['plan-bubbler-app', () => import('./components/inspection/Bubbler.jsx'), (d, parse) => ({
+            planId: parseInt(d.planId, 10), canApprove: parse('canApprove') ?? false, aiReading: parse('aiReading') ?? false,
+        })],
+        ['product-control-plans-app', () => import('./components/inspection/ProductControlPlans.jsx'), (d) => ({
+            productId: parseInt(d.productId, 10),
+        })],
+    ];
+
+    for (const [id, load, extra] of mounts) {
+        const element = document.getElementById(id);
+        if (!element) continue;
+
+        const { default: Component } = await load();
+        const parse = (attr) => {
+            try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+        };
+
+        createRoot(element).render(
+            React.createElement(Component, {
+                endpoints: parse('endpoints') ?? {},
+                trans:     parse('trans') ?? {},
+                canEdit:   parse('canEdit') ?? false,
+                ...extra(element.dataset, parse),
+            })
+        );
+    }
+}
+
 async function mountTaskManagePage() {
     const element = document.getElementById('task-manage-app');
     if (!element) return;
@@ -1413,6 +1445,7 @@ mountGanttChart();
 mountNonConformitiesIndex();
 mountGmaoDashboard();
 mountInspectionProjectsApp();
+mountQualityPlans();
 mountTaskManagePage();
 mountProcessDiagramApp();
 mountQuoteChartsTab();

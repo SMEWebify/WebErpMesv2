@@ -1149,8 +1149,9 @@ return [
                     'icon_color' => 'danger',
                 ],
                 [
+                    // Plans qualité (bullage) ; l'ancien écran reste lié depuis la page.
                     'text' => 'inspection_trans_key',
-                    'url'  => 'quality/inspection-projects',
+                    'url'  => 'quality/plans',
                     'icon_color' => 'info',
                 ],
                 [

@@ -57,6 +57,7 @@
         "frappe-gantt": "^1.2.2",
         "jspdf": "^4.2.1",
         "occt-import-js": "^0.0.23",
+        "pdfjs-dist": "^6.4.299",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
         "react-grid-layout": "^2.3.0",

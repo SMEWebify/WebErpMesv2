@@ -5,7 +5,10 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1>Inspections - Projets</h1>
-        <a class="btn btn-primary" href="{{ route('quality') }}">Retour à la qualité</a>
+        <div>
+            <a class="btn btn-success me-2" href="{{ route('quality.plans') }}"><i class="fas fa-pen-ruler me-1"></i>{{ __('inspection.title') }}</a>
+            <a class="btn btn-primary" href="{{ route('quality') }}">Retour à la qualité</a>
+        </div>
     </div>
 @stop
 

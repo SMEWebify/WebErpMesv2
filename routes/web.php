@@ -972,6 +972,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/Task/Statu/Api/{id}/date',          'App\Http\Controllers\Api\TaskStatuController@updateDate')->name('production.task.statu.api.date');
         Route::put('/Task/Statu/Api/{id}/resource',      'App\Http\Controllers\Api\TaskStatuController@updateResource')->name('production.task.statu.api.resource');
         Route::post('/Task/Statu/Api/{id}/nc',           'App\Http\Controllers\Api\TaskStatuController@createNc')->name('production.task.statu.api.nc');
+        // Onglet Contrôle : mesures du plan de contrôle validé de l'article
+        Route::get('/Task/Statu/Api/{id}/inspection',           'App\Http\Controllers\Inspection\InspectionTaskController@show')->name('production.task.statu.api.inspection');
+        Route::post('/Task/Statu/Api/{id}/inspection/measure',  'App\Http\Controllers\Inspection\InspectionTaskController@measure')->name('production.task.statu.api.inspection.measure');
+        Route::post('/Task/Statu/Api/{id}/inspection/close',    'App\Http\Controllers\Inspection\InspectionTaskController@close')->name('production.task.statu.api.inspection.close');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -1187,6 +1191,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
+        Route::get('/plans', 'App\Http\Controllers\Inspection\InspectionPlanController@indexView')->name('quality.plans');
+        Route::get('/plans/{plan}/bubbler', 'App\Http\Controllers\Inspection\InspectionPlanController@bubbler')->name('inspection.plans.bubbler');
 
         // Routes for Process Diagrams
         Route::get('/process-diagrams', 'App\Http\Controllers\Quality\ProcessDiagramController@indexView')->name('quality.process-diagrams');
@@ -1274,6 +1280,31 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/correction/create',      'App\Http\Controllers\Quality\QualityCorrectionController@jsonStore')->name('quality.json.correction.create');
             Route::post('/correction/update/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@jsonUpdate')->name('quality.json.correction.update');
         });
+    });
+
+    // Plans de contrôle (bullage) — lecture pour tous, écriture et validation sous permission.
+    Route::group(['prefix' => 'inspection-plans', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        $plans = \App\Http\Controllers\Inspection\InspectionPlanController::class;
+        $points = \App\Http\Controllers\Inspection\InspectionPlanPointController::class;
+        $edit = 'permission:' . \App\Http\Controllers\Inspection\InspectionPlanController::EDIT_PERMISSION;
+        $approve = 'permission:' . \App\Http\Controllers\Inspection\InspectionPlanController::APPROVE_PERMISSION;
+
+        Route::get('/', [$plans, 'index'])->name('inspection.plans.index');
+        Route::get('/product/{product}', [$plans, 'forProduct'])->name('inspection.plans.product');
+        Route::get('/{plan}', [$plans, 'show'])->name('inspection.plans.show');
+        Route::get('/{plan}/thumbnail', [$plans, 'thumbnail'])->name('inspection.plans.thumbnail');
+
+        Route::post('/', [$plans, 'store'])->middleware($edit)->name('inspection.plans.store');
+        Route::patch('/{plan}', [$plans, 'update'])->middleware($edit)->name('inspection.plans.update');
+        Route::delete('/{plan}', [$plans, 'destroy'])->middleware($edit)->name('inspection.plans.destroy');
+        Route::post('/{plan}/thumbnail', [$plans, 'storeThumbnail'])->middleware($edit)->name('inspection.plans.thumbnail.store');
+        Route::post('/{plan}/approve', [$plans, 'approve'])->middleware($approve)->name('inspection.plans.approve');
+
+        Route::post('/{plan}/points', [$points, 'store'])->middleware($edit)->name('inspection.plans.points.store');
+        Route::post('/{plan}/points/renumber', [$points, 'renumber'])->middleware($edit)->name('inspection.plans.points.renumber');
+        Route::post('/{plan}/read-zone', [$points, 'readZone'])->middleware([$edit, 'throttle:30,1'])->name('inspection.plans.read-zone');
+        Route::patch('/points/{point}', [$points, 'update'])->middleware($edit)->name('inspection.plans.points.update');
+        Route::delete('/points/{point}', [$points, 'destroy'])->middleware($edit)->name('inspection.plans.points.destroy');
     });
 
     Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -1430,7 +1461,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/store', [FileApiController::class, 'store'])->name('files.json.store');
             Route::patch('/{file}', [FileApiController::class, 'update'])->name('files.json.update');
             Route::delete('/{file}', [FileApiController::class, 'destroy'])->name('files.json.destroy');
+            Route::post('/{file}/thumbnail', [FileApiController::class, 'storeThumbnail'])->name('files.json.thumbnail');
         });
+
+        Route::get('/files/{file}/thumbnail', [FileApiController::class, 'thumbnail'])->name('files.thumbnail');
 
         Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->name('files.raw');
         Route::get('/files/{file}/download', [FileApiController::class, 'download'])->name('files.download');
