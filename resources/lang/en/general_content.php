@@ -1205,6 +1205,7 @@ return [
 
     //PURCHASE INVOICE
     'invoice_supplier_trans_key'               => 'Invoice supplier',
+    'supplier_reference_trans_key'             => 'Supplier reference',
     'name_purchase_invoice_trans_key'          => 'Name of invoice supplier',
 
     //QUALITY
