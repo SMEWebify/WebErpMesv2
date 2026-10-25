@@ -42,6 +42,7 @@ class AccountingEntry extends Model
         'currency_code',
         'invoice_line_id',
         'invoice_payment_id',
+        'credit_note_line_id',
         'purchase_invoice_line_id',
         'asset_id',
         'exported'

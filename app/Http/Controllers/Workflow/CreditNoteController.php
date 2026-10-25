@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\InvoiceLines;
 use App\Services\CreditNoteKPIService;
 use App\Services\DocumentCodeGenerator;
+use App\Services\AccountingEntryService;
 use App\Models\Workflow\CreditNoteLines;
 use App\Services\CreditNoteCalculatorService;
 use App\Http\Requests\Workflow\UpdateCreditNoteRequest;
@@ -83,7 +84,7 @@ class CreditNoteController extends Controller
             ]);
 
             foreach ($invoiceLines as $invoiceLine) {
-                CreditNoteLines::create([
+                $creditNoteLine = CreditNoteLines::create([
                     'credit_note_id'     => $creditNote->id,
                     'order_line_id'      => $invoiceLine->order_line_id,
                     'invoice_line_id'    => $invoiceLine->id,
@@ -99,6 +100,8 @@ class CreditNoteController extends Controller
                     'vat_rate'           => $invoiceLine->resolved_vat_rate,
                     'accounting_vats_id' => $invoiceLine->resolved_vat_id,
                 ]);
+                // Écriture d'avoir (montants inversés) : sans elle, l'avoir n'apparaissait pas au FEC.
+                app(AccountingEntryService::class)->createCreditNoteEntry($creditNoteLine);
 
                 // Inverse les quantités facturées sur la ligne de commande.
                 // Sans objet pour une ligne libre, qui n'en a pas.
@@ -224,6 +227,10 @@ class CreditNoteController extends Controller
         $CreditNote->reason             = $request->reason;
         $CreditNote->customer_reference = $request->customer_reference;
         $CreditNote->save();
+        if ($CreditNote->wasChanged('statu')) {
+            // Un avoir refusé ne compte pas en comptabilité ; rouvert, il compte de nouveau.
+            app(AccountingEntryService::class)->syncCreditNoteEntries($CreditNote);
+        }
 
         return redirect()->route('credit.notes.show', ['id' =>  $CreditNote->id])->with('success', 'Successfully updated credit note');
     }

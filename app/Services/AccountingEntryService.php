@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\InvoicePayment;
+use App\Models\Workflow\CreditNotes;
+use App\Models\Workflow\CreditNoteLines;
 use App\Models\Accounting\AccountingEntry;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Accounting\AccountingAllocation;
@@ -380,6 +382,101 @@ class AccountingEntryService
                     'credit_amount'            => $line->debit_amount,
                 ]);
             }
+        }
+
+        // L'original contre-passé n'est plus « vivant » : détaché de sa pièce, il ne sera pas
+        // annulé une seconde fois. La pièce reste lisible par document_reference.
+        AccountingEntry::whereIn('id', $lines->pluck('id'))
+            ->update(['invoice_line_id' => null, 'invoice_payment_id' => null, 'credit_note_line_id' => null]);
+    }
+
+    /**
+     * Écriture d'avoir (journal VENT) — miroir de l'écriture de vente de la ligne facturée :
+     * crédit 411 (TTC), débit produit (HT), débit TVA. Mêmes comptes que la facture
+     * (matrice de TVA, sinon affectation de la ligne de facture). Sans compte, rien n'est écrit,
+     * comme pour la facture.
+     */
+    public function createCreditNoteEntry(CreditNoteLines $line): void
+    {
+        $creditNote  = $line->creditNote;
+        $invoiceLine = $line->invoiceLine;
+        if (!$creditNote || !$invoiceLine) {
+            return;
+        }
+
+        $allocation = AccountingAllocation::find($invoiceLine->accounting_allocation_id);
+        try {
+            $rule = app(VatResolver::class)->resolveSale($creditNote->companie, $invoiceLine->Product);
+        } catch (VatRuleNotFoundException $e) {
+            $rule = null;
+        }
+
+        $salesAccount = $rule?->sales_account ?: $allocation?->code_account;
+        $salesLabel   = $allocation?->label ?? 'Vente';
+        $vatAccount   = $rule?->vat_account ?: $allocation?->vat_account;
+        if (!$salesAccount) {
+            return;
+        }
+
+        $ht  = round((float) $line->qty * (float) $line->unit_price * (1 - (float) $line->discount / 100), 2);
+        $tva = round($ht * (float) $line->vat_rate / 100, 2);
+        $ttc = $ht + $tva;
+        if ($ttc <= 0) {
+            return;
+        }
+
+        $clientCode  = strtoupper(substr(preg_replace('/[^A-Z0-9]/i', '', $creditNote->companie?->code ?? ''), 0, 8));
+        $clientLabel = $creditNote->companie?->label ?? 'Client';
+
+        $date = Carbon::parse($creditNote->created_at);
+        $base = $this->baseLine('VENT', 'Journal des Ventes', $this->getNextSequenceNumber('VENT', $date), $date, Factory::first()->curency ?? 'EUR');
+        $common = [
+            'justification_reference' => $creditNote->code,
+            'justification_date'      => $date,
+            'document_reference'      => $creditNote->code,
+            'document_date'           => $date,
+            'entry_label'             => 'Avoir ' . $creditNote->code . ' - ' . $line->display_label,
+            'credit_note_line_id'     => $line->id,
+        ];
+
+        AccountingEntry::create($base + $common + [
+            'account_number' => '411', 'account_label' => 'Clients',
+            'auxiliary_account_number' => $clientCode, 'auxiliary_account_label' => $clientLabel,
+            'debit_amount' => 0, 'credit_amount' => $ttc,
+        ]);
+        AccountingEntry::create($base + $common + [
+            'account_number' => $salesAccount, 'account_label' => $salesLabel,
+            'auxiliary_account_number' => null, 'auxiliary_account_label' => null,
+            'debit_amount' => $ht, 'credit_amount' => 0,
+        ]);
+        if ($tva > 0) {
+            AccountingEntry::create($base + $common + [
+                'account_number' => $vatAccount, 'account_label' => 'TVA collectée',
+                'auxiliary_account_number' => null, 'auxiliary_account_label' => null,
+                'debit_amount' => $tva, 'credit_amount' => 0,
+            ]);
+        }
+    }
+
+    /**
+     * Aligne les écritures d'un avoir sur son statut : un avoir refusé (3) n'est pas déduit de
+     * la créance (config/receivables.php), il ne doit pas non plus compter en comptabilité.
+     */
+    public function syncCreditNoteEntries(CreditNotes $creditNote): void
+    {
+        $lineIds = $creditNote->creditNotelines()->pluck('id');
+        $live    = AccountingEntry::whereIn('credit_note_line_id', $lineIds)->get();
+
+        if ((int) $creditNote->statu === 3) {
+            if ($live->isNotEmpty()) {
+                $this->cancelEntries($live);
+            }
+
+            return;
+        }
+
+        if ($live->isEmpty()) {
+            $creditNote->creditNotelines()->get()->each(fn (CreditNoteLines $line) => $this->createCreditNoteEntry($line));
         }
     }
 

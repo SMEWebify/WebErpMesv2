@@ -181,6 +181,41 @@ class CreditNotesTest extends TestCase
         $this->assertDatabaseCount('credit_notes', 0);
     }
 
+    public function test_a_credit_note_posts_reversed_sale_entries_that_follow_its_status(): void
+    {
+        $vat = \App\Models\Accounting\AccountingVat::factory()->create(['rate' => 20]);
+        $allocation = \App\Models\Accounting\AccountingAllocation::create([
+            'account' => '701000', 'label' => 'Ventes', 'accounting_vats_id' => $vat->id,
+            'vat_account' => '445710', 'code_account' => '701000', 'type_imputation' => 1,
+        ]);
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+        $invoiceLine = InvoiceLines::create([
+            'invoices_id' => $invoice->id, 'ordre' => 10, 'label' => 'Platine', 'qty' => 2,
+            'unit_price' => 100, 'discount' => 0, 'vat_rate' => 20, 'accounting_vats_id' => $vat->id,
+            'accounting_allocation_id' => $allocation->id, 'invoice_status' => 2,
+        ]);
+
+        $this->post(route('credit-notes.store.from.invoice'), ['selected_invoice_lines' => [$invoiceLine->id]])
+            ->assertRedirect();
+        $creditNote = CreditNotes::where('invoices_id', $invoice->id)->firstOrFail();
+        $lineIds = $creditNote->creditNotelines()->pluck('id');
+        $entries = fn () => \App\Models\Accounting\AccountingEntry::whereIn('credit_note_line_id', $lineIds)->get();
+
+        // Miroir de la vente : crédit client 240 TTC, débit produit 200 HT + TVA 40.
+        $this->assertEquals(240.0, (float) $entries()->where('account_number', '411')->sum('credit_amount'));
+        $this->assertEquals(240.0, (float) $entries()->sum('debit_amount'));
+
+        $update = fn (int $statu) => $this->post(route('credit.notes.update', ['id' => $creditNote->id]), [
+            'id' => $creditNote->id, 'label' => $creditNote->label, 'statu' => $statu,
+        ])->assertRedirect();
+
+        $update(3); // refusé : ne compte plus
+        $this->assertCount(0, $entries());
+
+        $update(1); // rouvert : compte de nouveau
+        $this->assertEquals(240.0, (float) $entries()->sum('debit_amount'));
+    }
+
     public function test_the_show_form_posts_the_comment_as_reason(): void
     {
         // Le champ s'appelait « comment » alors que le contrôleur lit « reason » :
