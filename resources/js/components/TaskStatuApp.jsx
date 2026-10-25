@@ -865,7 +865,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                 <form action={andonStoreUrl} method="POST" style={{ marginTop: 12 }}>
                     <input type="hidden" name="_token" value={csrfToken()} />
                     <input type="hidden" name="task_id" value={task.id} />
-                    <input type="hidden" name="resource_id" value={task.selected_resource_id ?? 1} />
+                    <input type="hidden" name="resource_id" value={task.selected_resource_id ?? ''} />
                     <div className="ts-stack">
                         <div>
                             <span className="ts-label">{"Type d'alerte"}</span>
@@ -882,7 +882,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                             <span className="ts-label">Description</span>
                             <textarea
                                 className="ts-input"
-                                name="message"
+                                name="description"
                                 rows={2}
                                 value={andonMessage}
                                 onChange={(e) => setAndonMessage(e.target.value)}

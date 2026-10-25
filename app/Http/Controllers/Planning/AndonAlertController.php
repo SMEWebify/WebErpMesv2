@@ -24,9 +24,12 @@ class AndonAlertController extends Controller
     {
         $alert = AndonAlerts::create([
             'task_id' => $request->task_id,
-            'methods_ressources_id' => $request->resource_id,
+            // Sans ressource affectée, l'écran envoyait la ressource n° 1 : l'alerte partait sur
+            // une machine au hasard. Une valeur vide reste vide.
+            'methods_ressources_id' => $request->filled('resource_id') ? $request->resource_id : null,
             'type' => $request->type,
-            'description' => $request->description,
+            // L'écran opérateur envoyait « message » : la description saisie était perdue.
+            'description' => $request->input('description', $request->input('message')),
             'status' => 1,
             'user_id' => Auth::id(),
             'triggered_at' => now(),
