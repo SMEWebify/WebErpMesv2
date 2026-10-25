@@ -499,6 +499,7 @@ return [
     'no_payment_methods_trans_key'             => '暂无支付方式，请前往会计页面添加。',
     'no_delivery_trans_key'                    => '暂无配送方式，请前往会计页面添加。',
     'no_service_trans_key'                     => '暂无服务，请前往方法页面添加。',
+    'none_service_trans_key'                   => '—（无服务）',
     'no_family_trans_key'                      => '暂无系列，请前往方法页面添加。',
     'no_unit_trans_key'                        => '暂无单位，请前往方法页面添加。',
     'no_vat_trans_key'                         => '暂无增值税，请添加。',

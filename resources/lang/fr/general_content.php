@@ -516,6 +516,7 @@ return [
     'no_payment_methods_trans_key'             => 'Aucune méthode de paiement, veuillez ajouter la page de comptabilité',
     'no_delivery_trans_key'                    => 'Aucun mode de livraison, veuillez ajouter la page de comptabilité',
     'no_service_trans_key'                     => 'Aucun service, veuillez ajouter la page de méthode',
+    'none_service_trans_key'                   => '— (aucun service)',
     'no_family_trans_key'                      => 'Aucune famille, veuillez ajouter la page de méthode',
     'no_unit_trans_key'                        => 'Aucune unité, veuillez ajouter la page de méthode',
     'no_vat_trans_key'                         => 'Aucune TVA, veuillez ajouter une TVA',

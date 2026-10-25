@@ -516,6 +516,7 @@ return [
     'no_payment_methods_trans_key'             => 'No payment methods, please add in accounting page',
     'no_delivery_trans_key'                    => 'No delivery type, please add in accounting page',
     'no_service_trans_key'                     => 'No service, please add in methods page',
+    'none_service_trans_key'                   => '— (no service)',
     'no_family_trans_key'                      => 'No family, please add in methods page',
     'no_unit_trans_key'                        => 'No unit, please add in methods page',
     'no_vat_trans_key'                         => 'Not VAT, please add VAT before',

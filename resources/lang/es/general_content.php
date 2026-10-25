@@ -445,6 +445,7 @@ return [
     'no_payment_methods_trans_key'             => 'Ningún método de pago, por favor añadir en la página de contabilidad',
     'no_delivery_trans_key'                    => 'Ningún tipo de entrega, por favor añadir en la página de contabilidad',
     'no_service_trans_key'                     => 'Ningún servicio, por favor añadir en la página de métodos',
+    'none_service_trans_key'                   => '— (ningún servicio)',
     'no_family_trans_key'                      => 'Ninguna familia, por favor añadir en la página de métodos',
     'no_unit_trans_key'                        => 'Ninguna unidad, por favor añadir en la página de métodos',
     'no_vat_trans_key'                         => 'Sin IVA, por favor añadir IVA antes',
