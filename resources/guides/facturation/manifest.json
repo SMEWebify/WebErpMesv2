@@ -1,0 +1,118 @@
+{
+  "scenario": "facturation",
+  "main": {
+    "id": 46,
+    "code": "FAC2510260002",
+    "companies_id": 66
+  },
+  "other": {
+    "id": 45,
+    "code": "FAC2510260001",
+    "companies_id": 64
+  },
+  "finishedAt": "2026-10-25T22:47:27.779Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-brouillon-lignes.png",
+      "title": "Brouillon : lignes encore modifiables",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 2,
+      "file": "img/02-brouillon-ajout-ligne.png",
+      "title": "Ajouter une ligne au brouillon (frais de port)",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 3,
+      "file": "img/03-brouillon-echeance.png",
+      "title": "Onglet « Facture info » : date d’échéance",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 4,
+      "file": "img/04-emise.png",
+      "title": "Facture émise : statut « Envoyé », PDF disponible",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 5,
+      "file": "img/05-liste-facturx.png",
+      "title": "Liste des factures : bouton Factur-X",
+      "url": "http://127.0.0.1:8001/fr/invoices"
+    },
+    {
+      "n": 6,
+      "file": "img/06-reglement-saisie.png",
+      "title": "Saisir un règlement partiel",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 7,
+      "file": "img/07-reglement-partiel.png",
+      "title": "Règlement enregistré : reste dû affiché",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 8,
+      "file": "img/08-relances-liste.png",
+      "title": "Factures à relancer : niveau proposé",
+      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+    },
+    {
+      "n": 9,
+      "file": "img/09-relance-appel.png",
+      "title": "Tracer un appel (aucun e-mail envoyé)",
+      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+    },
+    {
+      "n": 10,
+      "file": "img/10-relance-enregistree.png",
+      "title": "Relance enregistrée",
+      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+    },
+    {
+      "n": 11,
+      "file": "img/11-soldee.png",
+      "title": "Facture soldée : statut « Payé »",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 12,
+      "file": "img/12-historique-relances.png",
+      "title": "Fiche facture : historique des relances",
+      "url": "http://127.0.0.1:8001/fr/invoices/46"
+    },
+    {
+      "n": 13,
+      "file": "img/13-avoir-creation.png",
+      "title": "Facture émise : cocher les lignes, « Nouvel avoir »",
+      "url": "http://127.0.0.1:8001/fr/invoices/45"
+    },
+    {
+      "n": 14,
+      "file": "img/14-avoir-fiche.png",
+      "title": "Avoir créé, statut « En attente »",
+      "url": "http://127.0.0.1:8001/fr/credit-notes/3"
+    },
+    {
+      "n": 15,
+      "file": "img/15-encours.png",
+      "title": "Fiche société, tableau de bord : encours client",
+      "url": "http://127.0.0.1:8001/fr/companies/66"
+    },
+    {
+      "n": 16,
+      "file": "img/16-export-fec.png",
+      "title": "Export FEC : journaux, période, écritures à exporter",
+      "url": "http://127.0.0.1:8001/fr/admin/imports-exports"
+    },
+    {
+      "n": 17,
+      "file": "img/17-integrations-pdp.png",
+      "title": "Intégrations : facturation électronique (PDP)",
+      "url": "http://127.0.0.1:8001/fr/admin/integrations"
+    }
+  ]
+}
