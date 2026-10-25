@@ -54,10 +54,10 @@
                                 </div>
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="city">{{ __('general_content.capacity_trans_key') }}</label>
+                                <label for="city">{{ __('general_content.city_trans_key') }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-city"></i></span>
-                                    <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="{{ __('general_content.capacity_trans_key') }}">
+                                    <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="{{ __('general_content.city_trans_key') }}">
                                 </div>
                             </div>
                             <div class="mb-3 col-md-4">

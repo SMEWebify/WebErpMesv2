@@ -4,6 +4,7 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use App\Casts\EncryptedLegacyString;
 use App\Models\Accounting\AccountingVat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,8 +15,9 @@ class Factory extends Model
     protected $table = 'factory';
 
     protected $casts = [
-        'iban' => 'encrypted',
-        'bic' => 'encrypted',
+        // Relit aussi les valeurs chiffrées autrefois avec encrypt() (sérialisées).
+        'iban' => EncryptedLegacyString::class,
+        'bic' => EncryptedLegacyString::class,
     ];
 
     // Fillable attributes for mass assignment
