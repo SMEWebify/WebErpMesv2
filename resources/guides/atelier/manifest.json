@@ -1,0 +1,96 @@
+{
+  "scenario": "atelier",
+  "task": {
+    "id": 528,
+    "label": "Pliage",
+    "methods_services_id": 3,
+    "open": true
+  },
+  "finishedAt": "2026-10-25T23:02:02.891Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-accueil-atelier.png",
+      "title": "Accueil atelier : quatre tuiles",
+      "url": "http://127.0.0.1:8001/fr/workshop"
+    },
+    {
+      "n": 2,
+      "file": "img/02-liste-atelier.png",
+      "title": "Liste atelier : opérations à faire, filtres et échéances",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Lines"
+    },
+    {
+      "n": 3,
+      "file": "img/03-recherche-tache.png",
+      "title": "Déclaration de production : recherche par n° d’opération",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu"
+    },
+    {
+      "n": 4,
+      "file": "img/04-suivi-avant.png",
+      "title": "Écran de suivi d’une opération",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 5,
+      "file": "img/05-suivi-en-cours.png",
+      "title": "En cours : pièces bonnes et rebuts déclarés",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 6,
+      "file": "img/06-suivi-planification.png",
+      "title": "Carte de planification : date de fin, ressource",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 7,
+      "file": "img/07-suivi-informations.png",
+      "title": "Onglet « Informations » : temps, coût, TRS, avancement",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 8,
+      "file": "img/08-suivi-termine.png",
+      "title": "Opération terminée : journal d’activité",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 9,
+      "file": "img/09-alerte-andon.png",
+      "title": "Signaler un problème : alerte Andon ou non-conformité",
+      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+    },
+    {
+      "n": 10,
+      "file": "img/10-liste-taches.png",
+      "title": "Planification › Liste des tâches",
+      "url": "http://127.0.0.1:8001/fr/production/Task"
+    },
+    {
+      "n": 11,
+      "file": "img/11-kanban.png",
+      "title": "Flux de travail (Kanban) filtré sur un service",
+      "url": "http://127.0.0.1:8001/fr/production/kanban?methods_services_id=3"
+    },
+    {
+      "n": 12,
+      "file": "img/12-planning-charge.png",
+      "title": "Planning de charge",
+      "url": "http://127.0.0.1:8001/fr/production/load-planning"
+    },
+    {
+      "n": 13,
+      "file": "img/13-rapports.png",
+      "title": "Rapports atelier : réalisé, rebuts, charge machine, andon",
+      "url": "http://127.0.0.1:8001/fr/workshop/Reports"
+    },
+    {
+      "n": 14,
+      "file": "img/14-andon.png",
+      "title": "Écran Andon : alertes à traiter",
+      "url": "http://127.0.0.1:8001/fr/workshop/andon"
+    }
+  ]
+}
