@@ -295,8 +295,9 @@ La facture est créée à l'état **En cours** (brouillon), avec les lignes livr
 > « Nouvelle facture » de la commande crée son propre bon de livraison : la facture n'est
 > alors pas rattachée au BL déjà fait, qui reste « à facturer ».
 >
-> 💡 Tant qu'elle est en brouillon, la facture n'a ni PDF ni envoi par e-mail : émettez-la
-> pour lui attribuer son numéro définitif et pouvoir l'envoyer.
+> 💡 Son numéro lui est attribué dès sa création. Tant qu'elle est en brouillon, ses lignes
+> restent modifiables mais elle n'a ni PDF ni envoi par e-mail : émettez-la pour la verrouiller
+> et pouvoir l'envoyer (voir le guide « Facturer et encaisser »).
 
 ---
 
