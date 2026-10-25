@@ -8,14 +8,18 @@ function fmt(n) {
     return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n ?? 0);
 }
 
-function BalanceBar({ total, paid, remaining }) {
-    const pct = total > 0 ? Math.min(100, (paid / total) * 100) : 0;
-    const color = remaining <= 0 ? 'success' : paid > 0 ? 'warning' : 'danger';
+// credited : avoirs émis sur la facture, déduits du reste dû comme dans les relances.
+function BalanceBar({ total, paid, credited = 0, remaining }) {
+    const pct = total > 0 ? Math.min(100, ((paid + credited) / total) * 100) : 0;
+    const color = remaining <= 0 ? 'success' : paid + credited > 0 ? 'warning' : 'danger';
 
     return (
         <div className="mb-3">
             <div className="d-flex justify-content-between mb-1">
-                <span className="text-muted small">Réglé : <strong>{fmt(paid)} €</strong></span>
+                <span className="text-muted small">
+                    Réglé : <strong>{fmt(paid)} €</strong>
+                    {credited > 0 && <> · Avoirs : <strong>{fmt(credited)} €</strong></>}
+                </span>
                 <span className={`text-${remaining <= 0 ? 'success' : 'danger'} small`}>
                     {remaining <= 0
                         ? <><i className="fas fa-check-circle me-1"></i>Soldée</>
@@ -102,7 +106,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
 
     return (
         <div>
-            <BalanceBar total={data.total} paid={data.paid} remaining={data.remaining} />
+            <BalanceBar total={data.total} paid={data.paid} credited={data.credited} remaining={data.remaining} />
 
             {error && (
                 <div className="alert alert-danger alert-dismissible">

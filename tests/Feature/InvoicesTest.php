@@ -302,6 +302,26 @@ class InvoicesTest extends TestCase
         $this->assertEquals(192.0, $debit());
     }
 
+    public function test_the_payments_tab_deducts_credit_notes_from_the_balance(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2, 'invoice_type' => 1]);
+        $invoiceLine = InvoiceLines::create([
+            'invoices_id' => $invoice->id, 'ordre' => 10, 'label' => 'Platine', 'qty' => 1,
+            'unit_price' => 100, 'discount' => 0, 'vat_rate' => 20, 'invoice_status' => 2,
+        ]);
+        $creditNote = \App\Models\Workflow\CreditNotes::factory()->create(['invoices_id' => $invoice->id, 'statu' => 2]);
+        \App\Models\Workflow\CreditNoteLines::create([
+            'credit_note_id' => $creditNote->id, 'invoice_line_id' => $invoiceLine->id, 'label' => 'Remise', 'qty' => 1,
+            'unit_price' => 50, 'discount' => 0, 'vat_rate' => 20,
+        ]);
+
+        // 120 € TTC facturés, 60 € TTC d'avoir : il reste 60 €, pas 120.
+        $this->getJson(route('invoices.payments.index', $invoice->id))
+            ->assertOk()
+            ->assertJsonPath('credited', 60)
+            ->assertJsonPath('remaining', 60);
+    }
+
     public function test_can_add_free_line_to_draft_invoice(): void
     {
         $vat     = AccountingVat::factory()->create(['rate' => 20]);

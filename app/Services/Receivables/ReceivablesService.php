@@ -69,6 +69,18 @@ class ReceivablesService
     }
 
     /**
+     * Solde d'une facture (brouillon compris) : amount_ttc, paid, credited, balance.
+     * Même calcul que les relances et l'encours, pour l'onglet Règlements de la fiche.
+     */
+    public function invoiceBalance(int $invoiceId): ?object
+    {
+        return DB::query()
+            ->fromSub($this->invoiceBalances(true), 'b')
+            ->where('b.id', $invoiceId)
+            ->first();
+    }
+
+    /**
      * Factures émises qui restent dues, toutes sociétés ou une seule.
      */
     public function openInvoices(?int $companyId = null): Builder

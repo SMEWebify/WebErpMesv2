@@ -855,12 +855,14 @@ class InvoicesController extends Controller
 
         $total        = $invoice->getTotalPriceAttribute();
         $paid         = $payments->sum('amount');
-        $remaining    = round($total - $paid, 2);
+        $credited     = $this->creditedAmount($invoice);
+        $remaining    = round($total - $paid - $credited, 2);
 
         return response()->json([
             'payments'  => $payments,
             'total'     => $total,
             'paid'      => $paid,
+            'credited'  => $credited,
             'remaining' => $remaining,
         ]);
     }
@@ -893,7 +895,7 @@ class InvoicesController extends Controller
         // Mise à jour automatique du statut facture
         $total     = $invoice->getTotalPriceAttribute();
         $paid      = (float) InvoicePayment::where('invoice_id', $invoice->id)->sum('amount');
-        $remaining = round($total - $paid, 2);
+        $remaining = round($total - $paid - $this->creditedAmount($invoice), 2);
 
         if ($remaining <= 0) {
             $invoice->statu = 5; // Payée
@@ -919,7 +921,7 @@ class InvoicesController extends Controller
         // Recalcul du statut
         $total     = $invoice->getTotalPriceAttribute();
         $paid      = (float) InvoicePayment::where('invoice_id', $invoice->id)->sum('amount');
-        $remaining = round($total - $paid, 2);
+        $remaining = round($total - $paid - $this->creditedAmount($invoice), 2);
 
         if ($remaining <= 0) {
             $invoice->statu = 5;
@@ -933,6 +935,15 @@ class InvoicesController extends Controller
         event(new InvoiceStatusChanged($invoice, $invoice->statu));
 
         return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
+    }
+
+    /**
+     * Avoirs émis sur la facture (hors refusés), comme dans les relances et l'encours :
+     * sans eux, l'onglet Règlements affichait un reste dû que le client ne doit plus.
+     */
+    private function creditedAmount(Invoices $invoice): float
+    {
+        return (float) (app(\App\Services\Receivables\ReceivablesService::class)->invoiceBalance($invoice->id)?->credited ?? 0);
     }
 
     /**
