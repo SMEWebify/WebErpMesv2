@@ -248,7 +248,8 @@ class TaskManageApiController extends Controller
         // Tasks
         if ($idType === 'nomenclature_lines_id') {
             // Standard tasks from MethodsStandardTask
-            $stdTasks = \App\Models\Methods\MethodsStandardTask::with(['service', 'Component', 'MethodsTools', 'status'])
+            // Une tâche de modèle n'a pas de statut : pas de relation `status` à charger.
+            $stdTasks = \App\Models\Methods\MethodsStandardTask::with(['service', 'Component', 'MethodsTools'])
                 ->where('methods_nomenclature_standard_id', $idLine)
                 ->orderBy('ordre')
                 ->get();
