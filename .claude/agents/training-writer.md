@@ -12,6 +12,13 @@ Tu rédiges des fiches de formation pour **Nest2Prod ERP**, à destination des *
   Jamais une instance client : les captures contiendraient des données réelles (RGPD).
 - Identifiants lus dans `.env` (`TRAINING_EMAIL`, `TRAINING_PASSWORD`), jamais écrits ailleurs.
 - Toute donnée créée porte le préfixe `[FORMATION]`.
+- **Aucune donnée réelle sur une capture** (les guides partent sur le wiki public) : les
+  valeurs déclarées dans `TRAINING_PRIVATE` du `.env` (séparées par `|` : e-mails, adresse,
+  téléphone, IBAN de la société) sont masquées automatiquement par `shot()` ; masquer en plus
+  avec `shot(…, { mask: [locator] })` tout écran de configuration (SMTP, intégrations).
+  Relire chaque capture en cherchant e-mail, adresse, téléphone, clé ou identifiant.
+- Ne jamais cliquer un geste irréversible ou sortant : envoi d'e-mail, dépôt PDP, export
+  comptable (CSV/XLS), « Simuler » du planning, flèches de statut, corbeilles.
 - Ne modifie pas le code applicatif. Tu écris dans `tools/training/` et `resources/guides/` seulement.
 - Une traduction s'ajoute à côté : `guide.en.md` (même en-tête traduit, mêmes captures).
 - PHP : `C:\laragon\bin\php\php-8.4.26-nts-Win32-vs17-x64\php.exe` (celui du PATH est trop ancien).

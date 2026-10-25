@@ -14,12 +14,17 @@ export function readEnv(file = '.env') {
     return env;
 }
 
+const PRIVATE = (process.env.TRAINING_PRIVATE ?? readEnv().TRAINING_PRIVATE ?? '')
+    .split('|').map(v => v.trim()).filter(Boolean);
+
 export async function openSession({ baseUrl, outDir, theme = 'light', viewport = { width: 1440, height: 900 } }) {
     fs.mkdirSync(path.join(outDir, 'img'), { recursive: true });
     const browser = await chromium.launch({ channel: 'msedge', headless: !process.env.HEADED });
     const context = await browser.newContext({ viewport, locale: 'fr-FR', colorScheme: theme, deviceScaleFactor: 1 });
     const page = await context.newPage();
     page.setDefaultTimeout(15000);
+    // Serveur de dev mono-requête : certaines pages lourdes dépassent 15 s.
+    page.setDefaultNavigationTimeout(45000);
     page.on('dialog', d => { console.log(`  💬 ${d.message()}`); d.accept(); });
     // Requêtes en cours, pour que settle() attende vraiment la fin des appels AJAX.
     page.__inflight = 0;
@@ -41,7 +46,8 @@ export async function openSession({ baseUrl, outDir, theme = 'light', viewport =
     let n = 0;
 
     // Capture la page, l'élément `highlight` (locator ou liste) entouré en rouge et numéroté.
-    async function shot(slug, { title, highlight = [], fullPage = false, note } = {}) {
+    // `mask` : locators masqués d'un aplat (données personnelles : e-mail, identifiants…).
+    async function shot(slug, { title, highlight = [], fullPage = false, note, mask = [] } = {}) {
         n += 1;
         const file = `${String(n).padStart(2, '0')}-${slug}.png`;
         const targets = Array.isArray(highlight) ? highlight : [highlight];
@@ -79,7 +85,24 @@ export async function openSession({ baseUrl, outDir, theme = 'light', viewport =
             }, i);
         }
         await page.waitForTimeout(300);
-        await page.screenshot({ path: path.join(outDir, 'img', file), fullPage });
+        // Garde-fou : tout champ ou texte contenant une valeur de TRAINING_PRIVATE (.env, séparées
+        // par des |) est masqué, pour qu'aucune donnée réelle ne parte dans un guide publié.
+        await page.evaluate(values => {
+            document.querySelectorAll('[data-training-private]').forEach(el => el.removeAttribute('data-training-private'));
+            if (!values.length) return;
+            const hit = s => s && values.some(v => s.includes(v));
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if (hit(el.value) || hit(el.selectedOptions?.[0]?.textContent)) el.setAttribute('data-training-private', '');
+            });
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) {
+                if (hit(walker.currentNode.nodeValue)) walker.currentNode.parentElement?.setAttribute('data-training-private', '');
+            }
+        }, PRIVATE);
+        await page.screenshot({
+            path: path.join(outDir, 'img', file), fullPage,
+            mask: [...mask, page.locator('[data-training-private]')], maskColor: '#adb5bd',
+        });
         for (const h of handles) {
             await h.evaluate(el => { el.style.outline = el.dataset.trainingOutline || ''; }).catch(() => {});
         }
