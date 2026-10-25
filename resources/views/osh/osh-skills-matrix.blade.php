@@ -21,7 +21,7 @@
     ];
 @endphp
 
-<div class="callout callout-info">
+<div class="callout callout-info mb-3">
     <i class="fas fa-info-circle"></i>
     {{ __('general_content.skills_matrix_advisory_trans_key') }}
 </div>

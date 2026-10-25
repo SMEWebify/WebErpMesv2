@@ -27,7 +27,7 @@
 </x-adminlte-card>
 
 @if(count($Warnings) > 0)
-    <div class="callout callout-warning">
+    <div class="callout callout-warning mb-3">
         <h5><i class="fas fa-exclamation-triangle"></i> {{ __('general_content.payroll_warnings_trans_key') }}</h5>
         <ul class="mb-0">
             @foreach($Warnings as $Warning)
