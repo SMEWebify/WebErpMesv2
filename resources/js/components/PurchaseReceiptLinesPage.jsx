@@ -747,9 +747,10 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
         showFlash('success', 'Ligne manuelle ajoutée');
     };
 
-    const totalReceipt  = lines.reduce((s, l) => s + (l.receipt_qty  ?? 0), 0);
-    const totalAccepted = lines.reduce((s, l) => s + (l.accepted_qty ?? 0), 0);
-    const totalRejected = lines.reduce((s, l) => s + (l.rejected_qty ?? 0), 0);
+    // Les quantités décimales arrivent en texte (« 4.000 ») : sans Number(), la somme les concatène.
+    const totalReceipt  = lines.reduce((s, l) => s + Number(l.receipt_qty  ?? 0), 0);
+    const totalAccepted = lines.reduce((s, l) => s + Number(l.accepted_qty ?? 0), 0);
+    const totalRejected = lines.reduce((s, l) => s + Number(l.rejected_qty ?? 0), 0);
 
     return (
         <div>
