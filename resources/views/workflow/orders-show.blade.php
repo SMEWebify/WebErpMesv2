@@ -140,7 +140,7 @@ if (!$orderHasInvoicedLines) {
                   <div class="row">
                     <div class="mb-3 col-md-6">
                       @if($Order->quotes_id  or $Order->statu != 1)
-                      {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Order->companie['id'] }}" label="{{ $Order->companie['label'] }}"  />
+                      {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Order->companie['id'] }}" :label="$Order->companie['label']"  />
                       <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}">
                       @else
                         @include('include.form.form-select-companie',['companiesId' =>  $Order->companies_id])
@@ -164,7 +164,7 @@ if (!$orderHasInvoicedLines) {
                   <input type="hidden" name="companies_addresses_id" value="{{ $Order->companies_addresses_id }}">
                   <input type="hidden" name="companies_contacts_id" value="{{ $Order->companies_contacts_id }}">
                   <x-adminlte-alert theme="info" title="Info">
-                    The customer <x-CompanieButton id="{{ $Order->companie['id'] }}" label="{{ $Order->companie['label'] }}"  /> is currently disabled, you cannot change the customer name, contact and address.
+                    The customer <x-CompanieButton id="{{ $Order->companie['id'] }}" :label="$Order->companie['label']"  /> is currently disabled, you cannot change the customer name, contact and address.
                   </x-adminlte-alert>
                   @endif
                   <div class="row">

@@ -73,7 +73,7 @@
                 {{ __('general_content.created_at_trans_key') }} :  {{ $PurchaseInvoice->GetPrettyCreatedAttribute() }}
               </div>
               <div class="card-body">
-                {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $PurchaseInvoice->companie['id'] }}" label="{{ $PurchaseInvoice->companie['label'] }}"  />
+                {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $PurchaseInvoice->companie['id'] }}" :label="$PurchaseInvoice->companie['label']"  />
               </div>
             </x-adminlte-card>
           </div>

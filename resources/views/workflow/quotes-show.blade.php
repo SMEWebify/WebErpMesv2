@@ -99,7 +99,7 @@ $arrowSteps = json_encode([
                   <div class="row">
                     <div class="mb-3 col-md-6">
                         @if($Quote->opportunities_id or $Quote->statu != 1)
-                        {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  />
+                        {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" :label="$Quote->companie['label']"  />
                           <input type="hidden" name="companies_id" value="{{ $Quote->companies_id }}">
                           @else
                               @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])

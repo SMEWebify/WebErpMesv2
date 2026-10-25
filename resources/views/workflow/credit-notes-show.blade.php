@@ -70,7 +70,7 @@
                             {{ __('general_content.created_at_trans_key') }} : {{ $CreditNotes->GetPrettyCreatedAttribute() }}
                         </div>
                         <div class="card-body">
-                            {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $CreditNotes->companie['id'] }}" label="{{ $CreditNotes->companie['label'] }}"  />
+                            {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $CreditNotes->companie['id'] }}" :label="$CreditNotes->companie['label']"  />
                         </div>
                         <div class="card-body">
                             {{ __('general_content.adress_name_trans_key') }} :   {{ $CreditNotes->adresse['label'] }} - {{ $CreditNotes->adresse['adress'] }}

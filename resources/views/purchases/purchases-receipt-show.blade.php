@@ -84,7 +84,7 @@
                 {{ __('general_content.created_at_trans_key') }} :  {{ $PurchaseReceipt->GetPrettyCreatedAttribute() }}
               </div>
               <div class="card-body">
-                {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $PurchaseReceipt->companie['id'] }}" label="{{ $PurchaseReceipt->companie['label'] }}"  />
+                {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $PurchaseReceipt->companie['id'] }}" :label="$PurchaseReceipt->companie['label']"  />
               </div>
               <div class="card-body">
                 {{ __('general_content.delevery_time_trans_key') }} :  {{ $averageReceptionDelay }}

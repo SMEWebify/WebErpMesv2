@@ -60,7 +60,7 @@ $leadSteps = json_encode([
           <input type="hidden" name="companies_addresses_id" value="{{ $Lead->companies_addresses_id }}">
           <input type="hidden" name="companies_contacts_id" value="{{ $Lead->companies_contacts_id }}">
           <x-adminlte-alert theme="info" title="Info">
-            The customer <x-CompanieButton id="{{ $Lead->companie['id'] }}" label="{{ $Lead->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
+            The customer <x-CompanieButton id="{{ $Lead->companie['id'] }}" :label="$Lead->companie['label']"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
           </x-adminlte-alert>
           @endif
           <div class="row">

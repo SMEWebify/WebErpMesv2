@@ -74,7 +74,7 @@ $oppSteps = json_encode([
                   <div class="row">
                     <div class="mb-3 col-md-12">
                       @if($Opportunity->opportunities_id or $Opportunity->statu != 1)
-                          {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" label="{{ $Opportunity->companie['label'] }}"  />
+                          {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" :label="$Opportunity->companie['label']"  />
                           <input type="hidden" name="companies_id" value="{{ $Opportunity->companies_id }}">
                       @else
                           @include('include.form.form-select-companie',['companiesId' =>  $Opportunity->companies_id])
@@ -95,7 +95,7 @@ $oppSteps = json_encode([
                   <input type="hidden" name="companies_addresses_id" value="{{ $Opportunity->companies_addresses_id }}">
                   <input type="hidden" name="companies_contacts_id" value="{{ $Opportunity->companies_contacts_id }}">
                   <x-adminlte-alert theme="info" title="Info">
-                    The customer <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" label="{{ $Opportunity->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
+                    The customer <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" :label="$Opportunity->companie['label']"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
                   </x-adminlte-alert>
                   @endif
                   <div class="row">
