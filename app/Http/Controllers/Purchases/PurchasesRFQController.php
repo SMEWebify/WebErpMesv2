@@ -207,8 +207,8 @@ class PurchasesRFQController extends Controller
                 $validated['companies_id'],
                 $validated['code'],
                 $validated['label'],
-                $defaultSettings['defaultAddress']->id,
                 $defaultSettings['defaultContact']->id,
+                $defaultSettings['defaultAddress']->id,
             );
 
             if (!$purchase) {
@@ -266,8 +266,8 @@ class PurchasesRFQController extends Controller
                     $companyId,
                     $quotationCode,
                     $quotationLabel,
-                    $defaultSettings['defaultAddress']->id,
                     $defaultSettings['defaultContact']->id,
+                    $defaultSettings['defaultAddress']->id,
                     $rfqGroup->id,
                 );
 
