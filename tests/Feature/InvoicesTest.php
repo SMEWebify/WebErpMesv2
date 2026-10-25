@@ -280,6 +280,28 @@ class InvoicesTest extends TestCase
         $this->assertEquals(240.0, (float) $entries->sum('debit_amount'));
     }
 
+    public function test_editing_a_draft_line_updates_its_sale_entry(): void
+    {
+        $vat = AccountingVat::factory()->create(['rate' => 20]);
+        \App\Models\Accounting\AccountingAllocation::create([
+            'account' => '701000', 'label' => 'Ventes', 'accounting_vats_id' => $vat->id,
+            'vat_account' => '445710', 'code_account' => '701000', 'type_imputation' => 1,
+        ]);
+        MethodsUnits::factory()->create();
+        $invoice = Invoices::factory()->create(['statu' => 1, 'invoice_type' => 1]);
+
+        $lineId = $this->postJson(route('invoices.lines.store', $invoice->id), [
+            'label' => 'Frais de port', 'qty' => 1, 'unit_price' => 80, 'accounting_vats_id' => $vat->id,
+        ])->assertCreated()->json('line.id');
+        $debit = fn () => (float) \App\Models\Accounting\AccountingEntry::where('invoice_line_id', $lineId)->sum('debit_amount');
+        $this->assertEquals(96.0, $debit());
+
+        $this->patchJson(route('invoices.lines.update', [$invoice->id, $lineId]), ['qty' => 2])->assertOk();
+
+        // Une seule écriture, au nouveau montant (2 × 80 € HT + 20 %).
+        $this->assertEquals(192.0, $debit());
+    }
+
     public function test_can_add_free_line_to_draft_invoice(): void
     {
         $vat     = AccountingVat::factory()->create(['rate' => 20]);

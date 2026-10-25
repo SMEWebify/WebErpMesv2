@@ -645,6 +645,9 @@ class InvoicesController extends Controller
 
         $line = InvoiceLines::where('id', $lineId)->where('invoices_id', $id)->firstOrFail();
         $line->update($data);
+        if ($line->wasChanged(['qty', 'unit_price', 'discount'])) {
+            app(AccountingEntryService::class)->refreshSaleEntry($line);
+        }
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';

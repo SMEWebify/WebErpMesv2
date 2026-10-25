@@ -328,6 +328,32 @@ class AccountingEntryService
             return;
         }
 
+        $this->cancelEntries($lines);
+    }
+
+    /**
+     * Régénère l'écriture de vente d'une ligne de brouillon dont la quantité, le prix ou la
+     * remise vient de changer : sans ça, le FEC gardait le montant de la création.
+     * L'ancienne écriture est effacée, ou contre-passée si elle a déjà été exportée.
+     */
+    public function refreshSaleEntry(InvoiceLines $invoiceLine): void
+    {
+        $lines = AccountingEntry::where('invoice_line_id', $invoiceLine->id)->get();
+        if ($lines->isEmpty()) {
+            return; // ligne sans écriture (pas d'affectation comptable) : rien à suivre
+        }
+
+        $this->cancelEntries($lines);
+        $this->createSaleEntry($invoiceLine->fresh());
+    }
+
+    /**
+     * Annule des lignes d'écriture : effacées si aucune n'est partie chez le comptable,
+     * contre-passées sinon (débit et crédit inversés, à la date du jour, même journal) —
+     * une écriture transmise ne disparaît jamais.
+     */
+    private function cancelEntries($lines): void
+    {
         if (!$lines->contains(fn (AccountingEntry $line) => (bool) $line->exported)) {
             AccountingEntry::whereIn('id', $lines->pluck('id'))->delete();
 
@@ -335,22 +361,25 @@ class AccountingEntryService
         }
 
         $date = Carbon::today();
-        $base = $this->baseLine('ENCAIS', 'Journal des Encaissements', $this->getNextSequenceNumber('ENCAIS', $date), $date, $lines->first()->currency_code ?? 'EUR');
+        foreach ($lines->groupBy('journal_code') as $journal => $group) {
+            $first = $group->first();
+            $base  = $this->baseLine($journal, $first->journal_label, $this->getNextSequenceNumber($journal, $date), $date, $first->currency_code ?? 'EUR');
 
-        foreach ($lines as $line) {
-            AccountingEntry::create($base + [
-                'account_number'           => $line->account_number,
-                'account_label'            => $line->account_label,
-                'auxiliary_account_number' => $line->auxiliary_account_number,
-                'auxiliary_account_label'  => $line->auxiliary_account_label,
-                'justification_reference'  => $line->justification_reference,
-                'justification_date'       => $date,
-                'document_reference'       => $line->document_reference,
-                'document_date'            => $line->document_date,
-                'entry_label'              => 'Annulation ' . $line->entry_label,
-                'debit_amount'             => $line->credit_amount,
-                'credit_amount'            => $line->debit_amount,
-            ]);
+            foreach ($group as $line) {
+                AccountingEntry::create($base + [
+                    'account_number'           => $line->account_number,
+                    'account_label'            => $line->account_label,
+                    'auxiliary_account_number' => $line->auxiliary_account_number,
+                    'auxiliary_account_label'  => $line->auxiliary_account_label,
+                    'justification_reference'  => $line->justification_reference,
+                    'justification_date'       => $date,
+                    'document_reference'       => $line->document_reference,
+                    'document_date'            => $line->document_date,
+                    'entry_label'              => 'Annulation ' . $line->entry_label,
+                    'debit_amount'             => $line->credit_amount,
+                    'credit_amount'            => $line->debit_amount,
+                ]);
+            }
         }
     }
 
