@@ -29,6 +29,55 @@ use Illuminate\Support\Facades\Cache;
 class SelectDataService
 {
     /**
+     * Cached select lists, per model they are read from. A list is cached forever,
+     * so it must be forgotten whenever a row of its model changes.
+     */
+    public const CACHE_KEYS = [
+        AccountingPaymentConditions::class => ['select_data_payment_conditions'],
+        AccountingPaymentMethod::class     => ['select_data_payment_methods'],
+        AccountingDelivery::class          => ['select_data_accounting_deliveries'],
+        AccountingVat::class               => ['select_data_vat_v2'],
+        MethodsUnits::class                => ['select_data_units_v2'],
+        MethodsServices::class             => ['select_data_services', 'select_data_tech_services', 'select_data_bom_services'],
+        MethodsLocation::class             => ['select_data_locations'],
+        MethodsSection::class              => ['select_data_sections'],
+        MethodsFamilies::class             => ['select_data_families'],
+        MethodsRessources::class           => ['select_data_ressources'],
+        QualityCause::class                => ['select_data_quality_cause'],
+        QualityFailure::class              => ['select_data_quality_failure'],
+        QualityCorrection::class           => ['select_data_quality_correction'],
+        QualityNonConformity::class        => ['select_data_quality_non_conformity'],
+    ];
+
+    /**
+     * Forget a model's cached select lists on every create, update and delete.
+     * Mass updates (Model::where()->update()) fire no event: forget by hand there.
+     */
+    public static function registerCacheInvalidation(): void
+    {
+        foreach (self::CACHE_KEYS as $model => $keys) {
+            $forget = static function () use ($keys) {
+                foreach ($keys as $key) {
+                    Cache::forget($key);
+                }
+            };
+
+            $model::saved($forget);
+            $model::deleted($forget);
+        }
+    }
+
+    /**
+     * Forget every cached select list.
+     */
+    public static function forgetAll(): void
+    {
+        foreach (array_merge(...array_values(self::CACHE_KEYS)) as $key) {
+            Cache::forget($key);
+        }
+    }
+
+    /**
      * Retrieve a list of users with their id and name.
      *
      * @return \Illuminate\Database\Eloquent\Collection

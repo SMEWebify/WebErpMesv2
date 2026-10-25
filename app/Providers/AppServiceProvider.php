@@ -66,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
         StockMove::observe(StockMoveObserver::class);
         OrderLines::observe(OrderLinesObserver::class);
         TimesAbsence::observe(TimesAbsenceObserver::class);
+        \App\Services\SelectDataService::registerCacheInvalidation();
 
         if (config('branding.commercial')) {
             Config::set('mail.from.name', config('branding.app_name'));
