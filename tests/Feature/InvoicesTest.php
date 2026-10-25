@@ -246,6 +246,40 @@ class InvoicesTest extends TestCase
         $this->assertNull($invoice->fresh()->payment_date);
     }
 
+    public function test_deleting_a_payment_removes_its_unexported_entry(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+        $this->postJson(route('invoices.payments.store', $invoice->id), [
+            'amount' => 120, 'payment_date' => '2026-10-01', 'reference' => 'VIR 1',
+        ])->assertOk();
+        $payment = InvoicePayment::where('invoice_id', $invoice->id)->firstOrFail();
+        $this->assertSame(2, \App\Models\Accounting\AccountingEntry::where('invoice_payment_id', $payment->id)->count());
+
+        $this->deleteJson(route('invoices.payments.destroy', [$invoice->id, $payment->id]))->assertOk();
+
+        $this->assertSame(0, \App\Models\Accounting\AccountingEntry::where('journal_code', 'ENCAIS')
+            ->where('document_reference', $invoice->code)->count());
+    }
+
+    public function test_deleting_a_payment_already_exported_reverses_its_entry(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+        $this->postJson(route('invoices.payments.store', $invoice->id), [
+            'amount' => 120, 'payment_date' => '2026-10-01',
+        ])->assertOk();
+        $payment = InvoicePayment::where('invoice_id', $invoice->id)->firstOrFail();
+        \App\Models\Accounting\AccountingEntry::where('invoice_payment_id', $payment->id)->update(['exported' => true]);
+
+        $this->deleteJson(route('invoices.payments.destroy', [$invoice->id, $payment->id]))->assertOk();
+
+        $entries = \App\Models\Accounting\AccountingEntry::where('journal_code', 'ENCAIS')
+            ->where('document_reference', $invoice->code)->get();
+        // Les deux lignes exportées restent, deux lignes inverses les annulent.
+        $this->assertCount(4, $entries);
+        $this->assertEquals($entries->sum('debit_amount'), $entries->sum('credit_amount'));
+        $this->assertEquals(240.0, (float) $entries->sum('debit_amount'));
+    }
+
     public function test_can_add_free_line_to_draft_invoice(): void
     {
         $vat     = AccountingVat::factory()->create(['rate' => 20]);

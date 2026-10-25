@@ -909,6 +909,8 @@ class InvoicesController extends Controller
     {
         abort_if($payment->invoice_id !== $invoice->id, 404);
 
+        // Sans ça, l'écriture d'encaissement restait seule dans le FEC.
+        app(AccountingEntryService::class)->reversePaymentEntry($payment->load('invoice'));
         $payment->delete();
 
         // Recalcul du statut

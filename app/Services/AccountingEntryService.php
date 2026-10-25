@@ -278,6 +278,8 @@ class AccountingEntryService
         $seq  = $this->getNextSequenceNumber('ENCAIS', $date);
         $base = $this->baseLine('ENCAIS', 'Journal des Encaissements', $seq, $date, $currency);
         $lib  = 'Règlement ' . $invoice->code;
+        // Lien vers le règlement : sa suppression efface ou contre-passe l'écriture.
+        $base['invoice_payment_id'] = $payment->id;
 
         // Ligne 1 — Débit trésorerie
         AccountingEntry::create($base + [
@@ -308,6 +310,71 @@ class AccountingEntryService
             'debit_amount'             => 0,
             'credit_amount'            => $payment->amount,
         ]);
+    }
+
+    /**
+     * Annule l'écriture d'encaissement d'un règlement supprimé : effacée si elle n'est pas encore
+     * partie chez le comptable, contre-passée (débit et crédit inversés, à la date du jour) si
+     * elle a déjà été exportée — une écriture transmise ne disparaît jamais.
+     * À appeler avant de supprimer le règlement.
+     */
+    public function reversePaymentEntry(InvoicePayment $payment): void
+    {
+        $lines = AccountingEntry::where('invoice_payment_id', $payment->id)->get();
+        if ($lines->isEmpty()) {
+            $lines = $this->legacyPaymentLines($payment);
+        }
+        if ($lines->isEmpty()) {
+            return;
+        }
+
+        if (!$lines->contains(fn (AccountingEntry $line) => (bool) $line->exported)) {
+            AccountingEntry::whereIn('id', $lines->pluck('id'))->delete();
+
+            return;
+        }
+
+        $date = Carbon::today();
+        $base = $this->baseLine('ENCAIS', 'Journal des Encaissements', $this->getNextSequenceNumber('ENCAIS', $date), $date, $lines->first()->currency_code ?? 'EUR');
+
+        foreach ($lines as $line) {
+            AccountingEntry::create($base + [
+                'account_number'           => $line->account_number,
+                'account_label'            => $line->account_label,
+                'auxiliary_account_number' => $line->auxiliary_account_number,
+                'auxiliary_account_label'  => $line->auxiliary_account_label,
+                'justification_reference'  => $line->justification_reference,
+                'justification_date'       => $date,
+                'document_reference'       => $line->document_reference,
+                'document_date'            => $line->document_date,
+                'entry_label'              => 'Annulation ' . $line->entry_label,
+                'debit_amount'             => $line->credit_amount,
+                'credit_amount'            => $line->debit_amount,
+            ]);
+        }
+    }
+
+    /**
+     * Écriture d'un règlement antérieur au lien invoice_payment_id, retrouvée par ses références
+     * (journal, facture, pièce, date, montant). Si plusieurs correspondent, la plus récente.
+     */
+    private function legacyPaymentLines(InvoicePayment $payment)
+    {
+        $invoice = $payment->invoice;
+        $ref     = $payment->reference ? "{$invoice->code} - {$payment->reference}" : $invoice->code;
+
+        $candidates = AccountingEntry::where('journal_code', 'ENCAIS')
+            ->whereNull('invoice_payment_id')
+            ->where('document_reference', $invoice->code)
+            ->where('justification_reference', $ref)
+            ->whereDate('accounting_date', Carbon::parse($payment->payment_date))
+            ->where(fn ($q) => $q->where('debit_amount', $payment->amount)->orWhere('credit_amount', $payment->amount))
+            ->orderByDesc('sequence_number')
+            ->get();
+
+        $sequence = $candidates->first()?->sequence_number;
+
+        return $candidates->where('sequence_number', $sequence)->values();
     }
 
     public function getAllocationId(int $typeImputation, int $vatId): ?int
