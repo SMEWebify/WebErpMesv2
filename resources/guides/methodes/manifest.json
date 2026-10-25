@@ -1,0 +1,84 @@
+{
+  "scenario": "methodes",
+  "finishedAt": "2026-10-25T21:29:01.192Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-menu.png",
+      "title": "Le menu Méthodes déplié",
+      "url": "http://127.0.0.1:8001/fr/dashboard"
+    },
+    {
+      "n": 2,
+      "file": "img/02-unites.png",
+      "title": "Unités — nouvelle unité",
+      "url": "http://127.0.0.1:8001/fr/methods/unit"
+    },
+    {
+      "n": 3,
+      "file": "img/03-services.png",
+      "title": "Services — nouveau service",
+      "url": "http://127.0.0.1:8001/fr/methods/service"
+    },
+    {
+      "n": 4,
+      "file": "img/04-familles.png",
+      "title": "Familles — nouvelle famille",
+      "url": "http://127.0.0.1:8001/fr/methods/family"
+    },
+    {
+      "n": 5,
+      "file": "img/05-sections.png",
+      "title": "Sections — nouvelle section",
+      "url": "http://127.0.0.1:8001/fr/methods/section"
+    },
+    {
+      "n": 6,
+      "file": "img/06-ressources.png",
+      "title": "Ressources — nouvelle ressource",
+      "url": "http://127.0.0.1:8001/fr/methods/ressources"
+    },
+    {
+      "n": 7,
+      "file": "img/07-emplacements.png",
+      "title": "Emplacements atelier — nouvel emplacement",
+      "url": "http://127.0.0.1:8001/fr/methods/location"
+    },
+    {
+      "n": 8,
+      "file": "img/08-outils.png",
+      "title": "Outils — nouvel outil",
+      "url": "http://127.0.0.1:8001/fr/methods/tool"
+    },
+    {
+      "n": 9,
+      "file": "img/09-delais.png",
+      "title": "Délais inter-opérations — nouvelle paire",
+      "url": "http://127.0.0.1:8001/fr/methods/operation-transition-delay"
+    },
+    {
+      "n": 10,
+      "file": "img/10-nomenclatures.png",
+      "title": "Nomenclatures standard — « Voir » ouvre la gamme du modèle",
+      "url": "http://127.0.0.1:8001/fr/methods/standard-nomenclature"
+    },
+    {
+      "n": 11,
+      "file": "img/11-nomenclature-gamme.png",
+      "title": "Gamme d’un modèle standard : opérations et matières",
+      "url": "http://127.0.0.1:8001/fr/task/nomenclature_lines_id/1/show/1"
+    },
+    {
+      "n": 12,
+      "file": "img/12-operation-service.png",
+      "title": "Le service choisi remplit le libellé et calcule coût et prix",
+      "url": "http://127.0.0.1:8001/fr/task/nomenclature_lines_id/1/show/1"
+    },
+    {
+      "n": 13,
+      "file": "img/13-vue-ensemble.png",
+      "title": "Vue d'ensemble méthodes (menu Planification)",
+      "url": "http://127.0.0.1:8001/fr/methods/overview"
+    }
+  ]
+}

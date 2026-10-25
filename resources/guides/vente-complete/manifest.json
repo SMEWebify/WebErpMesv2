@@ -1,0 +1,203 @@
+{
+  "scenario": "vente-complete",
+  "company": "[FORMATION] Métallerie Durand 10252021",
+  "ids": {
+    "company": "70",
+    "lead": "17",
+    "opportunity": "17",
+    "quote": "562",
+    "quoteLine": "2276",
+    "order": "546",
+    "delivery": "39",
+    "invoice": "50"
+  },
+  "finishedAt": "2026-10-25T20:23:31.776Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-connexion.png",
+      "title": "Écran de connexion",
+      "url": "http://127.0.0.1:8001/fr/login"
+    },
+    {
+      "n": 2,
+      "file": "img/02-tableau-de-bord.png",
+      "title": "Tableau de bord après connexion",
+      "url": "http://127.0.0.1:8001/fr/dashboard"
+    },
+    {
+      "n": 3,
+      "file": "img/03-tiers-liste.png",
+      "title": "Liste des tiers — bouton « Ajouter un tiers »",
+      "url": "http://127.0.0.1:8001/fr/companies"
+    },
+    {
+      "n": 4,
+      "file": "img/04-tiers-modale.png",
+      "title": "Fenêtre « Ajouter un tiers » remplie",
+      "url": "http://127.0.0.1:8001/fr/companies"
+    },
+    {
+      "n": 5,
+      "file": "img/05-tiers-statut-prospect.png",
+      "title": "Onglet « Détail » : « Etat client » = Prospect",
+      "url": "http://127.0.0.1:8001/fr/companies/70"
+    },
+    {
+      "n": 6,
+      "file": "img/06-tiers-mettre-a-jour.png",
+      "title": "Enregistrer avec « Mettre à jours » en bas de la fiche",
+      "url": "http://127.0.0.1:8001/fr/companies/70"
+    },
+    {
+      "n": 7,
+      "file": "img/07-tiers-adresse.png",
+      "title": "Ajouter l’adresse du prospect",
+      "url": "http://127.0.0.1:8001/fr/companies/70"
+    },
+    {
+      "n": 8,
+      "file": "img/08-tiers-contact.png",
+      "title": "Ajouter le contact du prospect",
+      "url": "http://127.0.0.1:8001/fr/companies/70"
+    },
+    {
+      "n": 9,
+      "file": "img/09-lead-liste.png",
+      "title": "Liste des leads — bouton « Nouveau Lead »",
+      "url": "http://127.0.0.1:8001/fr/leads"
+    },
+    {
+      "n": 10,
+      "file": "img/10-lead-modale.png",
+      "title": "Fenêtre « Nouveau Lead » remplie",
+      "url": "http://127.0.0.1:8001/fr/leads"
+    },
+    {
+      "n": 11,
+      "file": "img/11-lead-fiche.png",
+      "title": "Fiche du lead — « Nouvelle Oportunité »",
+      "url": "http://127.0.0.1:8001/fr/leads/17"
+    },
+    {
+      "n": 12,
+      "file": "img/12-opportunite-synthese.png",
+      "title": "Opportunité créée — onglet « Synthèse »",
+      "url": "http://127.0.0.1:8001/fr/opportunities/17"
+    },
+    {
+      "n": 13,
+      "file": "img/13-opportunite-fiche.png",
+      "title": "Fiche opportunité — carte « Options », « Nouveau devis »",
+      "url": "http://127.0.0.1:8001/fr/opportunities/17"
+    },
+    {
+      "n": 14,
+      "file": "img/14-devis-fiche.png",
+      "title": "Devis créé (statut Ouvert)",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 15,
+      "file": "img/15-devis-lignes-vide.png",
+      "title": "Onglet lignes — ouvrir le panneau « Ajouter »",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 16,
+      "file": "img/16-devis-ligne-panneau.png",
+      "title": "Panneau « Nouvelle ligne » rempli",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 17,
+      "file": "img/17-devis-ligne-ajoutee.png",
+      "title": "Ligne ajoutée au devis",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 18,
+      "file": "img/18-devis-ligne-menu-taches.png",
+      "title": "Menu de la ligne — « Tâches »",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 19,
+      "file": "img/19-devis-ligne-modale-taches.png",
+      "title": "Fenêtre des tâches — « Gérer les tâches »",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 20,
+      "file": "img/20-gamme-operation.png",
+      "title": "Panneau « Nouvelle opération » rempli",
+      "url": "http://127.0.0.1:8001/fr/task/quote_lines_id/562/show/2276"
+    },
+    {
+      "n": 21,
+      "file": "img/21-gamme-complete.png",
+      "title": "Gamme de la ligne : découpe puis pliage",
+      "url": "http://127.0.0.1:8001/fr/task/quote_lines_id/562/show/2276"
+    },
+    {
+      "n": 22,
+      "file": "img/22-devis-vers-commande.png",
+      "title": "Cocher la ligne puis « Créer une commande »",
+      "url": "http://127.0.0.1:8001/fr/quotes/562"
+    },
+    {
+      "n": 23,
+      "file": "img/23-commande-fiche.png",
+      "title": "Commande créée depuis le devis",
+      "url": "http://127.0.0.1:8001/fr/orders/546"
+    },
+    {
+      "n": 24,
+      "file": "img/24-commande-lignes.png",
+      "title": "Lignes de commande — bouton « Tâches »",
+      "url": "http://127.0.0.1:8001/fr/orders/546"
+    },
+    {
+      "n": 25,
+      "file": "img/25-commande-gamme.png",
+      "title": "Gamme de la commande — ouvrir l’écran de suivi d’une opération",
+      "url": "http://127.0.0.1:8001/fr/task/order_lines_id/546/show/2298"
+    },
+    {
+      "n": 26,
+      "file": "img/26-suivi-play.png",
+      "title": "Écran de suivi — démarrer avec « Play »",
+      "url": "http://127.0.0.1:8001/fr/production/Task/Statu/Id/549"
+    },
+    {
+      "n": 27,
+      "file": "img/27-suivi-quantite.png",
+      "title": "Déclarer 20 pièces bonnes puis « Set »",
+      "url": "http://127.0.0.1:8001/fr/production/Task/Statu/Id/549"
+    },
+    {
+      "n": 28,
+      "file": "img/28-suivi-fin.png",
+      "title": "Opération terminée avec « Fin »",
+      "url": "http://127.0.0.1:8001/fr/production/Task/Statu/Id/549"
+    },
+    {
+      "n": 29,
+      "file": "img/29-commande-vers-bl.png",
+      "title": "Cocher la ligne puis « Nouveau BL »",
+      "url": "http://127.0.0.1:8001/fr/orders/546"
+    },
+    {
+      "n": 30,
+      "file": "img/30-bl-fiche.png",
+      "title": "Bon de livraison — « Nouvelle facture »",
+      "url": "http://127.0.0.1:8001/fr/deliverys/39"
+    },
+    {
+      "n": 31,
+      "file": "img/31-facture-fiche.png",
+      "title": "Facture créée (statut En cours)",
+      "url": "http://127.0.0.1:8001/fr/invoices/50"
+    }
+  ]
+}
