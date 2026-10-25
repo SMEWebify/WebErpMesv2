@@ -1,0 +1,128 @@
+{
+  "scenario": "achats",
+  "supplier": "[FORMATION] Aciers de l'Ouest 10252215",
+  "ids": {
+    "supplier": "74",
+    "rfq": "13",
+    "order": "13",
+    "receipt": "9",
+    "invoice": "3"
+  },
+  "finishedAt": "2026-10-25T22:16:58.001Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-fournisseur-etat.png",
+      "title": "Fiche du tiers : « Etat fournisseur » = Actif",
+      "url": "http://127.0.0.1:8001/fr/companies/74"
+    },
+    {
+      "n": 2,
+      "file": "img/02-fournisseur-adresse.png",
+      "title": "Adresse du fournisseur, cochée « Par défaut »",
+      "url": "http://127.0.0.1:8001/fr/companies/74"
+    },
+    {
+      "n": 3,
+      "file": "img/03-fournisseur-contact.png",
+      "title": "Contact du fournisseur, coché « Par défaut »",
+      "url": "http://127.0.0.1:8001/fr/companies/74"
+    },
+    {
+      "n": 4,
+      "file": "img/04-demande-achat.png",
+      "title": "Écran « Demande d’achat » : besoins issus des commandes clients",
+      "url": "http://127.0.0.1:8001/fr/purchases/request"
+    },
+    {
+      "n": 5,
+      "file": "img/05-demande-prix-creation.png",
+      "title": "Type « Demande d’achat », fournisseur(s) et libellé",
+      "url": "http://127.0.0.1:8001/fr/purchases/request"
+    },
+    {
+      "n": 6,
+      "file": "img/06-demande-prix-ligne.png",
+      "title": "Ajouter une ligne à la demande de prix",
+      "url": "http://127.0.0.1:8001/fr/purchases/quotation/13"
+    },
+    {
+      "n": 7,
+      "file": "img/07-demande-prix-lignes.png",
+      "title": "Demande de prix avec ses lignes",
+      "url": "http://127.0.0.1:8001/fr/purchases/quotation/13"
+    },
+    {
+      "n": 8,
+      "file": "img/08-demande-prix-envoi.png",
+      "title": "Envoyer la demande : PDF ou e-mail depuis la carte Options",
+      "url": "http://127.0.0.1:8001/fr/purchases/quotation/13"
+    },
+    {
+      "n": 9,
+      "file": "img/09-demande-prix-envoyee.png",
+      "title": "Demande de prix passée à « Envoyé »",
+      "url": "http://127.0.0.1:8001/fr/purchases/quotation/13"
+    },
+    {
+      "n": 10,
+      "file": "img/10-demande-prix-conversion.png",
+      "title": "Saisir le prix négocié, cocher les lignes, « Nouvelle commande »",
+      "url": "http://127.0.0.1:8001/fr/purchases/quotation/13"
+    },
+    {
+      "n": 11,
+      "file": "img/11-commande-achat.png",
+      "title": "Commande d’achat créée",
+      "url": "http://127.0.0.1:8001/fr/purchases/13"
+    },
+    {
+      "n": 12,
+      "file": "img/12-commande-achat-lignes.png",
+      "title": "Lignes de la commande d’achat",
+      "url": "http://127.0.0.1:8001/fr/purchases/13"
+    },
+    {
+      "n": 13,
+      "file": "img/13-commande-achat-statut.png",
+      "title": "Une fois envoyée au fournisseur : passer à « En commande »",
+      "url": "http://127.0.0.1:8001/fr/purchases/13"
+    },
+    {
+      "n": 14,
+      "file": "img/14-commande-achat-en-commande.png",
+      "title": "Commande d’achat « En commande » : lignes verrouillées",
+      "url": "http://127.0.0.1:8001/fr/purchases/13"
+    },
+    {
+      "n": 15,
+      "file": "img/15-reception-attente.png",
+      "title": "« En attente de réception » : fournisseur, n° de BL, lignes reçues",
+      "url": "http://127.0.0.1:8001/fr/purchases/waiting/receipt"
+    },
+    {
+      "n": 16,
+      "file": "img/16-reception-lignes.png",
+      "title": "Bon de réception : contrôle de chaque ligne",
+      "url": "http://127.0.0.1:8001/fr/purchases/receipt/9"
+    },
+    {
+      "n": 17,
+      "file": "img/17-facture-attente.png",
+      "title": "« En attente de facturation » : référence fournisseur et réceptions facturées",
+      "url": "http://127.0.0.1:8001/fr/purchases/waiting/invoice"
+    },
+    {
+      "n": 18,
+      "file": "img/18-facture-fiche.png",
+      "title": "Facture fournisseur créée",
+      "url": "http://127.0.0.1:8001/fr/purchases/invoice/3"
+    },
+    {
+      "n": 19,
+      "file": "img/19-factures-recues.png",
+      "title": "Factures reçues (Factur-X) : dépôt et rapprochement",
+      "url": "http://127.0.0.1:8001/fr/purchases/incoming-invoices"
+    }
+  ]
+}
