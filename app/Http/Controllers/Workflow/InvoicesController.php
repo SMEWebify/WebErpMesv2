@@ -612,6 +612,13 @@ class InvoicesController extends Controller
 
         $statu   = (int) $request->input('statu');
 
+        // Une facture émise ne repasse jamais en brouillon : ses lignes redeviendraient
+        // modifiables alors que son numéro et ses écritures existent déjà. Un clic sur la
+        // première étape du bandeau suffisait.
+        if ($statu === 1 && (int) $invoice->statu !== 1) {
+            return response()->json(['error' => 'Une facture émise ne repasse pas en brouillon : faites un avoir pour la corriger.'], 422);
+        }
+
         $invoice->statu = $statu;
         $invoice->save();
         event(new InvoiceStatusChanged($invoice, $statu));

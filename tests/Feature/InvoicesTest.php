@@ -163,6 +163,16 @@ class InvoicesTest extends TestCase
         $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'statu' => 2]);
     }
 
+    public function test_an_issued_invoice_never_goes_back_to_draft(): void
+    {
+        $invoice = Invoices::factory()->create(['statu' => 2]);
+
+        $this->postJson(route('invoices.json.statu', ['id' => $invoice->id]), ['statu' => 1])
+            ->assertStatus(422)
+            ->assertJsonStructure(['error']);
+        $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'statu' => 2]);
+    }
+
     public function test_can_add_payment_to_invoice(): void
     {
         $invoice = Invoices::factory()->create(['statu' => 2]);
