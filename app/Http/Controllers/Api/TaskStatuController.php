@@ -66,7 +66,12 @@ class TaskStatuController extends Controller
                 ->first(['id', 'ordre', 'label']);
         }
 
-        $lastActivity    = TaskActivities::where('task_id', $id)->latest()->first(['id', 'type']);
+        // État de marche (Play / Pause / Fin) : seules ces activités comptent ; une
+        // déclaration de quantités ne doit pas faire croire que la tâche est arrêtée.
+        $lastActivity    = TaskActivities::where('task_id', $id)
+            ->whereIn('type', [TaskActivities::TYPE_START, TaskActivities::TYPE_END, TaskActivities::TYPE_FINISH])
+            ->orderByDesc('id')
+            ->first(['id', 'type']);
         $serviceResources = $task->service
             ? $task->service->Ressources->where('is_labor', false)->map(fn ($r) => ['id' => $r->id, 'label' => $r->label])->values()
             : [];
@@ -140,6 +145,7 @@ class TaskStatuController extends Controller
             'not_recalculate'     => (bool) $task->not_recalculate,
             // computed
             'total_log_time'      => $task->getTotalLogTime(),
+            'total_log_seconds'   => $task->getTotalLogSeconds(),
             'total_log_good_qt'   => $task->getTotalLogGoodQt(),
             'total_log_bad_qt'    => $task->getTotalLogBadQt(),
             'total_net_good_qt'   => $task->getTotalNetGoodQt(),

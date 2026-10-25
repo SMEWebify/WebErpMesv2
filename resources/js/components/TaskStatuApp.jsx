@@ -193,8 +193,11 @@ function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
 // ---------------------------------------------------------------------------
 function TaskHeader({ task, onNavigate, trans, searchSlot }) {
     const t = (key) => trans?.[key] ?? key;
-    const pct = Math.min(Math.max(task.progress ?? 0, 0), 100);
     const ol = task.order_lines;
+    const isInternal = task.service?.type === 1;
+    const running = task.last_activity_type === ACT_START;
+    const loggedSeconds = useLiveSeconds(task.total_log_seconds ?? 0, running);
+    const plannedSeconds = Math.round(Number(task.total_time ?? 0) * 3600);
 
     const runTone = { [ACT_START]: 'ok', [ACT_END]: 'warn', [ACT_FINISH]: 'accent' }[task.last_activity_type] ?? 'neutral';
 
@@ -251,15 +254,65 @@ function TaskHeader({ task, onNavigate, trans, searchSlot }) {
                 </div>
             </div>
 
-            <div className="ts-header__progress">
-                <span className="ts-progress__meta">
-                    {task.total_net_good_qt ?? 0} / {task.order_qty ?? 0} {t('qty_trans_key')}
-                </span>
-                <div className="ts-progress">
-                    <div className="ts-progress__bar" style={{ width: `${pct}%` }} />
-                </div>
-                <span className="ts-progress__meta">{pct} %</span>
+            {/* Temps et quantités avancent séparément : 70 % du temps pour 10 % des pièces se voit d'un coup d'œil. */}
+            {isInternal && (
+                <ProgressRow
+                    icon="fas fa-stopwatch"
+                    title={t('total_time_trans_key')}
+                    meta={`${formatDuration(loggedSeconds)} / ${formatDuration(plannedSeconds)}`}
+                    done={loggedSeconds}
+                    target={plannedSeconds}
+                    tone="time"
+                />
+            )}
+            <ProgressRow
+                icon="fas fa-cubes"
+                title={t('net_production_qty_trans_key')}
+                meta={`${task.total_net_good_qt ?? 0} / ${task.order_qty ?? 0}`}
+                done={Number(task.total_net_good_qt ?? 0)}
+                target={Number(task.order_qty ?? 0)}
+                tone="qty"
+            />
+        </div>
+    );
+}
+
+/** hh:mm:ss, heures non plafonnées (une tâche peut dépasser 24 h). */
+function formatDuration(seconds) {
+    const s = Math.max(0, Math.round(seconds));
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
+}
+
+/** Temps pointé qui continue de défiler à l'écran tant que la tâche est démarrée. */
+function useLiveSeconds(base, running) {
+    const [extra, setExtra] = useState(0);
+    useEffect(() => {
+        setExtra(0);
+        if (!running) return;
+        const from = Date.now();
+        const timer = setInterval(() => setExtra(Math.floor((Date.now() - from) / 1000)), 1000);
+        return () => clearInterval(timer);
+    }, [base, running]);
+    return base + extra;
+}
+
+/** Une barre d'avancement : le pourcentage réel est affiché, la barre s'arrête à 100 % et vire au rouge au-delà. */
+function ProgressRow({ icon, title, meta, done, target, tone }) {
+    const realPct = target > 0 ? Math.round((done / target) * 100) : 0;
+    const width = Math.min(Math.max(realPct, 0), 100);
+    const over = realPct > 100;
+    return (
+        <div className="ts-header__progress" title={title}>
+            <i className={`${icon} ts-progress__icon`} />
+            <span className="ts-progress__meta ts-progress__meta--fixed">{meta}</span>
+            <div className="ts-progress">
+                <div
+                    className={`ts-progress__bar ts-progress__bar--${tone}${over ? ' ts-progress__bar--over' : ''}`}
+                    style={{ width: `${width}%` }}
+                />
             </div>
+            <span className={`ts-progress__meta${over ? ' ts-progress__meta--over' : ''}`}>{realPct} %</span>
         </div>
     );
 }
@@ -855,6 +908,7 @@ function TaskDetail({
     andonStoreUrl,
     purchasesRequestUrl,
     onNavigate,
+    onRefresh,
     onInspectionSummary,
     trans,
     fileTrans,
@@ -862,7 +916,7 @@ function TaskDetail({
 }) {
     const t = (key) => trans?.[key] ?? key;
     const [tab, setTab] = useState('activity');
-    const reload = () => onNavigate(task.id);
+    const reload = () => onRefresh(task.id);
     const isInternal = task.service?.type === 1;
     // Article avec plan de contrôle validé : les cotes restent sous les yeux, onglet Contrôle d'abord.
     const inspection = task.inspection;
@@ -1075,6 +1129,14 @@ export default function TaskStatuApp({
         loadTask(id);
     }
 
+    // Après une déclaration (quantités, play/pause, date…) : relit la tâche sans
+    // repasser par le spinner, pour ne pas démonter l'écran (plan, onglet, défilement).
+    function refreshTask(id) {
+        return apiFetch(`${apiBaseUrl}/${id}`)
+            .then((data) => setTask(data))
+            .catch(() => {});
+    }
+
     // Rendu une seule fois puis placé soit dans l'en-tête de tâche (mode compact),
     // soit en pleine largeur sur l'écran d'accueil KPI.
     const searchForm = (inline) => (
@@ -1127,6 +1189,7 @@ export default function TaskStatuApp({
                     andonStoreUrl={andonStoreUrl}
                     purchasesRequestUrl={purchasesRequestUrl}
                     onNavigate={handleNavigate}
+                    onRefresh={refreshTask}
                     onInspectionSummary={(summary) => summary && setTask((current) => ({ ...current, inspection: { ...current.inspection, ...summary } }))}
                     trans={trans}
                     fileTrans={fileTrans}

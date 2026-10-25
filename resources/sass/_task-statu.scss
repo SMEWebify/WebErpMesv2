@@ -230,6 +230,17 @@
     display: flex;
     align-items: center;
     gap: 12px;
+
+    & + & {
+        margin-top: 6px;
+    }
+}
+
+.ts-progress__icon {
+    width: 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ts-ink-2);
 }
 
 .ts-progress {
@@ -253,6 +264,23 @@
     color: var(--ts-ink-2);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+}
+
+// Les deux barres (temps, quantités) démarrent au même endroit.
+.ts-progress__meta--fixed {
+    min-width: 130px;
+}
+
+.ts-progress__meta--over {
+    color: var(--bs-danger);
+}
+
+.ts-progress__bar--qty {
+    background: var(--bs-success);
+}
+
+.ts-progress__bar--over {
+    background: var(--bs-danger);
 }
 
 // --- Boutons ----------------------------------------------------------------

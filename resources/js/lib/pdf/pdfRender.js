@@ -63,7 +63,8 @@ export async function openPlan(file) {
     }
 
     const pdfjs = await loadPdfjs();
-    const doc = await pdfjs.getDocument({ url: file.view_url, withCredentials: true }).promise;
+    const loadingTask = pdfjs.getDocument({ url: file.view_url, withCredentials: true });
+    const doc = await loadingTask.promise;
 
     return {
         pageCount: doc.numPages,
@@ -117,7 +118,8 @@ export async function openPlan(file) {
                 },
             };
         },
-        destroy() { doc.destroy(); },
+        // pdf.js 6 n'a plus PDFDocumentProxy.destroy() : c'est la tâche de chargement qui libère le document.
+        destroy() { loadingTask.destroy(); },
     };
 }
 

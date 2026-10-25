@@ -705,6 +705,14 @@ class Task extends Model
     }
 
     /**
+     * Temps réel passé sur la tâche, en secondes (affichage hh:mm:ss de l'écran opérateur).
+     */
+    public function getTotalLogSeconds(): int
+    {
+        return $this->computeWorkedSeconds();
+    }
+
+    /**
      * Get the total realized cost.
      *
      * This method calculates the total realized cost by multiplying the total log time
