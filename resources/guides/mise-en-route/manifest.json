@@ -1,0 +1,102 @@
+{
+  "scenario": "mise-en-route",
+  "finishedAt": "2026-10-25T22:58:32.134Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-societe-identite.png",
+      "title": "Réglage société : identité",
+      "url": "http://127.0.0.1:8001/fr/admin/factory"
+    },
+    {
+      "n": 2,
+      "file": "img/02-societe-administratif.png",
+      "title": "Réglage société : SIREN, n° de TVA, IBAN",
+      "url": "http://127.0.0.1:8001/fr/admin/factory"
+    },
+    {
+      "n": 3,
+      "file": "img/03-societe-defauts.png",
+      "title": "Réglage société : valeurs par défaut",
+      "url": "http://127.0.0.1:8001/fr/admin/factory"
+    },
+    {
+      "n": 4,
+      "file": "img/04-numerotation.png",
+      "title": "Numérotation des documents",
+      "url": "http://127.0.0.1:8001/fr/admin/factory"
+    },
+    {
+      "n": 5,
+      "file": "img/05-tva.png",
+      "title": "TVA : liste et création",
+      "url": "http://127.0.0.1:8001/fr/accounting/vats"
+    },
+    {
+      "n": 6,
+      "file": "img/06-tva-defaut.png",
+      "title": "Fenêtre « Modifier » : réglage « Par défaut »",
+      "url": "http://127.0.0.1:8001/fr/accounting/vats"
+    },
+    {
+      "n": 7,
+      "file": "img/07-conditions-paiement.png",
+      "title": "Conditions de paiement",
+      "url": "http://127.0.0.1:8001/fr/accounting/payment-conditions"
+    },
+    {
+      "n": 8,
+      "file": "img/08-modes-paiement.png",
+      "title": "Modes de paiement",
+      "url": "http://127.0.0.1:8001/fr/accounting/payment-methods"
+    },
+    {
+      "n": 9,
+      "file": "img/09-flux-taches.png",
+      "title": "Flux des tâches : statuts des opérations",
+      "url": "http://127.0.0.1:8001/fr/admin/kanban-settings"
+    },
+    {
+      "n": 10,
+      "file": "img/10-objectif-ca.png",
+      "title": "Objectif de chiffre d’affaires",
+      "url": "http://127.0.0.1:8001/fr/admin/estimated-budgets-settings"
+    },
+    {
+      "n": 11,
+      "file": "img/11-roles.png",
+      "title": "Rôles et permissions",
+      "url": "http://127.0.0.1:8001/fr/admin/roles-permissions"
+    },
+    {
+      "n": 12,
+      "file": "img/12-utilisateurs.png",
+      "title": "Liste des utilisateurs",
+      "url": "http://127.0.0.1:8001/fr/human-resources/users"
+    },
+    {
+      "n": 13,
+      "file": "img/13-utilisateur-role.png",
+      "title": "Fiche salarié, onglet « RH information » : le rôle",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/3"
+    },
+    {
+      "n": 14,
+      "file": "img/14-email.png",
+      "title": "Configuration e-mail (SMTP)",
+      "url": "http://127.0.0.1:8001/fr/admin/integrations/mail"
+    },
+    {
+      "n": 15,
+      "file": "img/15-import-clients.png",
+      "title": "Imports/Exports : import des clients",
+      "url": "http://127.0.0.1:8001/fr/admin/imports-exports"
+    },
+    {
+      "n": 16,
+      "file": "img/16-apparence.png",
+      "title": "Profil › Apparence : habillage et couleur",
+      "url": "http://127.0.0.1:8001/fr/users/Profile/1#Appearance"
+    }
+  ]
+}
