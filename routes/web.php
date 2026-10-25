@@ -76,16 +76,19 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     // --- Setup wizard (installation initiale) ---
     // setup.open ferme les endpoints dès que Factory + comptes de base sont créés,
     // pour qu'un utilisateur post-install ne puisse pas ré-écrire la config société.
-    Route::middleware(['auth', 'setup.open'])->prefix('setup')->name('setup.')->group(function () {
-        Route::get('/',                    'App\Http\Controllers\Setup\SetupController@index')->name('index');
-        Route::post('/company',            'App\Http\Controllers\Setup\SetupController@saveCompany')->name('company');
-        Route::post('/vat',                'App\Http\Controllers\Setup\SetupController@saveVat')->name('vat');
-        Route::post('/payment-condition',  'App\Http\Controllers\Setup\SetupController@savePaymentCondition')->name('payment-condition');
-        Route::post('/payment-method',     'App\Http\Controllers\Setup\SetupController@savePaymentMethod')->name('payment-method');
-        Route::post('/delivery',           'App\Http\Controllers\Setup\SetupController@saveDelivery')->name('delivery');
-        Route::post('/unit',               'App\Http\Controllers\Setup\SetupController@saveUnit')->name('unit');
-        Route::post('/role',               'App\Http\Controllers\Setup\SetupController@saveRole')->name('role');
-        Route::post('/estimated-budget',   'App\Http\Controllers\Setup\SetupController@saveEstimatedBudget')->name('estimated-budget');
+    // Chaque groupe d'étapes se ferme pour son compte (App\Support\SetupState).
+    Route::middleware(['auth'])->prefix('setup')->name('setup.')->group(function () {
+        Route::get('/',                    'App\Http\Controllers\Setup\SetupController@index')->middleware('setup.open:page')->name('index');
+        Route::middleware('setup.open')->group(function () {
+            Route::post('/company',            'App\Http\Controllers\Setup\SetupController@saveCompany')->name('company');
+            Route::post('/vat',                'App\Http\Controllers\Setup\SetupController@saveVat')->name('vat');
+            Route::post('/payment-condition',  'App\Http\Controllers\Setup\SetupController@savePaymentCondition')->name('payment-condition');
+            Route::post('/payment-method',     'App\Http\Controllers\Setup\SetupController@savePaymentMethod')->name('payment-method');
+            Route::post('/delivery',           'App\Http\Controllers\Setup\SetupController@saveDelivery')->name('delivery');
+            Route::post('/unit',               'App\Http\Controllers\Setup\SetupController@saveUnit')->name('unit');
+        });
+        Route::post('/role',               'App\Http\Controllers\Setup\SetupController@saveRole')->middleware('setup.open:role')->name('role');
+        Route::post('/estimated-budget',   'App\Http\Controllers\Setup\SetupController@saveEstimatedBudget')->middleware('setup.open:budget')->name('estimated-budget');
     });
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');

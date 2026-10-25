@@ -2,39 +2,36 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\SetupState;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
-use App\Models\Accounting\AccountingVat;
-use App\Models\Accounting\AccountingPaymentConditions;
-use App\Models\Accounting\AccountingPaymentMethod;
-use App\Models\Accounting\AccountingDelivery;
-use App\Models\Methods\MethodsUnits;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Ferme le wizard d'installation une fois que la société est configurée.
+ * Ferme le wizard d'installation au fur et à mesure qu'il est rempli (App\Support\SetupState).
  *
- * Miroir inversé de CheckFactory : ce middleware coupe l'accès aux routes
- * /setup/* dès que les six tables de base sont peuplées, pour qu'un
- * utilisateur authentifié post-install ne puisse pas ré-écrire la
- * ligne Factory ni écraser les référentiels comptables via le wizard.
+ * Paramètre de route :
+ * - (aucun) étapes 1 à 6 : fermées dès que les six référentiels existent, pour qu'un utilisateur
+ *   post-install ne puisse pas réécrire la société ni les référentiels comptables ;
+ * - role : étape 7, ouverte tant qu'aucun utilisateur n'a de rôle (première installation) ;
+ * - budget : étape 8, ouverte tant qu'aucun objectif de chiffre n'existe ;
+ * - page : l'écran lui-même, ouvert tant que l'installation n'est pas terminée.
  *
- * Le paramétrage post-install passe par les écrans admin dédiés
- * (FactoryController, AccountingVatController, etc.).
+ * Avant ce découpage, les étapes 7 et 8 étaient refusées dès la fin de l'étape 6.
+ * Le paramétrage post-install passe par les écrans admin dédiés.
  */
 class BlockOnceFactoryConfigured
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $stage = 'referentials'): Response
     {
-        if (
-            Factory::exists()
-            && AccountingVat::exists()
-            && AccountingPaymentConditions::exists()
-            && AccountingPaymentMethod::exists()
-            && AccountingDelivery::exists()
-            && MethodsUnits::exists()
-        ) {
+        $closed = match ($stage) {
+            'role'   => SetupState::referentialsDone() && SetupState::anyUserHasRole(),
+            'budget' => SetupState::referentialsDone() && SetupState::budgetDone(),
+            'page'   => SetupState::finished(),
+            default  => SetupState::referentialsDone(),
+        };
+
+        if ($closed) {
             if ($request->expectsJson()) {
                 abort(403, 'Setup wizard is closed.');
             }
