@@ -560,9 +560,15 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
 // Lines Tab
 // ---------------------------------------------------------------------------
 
-function LinesTab({ quotation, products, currency, endpoints, trans }) {
+function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChange }) {
     const [lines,       setLines]       = useState(quotation.lines ?? []);
     const [editingLine, setEditingLine] = useState(null);
+
+    // L'onglet est démonté quand on passe sur « Info » : sans remonter la liste au parent, il
+    // repartait des lignes du chargement et les lignes ajoutées depuis disparaissaient.
+    useEffect(() => {
+        onLinesChange?.(lines);
+    }, [lines]);
 
     function handleLineAdded(line) {
         setLines(prev => [...prev, line]);
@@ -841,6 +847,7 @@ export default function PurchasesQuotationShow({
                             products={products}
                             currency={currency}
                             endpoints={endpoints}
+                            onLinesChange={lines => setQuotation(prev => ({ ...prev, lines }))}
                             trans={trans}
                         />
                     )}
