@@ -132,6 +132,23 @@ class FileManagerTest extends TestCase
         $this->assertSame($file->name, $product->fresh()->drawing_file);
     }
 
+    public function test_the_legacy_drawing_url_serves_a_primary_ged_file(): void
+    {
+        $product = $this->product();
+
+        $this->postJson(route('files.json.store'), [
+            'fileable_type' => 'product',
+            'fileable_id' => $product->id,
+            'files' => [UploadedFile::fake()->create('plan.pdf', 12, 'application/pdf')],
+            'role' => FileRole::PLAN,
+            'is_primary' => true,
+        ])->assertStatus(201);
+
+        // TaskStatuApp, quote lines and order lines link to /drawing/{drawing_file}.
+        $this->get('/drawing/' . $product->fresh()->drawing_file)->assertOk();
+        $this->get('/drawing/unknown.pdf')->assertNotFound();
+    }
+
     public function test_promoting_a_file_demotes_the_previous_primary(): void
     {
         $product = $this->product();

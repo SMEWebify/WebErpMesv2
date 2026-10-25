@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Files;
 
 use App\Http\Controllers\Controller;
+use App\Models\File;
 use App\Services\Files\FileStorageService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -30,7 +31,21 @@ class LegacyFileController extends Controller
 
         $located = $this->storage->locateLegacy($filename, $folder);
 
-        abort_if($located === null, 404);
+        // The legacy product columns are now a cache of the primary GED files
+        // (refreshLegacyColumns), so /drawing/{name} may point at a file stored
+        // under files/{yyyy}/{mm}: serve it as files.raw would.
+        if ($located === null) {
+            $file = File::query()
+                ->where('name', basename($filename))
+                ->whereNotNull('path')
+                ->first();
+
+            abort_if($file === null, 404);
+
+            $this->authorize('view', $file);
+
+            return $this->storage->response($file);
+        }
 
         [$disk, $path] = $located;
 
