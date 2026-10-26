@@ -60,6 +60,20 @@ class HumanResourcesControllerTest extends TestCase
     }
 
     /** @test */
+    public function a_user_without_role_shows_an_empty_role_choice()
+    {
+        // Sans choix vide, la liste se positionnait sur le premier rôle : enregistrer la
+        // fiche d'un salarié sans rôle lui attribuait ce rôle.
+        Role::create(['name' => 'Admin']);
+        $user = User::factory()->create();
+        $user->syncRoles([]);
+
+        $this->get(route('human.resources.show.user', ['id' => $user->id]))
+            ->assertOk()
+            ->assertSee('<option value=""  selected >', false);
+    }
+
+    /** @test */
     public function it_updates_a_user()
     {
         $user = User::factory()->create();

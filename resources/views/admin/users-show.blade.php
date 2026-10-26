@@ -113,11 +113,11 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         <select class="form-select" name="role" id="role">
-                                            @forelse ($Roles as $Role)
+                                            {{-- Sans choix vide, enregistrer la fiche d'un salarié sans rôle lui donnait le premier rôle de la liste. --}}
+                                            <option value="" @if($User->roles->isEmpty()) selected @endif>—</option>
+                                            @foreach ($Roles as $Role)
                                             <option value="{{ $Role->name }}" @if($User->hasRole($Role->name)) Selected @endif>{{ $Role->name }}</option>
-                                            @empty
-                                            <option value="">{{__('general_content.no_role_trans_key') }}</option>
-                                            @endforelse
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
