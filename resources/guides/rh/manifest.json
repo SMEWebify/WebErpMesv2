@@ -1,0 +1,89 @@
+{
+  "scenario": "rh",
+  "ids": {
+    "me": "1",
+    "employee": "3",
+    "report": "1"
+  },
+  "finishedAt": "2026-10-26T09:32:12.666Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-salaries.png",
+      "title": "Liste des salariés",
+      "url": "http://127.0.0.1:8001/fr/human-resources/users"
+    },
+    {
+      "n": 2,
+      "file": "img/02-fiche-rh.png",
+      "title": "Fiche salarié : informations RH",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/3"
+    },
+    {
+      "n": 3,
+      "file": "img/03-contrat.png",
+      "title": "Nouveau contrat de travail",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/3"
+    },
+    {
+      "n": 4,
+      "file": "img/04-contrats.png",
+      "title": "Contrats du salarié",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/3"
+    },
+    {
+      "n": 5,
+      "file": "img/05-documents.png",
+      "title": "Dossier du salarié (confidentiel)",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/3"
+    },
+    {
+      "n": 6,
+      "file": "img/06-note-creation.png",
+      "title": "Le salarié ouvre une note de frais",
+      "url": "http://127.0.0.1:8001/fr/users/Profile/1#ExpenseReport"
+    },
+    {
+      "n": 7,
+      "file": "img/07-justificatif.png",
+      "title": "Déposer le justificatif",
+      "url": "http://127.0.0.1:8001/fr/human-resources/expense/show/1"
+    },
+    {
+      "n": 8,
+      "file": "img/08-depense.png",
+      "title": "Saisir la dépense à partir du justificatif",
+      "url": "http://127.0.0.1:8001/fr/human-resources/expense/show/1"
+    },
+    {
+      "n": 9,
+      "file": "img/09-note.png",
+      "title": "Note de frais : dépenses et justificatifs",
+      "url": "http://127.0.0.1:8001/fr/human-resources/expense/show/1"
+    },
+    {
+      "n": 10,
+      "file": "img/10-note-soumission.png",
+      "title": "Soumettre la note aux RH",
+      "url": "http://127.0.0.1:8001/fr/users/Profile/1#ExpenseReport"
+    },
+    {
+      "n": 11,
+      "file": "img/11-validation-liste.png",
+      "title": "Notes de frais à valider",
+      "url": "http://127.0.0.1:8001/fr/human-resources"
+    },
+    {
+      "n": 12,
+      "file": "img/12-validation.png",
+      "title": "Approuver ou retourner la note",
+      "url": "http://127.0.0.1:8001/fr/human-resources"
+    },
+    {
+      "n": 13,
+      "file": "img/13-categories.png",
+      "title": "Catégories de dépense",
+      "url": "http://127.0.0.1:8001/fr/human-resources"
+    }
+  ]
+}
