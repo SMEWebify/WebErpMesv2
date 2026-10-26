@@ -1,0 +1,106 @@
+{
+  "scenario": "qualite",
+  "ids": {
+    "nc": "NC-2026-26",
+    "action": "ACT-2026-26"
+  },
+  "finishedAt": "2026-10-26T00:49:55.519Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-tableau-de-bord.png",
+      "title": "Tableau de bord qualité",
+      "url": "http://127.0.0.1:8001/fr/quality"
+    },
+    {
+      "n": 2,
+      "file": "img/02-reglage.png",
+      "title": "Réglage : défaillances, causes et corrections types",
+      "url": "http://127.0.0.1:8001/fr/quality"
+    },
+    {
+      "n": 3,
+      "file": "img/03-appareil-creation.png",
+      "title": "Nouvel appareil de mesure",
+      "url": "http://127.0.0.1:8001/fr/quality"
+    },
+    {
+      "n": 4,
+      "file": "img/04-appareils-liste.png",
+      "title": "Appareils de mesure et alertes d’étalonnage",
+      "url": "http://127.0.0.1:8001/fr/quality"
+    },
+    {
+      "n": 5,
+      "file": "img/05-nc-creation.png",
+      "title": "Déclarer une non-conformité",
+      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie"
+    },
+    {
+      "n": 6,
+      "file": "img/06-nc-liste.png",
+      "title": "Liste des non-conformités",
+      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie"
+    },
+    {
+      "n": 7,
+      "file": "img/07-action-creation.png",
+      "title": "Action corrective liée à la non-conformité",
+      "url": "http://127.0.0.1:8001/fr/quality/action"
+    },
+    {
+      "n": 8,
+      "file": "img/08-actions-liste.png",
+      "title": "Actions qualité",
+      "url": "http://127.0.0.1:8001/fr/quality/action"
+    },
+    {
+      "n": 9,
+      "file": "img/09-derogation-creation.png",
+      "title": "Demande de dérogation",
+      "url": "http://127.0.0.1:8001/fr/quality/derogation"
+    },
+    {
+      "n": 10,
+      "file": "img/10-nc-cloture.png",
+      "title": "Clôturer avec le bouton « Résolue »",
+      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie?search=NC-2026-26"
+    },
+    {
+      "n": 11,
+      "file": "img/11-nc-resolue.png",
+      "title": "Non-conformité résolue",
+      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie?search=NC-2026-26"
+    },
+    {
+      "n": 12,
+      "file": "img/12-plans-valides.png",
+      "title": "Plans qualité : plans validés",
+      "url": "http://127.0.0.1:8001/fr/quality/plans"
+    },
+    {
+      "n": 13,
+      "file": "img/13-bulleur.png",
+      "title": "Plan bullé (validé, en lecture seule)",
+      "url": "http://127.0.0.1:8001/fr/quality/plans/1/bubbler"
+    },
+    {
+      "n": 14,
+      "file": "img/14-rapport-fai.png",
+      "title": "Rapport premier article",
+      "url": "http://127.0.0.1:8001/fr/quality/inspections/2/report"
+    },
+    {
+      "n": 15,
+      "file": "img/15-audits.png",
+      "title": "Audits internes : checklists ISO 9001",
+      "url": "http://127.0.0.1:8001/audit"
+    },
+    {
+      "n": 16,
+      "file": "img/16-retours.png",
+      "title": "Retours clients",
+      "url": "http://127.0.0.1:8001/fr/returns"
+    }
+  ]
+}
