@@ -1,0 +1,97 @@
+{
+  "scenario": "article",
+  "failedAt": "9. Statut du stock",
+  "error": "Error: locator.fill: Error: strict mode violation: getByPlaceholder(/Recherche/) resolved to 2 elements:\n    1) <input value=\"\" type=\"search\" placeholder=\"Recherche...\" class=\"form-control form-control-sm\"/> aka getByRole('searchbox', { name: 'Recherche...' })\n    2) <input type=\"search\" autocomplete=\"off\" class=\"wem-launcher__input\" aria-label=\"Rechercher un menu…\" placeholder=\"Rechercher un menu…\"/> aka getByPlaceholder('Rechercher un menu…')\n\nCall log:\n\u001b[2m  - waiting for getByPlaceholder(/Recherche/)\u001b[22m\n",
+  "ids": {
+    "product": "348",
+    "stock": "3",
+    "location": "12",
+    "line": "8"
+  },
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-liste.png",
+      "title": "Liste des articles",
+      "url": "http://127.0.0.1:8001/fr/products"
+    },
+    {
+      "n": 2,
+      "file": "img/02-creation.png",
+      "title": "Nouveau produit",
+      "url": "http://127.0.0.1:8001/fr/products"
+    },
+    {
+      "n": 3,
+      "file": "img/03-fiche.png",
+      "title": "Fiche article : onglets",
+      "url": "http://127.0.0.1:8001/fr/products/348"
+    },
+    {
+      "n": 4,
+      "file": "img/04-gamme-operation.png",
+      "title": "Nouvelle opération de la gamme",
+      "url": "http://127.0.0.1:8001/fr/products/348"
+    },
+    {
+      "n": 5,
+      "file": "img/05-gamme.png",
+      "title": "Gamme opératoire de l’article",
+      "url": "http://127.0.0.1:8001/fr/products/348"
+    },
+    {
+      "n": 6,
+      "file": "img/06-documents.png",
+      "title": "Documents de l’article (plans, modèles 3D, photos)",
+      "url": "http://127.0.0.1:8001/fr/products/348"
+    },
+    {
+      "n": 7,
+      "file": "img/07-stock-creation.png",
+      "title": "Nouveau stock (entrepôt)",
+      "url": "http://127.0.0.1:8001/fr/products/Stock"
+    },
+    {
+      "n": 8,
+      "file": "img/08-emplacement-creation.png",
+      "title": "Nouvel emplacement dans le stock",
+      "url": "http://127.0.0.1:8001/fr/products/Stock/3"
+    },
+    {
+      "n": 9,
+      "file": "img/09-ligne-creation.png",
+      "title": "Ranger l’article dans l’emplacement",
+      "url": "http://127.0.0.1:8001/fr/products/stock/location/12"
+    },
+    {
+      "n": 10,
+      "file": "img/10-emplacement.png",
+      "title": "Emplacement et ses lignes de stock",
+      "url": "http://127.0.0.1:8001/fr/products/stock/location/12"
+    },
+    {
+      "n": 11,
+      "file": "img/11-entree.png",
+      "title": "Entrée de stock",
+      "url": "http://127.0.0.1:8001/fr/products/stock/location/product/8"
+    },
+    {
+      "n": 12,
+      "file": "img/12-sortie.png",
+      "title": "Sortie de stock",
+      "url": "http://127.0.0.1:8001/fr/products/stock/location/product/8"
+    },
+    {
+      "n": 13,
+      "file": "img/13-mouvements.png",
+      "title": "Ligne de stock : mouvements et stock courant",
+      "url": "http://127.0.0.1:8001/fr/products/stock/location/product/8"
+    },
+    {
+      "n": 14,
+      "file": "img/14-fiche-stock.png",
+      "title": "Le stock de l’article, emplacement par emplacement",
+      "url": "http://127.0.0.1:8001/fr/products/348"
+    }
+  ]
+}
