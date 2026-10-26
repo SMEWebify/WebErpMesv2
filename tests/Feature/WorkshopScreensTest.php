@@ -134,6 +134,9 @@ class WorkshopScreensTest extends TestCase
      */
     public function test_report_pairs_declarations_within_the_period(): void
     {
+        // Midi : avant 3 h du matin, « il y a 3 heures » tombait la veille, hors de « today ».
+        $this->travelTo(now()->setTime(12, 0));
+
         $closed = Task::factory()->create();
         $open   = Task::factory()->create();
 
