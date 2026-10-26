@@ -103,6 +103,42 @@ class InvoicesTest extends TestCase
         ]);
     }
 
+    public function test_an_invoice_from_delivery_lines_books_its_sale_entry(): void
+    {
+        // Régression du 20/05/2026 : la facture créée sans invoice_type sautait l'écriture VENT.
+        $vat = AccountingVat::factory()->create(['rate' => 20]);
+        \App\Models\Accounting\AccountingAllocation::create([
+            'account' => '701000', 'label' => 'Ventes', 'accounting_vats_id' => $vat->id,
+            'vat_account' => '445710', 'code_account' => '701000', 'type_imputation' => 1,
+        ]);
+        $order     = Orders::factory()->create(['statu' => 1]);
+        $orderLine = OrderLines::factory()->create([
+            'orders_id' => $order->id, 'qty' => 2, 'selling_price' => 50, 'discount' => 0,
+            'delivered_qty' => 2, 'delivered_remaining_qty' => 0,
+            'invoiced_qty' => 0, 'invoiced_remaining_qty' => 2, 'accounting_vats_id' => $vat->id,
+        ]);
+        $delivery = Deliverys::factory()->create([
+            'companies_id' => $order->companies_id, 'companies_contacts_id' => $order->companies_contacts_id,
+            'companies_addresses_id' => $order->companies_addresses_id, 'order_id' => $order->id,
+        ]);
+        $deliveryLine = DeliveryLines::create([
+            'deliverys_id' => $delivery->id, 'order_line_id' => $orderLine->id,
+            'ordre' => 10, 'qty' => 2, 'invoice_status' => 1,
+        ]);
+
+        $this->postJson(route('invoices-request.store'), [
+            'code' => 'FA-TEST-VENT', 'label' => 'Test', 'companies_id' => $order->companies_id,
+            'companies_addresses_id' => $order->companies_addresses_id,
+            'companies_contacts_id' => $order->companies_contacts_id,
+            'user_id' => $this->user->id, 'lines' => [$deliveryLine->id],
+        ])->assertOk();
+
+        $line = InvoiceLines::where('delivery_line_id', $deliveryLine->id)->firstOrFail();
+        $this->assertEquals(1, (int) $line->invoice->invoice_type);
+        // 2 × 50 € HT + 20 % = 120 € TTC au débit du 411.
+        $this->assertEquals(120.0, (float) \App\Models\Accounting\AccountingEntry::where('invoice_line_id', $line->id)->sum('debit_amount'));
+    }
+
     public function test_can_create_invoice_from_delivery(): void
     {
         $vat      = AccountingVat::factory()->create();

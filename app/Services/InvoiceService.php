@@ -29,6 +29,9 @@ class InvoiceService
             'companies_addresses_id' => $companyAddressId,
             'companies_contacts_id'  => $companyContactId,
             'user_id'                => $userId,
+            // Écrit explicitement : un modèle tout juste créé ne porte pas le défaut de la
+            // colonne, et InvoiceLineService ne passerait pas l'écriture de vente.
+            'invoice_type'           => 1,
             'due_date'               => Carbon::now()->addDays(30),
             'customer_reference'     => $customerReference,
         ]);

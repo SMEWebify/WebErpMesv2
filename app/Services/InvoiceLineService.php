@@ -57,11 +57,16 @@ class InvoiceLineService
             'invoice_status'           => 1,
         ]);
 
-        if ($allocationId != null && $invoiceCreated->invoice_type === 1) {
+        // Une facture créée sans invoice_type est une facture (défaut de la colonne) : le
+        // test strict sur l'attribut absent écartait toutes les lignes venues d'une commande
+        // ou d'un BL — ni écriture de vente, ni clôture des tâches.
+        $isInvoice = (int) ($invoiceCreated->invoice_type ?? 1) === 1;
+
+        if ($allocationId != null && $isInvoice) {
             $this->accountingEntryService->createSaleEntry($invoiceLines);
         }
         
-        if ($deliveryId == null && $invoiceCreated->invoice_type === 1) {
+        if ($deliveryId == null && $isInvoice) {
             $this->taskService->closeTasks($key);
         }
 
