@@ -6,6 +6,15 @@ function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
 
+// Les dates arrivent en ISO (« 2026-10-25T00:00:00.000000Z ») : on n'affiche que le jour,
+// lu en UTC pour qu'il ne recule pas d'un jour selon le fuseau du navigateur.
+function formatDay(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat(document.documentElement.lang || 'fr', { timeZone: 'UTC' }).format(date);
+}
+
 export default function FecExportLines({ endpoints, trans, initialStartDate, initialEndDate }) {
     const [rows, setRows]             = useState([]);
     const [selected, setSelected]     = useState({});
@@ -123,15 +132,15 @@ export default function FecExportLines({ endpoints, trans, initialStartDate, ini
                                     <td>{row.journal_code}</td>
                                     <td>{row.journal_label}</td>
                                     <td>{row.sequence_number}</td>
-                                    <td>{row.accounting_date}</td>
+                                    <td>{formatDay(row.accounting_date)}</td>
                                     <td>{row.account_number}</td>
                                     <td>{row.account_label}</td>
                                     <td>{row.justification_reference}</td>
-                                    <td>{row.justification_date}</td>
+                                    <td>{formatDay(row.justification_date)}</td>
                                     <td>{row.auxiliary_account_number}</td>
                                     <td>{row.auxiliary_account_label}</td>
                                     <td>{row.document_reference}</td>
-                                    <td>{row.document_date}</td>
+                                    <td>{formatDay(row.document_date)}</td>
                                     <td>{row.entry_label}</td>
                                     <td>{row.formatted_debit}</td>
                                     <td>{row.formatted_credit}</td>
