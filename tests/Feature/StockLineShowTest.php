@@ -20,6 +20,20 @@ class StockLineShowTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function the_suggested_stock_code_is_not_already_taken()
+    {
+        // Le code proposé reprenait l'id du dernier stock : déjà utilisé, il était refusé.
+        $this->withoutMiddleware([\App\Http\Middleware\CheckUserRole::class, \App\Http\Middleware\CheckFactory::class]);
+        $user = User::factory()->create();
+        $user->givePermissionTo(\Spatie\Permission\Models\Permission::findOrCreate('stock-lot-serial-management'));
+        $stock = Stocks::create(['code' => 'STOCK-1', 'label' => 'Stock', 'user_id' => $user->id]);
+
+        $this->actingAs($user)->get(route('products.stock'))
+            ->assertOk()
+            ->assertSee('value="STOCK-'.($stock->id + 1).'"', false);
+    }
+
+    /** @test */
     public function the_dispatch_form_lists_the_order_lines_of_the_stocked_item()
     {
         $this->withoutMiddleware([\App\Http\Middleware\CheckUserRole::class, \App\Http\Middleware\CheckFactory::class]);

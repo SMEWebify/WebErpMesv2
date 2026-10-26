@@ -96,7 +96,7 @@
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-              <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-{{ $LastStock->id ?? '0' }}">
+              <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-{{ ($LastStock->id ?? 0) + 1 }}">
             </div>
           </div>
           <div class="mb-3">
