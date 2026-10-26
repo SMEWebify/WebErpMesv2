@@ -1,0 +1,99 @@
+{
+  "scenario": "sst",
+  "ids": {
+    "task": "108"
+  },
+  "finishedAt": "2026-10-26T00:29:57.333Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-type-creation.png",
+      "title": "Nouveau type d’habilitation, lié aux machines",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings/skills-matrix"
+    },
+    {
+      "n": 2,
+      "file": "img/02-types-liste.png",
+      "title": "Types d’habilitation",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings/skills-matrix"
+    },
+    {
+      "n": 3,
+      "file": "img/03-incident-creation.png",
+      "title": "Déclarer un incident",
+      "url": "http://127.0.0.1:8001/fr/osh/incidents"
+    },
+    {
+      "n": 4,
+      "file": "img/04-incident-resolution.png",
+      "title": "Passer l’incident à « Résolue »",
+      "url": "http://127.0.0.1:8001/fr/osh/incidents"
+    },
+    {
+      "n": 5,
+      "file": "img/05-incidents-liste.png",
+      "title": "Registre des incidents",
+      "url": "http://127.0.0.1:8001/fr/osh/incidents"
+    },
+    {
+      "n": 6,
+      "file": "img/06-risque-creation.png",
+      "title": "Évaluer un risque : gravité et probabilité",
+      "url": "http://127.0.0.1:8001/fr/osh/risks"
+    },
+    {
+      "n": 7,
+      "file": "img/07-risques-liste.png",
+      "title": "Évaluation des risques",
+      "url": "http://127.0.0.1:8001/fr/osh/risks"
+    },
+    {
+      "n": 8,
+      "file": "img/08-conformite-creation.png",
+      "title": "Suivre une vérification réglementaire",
+      "url": "http://127.0.0.1:8001/fr/osh/conformities"
+    },
+    {
+      "n": 9,
+      "file": "img/09-conformite-statut.png",
+      "title": "Statut de la conformité",
+      "url": "http://127.0.0.1:8001/fr/osh/conformities"
+    },
+    {
+      "n": 10,
+      "file": "img/10-conformites-liste.png",
+      "title": "Registre des conformités",
+      "url": "http://127.0.0.1:8001/fr/osh/conformities"
+    },
+    {
+      "n": 11,
+      "file": "img/11-formation-creation.png",
+      "title": "Enregistrer une formation",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings"
+    },
+    {
+      "n": 12,
+      "file": "img/12-formation-non-obtenue.png",
+      "title": "Certification non obtenue",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings"
+    },
+    {
+      "n": 13,
+      "file": "img/13-formations-liste.png",
+      "title": "Liste des formations",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings"
+    },
+    {
+      "n": 14,
+      "file": "img/14-matrice.png",
+      "title": "Matrice de polyvalence",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings/skills-matrix"
+    },
+    {
+      "n": 15,
+      "file": "img/15-ecarts.png",
+      "title": "Écarts constatés : opérateur non habilité",
+      "url": "http://127.0.0.1:8001/fr/osh/trainings/skills-matrix"
+    }
+  ]
+}
