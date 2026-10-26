@@ -647,6 +647,10 @@ function MeasuringDevicesTab({ calibrationAlerts, endpoints, trans }) {
 
     useEffect(() => { fetchDevices(page); }, [fetchDevices, page]);
 
+    // Le formulaire de création est toujours affiché : ses listes Service et Utilisateur
+    // restaient vides tant qu'aucun appareil n'avait été ouvert en modification.
+    useEffect(() => { loadSelectData(); }, []);
+
     async function loadSelectData() {
         if (selectLoaded) return;
         try {
