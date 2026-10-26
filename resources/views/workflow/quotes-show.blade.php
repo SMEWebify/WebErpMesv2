@@ -17,7 +17,7 @@ $arrowSteps = json_encode([
     <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
     @if($Quote->is_template)
     {{-- Une trame n'a pas de cycle de vie : ni statut, ni navigation entre devis. --}}
-    <x-document-header h1="{{ __('general_content.quote_template_trans_key') }} : {{ $Quote->label }}"
+    <x-document-header :h1="__('general_content.quote_template_trans_key') . ' : ' . $Quote->label"
                        list="{{ route('quotes', ['tab' => 'templates']) }}"/>
     @else
     <x-document-header h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}"

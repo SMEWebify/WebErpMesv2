@@ -4,7 +4,7 @@
 @section('plugins.Quill', true)
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ $Product->label }}" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  :h1="$Product->label" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('content')

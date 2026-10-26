@@ -19,7 +19,7 @@ $oppSteps = json_encode([
 @endphp
 
 @section('content_header')
-    <x-document-header h1="{{ __('general_content.opportunity_trans_key') }} : {{  $Opportunity->label }}"
+    <x-document-header :h1="__('general_content.opportunity_trans_key') . ' : ' . $Opportunity->label"
                        previous="{{ $previousUrl }}" list="{{ route('opportunities') }}" next="{{ $nextUrl }}"
                        :steps="$oppSteps" statu="{{ $Opportunity->statu }}"
                        endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"

@@ -3,7 +3,7 @@
 @section('title',  __('general_content.companie_trans_key')) 
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ $Companie->label }}" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  :h1="$Companie->label" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @php
