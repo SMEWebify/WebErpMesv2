@@ -258,7 +258,7 @@ function ContextCard({ inventory, statusMeta, trans, endpoints }) {
                 <div>
                     <span className={`badge ${statusMeta.badge} me-2`}>{trans[statusMeta.key]}</span>
                     <span className="text-muted">
-                        {inventory.creator?.name} · {trans.created_at}: {inventory.start_date}
+                        {inventory.creator?.name} · {trans.created_at}: {inventory.start_date && new Date(inventory.start_date).toLocaleDateString(trans.locale)}
                         {inventory.validated_at && ` · ${trans.validated_at}: ${new Date(inventory.validated_at).toLocaleDateString(trans.locale)}`}
                     </span>
                 </div>
