@@ -1,0 +1,75 @@
+{
+  "scenario": "comptabilite",
+  "ids": {
+    "company": "74"
+  },
+  "finishedAt": "2026-10-26T01:05:12.031Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-tva-liste.png",
+      "title": "Codes TVA",
+      "url": "http://127.0.0.1:8001/fr/accounting/vats"
+    },
+    {
+      "n": 2,
+      "file": "img/02-tva-modification.png",
+      "title": "Code TVA : catégorie EN 16931 et motif d’exonération",
+      "url": "http://127.0.0.1:8001/fr/accounting/vats"
+    },
+    {
+      "n": 3,
+      "file": "img/03-affectations.png",
+      "title": "Allocation comptable : une ligne par type et par TVA",
+      "url": "http://127.0.0.1:8001/fr/accounting/allocations"
+    },
+    {
+      "n": 4,
+      "file": "img/04-methodes-paiement.png",
+      "title": "Méthodes de paiement et compte de trésorerie",
+      "url": "http://127.0.0.1:8001/fr/accounting/payment-methods"
+    },
+    {
+      "n": 5,
+      "file": "img/05-conditions-paiement.png",
+      "title": "Conditions de paiement",
+      "url": "http://127.0.0.1:8001/fr/accounting/payment-conditions"
+    },
+    {
+      "n": 6,
+      "file": "img/06-regimes-natures.png",
+      "title": "Régimes et natures de TVA",
+      "url": "http://127.0.0.1:8001/fr/accounting/vat-references"
+    },
+    {
+      "n": 7,
+      "file": "img/07-matrice-ventes.png",
+      "title": "Matrice TVA ventes",
+      "url": "http://127.0.0.1:8001/fr/accounting/vat-matrix-sales"
+    },
+    {
+      "n": 8,
+      "file": "img/08-matrice-achats.png",
+      "title": "Matrice TVA achats",
+      "url": "http://127.0.0.1:8001/fr/accounting/vat-matrix-purchase"
+    },
+    {
+      "n": 9,
+      "file": "img/09-societe-regime.png",
+      "title": "Fiche client : régime de TVA",
+      "url": "http://127.0.0.1:8001/fr/companies/74"
+    },
+    {
+      "n": 10,
+      "file": "img/10-periodes.png",
+      "title": "Verrouillage des périodes",
+      "url": "http://127.0.0.1:8001/fr/accounting/periods-ui"
+    },
+    {
+      "n": 11,
+      "file": "img/11-fec.png",
+      "title": "Export FEC : journaux et période",
+      "url": "http://127.0.0.1:8001/fr/admin/imports-exports"
+    }
+  ]
+}
