@@ -1,0 +1,111 @@
+{
+  "scenario": "temps",
+  "ids": {
+    "user": "1"
+  },
+  "finishedAt": "2026-10-26T01:16:01.607Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-nature-conge.png",
+      "title": "Nouvelle nature de congé",
+      "url": "http://127.0.0.1:8001/fr/human-resources"
+    },
+    {
+      "n": 2,
+      "file": "img/02-natures-liste.png",
+      "title": "Natures de congé",
+      "url": "http://127.0.0.1:8001/fr/human-resources"
+    },
+    {
+      "n": 3,
+      "file": "img/03-regime-creation.png",
+      "title": "Nouveau régime horaire",
+      "url": "http://127.0.0.1:8001/fr/times/shift"
+    },
+    {
+      "n": 4,
+      "file": "img/04-regime-plage.png",
+      "title": "Ajouter une plage, du lundi au vendredi",
+      "url": "http://127.0.0.1:8001/fr/times/shift"
+    },
+    {
+      "n": 5,
+      "file": "img/05-regime.png",
+      "title": "Régime 2×8 : deux plages par jour",
+      "url": "http://127.0.0.1:8001/fr/times/shift"
+    },
+    {
+      "n": 6,
+      "file": "img/06-ferie-creation.png",
+      "title": "Nouveau jour férié",
+      "url": "http://127.0.0.1:8001/fr/times"
+    },
+    {
+      "n": 7,
+      "file": "img/07-feries.png",
+      "title": "Jours fériés",
+      "url": "http://127.0.0.1:8001/fr/times"
+    },
+    {
+      "n": 8,
+      "file": "img/08-droits.png",
+      "title": "Droits à congés du salarié",
+      "url": "http://127.0.0.1:8001/fr/human-resources/user/1"
+    },
+    {
+      "n": 9,
+      "file": "img/09-absence-demande.png",
+      "title": "Le salarié demande une absence",
+      "url": "http://127.0.0.1:8001/fr/users/Profile/1#LeaveRequest"
+    },
+    {
+      "n": 10,
+      "file": "img/10-absence-en-attente.png",
+      "title": "Demande en attente et solde du salarié",
+      "url": "http://127.0.0.1:8001/fr/users/Profile/1#LeaveRequest"
+    },
+    {
+      "n": 11,
+      "file": "img/11-absence-validation.png",
+      "title": "Valider la demande",
+      "url": "http://127.0.0.1:8001/fr/times"
+    },
+    {
+      "n": 12,
+      "file": "img/12-absences.png",
+      "title": "Temps et absences : demandes",
+      "url": "http://127.0.0.1:8001/fr/times"
+    },
+    {
+      "n": 13,
+      "file": "img/13-soldes.png",
+      "title": "Soldes de congés de l’atelier",
+      "url": "http://127.0.0.1:8001/fr/human-resources/leave/balances"
+    },
+    {
+      "n": 14,
+      "file": "img/14-presence.png",
+      "title": "Rapport de présence",
+      "url": "http://127.0.0.1:8001/fr/human-resources/attendance"
+    },
+    {
+      "n": 15,
+      "file": "img/15-export-paie.png",
+      "title": "Export paie du mois",
+      "url": "http://127.0.0.1:8001/fr/human-resources/payroll/export?month=2026-11"
+    },
+    {
+      "n": 16,
+      "file": "img/16-evenements-machine.png",
+      "title": "Événements machine",
+      "url": "http://127.0.0.1:8001/fr/times"
+    },
+    {
+      "n": 17,
+      "file": "img/17-unite-temps.png",
+      "title": "Unité des temps",
+      "url": "http://127.0.0.1:8001/fr/admin/time-unit-settings"
+    }
+  ]
+}
