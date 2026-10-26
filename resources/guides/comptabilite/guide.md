@@ -127,9 +127,13 @@ condition **par défaut** est proposée aux nouveaux clients.
 
 ![Conditions de paiement](img/05-conditions-paiement.png)
 
-> ⚠️ Les nombres de mois et de jours et la case « Fin de mois » ne calculent pas encore
-> l'échéance : une facture est toujours créée à échéance de **30 jours**. Corrigez la date
-> d'échéance sur la facture si besoin.
+L'échéance d'une facture se calcule depuis sa date de création avec la condition de
+paiement de la commande facturée (celle de la condition par défaut si la commande n'en a
+pas) : les mois, puis les jours, puis la fin de mois si la case est cochée. « 30 jours fin
+de mois » au 10 janvier donne le 28 février.
+
+> 💡 Une facture qui regroupe plusieurs commandes prend la condition de la première. La date
+> d'échéance reste modifiable sur la facture.
 
 **Mode de livraison** : un libellé repris sur les tiers et les devis, sans effet comptable.
 

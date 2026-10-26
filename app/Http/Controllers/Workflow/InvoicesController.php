@@ -353,6 +353,8 @@ class InvoicesController extends Controller
             $validated['companies_addresses_id'],
             $validated['companies_contacts_id'],
             $validated['user_id'],
+            null,
+            $this->paymentConditionOf(DeliveryLines::whereIn('id', $validated['lines'])->get()),
         );
 
         $ordre = 10;
@@ -422,6 +424,8 @@ class InvoicesController extends Controller
                     $validated['companies_addresses_id'],
                     $validated['companies_contacts_id'],
                     $validated['user_id'],
+                    null,
+                    $this->paymentConditionOf($lines),
                 );
 
                 $ordre = 10;
@@ -446,6 +450,26 @@ class InvoicesController extends Controller
             'message' => $invoiceCount . ' invoice(s) created',
             'count'   => $invoiceCount,
         ]);
+    }
+
+    /**
+     * Condition de paiement qui fixe l'échéance d'une facture créée depuis des lignes de
+     * BL : celle de la commande de la première ligne. Une facture multi-commandes prend
+     * donc la condition de sa première commande ; null laisse la condition par défaut.
+     */
+    private function paymentConditionOf($deliveryLines): ?int
+    {
+        $orderLineId = collect($deliveryLines)->sortBy('id')->first()?->order_line_id;
+        if (! $orderLineId) {
+            return null;
+        }
+
+        $conditionId = OrderLines::query()
+            ->join('orders', 'orders.id', '=', 'order_lines.orders_id')
+            ->where('order_lines.id', $orderLineId)
+            ->value('orders.accounting_payment_conditions_id');
+
+        return $conditionId ? (int) $conditionId : null;
     }
 
     /**
@@ -497,6 +521,8 @@ class InvoicesController extends Controller
             $DeliveryData->companies_addresses_id,
             $DeliveryData->companies_contacts_id
         );
+        $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
+
         $InvoiceCreated = $this->invoiceService->createInvoice(
             $code,
             $DeliveryData->label,
@@ -504,10 +530,10 @@ class InvoicesController extends Controller
             $recipient['address_id'],
             $recipient['contact_id'],
             $user->id,
-            $DeliveryData->customer_reference
+            $DeliveryData->customer_reference,
+            $this->paymentConditionOf($DeliveryLines)
         );
 
-        $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
             // 1 = Facturable, 3 = Partiellement : seules ces lignes sont facturées.
             // 2 = Non facturable, 4 = Facturé : ignorées.

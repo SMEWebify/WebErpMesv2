@@ -845,7 +845,8 @@ class OrderLinesController extends Controller
             $invoiceRecipient['address_id'],
             $invoiceRecipient['contact_id'],
             Auth::id(),
-            $order->customer_reference
+            $order->customer_reference,
+            $order->accounting_payment_conditions_id
         );
 
         if (! $invoice) {

@@ -6,7 +6,7 @@ order: 20
 duration: 15
 icon: fas fa-file-invoice-dollar
 can: invoices-menu
-updated: 2026-10-25
+updated: 2026-10-26
 ---
 
 **Goal**: turn a draft invoice into an issued invoice, follow its payment until it is
@@ -56,7 +56,7 @@ To invoice something that was not ordered (shipping costs, handling fees), fill 
 ![Add a line](img/02-brouillon-ajout-ligne.png)
 
 "Invoice info" tab: check the customer, the address, the contact and the **due
-date** (30 days by default), then "Update".
+date** (computed from the order's payment terms), then "Update".
 
 ![Due date](img/03-brouillon-echeance.png)
 

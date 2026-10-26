@@ -6,7 +6,7 @@ order: 20
 duration: 15
 icon: fas fa-file-invoice-dollar
 can: invoices-menu
-updated: 2026-10-25
+updated: 2026-10-26
 ---
 
 **Objectif** : transformer une facture brouillon en facture émise, suivre son paiement
@@ -54,7 +54,8 @@ Pour facturer un élément non commandé (frais de port, frais de dossier), remp
 ![Ajouter une ligne](img/02-brouillon-ajout-ligne.png)
 
 Onglet « Facture info » : vérifiez le client, l'adresse, le contact et la **date
-d'échéance** (30 jours par défaut), puis « Mettre à jours ».
+d'échéance** (calculée depuis la condition de paiement de la commande), puis « Mettre à
+jours ».
 
 ![Date d'échéance](img/03-brouillon-echeance.png)
 

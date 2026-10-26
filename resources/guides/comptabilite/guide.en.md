@@ -127,9 +127,13 @@ for new customers.
 
 ![Payment terms](img/05-conditions-paiement.png)
 
-> ⚠️ The number of months and days and the "End of month" box do not compute the due date
-> yet: an invoice is always created due in **30 days**. Adjust the due date on the invoice
-> if needed.
+An invoice's due date is computed from its creation date with the payment terms of the
+invoiced order (the default terms if the order has none): the months, then the days, then
+the end of the month if the box is ticked. "30 days end of month" on 10 January gives
+28 February.
+
+> 💡 An invoice that groups several orders takes the terms of the first one. The due date
+> can still be changed on the invoice.
 
 **Delivery method**: a label used on customers and quotes, with no accounting effect.
 
