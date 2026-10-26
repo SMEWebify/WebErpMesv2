@@ -27,6 +27,15 @@ async function apiFetch(url, options = {}) {
     return json;
 }
 
+// Seule l'erreur du libellé s'affiche sous son champ : les autres (code, n° de série,
+// service, utilisateur…) et les erreurs sans détail remontent dans l'encadré du formulaire.
+function deviceErrors(err) {
+    const errs = err.errors ?? {};
+    if (!Object.keys(errs).length) return { _: err.message ?? 'Erreur' };
+    const others = Object.entries(errs).filter(([k]) => k !== 'label').flatMap(([, m]) => m);
+    return others.length ? { ...errs, _: others.join(' ') } : errs;
+}
+
 async function apiJson(url, body) {
     return apiFetch(url, {
         method: 'POST',
@@ -401,7 +410,7 @@ function DeviceEditModal({ device, users, services, endpoints, trans, onClose, o
             const result = await apiJson(url, form);
             onSaved(result.device);
         } catch (err) {
-            setErrors(err.errors ?? { _: err.message });
+            setErrors(deviceErrors(err));
         } finally {
             setSaving(false);
         }
@@ -528,7 +537,7 @@ function DeviceCreateForm({ users, services, endpoints, trans, onCreated }) {
             setSuccess(true);
             onCreated(json.device);
         } catch (err) {
-            setErrors(err.errors ?? { _: err.message ?? 'Erreur' });
+            setErrors(deviceErrors(err));
         } finally {
             setSaving(false);
         }
