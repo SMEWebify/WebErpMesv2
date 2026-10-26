@@ -44,10 +44,12 @@ class StockLocationProductsController extends Controller
         $Product = Products::findOrFail($StockLocationProduct->products_id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
-        $TaskList = Task::where('component_id', $id)
+        // Tâches et lignes de commande de l'article, pas de la ligne de stock : $id est l'id de
+        // la ligne de stock, et le formulaire de sortie proposait des documents sans rapport.
+        $TaskList = Task::where('component_id', $StockLocationProduct->products_id)
                         ->whereNotNull('order_lines_id')
                         ->orderby('created_at', 'desc')->get();
-        $OrderLineList = OrderLines::where('product_id', $id)
+        $OrderLineList = OrderLines::where('product_id', $StockLocationProduct->products_id)
                         ->orderby('created_at', 'desc')->get();
 
         $averageCost = $this->stockCalculationService->calculateWeightedAverageCost($id);
