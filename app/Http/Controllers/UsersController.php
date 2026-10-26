@@ -70,9 +70,9 @@ class UsersController extends Controller
         // --- React: NotificationLinePage initial data ---
         $notifications = [];
         foreach ($UserProfil->unreadNotifications as $n) {
-            $id    = $n->data['id'];
+            $id    = $n->data['id'] ?? null;
             $icon  = 'fas fa-bell';
-            $route = route('quotes.show', ['id' => $id]);
+            $route = $id ? route('quotes.show', ['id' => $id]) : url('/');
 
             if ($n->type === 'App\Notifications\QuoteNotification')         { $icon = 'fas fa-calculator';   $route = route('quotes.show',  ['id' => $id]); }
             if ($n->type === 'App\Notifications\OrderNotification')         { $icon = 'fas fa-shopping-cart'; $route = route('orders.show',  ['id' => $id]); }
@@ -82,10 +82,14 @@ class UsersController extends Controller
             if ($n->type === 'App\Notifications\InspectionDocumentApprovalNotification') { $icon = 'fas fa-file-alt';     $route = route('quality.inspection.projects'); }
 
             $originUser = User::find($n->data['user_id'] ?? null);
+            $text = ($n->data['code'] ?? '') . ' created by ' . ($originUser?->name ?? 'System');
+            if ($n->type === \App\Notifications\AbsenceRequestNotification::class) {
+                ['icon' => $icon, 'route' => $route, 'text' => $text] = \App\Notifications\AbsenceRequestNotification::present($n->data);
+            }
             $notifications[] = [
                 'id'    => $n->id,
                 'icon'  => $icon,
-                'text'  => ($n->data['code'] ?? '') . ' created by ' . ($originUser?->name ?? 'System'),
+                'text'  => $text,
                 'route' => $route,
                 'time'  => $n->created_at->diffForHumans(),
             ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Times\TimesAbsence;
+use App\Notifications\AbsenceRequestNotification;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends Controller
@@ -20,10 +21,11 @@ class NotificationsController extends Controller
         $notifications = [];
         $user = User::find(Auth::id());
         foreach ($user->unreadNotifications  as $notification) {
-            $id = $notification->data['id'];
+            // Les alertes d'étalonnage et de tâche ne portent pas d'id de document.
+            $id = $notification->data['id'] ?? null;
 
             $type = 'fas fa-bell';
-            $route = route('quotes.show', ['id' => $id]);
+            $route = $id ? route('quotes.show', ['id' => $id]) : url('/');
 
             if($notification->type == 'App\Notifications\QuoteNotification') {
                 $type = 'fas fa-calculator';
@@ -50,10 +52,17 @@ class NotificationsController extends Controller
                 $route = route('pre-orders.show', ['preOrder' => $id]);
             }
 
-            $code = $notification->data['code'];
+            $code = $notification->data['code'] ?? $notification->data['label'] ?? '';
             $notificationOriginUser = User::find($notification->data['user_id'] ?? null);
             $originUserName = $notificationOriginUser?->name ?? 'System';
             $text = ''.$code .' created by '. $originUserName .'';
+
+            if ($notification->type === AbsenceRequestNotification::class) {
+                ['icon' => $type, 'route' => $route, 'text' => $text] = AbsenceRequestNotification::present($notification->data);
+            }
+
+            // Noms et libellés saisis par les utilisateurs : échappés avant d'entrer dans le HTML.
+            $text = e($text);
 
             array_push($notifications,[
                             'icon' => $type,

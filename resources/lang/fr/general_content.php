@@ -1888,4 +1888,7 @@ return [
     'gmao_auto_generate_counter_trans_key' => 'Non disponible : compteur non relevé',
     'gmao_plan_no_work_order_trans_key' => 'Aucun ordre de travail n\'a encore été généré par ce plan.',
     'gmao_created_automatically_trans_key' => 'Créé automatiquement',
+    'absence_notification_requested_trans_key' => 'Demande d\'absence à valider : :name, du :start au :end',
+    'absence_notification_approved_trans_key' => 'Votre absence du :start au :end est validée',
+    'absence_notification_refused_trans_key' => 'Votre absence du :start au :end est refusée',
 ];

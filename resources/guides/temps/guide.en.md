@@ -168,7 +168,9 @@ handled.
 > ⚠️ The "Afternoon absence" type counts a full day: for a half-day, use "Morning absence"
 > or an absence in hours.
 >
-> 💡 No notification is sent to the approver: HR check the absences screen.
+> 💡 The request shows up in the notification bell of HR and of the employee's manager
+> (set on the employee record); the employee is told the same way once it is approved or
+> refused.
 
 ---
 

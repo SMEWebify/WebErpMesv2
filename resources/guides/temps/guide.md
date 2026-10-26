@@ -166,7 +166,9 @@ n'est pas traitée.
 > ⚠️ Le type « Absence après-midi » compte une journée entière : pour une demi-journée,
 > utilisez « Absence matin » ou une absence en heures.
 >
-> 💡 Aucune notification n'est envoyée au valideur : les RH consultent l'écran des absences.
+> 💡 La demande arrive dans la cloche de notifications des RH et du responsable du salarié
+> (renseigné sur sa fiche) ; le salarié est prévenu de la même façon quand elle est validée
+> ou refusée.
 
 ---
 

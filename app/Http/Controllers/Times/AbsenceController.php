@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Times\StoreAbsenceRequest;
 use App\Http\Requests\Times\UpdateAbsenceRequest;
+use App\Services\HumanResources\AbsenceNotifier;
 
 class AbsenceController extends Controller
 {
@@ -14,7 +15,7 @@ class AbsenceController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(StoreAbsenceRequest $request)
+    public function store(StoreAbsenceRequest $request, AbsenceNotifier $notifier)
     {
         // Only HR may file a request on behalf of somebody else, otherwise the
         // balance of any colleague could be moved from the profile page.
@@ -31,6 +32,8 @@ class AbsenceController extends Controller
             'end_date' => $request->input('end_date'),
         ]);
 
+        $notifier->requested($TimesAbsence, Auth::id());
+
         if($TimesAbsence->user_id == Auth::user()->id){
             return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', __('general_content.absence_request_created_success_trans_key'));
         }
@@ -43,11 +46,12 @@ class AbsenceController extends Controller
     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateAbsenceRequest $request)
+    public function update(UpdateAbsenceRequest $request, AbsenceNotifier $notifier)
     {
         $Absence = TimesAbsence::findOrFail($request->id);
 
         $isHr = Auth::user()?->can('human-resources-menu') ?? false;
+        $previousStatu = (int) $Absence->statu;
 
         // An employee may amend their own pending request; approving it, or
         // touching somebody else's, stays an HR action.
@@ -67,6 +71,10 @@ class AbsenceController extends Controller
         $Absence->start_date = $request->input('start_date');
         $Absence->end_date = $request->input('end_date');
         $Absence->save();
+
+        if ((int) $Absence->statu !== $previousStatu) {
+            $notifier->decided($Absence, Auth::id());
+        }
 
         if($Absence->user_id == Auth::user()->id){
             return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', __('general_content.absence_request_updated_success_trans_key'));

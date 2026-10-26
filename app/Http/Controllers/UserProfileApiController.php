@@ -90,12 +90,17 @@ class UserProfileApiController extends Controller
         if ($n->type === 'App\Notifications\LeadNotification')                      { $icon = 'fas fa-user-tag';    $route = url('/'); }
         if ($n->type === 'App\Notifications\InspectionDocumentApprovalNotification') { $icon = 'fas fa-file-alt';   $route = route('quality.inspection.projects'); }
 
-        $originUser = $n->data['user_id'] ? User::find($n->data['user_id']) : null;
+        $originUser = ($n->data['user_id'] ?? null) ? User::find($n->data['user_id']) : null;
+        $text = ($n->data['code'] ?? '') . ' — ' . ($originUser?->name ?? 'Système');
+
+        if ($n->type === \App\Notifications\AbsenceRequestNotification::class) {
+            ['icon' => $icon, 'route' => $route, 'text' => $text] = \App\Notifications\AbsenceRequestNotification::present($n->data);
+        }
 
         return [
             'id'      => $n->id,
             'icon'    => $icon,
-            'text'    => ($n->data['code'] ?? '') . ' — ' . ($originUser?->name ?? 'Système'),
+            'text'    => $text,
             'route'   => $route,
             'time'    => $n->created_at->format('d M Y H:i'),
             'read_at' => $n->read_at?->toISOString(),

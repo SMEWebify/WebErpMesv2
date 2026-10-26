@@ -1888,4 +1888,7 @@ return [
     'gmao_auto_generate_counter_trans_key' => 'Not available: counter not recorded',
     'gmao_plan_no_work_order_trans_key' => 'No work order has been generated from this plan yet.',
     'gmao_created_automatically_trans_key' => 'Created automatically',
+    'absence_notification_requested_trans_key' => 'Absence request to approve: :name, from :start to :end',
+    'absence_notification_approved_trans_key' => 'Your absence from :start to :end is approved',
+    'absence_notification_refused_trans_key' => 'Your absence from :start to :end is refused',
 ];
