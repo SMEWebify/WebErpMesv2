@@ -27,6 +27,11 @@ class LocalizedHrefFilter implements FilterInterface
             return $item;
         }
 
+        // Écran déclaré hors du groupe de langue (audits internes) : préfixé, il répond 404.
+        if (($item['localized'] ?? true) === false) {
+            return $item;
+        }
+
         $localized = LaravelLocalization::getLocalizedURL(null, $item['href']);
 
         if (is_string($localized) && $localized !== '') {

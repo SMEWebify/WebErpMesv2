@@ -1167,6 +1167,8 @@ return [
                 [
                     'text' => 'internal_audits_trans_key',
                     'url'  => 'audit',
+                    // Routes hors du groupe de langue : /fr/audit n'existe pas.
+                    'localized' => false,
                     'icon' => 'fas fa-clipboard-check',
                     'icon_color' => 'success',
                     'can'  => ['audit-menu'],
