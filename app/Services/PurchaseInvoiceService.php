@@ -32,7 +32,8 @@ class PurchaseInvoiceService
                                     ->whereHas('purchaseLines', function($query)use ($companies_id) {
                                         $query->whereColumn('invoiced_qty', '<', 'qty')->whereHas('purchase', function($q)
                                         use ($companies_id){
-                                            $q->where('companies_id','like', '%'. $companies_id .'%');
+                                            // Égalité : le like '%1%' ramenait aussi les fournisseurs 10, 11…
+                                            $q->when($companies_id, fn ($q) => $q->where('companies_id', $companies_id));
                                         }); // Comparer receipt_qty avec qty
                                     })
                                     ->get();

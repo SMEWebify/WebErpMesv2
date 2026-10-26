@@ -122,10 +122,13 @@ class PurchaseReceiptService
      */
     public function getPurchasesWaintingReceiptLines($companies_id = null, $sortField = 'id', $sortAsc = true)
     {
+        // Strictement inférieur : une ligne entièrement reçue (receipt_qty = qty) ne sortait pas de
+        // la liste, et la recocher créait une seconde réception. Fournisseur filtré à l'égalité :
+        // le like '%1%' ramenait aussi les fournisseurs 10, 11…
         return PurchaseLines::orderBy($sortField, $sortAsc ? 'asc' : 'desc')
-        ->whereColumn('receipt_qty','<=', 'qty')
+        ->whereColumn('receipt_qty', '<', 'qty')
         ->whereHas('purchase', function($q)use ($companies_id) {
-            $q->where('companies_id','like', '%'. $companies_id .'%');
+            $q->when($companies_id, fn ($q) => $q->where('companies_id', $companies_id));
         })
         ->get();
     }
@@ -137,7 +140,7 @@ class PurchaseReceiptService
      */
     public function getUniqueCompanyIdsWithOpenPurchaseLines(): Collection
     {
-        return PurchaseLines::whereColumn('receipt_qty','<=', 'qty')
+        return PurchaseLines::whereColumn('receipt_qty', '<', 'qty')
                             ->leftJoin('purchases', 'purchase_lines.purchases_id', '=', 'purchases.id')
                             ->pluck('purchases.companies_id')
                             ->filter()
