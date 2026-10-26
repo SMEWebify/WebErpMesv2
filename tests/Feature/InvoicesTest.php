@@ -139,6 +139,32 @@ class InvoicesTest extends TestCase
         $this->assertEquals(120.0, (float) \App\Models\Accounting\AccountingEntry::where('invoice_line_id', $line->id)->sum('debit_amount'));
     }
 
+    public function test_a_converted_proforma_books_its_sale_entry(): void
+    {
+        $vat = AccountingVat::factory()->create(['rate' => 20]);
+        $allocation = \App\Models\Accounting\AccountingAllocation::create([
+            'account' => '701000', 'label' => 'Ventes', 'accounting_vats_id' => $vat->id,
+            'vat_account' => '445710', 'code_account' => '701000', 'type_imputation' => 1,
+        ]);
+        $order     = Orders::factory()->create(['statu' => 1]);
+        $orderLine = OrderLines::factory()->create([
+            'orders_id' => $order->id, 'qty' => 1, 'selling_price' => 100, 'discount' => 0,
+            'invoiced_qty' => 0, 'invoiced_remaining_qty' => 1, 'accounting_vats_id' => $vat->id,
+        ]);
+        $proforma = Invoices::factory()->create(['statu' => 2, 'invoice_type' => 3]);
+        $line = InvoiceLines::create([
+            'invoices_id' => $proforma->id, 'order_line_id' => $orderLine->id, 'ordre' => 10, 'qty' => 1,
+            'unit_price' => 100, 'discount' => 0, 'vat_rate' => 20, 'accounting_vats_id' => $vat->id,
+            'accounting_allocation_id' => $allocation->id, 'invoice_status' => 1,
+        ]);
+        $entries = fn () => \App\Models\Accounting\AccountingEntry::where('invoice_line_id', $line->id);
+        $this->assertEquals(0, $entries()->count());
+
+        $this->postJson(route('proformas.convert', $proforma->id))->assertOk();
+
+        $this->assertEquals(120.0, (float) $entries()->sum('debit_amount'));
+    }
+
     public function test_can_create_invoice_from_delivery(): void
     {
         $vat      = AccountingVat::factory()->create();

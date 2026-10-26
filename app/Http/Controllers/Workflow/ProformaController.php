@@ -18,6 +18,8 @@ use App\Events\OrderCreated;
 use App\Events\OrderStatusChanged;
 use App\Events\InvoiceStatusChanged;
 use App\Services\InvoiceService;
+use App\Services\AccountingEntryService;
+use App\Models\Accounting\AccountingEntry;
 use App\Services\InvoiceLineService;
 use App\Services\OrderService;
 use App\Services\Quotes\QuoteLineToOrderLineConverter;
@@ -33,6 +35,7 @@ class ProformaController extends Controller
         private OrderService $orderService,
         private DocumentCodeGenerator $documentCodeGenerator,
         private SelectDataService $selectDataService,
+        private AccountingEntryService $accountingEntryService,
     ) {}
 
     public function index()
@@ -446,6 +449,12 @@ class ProformaController extends Controller
                 $orderLine->invoiced_remaining_qty    = max(0, $orderLine->invoiced_remaining_qty);
                 $orderLine->invoice_status            = $orderLine->invoiced_remaining_qty == 0 ? 3 : 2;
                 $orderLine->save();
+
+                // Une proforma n'a pas d'écriture ; devenue facture, sa vente doit être comptée.
+                if ($invoiceLine->accounting_allocation_id
+                    && !AccountingEntry::where('invoice_line_id', $invoiceLine->id)->exists()) {
+                    $this->accountingEntryService->createSaleEntry($invoiceLine->setRelation('invoice', $proforma));
+                }
             }
         });
 
