@@ -22,6 +22,10 @@ class StoreRiskRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Colonnes NOT NULL : sans règle, validated() les écartait (500 à la création,
+            // modification ignorée).
+            'section_id' => 'required|exists:methods_sections,id',
+            'description' => 'required|string',
             'severity' => 'required|in:1,2,3',
             'probability' => 'required|in:1,2,3',
             'preventive_measures' => 'nullable|string',
