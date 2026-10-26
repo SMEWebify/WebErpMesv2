@@ -29,9 +29,9 @@
                             <td>{{ $workOrder->id }}</td>
                             <td>{{ $workOrder->asset?->name }}</td>
                             <td><a href="{{ route('gmao.work-orders.show', $workOrder->id) }}">{{ $workOrder->title }}</a></td>
-                            <td>{{ ucfirst(str_replace('_', ' ', $workOrder->work_type)) }}</td>
-                            <td>{{ ucfirst(str_replace('_', ' ', $workOrder->priority)) }}</td>
-                            <td>{{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}</td>
+                            <td>{{ \App\Models\Maintenance\WorkOrder::label('work_type', $workOrder->work_type) }}</td>
+                            <td>{{ \App\Models\Maintenance\WorkOrder::label('priority', $workOrder->priority) }}</td>
+                            <td>{{ \App\Models\Maintenance\WorkOrder::label('status', $workOrder->status) }}</td>
                             <td>{{ $workOrder->technician?->name ?? __('general_content.not_available_trans_key') }}</td>
                             <td>{{ optional($workOrder->requested_at)->format('Y-m-d') }}</td>
                             <td class="text-end">

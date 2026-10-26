@@ -120,4 +120,6 @@ return [
     'assets_trans_key'                         => 'Assets',
     'returns_trans_key'                        => 'Customer returns',
     'time_unit_settings_trans_key' => 'Time unit',
+    'gmao_maintenance_plans_trans_key' => 'Maintenance plans',
+    'gmao_work_orders_trans_key' => 'Work orders',
 ];

@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_maintenance_plan_number_trans_key', ['id' => $plan->id]))
 
 @section('content_header')
-    <h1>Maintenance Plan #{{ $plan->id }}</h1>
+    <h1>{{ __('general_content.gmao_maintenance_plan_number_trans_key', ['id' => $plan->id]) }}</h1>
 @stop
 
 
@@ -26,7 +26,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.gmao_frequency_trans_key') }}</div>
-                            <div class="fw-bold">{{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }}</div>
+                            <div class="fw-bold">{{ \App\Models\Maintenance\MaintenancePlan::triggerTypeLabel($plan->trigger_type) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.title_trans_key') }}</div>
@@ -53,11 +53,25 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.gmao_trigger_type_trans_key') }}</div>
-                            <div class="fw-bold">{{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }}</div>
+                            <div class="fw-bold">{{ \App\Models\Maintenance\MaintenancePlan::triggerTypeLabel($plan->trigger_type) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.gmao_trigger_value_trans_key') }}</div>
                             <div class="fw-bold">{{ $plan->trigger_value ?? __('general_content.not_available_trans_key') }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-uppercase text-muted small">{{ __('general_content.gmao_interval_days_trans_key') }}</div>
+                            <div class="fw-bold">{{ $plan->interval_days ?? __('general_content.not_available_trans_key') }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-uppercase text-muted small">{{ __('general_content.gmao_auto_generate_trans_key') }}</div>
+                            @if(! in_array($plan->trigger_type, \App\Models\Maintenance\MaintenancePlan::SCHEDULABLE_TRIGGERS, true))
+                                <div class="text-muted">{{ __('general_content.gmao_auto_generate_counter_trans_key') }}</div>
+                            @elseif($plan->auto_generate)
+                                <div class="fw-bold text-success">{{ __('general_content.gmao_auto_generate_on_trans_key', ['days' => $plan->lead_days]) }}</div>
+                            @else
+                                <div class="fw-bold">{{ __('general_content.no_trans_key') }}</div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -76,7 +90,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.gmao_next_scheduled_date_trans_key') }}</div>
-                            <div class="fw-bold">{{ optional($plan->fixed_date)->format('Y-m-d') ?? __('general_content.not_available_trans_key') }}</div>
+                            <div class="fw-bold">{{ $nextDueDate?->format('Y-m-d') ?? __('general_content.not_available_trans_key') }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-uppercase text-muted small">{{ __('general_content.created_at_trans_key') }}</div>
@@ -110,6 +124,39 @@
                             <div class="fw-bold">{{ $plan->actions ?? __('general_content.gmao_no_actions_defined_trans_key') }}</div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-wrench text-muted me-2"></i>
+                        <h5 class="mb-0 fw-bold">{{ __('general_content.gmao_work_orders_card_title_trans_key') }}</h5>
+                    </div>
+                    @if($workOrders->isEmpty())
+                        <p class="text-muted mb-0">{{ __('general_content.gmao_plan_no_work_order_trans_key') }}</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{ __('general_content.gmao_scheduled_at_trans_key') }}</th>
+                                        <th>{{ __('general_content.status_trans_key') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($workOrders as $workOrder)
+                                        <tr>
+                                            <td><a href="{{ route('gmao.work-orders.show', $workOrder->id) }}">{{ $workOrder->id }}</a></td>
+                                            <td>{{ optional($workOrder->scheduled_at)->format('Y-m-d') ?? '—' }}</td>
+                                            <td>{{ \App\Models\Maintenance\WorkOrder::label('status', $workOrder->status) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -149,7 +196,7 @@
                     </div>
                     <div class="mb-3">
                         <div class="text-muted small">{{ __('general_content.gmao_frequency_trans_key') }}</div>
-                        <div class="fw-bold">{{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }}</div>
+                        <div class="fw-bold">{{ \App\Models\Maintenance\MaintenancePlan::triggerTypeLabel($plan->trigger_type) }}</div>
                     </div>
                     <div class="mb-3">
                         <div class="text-muted small">{{ __('general_content.gmao_duration_trans_key') }}</div>
@@ -157,7 +204,7 @@
                     </div>
                     <div>
                         <div class="text-muted small">{{ __('general_content.gmao_next_scheduled_trans_key') }}</div>
-                        <div class="fw-bold">{{ optional($plan->fixed_date)->format('Y-m-d') ?? __('general_content.not_available_trans_key') }}</div>
+                        <div class="fw-bold">{{ $nextDueDate?->format('Y-m-d') ?? __('general_content.not_available_trans_key') }}</div>
                     </div>
                 </div>
             </div>

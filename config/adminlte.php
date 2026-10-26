@@ -1296,7 +1296,7 @@ return [
             'can'  => ['asset_manager'],
             'submenu' => [
                 [
-                    'text' => 'Dashboard',
+                    'text' => 'dashboard_trans_key',
                     'url'  => 'gmao/dashboard',
                     'icon_color' => 'info',
                 ],
@@ -1307,7 +1307,12 @@ return [
                     'can'  => ['asset-menu'],
                 ],
                 [
-                    'text' => 'Work orders',
+                    'text' => 'gmao_maintenance_plans_trans_key',
+                    'url'  => 'gmao/maintenance-plans',
+                    'icon_color' => 'success',
+                ],
+                [
+                    'text' => 'gmao_work_orders_trans_key',
                     'url'  => 'gmao/work-orders',
                     'icon_color' => 'primary',
                 ],

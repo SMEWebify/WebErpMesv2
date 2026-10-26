@@ -1088,6 +1088,7 @@ async function mountGmaoDashboard() {
                                    ? parseInt(element.dataset.maintenancePlansCount, 10)
                                    : 0,
             endpoints:             parse('endpoints')          ?? {},
+            labels:                parse('labels')             ?? {},
         })
     );
 }

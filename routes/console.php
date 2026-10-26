@@ -63,6 +63,18 @@ Schedule::command('wem:pdp:sync')
 
 /*
 |--------------------------------------------------------------------------
+| GMAO
+|--------------------------------------------------------------------------
+*/
+
+// Ordres de travail préventifs des plans arrivés à échéance (moins leur délai
+// d'anticipation). Seuls les plans dont la génération automatique est cochée.
+Schedule::command('gmao:generate-work-orders')
+    ->dailyAt('06:00')
+    ->withoutOverlapping();
+
+/*
+|--------------------------------------------------------------------------
 | Signature électronique des devis (DocuSign)
 |--------------------------------------------------------------------------
 */

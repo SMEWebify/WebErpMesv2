@@ -14,6 +14,7 @@
         data-recent-work-orders="{{ json_encode($recentWorkOrders) }}"
         data-maintenance-plans-count="{{ $maintenancePlansCount }}"
         data-endpoints="{{ json_encode($endpoints) }}"
+        data-labels="{{ json_encode($labels) }}"
     ></div>
 @stop
 

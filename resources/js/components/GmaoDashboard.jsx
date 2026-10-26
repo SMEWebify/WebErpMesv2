@@ -82,6 +82,13 @@ const WORK_TYPE_LABELS = {
     safety:      'Sécurité',
 };
 
+// Libellés traduits fournis par le serveur (WorkOrder::statusOptions()…) : les
+// libellés français ci-dessus ne servent que de repli.
+function withLabels(map, labels) {
+    if (!labels) return map;
+    return Object.fromEntries(Object.entries(map).map(([k, meta]) => [k, { ...meta, label: labels[k] ?? meta.label }]));
+}
+
 function Badge({ value, map }) {
     const meta = map[value] ?? { bg: '#6c757d', label: value ?? '—' };
     return (
@@ -103,14 +110,14 @@ function Badge({ value, map }) {
 // Status breakdown bar
 // ---------------------------------------------------------------------------
 
-function StatusBar({ byStatus }) {
+function StatusBar({ byStatus, statusMap = STATUS_COLORS }) {
     const total = Object.values(byStatus).reduce((s, n) => s + n, 0);
     if (!total) return null;
 
     return (
         <div style={{ marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', height: 18, borderRadius: 4, overflow: 'hidden' }}>
-                {Object.entries(STATUS_COLORS).map(([key, { bg, label }]) => {
+                {Object.entries(statusMap).map(([key, { bg, label }]) => {
                     const n = byStatus[key] ?? 0;
                     if (!n) return null;
                     const pct = (n / total * 100).toFixed(1);
@@ -122,7 +129,7 @@ function StatusBar({ byStatus }) {
                 })}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.4rem' }}>
-                {Object.entries(STATUS_COLORS).map(([key, { bg, label }]) => {
+                {Object.entries(statusMap).map(([key, { bg, label }]) => {
                     const n = byStatus[key] ?? 0;
                     if (!n) return null;
                     return (
@@ -191,7 +198,7 @@ function StatRow({ label, value, color }) {
 // Recent work orders table
 // ---------------------------------------------------------------------------
 
-function RecentWorkOrders({ workOrders, endpoints }) {
+function RecentWorkOrders({ workOrders, endpoints, statusMap, priorityMap, workTypeLabels }) {
     const [expanded, setExpanded] = useState(false);
     const rows = expanded ? workOrders : workOrders.slice(0, 5);
 
@@ -222,13 +229,13 @@ function RecentWorkOrders({ workOrders, endpoints }) {
                                     {wo.asset ?? '—'}
                                 </td>
                                 <td style={{ padding: '6px 10px', whiteSpace: 'nowrap' }}>
-                                    {WORK_TYPE_LABELS[wo.work_type] ?? wo.work_type ?? '—'}
+                                    {workTypeLabels[wo.work_type] ?? wo.work_type ?? '—'}
                                 </td>
                                 <td style={{ padding: '6px 10px' }}>
-                                    <Badge value={wo.priority} map={PRIORITY_COLORS} />
+                                    <Badge value={wo.priority} map={priorityMap} />
                                 </td>
                                 <td style={{ padding: '6px 10px' }}>
-                                    <Badge value={wo.status} map={STATUS_COLORS} />
+                                    <Badge value={wo.status} map={statusMap} />
                                 </td>
                                 <td style={{ padding: '6px 10px', whiteSpace: 'nowrap' }}>
                                     {fmtDate(wo.scheduled_at)}
@@ -276,7 +283,11 @@ export default function GmaoDashboard({
     maintenancePlansCount = 0,
     endpoints = {},
     trans = {},
+    labels = {},
 }) {
+    const statusMap      = withLabels(STATUS_COLORS, labels.status);
+    const priorityMap    = withLabels(PRIORITY_COLORS, labels.priority);
+    const workTypeLabels = { ...WORK_TYPE_LABELS, ...(labels.work_type ?? {}) };
     const totalWo = Object.values(workOrdersCount).reduce((s, n) => s + n, 0);
     const openWo  = (workOrdersCount.draft ?? 0) + (workOrdersCount.planned ?? 0) + (workOrdersCount.in_progress ?? 0);
 
@@ -305,7 +316,7 @@ export default function GmaoDashboard({
 
                 {/* Work orders summary */}
                 <Card title="Bons de travail" icon="fas fa-wrench" color="#007bff">
-                    <StatusBar byStatus={workOrdersCount} />
+                    <StatusBar byStatus={workOrdersCount} statusMap={statusMap} />
                     <StatRow label="Total" value={totalWo} />
                     <StatRow label="Ouverts" value={openWo} color="#007bff" />
                     <StatRow label="En cours" value={workOrdersCount.in_progress ?? 0} color="#007bff" />
@@ -387,7 +398,13 @@ export default function GmaoDashboard({
 
             {/* Recent work orders */}
             <Card title="Bons de travail récents" icon="fas fa-history" color="#6c757d">
-                <RecentWorkOrders workOrders={recentWorkOrders} endpoints={endpoints} />
+                <RecentWorkOrders
+                    workOrders={recentWorkOrders}
+                    endpoints={endpoints}
+                    statusMap={statusMap}
+                    priorityMap={priorityMap}
+                    workTypeLabels={workTypeLabels}
+                />
             </Card>
         </div>
     );

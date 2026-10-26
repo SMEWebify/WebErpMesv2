@@ -79,6 +79,11 @@ class DashboardController extends Controller
             'recentWorkOrders'      => $recentWorkOrders,
             'maintenancePlansCount' => $maintenancePlansCount,
             'endpoints'             => $endpoints,
+            'labels'                => [
+                'status'    => WorkOrder::statusOptions(),
+                'priority'  => WorkOrder::priorityOptions(),
+                'work_type' => WorkOrder::workTypeOptions(),
+            ],
         ]);
     }
 }

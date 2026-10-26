@@ -22,4 +22,6 @@ return [
     'internal_audits_trans_key'                => 'Internal Audits',
     'methods_overview_trans_key'               => 'Resumen de métodos',
     'assets_trans_key'                         => 'Activos',
+    'gmao_maintenance_plans_trans_key' => 'Planes de mantenimiento',
+    'gmao_work_orders_trans_key' => 'Órdenes de trabajo',
 ];

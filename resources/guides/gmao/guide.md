@@ -34,9 +34,9 @@ Intervention
 Clôture
 ```
 
-Le menu **GMAO** a trois entrées : **Dashboard** (le tableau de bord), **Immobilisations**
-(les équipements) et **Work orders** (les ordres de travail). Les plans de maintenance
-s'ouvrent depuis le tableau de bord ou depuis la fiche d'un équipement.
+Le menu **GMAO** a quatre entrées : **Tableau de bord**, **Immobilisations** (les
+équipements), **Plans de maintenance** et **Ordres de travail**. Les plans s'ouvrent aussi
+depuis la fiche d'un équipement.
 
 ---
 
@@ -85,26 +85,37 @@ choisi.
 
 ![Nouveau plan de maintenance](img/04-plan-creation.png)
 
-1. **Type de déclencheur** : au temps (Time-based), aux heures machine, aux cycles, ou à
-   date fixe.
-2. **Valeur du déclencheur** : la fréquence, en clair (« mensuel », « 500 heures »…).
-3. **Date fixe** : la date de la prochaine intervention.
+1. **Type de déclencheur** : périodique (calendrier), heures machine, cycles, ou date fixe.
+2. **Valeur du déclencheur** : la fréquence, en clair (« mensuel », « 500 heures »…), pour
+   information.
+3. **Date fixe** : la date de la prochaine intervention (pour un plan périodique, la
+   première).
+4. **Générer automatiquement les ordres de travail** (cochée par défaut), avec la
+   **périodicité en jours** d'un plan périodique (7 = hebdomadaire, 30 = mensuel, 365 =
+   annuel) et le nombre de **jours d'avance** avec lequel l'ordre est créé (7 par défaut).
 
 Complétez la **durée estimée**, la **compétence requise**, la **liste des actions** et les
 **pièces nécessaires** : ces informations sont recopiées dans chaque ordre de travail.
 
 ![Fiche du plan](img/05-plan-fiche.png)
 
-1. **Générer un ordre de travail** crée l'intervention à partir du plan.
+La fiche affiche la **prochaine échéance** et la liste des ordres déjà générés par le plan.
 
-> ⚠️ Les ordres ne sont **pas** générés automatiquement à l'échéance : il faut cliquer sur
-> le bouton. Chaque clic crée un nouvel ordre de travail, alors ne cliquez qu'une fois.
+Chaque matin, un ordre **planifié** est créé quand l'échéance approche (moins les jours
+d'avance), sauf si le plan a déjà un ordre ouvert : un ordre en retard n'en empile pas
+d'autres. L'échéance suivante part de la date planifiée du précédent ordre, pas de sa date
+de clôture, pour que le calendrier ne dérive pas.
+
+1. **Générer un ordre de travail** crée l'intervention tout de suite, sans attendre.
+
+> ⚠️ Les heures machine et les cycles ne sont relevés nulle part : ces plans ne génèrent
+> rien tout seuls, il faut cliquer sur le bouton. Chaque clic crée un nouvel ordre.
 
 ---
 
 ## 4. L'ordre de travail
 
-L'ordre généré est **planifié** (Planned), de type **Preventive**, à la date prévue du plan.
+L'ordre généré est **Planifié**, de type **Préventif**, à la date d'échéance du plan.
 
 ![Ordre de travail généré](img/06-ot-genere.png)
 
@@ -112,11 +123,11 @@ Les statuts se suivent dans cet ordre :
 
 | Statut | Signification |
 |---|---|
-| Draft | brouillon, pas encore planifié |
-| Planned | planifié à une date |
-| In progress | intervention en cours |
-| Completed | intervention terminée |
-| Closed | ordre clôturé, rien à reprendre |
+| Brouillon | pas encore planifié |
+| Planifié | planifié à une date |
+| En cours | intervention en cours |
+| Terminé | intervention terminée |
+| Clôturé | ordre clôturé, rien à reprendre |
 
 ---
 
@@ -126,7 +137,7 @@ Les statuts se suivent dans cet ordre :
 
 ![Statut, technicien et horaires](img/07-ot-execution.png)
 
-1. **Statuts** : « In progress » pendant l'intervention, « Completed » une fois terminée.
+1. **Statuts** : « En cours » pendant l'intervention, « Terminé » une fois terminée.
 2. **Technicien assigné**.
 3. **Démarré le** et **Terminé le**.
 
@@ -146,7 +157,7 @@ Enregistrez.
 
 ## 6. Clôturer
 
-Une fois l'intervention vérifiée, rouvrez l'ordre : statut **Closed**, puis **Clôturé le**.
+Une fois l'intervention vérifiée, rouvrez l'ordre : statut **Clôturé**, puis **Clôturé le**.
 
 ![Clôture](img/09-ot-cloture.png)
 
@@ -166,8 +177,8 @@ Depuis la fiche de l'équipement, **Nouvel ordre de travail**.
 
 ![Ordre curatif](img/11-ot-correctif.png)
 
-1. **Type** : **Corrective** pour une réparation (Preventive pour l'entretien planifié).
-2. **Priorité** : Low, Medium, High ou Critical.
+1. **Type** : **Curatif** pour une réparation (Préventif pour l'entretien planifié).
+2. **Priorité** : Basse, Moyenne, Haute ou Critique.
 
 En bas du formulaire, décrivez la panne :
 
@@ -187,7 +198,7 @@ Puis suivez l'intervention comme aux sections 5 et 6.
 
 ## 8. Suivre les interventions
 
-Menu **GMAO › Work orders** : tous les ordres de travail, avec leur équipement, leur type,
+Menu **GMAO › Ordres de travail** : tous les ordres de travail, avec leur équipement, leur type,
 leur priorité, leur statut et leur technicien.
 
 ![Liste des ordres de travail](img/13-ot-liste.png)
@@ -199,8 +210,10 @@ La **fiche équipement** garde l'historique de ses interventions :
 ## Questions fréquentes
 
 **Mon plan de maintenance n'a créé aucun ordre de travail à l'échéance.**
-C'est normal : les ordres se génèrent avec le bouton « Générer un ordre de travail » de la
-fiche du plan.
+Vérifiez sur la fiche du plan que la génération automatique est cochée et, pour un plan
+périodique, que la périodicité est renseignée. Un plan qui a déjà un ordre ouvert attend sa
+clôture. Les plans aux heures machine ou aux cycles ne génèrent rien tout seuls. Les plans
+créés avant cette fonction ont la génération décochée : modifiez-les pour l'activer.
 
 **Les indicateurs MTBF et MTTR restent à « — ».**
 Ils ne sont pas encore calculés. La durée réelle et le début de la panne saisis sur chaque
@@ -208,7 +221,3 @@ ordre de travail serviront à les calculer.
 
 **Ma machine n'apparaît pas dans la liste des ressources de l'équipement.**
 Créez-la d'abord dans Méthodes › Ressources.
-
-**Pourquoi des libellés en anglais (Planned, Corrective, High…) ?**
-Les statuts, types et priorités de la GMAO ne sont pas encore traduits : ce guide les cite
-tels qu'ils s'affichent.

@@ -26,7 +26,7 @@
                             <td>{{ $plan->id }}</td>
                             <td>{{ $plan->asset?->name }}</td>
                             <td><a href="{{ route('gmao.maintenance-plans.show', $plan->id) }}">{{ $plan->title }}</a></td>
-                            <td>{{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }} {{ $plan->trigger_value ? '(' . $plan->trigger_value . ')' : '' }}</td>
+                            <td>{{ \App\Models\Maintenance\MaintenancePlan::triggerTypeLabel($plan->trigger_type) }} {{ $plan->trigger_value ? '(' . $plan->trigger_value . ')' : '' }}</td>
                             <td>{{ optional($plan->fixed_date)->format('Y-m-d') }}</td>
                             <td class="text-end">
                                 <a href="{{ route('gmao.maintenance-plans.edit', $plan->id) }}" class="btn btn-sm btn-outline-secondary text-primary mx-1 shadow" title="{{ __('general_content.edit_trans_key') }}">

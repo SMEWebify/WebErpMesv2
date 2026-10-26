@@ -8,20 +8,20 @@
 
 @section('content')
     @php
-        $statusLabel = ucfirst(str_replace('_', ' ', $workOrder->status));
-        $priorityLabel = ucfirst(str_replace('_', ' ', $workOrder->priority));
-        $typeLabel = ucfirst(str_replace('_', ' ', $workOrder->work_type));
+        $statusLabel = \App\Models\Maintenance\WorkOrder::label('status', $workOrder->status);
+        $priorityLabel = \App\Models\Maintenance\WorkOrder::label('priority', $workOrder->priority);
+        $typeLabel = \App\Models\Maintenance\WorkOrder::label('work_type', $workOrder->work_type);
         $statusClass = match ($workOrder->status) {
-            'scheduled' => 'text-bg-primary',
+            'planned' => 'text-bg-primary',
             'in_progress' => 'text-bg-info',
             'completed' => 'text-bg-success',
-            'cancelled' => 'text-bg-secondary',
+            'closed' => 'text-bg-secondary',
             default => 'text-bg-light',
         };
         $priorityClass = match ($workOrder->priority) {
             'low' => 'text-bg-success',
             'medium' => 'text-bg-warning',
-            'high' => 'text-bg-danger',
+            'high', 'critical' => 'text-bg-danger',
             default => 'text-bg-light',
         };
         $typeClass = match ($workOrder->work_type) {
@@ -56,9 +56,14 @@
                         <p class="text-muted text-uppercase mb-1">{{ __('general_content.asset_trans_key') }}</p>
                         <p class="mb-3">{{ $workOrder->asset?->name ?? __('general_content.gmao_not_specified_trans_key') }}</p>
 
+                        @if($workOrder->plan)
+                            <p class="text-muted text-uppercase mb-1">{{ __('general_content.gmao_maintenance_plan_trans_key') }}</p>
+                            <p class="mb-3"><a href="{{ route('gmao.maintenance-plans.show', $workOrder->plan->id) }}">{{ $workOrder->plan->title }}</a></p>
+                        @endif
+
                         <p class="text-muted text-uppercase mb-1">{{ __('general_content.gmao_created_by_trans_key') }}</p>
                         <p class="mb-0">
-                            <i class="far fa-user me-1 text-muted"></i>{{ $workOrder->creator?->name ?? __('general_content.not_available_trans_key') }}
+                            <i class="far fa-user me-1 text-muted"></i>{{ $workOrder->creator?->name ?? ($workOrder->plan ? __('general_content.gmao_created_automatically_trans_key') : __('general_content.not_available_trans_key')) }}
                         </p>
                     </div>
                 </div>

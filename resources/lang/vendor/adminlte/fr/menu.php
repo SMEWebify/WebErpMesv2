@@ -120,4 +120,6 @@ return [
     'assets_trans_key'                         => 'Immobilisations',
     'returns_trans_key'                        => 'Retours clients',
     'time_unit_settings_trans_key' => 'Unité des temps',
+    'gmao_maintenance_plans_trans_key' => 'Plans de maintenance',
+    'gmao_work_orders_trans_key' => 'Ordres de travail',
 ];

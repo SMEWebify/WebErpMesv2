@@ -95,33 +95,17 @@ class WorkOrderController extends Controller
 
     private function priorityOptions(): array
     {
-        return [
-            'low' => 'Low',
-            'medium' => 'Medium',
-            'high' => 'High',
-            'critical' => 'Critical',
-        ];
+        return WorkOrder::priorityOptions();
     }
 
     private function statusOptions(): array
     {
-        return [
-            'draft' => 'Draft',
-            'planned' => 'Planned',
-            'in_progress' => 'In progress',
-            'completed' => 'Completed',
-            'closed' => 'Closed',
-        ];
+        return WorkOrder::statusOptions();
     }
 
     private function workTypeOptions(): array
     {
-        return [
-            'preventive' => 'Preventive',
-            'corrective' => 'Corrective',
-            'improvement' => 'Improvement',
-            'safety' => 'Safety',
-        ];
+        return WorkOrder::workTypeOptions();
     }
 
     private function validatedData(Request $request): array

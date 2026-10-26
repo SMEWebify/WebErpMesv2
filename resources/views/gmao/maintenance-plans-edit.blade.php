@@ -43,7 +43,9 @@
             <div class="mb-3">
                 <label for="fixed_date">{{ __('general_content.gmao_fixed_date_trans_key') }}</label>
                 <input type="date" class="form-control" name="fixed_date" id="fixed_date" value="{{ old('fixed_date', optional($plan->fixed_date)->format('Y-m-d')) }}">
+                @error('fixed_date')<div class="text-danger small">{{ $message }}</div>@enderror
             </div>
+            @include('gmao.partials.plan-auto-generation', ['plan' => $plan])
             <div class="mb-3">
                 <label for="estimated_duration_minutes">{{ __('general_content.gmao_estimated_duration_minutes_trans_key') }}</label>
                 <input type="number" min="0" class="form-control" name="estimated_duration_minutes" id="estimated_duration_minutes" value="{{ old('estimated_duration_minutes', $plan->estimated_duration_minutes) }}">

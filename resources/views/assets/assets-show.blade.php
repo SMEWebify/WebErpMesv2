@@ -97,7 +97,7 @@
                                 #{{ $workOrder->id }} - {{ $workOrder->title }}
                             </a>
                             <span class="badge text-bg-info text-uppercase">
-                                {{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}
+                                {{ \App\Models\Maintenance\WorkOrder::label('status', $workOrder->status) }}
                             </span>
                         </li>
                     @empty
@@ -120,7 +120,7 @@
                                 {{ $plan->title }}
                             </a>
                             <span class="badge text-bg-secondary text-uppercase">
-                                {{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }}
+                                {{ \App\Models\Maintenance\MaintenancePlan::triggerTypeLabel($plan->trigger_type) }}
                             </span>
                         </li>
                     @empty
