@@ -14,6 +14,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -57,6 +58,24 @@ class UniversalQueryTool
 
     /** Fonctions de groupement temporel autorisées sur une colonne date. */
     private const TIME_GROUPINGS = ['year', 'month', 'day', 'yearmonth', 'week'];
+
+    /**
+     * Permissions de menu donnant accès à chaque table (une seule suffit).
+     * Les sociétés sont lisibles par quiconque voit un document qui les nomme.
+     */
+    private const TABLE_PERMISSIONS = [
+        'orders'                  => ['orders-menu'],
+        'order_lines'             => ['orders-menu'],
+        'quotes'                  => ['quotes-menu'],
+        'quote_lines'             => ['quotes-menu'],
+        'invoices'                => ['invoices-menu'],
+        'invoice_lines'           => ['invoices-menu'],
+        'companies'               => ['companies-menu', 'quotes-menu', 'orders-menu', 'deliverys-menu', 'invoices-menu', 'purchases-menu'],
+        'products'                => ['products-menu'],
+        'stock_location_products' => ['products-menu'],
+        'deliverys'               => ['deliverys-menu'],
+        'purchases'               => ['purchases-menu'],
+    ];
 
     /**
      * Schéma exposé à Claude. Chaque entrée décrit ce que l'IA a le droit de voir/utiliser.
@@ -217,8 +236,12 @@ class UniversalQueryTool
         if (! is_string($table) || ! isset(self::SCHEMA[$table])) {
             return [
                 'error' => 'Table inconnue ou manquante.',
-                'available_tables' => array_keys(self::SCHEMA),
+                'available_tables' => $this->allowedTables(),
             ];
+        }
+
+        if (! in_array($table, $this->allowedTables(), true)) {
+            return ['error' => "L'utilisateur n'a pas accès à la table {$table}."];
         }
 
         $schema = self::SCHEMA[$table];
@@ -507,6 +530,19 @@ class UniversalQueryTool
         return [$col, $dir];
     }
 
+    /**
+     * Tables lisibles par l'utilisateur courant.
+     *
+     * @return list<string>
+     */
+    public function allowedTables(): array
+    {
+        return array_values(array_filter(
+            array_keys(self::SCHEMA),
+            fn (string $table) => Gate::any(self::TABLE_PERMISSIONS[$table]),
+        ));
+    }
+
     private function assertColumnAllowed(string $column, array $schema): void
     {
         if (in_array(strtolower($column), self::FORBIDDEN_COLUMNS, true)) {
@@ -525,12 +561,16 @@ class UniversalQueryTool
      * On décrit un DSL JSON — la description doit être assez riche pour que
      * Claude compose des requêtes correctes du premier coup.
      */
-    public static function definition(): array
+    public static function definition(?array $allowedTables = null): array
     {
+        $schemas = $allowedTables === null
+            ? self::SCHEMA
+            : array_intersect_key(self::SCHEMA, array_flip($allowedTables));
+
         $tables = array_map(
             fn (string $name, array $s) => "- **{$name}** ({$s['label']})\n  colonnes: " . implode(', ', $s['columns']),
-            array_keys(self::SCHEMA),
-            self::SCHEMA
+            array_keys($schemas),
+            $schemas
         );
         $tableList = implode("\n", $tables);
 
@@ -599,7 +639,7 @@ TXT,
                 'properties' => [
                     'table' => [
                         'type'        => 'string',
-                        'enum'        => array_keys(self::SCHEMA),
+                        'enum'        => array_keys($schemas),
                         'description' => 'Nom de la table à interroger.',
                     ],
                     'select' => [

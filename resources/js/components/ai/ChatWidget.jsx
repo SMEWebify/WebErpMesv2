@@ -34,13 +34,30 @@ function escapeHtml(s) {
         .replace(/'/g, '&#39;');
 }
 
+// Seuls les liens vers l'instance elle-même sont cliquables : une donnée piégée
+// (libellé, référence client…) pourrait faire écrire à l'IA un lien externe
+// portant des données de l'ERP dans son URL. Un lien externe reste du texte.
+function isInternalUrl(url) {
+    try {
+        return new URL(url.replace(/&amp;/g, '&')).origin === window.location.origin;
+    } catch {
+        return false;
+    }
+}
+
+function link(url, label) {
+    return `<a href="${url}" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">${label}</a>`;
+}
+
 function renderMarkdown(text) {
     if (!text) return '';
     return escapeHtml(text)
-        // URLs brutes → liens cliquables (http/https uniquement, pas de javascript:)
-        .replace(/\bhttps?:\/\/[^\s)\]]+/g, url => `<a href="${url}" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">${url}</a>`)
-        // [texte](url) — url limitée à http/https par le pattern
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">$1</a>')
+        // [texte](url) — url limitée à http/https par le pattern ; externe → « texte (url) »
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (m, label, url) =>
+            isInternalUrl(url) ? link(url, label) : `${label} (${url})`)
+        // URLs brutes → liens cliquables si internes (pas déjà dans un href)
+        .replace(/(^|[^"=>])\b(https?:\/\/[^\s)\]<"]+)/g, (m, before, url) =>
+            before + (isInternalUrl(url) ? link(url, url) : url))
         // **gras**
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         // *italique*

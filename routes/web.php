@@ -113,7 +113,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     // Assistant IA ERP
     Route::middleware(['auth', 'verified', 'has.role'])->prefix('ai')->name('ai.')->group(function () {
-        Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->name('chat');
+        Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->middleware('throttle:20,1')->name('chat');
     });
 
     // Chat direct (commentaires sur devis, commandes, etc.)

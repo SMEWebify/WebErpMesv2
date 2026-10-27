@@ -6,6 +6,7 @@ use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Orders;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Outil Journal quotidien.
@@ -17,6 +18,13 @@ use Carbon\Carbon;
  */
 class DailyJournalTool
 {
+    /** Permission de menu exigée par section (une section non autorisée est omise). */
+    public const SECTION_PERMISSIONS = [
+        'orders'    => 'orders-menu',
+        'deliverys' => 'deliverys-menu',
+        'receipts'  => 'purchases-menu',
+    ];
+
     /**
      * @param  string|null  $date  Date cible au format YYYY-MM-DD (défaut : hier)
      */
@@ -28,12 +36,21 @@ class DailyJournalTool
 
         $end = $target->copy()->endOfDay();
 
-        return [
-            'date'     => $target->locale('fr')->isoFormat('dddd D MMMM YYYY'),
-            'orders'   => $this->newOrders($target, $end),
-            'deliverys' => $this->deliverys($target, $end),
-            'receipts' => $this->receipts($target, $end),
+        $journal = [
+            'date' => $target->locale('fr')->isoFormat('dddd D MMMM YYYY'),
         ];
+
+        foreach (self::SECTION_PERMISSIONS as $section => $permission) {
+            if (Gate::allows($permission)) {
+                $journal[$section] = match ($section) {
+                    'orders'    => $this->newOrders($target, $end),
+                    'deliverys' => $this->deliverys($target, $end),
+                    'receipts'  => $this->receipts($target, $end),
+                };
+            }
+        }
+
+        return $journal;
     }
 
     // ─── Nouvelles commandes ───────────────────────────────────────────────────
