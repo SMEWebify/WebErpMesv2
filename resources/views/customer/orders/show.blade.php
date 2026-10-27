@@ -18,7 +18,7 @@
                                 <div>
                                     <span class="me-3">{{ $order->GetshortCreatedAttribute() }}</span>
                                     <span class="me-3">#{{ $order->code }}</span>
-                                    @php($status = $order->statu)
+                                    @php $status = $order->statu; @endphp
                                     @if(isset($orderStatusBadges[$status]))
                                         <span class="badge text-bg-{{ $orderStatusBadges[$status] }}">{{ __($orderStatusLabels[$status]) }}</span>
                                     @endif

@@ -217,9 +217,7 @@
 
                         <x-adminlte-textarea name="comment" label="Commentaire" rows=3>{{ old('comment') }}</x-adminlte-textarea>
 
-                        @php
-                            $creditBlock = session('credit_block');
-                        @endphp
+                        @php($creditBlock = session('credit_block'))
                         @if($creditBlock && $creditBlock['can_override'])
                             <div class="border border-danger rounded p-2 mb-3">
                                 <input type="hidden" name="credit_override" value="1">
