@@ -21,7 +21,6 @@ services:
       - /app/node_modules
     expose:
       - "9000"
-    command: ["/entrypoint.sh"]
 
   nginx:
     container_name: wem-nginx
@@ -66,17 +65,24 @@ services:
       - "6001:6001"
   worker:
     build: .
-    command: php artisan queue:work redis --tries=3 --timeout=60 --sleep=3
+    command: ["php", "artisan", "queue:work", "redis", "--tries=3", "--timeout=60", "--sleep=3"]
     volumes:
-      - .:/var/www/html
+      - .:/app
+      - /app/vendor
+      - /app/node_modules
     depends_on:
+      - wem-dev
       - redis-dev
       - db-dev
     restart: unless-stopped
+    env_file: .env
     environment:
-      - APP_ENV=${APP_ENV}
-      - APP_KEY=${APP_KEY}
-      - DB_HOST=${DB_HOST}
-      - REDIS_HOST=${REDIS_HOST}
+      DB_CONNECTION: mysql
+      DB_HOST: db-dev
+      DB_PORT: 3306
+      DB_DATABASE: wem
+      DB_USERNAME: wem_user
+      DB_PASSWORD: password
+      REDIS_HOST: redis-dev
 volumes:
   db-dev_data:

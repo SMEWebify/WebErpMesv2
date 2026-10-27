@@ -182,8 +182,12 @@ Start in **3 minutes**:
 ```bash
 git clone https://github.com/SMEWebify/WebErpMesv2.git
 cd WebErpMesv2
+cp .env.example .env
 docker compose up --build
 ```
+
+The first start installs dependencies, builds the front-end assets and runs the
+migrations: wait for `All is ready !!!` in the `wem-dev` logs.
 
 ➡️ Access http://localhost:45060
 

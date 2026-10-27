@@ -36,6 +36,13 @@ while ! nc -z "$DB_HOST" "$DB_PORT"; do
 done
 echo "✅ Database reachable!"
 
+# Une commande passée au conteneur (service worker : queue:work) est lancée
+# telle quelle : installation, migrations et php-fpm restent au conteneur wem-dev.
+if [ "$#" -gt 0 ]; then
+  echo "⚡ Starting: $*"
+  exec "$@"
+fi
+
 # Dependencies (attention: avec tes volumes, vendor/node_modules existent dans des volumes docker)
 if [ ! -d "vendor" ] || [ -z "$(ls -A vendor 2>/dev/null)" ]; then
   echo "📦 Installing Composer dependencies..."
@@ -45,6 +52,12 @@ fi
 if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
   echo "📦 Installing NPM dependencies..."
   npm install
+fi
+
+# Le montage .:/app masque le public/ de l'image : public/build (hors git)
+# n'existe pas tant qu'on ne l'a pas compilé ici.
+if [ ! -f "public/build/manifest.json" ]; then
+  echo "🎨 Building front-end assets..."
   npm run build
 fi
 
