@@ -11,10 +11,7 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
 use App\Models\Workflow\CreditNotes;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
-use App\Services\OrderCalculatorService;
-use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\OrderConfirmations;
-use App\Services\OrderConfirmationCalculatorService;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
 use App\Services\PurchaseCalculatorService;
@@ -25,6 +22,9 @@ use App\Services\PdfThemeResolver;
 use App\Services\Invoicing\FacturXBuilder;
 use App\Services\Documents\SalesPrintLayout;
 use App\Services\Documents\ProductionSheetBuilder;
+use App\Services\Documents\DocumentPdfService;
+use App\Services\Documents\PdfLayoutRegistry;
+use Illuminate\Http\Request;
 
 class PrintController extends Controller
 {
@@ -32,22 +32,18 @@ class PrintController extends Controller
      * @param Quotes $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getQuotePdf(Quotes $Document)
+    public function getQuotePdf(Request $request, Quotes $Document)
     {
-        $typeDocumentName = __('general_content.quote_trans_key');
-        $calculatorService = new QuoteCalculatorService($Document);
-        return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-sales');
+        return $this->salesPdf($request, $Document);
     }
 
     /**
      * @param Orders $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getOrderPdf(Orders $Document)
+    public function getOrderPdf(Request $request, Orders $Document)
     {
-        $typeDocumentName = __('general_content.order_trans_key');
-        $calculatorService = new OrderCalculatorService($Document);
-        return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-sales');
+        return $this->salesPdf($request, $Document);
     }
 
     /**
@@ -59,13 +55,35 @@ class PrintController extends Controller
      * @param OrderConfirmations $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getOrderConfirmPdf(OrderConfirmations $Document)
+    public function getOrderConfirmPdf(Request $request, OrderConfirmations $Document)
     {
         abort_if((int) $Document->statu === OrderConfirmations::STATUS_IN_PROGRESS, 403, __('general_content.arc_draft_no_pdf_trans_key'));
 
-        $typeDocumentName = __('general_content.order_confirm_trans_key') . ' ' . $Document->revision;
-        $calculatorService = new OrderConfirmationCalculatorService($Document);
-        return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-sales');
+        return $this->salesPdf($request, $Document);
+    }
+
+    /**
+     * Devis, commande, AR : même rendu que les e-mails (DocumentPdfService), avec
+     * le modèle d'impression (?layout=) et la langue (?lang=) choisis dans le menu
+     * d'impression. Sans paramètre : le PDF d'avant. Une valeur hors liste → 404,
+     * elle n'est jamais assemblée en nom de vue.
+     */
+    private function salesPdf(Request $request, $Document): \Symfony\Component\HttpFoundation\Response
+    {
+        $layout = $request->query('layout');
+        $locale = $request->query('lang');
+        $layout = is_string($layout) && $layout !== '' ? $layout : null;
+        $locale = is_string($locale) && $locale !== '' ? $locale : null;
+
+        $registry = app(PdfLayoutRegistry::class);
+        abort_unless($registry->find('print/pdf-sales', $layout) && $registry->supportsLanguage($locale), 404);
+
+        $service = app(DocumentPdfService::class);
+        $bytes   = $service->render($Document, $layout, $locale);
+
+        return response()->streamDownload(function () use ($bytes) {
+            echo $bytes;
+        }, $service->fileName($Document));
     }
 
     /**

@@ -25,6 +25,27 @@ return [
         QualityNonConformity::class => 'print/pdf-nc',
     ],
 
+    /*
+    | Modèles d'impression (App\Services\Documents\PdfLayoutRegistry).
+    |
+    | « short » est la vue de base (print/pdf-sales…), thème compris : c'est le
+    | rendu historique, et celui des e-mails. Chaque autre modèle est un dossier
+    | de print/layouts/{modèle} (versionné) ou de print/custom/layouts/{modèle}
+    | (propre au client, non versionné) qui reprend les noms de fichier de
+    | print/ : un modèle est proposé pour un document dès que son dossier
+    | contient le fichier de la vue de base (pdf-sales.blade.php pour devis,
+    | commande et AR). layout.json, facultatif, en donne le libellé, s'il porte
+    | des prix et les données à préparer — voir print/layouts/long/layout.json.
+    */
+    'layouts_path'        => 'print/layouts',
+    'custom_layouts_path' => 'print/custom/layouts',
+
+    // Langues proposées à l'impression, indépendamment de celle de l'utilisateur.
+    'languages' => [
+        'fr' => 'Français',
+        'en' => 'English',
+    ],
+
     'themes' => [
         'default' => [
             'print/pdf-sales' => 'print/pdf-sales',

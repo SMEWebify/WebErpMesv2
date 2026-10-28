@@ -1,0 +1,6 @@
+{
+    "label": "pdf_layouts.long",
+    "prices": true,
+    "with": ["details", "plans", "estimates"],
+    "order": 10
+}

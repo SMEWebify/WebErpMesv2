@@ -329,7 +329,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               <table class="table table-hover">
                 <tr>
                   <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
-                  <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
+                  <td><x-pdf-print-menu :route="route('pdf.quote', ['Document' => $Quote->id])" /></td>
                 </tr>
                 @unless($Quote->is_template)
                 <tr>

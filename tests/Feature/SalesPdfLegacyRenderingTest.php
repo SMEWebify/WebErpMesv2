@@ -17,7 +17,9 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLineDetails;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
+use App\Services\Documents\DocumentPdfService;
 use App\Services\Documents\SalesPrintLayout;
+use App\Services\PdfThemeResolver;
 use App\Services\OrderCalculatorService;
 use App\Services\OrderConfirmationCalculatorService;
 use App\Services\OrderConfirmationService;
@@ -114,7 +116,100 @@ class SalesPdfLegacyRenderingTest extends TestCase
         );
     }
 
+    /**
+     * Modèle « court » rendu par DocumentPdfService — chemin du bouton PDF et des
+     * e-mails — sans paramètre ou avec layout=short : même HTML que la référence.
+     * Les références portent un titre écrit en dur (« Devis », « ARC 1 ») là où le
+     * service met le titre traduit : seul ce titre est ramené à celui de la référence.
+     */
+    public static function shortLayouts(): array
+    {
+        return [
+            'sans paramètre, vue résolue'  => [null, false],
+            'layout=short, vue résolue'    => ['short', false],
+            'sans paramètre, vue standard' => [null, true],
+            'layout=short, vue standard'   => ['short', true],
+        ];
+    }
+
+    #[DataProvider('shortLayouts')]
+    public function test_the_short_layout_of_the_print_service_renders_the_quote_reference(?string $layout, bool $standard): void
+    {
+        $quote = $this->makeQuote()->fresh();
+
+        $this->assertMatchesReference(
+            "quote-{$this->resolvedSuffix($standard)}.html",
+            $this->serviceHtml($quote, $layout, __('general_content.quote_trans_key'), 'Devis')
+        );
+    }
+
+    #[DataProvider('shortLayouts')]
+    public function test_the_short_layout_of_the_print_service_renders_the_order_reference(?string $layout, bool $standard): void
+    {
+        $order = $this->makeOrder()->fresh();
+
+        $this->assertMatchesReference(
+            "order-{$this->resolvedSuffix($standard)}.html",
+            $this->serviceHtml($order, $layout, __('general_content.order_trans_key'), 'Commande')
+        );
+    }
+
+    #[DataProvider('shortLayouts')]
+    public function test_the_short_layout_of_the_print_service_renders_the_order_confirmation_reference(?string $layout, bool $standard): void
+    {
+        $confirmation = app(OrderConfirmationService::class)->createFromOrder($this->makeOrder());
+        $confirmation->forceFill([
+            'code'       => 'ARC-0001',
+            'uuid'       => '00000000-0000-0000-0000-0000000000a1',
+            'created_at' => '2026-10-07 10:00:00',
+        ])->save();
+        $confirmation = $confirmation->fresh();
+
+        $this->assertMatchesReference(
+            "order-confirmation-{$this->resolvedSuffix($standard)}.html",
+            $this->serviceHtml($confirmation, $layout, __('general_content.order_confirm_trans_key') . ' ' . $confirmation->revision, 'ARC 1')
+        );
+    }
+
     // ---------------------------------------------------------------------
+
+    /**
+     * Le service imprime la vue personnalisée quand elle existe (PdfThemeResolver).
+     * $standard : la surcharge est neutralisée, pour vérifier aussi la vue standard
+     * sur une machine où une vue print/custom est déployée.
+     */
+    private function resolvedSuffix(bool $standard): string
+    {
+        if ($standard) {
+            $this->app->instance(PdfThemeResolver::class, new class(config()) extends PdfThemeResolver {
+                public function resolve(string $baseViewKey, ?Factory $factory = null): string
+                {
+                    return $baseViewKey;
+                }
+            });
+
+            return 'standard';
+        }
+
+        return View::exists('print/custom/pdf-sales') ? 'custom' : 'standard';
+    }
+
+    /**
+     * Titre traduit du service ramené au titre écrit en dur de la référence,
+     * tel quel ou en majuscules (une vue personnalisée peut le capitaliser).
+     */
+    private function serviceHtml($document, ?string $layout, string $serviceTitle, string $referenceTitle): string
+    {
+        $html = app(DocumentPdfService::class)->html($document, $layout);
+
+        $html = str_replace(
+            ["<title>{$serviceTitle} - #", "<h2>{$serviceTitle}</h2>", '>' . mb_strtoupper($serviceTitle) . '<'],
+            ["<title>{$referenceTitle} - #", "<h2>{$referenceTitle}</h2>", '>' . mb_strtoupper($referenceTitle) . '<'],
+            $html
+        );
+
+        return str_replace([date('Y-m-d'), '&copy; ' . date('Y')], ['{{today}}', '&copy; {{year}}'], $html);
+    }
 
     /**
      * Prépare les variables comme PrintController::generatePdf (mise en page

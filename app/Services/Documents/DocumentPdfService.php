@@ -22,6 +22,7 @@ use App\Services\PurchaseCalculatorService;
 use App\Services\QuoteCalculatorService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Number;
+use Illuminate\Support\Traits\Localizable;
 
 /**
  * Rend un document (devis, commande, facture…) en PDF renvoyé sous forme de
@@ -38,10 +39,14 @@ use Illuminate\Support\Number;
  */
 class DocumentPdfService
 {
+    use Localizable;
+
     public function __construct(
         private readonly PdfThemeResolver $themeResolver,
         private readonly FacturXBuilder $facturXBuilder,
         private readonly SalesPrintLayout $salesPrintLayout,
+        private readonly PdfLayoutRegistry $layouts,
+        private readonly SalesLayoutRows $salesLayoutRows,
     ) {}
 
     public function fileName($document): string
@@ -51,8 +56,11 @@ class DocumentPdfService
 
     /**
      * Rend le PDF du document et renvoie les octets bruts.
+     *
+     * @param  string|null  $layout  modèle d'impression (PdfLayoutRegistry) ; null = modèle par défaut
+     * @param  string|null  $locale  langue du document (config pdf.languages) ; null = celle de l'utilisateur
      */
-    public function render($document): string
+    public function render($document, ?string $layout = null, ?string $locale = null): string
     {
         // Facture émise (non brouillon, non proforma) → Factur-X, source de vérité légale.
         if ($document instanceof Invoices
@@ -62,11 +70,79 @@ class DocumentPdfService
             return $this->facturXBuilder->buildPdf($document);
         }
 
+        return $this->inLocale($locale, function () use ($document, $layout) {
+            [$view, $data] = $this->prepare($document, $layout);
+
+            $pdf = PDF::loadView($view, $data);
+
+            $pdf->render();
+            $canvas = $pdf->getDomPDF()->getCanvas();
+            $font   = $pdf->getDomPDF()->getFontMetrics()->getFont('helvetica', 'normal');
+            $canvas->page_text(470, 778, 'Page {PAGE_NUM} / {PAGE_COUNT}', $font, 7, [0.3, 0.3, 0.3]);
+
+            return (string) $pdf->output();
+        });
+    }
+
+    /**
+     * HTML remis à dompdf, sans passer par dompdf (tests, diagnostic d'une vue).
+     */
+    public function html($document, ?string $layout = null, ?string $locale = null): string
+    {
+        return $this->inLocale($locale, function () use ($document, $layout) {
+            [$view, $data] = $this->prepare($document, $layout);
+
+            return view($view, $data)->render();
+        });
+    }
+
+    /**
+     * Toute la préparation — titre du document compris — se fait dans la langue
+     * demandée : __(), Number::currency et les accesseurs de prix lisent la
+     * langue de l'application.
+     */
+    private function inLocale(?string $locale, \Closure $callback)
+    {
+        if (!$this->layouts->supportsLanguage($locale)) {
+            throw new \InvalidArgumentException("Langue d'impression non proposée : {$locale}");
+        }
+
+        return $this->withLocale($locale, $callback);
+    }
+
+    /**
+     * @return array{0: string, 1: array<string, mixed>} [vue, variables]
+     */
+    private function prepare($document, ?string $layoutKey): array
+    {
         [$viewKey, $calculator, $typeDocumentName] = $this->resolveViewAndCalculator($document);
 
-        $factory  = app('Factory');
+        $layout = $this->layouts->find($viewKey, $layoutKey)
+            ?? throw new \InvalidArgumentException("Modèle d'impression inconnu pour {$viewKey} : {$layoutKey}");
+
+        $factory   = app('Factory');
+        $image     = $factory->getImageFactoryPath();
+        $customCss = $factory->pdf_custom_css;
+        $Factory   = $factory; // Alias attendu par les vues legacy.
+        $Document  = $document;
+
+        // Modèle sans prix : ni calculateur, ni montant, ni ligne Eloquent — seulement
+        // des rangées préparées sans prix (SalesLayoutRows).
+        if (!$layout->prices) {
+            $this->exposeDocumentLines($document);
+            $layoutRows = $this->salesLayoutRows->rows($document->Lines ?? [], $layout);
+            $estimates  = $this->salesLayoutRows->estimates($document, $layout);
+            $document->Lines = collect();
+
+            return [$layout->view, compact(
+                'typeDocumentName', 'Document', 'Factory', 'image', 'customCss', 'layout', 'layoutRows', 'estimates',
+            )];
+        }
+
         $currency = $factory->curency ?? 'EUR';
 
+        // Totaux calculés avant d'exposer les lignes, comme avant : les calculateurs
+        // lisent la relation des lignes que exposeDocumentLines() retire.
         $totalPrice = $calculator ? $calculator->getTotalPrice() : 0;
         $subPrice   = $calculator ? $calculator->getSubTotal()   : 0;
         $vatPrice   = $calculator ? $calculator->getVatTotal()   : 0;
@@ -76,15 +152,13 @@ class DocumentPdfService
         $normalizeCurrency   = fn ($value) => str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value);
 
         $this->exposeDocumentLines($document);
-        $printRows    = $viewKey === 'print/pdf-sales' ? $this->salesPrintLayout->apply($document) : null;
-        $image        = $factory->getImageFactoryPath();
-        $resolvedView = $this->themeResolver->resolveForDocument($document, $viewKey, $factory);
-        $customCss    = $factory->pdf_custom_css;
 
-        $Factory = $factory; // Alias attendu par les vues legacy.
-        $Document = $document;
+        $isSales    = $viewKey === 'print/pdf-sales';
+        $layoutRows = !$layout->isDefault() && $isSales ? $this->salesLayoutRows->rows($document->Lines ?? [], $layout) : null;
+        $estimates  = !$layout->isDefault() && $isSales ? $this->salesLayoutRows->estimates($document, $layout) : [];
+        $printRows  = $isSales ? $this->salesPrintLayout->apply($document) : null;
 
-        $pdf = PDF::loadView($resolvedView, compact(
+        $data = compact(
             'typeDocumentName',
             'Document',
             'Factory',
@@ -95,14 +169,14 @@ class DocumentPdfService
             'customCss',
             'normalizeCurrency',
             'printRows',
-        ));
+        );
 
-        $pdf->render();
-        $canvas = $pdf->getDomPDF()->getCanvas();
-        $font   = $pdf->getDomPDF()->getFontMetrics()->getFont('helvetica', 'normal');
-        $canvas->page_text(470, 778, 'Page {PAGE_NUM} / {PAGE_COUNT}', $font, 7, [0.3, 0.3, 0.3]);
+        // Modèle par défaut : exactement les variables et la vue d'avant (thème, print/custom).
+        if ($layout->isDefault()) {
+            return [$this->themeResolver->resolveForDocument($document, $viewKey, $factory), $data];
+        }
 
-        return (string) $pdf->output();
+        return [$layout->view, $data + compact('layout', 'layoutRows', 'estimates')];
     }
 
     /**

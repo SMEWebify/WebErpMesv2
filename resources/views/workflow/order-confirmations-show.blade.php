@@ -142,7 +142,7 @@
                     <td style="width:50%">{{ __('general_content.order_confirm_trans_key') }}</td>
                     <td>
                       @if($Confirmation->isSent())
-                        <x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Confirmation->id]) }}" />
+                        <x-pdf-print-menu :route="route('pdf.orders.confirm', ['Document' => $Confirmation->id])" />
                       @else
                         <span class="text-muted small">{{ __('general_content.arc_draft_no_pdf_trans_key') }}</span>
                       @endif

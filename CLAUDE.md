@@ -472,6 +472,31 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
   une ligne non article absente du payload.
 
+## Modèles d'impression (devis, commande, AR)
+
+Menu PDF des fiches devis et AR (`<x-pdf-print-menu>`) : modèle + langue (`?layout=&lang=` sur
+`pdf.quote`, `pdf.order`, `pdf.orders.confirm`). Sans paramètre = PDF d'avant ; e-mails,
+signature et relances appellent `DocumentPdfService::render($doc)` sans modèle, donc inchangés.
+- **« short »** = la vue de base (`print/pdf-sales`), thème `pdf_theme` et `print/custom/pdf-sales`
+  compris. Le service est couvert par `SalesPdfLegacyRenderingTest` (mêmes références).
+- **Un modèle = un dossier** qui reprend les noms de fichier de `print/` :
+  `print/layouts/{modèle}/pdf-sales.blade.php` (versionné) ou `print/custom/layouts/{modèle}/…`
+  (client, non versionné, prioritaire fichier par fichier). Proposé pour un document dès que
+  le dossier contient sa vue de base. `layout.json` (le plus proche, custom d'abord) : `label`,
+  `prices`, `with` (`details`, `plans`, `estimates`), `order`. `App\Services\Documents\PdfLayoutRegistry`
+  est la liste blanche : une valeur hors liste → 404, jamais assemblée en chemin.
+- **`prices: false`** (modèle « technical ») : ni calculateur, ni variable de montant, ni ligne
+  Eloquent (`$Document->Lines` vide) — seulement `$layoutRows` sans prix (`SalesLayoutRows`).
+  Seulement pour les vues de base de `PdfLayoutRegistry::PRICELESS` (ventes) ; ailleurs le
+  modèle n'est pas proposé (warning dans le log).
+- **« long »** : description longue = `external_comment` du détail de ligne ; vignette = plan
+  principal (rôle `plan`) de la ligne puis de l'article, lu sur disque (`files.thumbnail_path`
+  ou image) par `PlanThumbnail` — dompdf ne lit ni PDF ni URL ; estimations de projet cochées
+  (case = 1), coûts imprimés « non compris dans le total ».
+- **Langue** : tout le rendu (titre compris) dans `withLocale`, `config('pdf.languages')`. Une vue
+  `print/custom` aux textes écrits en dur reste dans sa langue.
+- Tests : `tests/Feature/PdfLayoutTest.php`.
+
 ## Signature électronique des devis (DocuSign)
 
 Le client signe un devis depuis son **lien public** (`/guest/quote/{uuid}`) : bouton

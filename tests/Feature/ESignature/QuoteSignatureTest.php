@@ -13,6 +13,8 @@ use App\Services\Files\FileRole;
 use App\Services\Integrations\Signature\Drivers\DocuSignGateway;
 use App\Services\Invoicing\FacturXBuilder;
 use App\Services\PdfThemeResolver;
+use App\Services\Documents\PdfLayoutRegistry;
+use App\Services\Documents\SalesLayoutRows;
 use App\Services\Documents\SalesPrintLayout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
@@ -64,8 +66,10 @@ class QuoteSignatureTest extends TestCase
             $app->make(PdfThemeResolver::class),
             $app->make(FacturXBuilder::class),
             $app->make(SalesPrintLayout::class),
+            $app->make(PdfLayoutRegistry::class),
+            $app->make(SalesLayoutRows::class),
         ) extends DocumentPdfService {
-            public function render($document): string
+            public function render($document, ?string $layout = null, ?string $locale = null): string
             {
                 return '%PDF-1.4 quote';
             }

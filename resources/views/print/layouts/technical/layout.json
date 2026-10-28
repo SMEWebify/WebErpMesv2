@@ -1,0 +1,6 @@
+{
+    "label": "pdf_layouts.technical",
+    "prices": false,
+    "with": ["details"],
+    "order": 20
+}
