@@ -127,7 +127,7 @@
                         <td align="center">
                             {{ $DocumentLine->label }}<br>
                             <span style="color: #6c757d">{{ $DocumentLine->code }}@if(!empty($DocumentLine->ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</span>
-                        </td>
+                        @if(!empty($DocumentLine->equipment_tag))<br><span style="color: #6c757d">{{ __('general_content.equipment_tag_trans_key') }} : {{ $DocumentLine->equipmentTagsText() }}</span>@endif</td>
                         <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
                         <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>
                         <td align="center">{{ $DocumentLine->qty }}</td>
@@ -164,7 +164,7 @@
                         <td align="center">
                             {{ $DocumentLine->label }}<br>
                             <span style="color: #6c757d">{{ $DocumentLine->code }}@if(!empty($DocumentLine->ind)) · {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</span>
-                        </td>
+                        @if(!empty($DocumentLine->equipment_tag))<br><span style="color: #6c757d">{{ __('general_content.equipment_tag_trans_key') }} : {{ $DocumentLine->equipmentTagsText() }}</span>@endif</td>
                         <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
                         <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>
                         <td align="center">{{ $DocumentLine->qty }}</td>

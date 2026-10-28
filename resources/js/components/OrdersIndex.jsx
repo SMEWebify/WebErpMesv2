@@ -388,7 +388,19 @@ function orderColumns(trans, currency, locale) {
         { key: 'code',               label: trans.code               ?? 'Code',     sortable: true,                bold: true,
           render: o => <code>{o.code}</code>, filter: 'text', mobile: 'title', mobileRender: o => o.code },
         { key: 'label',              label: trans.label              ?? 'Label',    sortable: true,
-          filter: 'text', mobile: 'subtitle' },
+          // Repères qui ont fait remonter la commande dans la recherche.
+          render: o => (o.matched_equipment_tags?.length ? (
+              <>
+                  {o.label}
+                  <div className="small" title={trans.matched_equipment_tag}>
+                      <i className="fas fa-tag text-body-secondary me-1" />
+                      {o.matched_equipment_tags.map(tag => (
+                          <span key={tag} className="badge bg-body-tertiary text-body border me-1">{tag}</span>
+                      ))}
+                  </div>
+              </>
+          ) : o.label),
+          filter: 'text', mobile: 'subtitle', mobileRender: o => o.label },
         { key: 'customer_reference', label: trans.customer_reference ?? 'Ref.',
           render: o => o.customer_reference ?? '—', filter: 'text' },
         { key: 'companie',           label: trans.company            ?? 'Company',  sortable: true,

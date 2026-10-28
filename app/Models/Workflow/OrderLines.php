@@ -4,6 +4,7 @@ namespace App\Models\Workflow;
 
 use App\Models\File;
 use App\Enums\SalesLineType;
+use App\Models\Concerns\HasEquipmentTags;
 use App\Models\Concerns\HasSalesLineType;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
-    use HasFactory, LogsActivity, HasSalesLineType;
+    use HasFactory, LogsActivity, HasSalesLineType, HasEquipmentTags;
 
     // Fillable attributes for mass assignment.
     // promised_delivery_date n'y figure pas : posée par OrderLinesObserver à la création, jamais modifiée.

@@ -258,7 +258,7 @@
                     <td>{{ $display($sheet['product_code'] ?: $sheet['code']) }}</td>
                     <td class="label">{{ $t('fields.revision') }}</td>
                     <td>{{ $display($sheet['revision']) }}</td>
-                    <td rowspan="6" class="center" style="width: 24%; vertical-align: middle;">
+                    <td rowspan="{{ empty($sheet['equipment_tags']) ? 6 : 7 }}" class="center" style="width: 24%; vertical-align: middle;">
                         @if ($sheet['image_src'])
                             <img src="{{ $sheet['image_src'] }}" alt="" class="part-image">
                         @else
@@ -270,6 +270,12 @@
                     <td class="label">{{ $t('fields.label') }}</td>
                     <td colspan="3">{{ $display($sheet['label']) }}</td>
                 </tr>
+                @if (!empty($sheet['equipment_tags']))
+                <tr>
+                    <td class="label">{{ $t('fields.equipment_tags') }}</td>
+                    <td colspan="3"><strong>{{ implode(', ', $sheet['equipment_tags']) }}</strong></td>
+                </tr>
+                @endif
                 <tr>
                     <td class="label">{{ $t('fields.material') }}</td>
                     <td>{{ $display($sheet['material']) }}</td>

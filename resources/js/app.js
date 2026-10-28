@@ -752,6 +752,7 @@ async function mountQuoteLinesPage() {
             quoteId:    parseInt(element.dataset.quoteId, 10),
             quoteStatu: parseInt(element.dataset.quoteStatu, 10),
             endpoints:  parse('endpoints') ?? {},
+            trans:      parse('trans') ?? {},
         })
     );
 }

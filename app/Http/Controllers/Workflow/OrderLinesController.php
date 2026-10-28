@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Casts\EquipmentTags;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Number;
@@ -324,6 +325,7 @@ class OrderLinesController extends Controller
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
+            ...EquipmentTags::RULES,
         ]);
 
         $defaultVat  = AccountingVat::getDefault();
@@ -340,6 +342,7 @@ class OrderLinesController extends Controller
             'ind'                       => $validated['ind'] ?? (!empty($validated['product_id']) ? Products::whereKey($validated['product_id'])->value('ind') : null),
             'product_id'                => $validated['product_id'] ?? null,
             'label'                     => $validated['label'],
+            'equipment_tag'             => $validated['equipment_tag'] ?? null,
             'qty'                       => $validated['qty'],
             'delivered_remaining_qty'   => $validated['qty'],
             'invoiced_remaining_qty'    => $validated['qty'],
@@ -385,6 +388,7 @@ class OrderLinesController extends Controller
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
+            ...EquipmentTags::RULES,
         ]);
 
         // Motif du report : facultatif, tronqué plutôt que refusé (jamais bloquant).
@@ -478,6 +482,8 @@ class OrderLinesController extends Controller
             $newLine->ordre = $line->ordre + 1;
             $newLine->code  = $line->code . '#dup' . $line->id;
             $newLine->label = $line->label . '#dup' . $line->id;
+            // Un repère désigne un seul équipement : la copie n'en reprend aucun.
+            $newLine->equipment_tag = null;
             // Reset delivery/invoice tracking fields
             $newLine->delivered_qty           = 0;
             $newLine->delivered_remaining_qty = $line->qty;
@@ -643,6 +649,7 @@ class OrderLinesController extends Controller
             'product_url'          => $l->product_id ? route('products.show', ['id' => $l->product_id]) : null,
             'product_drawing_file' => $l->Product?->drawing_file,
             'label'                => $l->label,
+            'equipment_tag'        => $l->equipment_tag,
             'qty'                  => $l->qty,
             'delivered_qty'           => $l->delivered_qty,
             'delivered_remaining_qty' => $l->delivered_remaining_qty,

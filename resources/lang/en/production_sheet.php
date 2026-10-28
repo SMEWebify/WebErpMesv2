@@ -39,6 +39,7 @@ return [
         'sheet_index' => 'Sheet :current / :total',
         'article_ref' => 'Part number',
         'revision' => 'Revision',
+        'equipment_tags' => 'Equipment tags',
         'label' => 'Description',
         'material' => 'Material',
         'thickness' => 'Thickness',

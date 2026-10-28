@@ -264,6 +264,7 @@ class OrderConfirmationService
                 'code'                  => $line->code,
                 'ind'                   => $line->ind,
                 'label'                 => $line->label,
+                'equipment_tag'         => $line->equipment_tag,
                 'qty'                   => $line->qty,
                 'methods_units_id'      => $line->methods_units_id,
                 'unit_label'            => optional($line->Unit)->label,

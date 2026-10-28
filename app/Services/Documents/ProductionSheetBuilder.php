@@ -76,6 +76,7 @@ class ProductionSheetBuilder
             'label' => $line->label,
             'product_code' => $line->Product?->code,
             'revision' => $line->ind,
+            'equipment_tags' => $line->equipment_tag,
             'qty' => (float) $line->qty,
             'delivered_qty' => (float) $line->delivered_qty,
             'unit' => $line->Unit?->label,

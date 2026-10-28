@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Illuminate\Support\Number;
+use App\Models\Concerns\HasEquipmentTags;
 use App\Models\Concerns\HasSalesLineType;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class OrderConfirmationLines extends Model
 {
-    use HasFactory, LogsActivity, HasSalesLineType;
+    use HasFactory, LogsActivity, HasSalesLineType, HasEquipmentTags;
 
     // Fillable attributes for mass assignment
     protected $fillable = ['ind', 'order_confirmation_id',

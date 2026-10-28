@@ -1121,6 +1121,7 @@ return [
     'index_trans_key'                          => 'Index',
     'plan_index_trans_key'                     => 'Drawing rev.',
     'plan_index_short_trans_key'               => 'rev.',
+    'equipment_tag_trans_key'                  => 'Equipment tag',
     'new_product_trans_key'                    => 'New product',
     'price_by_qty_trans_key'                   => 'Price by quantity',
     'weighted_average_price_trans_key'         => 'Weighted average price',

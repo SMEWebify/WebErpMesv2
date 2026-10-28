@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use App\Models\File;
+use App\Models\Concerns\HasEquipmentTags;
 use App\Models\Concerns\HasSalesLineType;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity, HasSalesLineType;
+    use HasFactory, SoftDeletes, LogsActivity, HasSalesLineType, HasEquipmentTags;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['ind', 'quotes_id', 

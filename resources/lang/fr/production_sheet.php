@@ -39,6 +39,7 @@ return [
         'sheet_index' => 'Fiche :current / :total',
         'article_ref' => 'Réf. article',
         'revision' => 'Indice',
+        'equipment_tags' => 'Repères équipement',
         'label' => 'Désignation',
         'material' => 'Matière',
         'thickness' => 'Épaisseur',

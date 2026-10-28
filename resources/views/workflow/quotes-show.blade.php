@@ -436,6 +436,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               data-quote-id="{{ $Quote->id }}"
               data-quote-statu="{{ $Quote->statu }}"
               data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
+              data-trans="{{ json_encode(['equipment_tags' => __('equipment_tags')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

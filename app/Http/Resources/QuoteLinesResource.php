@@ -18,6 +18,7 @@ class QuoteLinesResource extends JsonResource
             'ind'                   => $this->ind,
             'product_id'            => $this->product_id,
             'label'                 => $this->label,
+            'equipment_tag'         => $this->equipment_tag,
             'qty'                   => $this->qty,
             'methods_units_id'      => $this->methods_units_id,
             'selling_price'         => $this->selling_price,

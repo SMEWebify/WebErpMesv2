@@ -6,6 +6,7 @@ import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
+import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -37,6 +38,7 @@ const EMPTY_FORM = {
     code: '',
     ind: '',
     label: '',
+    equipment_tag: '',
     qty: 1,
     methods_units_id: '',
     selling_price: 0,
@@ -300,7 +302,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
 // LineDrawer
 // ---------------------------------------------------------------------------
 
-function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, isReadOnly, t = {} }) {
+function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, isReadOnly, t = {}, tagTrans = {} }) {
     const [form, setForm]                   = useState(EMPTY_FORM);
     const [priceList, setPriceList]         = useState([]);
     const [saving, setSaving]               = useState(false);
@@ -318,6 +320,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 code:               editingLine.code               ?? '',
                 ind:                editingLine.ind                ?? '',
                 label:              editingLine.label              ?? '',
+                equipment_tag:      formatTags(editingLine.equipment_tag),
                 qty:                editingLine.qty                ?? 1,
                 methods_units_id:   editingLine.methods_units_id   ?? '',
                 selling_price:      editingLine.selling_price      ?? 0,
@@ -409,7 +412,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             ? endpoints.update.replace('__ID__', editingLine.id)
             : endpoints.store;
         // Le motif ne part que si la date a réellement changé.
-        const payload = { ...form, delay_reason: isEdit && dateChanged ? form.delay_reason : '' };
+        const payload = {
+            ...form,
+            equipment_tag: parseTags(form.equipment_tag),
+            delay_reason:  isEdit && dateChanged ? form.delay_reason : '',
+        };
         try {
             const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
@@ -587,6 +594,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                             </div>
                             {errors.label && <div className="invalid-feedback d-block">{errors.label[0]}</div>}
                         </div>
+
+                        {/* Repères d'équipement */}
+                        <EquipmentTagsInput value={form.equipment_tag} qty={form.qty} trans={tagTrans}
+                            onChange={(v) => set('equipment_tag', v)} disabled={isReadOnly}
+                            error={Object.entries(errors).find(([k]) => k.startsWith('equipment_tag'))?.[1]?.[0]} />
 
                         {/* Qty + Unit */}
                         <div className="row gx-2">
@@ -793,7 +805,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
-    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {},
+    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -882,6 +894,7 @@ function LineRow({
                     <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
                 )}
                 <span title={line.label}>{line.label}</span>
+                <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
             </td>
 
             {/* Qty */}
@@ -1000,6 +1013,7 @@ function LineRow({
 
 export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orderType: initialType, canManageStock, endpoints, trans = {} }) {
     const delaysTrans = trans.delays ?? {};
+    const tagTrans    = trans.equipment_tags ?? {};
     const [lines, setLines]             = useState([]);
     const [orderStatu, setOrderStatu]   = useState(Number(initialStatu));
     const [orderType]                   = useState(Number(initialType));
@@ -1342,7 +1356,8 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             const q = search.toLowerCase();
             return !q || (l.label ?? '').toLowerCase().includes(q)
                        || (l.code  ?? '').toLowerCase().includes(q)
-                       || (l.product_code ?? '').toLowerCase().includes(q);
+                       || (l.product_code ?? '').toLowerCase().includes(q)
+                       || (l.equipment_tag ?? []).some((tag) => tag.toLowerCase().includes(q));
         })
         .sort((a, b) => a.ordre - b.ordre);
 
@@ -1532,6 +1547,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 onToggleSelect={handleToggleSelect}
                                 selected={selected.has(line.id)}
                                 t={delaysTrans}
+                                tagTrans={tagTrans}
                                 onDragStart={(e) => handleDragStart(e, index)}
                                 onDragEnter={(e) => handleDragEnter(e, index)}
                                 onDragEnd={handleDragEnd}
@@ -1561,6 +1577,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 onSaved={handleSaved}
                 isReadOnly={isReadOnly}
                 t={delaysTrans}
+                tagTrans={tagTrans}
             />
 
             {/* Task modal */}

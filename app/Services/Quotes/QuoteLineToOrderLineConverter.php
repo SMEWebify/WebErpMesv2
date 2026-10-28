@@ -103,6 +103,7 @@ class QuoteLineToOrderLineConverter
             'ind'                     => $quoteLine->ind,
             'product_id'              => $quoteLine->product_id,
             'label'                   => $quoteLine->label,
+            'equipment_tag'           => $quoteLine->equipment_tag,
             'qty'                     => $quoteLine->qty,
             // Explicites : le passage en decimal a retiré le default(0) de ces colonnes.
             'delivered_qty'           => 0,

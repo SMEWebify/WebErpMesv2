@@ -7,6 +7,7 @@ import { LINE_TYPES, PACKAGE, isArticle, computeLayout, moveLine } from '../lib/
 import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { askRequiredOperationsOverride } from '../lib/requiredOperations.jsx';
+import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
 
 // ---------------------------------------------------------------------------
@@ -28,6 +29,7 @@ const EMPTY_FORM = {
     code: '',
     ind: '',
     label: '',
+    equipment_tag: '',
     qty: 1,
     methods_units_id: '',
     selling_price: 0,
@@ -227,7 +229,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
 // LineDrawer
 // ---------------------------------------------------------------------------
 
-function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, quoteStatu }) {
+function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, quoteStatu, tagTrans = {} }) {
     const [form, setForm]                   = useState(EMPTY_FORM);
     const [priceList, setPriceList]         = useState([]);
     const [saving, setSaving]               = useState(false);
@@ -247,6 +249,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 code:               editingLine.code               ?? '',
                 ind:                editingLine.ind                ?? '',
                 label:              editingLine.label              ?? '',
+                equipment_tag:      formatTags(editingLine.equipment_tag),
                 qty:                editingLine.qty                ?? 1,
                 methods_units_id:   editingLine.methods_units_id   ?? '',
                 selling_price:      editingLine.selling_price      ?? 0,
@@ -337,7 +340,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             ? endpoints.update.replace('__ID__', editingLine.id)
             : endpoints.store;
         try {
-            const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify(form) });
+            const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify({ ...form, equipment_tag: parseTags(form.equipment_tag) }) });
             const data = await res.json();
             if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
             onSaved(data.line, isEdit);
@@ -513,6 +516,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                             </div>
                             {errors.label && <div className="invalid-feedback d-block">{errors.label[0]}</div>}
                         </div>
+
+                        {/* Repères d'équipement */}
+                        <EquipmentTagsInput value={form.equipment_tag} qty={form.qty} trans={tagTrans}
+                            onChange={(v) => set('equipment_tag', v)} disabled={isReadOnly}
+                            error={Object.entries(errors).find(([k]) => k.startsWith('equipment_tag'))?.[1]?.[0]} />
 
                         {/* Qty + Unit */}
                         <div className="row gx-2">
@@ -779,7 +787,7 @@ function LineRow({
     line, quoteStatu, onEdit, onDelete, onDuplicate, onBreakDown, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
     info, onToggleHidden, onInsert,
     // drag props
-    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
+    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, tagTrans = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -871,6 +879,7 @@ function LineRow({
                 {info?.inPackage && (
                     <span className="badge text-bg-light border ms-1" title="Section au forfait : la ligne n'est pas détaillée sur le PDF">forfait</span>
                 )}
+                <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
             </td>
 
             {/* Qty */}
@@ -1175,7 +1184,8 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
     );
 }
 
-export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints }) {
+export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints, trans = {} }) {
+    const tagTrans = trans.equipment_tags ?? {};
     const [lines, setLines]             = useState([]);
     const [quoteStatu, setQuoteStatu]   = useState(Number(initialStatu));
     const [selectData, setSelectData]   = useState({});
@@ -1518,7 +1528,8 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             return !q || (l.label ?? '').toLowerCase().includes(q)
                        || (l.code  ?? '').toLowerCase().includes(q)
                        || (l.ind   ?? '').toLowerCase().includes(q)
-                       || (l.product_code ?? '').toLowerCase().includes(q);
+                       || (l.product_code ?? '').toLowerCase().includes(q)
+                       || (l.equipment_tag ?? []).some((tag) => tag.toLowerCase().includes(q));
         })
         .sort((a, b) => a.ordre - b.ordre);
 
@@ -1682,6 +1693,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 onInsert={handleInsert}
                                 canDrag={canDrag}
                                 quoteStatu={quoteStatu}
+                                tagTrans={tagTrans}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 onDuplicate={handleDuplicate}
@@ -1757,6 +1769,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 endpoints={endpoints}
                 onSaved={handleSaved}
                 quoteStatu={quoteStatu}
+                tagTrans={tagTrans}
             />
 
             {importOpen && (

@@ -335,7 +335,10 @@ class OrdersController extends Controller
         $query = Orders::withCount(['OrderLines' => fn ($q) => $q->articles()])
             ->selectRaw("orders.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name', 'affairCategory:id,code,label'])
-            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            // La recherche porte aussi sur les repères d'équipement des lignes.
+            ->when($search, fn ($q) => $q->where(fn ($w) => $w
+                ->where('label', 'like', '%'.$search.'%')
+                ->orWhereHas('OrderLines', fn ($l) => $l->withEquipmentTag($search))))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
             ->when($companyId, fn ($q) => $q->where('companies_id', $companyId))
             ->when($category, fn ($q) => $q->where('affair_category_id', $category));
@@ -349,6 +352,7 @@ class OrdersController extends Controller
         };
 
         $orders = $query->paginate(15);
+        $matchedTags = $this->matchedEquipmentTags($orders->pluck('id')->all(), (string) $search);
 
         return response()->json([
             'data' => $orders->map(fn ($o) => [
@@ -364,6 +368,7 @@ class OrdersController extends Controller
                 'order_lines_count'  => $o->order_lines_count,
                 'total_amount'       => round((float) $o->total_amount, 2),
                 'affair_category'    => $o->affairCategory ? ['id' => $o->affairCategory->id, 'code' => $o->affairCategory->code, 'label' => $o->affairCategory->label] : null,
+                'matched_equipment_tags' => $matchedTags[$o->id] ?? [],
                 'url'                => route('orders.show', ['id' => $o->id]),
             ]),
             'meta' => [
@@ -374,6 +379,35 @@ class OrdersController extends Controller
             ],
             'affair_categories' => AffairCategory::forFilter(),
         ]);
+    }
+
+    /**
+     * Repères qui répondent à la recherche, par commande de la page affichée :
+     * l'index montre pourquoi une commande est remontée. Une seule requête.
+     *
+     * @param  int[]  $orderIds
+     * @return array<int, string[]>
+     */
+    private function matchedEquipmentTags(array $orderIds, string $search): array
+    {
+        $search = trim($search);
+        if ($search === '' || $orderIds === []) {
+            return [];
+        }
+
+        $needle = mb_strtolower($search);
+
+        return OrderLines::whereIn('orders_id', $orderIds)
+            ->withEquipmentTag($search)
+            ->get(['id', 'orders_id', 'equipment_tag'])
+            ->groupBy('orders_id')
+            ->map(fn ($lines) => $lines
+                ->flatMap(fn (OrderLines $l) => $l->equipment_tag)
+                ->filter(fn (string $tag) => str_contains(mb_strtolower($tag), $needle))
+                ->unique()
+                ->values()
+                ->all())
+            ->all();
     }
 
     public function storeJson(Request $request)

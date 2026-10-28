@@ -518,6 +518,22 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
+## Repères d'équipement (nucléaire)
+
+`quote_lines`, `order_lines`, `order_confirmation_lines` portent `equipment_tag` (texte
+nullable) : une **liste JSON** de repères (une ligne de quantité > 1 en porte plusieurs), lue
+et écrite par le cast `App\Casts\EquipmentTags` (toujours un tableau, null en base si vide,
+JSON sans échappement de `/` pour que le LIKE trouve `1RCP/001`). Trait `HasEquipmentTags`.
+- Recopiés par `QuoteLineToOrderLineConverter` (conversion et proforma) et figés sur l'ARC ;
+  **jamais** sur une ligne dupliquée ni sur une ligne de présentation.
+- Recherche : `->withEquipmentTag($texte)` (partielle, `ESCAPE '!'` pour SQLite et MySQL) ;
+  la recherche de l'index des commandes porte aussi sur les repères (`matched_equipment_tags`).
+- Impression seulement si renseigné (`pdf-sales` = devis/commande/AR, BL, fiche suiveuse) ;
+  blocs `@if` placés juste avant `</td>` : un `@endif` en fin de ligne mangerait le saut de
+  ligne et changerait le rendu des documents sans repère.
+- Plus de repères que la quantité : simple avertissement dans le tiroir, jamais bloquant.
+- Tests : `tests/Feature/EquipmentTagTest.php`, `resources/js/tests/components/equipmentTags.test.jsx`.
+
 ## Motifs de perte (devis, opportunités)
 
 Référentiel `loss_reasons` (écran Méthodes → Motifs de perte, `methods-menu` ; 5 motifs

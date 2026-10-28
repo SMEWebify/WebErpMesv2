@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Casts\EquipmentTags;
 use App\Enums\SalesLineType;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Auth;
@@ -343,6 +344,7 @@ class QuoteLinesController extends Controller
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
+            ...EquipmentTags::RULES,
         ]);
 
         $defaultVat  = AccountingVat::getDefault();
@@ -353,6 +355,7 @@ class QuoteLinesController extends Controller
         }
 
         $line = QuoteLines::create([
+            'equipment_tag'      => $validated['equipment_tag'] ?? null,
             'quotes_id'          => $quoteId,
             'ordre'              => $validated['ordre'],
             'code'               => $validated['code'] ?? '',
@@ -413,6 +416,7 @@ class QuoteLinesController extends Controller
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
             'statu'              => 'nullable|integer|min:1|max:6',
+            ...EquipmentTags::RULES,
         ]);
 
         $line->update($validated);
@@ -468,9 +472,11 @@ class QuoteLinesController extends Controller
                 ->where('ordre', '>', $line->ordre)
                 ->increment('ordre');
 
+            // Un repère désigne un seul équipement : la copie n'en reprend aucun.
             return $copier->copy($line, (int) $quoteId, $line->ordre + 1, $line->isArticle() ? [
-                'code'  => $line->code . '#dup' . $line->id,
-                'label' => $line->label . '#dup' . $line->id,
+                'code'          => $line->code . '#dup' . $line->id,
+                'label'         => $line->label . '#dup' . $line->id,
+                'equipment_tag' => null,
             ] : []);
         });
 
@@ -658,6 +664,7 @@ class QuoteLinesController extends Controller
             'product_url'          => $l->product_id ? route('products.show', ['id' => $l->product_id]) : null,
             'product_drawing_file' => $l->Product?->drawing_file,
             'label'                => $l->label,
+            'equipment_tag'        => $l->equipment_tag,
             'qty'                  => $l->qty,
             'methods_units_id'     => $l->methods_units_id,
             'unit_label'           => $l->Unit?->label,

@@ -1121,6 +1121,7 @@ return [
     'index_trans_key'                          => 'Ind',
     'plan_index_trans_key'                     => 'Ind. plan',
     'plan_index_short_trans_key'               => 'ind.',
+    'equipment_tag_trans_key'                  => 'Repère',
     'new_product_trans_key'                    => 'Nouveau produit',
     'price_by_qty_trans_key'                   => 'Prix par quantité',
     'weighted_average_price_trans_key'         => 'Prix ​​moyen pondéré',
