@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Integrations;
 
 use App\Http\Controllers\Controller;
+use App\Models\Quality\QualityDerogationSignature;
 use App\Models\Workflow\QuoteSignature;
+use App\Services\Integrations\Signature\DerogationSignatureService;
 use App\Services\Integrations\Signature\Exceptions\SignatureException;
 use App\Services\Integrations\Signature\QuoteSignatureService;
 use Illuminate\Http\Request;
@@ -19,7 +21,10 @@ use Illuminate\Support\Facades\Log;
  */
 class ESignatureWebhookController extends Controller
 {
-    public function __construct(private readonly QuoteSignatureService $service) {}
+    public function __construct(
+        private readonly QuoteSignatureService $service,
+        private readonly DerogationSignatureService $derogations,
+    ) {}
 
     public function handle(Request $request): Response
     {
@@ -36,16 +41,22 @@ class ESignatureWebhookController extends Controller
         }
 
         $signature = $envelopeId ? QuoteSignature::where('envelope_id', $envelopeId)->first() : null;
+        // Sinon, accord client sur une dérogation.
+        $derogationSignature = ! $signature && $envelopeId
+            ? QualityDerogationSignature::where('envelope_id', $envelopeId)->first()
+            : null;
 
-        // Enveloppe inconnue (envoyée hors WEM, ou devis supprimé) → on acquitte.
-        if (! $signature) {
+        // Enveloppe inconnue (envoyée hors WEM, ou document supprimé) → on acquitte.
+        if (! $signature && ! $derogationSignature) {
             return response('OK', 200);
         }
 
         try {
-            $this->service->sync($signature);
+            $signature
+                ? $this->service->sync($signature)
+                : $this->derogations->sync($derogationSignature);
         } catch (\Throwable $e) {
-            Log::error('ESignatureWebhook: sync failed', ['signature' => $signature->id, 'error' => $e->getMessage()]);
+            Log::error('ESignatureWebhook: sync failed', ['envelope' => $envelopeId, 'error' => $e->getMessage()]);
 
             // 500 → DocuSign renverra la notification plus tard.
             return response('Internal Server Error', 500);

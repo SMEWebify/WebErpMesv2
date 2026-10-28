@@ -20,6 +20,8 @@ class FileRole
     public const CONTROL = 'controle';
     // Document revenu signé d'un prestataire de signature électronique
     public const SIGNED = 'document_signe';
+    // Accord écrit du client sur une dérogation (courrier, e-mail, fiche signée)
+    public const CUSTOMER_APPROVAL = 'accord_client';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -44,6 +46,7 @@ class FileRole
             self::CERTIFICATE,
             self::CONTROL,
             self::SIGNED,
+            self::CUSTOMER_APPROVAL,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,
@@ -63,6 +66,22 @@ class FileRole
     {
         return [
             self::RECEIPT,
+            self::OTHER,
+        ];
+    }
+
+    /**
+     * Roles offered on a derogation, in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forDerogations(): array
+    {
+        return [
+            self::CUSTOMER_APPROVAL,
+            self::SIGNED,
+            self::PHOTO,
+            self::CONTROL,
             self::OTHER,
         ];
     }

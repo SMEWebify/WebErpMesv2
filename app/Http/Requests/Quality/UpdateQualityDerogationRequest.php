@@ -26,6 +26,12 @@ class UpdateQualityDerogationRequest extends FormRequest
         return [
             //
             'label'=>'required',
+            'statu' => 'nullable|in:1,2,3,4',
+            'customer_reply_date' => 'nullable|date',
+            'customer_signatory' => 'nullable|string|max:255',
+            'companies_id' => 'nullable|integer',
+            'companies_contacts_id' => 'nullable|integer',
+            'order_lines_id' => 'nullable|integer',
         ];
     }
 }

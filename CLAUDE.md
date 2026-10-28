@@ -139,7 +139,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
-| `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné ». Filet de la notification DocuSign (instance non publiée en HTTPS) |
+| `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné » ; range l'accord signé d'une dérogation dans sa GED. Filet de la notification DocuSign (instance non publiée en HTTPS) |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
@@ -161,7 +161,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Quotidien à 02h00 | `backup:run` | Sauvegarde complète DB + `storage/app` |
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
 | Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
-| Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis en attente |
+| Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis et de dérogations en attente |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
 
@@ -499,6 +499,34 @@ contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
 - Devis modifié après l'envoi (total TTC différent) ou mode changé → l'enveloppe en
   attente est annulée (`voided`) et une nouvelle part au clic suivant.
 - Tests : `tests/Feature/ESignature/` (API DocuSign simulée, clé RSA jetable en fixture).
+
+## Dérogations — accord du client (ISO 19443)
+
+Écran Qualité → Dérogations (`quality_derogations`, 2021) + fiche `/quality/derogation/{id}`
+(`quality-derogation-show`). Type 1 = interne, 2 = externe ; statut 1 en cours, 2 attente
+client, 3 validé, 4 annulé.
+- **Colonnes additives** : `companies_id`, `companies_contacts_id`, `order_lines_id` (repris de
+  la NC à l'enregistrement s'ils sont vides), `customer_reply_date`, `customer_signatory`,
+  `validated_by` / `validated_at`. `reply` et `decision` sont devenues facultatives.
+- **Validation** (`App\Services\Quality\DerogationApproval`) : passer en « Validé » exige la
+  permission `quality-derogation-validate` (rôle Admin, migration) et, pour une **externe**,
+  client, réponse, date, signataire et une pièce de la GED au rôle `accord_client` ou
+  `document_signe`. Une interne n'exige que la décision. Une dérogation validée n'est
+  modifiable que par un porteur de la permission. Historique : activitylog sur le modèle.
+- **GED** : alias `derogation`, rôles `FileRole::forDerogations()`.
+- **BL bloqué** (`DerogationDeliveryGuard`) : une ligne de commande visée par une dérogation
+  **externe ouverte** (statut 1 ou 2), directement ou via `quality_non_conformities.order_lines_id`,
+  ne passe pas sur un BL (`orders.lines.json.store-delivery`, `deliverys-request.store` → 422).
+  Non contrôlé : BL automatique de la facturation directe (comme le plafond d'encours).
+- **DocuSign** (`DerogationSignatureService`, table `quality_derogation_signatures`) : réutilise
+  la configuration et le driver des devis, mais toujours **par e-mail DocuSign** au contact
+  (pas de page publique), et seulement `isComplete()` (l'option « signature des devis
+  publics » ne s'applique pas). Document = `print/derogation-request`. Envoi → statut 2.
+  Dérogation modifiée (empreinte `contentHash()`) → enveloppe en attente annulée. Signée →
+  PDF signé + certificat dans la GED (rôle `document_signe`), réponse / date / signataire
+  complétés s'ils étaient vides ; **jamais validée d'office**. Notification et
+  `wem:esign:sync` relisent devis et dérogations.
+- Tests : `tests/Feature/Quality/DerogationApprovalTest.php`, `tests/Feature/ESignature/DerogationSignatureTest.php`.
 
 ## Reports de date des lignes de commande
 

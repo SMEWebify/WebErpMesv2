@@ -1268,6 +1268,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Quality\QualityDerogationController@index')->name('quality.derogation');
             Route::post('/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->name('quality.derogation.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->name('quality.derogation.update');
+            Route::get('/company-data', 'App\Http\Controllers\Quality\QualityDerogationController@companyData')->name('quality.derogation.company-data');
+            Route::get('/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@show')->whereNumber('id')->name('quality.derogation.show');
+            Route::get('/{id}/preview', 'App\Http\Controllers\Quality\QualityDerogationController@preview')->whereNumber('id')->name('quality.derogation.preview');
+            // Accord du client par DocuSign (e-mail au contact)
+            Route::post('/{id}/signature', 'App\Http\Controllers\Quality\QualityDerogationController@sendSignature')->whereNumber('id')->middleware('throttle:10,1')->name('quality.derogation.signature.send');
+            Route::post('/{id}/signature/sync', 'App\Http\Controllers\Quality\QualityDerogationController@syncSignature')->whereNumber('id')->name('quality.derogation.signature.sync');
         });
 
         // Routes for AMDEC

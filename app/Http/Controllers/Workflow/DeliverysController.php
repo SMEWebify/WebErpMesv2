@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Workflow;
 
 use App\Services\Receivables\CreditLimitGuard;
+use App\Services\Quality\DerogationDeliveryGuard;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
@@ -225,6 +226,11 @@ class DeliverysController extends Controller
         ]);
 
         $removeFromStock = $validated['remove_from_stock'] ?? false;
+
+        // Une pièce en attente de la décision du client sur une dérogation ne part pas.
+        if ($refusal = app(DerogationDeliveryGuard::class)->refusal(array_column($validated['lines'], 'order_line_id'))) {
+            return response()->json(['message' => $refusal, 'errors' => ['lines' => [$refusal]]], 422);
+        }
 
         // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).
         $creditGuard = app(CreditLimitGuard::class);

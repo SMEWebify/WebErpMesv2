@@ -14,6 +14,7 @@ use App\Services\Cad\CadImportService;
 use App\Services\ImportCsvService;
 use App\Services\DeliveryService;
 use App\Services\Receivables\CreditLimitGuard;
+use App\Services\Quality\DerogationDeliveryGuard;
 use App\Services\DeliveryLineService;
 use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
@@ -732,6 +733,11 @@ class OrderLinesController extends Controller
 
         $order = Orders::findOrFail($orderId);
         abort_if($order->statu == 6, 422, __('general_content.order_canceled_no_document_trans_key'));
+
+        // Une pièce en attente de la décision du client sur une dérogation ne part pas.
+        if ($refusal = app(DerogationDeliveryGuard::class)->refusal($request->input('line_ids'))) {
+            return response()->json(['error' => $refusal], 422);
+        }
 
         // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).
         $creditGuard = app(CreditLimitGuard::class);

@@ -6,8 +6,6 @@
     <h1>{{ __('general_content.derogations_trans_key') }}</h1>
 @stop
 
-@section('right-sidebar')
-
 @section('content')
 
       @include('include.alert-result')
@@ -23,6 +21,7 @@
                 <th>{{ __('general_content.type_trans_key') }}</th>
                 <th>{{__('general_content.status_trans_key') }}</th>
                 <th>{{ __('general_content.nc_trans_key') }}</th>
+                <th>{{ __('derogations.customer') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
                 <th></th>
               </tr>
@@ -50,8 +49,10 @@
                     {{ __('general_content.no_nc_trans_key') }}
                   @endif
                 </td>
+                <td>{{ $QualityDerogation->companie?->label }}</td>
                 <td>{{ $QualityDerogation->GetPrettyCreatedAttribute() }}</td>
                 <td class=" py-0 align-middle">
+                  <a href="{{ route('quality.derogation.show', ['id' => $QualityDerogation->id]) }}" class="btn btn-sm btn-primary" title="{{ __('derogations.open') }}"><i class="fas fa-folder-open"></i></a>
                   <!-- Button Modal -->
                   <x-button-text-view :modalTarget="'QualityDerogationView' . $QualityDerogation->id" />
                   <!-- Modal {{ $QualityDerogation->id }} -->
@@ -140,11 +141,11 @@
                           </div>
                           <div class="mb-3">
                             <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
-                            <textarea class="form-control" rows="3" name="reply"  placeholder="..." required>{{ $QualityDerogation->reply }}</textarea>
+                            <textarea class="form-control" rows="3" name="reply"  placeholder="...">{{ $QualityDerogation->reply }}</textarea>
                           </div>
                           <div class="mb-3">
                             <label>{{ __('general_content.decision_description_trans_key') }}</label>
-                            <textarea class="form-control" rows="3" name="decision"  placeholder="..." required>{{ $QualityDerogation->decision }}</textarea>
+                            <textarea class="form-control" rows="3" name="decision"  placeholder="...">{{ $QualityDerogation->decision }}</textarea>
                           </div>
                       </div>
                       <div class="card-footer">
@@ -155,7 +156,7 @@
                 </td>
               </tr>
               @empty
-              <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+              <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
               @endforelse
             </tbody>
             <tfoot>
@@ -166,6 +167,7 @@
                 <th>{{ __('general_content.type_trans_key') }}</th>
                 <th>{{__('general_content.status_trans_key') }}</th>
                 <th>{{ __('general_content.nc_trans_key') }}</th>
+                <th>{{ __('derogations.customer') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
                 <th></th>
               </tr>
@@ -231,11 +233,11 @@
             </div>
             <div class="mb-3 col-md-2">
               <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
-              <textarea class="form-control" rows="3" name="reply"  placeholder="..." required></textarea>
+              <textarea class="form-control" rows="3" name="reply"  placeholder="..."></textarea>
             </div>
             <div class="mb-3 col-md-2">
               <label>{{ __('general_content.decision_description_trans_key') }}</label>
-              <textarea class="form-control" rows="3" name="decision"  placeholder="..." required></textarea>
+              <textarea class="form-control" rows="3" name="decision"  placeholder="..."></textarea>
             </div>
             
           <!-- /.row -->
