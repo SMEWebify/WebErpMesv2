@@ -16,6 +16,7 @@ use App\Models\Products\SerialNumbers;
 use App\Services\QualityNonConformityService;
 use App\Services\Files\FileKindResolver;
 use App\Services\Inspection\TaskInspection;
+use App\Services\Production\ProductionRelease;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class TaskStatuController extends Controller
     public function __construct(
         private readonly TaskService $taskService,
         private readonly QualityNonConformityService $qualityNonConformityService,
+        private readonly ProductionRelease $productionRelease,
     ) {}
 
     // -------------------------------------------------------------------------
@@ -203,6 +205,8 @@ class TaskStatuController extends Controller
             'documents'           => $this->buildDocuments($task),
             // contrôle : plan de contrôle validé de l'article, dossier de la ligne
             'inspection'          => app(TaskInspection::class)->summary($task),
+            // bon pour fabrication : message si le démarrage est bloqué, sinon null
+            'release_blocked'     => $this->productionRelease->blockingReason($task),
         ]);
     }
 
@@ -357,6 +361,13 @@ class TaskStatuController extends Controller
     // -------------------------------------------------------------------------
     public function start(int $id)
     {
+        // Bon pour fabrication : refus avant toute écriture. Achats, matière et
+        // sous-traitance ne sont jamais concernés (ProductionRelease).
+        $reason = $this->productionRelease->blockingReason(Task::with('service', 'OrderLines')->findOrFail($id));
+        if ($reason !== null) {
+            return response()->json(['message' => $reason, 'production_release' => false], 422);
+        }
+
         $this->taskService->recordTaskActivity($id, TaskActivities::TYPE_START, 0, 0);
 
         $status = Status::where('title', 'In progress')->first()

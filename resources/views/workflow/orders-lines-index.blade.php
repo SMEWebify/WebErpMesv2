@@ -11,6 +11,16 @@
     'list' => route('order-lines.json.list'),
   ];
 
+  // Bon pour fabrication : colonne affichée seulement quand il est exigé.
+  $releaseConfig = null;
+  if (\App\Services\Production\ProductionRelease::enabled()) {
+    $releaseConfig = [
+      'can_release' => auth()->user()?->can('production-release') ?? false,
+      'release'     => route('order-lines.json.release', ['id' => '__ID__']),
+      'revoke'      => route('order-lines.json.release.revoke', ['id' => '__ID__']),
+    ];
+  }
+
   $reactTrans = [
     'order'                    => __('general_content.order_trans_key'),
     'ordre'                    => __('general_content.sort_trans_key'),
@@ -50,6 +60,14 @@
     'not_invoiced'             => __('general_content.not_invoiced_trans_key'),
     'partly_invoiced'          => __('general_content.partly_invoiced_trans_key'),
     'invoiced'                 => __('general_content.invoiced_trans_key'),
+    // bon pour fabrication
+    'release_short'            => __('production_release.short'),
+    'release_label'            => __('production_release.label'),
+    'release_action'           => __('production_release.release'),
+    'release_revoke'           => __('production_release.revoke'),
+    'release_not_released'     => __('production_release.not_released'),
+    'release_released_on'      => __('production_release.released_on'),
+    'release_revoke_confirm'   => __('production_release.revoke_confirm'),
     'currency'                 => app('Factory')->curency ?? 'EUR',
     'locale'                   => str_replace('_', '-', config('app.locale')),
   ];
@@ -59,7 +77,8 @@
 <div
   id="order-lines-index-app"
   data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-  data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+  data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-release='@json($releaseConfig, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
 </div>
 @stop
 

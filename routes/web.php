@@ -387,6 +387,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders');
         Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines');
         Route::get('/lines/json', 'App\Http\Controllers\Workflow\OrderLinesController@listJson')->name('order-lines.json.list');
+        // Bon pour fabrication (bureau d'études)
+        Route::post('/lines/json/{id}/release',   'App\Http\Controllers\Workflow\OrderLinesController@releaseJson')->middleware('permission:production-release')->name('order-lines.json.release');
+        Route::delete('/lines/json/{id}/release', 'App\Http\Controllers\Workflow\OrderLinesController@revokeReleaseJson')->middleware('permission:production-release')->name('order-lines.json.release.revoke');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->name('orders.update');
         // JSON endpoints for React OrdersIndex
         Route::get('/json/list',                  'App\Http\Controllers\Workflow\OrdersController@listJson')->name('orders.json.list');

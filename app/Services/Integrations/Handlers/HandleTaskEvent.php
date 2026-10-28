@@ -9,6 +9,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\TaskActivities;
 use App\Models\User;
 use App\Services\Integrations\IntegrationEventHandler;
+use App\Services\Production\ProductionRelease;
 use App\Services\TaskService;
 use Carbon\Carbon;
 use InvalidArgumentException;
@@ -73,6 +74,13 @@ class HandleTaskEvent implements IntegrationEventHandler
         }
 
         $activityType = self::EVENT_TO_ACTIVITY_TYPE[$eventType];
+
+        // Bon pour fabrication : l'événement échoue (livraison en erreur, rejouable
+        // une fois le BPF donné) plutôt que d'enregistrer un démarrage interdit.
+        if ($activityType === TaskActivities::TYPE_START) {
+            app(ProductionRelease::class)->assertCanStart($task);
+        }
+
         $occurredAt = $this->normalizeTimestamp($meta['occurred_at'] ?? null);
 
         $this->taskService->recordTaskActivity(

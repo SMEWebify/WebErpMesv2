@@ -58,9 +58,11 @@ class OrderLines extends Model
                             'pdf_package',
                         ];
 
+    // released_for_production_* ne sont pas $fillable : seul ProductionRelease les écrit.
     protected $casts = [
         'hide_on_pdf' => 'boolean',
         'pdf_package' => 'integer',
+        'released_for_production_at' => 'datetime',
     ];
 
     /**
@@ -100,6 +102,12 @@ class OrderLines extends Model
     public function order()
     {
         return $this->belongsTo(Orders::class, 'orders_id');
+    }
+
+    /** Auteur du bon pour fabrication (ProductionRelease). */
+    public function releasedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'released_for_production_by');
     }
 
     public function quoteLine()
@@ -385,7 +393,8 @@ class OrderLines extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['orders_id', 'code', 'label', 'statu']);
+        // BPF et indice tracés : qui a libéré quelle ligne, et pourquoi le BPF est tombé.
+        return LogOptions::defaults()->logOnly(['orders_id', 'code', 'label', 'statu', 'ind', 'released_for_production_at', 'released_for_production_by']);
         // Chain fluent methods for configuration options
     }
 }

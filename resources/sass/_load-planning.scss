@@ -636,6 +636,13 @@ $lp-row-col: 240px;
     opacity: .9;
 }
 
+// Tâches sans bon pour fabrication (BPF exigé seulement)
+.lp-tile__unreleased {
+    margin-top: .15rem;
+    font-size: .58rem;
+    white-space: nowrap;
+}
+
 // Overloaded row: red side strip on the sticky label
 .lp-row.is-overloaded .lp-row-head {
     box-shadow:

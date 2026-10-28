@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Planning;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Services\TaskService;
+use App\Services\Production\ProductionRelease;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Planning\TaskActivities;
@@ -226,6 +227,13 @@ class TaskController extends Controller
         $statuses  = Status::orderBy('order')->get();
         $statusMap = $this->resolveGtdStatusMap($statuses);
 
+        if (in_array($request->status_id, $statusMap['in_progress'] ?? [], true)) {
+            $reason = app(ProductionRelease::class)->blockingReason($task);
+            if ($reason !== null) {
+                return response()->json(['message' => $reason], 422);
+            }
+        }
+
         $task->status_id = $request->status_id;
         $task->save();
 
@@ -402,6 +410,17 @@ class TaskController extends Controller
         $StatusInProgessId = Status::select('id')->where('title', 'In Progress')->first();
         $StatusFinishId = Status::select('id')->where('title', 'Finished')->first();
 
+        // Bon pour fabrication : le tableau entier est refusé avant toute écriture,
+        // sinon une partie des déplacements serait appliquée et l'autre perdue.
+        if ($StatusInProgessId) {
+            $blocked = $this->tasksBlockedByRelease($request->columns, (int) $StatusInProgessId->id);
+            if ($blocked !== []) {
+                return response()->json([
+                    'message' => __('production_release.blocked_kanban', ['tasks' => implode(', ', $blocked)]),
+                ], 422);
+            }
+        }
+
         foreach ($request->columns as $status) {
             foreach ($status['tasks'] as $i => $task) {
                 if ($task['status_id'] !== $status['id']) {
@@ -426,6 +445,36 @@ class TaskController extends Controller
                         ->with('tasks.OrderLines.order')
                         ->with('tasks.service')->get();
         return  $tasks;
+    }
+
+    /**
+     * Tâches déplacées vers « En cours » par le Kanban mais sans bon pour fabrication.
+     *
+     * @return array<int, int>
+     */
+    private function tasksBlockedByRelease(array $columns, int $inProgressId): array
+    {
+        $release = app(ProductionRelease::class);
+        $blocked = [];
+
+        foreach ($columns as $status) {
+            if ((int) ($status['id'] ?? 0) !== $inProgressId) {
+                continue;
+            }
+
+            foreach ($status['tasks'] ?? [] as $task) {
+                if ((int) ($task['status_id'] ?? 0) === $inProgressId) {
+                    continue;
+                }
+
+                $model = Task::with('service', 'OrderLines')->find($task['id'] ?? null);
+                if ($model && $release->blockingReason($model) !== null) {
+                    $blocked[] = $model->id;
+                }
+            }
+        }
+
+        return $blocked;
     }
 
     /**

@@ -281,6 +281,7 @@ async function mountOrderLinesIndex() {
         React.createElement(OrderLinesIndex, {
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+            release:   parse('release'),
         })
     );
 }

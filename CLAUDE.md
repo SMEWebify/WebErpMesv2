@@ -562,6 +562,31 @@ JSON sans échappement de `/` pour que le LIKE trouve `1RCP/001`). Trait `HasEqu
 - Plus de repères que la quantité : simple avertissement dans le tiroir, jamais bloquant.
 - Tests : `tests/Feature/EquipmentTagTest.php`, `resources/js/tests/components/equipmentTags.test.jsx`.
 
+## Bon pour fabrication (BPF)
+
+`order_lines.released_for_production_at` / `_by` (hors `$fillable`), écrits seulement par
+`App\Services\Production\ProductionRelease`. Option `production.require_release`
+(`PRODUCTION_REQUIRE_RELEASE`, **false** par défaut) : inactive = aucun blocage **et aucun
+affichage** BPF (colonne, bandeau, badges).
+- **Bloqué** : démarrage d'une tâche dont le **service** est productif (type 1) et dont la
+  ligne (directe ou via sous-ensembles) n'a pas de BPF. Matière (2-6, 8), sous-traitance (7),
+  achats, réservations : jamais. Points de démarrage : `Api/TaskStatuController::start`
+  (422), Kanban `TaskController::sync` (422, rien appliqué), GTD `gtdMove`, événement N2P
+  `task.started/resumed` (livraison en échec, rejouable), commande passée « En cours »
+  (tâches productives non libérées laissées à leur statut). Un nouveau point de démarrage
+  doit appeler `blockingReason()` / `assertCanStart()`.
+- **Donner / annuler** : `order-lines.json.release` (POST/DELETE), permission
+  `production-release` (Admin par migration). Annulation refusée dès qu'une tâche de la
+  ligne a une activité START.
+- **Revue et changement** : BPF refusé si la revue de commande est `rejected` ou si une
+  demande de changement attend (`change_requested_by` sans `change_approved_at`). Un
+  changement d'`ind` révoque le BPF (`OrderLinesObserver::updating`) ; une ligne neuve ou
+  dupliquée n'en a jamais. BPF et indice tracés par activitylog.
+- Affichage : colonne de l'index des lignes de commande, bandeau de l'écran tâche,
+  badge « sans BPF » du planning de charge (`unreleasedTaskIds`, 1 requête) et du Gantt.
+- Tests : `tests/Feature/Production/ProductionReleaseTest.php`,
+  `resources/js/tests/lib/productionRelease.test.js`.
+
 ## Journal des consultations (traçabilité des accès, nucléaire)
 
 Les modifications sont tracées par activitylog ; les **lectures** des fiches sensibles le

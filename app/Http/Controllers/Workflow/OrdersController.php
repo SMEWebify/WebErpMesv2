@@ -10,6 +10,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\AffairCategory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use App\Services\Production\ProductionRelease;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Services\OrderService;
@@ -631,8 +632,14 @@ class OrdersController extends Controller
             $statusSuspended  = Status::where('title', 'Suspended')->first();
             $statusFinished   = Status::where('title', 'Finished')->first();
 
+            $release = app(ProductionRelease::class);
+
             foreach ($tasks as $task) {
                 if ($statu === 2) {
+                    // Sans bon pour fabrication, une tâche de production reste où elle est.
+                    if ($release->blockingReason($task) !== null) {
+                        continue;
+                    }
                     $s = $statusStarted ?? $statusInProgress;
                     if ($s) $task->update(['status_id' => $s->id]);
                 } elseif ($statu === 5) {

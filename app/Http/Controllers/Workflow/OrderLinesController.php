@@ -39,6 +39,8 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Planning\Task;
 use App\Services\Planning\BillOfMaterialsCopier;
+use App\Services\Production\ProductionRelease;
+use App\Services\Production\ProductionReleaseException;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -81,6 +83,7 @@ class OrderLinesController extends Controller
                 'DeliveryLines.delivery:id,code',
                 'InvoiceLines:id,order_line_id,qty,invoices_id',
                 'InvoiceLines.invoice:id,code',
+                'releasedBy:id,name',
             ])
             ->articles()
             ->withCount(['Task', 'SubAssembly'])
@@ -121,6 +124,7 @@ class OrderLinesController extends Controller
                 'task_count'           => $l->task_count,
                 'sub_assembly_count'   => $l->sub_assembly_count,
                 'task_url'             => route('task.manage', ['id_type' => 'order_lines_id', 'id_page' => $l->orders_id, 'id_line' => $l->id]),
+                'release'              => $this->releasePayload($l),
                 'delivery_lines'       => $l->DeliveryLines->map(fn ($dl) => [
                     'id'           => $dl->id,
                     'qty'          => $dl->qty,
@@ -141,6 +145,52 @@ class OrderLinesController extends Controller
                 'last_page'    => $lines->lastPage(),
             ],
         ]);
+    }
+
+    /**
+     * POST — bon pour fabrication de la ligne (permission production-release).
+     */
+    public function releaseJson(int $id, ProductionRelease $release)
+    {
+        $line = OrderLines::with('order')->findOrFail($id);
+
+        try {
+            $release->release($line, Auth::user());
+        } catch (ProductionReleaseException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => __('production_release.released_ok'),
+            'release' => $this->releasePayload($line->fresh('releasedBy')),
+        ]);
+    }
+
+    /**
+     * DELETE — annule le bon pour fabrication tant qu'aucune tâche n'a démarré.
+     */
+    public function revokeReleaseJson(int $id, ProductionRelease $release)
+    {
+        $line = OrderLines::findOrFail($id);
+
+        try {
+            $release->revoke($line);
+        } catch (ProductionReleaseException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => __('production_release.revoked_ok'),
+            'release' => $this->releasePayload($line->fresh('releasedBy')),
+        ]);
+    }
+
+    private function releasePayload(OrderLines $line): array
+    {
+        return [
+            'released_at' => $line->released_for_production_at?->toIso8601String(),
+            'released_by' => $line->releasedBy?->name,
+        ];
     }
 
     /**

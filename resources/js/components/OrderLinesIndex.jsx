@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty, formatDate, formatCurrency } from '../utils';
 import { DataTable, Pagination, MobileFilters } from './table';
+import { isReleased, releasedOnText } from '../lib/productionRelease.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -166,7 +167,72 @@ function invoiceStatusCell(line, trans) {
     );
 }
 
-function orderLineColumns(trans, currency, locale) {
+// ---------------------------------------------------------------------------
+// ReleaseCell — bon pour fabrication (affiché seulement quand il est exigé)
+// ---------------------------------------------------------------------------
+
+function ReleaseCell({ line, release, trans, locale, onChange }) {
+    const [busy, setBusy] = useState(false);
+    const state = line.release ?? {};
+    const released = isReleased(state);
+
+    async function send(method) {
+        if (method === 'DELETE' && !window.confirm(trans.release_revoke_confirm)) return;
+        setBusy(true);
+        try {
+            const url = (method === 'POST' ? release.release : release.revoke).replace('__ID__', line.id);
+            const res = await fetch(url, {
+                method,
+                headers: { 'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json' },
+                credentials: 'same-origin',
+            });
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                window.alert(json.message ?? res.statusText);
+                return;
+            }
+            onChange(line.id, json.release);
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    const badge = released
+        ? <span className="badge text-bg-success" title={releasedOnText(trans.release_released_on, state, locale)}>
+              <i className="fas fa-check me-1" />{trans.release_short}
+          </span>
+        : <span className="badge text-bg-warning">{trans.release_not_released}</span>;
+
+    if (!release.can_release) return badge;
+
+    return (
+        <span className="d-inline-flex align-items-center" style={{ gap: '0.25rem' }}>
+            {badge}
+            {released ? (
+                <button type="button" className="btn btn-sm btn-outline-secondary" disabled={busy}
+                        title={trans.release_revoke} aria-label={trans.release_revoke}
+                        onClick={() => send('DELETE')}>
+                    <i className="fas fa-undo" />
+                </button>
+            ) : (
+                <button type="button" className="btn btn-sm btn-success" disabled={busy}
+                        title={trans.release_action} onClick={() => send('POST')}>
+                    <i className="fas fa-stamp me-1" />{trans.release_action}
+                </button>
+            )}
+        </span>
+    );
+}
+
+function orderLineColumns(trans, currency, locale, release, onReleaseChange) {
+    const releaseColumn = release ? [
+        { key: 'release',     label: trans.release_short,
+          render: l => <ReleaseCell line={l} release={release} trans={trans} locale={locale} onChange={onReleaseChange} />,
+          mobile: 'badge', mobileRender: l => (isReleased(l.release)
+              ? <span className="badge text-bg-success">{trans.release_short}</span>
+              : <span className="badge text-bg-warning">{trans.release_not_released}</span>) },
+    ] : [];
+
     return [
         { key: 'order_code',      label: trans.order,
           render: l => <strong>{l.order_code ?? l.orders_id}</strong>, filterValue: l => l.order_code, filter: 'text',
@@ -202,6 +268,7 @@ function orderLineColumns(trans, currency, locale) {
               const cfg = TASKS_STATUS_CONFIG[l.tasks_status];
               return cfg ? <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span> : '—';
           } },
+        ...releaseColumn,
         { key: 'delivery_status', label: trans.delivery_status, sortable: true,
           render: l => deliveryStatusCell(l, trans),
           mobile: 'badge', mobileRender: l => {
@@ -233,11 +300,11 @@ function fromTableFilters(next) {
     return { ...rest, delivery_date_from: range?.from ?? '', delivery_date_to: range?.to ?? '' };
 }
 
-function OrderLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, locale, colFilters, onColFiltersChange }) {
+function OrderLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, locale, colFilters, onColFiltersChange, release, onReleaseChange }) {
     return (
         <DataTable
             rows={lines}
-            columns={orderLineColumns(trans, currency, locale)}
+            columns={orderLineColumns(trans, currency, locale, release, onReleaseChange)}
             trans={trans}
             sortField={sortField}
             sortAsc={sortAsc}
@@ -261,7 +328,7 @@ function OrderLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, l
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function OrderLinesIndex({ endpoints, trans }) {
+export default function OrderLinesIndex({ endpoints, trans, release = null }) {
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 
@@ -318,6 +385,10 @@ export default function OrderLinesIndex({ endpoints, trans }) {
         setPage(1);
     }
 
+    function handleReleaseChange(lineId, state) {
+        setLines(prev => prev.map(l => (l.id === lineId ? { ...l, release: state } : l)));
+    }
+
 
     return (
         <div className="card card-outline card-warning mb-3">
@@ -356,6 +427,8 @@ export default function OrderLinesIndex({ endpoints, trans }) {
                     locale={locale}
                     colFilters={colFilters}
                     onColFiltersChange={handleColFilters}
+                    release={release}
+                    onReleaseChange={handleReleaseChange}
                 />
 
                 <Pagination meta={meta} navClassName="mt-2" ulClassName="pagination pagination-sm m-0 flex-wrap" onPage={setPage} />

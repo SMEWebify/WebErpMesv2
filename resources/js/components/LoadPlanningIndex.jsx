@@ -736,7 +736,7 @@ function RowLabel({ row, stats, byResource, customCapacities, onCustomCapacityCh
     );
 }
 
-function LoadCell({ day, cell, capacity, taskCount, trans }) {
+function LoadCell({ day, cell, capacity, taskCount, unreleasedCount = 0, trans }) {
     const classes = ['lp-cell'];
     if (day.isHoliday)      classes.push('is-off');
     else if (day.isWeekend) classes.push('is-weekend');
@@ -752,6 +752,9 @@ function LoadCell({ day, cell, capacity, taskCount, trans }) {
         tooltipParts.push(`${Math.round(cell.hours * 10) / 10} h / ${capacity} h — ${Math.round(cell.pct)} %`);
         if (taskCount > 0) {
             tooltipParts.push(fmt(trans.tasks_count ?? ':count tâche(s)', { count: taskCount }));
+        }
+        if (unreleasedCount > 0) {
+            tooltipParts.push(fmt(trans.unreleased ?? ':count sans BPF', { count: unreleasedCount }));
         }
     }
 
@@ -771,6 +774,12 @@ function LoadCell({ day, cell, capacity, taskCount, trans }) {
                             : '—'}
                     </span>
                     <span className="lp-tile__pct">{cell.label}</span>
+                    {unreleasedCount > 0 && (
+                        <span className="badge text-bg-warning lp-tile__unreleased">
+                            <i className="fas fa-lock me-1" />
+                            {fmt(trans.unreleased ?? ':count sans BPF', { count: unreleasedCount })}
+                        </span>
+                    )}
                 </div>
             ) : (
                 <span className="lp-cell__empty" aria-hidden="true"></span>
@@ -783,12 +792,14 @@ function Heatmap({
     data, days, displayHoursDiff, customCapacities, search,
     onCustomCapacityChange, trans,
 }) {
-    const { rows: rowDefs, hoursPerRowDay, tasksPerRowDay, granularity } = data;
+    const { rows: rowDefs, hoursPerRowDay, tasksPerRowDay, granularity, unreleasedTaskIds } = data;
     const byResource = granularity === 'resource';
 
     // Per-row aggregates, cell tones and per-day column totals (for header sums).
     const { rows, dayTotals } = useMemo(() => {
         const totals = Object.fromEntries(days.map((d) => [d.date, 0]));
+        // Tâches sans bon pour fabrication (liste vide quand le BPF n'est pas exigé).
+        const unreleased = new Set(unreleasedTaskIds ?? []);
 
         const computedRows = (rowDefs ?? []).map((row) => {
             const rowId = String(row.id);
@@ -825,7 +836,11 @@ function Heatmap({
                     }
                 }
 
-                return { day, cell, capacity: dayCapacity, taskCount: tasks.length };
+                const unreleasedCount = unreleased.size > 0
+                    ? tasks.filter((id) => unreleased.has(id)).length
+                    : 0;
+
+                return { day, cell, capacity: dayCapacity, taskCount: tasks.length, unreleasedCount };
             });
 
             return {
@@ -840,7 +855,7 @@ function Heatmap({
         });
 
         return { rows: computedRows, dayTotals: totals };
-    }, [rowDefs, days, hoursPerRowDay, tasksPerRowDay, customCapacities, displayHoursDiff, byResource]);
+    }, [rowDefs, days, hoursPerRowDay, tasksPerRowDay, unreleasedTaskIds, customCapacities, displayHoursDiff, byResource]);
 
     // Client-side search: filter row labels.
     const needle = search.trim().toLocaleLowerCase();
@@ -889,13 +904,14 @@ function Heatmap({
                                     customCapacities={customCapacities}
                                     onCustomCapacityChange={onCustomCapacityChange}
                                 />
-                                {r.cells.map(({ day, cell, capacity, taskCount }) => (
+                                {r.cells.map(({ day, cell, capacity, taskCount, unreleasedCount }) => (
                                     <LoadCell
                                         key={day.date}
                                         day={day}
                                         cell={cell}
                                         capacity={capacity}
                                         taskCount={taskCount}
+                                        unreleasedCount={unreleasedCount}
                                         trans={trans}
                                     />
                                 ))}

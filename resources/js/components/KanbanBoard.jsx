@@ -117,6 +117,7 @@ export default function KanbanBoard({ initialData }) {
     // Always points to the latest statuses — safe to read in event handlers
     const latestStatuses = useRef(statuses);
     latestStatuses.current = statuses;
+    const beforeDrag = useRef(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -137,6 +138,8 @@ export default function KanbanBoard({ initialData }) {
     }
 
     function handleDragStart({ active }) {
+        // Photo d'avant déplacement : remise en place si le serveur refuse (bon pour fabrication).
+        beforeDrag.current = latestStatuses.current;
         const idx = findStatusIndexByTaskId(active.id, latestStatuses.current);
         if (idx !== -1) {
             setActiveTask(latestStatuses.current[idx].tasks.find((t) => t.id === active.id));
@@ -198,7 +201,15 @@ export default function KanbanBoard({ initialData }) {
     }
 
     function syncToServer(columns) {
-        axios.put('/task/sync', { columns }).catch((err) => console.error(err));
+        axios.put('/task/sync', { columns }).catch((err) => {
+            const message = err?.response?.data?.message;
+            if (err?.response?.status === 422 && message) {
+                if (beforeDrag.current) setStatuses(beforeDrag.current);
+                window.alert(message);
+                return;
+            }
+            console.error(err);
+        });
     }
 
     return (

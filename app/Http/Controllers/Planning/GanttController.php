@@ -9,6 +9,7 @@ use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Services\Planning\DependencyEdge;
 use App\Services\Planning\DependencyGraph;
+use App\Services\Production\ProductionRelease;
 use Illuminate\Database\Eloquent\Builder;
 
 class GanttController extends Controller
@@ -51,14 +52,19 @@ class GanttController extends Controller
             'dependencies' => null,
         ];
 
+        // Bon pour fabrication : signalé sur la barre de la ligne quand il est exigé.
+        $flagUnreleased = ProductionRelease::enabled();
+
         foreach ($order->orderLines as $orderLine) {
 
             $previousId = 'order_' . $order->id;
+            $unreleased = $flagUnreleased && $orderLine->released_for_production_at === null;
 
             // Bar for the order line
             $formattedTasks[] = [
                 'id'           => 'ol_' . $orderLine->id,
-                'label'        => '#' . $orderLine->id . ' ' . $orderLine->label,
+                'label'        => '#' . $orderLine->id . ' ' . $orderLine->label
+                    . ($unreleased ? ' ' . __('production_release.gantt_unreleased') : ''),
                 'resource'     => 'Order Line',
                 'start_date'   => $orderLine->created_at ? new \DateTime($orderLine->created_at) : null,
                 'end_date'     => $orderLine->delivery_date ? new \DateTime($orderLine->delivery_date) : null,

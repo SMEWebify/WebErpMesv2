@@ -12,6 +12,7 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
 use App\Models\Methods\MethodsRessources;
 use App\Services\Planning\FiniteCapacityScheduler;
+use App\Services\Production\ProductionRelease;
 use App\Services\ResourceCapacityService;
 use App\Services\TaskDateCalculator;
 use Illuminate\Database\Eloquent\Builder;
@@ -109,6 +110,8 @@ class PlanningController extends Controller
             'bankHolidays'           => $this->getBankHolidays(),
             'countTaskNullDate'      => $this->countTaskNullDate(),
             'countTaskNullRessource' => $this->countTaskNullRessource(),
+            // Tâches de production sans bon pour fabrication (vide si non exigé).
+            'unreleasedTaskIds'      => app(ProductionRelease::class)->unreleasedTaskIds($taches->pluck('id')),
         ];
     }
 

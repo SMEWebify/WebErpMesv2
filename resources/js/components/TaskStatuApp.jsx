@@ -324,13 +324,18 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
     const t = (key) => trans?.[key] ?? key;
     const last = task.last_activity_type;
     const [busy, setBusy] = useState(false);
+    const [refusal, setRefusal] = useState(null);
     const layout = `ts-run${stack ? ' ts-run--stack' : ''}`;
 
     async function action(type) {
         setBusy(true);
+        setRefusal(null);
         try {
             await apiFetch(`${apiBase}/${task.id}/${type}`, 'POST');
             onReload();
+        } catch (e) {
+            // Refus métier (bon pour fabrication manquant…) : message du serveur.
+            setRefusal(e?.message ?? String(e));
         } finally {
             setBusy(false);
         }
@@ -357,7 +362,8 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
     }
 
     const running = last === ACT_START;
-    const canStart = !last || (last !== ACT_START && last !== ACT_FINISH);
+    const releaseBlocked = Boolean(task.release_blocked);
+    const canStart = !releaseBlocked && (!last || (last !== ACT_START && last !== ACT_FINISH));
     const canPause = !last || (last !== ACT_END && last !== ACT_FINISH);
     const canFinish = last !== ACT_FINISH;
 
@@ -374,11 +380,19 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
     );
 
     return (
-        <div className={layout}>
+        <>
+            {(refusal || releaseBlocked) && (
+                <div className="ts-alert ts-alert--warn" role="alert">
+                    <i className="fas fa-lock me-1" />
+                    {refusal ?? task.release_blocked}
+                </div>
+            )}
+            <div className={layout}>
  {btn(canStart, 'start', 'fas fa-play', t('play_trans_key'), 'start', running ? ' ts-run__btn--is-active' : '')}
-            {btn(canPause, 'pause', 'fas fa-pause', t('pause_trans_key'), 'pause')}
-            {btn(canFinish, 'stop', 'fas fa-stop', t('end_trans_key'), 'finish')}
-        </div>
+                {btn(canPause, 'pause', 'fas fa-pause', t('pause_trans_key'), 'pause')}
+                {btn(canFinish, 'stop', 'fas fa-stop', t('end_trans_key'), 'finish')}
+            </div>
+        </>
     );
 }
 

@@ -28,6 +28,36 @@ class OrderLinesObserver
         if ($orderLine->promised_delivery_date === null) {
             $orderLine->promised_delivery_date = self::toDate($orderLine->delivery_date);
         }
+
+        // Une ligne neuve (copie comprise) n'a jamais de bon pour fabrication.
+        if ($orderLine->released_for_production_at !== null || $orderLine->released_for_production_by !== null) {
+            $orderLine->released_for_production_at = null;
+            $orderLine->released_for_production_by = null;
+        }
+    }
+
+    /**
+     * Nouvel indice = nouveau plan : le bon pour fabrication donné sur
+     * l'ancien ne vaut plus. activitylog garde l'ancien BPF et l'indice.
+     */
+    private function revokeReleaseOnNewRevision(OrderLines $orderLine): void
+    {
+        if (! $orderLine->isDirty('ind') || $orderLine->isDirty('released_for_production_at')) {
+            return;
+        }
+        if ($orderLine->getOriginal('released_for_production_at') === null) {
+            return;
+        }
+
+        $old = trim((string) $orderLine->getOriginal('ind'));
+        $new = trim((string) $orderLine->ind);
+
+        if ($old === $new) {
+            return;
+        }
+
+        $orderLine->released_for_production_at = null;
+        $orderLine->released_for_production_by = null;
     }
 
     /**
@@ -38,6 +68,8 @@ class OrderLinesObserver
      */
     public function updating(OrderLines $orderLine): void
     {
+        $this->revokeReleaseOnNewRevision($orderLine);
+
         // Ligne chargée par un select partiel : la date promise réelle est
         // inconnue ici, l'écrire écraserait celle de la base.
         if (!array_key_exists('promised_delivery_date', $orderLine->getRawOriginal())) {

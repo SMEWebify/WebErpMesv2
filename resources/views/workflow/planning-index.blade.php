@@ -50,6 +50,7 @@
       'period_total'            => __('general_content.load_planning_period_total_trans_key'),
       'overloaded_days'         => __('general_content.load_planning_overloaded_days_trans_key'),
       'tasks_count'             => __('general_content.load_planning_tasks_count_trans_key'),
+      'unreleased'              => __('production_release.planning_unreleased'),
       'tasks_processed'         => __('general_content.load_planning_tasks_processed_trans_key'),
       'running'                 => __('general_content.load_planning_running_trans_key'),
       'finished'                => __('general_content.load_planning_finished_trans_key'),
