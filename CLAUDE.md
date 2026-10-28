@@ -534,6 +534,21 @@ JSON sans échappement de `/` pour que le LIKE trouve `1RCP/001`). Trait `HasEqu
 - Plus de repères que la quantité : simple avertissement dans le tiroir, jamais bloquant.
 - Tests : `tests/Feature/EquipmentTagTest.php`, `resources/js/tests/components/equipmentTags.test.jsx`.
 
+## Journal des consultations (traçabilité des accès, nucléaire)
+
+Les modifications sont tracées par activitylog ; les **lectures** des fiches sensibles le
+sont dans `activity_log` avec `log_name = access` (causer, sujet, `properties.route` / `ip`).
+- Option `audit.log_reads` (`AUDIT_LOG_READS`, **false** par défaut) : inactive = aucune écriture.
+- Middleware `audit.access:{type},{paramètre}` (`LogReadAccess`) posé sur `opportunities.show`,
+  `quotes.show`, `orders.show`, `orders.lines.detail.edit`, `files.raw`, `files.download`.
+  Écriture dans `terminate()` seulement (GET 2xx, utilisateur connecté), sujet jamais chargé.
+  Types autorisés : `AccessLogger::SUBJECTS` (`batch` prêt, aucune fiche lot n'existe encore).
+- Dédoublonnage : `Cache::add` par (utilisateur, sujet), fenêtre `audit.dedup_minutes` (10).
+- Écran `admin/access-log` + export CSV, permission `audit-access-log` (rôle Admin, migration).
+  L'historique partagé (`LogsViewerController`, ouvert à tous) **exclut** `access`.
+- Purge : `activitylog:clean` (rétention de `config/activitylog.php`), rien de spécifique.
+- Tests : `tests/Feature/Audit/AccessLogTest.php`.
+
 ## Motifs de perte (devis, opportunités)
 
 Référentiel `loss_reasons` (écran Méthodes → Motifs de perte, `methods-menu` ; 5 motifs

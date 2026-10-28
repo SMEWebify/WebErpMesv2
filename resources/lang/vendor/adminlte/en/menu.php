@@ -115,6 +115,7 @@ return [
     'mail_config_menu_trans_key'               => 'Email settings',
     'email_logs_trans_key'                     => 'Email log',
     'energy_consumption_trans_key'             => 'Energy consumption',
+    'access_log_trans_key'                     => 'Access log',
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',

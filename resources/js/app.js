@@ -1599,6 +1599,22 @@ async function mountLogsViewer() {
     );
 }
 
+// Journal des consultations (Admin) : admin/access-log.blade.php.
+async function mountAccessLogApp() {
+    const el = document.getElementById('access-log-app');
+    if (!el) return;
+    const { default: AccessLogApp } = await import('./components/admin/AccessLogApp.jsx');
+    const parse = (key, fallback) => { try { return JSON.parse(el.dataset[key] ?? 'null') ?? fallback; } catch { return fallback; } };
+    createRoot(el).render(
+        React.createElement(AccessLogApp, {
+            endpoints: parse('endpoints', {}),
+            trans:     parse('trans', {}),
+            users:     parse('users', []),
+            types:     parse('types', {}),
+        })
+    );
+}
+
 // Unified document manager: one drop area and one multi-format viewer, mounted
 // from include/file-manager-mount.blade.php on any entity that owns files.
 async function mountFileManagers() {
@@ -1784,6 +1800,7 @@ mountGtdBoard();
 mountReturnShow();
 mountTaskLines();
 mountLogsViewer();
+mountAccessLogApp();
 mountFileManagers();
 mountOpportunityVisit();
 mountAffairSummary();

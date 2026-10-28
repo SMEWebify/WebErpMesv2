@@ -1490,6 +1490,13 @@ return [
                     'icon_color' => 'success',
                 ],
                 [
+                    'text'       => 'access_log_trans_key',
+                    'url'        => 'admin/access-log',
+                    'icon'       => 'fas fa-user-shield',
+                    'icon_color' => 'secondary',
+                    'can'        => ['audit-access-log'],
+                ],
+                [
                     'text'       => 'Tokens API',
                     'url'        => 'admin/api-tokens',
                     'icon'       => 'fas fa-key',

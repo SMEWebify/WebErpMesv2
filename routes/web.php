@@ -303,7 +303,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/visits/{visit}/json/validate',   'App\Http\Controllers\Workflow\OpportunityVisitsController@validateVisit')->name('opportunities.visits.validate');
         Route::delete('/visits/{visit}/json',         'App\Http\Controllers\Workflow\OpportunityVisitsController@destroy')->name('opportunities.visits.destroy');
 
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->middleware('audit.access:opportunity,id')->name('opportunities.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
         Route::post('/{id}/json/loss-reason', 'App\Http\Controllers\Workflow\OpportunitiesController@lossReasonJson')->name('opportunities.json.loss-reason');
         Route::get('/{id}/json/summary', 'App\Http\Controllers\Workflow\OpportunitySummaryController@summary')->name('opportunities.json.summary');
@@ -343,7 +343,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/duplicate', 'App\Http\Controllers\Workflow\QuotesController@duplicate')->name('quotes.duplicate');
         Route::post('/{id}/save-as-template', 'App\Http\Controllers\Workflow\QuotesController@saveAsTemplate')->name('quotes.save-template');
         Route::delete('/{id}/template', 'App\Http\Controllers\Workflow\QuotesController@destroyTemplate')->name('quotes.template.destroy');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware('audit.access:quote,id')->name('quotes.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\QuotesController@changeStatusJson')->name('quotes.json.statu');
         Route::post('/{id}/json/loss-reason', 'App\Http\Controllers\Workflow\QuotesController@lossReasonJson')->name('quotes.json.loss-reason');
         //quote line
@@ -396,7 +396,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OrdersController@contactsJson')->name('orders.json.contacts');
         Route::post('/json/address/store',        'App\Http\Controllers\Workflow\OrdersController@storeAddressJson')->name('orders.json.address.store');
         Route::post('/json/contact/store',        'App\Http\Controllers\Workflow\OrdersController@storeContactJson')->name('orders.json.contact.store');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware('audit.access:order,id')->name('orders.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OrdersController@changeStatusJson')->name('orders.json.statu');
         Route::get('/{id}/json/purchase-history', 'App\Http\Controllers\Workflow\OrdersController@purchaseHistoryJson')->name('orders.json.purchase-history');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
@@ -416,7 +416,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{orderId}/lines/json/{id}/move',                  'App\Http\Controllers\Workflow\OrderLinesController@moveLineJson')->name('orders.lines.json.move');
         Route::post('/{orderId}/lines/json/reorder',                    'App\Http\Controllers\Workflow\OrderLinesController@reorderJson')->name('orders.lines.json.reorder');
         Route::post('/{orderId}/lines/json/price-increase',             'App\Http\Controllers\Workflow\OrderLinesController@priceIncreaseJson')->name('orders.lines.json.price-increase');
-        Route::get('/{idOrder}/lines/{id}/detail-edit',                 'App\Http\Controllers\Workflow\OrderLinesController@detailEdit')->name('orders.lines.detail.edit');
+        Route::get('/{idOrder}/lines/{id}/detail-edit',                 'App\Http\Controllers\Workflow\OrderLinesController@detailEdit')->middleware('audit.access:order-line,id')->name('orders.lines.detail.edit');
         Route::get('/{orderId}/lines/json/{id}/delay-history',          'App\Http\Controllers\Workflow\OrderLinesController@delayHistoryJson')->name('orders.lines.json.delay-history');
         Route::get('/{orderId}/lines/json/{id}/tasks',                  'App\Http\Controllers\Workflow\OrderLinesController@tasksForLineJson')->name('orders.lines.json.tasks');
         Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
@@ -1109,6 +1109,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/fec-export/json/list',            'App\Http\Controllers\Admin\ImportsExportsController@fecExportJsonList')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.fec.export.json.list');
         Route::post('/fec-export/export/{ext}',        'App\Http\Controllers\Admin\ImportsExportsController@fecExport')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.fec.export');
 
+        // Journal des consultations (traçabilité des accès aux affaires) : Admin seulement.
+        Route::middleware(['auth', 'permission:audit-access-log'])->prefix('access-log')->name('admin.access-log.')->group(function () {
+            Route::get('/',            [\App\Http\Controllers\Admin\AccessLogController::class, 'index'])->name('index');
+            Route::get('/json/list',   [\App\Http\Controllers\Admin\AccessLogController::class, 'list'])->name('json.list');
+            Route::get('/export.csv',  [\App\Http\Controllers\Admin\AccessLogController::class, 'export'])->name('export');
+        });
+
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
         Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->withoutMiddleware('permission:your-company-menu')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
 
@@ -1499,8 +1506,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/files/{file}/thumbnail', [FileApiController::class, 'thumbnail'])->name('files.thumbnail');
 
-        Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->name('files.raw');
-        Route::get('/files/{file}/download', [FileApiController::class, 'download'])->name('files.download');
+        Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->middleware('audit.access:file,file')->name('files.raw');
+        Route::get('/files/{file}/download', [FileApiController::class, 'download'])->middleware('audit.access:file,file')->name('files.download');
     });
 
     // Route::view() plutot qu'une closure : une closure n'est pas serialisable,

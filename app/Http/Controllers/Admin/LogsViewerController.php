@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Audit\AccessLogger;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 
@@ -28,7 +29,11 @@ class LogsViewerController extends Controller
             'model'       => 'nullable|string',
         ]);
 
-        $query = Activity::query();
+        // Les consultations (log_name `access`) ne sont lisibles que par l'Admin, sur
+        // l'écran Journal des consultations : cet historique est ouvert à tous.
+        $query = Activity::query()->where(function ($q) {
+            $q->whereNull('log_name')->orWhere('log_name', '!=', AccessLogger::logName());
+        });
 
         if (!empty($validated['subjectType']) && !empty($validated['subjectId'])) {
             $query->where('subject_type', $validated['subjectType'])
