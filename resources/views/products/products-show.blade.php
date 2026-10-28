@@ -154,6 +154,20 @@
                     </div>
                 </div>
                 <div class="row">
+                    @foreach (\App\Services\Purchases\PurchaseCriticality::options() as $field => $values)
+                    <div class="mb-3 col-md-4">
+                        <label for="{{ $field }}">{{ __('purchase_quality.criticality') }} — {{ __('purchase_quality.' . $field) }}</label>
+                        <select class="form-select" name="{{ $field }}" id="{{ $field }}">
+                            <option value="">{{ __('purchase_quality.none') }}</option>
+                            @foreach (array_unique(array_filter(array_merge($values, [$Product->{$field}]))) as $value)
+                            <option value="{{ $value }}" @selected($Product->{$field} === $value)>{{ $value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endforeach
+                    <div class="col-12 form-text mb-3">{{ __('purchase_quality.product_help') }}</div>
+                </div>
+                <div class="row">
                     <div class="mb-3 col-md-4">
                         <div class="input-group">
                             <span class="input-group-text">{{ $Factory->curency }}</span>

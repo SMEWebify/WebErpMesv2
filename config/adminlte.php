@@ -1120,6 +1120,12 @@ return [
                     'text' => 'invoice_supplier_trans_key',
                     'url'  => 'purchases/invoice',
                 ],
+                [
+                    'text' => 'purchase_quality_clauses_trans_key',
+                    'url'  => 'purchases/quality-clauses',
+                    'can'  => ['purchase-quality-clauses-manage'],
+                    'icon_color' => 'teal',
+                ],
             ],
         ],
         [

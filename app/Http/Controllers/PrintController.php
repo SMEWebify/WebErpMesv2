@@ -15,6 +15,7 @@ use App\Models\Workflow\OrderConfirmations;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
 use App\Services\PurchaseCalculatorService;
+use App\Services\Purchases\PurchaseQualityClauses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
 use App\Services\CreditNoteCalculatorService;
@@ -255,7 +256,11 @@ class PrintController extends Controller
         $resolver = app(PdfThemeResolver::class);
         $resolvedView = $resolver->resolveForDocument($Document, $viewKey, $Factory);
         $customCss = $Factory->pdf_custom_css;
-        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency', 'printRows'));
+        $viewData = compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency', 'printRows');
+        // Commande d'achat : clauses qualité ajoutées en fin de document (aucune = HTML inchangé)
+        $pdf = $Document instanceof Purchases
+            ? PDF::loadHTML(app(PurchaseQualityClauses::class)->appendToHtml(view($resolvedView, $viewData)->render(), $Document))
+            : PDF::loadView($resolvedView, $viewData);
 
         // Render first so all pages exist, then add page numbers on every page
         $pdf->render();

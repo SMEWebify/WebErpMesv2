@@ -5,6 +5,7 @@ namespace App\Models\Purchases;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Products\Products;
+use App\Services\Purchases\PurchaseCriticality;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
@@ -39,7 +40,36 @@ class PurchaseLines extends Model
                             'methods_units_id',
                             'accounting_vats_id',
                             'stock_locations_id',
+                            'certificate_type',
+                            'construction_code',
+                            'nuclear_level',
                         ];
+
+    /**
+     * Criticité (certificat, code de construction, niveau) reprise de l'article à
+     * la création, pour chaque champ que l'appelant n'a pas fourni : tous les
+     * chemins de création (écran, demande d'achat, réappro, réception) en héritent.
+     * Une valeur fournie, même vide, est gardée : l'écran peut retirer une exigence.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (PurchaseLines $line) {
+            $missing = array_values(array_filter(
+                PurchaseCriticality::FIELDS,
+                fn ($field) => ! array_key_exists($field, $line->getAttributes())
+            ));
+
+            if (! $line->product_id || $missing === []) {
+                return;
+            }
+
+            $product = Products::query()->select(array_merge(['id'], $missing))->find($line->product_id);
+
+            foreach ($missing as $field) {
+                $line->setAttribute($field, $product?->{$field});
+            }
+        });
+    }
 
     public function tasks()
     {

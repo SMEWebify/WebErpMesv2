@@ -725,6 +725,36 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - Tests : `tests/Feature/Purchases/SupplierReceiptRatingTest.php`,
   `resources/js/tests/components/receiptSupplierRating.test.jsx`.
 
+## Clauses qualité des commandes d'achat (criticité)
+
+Criticité = `certificate_type` (EN 10204 : 2.1, 2.2, 3.1, 3.2), `construction_code` (RCC-M,
+RCC-MX), `nuclear_level` (N1, N2, N3, NC) — valeurs dans `config/purchase_quality.php`,
+`App\Services\Purchases\PurchaseCriticality`. Colonnes nullable sur `products` (fiche article)
+et `purchase_lines` (tiroir de l'écran des lignes, badges sous la désignation).
+- **Ligne d'achat** : `PurchaseLines::booted` reprend de l'article chaque champ **absent**
+  des attributs à la création (tous les chemins : écran, demande d'achat, réappro, réception) ;
+  une valeur fournie, même vide, est gardée. L'écran préremplit au choix de l'article
+  (`lib/purchaseCriticality.js`). En mise à jour, un champ absent de la requête n'est pas touché.
+  Le type de certificat de la ligne servira au contrôle documentaire à la réception.
+- **Référentiel** : `purchase_quality_clauses` (code, libellé, texte FR/EN, actif, jamais
+  supprimée) + `purchase_quality_clause_rules` (critère vide = toute valeur ; une règle **sans
+  critère ne s'applique à rien**). Écran Achats → Clauses qualité (`/purchases/quality-clauses`,
+  Blade), permission `purchase-quality-clauses-manage` (Admin, migration).
+- **Figées** (`App\Services\Purchases\PurchaseQualityClauses`) : commande en cours (statu 1) =
+  calcul à la lecture, rien d'écrit ; sortie de « en cours » (`Purchases::booted`, statu
+  modifié par le modèle — `changeStatusJson` passe désormais par le modèle) = copie dans
+  `purchase_order_quality_clauses` + `purchases.quality_clauses_frozen_at`. Retour en cours =
+  copie effacée. Une sortie par requête de masse est figée à la première lecture. La migration
+  fige **sans clause** les commandes déjà émises.
+- **PDF** : `appendToHtml()` insère `print/partials/purchase-quality-clauses` avant `</main>`
+  (sinon `</body>`) du HTML rendu, dans les deux chemins (`PrintController::generatePdf`,
+  `DocumentPdfService`) : vue standard comme `print/custom`. Sans clause, HTML inchangé —
+  `PurchasePdfLegacyRenderingTest` compare à des références capturées avant la fonctionnalité
+  (`tests/fixtures/pdf-purchases`, **ne jamais les régénérer**). Texte FR ou EN selon la langue.
+- Tests : `tests/Feature/Purchases/PurchaseQualityClausesTest.php`,
+  `tests/Feature/Purchases/PurchasePdfLegacyRenderingTest.php`,
+  `resources/js/tests/lib/purchaseCriticality.test.js`.
+
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul

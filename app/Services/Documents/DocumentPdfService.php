@@ -19,6 +19,7 @@ use App\Services\OrderCalculatorService;
 use App\Services\OrderConfirmationCalculatorService;
 use App\Services\PdfThemeResolver;
 use App\Services\PurchaseCalculatorService;
+use App\Services\Purchases\PurchaseQualityClauses;
 use App\Services\QuoteCalculatorService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Number;
@@ -73,7 +74,7 @@ class DocumentPdfService
         return $this->inLocale($locale, function () use ($document, $layout) {
             [$view, $data] = $this->prepare($document, $layout);
 
-            $pdf = PDF::loadView($view, $data);
+            $pdf = PDF::loadHTML($this->documentHtml($document, $view, $data));
 
             $pdf->render();
             $canvas = $pdf->getDomPDF()->getCanvas();
@@ -92,8 +93,21 @@ class DocumentPdfService
         return $this->inLocale($locale, function () use ($document, $layout) {
             [$view, $data] = $this->prepare($document, $layout);
 
-            return view($view, $data)->render();
+            return $this->documentHtml($document, $view, $data);
         });
+    }
+
+    /**
+     * HTML de la vue ; commande d'achat : clauses qualité ajoutées en fin de
+     * document (aucune clause = HTML de la vue inchangé).
+     */
+    private function documentHtml($document, string $view, array $data): string
+    {
+        $html = view($view, $data)->render();
+
+        return $document instanceof Purchases
+            ? app(PurchaseQualityClauses::class)->appendToHtml($html, $document)
+            : $html;
     }
 
     /**

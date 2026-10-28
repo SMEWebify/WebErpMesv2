@@ -247,7 +247,7 @@ class SelectDataService
      */
     public function searchProducts(string $search = '', ?int $supplierId = null, int $limit = 30)
     {
-        $query = Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price', 'ind');
+        $query = Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price', 'ind', 'certificate_type', 'construction_code', 'nuclear_level');
 
         if ($search !== '') {
             $like = '%' . addcslashes($search, '\\%_') . '%';

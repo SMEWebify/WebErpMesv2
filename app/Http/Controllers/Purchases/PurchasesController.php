@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\PurchaseOrderService;
 use App\Models\Companies\CompaniesContacts;
 use App\Services\PurchaseCalculatorService;
+use App\Services\Purchases\PurchaseQualityClauses;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Http\Requests\Purchases\StorePurchaseRequest;
@@ -245,6 +246,7 @@ class PurchasesController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
+            'qualityClauses' => app(PurchaseQualityClauses::class)->forOrder($id),
         ]);
     }
 
@@ -509,7 +511,8 @@ class PurchasesController extends Controller
     public function changeStatusJson(Request $request, $id)
     {
         try {
-            Purchases::where('id', $id)->update(['statu' => (int) $request->input('statu')]);
+            // Par le modèle : la sortie de « en cours » fige les clauses qualité (Purchases::booted)
+            Purchases::findOrFail($id)->update(['statu' => (int) $request->input('statu')]);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed'], 500);

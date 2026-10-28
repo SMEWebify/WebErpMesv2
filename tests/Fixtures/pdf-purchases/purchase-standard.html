@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Purchase Order - #PU-0001</title>
+        <style type="text/css">
+            @page {
+                margin: 350px 25px 50px 25px;
+            }
+            body {
+                margin: 0px; 
+                border: 1px solid #dddddd;
+            }
+            * {
+                font-family: Verdana, Arial, sans-serif;
+            }
+            a {
+                color: #000;
+                text-decoration: none;
+            }
+            table {
+                font-size: smaller;
+                border-collapse:collapse;
+            }
+            tfoot tr td {
+                font-weight: bold;
+                font-size: smaller;
+            }
+            table th
+            {
+                padding: 10px;
+                margin-top:30px;
+            }
+            header { position: fixed; top: -350px; left: 0px; right: 0px; ; height: 350px; }
+            footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: #dddddd; height: 50px; }
+            footer .pagenum:before {
+                content: counter(page);
+            }
+        </style>
+            </head>
+    <body>
+        <header>
+            <table width="100%; border: none; ">
+                <tr>
+                    <td align="left" style="width: 50%; background-color: #dddddd">
+                                            </td>
+                    <td colspan="2" align="center" style="width: 400%; background-color: #dddddd">
+                        <h2>Purchase Order</h2>
+                        <h3>PU-0001</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="width: 40%;">
+                        <h3>Métallerie Dupont</h3>
+                        <pre>
+12 rue des Forges
+35000 Rennes
+Phone number : 02 99 00 00 00
+E-mail : contact@dupont.test
+<br />
+<br />
+Date : {{today}}
+                        </pre>
+                    </td>
+                    <td align="left" style="width: 50%;">
+                                                    <h3>Aciers de l&#039;Ouest </h3>
+                            <pre>
+Mme Anne Durand
+5 quai des Aciéries
+56100 Lorient Morbihan
+France
+Phone number : 06 11 11 11 11
+E-mail : anne@aciers.test
+<br />
+Identifier: 
+                            </pre>
+                                            </td>
+                </tr>
+            </table>
+        </header>
+
+        <footer>
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td align="left" style="width: 40%;">
+                            &copy; {{year}} - Métallerie Dupont
+                        </td>
+                        <td align="right" style="width: 40%;">
+                            <div class="pagenum-container">Page <span class="pagenum"></span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </footer>
+
+        <main>
+            <table style="width: 100%; " >
+                <thead>
+                    <tr>
+                        <th align="left">Order</th>
+                        <th align="left">Description</th>
+                        <th align="left">Supplier ref</th>
+                        <th align="left">Qty</th>
+                        <th align="left">Unit Price</th>
+                        <th align="left">Discount</th>
+                        <th align="left">VAT</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                                        <tr>
+                        <td>
+                                                    </td>
+                        <td>
+                                                            Tôle DC01 2 mm                                                    </td>
+                        <td>AO-221</td>
+                        <td>1500</td>
+                        <td>€1.10</td>
+                        <td>0 %</td>
+                        <td> 
+                                                        20 %
+                                                    </td>
+                    </tr>
+                                        <tr>
+                        <td>
+                                                    </td>
+                        <td>
+                                                            Tôle inox 304 3 mm — rev. B                                                    </td>
+                        <td></td>
+                        <td>200</td>
+                        <td>€4.25</td>
+                        <td>5 %</td>
+                        <td> 
+                                                        20 %
+                                                    </td>
+                    </tr>
+                                    </tbody>
+            </table>
+            <hr style="color: #6c757d">
+            <table width="100%">
+                <tr>
+                    <td align="left" style="width: 50%;">
+                                                <p class="lead"><strong>Comment :</strong></p>
+                        <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                            Livraison quai 2
+                        </p>
+                                            </td>
+                </tr>
+            </table>
+        </main>
+    </body>
+</html>

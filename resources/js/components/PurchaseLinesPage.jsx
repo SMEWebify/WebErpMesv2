@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
 import { apiRequest as apiFetch } from '../lib/http';
+import { CRITICALITY_FIELDS, applyProductCriticality, criticalityChoices, criticalityBadges } from '../lib/purchaseCriticality';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -32,6 +33,9 @@ const EMPTY_FORM = {
     discount:           0,
     accounting_vats_id: '',
     delivery_date:      '',
+    certificate_type:   '',
+    construction_code:  '',
+    nuclear_level:      '',
 };
 
 // ---------------------------------------------------------------------------
@@ -161,6 +165,9 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 discount:           editingLine.discount           ?? 0,
                 accounting_vats_id: editingLine.accounting_vats_id ?? '',
                 delivery_date:      editingLine.delivery_date       ?? '',
+                certificate_type:   editingLine.certificate_type    ?? '',
+                construction_code:  editingLine.construction_code   ?? '',
+                nuclear_level:      editingLine.nuclear_level       ?? '',
             });
             setProductSearch(
                 editingLine.product_code
@@ -185,7 +192,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
     const handleProductSelect = (product) => {
         setForm((f) => ({
-            ...f,
+            ...applyProductCriticality(f, product),
             product_id:       product.id,
             code:             product.code   ?? f.code,
             label:            product.label  ?? f.label,
@@ -467,6 +474,31 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     onChange={(e) => set('delivery_date', e.target.value)} disabled={isReadOnly} />
                             </div>
                         </div>
+
+                        {/* Criticité : certificat, code de construction, niveau (clauses qualité) */}
+                        {selectData.criticality && (
+                            <>
+                                <div className="small fw-bold text-body-secondary mt-1 mb-1">
+                                    <i className="fas fa-shield-alt me-1" />{selectData.criticality.labels.title}
+                                </div>
+                                <div className="row gx-2">
+                                    {CRITICALITY_FIELDS.map((field) => (
+                                        <div key={field} className="mb-2 col-4">
+                                            <label className="mb-1 small fw-bold">{selectData.criticality.labels[field]}</label>
+                                            <select className={`form-select form-select-sm ${errors[field] ? 'is-invalid' : ''}`}
+                                                value={form[field] ?? ''}
+                                                onChange={(e) => set(field, e.target.value)} disabled={isReadOnly}>
+                                                <option value="">{selectData.criticality.labels.none}</option>
+                                                {criticalityChoices(selectData.criticality.options?.[field], form[field]).map((v) => (
+                                                    <option key={v} value={v}>{v}</option>
+                                                ))}
+                                            </select>
+                                            {errors[field] && <div className="invalid-feedback d-block">{errors[field][0]}</div>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </form>
                 </div>
 
@@ -583,6 +615,9 @@ function LineRow({
             {/* Description */}
             <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <span title={line.label}>{line.label}</span>
+                {criticalityBadges(line).map((value) => (
+                    <span key={value} className="badge text-bg-info ms-1">{value}</span>
+                ))}
             </td>
 
             {/* Qté commandée */}

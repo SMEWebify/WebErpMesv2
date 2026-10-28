@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Products;
 
+use App\Models\Products\Products;
+use App\Services\Purchases\PurchaseCriticality;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductsRequest extends FormRequest
@@ -54,6 +56,8 @@ class UpdateProductsRequest extends FormRequest
             'cad_file_path' => 'nullable|string|max:255',
             'cam_file_path' => 'nullable|string|max:255',
             'picture'=> 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        ];
+        ] + PurchaseCriticality::validationRules(
+            PurchaseCriticality::of(Products::query()->select(PurchaseCriticality::FIELDS)->find($this->id) ?? new Products())
+        );
     }
 }

@@ -65,7 +65,10 @@ class Products extends Model
                             'cad_file_path',
                             'cam_file_path',
                             'csv_file_name',
-                            'control_plan_mode',];
+                            'control_plan_mode',
+                            'certificate_type',
+                            'construction_code',
+                            'nuclear_level',];
 
     // Only log changes
     protected static $logOnlyDirty = true;

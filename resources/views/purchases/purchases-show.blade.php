@@ -91,6 +91,22 @@ $purchaseSteps = json_encode([
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            <x-adminlte-card title="{{ __('purchase_quality.order_card') }} ({{ $qualityClauses->count() }})" theme="teal" theme-mode="outline" icon="fas fa-shield-alt" :collapsible="$qualityClauses->isEmpty() ? 'collapsed' : 'expanded'">
+              @if ($Purchase->quality_clauses_frozen_at)
+                <p class="small text-body-secondary mb-2"><i class="fas fa-lock me-1"></i>{{ __('purchase_quality.order_frozen', ['date' => $Purchase->quality_clauses_frozen_at->format('d/m/Y H:i')]) }}</p>
+              @else
+                <p class="small text-body-secondary mb-2">{{ __('purchase_quality.order_draft') }}</p>
+              @endif
+              @forelse ($qualityClauses as $clause)
+                <div class="mb-2">
+                  <code>{{ $clause->code }}</code> <strong>{{ $clause->label }}</strong>
+                  <div class="small" style="white-space: pre-line;">{{ $clause->text() }}</div>
+                </div>
+              @empty
+                <p class="small mb-0">{{ __('purchase_quality.order_none') }}</p>
+              @endforelse
+            </x-adminlte-card>
+
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible="collapsed" maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">

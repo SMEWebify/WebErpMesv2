@@ -83,6 +83,7 @@ return [
     'operation_transition_delays_trans_key'    => 'Inter-operation delays',
     'affair_categories_trans_key'              => 'Business categories',
     'loss_reasons_trans_key'                   => 'Loss reasons',
+    'purchase_quality_clauses_trans_key'       => 'Quality clauses',
     'accounting_trans_key'                     => 'Accounting',
     'payment_conditions_trans_key'             => 'Payment Conditions',
     'payment_methods_trans_key'                => 'Payment Methods',

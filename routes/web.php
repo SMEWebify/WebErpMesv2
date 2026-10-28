@@ -566,6 +566,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/reorder', 'App\Http\Controllers\Purchases\ReorderController@index')->name('purchases.reorder');
         Route::get('/reorder/json', 'App\Http\Controllers\Purchases\ReorderController@json')->name('purchases.reorder.json');
         Route::post('/reorder', 'App\Http\Controllers\Purchases\ReorderController@store')->name('purchases.reorder.store');
+        // Clauses qualité d'achat (avant /{id})
+        Route::group(['prefix' => 'quality-clauses', 'middleware' => ['permission:purchase-quality-clauses-manage']], function () {
+            Route::get('/', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@index')->name('purchases.quality-clauses');
+            Route::post('/create', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@store')->name('purchases.quality-clauses.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@update')->name('purchases.quality-clauses.update');
+            Route::post('/{id}/rules', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@storeRule')->name('purchases.quality-clauses.rules.store');
+            Route::delete('/{id}/rules/{ruleId}', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@destroyRule')->name('purchases.quality-clauses.rules.destroy');
+        });
         Route::get('/request/tasks', 'App\Http\Controllers\Purchases\PurchasesRFQController@requestTasks')->name('purchases.request.tasks');
         Route::post('/request/store', 'App\Http\Controllers\Purchases\PurchasesRFQController@storePurchaseApi')->name('purchases.request.store');
         Route::get('/request/export-csv', 'App\Http\Controllers\Purchases\PurchasesRFQController@exportCsvApi')->name('purchases.request.export-csv');

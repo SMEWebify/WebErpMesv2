@@ -16,6 +16,7 @@ use App\Models\Accounting\AccountingVat;
 use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseReceiptService;
 use App\Services\SelectDataService;
+use App\Services\Purchases\PurchaseCriticality;
 
 class PurchaseLinesController extends Controller
 {
@@ -71,6 +72,16 @@ class PurchaseLinesController extends Controller
             'units'    => $this->selectDataService->getUnitsSelect(),
             'vats'     => $this->selectDataService->getVATSelect(),
             'currency' => $factory->curency ?? 'EUR',
+            'criticality' => [
+                'options' => PurchaseCriticality::options(),
+                'labels'  => [
+                    'title'             => __('purchase_quality.criticality'),
+                    'certificate_type'  => __('purchase_quality.certificate_type'),
+                    'construction_code' => __('purchase_quality.construction_code'),
+                    'nuclear_level'     => __('purchase_quality.nuclear_level'),
+                    'none'              => __('purchase_quality.none'),
+                ],
+            ],
         ]);
     }
 
@@ -97,7 +108,7 @@ class PurchaseLinesController extends Controller
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
-        ]);
+        ] + PurchaseCriticality::validationRules());
 
         $defaultVat  = AccountingVat::getDefault();
         $defaultUnit = MethodsUnits::getDefault();
@@ -121,7 +132,8 @@ class PurchaseLinesController extends Controller
             'discount'           => $validated['discount'],
             'accounting_vats_id' => $validated['accounting_vats_id'] ?? $defaultVat->id,
             'delivery_date'      => $validated['delivery_date'] ?? null,
-        ] + PurchaseLines::netPrices($validated['selling_price'], $validated['qty'], $validated['discount']));
+        ] + $this->criticalityFrom($request, $validated)
+          + PurchaseLines::netPrices($validated['selling_price'], $validated['qty'], $validated['discount']));
 
         $line->load([
             'unit:id,label,code',
@@ -159,7 +171,10 @@ class PurchaseLinesController extends Controller
             'methods_units_id'   => 'nullable|exists:methods_units,id',
             'accounting_vats_id' => 'nullable|exists:accounting_vats,id',
             'delivery_date'      => 'nullable|date',
-        ]);
+        ] + PurchaseCriticality::validationRules(PurchaseCriticality::of($line)));
+
+        // Criticité absente de la requête : laissée telle quelle (appelants d'avant la fonctionnalité)
+        $validated = array_diff_key($validated, array_flip(PurchaseCriticality::FIELDS)) + $this->criticalityFrom($request, $validated);
 
         $line->update($validated + PurchaseLines::netPrices($validated['selling_price'], $validated['qty'], $validated['discount']));
         $line->load([
@@ -292,6 +307,23 @@ class PurchaseLinesController extends Controller
     // Private helper
     // -------------------------------------------------------------------------
 
+    /**
+     * Champs de criticité envoyés par l'écran, vides compris (l'utilisateur a retiré
+     * l'exigence). Un champ absent n'est pas repris : à la création, la ligne le
+     * reçoit alors de l'article (PurchaseLines::booted).
+     */
+    private function criticalityFrom(Request $request, array $validated): array
+    {
+        $values = [];
+        foreach (PurchaseCriticality::FIELDS as $field) {
+            if ($request->exists($field)) {
+                $values[$field] = $validated[$field] ?? null;
+            }
+        }
+
+        return $values;
+    }
+
     private function formatLineJson(PurchaseLines $l, string $currency, string $locale): array
     {
         $rawPrice = (float) ($l->getRawOriginal('selling_price') ?? 0);
@@ -322,6 +354,9 @@ class PurchaseLinesController extends Controller
             'vat_label'          => $l->VAT?->label,
             'vat_rate'           => $l->VAT?->rate,
             'delivery_date'      => $l->delivery_date,
+            'certificate_type'   => $l->certificate_type,
+            'construction_code'  => $l->construction_code,
+            'nuclear_level'      => $l->nuclear_level,
             'receipt_lines'      => ($l->relationLoaded('purchaseReceiptLines') ? $l->purchaseReceiptLines : collect())->map(fn ($rl) => [
                 'id'          => $rl->id,
                 'qty'         => $rl->receipt_qty,

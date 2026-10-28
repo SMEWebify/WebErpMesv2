@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use App\Services\PurchaseCalculatorService;
+use App\Services\Purchases\PurchaseQualityClauses;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,6 +36,31 @@ class Purchases extends Model
                             'comment',
                             'csv_file_name',
                         ];
+
+    protected $casts = [
+        'quality_clauses_frozen_at' => 'datetime',
+    ];
+
+    /**
+     * Clauses qualité figées à la sortie de « en cours », effacées au retour
+     * (App\Services\Purchases\PurchaseQualityClauses).
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (Purchases $purchase) {
+            if (! $purchase->wasChanged('statu')) {
+                return;
+            }
+
+            $clauses = app(PurchaseQualityClauses::class);
+
+            if ((int) $purchase->statu === 1) {
+                $clauses->unfreeze($purchase);
+            } elseif ($purchase->quality_clauses_frozen_at === null) {
+                $clauses->freeze($purchase);
+            }
+        });
+    }
 
     // Only log changes
     protected static $logOnlyDirty = true;
@@ -74,6 +100,12 @@ class Purchases extends Model
     public function PurchaseLines()
     {
         return $this->hasMany(PurchaseLines::class)->orderBy('ordre');
+    }
+
+    // Copie figée des clauses qualité (lire par PurchaseQualityClauses::forOrder())
+    public function qualityClauses()
+    {
+        return $this->hasMany(PurchaseOrderQualityClause::class)->orderBy('ordre');
     }
 
     // Relationship with the files associated with the Purchases

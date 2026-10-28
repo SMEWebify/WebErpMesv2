@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>BON DE COMMANDE FOURNISSEUR - #PU-0001</title>
+    <style type="text/css">
+        @page {
+            margin: 185px 25px 75px 25px;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #000;
+        }
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        header {
+            position: fixed;
+            top: -185px;
+            left: 0;
+            right: 0;
+            height: 185px;
+        }
+        footer {
+            position: fixed;
+            bottom: -75px;
+            left: 0;
+            right: 0;
+            height: 75px;
+        }
+        .footer-pagination {
+            text-align: right;
+            font-size: 9px;
+            color: #555;
+            padding: 2px 4px 2px 0;
+            line-height: 1;
+        }
+        .footer-pagination .pagenum:before { content: counter(page); }
+        .footer-pagination .pagecount:before { content: counter(pages); }
+        .watermark {
+            position: fixed;
+            top: 130px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            opacity: 0.06;
+            z-index: -1000;
+        }
+        .doc-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #7a4f00;
+            letter-spacing: 1px;
+        }
+        .doc-subtitle {
+            font-size: 11px;
+            color: #7a4f00;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .doc-ref {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 5px;
+        }
+        .separator-thick {
+            border: none;
+            border-top: 2px solid #000;
+            margin: 0 0 8px 0;
+        }
+        .separator-thin {
+            border: none;
+            border-top: 1px solid #bbb;
+            margin: 6px 0;
+        }
+        table {
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .factory-block {
+            font-size: 10px;
+            line-height: 1.4;
+            vertical-align: top;
+        }
+        .supplier-block {
+            font-size: 11px;
+            line-height: 1.4;
+            text-align: right;
+            vertical-align: top;
+        }
+        .supplier-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #7a4f00;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .ref-block {
+            font-size: 11px;
+            line-height: 1.8;
+            vertical-align: top;
+        }
+        .accent-value {
+            font-weight: bold;
+            color: #7a4f00;
+        }
+        .lines-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .lines-table thead tr th {
+            background-color: #f5ede0;
+            border: 1px solid #aaa;
+            padding: 5px 6px;
+            font-weight: bold;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+        .lines-table tbody tr td {
+            border: 1px solid #ddd;
+            padding: 7px 6px;
+            vertical-align: middle;
+        }
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .totals-table td {
+            padding: 3px 8px;
+            font-size: 11px;
+        }
+        .total-ttc td {
+            padding: 5px 8px;
+            font-weight: bold;
+            font-size: 12px;
+            border-top: 1px solid #999;
+        }
+        .conditions-block {
+            font-size: 10px;
+            vertical-align: top;
+            padding: 6px 10px 6px 0;
+        }
+        .footer-legal {
+            background-color: #fff;
+            text-align: center;
+            font-size: 9px;
+            color: #333;
+            padding: 5px 10px;
+            line-height: 1.6;
+            border-top: 1px solid #bbb;
+            margin-top: 4px;
+        }
+    </style>
+    </head>
+<body>
+
+    
+    
+    <header>
+        
+        <table width="100%" style="border-collapse: collapse; height: 150px;">
+            <tr>
+                <td style="width: 45%; vertical-align: middle;">
+                                    </td>
+                <td style="width: 55%; vertical-align: top; text-align: right; padding-top: 10px;">
+                    <div class="doc-title">BON DE COMMANDE</div>
+                    <div class="doc-subtitle">FOURNISSEUR</div>
+                    <div class="doc-ref" style="margin-top: 14px;">
+                        N°&nbsp;<span class="accent-value">PU-0001</span>
+                    </div>
+                    <div class="doc-ref" style="font-size: 11px; font-weight: normal;">
+                        28/10/2026
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <hr class="separator-thick">
+    </header>
+
+    <footer>
+        <div class="footer-legal">
+            Métallerie Dupont, 12 rue des Forges 35000 Rennes            &nbsp;&ndash;&nbsp;Tél : 02 99 00 00 00<br>
+                                                &nbsp;&ndash;&nbsp;contact@dupont.test        </div>
+    </footer>
+
+    <main>
+        
+        
+        <table width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td style="width: 45%;" class="factory-block">
+                    <strong>Métallerie Dupont</strong><br>
+                    12 rue des Forges<br>
+                    35000 Rennes<br>
+                    Tél : 02 99 00 00 00<br>                                                        </td>
+                <td style="width: 55%;" class="supplier-block">
+                    <div class="supplier-label">Fournisseur</div>
+                                            <strong style="font-size: 13px;">ACIERS DE L&#039;OUEST</strong><br>
+                                                    Mme Anne Durand<br>
+                                                5 quai des Aciéries<br>
+                        56100 LORIENT
+                                                <br>Tél : 06 11 11 11 11                        <br>anne@aciers.test                                    </td>
+            </tr>
+        </table>
+
+        <hr class="separator-thin">
+
+        
+        <table width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td style="width: 50%;" class="ref-block">
+                    <strong>VOTRE RÉF. :</strong>&nbsp;-
+                </td>
+                <td style="width: 50%;" class="ref-block" style="text-align: right;">
+                    <strong>LIVRAISON SOUHAITÉE :</strong>&nbsp;
+                    <span class="accent-value">
+                        -
+                    </span>
+                </td>
+            </tr>
+        </table>
+    
+
+                <div style="margin-bottom: 10px; font-size: 11px; padding: 6px 8px; border-left: 3px solid #7a4f00; background: #fdf8f0;">
+            <strong>Commentaire :</strong> Livraison quai 2
+        </div>
+        
+        <table class="lines-table">
+            <thead>
+                <tr>
+                    <th align="left"   style="width: 14%;">Affaire</th>
+                    <th align="left"   style="width: 36%;">Désignation</th>
+                    <th align="left"   style="width: 14%;">Réf. fournisseur</th>
+                    <th align="center" style="width: 7%;">Qté</th>
+                    <th align="right"  style="width: 12%;">P.U HT</th>
+                    <th align="center" style="width: 8%;">Remise</th>
+                    <th align="center" style="width: 9%;">TVA</th>
+                </tr>
+            </thead>
+            <tbody>
+                                <tr>
+                    <td style="font-size: 10px; color: #555;">
+                                                    -
+                                            </td>
+                    <td>
+                                                    <strong>Tôle DC01 2 mm</strong><br>
+                            <span style="color: #6c757d; font-size: 9px;">T-DC01</span>
+                                            </td>
+                    <td style="font-size: 10px;">AO-221</td>
+                    <td align="center">1500</td>
+                    <td align="right">€1.10</td>
+                    <td align="center">
+                                                    -
+                                            </td>
+                    <td align="center">
+                                                    20 %
+                                            </td>
+                </tr>
+                                <tr>
+                    <td style="font-size: 10px; color: #555;">
+                                                    -
+                                            </td>
+                    <td>
+                                                    <strong>Tôle inox 304 3 mm</strong><br>
+                            <span style="color: #6c757d; font-size: 9px;">T-304</span>
+                                            </td>
+                    <td style="font-size: 10px;">-</td>
+                    <td align="center">200</td>
+                    <td align="right">€4.25</td>
+                    <td align="center">
+                                                    5 %
+                                            </td>
+                    <td align="center">
+                                                    20 %
+                                            </td>
+                </tr>
+                            </tbody>
+        </table>
+
+        
+        <table width="100%" style="border-collapse: collapse; border-top: 2px solid #000; margin-top: 14px; padding-top: 10px;">
+            <tr>
+                <td style="width: 55%; vertical-align: top;" class="conditions-block">
+                                    </td>
+                <td style="width: 45%; vertical-align: top; padding: 4px 0;">
+                    <table class="totals-table">
+                        <tr>
+                            <td align="right">Total HT</td>
+                            <td align="right" style="width: 42%; border-left: 1px solid #ccc;">€2,457.50</td>
+                        </tr>
+                                                <tr>
+                            <td align="right">TVA 20.00 %</td>
+                            <td align="right" style="border-left: 1px solid #ccc;">491.50</td>
+                        </tr>
+                                                <tr class="total-ttc">
+                            <td align="right"><strong>Total TTC</strong></td>
+                            <td align="right" style="border-left: 1px solid #999;"><strong>€2,949.00</strong></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </main>
+</body>
+</html>
