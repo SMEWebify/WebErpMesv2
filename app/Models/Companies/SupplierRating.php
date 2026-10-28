@@ -4,6 +4,7 @@ namespace App\Models\Companies;
 
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
+use App\Models\Purchases\PurchaseReceipt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
@@ -15,6 +16,7 @@ class SupplierRating extends Model
     // Fillable attributes for mass assignment
     protected $fillable = [
         'purchases_id',
+        'purchase_receipt_id',
         'companies_id',
         'rating',
         'comment',
@@ -38,6 +40,12 @@ class SupplierRating extends Model
     public function purchaseOrder()
     {
         return $this->belongsTo(Purchases::class, 'purchases_id');
+    }
+
+    // Réception notée (notation rapide, App\Services\Purchases\SupplierReceiptRating) ; null = évaluation de la commande
+    public function purchaseReceipt()
+    {
+        return $this->belongsTo(PurchaseReceipt::class, 'purchase_receipt_id');
     }
 
     public function supplier()

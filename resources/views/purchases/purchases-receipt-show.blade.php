@@ -96,6 +96,8 @@
               @endif
             </x-adminlte-card>
 
+            @include('purchases.partials.receipt-supplier-rating', ['supplierRating' => $supplierRating])
+
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible="collapsed" maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">

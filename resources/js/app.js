@@ -817,6 +817,21 @@ async function mountPurchaseReceiptLinesPage() {
     );
 }
 
+async function mountReceiptSupplierRating() {
+    const element = document.getElementById('receipt-supplier-rating-app');
+    if (!element) return;
+
+    const { default: ReceiptSupplierRating } = await import('./components/purchases/ReceiptSupplierRating.jsx');
+    createRoot(element).render(
+        React.createElement(ReceiptSupplierRating, {
+            endpoint: element.dataset.endpoint,
+            autoOpen: element.dataset.autoOpen === '1',
+            state:    parseJsonAttribute(element.dataset.state) ?? {},
+            texts:    parseJsonAttribute(element.dataset.texts) ?? {},
+        })
+    );
+}
+
 async function mountLoadPlanningIndex() {
     const element = document.getElementById('load-planning-app');
     if (!element) return;
@@ -1423,6 +1438,7 @@ mountQuoteLinesPage();
 mountOrderLinesPage();
 mountPurchaseLinesPage();
 mountPurchaseReceiptLinesPage();
+mountReceiptSupplierRating();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();

@@ -706,6 +706,25 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
   tâches, pas de cron.
 - Tests : `tests/Feature/Receivables/`.
 
+## Notation fournisseur à la réception
+
+`App\Services\Purchases\SupplierReceiptRating`. Fenêtre **facultative** sur la fiche réception
+(`components/purchases/ReceiptSupplierRating.jsx`), ouverte seule après la création (`?rate=1`,
+écran « En attente de réception » et commande d'achat), « Plus tard » n'enregistre rien.
+- Une ligne `supplier_ratings` par réception (`purchase_receipt_id`, unique ; `purchases_id` =
+  commande de la première ligne). Conformité / délai / documents (1-5) rangés × 20 dans
+  `evaluation_score_quality / _logistics / _service` (échelle 0-100 existante), `rating` = moyenne.
+- Délai proposé : retard de la pire ligne (date de réception − `purchase_lines.delivery_date`),
+  barème `config/supplier_rating.php`.
+- **Note glissante** (`rolling()`, 2 requêtes) : toutes les évaluations des 12 derniers mois.
+  Une réception dont une ligne porte une NC non annulée compte qualité = `nc_quality_score`
+  (1), notée ou non — appliqué **à la lecture**, la note saisie n'est jamais réécrite.
+  Affichée sur la fiche fournisseur ; alimente `PurchaseKPIService::getSupplierCompositeIndicators()`.
+- Les notes de réception n'ont ni statut ni échéance : exclues de la « dernière évaluation »
+  (requalification) de la fiche fournisseur et de `Purchases::Rating()` (fiche commande d'achat).
+- Tests : `tests/Feature/Purchases/SupplierReceiptRatingTest.php`,
+  `resources/js/tests/components/receiptSupplierRating.test.jsx`.
+
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul

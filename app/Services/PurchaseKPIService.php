@@ -8,6 +8,7 @@ use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
+use App\Services\Purchases\SupplierReceiptRating;
 
 class PurchaseKPIService
 {
@@ -185,14 +186,21 @@ class PurchaseKPIService
     /**
      * Retrieve suppliers ordered by their composite evaluation score.
      *
+     * Le score est la note glissante (SupplierReceiptRating::rolling(), sur 100) : évaluations
+     * des 12 derniers mois, notes rapides de réception comprises, NC de réception déduites
+     * de la qualité. La prochaine revue reste lue sur les évaluations formelles.
+     *
      * @param int $limit
      * @return \Illuminate\Support\Collection
      */
     public function getSupplierCompositeIndicators(int $limit = 5)
     {
+        $rolling = app(SupplierReceiptRating::class)->rolling();
+
         return Companies::where('statu_supplier', 2)
+            ->whereIn('id', $rolling->keys()->all())
             ->with(['rating' => function ($query) {
-                $query->select([
+                $query->whereNull('purchase_receipt_id')->select([
                     'id',
                     'companies_id',
                     'evaluation_score_quality',
@@ -205,14 +213,8 @@ class PurchaseKPIService
                 ]);
             }])
             ->get()
-            ->map(function ($company) {
-                $compositeScores = $company->rating
-                    ->map(fn ($rating) => $rating->composite_score)
-                    ->filter(fn ($score) => $score !== null);
-
-                $company->composite_score = $compositeScores->isEmpty()
-                    ? null
-                    : round($compositeScores->avg(), 1);
+            ->map(function ($company) use ($rolling) {
+                $company->composite_score = $rolling->get($company->id)['composite_score'] ?? null;
 
                 $company->latest_review = $company->rating->sortByDesc(function ($rating) {
                     return [$rating->next_review_at ?? Carbon::createFromTimestamp(0), $rating->created_at];

@@ -279,8 +279,9 @@ class PurchaseLinesController extends Controller
 
         try {
             $receipt = $this->purchaseReceiptService->createPurchaseReceipt($data, $receiptData);
+            // rate=1 : la fiche propose la notation rapide du fournisseur
             return response()->json([
-                'redirect' => route('purchase.receipts.show', ['id' => $receipt->id]),
+                'redirect' => route('purchase.receipts.show', ['id' => $receipt->id, 'rate' => 1]),
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);

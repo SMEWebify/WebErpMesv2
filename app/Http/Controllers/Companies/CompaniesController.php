@@ -16,6 +16,7 @@ use App\Models\Purchases\Purchases;
 use App\Services\CompanyService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Receivables\ReceivablesService;
+use App\Services\Purchases\SupplierReceiptRating;
 use App\Models\Companies\CreditLimitOverride;
 use App\Services\OrderKPIService;
 use App\Services\QuoteKPIService;
@@ -294,8 +295,14 @@ class CompaniesController extends Controller
 
         $Companie = $id;
 
-        $evaluationHistory = $Companie->rating()->orderByDesc('created_at')->get();
-        $latestEvaluation = $evaluationHistory->first();
+        $evaluationHistory = $Companie->rating()
+            ->with(['purchaseOrder:id,code', 'purchaseReceipt:id,code'])
+            ->orderByDesc('created_at')
+            ->get();
+        // Dernière évaluation (statut, requalification) : les notes rapides de réception
+        // n'ont ni statut ni échéance, elles ne doivent pas masquer l'évaluation en cours.
+        $latestEvaluation = $evaluationHistory->firstWhere('purchase_receipt_id', null);
+        $rollingRating = app(SupplierReceiptRating::class)->rollingFor($Companie->id);
         $compositeScores = $evaluationHistory
             ->pluck('composite_score')
             ->filter();
@@ -351,6 +358,7 @@ class CompaniesController extends Controller
                                                         'evaluationHistory',
                                                         'latestEvaluation',
                                                         'averageCompositeScore',
+                                                        'rollingRating',
                                                         'needsRequalification',
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',

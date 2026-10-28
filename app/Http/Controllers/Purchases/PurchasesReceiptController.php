@@ -15,6 +15,7 @@ use App\Services\CustomFieldService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseReceiptService;
+use App\Services\Purchases\SupplierReceiptRating;
 use App\Services\QualityNonConformityService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
@@ -191,7 +192,8 @@ class PurchasesReceiptController extends Controller
 
         try {
             $receipt = $this->purchaseReceiptService->createPurchaseReceipt($data, $receiptData);
-            return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id])]);
+            // rate=1 : la fiche propose la notation rapide du fournisseur
+            return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id, 'rate' => 1])]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
@@ -247,12 +249,22 @@ class PurchasesReceiptController extends Controller
             'productSearch'    => route('products.json.search'),
         ];
 
+        // Notation rapide : la fenêtre s'ouvre seule juste après la création (?rate=1)
+        $ratingState = PurchaseReceiptRatingController::state(app(SupplierReceiptRating::class), $id);
+        $supplierRating = [
+            'endpoint' => route('purchase.receipts.rating.store', ['receipt' => $id->id]),
+            'autoOpen' => request()->boolean('rate') && ! $ratingState['rated'] && $ratingState['can_rate'],
+            'state'    => $ratingState,
+            'texts'    => PurchaseReceiptRatingController::texts(),
+        ];
+
         return view('purchases/purchases-receipt-show', [
             'PurchaseReceipt'      => $id,
             'previousUrl'          => $previousUrl,
             'nextUrl'              => $nextUrl,
             'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay,
             'reactEndpoints'       => $reactEndpoints,
+            'supplierRating'       => $supplierRating,
         ]);
     }
 

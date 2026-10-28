@@ -96,9 +96,10 @@ class Purchases extends Model
     }
 
     // Relationship with the Rating associated with the Purchases
+    // (évaluation de la commande : les notes de réception ont leur propre lien)
     public function Rating()
     {
-        return $this->hasMany(SupplierRating::class);
+        return $this->hasMany(SupplierRating::class)->whereNull('purchase_receipt_id');
     }
         
     // Relationship with the deliveries associated with the Purchases

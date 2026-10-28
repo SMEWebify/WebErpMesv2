@@ -632,6 +632,34 @@
                 <li><strong>{{ __('general_content.evaluation_average_composite_score_trans_key') }}:</strong> {{ $averageCompositeScore ?? __('general_content.not_available_trans_key') }}</li>
                 <li><strong>{{ __('general_content.evaluation_average_rating_trans_key') }}:</strong> {{ $Companie->averageRating() ? number_format($Companie->averageRating(), 2) : __('general_content.not_available_trans_key') }}</li>
               </ul>
+              <hr>
+              <div id="supplier-rolling-rating">
+                <strong>{{ __('supplier_rating.company.rolling', ['months' => $rollingRating['window_months']]) }}</strong>
+                <span class="text-body-secondary small">{{ __('supplier_rating.company.since', ['date' => \Carbon\Carbon::parse($rollingRating['since'])->format('d/m/Y')]) }}</span>
+                @if($rollingRating['rating'] !== null)
+                  <div class="d-flex align-items-center gap-2 my-1">
+                    <span class="fs-4 fw-bold">{{ number_format($rollingRating['rating'], 1) }}/5</span>
+                    <span>
+                      @for ($i = 1; $i <= 5; $i++)
+                        <i class="fa-star {{ $i <= round($rollingRating['rating']) ? 'fas text-warning' : 'far text-body-tertiary' }}"></i>
+                      @endfor
+                    </span>
+                  </div>
+                  <ul class="list-unstyled small mb-1">
+                    @foreach(['quality', 'logistics', 'service'] as $axis)
+                      <li>{{ __('supplier_rating.company.' . $axis) }} : {{ $rollingRating[$axis] !== null ? number_format($rollingRating[$axis], 1) . '/5' : '-' }}</li>
+                    @endforeach
+                  </ul>
+                  <div class="small text-body-secondary">
+                    {{ __('supplier_rating.company.count', ['count' => $rollingRating['ratings_count']]) }}
+                    @if($rollingRating['nc_receipts'] > 0)
+                      · <span class="text-danger">{{ __('supplier_rating.company.nc_receipts', ['count' => $rollingRating['nc_receipts']]) }}</span>
+                    @endif
+                  </div>
+                @else
+                  <p class="text-body-secondary small mb-0">{{ __('supplier_rating.company.none') }}</p>
+                @endif
+              </div>
             </x-adminlte-card>
           </div>
         </div>
@@ -661,7 +689,12 @@
                   @foreach($evaluationHistory as $evaluation)
                     <tr>
                       <td>{{ optional($evaluation->created_at)->format('d/m/Y') }}</td>
-                      <td>{{ optional($evaluation->purchaseOrder)->code }}</td>
+                      <td>
+                        {{ optional($evaluation->purchaseOrder)->code }}
+                        @if($evaluation->purchaseReceipt)
+                          <br><a href="{{ route('purchase.receipts.show', ['id' => $evaluation->purchase_receipt_id]) }}" class="small">{{ __('supplier_rating.company.receipt') }} {{ $evaluation->purchaseReceipt->code }}</a>
+                        @endif
+                      </td>
                       <td>{{ $evaluation->rating }}</td>
                       <td>{{ $evaluation->composite_score ?? __('general_content.not_available_trans_key') }}</td>
                       <td>{{ $evaluationStatusLabels[$evaluation->evaluation_status] ?? ucfirst(str_replace('_', ' ', $evaluation->evaluation_status ?? '')) }}</td>
