@@ -95,6 +95,9 @@ function colDefs(t) {
                 <>
                     <span className="text-muted small">#{task.id}</span>
                     {' — '}
+                    {task.release_blocked && (
+                        <i className="fas fa-lock text-warning me-1" title={t('release_blocked')} aria-label={t('release_blocked')} />
+                    )}
                     {task.label}
                     {task.component_id && <span className="text-muted"> — {task.component?.label}</span>}
                 </>

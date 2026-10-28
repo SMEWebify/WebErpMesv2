@@ -455,6 +455,15 @@ if (!$orderHasInvoicedLines) {
         if (config('cad.line_import')) {
           $orderLineEndpoints['importCad'] = route('orders.lines.json.import-cad', ['orderId' => $Order->id]);
         }
+        // Bon pour fabrication : badge par ligne et action groupée, seulement quand il est exigé.
+        $orderLineRelease = null;
+        if (\App\Services\Production\ProductionRelease::enabled()) {
+          $canRelease = Auth::user()->can('production-release');
+          $orderLineRelease = ['can_release' => $canRelease] + __('production_release');
+          if ($canRelease) {
+            $orderLineEndpoints['releaseMany'] = route('orders.lines.json.release', ['orderId' => $Order->id]);
+          }
+        }
       @endphp
       <div class="tab-pane " id="Lines">
         <div class="card mb-3">
@@ -466,7 +475,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags')]) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

@@ -68,7 +68,13 @@ class TaskController extends Controller
         ->limit(2000)
         ->get();
 
-        $tasksData = $tasks->map(function ($task) {
+        // Cadenas « sans BPF » : calculé sur les relations déjà chargées, sans requête.
+        $release = app(ProductionRelease::class);
+        $flagRelease = ProductionRelease::enabled();
+
+        $tasksData = $tasks->map(function ($task) use ($release, $flagRelease) {
+            $releaseLine = $task->OrderLines ?? $task->SubAssembly?->OrderLines;
+
             return [
                 'id'                  => $task->id,
                 'label'               => $task->label,
@@ -87,6 +93,9 @@ class TaskController extends Controller
                 'quote_lines_id'      => $task->quote_lines_id,
                 'products_id'         => $task->products_id,
                 'component_id'        => $task->component_id,
+                'release_blocked'     => $flagRelease && $releaseLine !== null
+                    && $releaseLine->released_for_production_at === null
+                    && $release->isProductionTask($task),
                 'status'   => $task->status   ? ['id' => $task->status->id,   'title' => $task->status->title]   : null,
                 'service'  => $task->service  ? ['id' => $task->service->id,  'label' => $task->service->label,  'color' => $task->service->color, 'picture' => $task->service->picture] : null,
                 'resources' => $task->resources->map(fn ($r) => ['id' => $r->id, 'label' => $r->label, 'picture' => $r->picture])->values()->toArray(),
@@ -142,6 +151,7 @@ class TaskController extends Controller
             'description_trans_key'      => __('general_content.description_trans_key'),
             'view_trans_key'             => __('general_content.view_trans_key'),
             'generic_trans_key'          => __('general_content.generic_trans_key'),
+            'release_blocked'            => __('production_release.not_released'),
         ];
 
         return view('workflow/task-index', compact('tasksData', 'services', 'statuses', 'resources', 'defaultStatusIds', 'trans'));
@@ -412,13 +422,11 @@ class TaskController extends Controller
 
         // Bon pour fabrication : le tableau entier est refusé avant toute écriture,
         // sinon une partie des déplacements serait appliquée et l'autre perdue.
-        if ($StatusInProgessId) {
-            $blocked = $this->tasksBlockedByRelease($request->columns, (int) $StatusInProgessId->id);
-            if ($blocked !== []) {
-                return response()->json([
-                    'message' => __('production_release.blocked_kanban', ['tasks' => implode(', ', $blocked)]),
-                ], 422);
-            }
+        $blocked = $this->tasksBlockedByRelease($request->columns, $this->startedStatusIds());
+        if ($blocked !== []) {
+            return response()->json([
+                'message' => __('production_release.blocked_kanban', ['tasks' => implode(', ', $blocked)]),
+            ], 422);
         }
 
         foreach ($request->columns as $status) {
@@ -426,11 +434,11 @@ class TaskController extends Controller
                 if ($task['status_id'] !== $status['id']) {
                     Task::find($task['id'])->update(['status_id' => $status['id']]);
 
-                    if($status['id'] == $StatusInProgessId->id){
+                    if($StatusInProgessId && $status['id'] == $StatusInProgessId->id){
                          // Create Line
                         $this->taskService->recordTaskActivity($task['id'], 1, 0, 0);
                     }
-                    elseif($status['id'] == $StatusFinishId->id){
+                    elseif($StatusFinishId && $status['id'] == $StatusFinishId->id){
                         // Create Line
                         $this->taskService->recordTaskActivity($task['id'], 3, 0, 0);
                     }
@@ -448,22 +456,38 @@ class TaskController extends Controller
     }
 
     /**
-     * Tâches déplacées vers « En cours » par le Kanban mais sans bon pour fabrication.
+     * Statuts qui valent démarrage : « Started » comme « In progress » (même
+     * correspondance que le GTD, et que le passage de la commande « En cours »).
      *
      * @return array<int, int>
      */
-    private function tasksBlockedByRelease(array $columns, int $inProgressId): array
+    private function startedStatusIds(): array
+    {
+        return Status::whereRaw('LOWER(title) IN (?, ?, ?)', ['in progress', 'started', 'ongoing'])
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * Tâches posées par le Kanban dans une colonne de démarrage sans bon pour fabrication.
+     *
+     * @param  array<int, int>  $startedIds
+     * @return array<int, int>
+     */
+    private function tasksBlockedByRelease(array $columns, array $startedIds): array
     {
         $release = app(ProductionRelease::class);
         $blocked = [];
 
         foreach ($columns as $status) {
-            if ((int) ($status['id'] ?? 0) !== $inProgressId) {
+            $statusId = (int) ($status['id'] ?? 0);
+            if (! in_array($statusId, $startedIds, true)) {
                 continue;
             }
 
             foreach ($status['tasks'] ?? [] as $task) {
-                if ((int) ($task['status_id'] ?? 0) === $inProgressId) {
+                if ((int) ($task['status_id'] ?? 0) === $statusId) {
                     continue;
                 }
 

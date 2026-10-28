@@ -183,6 +183,25 @@ class ProductionReleaseTest extends TestCase
         $this->assertSame(0, $this->startCount($allowed));
     }
 
+    public function test_the_kanban_started_column_counts_as_a_start(): void
+    {
+        $started = Status::where('title', 'Started')->first();
+        $open = Status::where('title', 'Open')->first();
+        $blocked = $this->task($this->line(), $this->laser, ['status_id' => $open->id]);
+        $material = $this->task($this->line(), $this->sheet, ['status_id' => $open->id]);
+
+        $this->putJson(route('task.sync'), ['columns' => [
+            ['id' => $started->id, 'tasks' => [['id' => $blocked->id, 'status_id' => $open->id]]],
+        ]])->assertStatus(422);
+        $this->assertSame($open->id, $blocked->fresh()->status_id);
+
+        // Matière : jamais bloquée, même posée en « Started ».
+        $this->putJson(route('task.sync'), ['columns' => [
+            ['id' => $started->id, 'tasks' => [['id' => $material->id, 'status_id' => $open->id]]],
+        ]])->assertOk();
+        $this->assertSame($started->id, $material->fresh()->status_id);
+    }
+
     public function test_an_n2p_start_event_fails_without_release(): void
     {
         $line = $this->line();
@@ -282,6 +301,49 @@ class ProductionReleaseTest extends TestCase
         $this->postJson(route('order-lines.json.release', $approved->id))->assertOk();
     }
 
+    public function test_the_checked_lines_of_an_order_are_released_together(): void
+    {
+        $this->user->givePermissionTo('production-release');
+        $first = $this->line();
+        $second = OrderLines::factory()->create([
+            'orders_id' => $first->orders_id, 'product_id' => $first->product_id, 'qty' => 2,
+            'delivered_qty' => 0, 'invoiced_qty' => 0, 'delivery_status' => 1, 'invoice_status' => 1,
+            'line_type' => 'article', 'ordre' => 2,
+        ]);
+        $otherOrder = $this->line();
+
+        $response = $this->postJson(route('orders.lines.json.release', ['orderId' => $first->orders_id]), [
+            'line_ids' => [$first->id, $second->id, $otherOrder->id],
+        ])->assertOk()->assertJsonPath('refused', []);
+        $this->assertEqualsCanonicalizing([$first->id, $second->id], $response->json('released'));
+
+        $this->assertNotNull($first->fresh()->released_for_production_at);
+        $this->assertNotNull($second->fresh()->released_for_production_at);
+        // Une ligne d'une autre commande n'est jamais touchée par cette porte.
+        $this->assertNull($otherOrder->fresh()->released_for_production_at);
+    }
+
+    public function test_bulk_release_reports_refusals_without_stopping_the_others(): void
+    {
+        $this->user->givePermissionTo('production-release');
+        $line = $this->line(['change_requested_by' => $this->user->id]);
+
+        $this->postJson(route('orders.lines.json.release', ['orderId' => $line->orders_id]), ['line_ids' => [$line->id]])
+            ->assertOk()
+            ->assertJsonPath('released', [])
+            ->assertJsonPath('refused.0.message', __('production_release.change_pending'));
+
+        $this->assertNull($line->fresh()->released_for_production_at);
+    }
+
+    public function test_bulk_release_requires_the_permission(): void
+    {
+        $line = $this->line();
+
+        $this->postJson(route('orders.lines.json.release', ['orderId' => $line->orders_id]), ['line_ids' => [$line->id]])
+            ->assertForbidden();
+    }
+
     public function test_a_new_revision_revokes_the_release(): void
     {
         $line = $this->released($this->line());
@@ -302,6 +364,24 @@ class ProductionReleaseTest extends TestCase
 
         $copy = OrderLines::where('orders_id', $line->orders_id)->where('id', '!=', $line->id)->firstOrFail();
         $this->assertNull($copy->released_for_production_at);
+    }
+
+    public function test_the_task_list_shows_the_lock_on_unreleased_production_tasks(): void
+    {
+        $line = $this->line();
+        $production = $this->task($line, $this->laser);
+        $material = $this->task($line, $this->sheet, ['ordre' => 2]);
+        $releasedTask = $this->task($this->released($this->line()), $this->laser);
+
+        $tasks = collect($this->get(route('production.task'))->assertOk()->viewData('tasksData'))->keyBy('id');
+
+        $this->assertTrue($tasks[$production->id]['release_blocked']);
+        $this->assertFalse($tasks[$material->id]['release_blocked']);
+        $this->assertFalse($tasks[$releasedTask->id]['release_blocked']);
+
+        config(['production.require_release' => false]);
+        $tasks = collect($this->get(route('production.task'))->viewData('tasksData'))->keyBy('id');
+        $this->assertFalse($tasks[$production->id]['release_blocked']);
     }
 
     public function test_the_planning_lists_unreleased_production_tasks_only_when_required(): void

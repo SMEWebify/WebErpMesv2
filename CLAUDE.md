@@ -571,7 +571,8 @@ affichage** BPF (colonne, bandeau, badges).
 - **Bloqué** : démarrage d'une tâche dont le **service** est productif (type 1) et dont la
   ligne (directe ou via sous-ensembles) n'a pas de BPF. Matière (2-6, 8), sous-traitance (7),
   achats, réservations : jamais. Points de démarrage : `Api/TaskStatuController::start`
-  (422), Kanban `TaskController::sync` (422, rien appliqué), GTD `gtdMove`, événement N2P
+  (422), Kanban `TaskController::sync` (colonnes « Started » et « In progress », 422, rien
+  appliqué), GTD `gtdMove`, événement N2P
   `task.started/resumed` (livraison en échec, rejouable), commande passée « En cours »
   (tâches productives non libérées laissées à leur statut). Un nouveau point de démarrage
   doit appeler `blockingReason()` / `assertCanStart()`.
@@ -582,8 +583,11 @@ affichage** BPF (colonne, bandeau, badges).
   demande de changement attend (`change_requested_by` sans `change_approved_at`). Un
   changement d'`ind` révoque le BPF (`OrderLinesObserver::updating`) ; une ligne neuve ou
   dupliquée n'en a jamais. BPF et indice tracés par activitylog.
-- Affichage : colonne de l'index des lignes de commande, bandeau de l'écran tâche,
-  badge « sans BPF » du planning de charge (`unreleasedTaskIds`, 1 requête) et du Gantt.
+- Affichage : colonne de l'index des lignes de commande, badge par ligne et action groupée
+  sur les lignes cochées de la fiche commande (`orders.lines.json.release`, refus rendus
+  ligne par ligne), bandeau de l'écran tâche, cadenas de la liste des tâches
+  (`/production/Task`), badge « sans BPF » du planning de charge (`unreleasedTaskIds`,
+  1 requête) et du Gantt.
 - Tests : `tests/Feature/Production/ProductionReleaseTest.php`,
   `resources/js/tests/lib/productionRelease.test.js`.
 

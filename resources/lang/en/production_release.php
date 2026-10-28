@@ -9,6 +9,10 @@ return [
     'not_released' => 'Not released',
     'released_on' => 'Released on :date by :user',
     'revoke_confirm' => 'Revoke the production release of this line?',
+    'bulk_action' => 'Release for production',
+    'bulk_result' => ':count line(s) released for production.',
+    'bulk_refused' => 'Not released:',
+    'bulk_none' => 'The selected lines are already released for production.',
     'released_ok' => 'Line released for production.',
     'revoked_ok' => 'Production release revoked.',
 

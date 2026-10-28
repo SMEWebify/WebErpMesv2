@@ -185,6 +185,48 @@ class OrderLinesController extends Controller
         ]);
     }
 
+    /**
+     * POST — bon pour fabrication des lignes cochées d'une commande. Chaque
+     * ligne est jugée seule : les refus (revue, changement en attente,
+     * présentation) sont rendus avec leur motif sans empêcher les autres.
+     */
+    public function releaseManyJson(Request $request, int $orderId, ProductionRelease $release)
+    {
+        $request->validate(['line_ids' => 'required|array|min:1', 'line_ids.*' => 'integer']);
+
+        $lines = OrderLines::with('order')
+            ->where('orders_id', $orderId)
+            ->whereIn('id', $request->input('line_ids'))
+            ->orderBy('ordre')
+            ->get();
+
+        $released = [];
+        $refused  = [];
+
+        foreach ($lines as $line) {
+            if ($release->isReleased($line)) {
+                continue;
+            }
+
+            try {
+                $release->release($line, Auth::user());
+                $released[] = $line->id;
+            } catch (ProductionReleaseException $e) {
+                $refused[] = ['id' => $line->id, 'code' => $line->code ?: '#' . $line->id, 'message' => $e->getMessage()];
+            }
+        }
+
+        $states = OrderLines::with('releasedBy:id,name')->whereIn('id', $lines->pluck('id'))->get()
+            ->mapWithKeys(fn (OrderLines $l) => [$l->id => $this->releasePayload($l)]);
+
+        return response()->json([
+            'released' => $released,
+            'refused'  => $refused,
+            'lines'    => $states,
+            'message'  => __('production_release.bulk_result', ['count' => count($released)]),
+        ]);
+    }
+
     private function releasePayload(OrderLines $line): array
     {
         return [
@@ -283,6 +325,7 @@ class OrderLinesController extends Controller
                 'DeliveryLines.delivery:id,code',
                 'InvoiceLines:id,order_line_id,qty,invoices_id',
                 'InvoiceLines.invoice:id,code',
+                'releasedBy:id,name',
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('orders_id', $orderId)
@@ -726,6 +769,7 @@ class OrderLinesController extends Controller
             'detail_id'            => $l->OrderLineDetails?->id,
             'picture'              => $l->OrderLineDetails?->picture,
             'task_url'             => route('task.manage', ['id_type' => 'order_lines_id', 'id_page' => $l->orders_id, 'id_line' => $l->id]),
+            'release'              => $this->releasePayload($l),
             'detail_url'           => route('orders.lines.detail.edit', ['idOrder' => $l->orders_id, 'id' => $l->id]),
             'delivery_lines'       => ($l->relationLoaded('DeliveryLines') ? $l->DeliveryLines : collect())->map(fn ($dl) => [
                 'id'           => $dl->id,

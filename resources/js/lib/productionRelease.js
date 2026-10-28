@@ -25,3 +25,16 @@ export function releasedOnText(template, release, locale = 'fr-FR') {
 
     return text;
 }
+
+/**
+ * Lignes cochées à libérer : articles seulement (une section ne se fabrique
+ * pas), sans BPF. Les lignes déjà libérées ne sont pas renvoyées au serveur.
+ */
+export function releasableIds(lines, selected) {
+    const chosen = selected instanceof Set ? selected : new Set(selected ?? []);
+    return (lines ?? [])
+        .filter((l) => chosen.has(l.id))
+        .filter((l) => (l.line_type ?? 'article') === 'article')
+        .filter((l) => !isReleased(l.release))
+        .map((l) => l.id);
+}

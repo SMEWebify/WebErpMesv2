@@ -7,6 +7,7 @@ import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineL
 import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
+import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -805,7 +806,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
-    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {},
+    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {}, releaseTrans = null,
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -926,7 +927,15 @@ function LineRow({
             </td>
 
             {/* Tasks status */}
-            <td><span className={`badge ${tasksCfg.badge}`}>{tasksCfg.label}</span></td>
+            <td>
+                <span className={`badge ${tasksCfg.badge}`}>{tasksCfg.label}</span>
+                {/* Bon pour fabrication : seulement quand il est exigé */}
+                {releaseTrans && (isReleased(line.release)
+                    ? <span className="badge text-bg-success ms-1" title={releasedOnText(releaseTrans.released_on, line.release)}>
+                          <i className="fas fa-check me-1" />{releaseTrans.short}
+                      </span>
+                    : <span className="badge text-bg-warning ms-1">{releaseTrans.not_released}</span>)}
+            </td>
 
             {/* Delivery status — cliquable si des BL existent */}
             <td>
@@ -1014,6 +1023,7 @@ function LineRow({
 export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orderType: initialType, canManageStock, endpoints, trans = {} }) {
     const delaysTrans = trans.delays ?? {};
     const tagTrans    = trans.equipment_tags ?? {};
+    const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
     const [lines, setLines]             = useState([]);
     const [orderStatu, setOrderStatu]   = useState(Number(initialStatu));
     const [orderType]                   = useState(Number(initialType));
@@ -1321,6 +1331,34 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         }
     };
 
+    const handleReleaseMany = async () => {
+        const ids = releasableIds(lines, selected);
+        if (ids.length === 0) {
+            showFlash('warning', releaseTrans.bulk_none);
+            return;
+        }
+        try {
+            const res  = await apiFetch(endpoints.releaseMany, {
+                method: 'POST',
+                body: JSON.stringify({ line_ids: ids }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showFlash('danger', data.message ?? 'Erreur');
+                return;
+            }
+            const states = data.lines ?? {};
+            setLines((prev) => prev.map((l) => (states[l.id] ? { ...l, release: states[l.id] } : l)));
+            showFlash((data.released ?? []).length > 0 ? 'success' : 'warning', data.message);
+            // Les refus portent leur motif (revue rejetée, changement en attente) : à lire, pas à laisser filer.
+            if ((data.refused ?? []).length > 0) {
+                window.alert(`${releaseTrans.bulk_refused}\n${data.refused.map((r) => `${r.code} — ${r.message}`).join('\n')}`);
+            }
+        } catch {
+            showFlash('danger', 'Erreur réseau');
+        }
+    };
+
     const handleCreateProducts = async () => {
         const ids = [...selected];
         if (ids.length === 0) return;
@@ -1460,6 +1498,13 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                     </button>
                                 );
                             })()}
+                            {releaseTrans?.can_release && endpoints.releaseMany && (
+                                <button className="btn btn-teal btn-sm" onClick={handleReleaseMany}
+                                    title={releaseTrans.label}>
+                                    <i className="fas fa-stamp me-1" />
+                                    {releaseTrans.bulk_action} ({releasableIds(lines, selected).length})
+                                </button>
+                            )}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
                                 <i className="fas fa-folder me-1" />
                                 Nouveau BL ({selected.size})
@@ -1548,6 +1593,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 selected={selected.has(line.id)}
                                 t={delaysTrans}
                                 tagTrans={tagTrans}
+                                releaseTrans={releaseTrans}
                                 onDragStart={(e) => handleDragStart(e, index)}
                                 onDragEnter={(e) => handleDragEnter(e, index)}
                                 onDragEnd={handleDragEnd}

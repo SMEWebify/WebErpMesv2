@@ -9,6 +9,10 @@ return [
     'not_released' => 'Sans BPF',
     'released_on' => 'BPF le :date par :user',
     'revoke_confirm' => 'Annuler le bon pour fabrication de cette ligne ?',
+    'bulk_action' => 'Bon pour fabrication',
+    'bulk_result' => ':count ligne(s) libérée(s) pour la fabrication.',
+    'bulk_refused' => 'Non libérée(s) :',
+    'bulk_none' => 'Les lignes sélectionnées ont déjà leur bon pour fabrication.',
     'released_ok' => 'Bon pour fabrication donné.',
     'revoked_ok' => 'Bon pour fabrication annulé.',
 
