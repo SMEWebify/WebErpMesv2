@@ -18,6 +18,9 @@ use App\Services\Receivables\ReceivablesService;
 use App\Services\Quotes\QuoteLineCopier;
 use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Quotes\QuoteLineToOrderLineConverter;
+use App\Services\Quotes\RequiredOperationsChecker;
+use App\Services\Quotes\RequiredOperationsGuard;
+use App\Models\Workflow\RequiredOperationsOverride;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Factory;
@@ -780,6 +783,13 @@ class QuoteLinesController extends Controller
             return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
         }
 
+        // Opérations exigées par la catégorie d'affaire, contrôlées sur les seules
+        // lignes converties : refus sauf passe-droit motivé.
+        $operationsGuard = app(RequiredOperationsGuard::class);
+        if ($refusal = $operationsGuard->guardJson($request, $quote, array_map('intval', (array) $lineIds))) {
+            return $refusal;
+        }
+
         // La commande ajoute à l'encours le montant des lignes converties.
         $creditGuard = app(CreditLimitGuard::class);
         $creditCheck = $creditGuard->check(
@@ -792,7 +802,7 @@ class QuoteLinesController extends Controller
 
         $converter = app(QuoteLineToOrderLineConverter::class);
 
-        $order = DB::transaction(function () use ($quote, $lineIds, $converter, $presentation) {
+        $order = DB::transaction(function () use ($quote, $lineIds, $converter, $presentation, $operationsGuard) {
             $lastOrder = Orders::latest('id')->first();
             $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
 
@@ -815,6 +825,9 @@ class QuoteLinesController extends Controller
                 $quote->id,
                 null
             );
+
+            // Tracé dans la même transaction que la commande qu'il autorise.
+            $operationsGuard->recordOverride($quote, $newOrder);
 
             $toConvert = $converter->linesToConvert(
                 QuoteLines::with(['QuoteLineDetails', 'Task', 'files'])->where('quotes_id', $quote->id)->get(),
@@ -850,6 +863,41 @@ class QuoteLinesController extends Controller
 
         return response()->json([
             'redirect' => route('orders.show', ['id' => $order->id]),
+        ]);
+    }
+
+    /**
+     * Avertissement du devis : lignes article dont la gamme ne contient pas les
+     * opérations exigées par la catégorie d'affaire, et passe-droits déjà
+     * accordés à la conversion. Ne bloque rien.
+     */
+    public function requiredOperationsJson(int $quoteId, RequiredOperationsChecker $checker)
+    {
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
+
+        return response()->json([
+            'required'  => $checker->requiredServices($quote)->map(fn ($s) => ['id' => (int) $s->id, 'code' => $s->code, 'label' => $s->label])->values(),
+            'missing'   => $checker->missing($quote),
+            'overrides' => RequiredOperationsOverride::with(['user:id,name', 'document'])
+                ->where('quotes_id', $quote->id)
+                ->latest()
+                ->get()
+                ->map(fn (RequiredOperationsOverride $o) => [
+                    'id'         => $o->id,
+                    'user'       => $o->user?->name,
+                    'reason'     => $o->reason,
+                    'created_at' => $o->created_at?->format('d/m/Y H:i'),
+                    'order_code' => $o->document?->code,
+                    'order_url'  => $o->document instanceof Orders ? route('orders.show', ['id' => $o->document->id]) : null,
+                ]),
+            'texts' => [
+                'title'          => __('affairs.required_operations.warning_title'),
+                'intro'          => __('affairs.required_operations.warning_intro'),
+                'line'           => __('affairs.required_operations.line'),
+                'missing'        => __('affairs.required_operations.missing'),
+                'overrides'      => __('affairs.required_operations.overrides_title'),
+                'override_entry' => __('affairs.required_operations.override_entry'),
+            ],
         ]);
     }
 

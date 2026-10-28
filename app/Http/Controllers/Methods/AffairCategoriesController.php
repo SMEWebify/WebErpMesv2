@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Methods;
 
 use App\Http\Requests\Methods\StoreAffairCategoryRequest;
 use App\Http\Requests\Methods\UpdateAffairCategoryRequest;
+use App\Models\Methods\MethodsServices;
 use App\Models\Workflow\AffairCategory;
 
 /**
- * Référentiel des catégories d'affaire. Pas de suppression : une catégorie
- * déjà portée par des affaires se désactive.
+ * Référentiel des catégories d'affaire et de leurs opérations obligatoires.
+ * Pas de suppression : une catégorie déjà portée par des affaires se désactive.
  */
 class AffairCategoriesController extends Controller
 {
@@ -16,19 +17,22 @@ class AffairCategoriesController extends Controller
     {
         return view('methods/methods-affair-categories', [
             'categories' => AffairCategory::ordered()
+                ->with('requiredServices:id,code,label')
                 ->withCount(['opportunities', 'quotes', 'orders'])
                 ->get(),
+            'services' => MethodsServices::orderBy('ordre')->orderBy('code')->get(['id', 'code', 'label']),
         ]);
     }
 
     public function store(StoreAffairCategoryRequest $request)
     {
-        AffairCategory::create([
+        $category = AffairCategory::create([
             'code'   => $request->validated('code'),
             'label'  => $request->validated('label'),
             'ordre'  => (int) ($request->validated('ordre') ?? 0),
             'active' => true,
         ]);
+        $category->requiredServices()->sync($request->validated('required_services') ?? []);
 
         return redirect()->route('methods.affair-category')
             ->with('success', __('affairs.category.created'));
@@ -36,11 +40,14 @@ class AffairCategoriesController extends Controller
 
     public function update(UpdateAffairCategoryRequest $request, int $id)
     {
-        AffairCategory::findOrFail($id)->update([
+        $category = AffairCategory::findOrFail($id);
+        $category->update([
             'label'  => $request->validated('label'),
             'ordre'  => (int) ($request->validated('ordre') ?? 0),
             'active' => $request->boolean('active'),
         ]);
+        // Le formulaire de modification envoie toujours la liste : vide = plus aucune exigence.
+        $category->requiredServices()->sync($request->validated('required_services') ?? []);
 
         return redirect()->route('methods.affair-category')
             ->with('success', __('affairs.category.updated'));

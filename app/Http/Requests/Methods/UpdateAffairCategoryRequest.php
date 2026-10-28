@@ -21,6 +21,8 @@ class UpdateAffairCategoryRequest extends FormRequest
             'label'  => 'required|string|max:255',
             'ordre'  => 'nullable|integer|min:0',
             'active' => 'boolean',
+            'required_services'   => 'nullable|array',
+            'required_services.*' => 'integer|exists:methods_services,id',
         ];
     }
 }

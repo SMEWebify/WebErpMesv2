@@ -6,6 +6,8 @@ import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout, moveLine } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
+import { askRequiredOperationsOverride } from '../lib/requiredOperations.jsx';
+import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1192,6 +1194,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
     const layout = useMemo(() => computeLayout(lines), [lines]);
 
+    // Relecture des opérations obligatoires quand les lignes ou leur gamme changent
+    // (la gamme se modifie dans la fenêtre des tâches : sa fermeture compte aussi).
+    const operationsKey = useMemo(
+        () => `${taskModalLine?.id ?? ''}|${lines.map(l => `${l.id}:${l.line_type}:${l.task_count ?? ''}`).join(',')}`,
+        [lines, taskModalLine],
+    );
+
     // Drag-and-drop state
     const dragIndexRef  = useRef(null);   // index in filteredLines
     const [dragOver, setDragOver] = useState(null); // index with top-border indicator
@@ -1389,20 +1398,26 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
     const hasPresentation = lines.some((l) => !isArticle(l));
 
-    const handleStoreOrder = async (presentation = 'keep', creditOverride = null) => {
+    // `overrides` cumule les passe-droits déjà accordés (opérations obligatoires,
+    // encours) : chaque refus en ajoute un et la requête repart avec tous.
+    const handleStoreOrder = async (presentation = 'keep', overrides = null) => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!creditOverride && !hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!overrides && !hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
         setConvertOpen(false);
         try {
-            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation, ...creditOverride }) });
+            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation, ...overrides }) });
             const data = await res.json();
             if (res.ok && data.redirect) {
                 window.location.href = data.redirect;
+            } else if (data.required_operations) {
+                // Opérations exigées par la catégorie absentes de la gamme : passe-droit motivé.
+                const override = await askRequiredOperationsOverride(data.required_operations);
+                if (override) return handleStoreOrder(presentation, { ...overrides, ...override });
             } else if (data.credit_limit) {
                 // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
                 const override = await askCreditOverride(data.credit_limit);
-                if (override) return handleStoreOrder(presentation, override);
+                if (override) return handleStoreOrder(presentation, { ...overrides, ...override });
             } else {
                 showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
             }
@@ -1532,6 +1547,8 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     <button type="button" onClick={() => setFlash(null)} aria-label="Close" className="btn-close float-end"></button>
                 </div>
             )}
+
+            <RequiredOperationsBanner endpoint={endpoints.requiredOperations} refreshKey={operationsKey} />
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>

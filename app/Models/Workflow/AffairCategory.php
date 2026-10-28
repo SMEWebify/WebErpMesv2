@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,6 +52,13 @@ class AffairCategory extends Model
         return static::query()->ordered()->get(['id', 'code', 'label', 'active'])
             ->map(fn (self $c) => ['id' => $c->id, 'code' => $c->code, 'label' => $c->label, 'active' => $c->active])
             ->all();
+    }
+
+    /** Opérations (postes de charge) que la gamme de chaque ligne article doit contenir. */
+    public function requiredServices()
+    {
+        return $this->belongsToMany(MethodsServices::class, 'affair_category_required_services', 'affair_category_id', 'methods_services_id')
+            ->withTimestamps();
     }
 
     public function opportunities()

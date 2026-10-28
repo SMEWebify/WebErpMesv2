@@ -413,6 +413,7 @@ $arrowSteps = json_encode([
             'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'presentation'    => route('quotes.lines.json.presentation',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
+            'requiredOperations' => route('quotes.lines.json.required-operations', ['quoteId' => $Quote->id]),
             'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
             'importSources'   => route('quotes.lines.json.import-sources',  ['quoteId' => $Quote->id]),
             'importFrom'      => route('quotes.lines.json.import-from',     ['quoteId' => $Quote->id]),

@@ -362,6 +362,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{quoteId}/lines/json/{id}/move', 'App\Http\Controllers\Workflow\QuoteLinesController@moveLineJson')->name('quotes.lines.json.move');
         Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
         Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
+        Route::get('/{quoteId}/lines/json/required-operations', 'App\Http\Controllers\Workflow\QuoteLinesController@requiredOperationsJson')->name('quotes.lines.json.required-operations');
         Route::post('/{quoteId}/lines/json/import-cad', 'App\Http\Controllers\Workflow\QuoteLinesController@importCadJson')->name('quotes.lines.json.import-cad');
         Route::post('/{quoteId}/lines/json/create-products',    'App\Http\Controllers\Workflow\QuoteLinesController@createProductsFromLinesJson')->name('quotes.lines.json.create-products');
         Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->name('quotes.lines.json.create-product');

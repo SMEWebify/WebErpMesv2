@@ -19,6 +19,7 @@
                 <th>{{ __('affairs.category.order') }}</th>
                 <th>{{ __('affairs.category.code') }}</th>
                 <th>{{ __('general_content.label_trans_key') }}</th>
+                <th>{{ __('affairs.category.required_services') }}</th>
                 <th>{{ __('affairs.category.active') }}</th>
                 <th>{{ __('affairs.category.usage') }}</th>
                 <th></th>
@@ -30,6 +31,13 @@
                 <td>{{ $category->ordre }}</td>
                 <td><code>{{ $category->code }}</code></td>
                 <td>{{ $category->label }}</td>
+                <td>
+                  @forelse ($category->requiredServices as $service)
+                    <span class="badge text-bg-warning" title="{{ $service->label }}">{{ $service->code }}</span>
+                  @empty
+                    <span class="text-body-secondary">—</span>
+                  @endforelse
+                </td>
                 <td>
                   @if ($category->active)
                     <span class="badge text-bg-success"><i class="fas fa-check"></i></span>
@@ -69,6 +77,15 @@
                             <input type="text" class="form-control" name="label" id="label_{{ $category->id }}" value="{{ $category->label }}" required maxlength="255">
                           </div>
                         </div>
+                        <div class="mb-3">
+                          <x-adminlte-select-bs id="required_services_{{ $category->id }}" name="required_services[]" multiple
+                              label="{{ __('affairs.category.required_services') }}">
+                            @foreach ($services as $service)
+                              <option value="{{ $service->id }}" @selected($category->requiredServices->contains('id', $service->id))>{{ $service->code }} — {{ $service->label }}</option>
+                            @endforeach
+                          </x-adminlte-select-bs>
+                          <div class="form-text">{{ __('affairs.category.required_services_help') }}</div>
+                        </div>
                         <div class="form-check form-switch">
                           <input type="hidden" name="active" value="0">
                           <input type="checkbox" class="form-check-input" name="active" value="1" id="active_{{ $category->id }}" @checked($category->active)>
@@ -83,7 +100,7 @@
                 </td>
               </tr>
               @empty
-              <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}" />
+              <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}" />
               @endforelse
             </tbody>
           </table>
@@ -116,6 +133,15 @@
               <input type="text" class="form-control @error('label') is-invalid @enderror" name="label" id="label" maxlength="255" required value="{{ old('label') }}">
             </div>
             @error('label')<span class="text-danger small">{{ $message }}</span>@enderror
+          </div>
+          <div class="mb-3">
+            <x-adminlte-select-bs id="required_services_new" name="required_services[]" multiple
+                label="{{ __('affairs.category.required_services') }}">
+              @foreach ($services as $service)
+                <option value="{{ $service->id }}" @selected(in_array($service->id, (array) old('required_services', [])))>{{ $service->code }} — {{ $service->label }}</option>
+              @endforeach
+            </x-adminlte-select-bs>
+            <div class="form-text">{{ __('affairs.category.required_services_help') }}</div>
           </div>
           <x-slot name="footerSlot">
             <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
