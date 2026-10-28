@@ -40,6 +40,8 @@ class UpdateOrderRequest extends FormRequest
             'change_requested_by' => 'nullable|exists:users,id',
             'change_reason' => 'nullable|string',
             'change_approved_at' => 'nullable|date',
+            // Absent du formulaire tant que le référentiel est vide : ne rien écraser.
+            'affair_category_id' => 'sometimes|nullable|integer|exists:affair_categories,id',
         ];
     }
 }

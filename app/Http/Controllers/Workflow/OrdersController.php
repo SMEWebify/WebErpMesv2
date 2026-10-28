@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Number;
 use App\Models\User;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\AffairCategory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Jobs\CalculateTaskDates;
@@ -321,6 +322,7 @@ class OrdersController extends Controller
         $sortField = $request->get('sort', 'created_at');
         $sortAsc   = $request->boolean('asc', false);
         $companyId = $request->get('company_id');
+        $category  = (int) $request->get('affair_category_id');
 
         $allowed = ['code', 'label', 'created_at', 'validity_date', 'statu', 'companie', 'contact', 'order_lines_count', 'total_amount'];
         if (!in_array($sortField, $allowed)) {
@@ -332,10 +334,11 @@ class OrdersController extends Controller
 
         $query = Orders::withCount(['OrderLines' => fn ($q) => $q->articles()])
             ->selectRaw("orders.*, {$totalSub} as total_amount")
-            ->with(['companie:id,label,code', 'contact:id,first_name,name'])
+            ->with(['companie:id,label,code', 'contact:id,first_name,name', 'affairCategory:id,code,label'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
-            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId))
+            ->when($category, fn ($q) => $q->where('affair_category_id', $category));
 
         match ($sortField) {
             'companie'          => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = orders.companies_id) {$dir}"),
@@ -360,6 +363,7 @@ class OrdersController extends Controller
                 'contact'            => $o->contact  ? ['id' => $o->contact->id,  'name'  => trim($o->contact->first_name.' '.$o->contact->name)] : null,
                 'order_lines_count'  => $o->order_lines_count,
                 'total_amount'       => round((float) $o->total_amount, 2),
+                'affair_category'    => $o->affairCategory ? ['id' => $o->affairCategory->id, 'code' => $o->affairCategory->code, 'label' => $o->affairCategory->label] : null,
                 'url'                => route('orders.show', ['id' => $o->id]),
             ]),
             'meta' => [
@@ -368,6 +372,7 @@ class OrdersController extends Controller
                 'current_page' => $orders->currentPage(),
                 'last_page'    => $orders->lastPage(),
             ],
+            'affair_categories' => AffairCategory::forFilter(),
         ]);
     }
 
@@ -385,6 +390,7 @@ class OrdersController extends Controller
             'comment'            => 'nullable|string',
             'customer_reference' => 'nullable|string|max:255',
             'type'               => 'required|in:1,2',
+            'affair_category_id' => 'nullable|integer|exists:affair_categories,id',
         ];
 
         if ($type === 1) {
@@ -422,7 +428,8 @@ class OrdersController extends Controller
             $validated['comment'] ?? null,
             $type,
             null,
-            null
+            null,
+            $validated['affair_category_id'] ?? null
         );
         $creditGuard->recordOverride($creditCheck, $order, $order->companies_id);
 
@@ -447,6 +454,7 @@ class OrdersController extends Controller
             'payment_methods'     => AccountingPaymentMethod::select('id', 'code', 'label', 'default')->get(),
             'deliveries'          => AccountingDelivery::select('id', 'code', 'label', 'default')->get(),
             'users'               => User::select('id', 'name')->get(),
+            'affair_categories'   => AffairCategory::choices(),
         ]);
     }
 

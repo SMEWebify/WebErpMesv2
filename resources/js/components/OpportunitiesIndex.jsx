@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
+import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -287,11 +288,13 @@ function opportunityColumns(trans, currency, locale) {
     ];
 }
 
-function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
+function OpportunitiesTable({ items, loading, trans, onSort, sortField, sortAsc, currency, locale, withCategory }) {
+    const columns = opportunityColumns(trans, currency, locale);
+    if (withCategory) columns.push(affairCategoryColumn(trans));
     return (
         <DataTable
             rows={items}
-            columns={opportunityColumns(trans, currency, locale)}
+            columns={columns}
             loading={loading}
             trans={trans}
             sortField={sortField}
@@ -435,6 +438,7 @@ function CreateModal({ endpoints, trans, onClose }) {
     const [form, setForm]         = useState({
         label: '', user_id: '', budget: '0', probality: '50', comment: '',
         companies_id: '', companies_addresses_id: '', companies_contacts_id: '',
+        affair_category_id: '',
     });
     const [errors,    setErrors]    = useState({});
     const [saving,    setSaving]    = useState(false);
@@ -550,6 +554,20 @@ function CreateModal({ endpoints, trans, onClose }) {
                                         value={form.budget} onChange={e => set('budget', e.target.value)} />
                                     {errors.budget && <div className="invalid-feedback">{errors.budget[0]}</div>}
                                 </div>
+                                {/* Affair category */}
+                                {selectData?.affair_categories?.length > 0 && (
+                                    <div className="col-md-6 mb-2">
+                                        <AffairCategoryField
+                                            categories={selectData.affair_categories}
+                                            value={form.affair_category_id}
+                                            onChange={v => set('affair_category_id', v)}
+                                            trans={trans}
+                                            error={errors.affair_category_id?.[0]}
+                                            className="form-select form-select-sm"
+                                            labelClassName="mb-0 small"
+                                        />
+                                    </div>
+                                )}
                                 {/* Comment */}
                                 <div className="col-12 mb-2">
                                     <label className="mb-0 small">{trans.comment ?? 'Comment'}</label>
@@ -589,6 +607,8 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
     const [page,       setPage]       = useState(1);
     const [viewType,   setViewType]   = useState('table');
     const [showModal,  setShowModal]  = useState(false);
+    const [category,   setCategory]   = useState('');
+    const [categories, setCategories] = useState([]);
     const debounceRef = useRef(null);
 
     // Restore filters from localStorage
@@ -602,14 +622,17 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 if (f.sortField !== undefined) setSortField(f.sortField);
                 if (f.sortAsc   !== undefined) setSortAsc(f.sortAsc);
                 if (f.viewType  !== undefined) setViewType(f.viewType);
+                if (f.affairCategory !== undefined) setCategory(f.affairCategory);
             }
         } catch {}
     }, []);
 
     // Persist filters
     useEffect(() => {
-        localStorage.setItem(LS_FILTERS, JSON.stringify({ search, statuses, sortField, sortAsc, viewType }));
-    }, [search, statuses, sortField, sortAsc, viewType]);
+        try {
+            localStorage.setItem(LS_FILTERS, JSON.stringify({ search, statuses, sortField, sortAsc, viewType, affairCategory: category }));
+        } catch {}
+    }, [search, statuses, sortField, sortAsc, viewType, category]);
 
     const fetchItems = useCallback(async (overrides = {}) => {
         setLoading(true);
@@ -622,14 +645,16 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
         const params = new URLSearchParams({ search: q, sort: sf, asc: sa ? '1' : '0', page: p });
         s.forEach(id => params.append('statuses[]', id));
         if (companieId) params.set('company_id', companieId);
+        if (category) params.set('affair_category_id', category);
 
         try {
             const data = await apiFetch(`${endpoints.list}?${params}`);
             setItems(data.data ?? []);
             setMeta(data.meta ?? null);
+            setCategories(data.affair_categories ?? []);
         } catch {}
         finally { setLoading(false); }
-    }, [endpoints.list, page, search, statuses, sortField, sortAsc, companieId]);
+    }, [endpoints.list, page, search, statuses, sortField, sortAsc, category, companieId]);
 
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -665,8 +690,10 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </div>
 
                 {/* Status filter */}
-                <MobileFilters count={statuses.length} trans={trans}>
+                <MobileFilters count={statuses.length + (category ? 1 : 0)} trans={trans}>
                     <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                    <AffairCategoryFilter categories={categories} value={category}
+                        onChange={v => { setCategory(v); setPage(1); }} trans={trans} />
                 </MobileFilters>
 
                 <div className="flex-grow-1" />
@@ -700,6 +727,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                     sortAsc={sortAsc}
                     currency={currency}
                     locale={locale}
+                    withCategory={categories.length > 0}
                 />
             )}
             {viewType === 'card' && (

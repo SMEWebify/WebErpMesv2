@@ -81,6 +81,7 @@ return [
     'methods_tool_configurator_trans_key'      => 'Tool configurator',
     'methods_standard_bom_trans_key'           => 'Nomenclature standard',
     'operation_transition_delays_trans_key'    => 'Inter-operation delays',
+    'affair_categories_trans_key'              => 'Business categories',
     'accounting_trans_key'                     => 'Accounting',
     'payment_conditions_trans_key'             => 'Payment Conditions',
     'payment_methods_trans_key'                => 'Payment Methods',

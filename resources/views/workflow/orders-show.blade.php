@@ -130,6 +130,7 @@ if (!$orderHasInvoicedLines) {
                   </div>
                   <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Order->label])
+                    @include('include.form.form-select-affair-category',['affairCategoryId' => $Order->affair_category_id])
                   </div>
                 </div>
                 @if($Order->type == 1)

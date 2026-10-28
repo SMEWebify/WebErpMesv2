@@ -33,6 +33,7 @@ class OrderService
      * @param object $deliveryId
      * @param string $comment
      * @param string $type
+     * @param int|null $affairCategoryId catégorie d'affaire ; null = celle du devis s'il y en a un
      * @return Orders
      */
     public function createOrder(
@@ -51,7 +52,8 @@ class OrderService
         $comment,
         $type,
         $quotes_id,
-        $filename
+        $filename,
+        $affairCategoryId = null
     ) {
         try {
             $OrdersCreated = Orders::create([
@@ -72,6 +74,8 @@ class OrderService
                 'type' => $type,
                 'quotes_id' => $quotes_id,
                 'csv_file_name' => $filename,
+                // null : reprise de la catégorie du devis (Orders::booted).
+                'affair_category_id' => $affairCategoryId,
             ]);
 
             // notification

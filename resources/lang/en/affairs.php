@@ -10,6 +10,25 @@ return [
     'open' => 'Open',
     'none' => 'None',
 
+    'category' => [
+        'label' => 'Business category',
+        'plural' => 'Business categories',
+        'none' => 'No category',
+        'all' => 'All categories',
+        'inactive' => 'inactive',
+        'info' => 'Classifies business (flow metering, pyrometry, mechanics…). The category is chosen on the opportunity and carries over to the quote created from it, then to the order converted from the quote. A category in use cannot be deleted: once deactivated it is no longer offered but stays on the documents that carry it.',
+        'new' => 'New category',
+        'edit' => 'Edit :label',
+        'code' => 'Code',
+        'order' => 'Order',
+        'active' => 'Active',
+        'usage' => 'Usage',
+        'usage_detail' => ':opportunities opportunity(ies), :quotes quote(s), :orders order(s)',
+        'created' => 'Business category created.',
+        'updated' => 'Business category updated.',
+        'code_locked' => 'The code cannot be changed.',
+    ],
+
     'stage_label' => 'Stage',
     'stages' => [
         'visit' => 'Site visit',

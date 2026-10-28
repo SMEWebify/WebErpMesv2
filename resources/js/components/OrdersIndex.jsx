@@ -4,6 +4,7 @@ import { apiFetchOrThrow as apiFetch, apiRequest } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
+import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -409,11 +410,13 @@ function orderColumns(trans, currency, locale) {
     ];
 }
 
-function OrdersTable({ orders, loading, trans, onSort, sortField, sortAsc, currency, locale }) {
+function OrdersTable({ orders, loading, trans, onSort, sortField, sortAsc, currency, locale, withCategory }) {
+    const columns = orderColumns(trans, currency, locale);
+    if (withCategory) columns.push(affairCategoryColumn(trans));
     return (
         <DataTable
             rows={orders}
-            columns={orderColumns(trans, currency, locale)}
+            columns={columns}
             loading={loading}
             trans={trans}
             sortField={sortField}
@@ -520,7 +523,7 @@ function CreateModal({ endpoints, trans, onClose }) {
         code: '', label: '', customer_reference: '', comment: '',
         companies_id: '', companies_contacts_id: '', companies_addresses_id: '',
         accounting_payment_conditions_id: '', accounting_payment_methods_id: '', accounting_deliveries_id: '',
-        user_id: '', validity_date: '',
+        user_id: '', validity_date: '', affair_category_id: '',
     });
     const [errors, setErrors]             = useState({});
     const [saving, setSaving]             = useState(false);
@@ -666,6 +669,20 @@ function CreateModal({ endpoints, trans, onClose }) {
                                     </select>
                                     {errors.user_id && <div className="invalid-feedback">{errors.user_id[0]}</div>}
                                 </div>
+                                {/* Affair category */}
+                                {selectData?.affair_categories?.length > 0 && (
+                                    <div className="col-md-4 mb-2">
+                                        <AffairCategoryField
+                                            categories={selectData.affair_categories}
+                                            value={form.affair_category_id}
+                                            onChange={v => set('affair_category_id', v)}
+                                            trans={trans}
+                                            error={errors.affair_category_id?.[0]}
+                                            className="form-select form-select-sm"
+                                            labelClassName="mb-0 small"
+                                        />
+                                    </div>
+                                )}
                                 {/* Customer reference (external only) */}
                                 {isExternal && (
                                     <div className="col-md-4 mb-2">
@@ -830,6 +847,8 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
     const [page, setPage]           = useState(1);
     const [viewType, setViewType]   = useState('table');
     const [showModal, setShowModal] = useState(false);
+    const [category, setCategory]   = useState('');
+    const [categories, setCategories] = useState([]);
     const debounceRef = useRef(null);
 
     // Restore filters from localStorage
@@ -843,14 +862,17 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 if (f.sortField !== undefined) setSortField(f.sortField);
                 if (f.sortAsc   !== undefined) setSortAsc(f.sortAsc);
                 if (f.viewType  !== undefined) setViewType(f.viewType);
+                if (f.affairCategory !== undefined) setCategory(f.affairCategory);
             }
         } catch {}
     }, []);
 
     // Persist filters
     useEffect(() => {
-        localStorage.setItem(LS_FILTERS, JSON.stringify({ search, statuses, sortField, sortAsc, viewType }));
-    }, [search, statuses, sortField, sortAsc, viewType]);
+        try {
+            localStorage.setItem(LS_FILTERS, JSON.stringify({ search, statuses, sortField, sortAsc, viewType, affairCategory: category }));
+        } catch {}
+    }, [search, statuses, sortField, sortAsc, viewType, category]);
 
     const fetchOrders = useCallback(async (overrides = {}) => {
         setLoading(true);
@@ -863,14 +885,16 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
         const params = new URLSearchParams({ search: q, sort: sf, asc: sa ? '1' : '0', page: p });
         s.forEach(id => params.append('statuses[]', id));
         if (companieId) params.set('company_id', companieId);
+        if (category) params.set('affair_category_id', category);
 
         try {
             const data = await apiFetch(`${endpoints.list}?${params}`);
             setOrders(data.data ?? []);
             setMeta(data.meta ?? null);
+            setCategories(data.affair_categories ?? []);
         } catch {}
         finally { setLoading(false); }
-    }, [endpoints.list, page, search, statuses, sortField, sortAsc, companieId]);
+    }, [endpoints.list, page, search, statuses, sortField, sortAsc, category, companieId]);
 
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -913,8 +937,10 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                 </div>
 
                 {/* Status filter */}
-                <MobileFilters count={statuses.length} trans={trans}>
+                <MobileFilters count={statuses.length + (category ? 1 : 0)} trans={trans}>
                     <StatusFilter config={STATUS_CONFIG} selected={statuses} onToggle={handleStatusToggle} trans={trans} />
+                    <AffairCategoryFilter categories={categories} value={category}
+                        onChange={v => { setCategory(v); setPage(1); }} trans={trans} />
                 </MobileFilters>
 
                 {/* Spacer */}
@@ -944,6 +970,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
                     orders={orders}
                     loading={loading}
                     trans={trans}
+                    withCategory={categories.length > 0}
                     onSort={handleSort}
                     sortField={sortField}
                     sortAsc={sortAsc}

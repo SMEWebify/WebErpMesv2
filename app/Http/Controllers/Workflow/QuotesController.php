@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Models\Workflow\QuoteLines;
+use App\Models\Workflow\AffairCategory;
 use App\Events\QuoteStatusChanged;
 use App\Models\Planning\Task;
 use App\Models\Methods\MethodsServices;
@@ -474,6 +475,7 @@ class QuotesController extends Controller
         $sortField  = $request->get('sort', 'created_at');
         $sortAsc    = $request->boolean('asc', false);
         $companyId  = $request->get('company_id');
+        $category   = (int) $request->get('affair_category_id');
 
         $allowed = ['code', 'label', 'created_at', 'validity_date', 'statu', 'companie', 'contact', 'quote_lines_count', 'total_amount'];
         if (!in_array($sortField, $allowed)) {
@@ -485,10 +487,11 @@ class QuotesController extends Controller
 
         $query = Quotes::withCount(['QuoteLines' => fn ($q) => $q->articles()])
             ->selectRaw("quotes.*, {$totalSub} as total_amount")
-            ->with(['companie:id,label,code', 'contact:id,first_name,name'])
+            ->with(['companie:id,label,code', 'contact:id,first_name,name', 'affairCategory:id,code,label'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
-            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId))
+            ->when($category, fn ($q) => $q->where('affair_category_id', $category));
 
         match ($sortField) {
             'companie'          => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = quotes.companies_id) {$dir}"),
@@ -513,6 +516,7 @@ class QuotesController extends Controller
                 'contact'             => $q->contact  ? ['id' => $q->contact->id,  'name'  => trim($q->contact->first_name.' '.$q->contact->name)] : null,
                 'quote_lines_count'   => $q->quote_lines_count,
                 'total_amount'        => round((float) $q->total_amount, 2),
+                'affair_category'     => $q->affairCategory ? ['id' => $q->affairCategory->id, 'code' => $q->affairCategory->code, 'label' => $q->affairCategory->label] : null,
                 'url'                 => route('quotes.show', ['id' => $q->id]),
             ]),
             'meta' => [
@@ -521,6 +525,7 @@ class QuotesController extends Controller
                 'current_page' => $quotes->currentPage(),
                 'last_page'    => $quotes->lastPage(),
             ],
+            'affair_categories' => AffairCategory::forFilter(),
         ]);
     }
 
@@ -542,6 +547,7 @@ class QuotesController extends Controller
             'validity_date'                     => 'nullable|date',
             'comment'                           => 'nullable|string',
             'template_id'                       => 'nullable|integer',
+            'affair_category_id'                => 'nullable|integer|exists:affair_categories,id',
         ]);
 
         $template = !empty($validated['template_id'])
@@ -660,6 +666,7 @@ class QuotesController extends Controller
             'users'                  => User::select('id', 'name')->get(),
             'current_user_id'        => auth()->id(),
             'validity_days'          => (int) (app('Factory')->add_day_validity_quote ?? 0),
+            'affair_categories'      => AffairCategory::choices(),
         ]);
     }
 

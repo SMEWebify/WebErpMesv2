@@ -56,6 +56,10 @@ $trans = [
     'no_data'   => __('general_content.no_data_trans_key'),
     'search'    => __('general_content.search_trans_key'),
     'page'      => 'Page',
+    'affair_category'          => __('affairs.category.label'),
+    'all_affair_categories'    => __('affairs.category.all'),
+    'no_affair_category'       => __('affairs.category.none'),
+    'affair_category_inactive' => __('affairs.category.inactive'),
     'currency'  => app('Factory')->curency ?? 'EUR',
     'locale'    => str_replace('_', '-', config('app.locale')),
 ];

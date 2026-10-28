@@ -66,6 +66,9 @@ $oppSteps = json_encode([
                   <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])
                   </div>
+                  <div class="mb-3 col-md-6">
+                    @include('include.form.form-select-affair-category',['affairCategoryId' => $Opportunity->affair_category_id])
+                  </div>
                 </div>
                 @if($Opportunity->companie['active'] == 1)
                   <div class="row">

@@ -90,6 +90,7 @@ $arrowSteps = json_encode([
                   </div>
                   <div class="mb-3 col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Quote->label])
+                    @include('include.form.form-select-affair-category',['affairCategoryId' => $Quote->affair_category_id])
                   </div>
                 </div>
                   @if($Quote->companie['active'] == 1)

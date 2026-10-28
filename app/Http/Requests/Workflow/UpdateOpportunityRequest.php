@@ -30,6 +30,8 @@ class UpdateOpportunityRequest extends FormRequest
             'close_date' => 'nullable|date',
             'probality' => 'required|integer|min:0|max:100',
             'comment' => 'nullable|string',
+            // Absent du formulaire tant que le référentiel est vide : ne rien écraser.
+            'affair_category_id' => 'sometimes|nullable|integer|exists:affair_categories,id',
         ];
     }
 }

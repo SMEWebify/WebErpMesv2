@@ -1420,6 +1420,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\OperationTransitionDelayController@update')->name('methods.operation-transition-delay.update');
             Route::post('/delete/{id}', 'App\Http\Controllers\Methods\OperationTransitionDelayController@destroy')->name('methods.operation-transition-delay.destroy');
         });
+
+        // Catégories d'affaire (opportunités, devis, commandes)
+        Route::group(['prefix' => 'affair-category', 'middleware' => ['permission:methods-menu']], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\AffairCategoriesController@index')->name('methods.affair-category');
+            Route::post('/create', 'App\Http\Controllers\Methods\AffairCategoriesController@store')->name('methods.affair-category.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Methods\AffairCategoriesController@update')->name('methods.affair-category.update');
+        });
     });
 
     Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

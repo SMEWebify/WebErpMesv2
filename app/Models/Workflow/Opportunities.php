@@ -36,6 +36,7 @@ class Opportunities extends Model
         'statu',
         'probality',
         'comment',
+        'affair_category_id',
     ];
 
     // Only log changes
@@ -75,6 +76,11 @@ class Opportunities extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function affairCategory()
+    {
+        return $this->belongsTo(AffairCategory::class, 'affair_category_id');
     }
 
     // Relationship with the lead associated with the Opportunities
@@ -139,7 +145,8 @@ class Opportunities extends Model
                                                 'close_date',
                                                 'statu',
                                                 'probality',
-                                                'comment',]);
+                                                'comment',
+                                                'affair_category_id',]);
         // Chain fluent methods for configuration options
     }
 }

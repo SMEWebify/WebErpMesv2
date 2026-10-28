@@ -1250,6 +1250,11 @@ return [
                     'url'  => 'methods/operation-transition-delay',
                     'icon_color' => 'teal',
                 ],
+                [
+                    'text' => 'affair_categories_trans_key',
+                    'url'  => 'methods/affair-category',
+                    'icon_color' => 'indigo',
+                ],
             ],
         ],
         [

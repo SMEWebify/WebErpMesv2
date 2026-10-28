@@ -111,6 +111,10 @@
     'cancel'                 => __('general_content.cancel_trans_key'),
     'no_results'             => __('general_content.no_results_trans_key'),
     'total'                  => __('general_content.total_trans_key'),
+    'affair_category'          => __('affairs.category.label'),
+    'all_affair_categories'    => __('affairs.category.all'),
+    'no_affair_category'       => __('affairs.category.none'),
+    'affair_category_inactive' => __('affairs.category.inactive'),
     'currency'               => app('Factory')->curency ?? 'EUR',
     'locale'                 => str_replace('_', '-', config('app.locale')),
   ];

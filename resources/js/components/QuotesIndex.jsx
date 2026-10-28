@@ -4,6 +4,7 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { csrfToken, apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
+import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -332,7 +333,14 @@ const ALL_STATUSES = [1, 2, 3, 4, 5, 6];
 const LS_COL_ORDER     = 'quotes_table_col_order';
 const LS_HIDDEN_COLS   = 'quotes_table_hidden_cols';
 
-function quoteColumns(trans) {
+function quoteColumns(trans, withCategory = false) {
+    return [
+        ...baseQuoteColumns(trans),
+        ...(withCategory ? [affairCategoryColumn(trans)] : []),
+    ];
+}
+
+function baseQuoteColumns(trans) {
     return [
         { key: 'code',          label: trans.code,          sortable: true,
           render: q => <code>{q.code}</code>, filter: 'text', mobile: 'title', mobileRender: q => q.code },
@@ -359,11 +367,11 @@ function quoteColumns(trans) {
     ];
 }
 
-function QuotesTable({ quotes, loading, sortField, sortAsc, onSort, trans }) {
+function QuotesTable({ quotes, loading, sortField, sortAsc, onSort, trans, withCategory }) {
     return (
         <DataTable
             rows={quotes}
-            columns={quoteColumns(trans)}
+            columns={quoteColumns(trans, withCategory)}
             loading={loading}
             trans={trans}
             sortField={sortField}
@@ -488,6 +496,7 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
         validity_date:                    '',
         comment:                          '',
         template_id:                      '',
+        affair_category_id:               '',
     });
 
     // Trames proposées comme point de départ ; la liste est courte, on la charge en entier.
@@ -756,6 +765,17 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                                                 <label>{trans.validity_date}</label>
                                                 <input type="date" className="form-control" value={form.validity_date} onChange={set('validity_date')} />
                                             </div>
+                                            {selectData.affair_categories?.length > 0 && (
+                                                <div className="mb-3 col-md-4">
+                                                    <AffairCategoryField
+                                                        categories={selectData.affair_categories}
+                                                        value={form.affair_category_id}
+                                                        onChange={v => setForm(f => ({ ...f, affair_category_id: v }))}
+                                                        trans={trans}
+                                                        error={errors.affair_category_id?.[0]}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="mb-3">
                                             <label>{trans.comment}</label>
@@ -833,6 +853,8 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
     const [page, setPage]             = useState(1);
     const [viewType, setViewType]     = useState(saved?.viewType  ?? 'table');
     const [showModal, setShowModal]   = useState(!!initialTemplateId);
+    const [category, setCategory]     = useState(saved?.affairCategory ?? '');
+    const [categories, setCategories] = useState([]);
 
     const searchTimeout = useRef(null);
 
@@ -846,13 +868,14 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
         });
         (opts.statuses ?? statuses).forEach(s => params.append('statuses[]', s));
         if (companieId) params.set('company_id', companieId);
+        if (category) params.set('affair_category_id', category);
 
         apiFetch(`${endpoints.list}?${params}`)
-            .then(data => { setQuotes(data.data); setMeta(data.meta); })
+            .then(data => { setQuotes(data.data); setMeta(data.meta); setCategories(data.affair_categories ?? []); })
             .finally(() => setLoading(false));
-    }, [search, sortField, sortAsc, page, statuses, endpoints.list, companieId]);
+    }, [search, sortField, sortAsc, page, statuses, category, endpoints.list, companieId]);
 
-    useEffect(() => { fetchQuotes(); }, [sortField, sortAsc, page, statuses]);
+    useEffect(() => { fetchQuotes(); }, [sortField, sortAsc, page, statuses, category]);
 
     const handleSearch = (val) => {
         setSearch(val);
@@ -865,8 +888,13 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
 
     // Persist filters whenever they change
     useEffect(() => {
-        saveFilters({ search, statuses, sortField, sortAsc, viewType });
-    }, [search, statuses, sortField, sortAsc, viewType]);
+        saveFilters({ search, statuses, sortField, sortAsc, viewType, affairCategory: category });
+    }, [search, statuses, sortField, sortAsc, viewType, category]);
+
+    const handleCategoryChange = (next) => {
+        setCategory(next);
+        setPage(1);
+    };
 
     const handleSort = (field) => {
         const asc = field === sortField ? !sortAsc : true;
@@ -896,8 +924,9 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
                 </div>
 
                 {/* Status filter */}
-                <MobileFilters count={statuses.length === ALL_STATUSES.length ? 0 : statuses.length} trans={trans}>
+                <MobileFilters count={(statuses.length === ALL_STATUSES.length ? 0 : statuses.length) + (category ? 1 : 0)} trans={trans}>
                     <StatusFilter config={STATUS_CONFIG} ids={ALL_STATUSES} selected={statuses} onChange={handleStatusChange} trans={trans} allowEmpty={false} fallback="value" />
+                    <AffairCategoryFilter categories={categories} value={category} onChange={handleCategoryChange} trans={trans} />
                 </MobileFilters>
 
                 {/* Spacer */}
@@ -929,7 +958,7 @@ function ListTab({ endpoints, trans, companieId, initialTemplateId = null }) {
 
             {/* Quote views */}
             {viewType === 'table' && (
-                <QuotesTable quotes={quotes} loading={loading} sortField={sortField} sortAsc={sortAsc} onSort={handleSort} trans={trans} />
+                <QuotesTable quotes={quotes} loading={loading} sortField={sortField} sortAsc={sortAsc} onSort={handleSort} trans={trans} withCategory={categories.length > 0} />
             )}
             {viewType === 'card' && (
                 <QuoteCards quotes={quotes} loading={loading} trans={trans} />

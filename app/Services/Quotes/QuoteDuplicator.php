@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * Copie d'un devis entier — en-tête, lignes (avec gamme, nomenclature et
- * fichiers, via QuoteLineCopier), documents du devis et estimation projet.
+ * Copie d'un devis entier — en-tête (catégorie d'affaire comprise), lignes (avec
+ * gamme, nomenclature et fichiers, via QuoteLineCopier), documents du devis et
+ * estimation projet.
  *
  * Sert à trois usages : dupliquer un devis, enregistrer un devis comme trame,
  * et démarrer un devis depuis une trame.
@@ -94,7 +95,14 @@ class QuoteDuplicator
      */
     public function fillFromTemplate(Quotes $template, Quotes $quote): void
     {
-        DB::transaction(fn () => $this->copyContent($template, $quote, resetDates: true));
+        DB::transaction(function () use ($template, $quote) {
+            // La catégorie choisie dans le formulaire (ou reprise de l'opportunité) prime.
+            if ($quote->affair_category_id === null && $template->affair_category_id !== null) {
+                $quote->update(['affair_category_id' => $template->affair_category_id]);
+            }
+
+            $this->copyContent($template, $quote, resetDates: true);
+        });
     }
 
     private function copyContent(Quotes $source, Quotes $target, bool $resetDates): void

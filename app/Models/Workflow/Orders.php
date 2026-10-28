@@ -61,6 +61,7 @@ class Orders extends Model
                             'n2p_last_push_status',
                             'n2p_last_push_error',
                             'n2p_last_status_event_at',
+                            'affair_category_id',
                         ];
     // NOTE: 'id' removed from fillable (was present before) — mass-assigning PK is always wrong.
 
@@ -70,6 +71,19 @@ class Orders extends Model
         'n2p_last_push_at' => 'datetime',
         'n2p_last_status_event_at' => 'datetime',
     ];
+
+    /**
+     * Une commande issue d'un devis reprend sa catégorie d'affaire, quel que
+     * soit le chemin (conversion, proforma, import) : tous passent par Orders::create.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (self $order) {
+            if ($order->affair_category_id === null && $order->quotes_id) {
+                $order->affair_category_id = Quotes::withTemplates()->whereKey($order->quotes_id)->value('affair_category_id');
+            }
+        });
+    }
 
     public function setOriginal($key, $value = null): self
     {
@@ -140,6 +154,11 @@ class Orders extends Model
     public function Quote()
     {
         return $this->belongsTo(Quotes::class, 'quotes_id');
+    }
+
+    public function affairCategory()
+    {
+        return $this->belongsTo(AffairCategory::class, 'affair_category_id');
     }
 
     public function preOrder()
@@ -351,7 +370,8 @@ class Orders extends Model
                                                 'review_decision',
                                                 'change_requested_by',
                                                 'change_reason',
-                                                'change_approved_at']);
+                                                'change_approved_at',
+                                                'affair_category_id']);
         // Chain fluent methods for configuration options
     }
 }

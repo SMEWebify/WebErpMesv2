@@ -53,6 +53,7 @@ class Quotes extends Model
                             'change_reason',
                             'change_approved_at',
                             'is_template',
+                            'affair_category_id',
                         ];
 
     protected $casts = [
@@ -72,6 +73,14 @@ class Quotes extends Model
     {
         static::addGlobalScope(self::TEMPLATE_SCOPE, function (Builder $query) {
             $query->where($query->qualifyColumn('is_template'), false);
+        });
+
+        // Un devis créé depuis une opportunité reprend sa catégorie d'affaire,
+        // quel que soit le chemin de création (fiche opportunité, API, import).
+        static::creating(function (self $quote) {
+            if ($quote->affair_category_id === null && $quote->opportunities_id) {
+                $quote->affair_category_id = Opportunities::whereKey($quote->opportunities_id)->value('affair_category_id');
+            }
         });
     }
 
@@ -187,6 +196,11 @@ class Quotes extends Model
         return $this->belongsTo(Opportunities::class, 'opportunities_id');
     }
 
+    public function affairCategory()
+    {
+        return $this->belongsTo(AffairCategory::class, 'affair_category_id');
+    }
+
     // Relationship with the Orders associated with the Quote
     public function Orders()
     {
@@ -270,7 +284,8 @@ class Quotes extends Model
                                                 'review_decision',
                                                 'change_requested_by',
                                                 'change_reason',
-                                                'change_approved_at', ]);
+                                                'change_approved_at',
+                                                'affair_category_id', ]);
         // Chain fluent methods for configuration options
     }
 }

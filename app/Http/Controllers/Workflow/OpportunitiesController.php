@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
+use App\Models\Workflow\AffairCategory;
 use App\Notifications\QuoteNotification;
 use App\Services\OpportunitiesKPIService;
 use App\Models\Accounting\AccountingDelivery;
@@ -103,6 +104,7 @@ class OpportunitiesController extends Controller
         $sortField = $request->get('sort', 'created_at');
         $sortAsc   = $request->boolean('asc', false);
         $companyId = $request->get('company_id');
+        $category  = (int) $request->get('affair_category_id');
 
         $allowed = ['label', 'budget', 'probality', 'statu', 'created_at', 'companie'];
         if (!in_array($sortField, $allowed)) {
@@ -110,10 +112,11 @@ class OpportunitiesController extends Controller
         }
 
         $dir   = $sortAsc ? 'asc' : 'desc';
-        $query = Opportunities::with(['companie:id,label,code', 'UserManagement:id,name'])
+        $query = Opportunities::with(['companie:id,label,code', 'UserManagement:id,name', 'affairCategory:id,code,label'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
-            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId))
+            ->when($category, fn ($q) => $q->where('affair_category_id', $category));
 
         match ($sortField) {
             'companie' => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = opportunities.companies_id) {$dir}"),
@@ -133,6 +136,7 @@ class OpportunitiesController extends Controller
                 'created_at' => $o->created_at?->format('d/m/Y'),
                 'companie'   => $o->companie   ? ['id' => $o->companie->id,   'label' => $o->companie->label] : null,
                 'user'       => $o->UserManagement ? ['id' => $o->UserManagement->id, 'name' => $o->UserManagement->name] : null,
+                'affair_category' => $o->affairCategory ? ['id' => $o->affairCategory->id, 'code' => $o->affairCategory->code, 'label' => $o->affairCategory->label] : null,
                 'url'        => route('opportunities.show', ['id' => $o->id]),
             ]),
             'meta' => [
@@ -141,6 +145,7 @@ class OpportunitiesController extends Controller
                 'current_page' => $items->currentPage(),
                 'last_page'    => $items->lastPage(),
             ],
+            'affair_categories' => AffairCategory::forFilter(),
         ]);
     }
 
@@ -182,6 +187,7 @@ class OpportunitiesController extends Controller
             'budget'                 => 'required|numeric|min:0',
             'probality'              => 'required|integer|min:0|max:100',
             'comment'                => 'nullable|string',
+            'affair_category_id'     => 'nullable|integer|exists:affair_categories,id',
         ]);
 
         $opportunity = Opportunities::create(array_merge($validated, ['uuid' => Str::uuid()]));
@@ -200,6 +206,7 @@ class OpportunitiesController extends Controller
                 'code'  => $c->code,
             ]),
             'users' => User::select('id', 'name')->get(),
+            'affair_categories' => AffairCategory::choices(),
         ]);
     }
 

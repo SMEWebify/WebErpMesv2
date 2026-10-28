@@ -10,6 +10,25 @@ return [
     'open' => 'Ouvrir',
     'none' => 'Aucun',
 
+    'category' => [
+        'label' => 'Catégorie d\'affaire',
+        'plural' => 'Catégories d\'affaire',
+        'none' => 'Aucune catégorie',
+        'all' => 'Toutes les catégories',
+        'inactive' => 'inactive',
+        'info' => 'Classe les affaires (débitmétrie, pyrométrie, mécanique…). La catégorie se choisit sur l\'opportunité et passe d\'elle-même au devis créé depuis elle, puis à la commande issue du devis. Une catégorie déjà utilisée ne se supprime pas : désactivée, elle n\'est plus proposée mais reste affichée sur les documents qui la portent.',
+        'new' => 'Nouvelle catégorie',
+        'edit' => 'Modifier :label',
+        'code' => 'Code',
+        'order' => 'Ordre',
+        'active' => 'Active',
+        'usage' => 'Utilisation',
+        'usage_detail' => ':opportunities opportunité(s), :quotes devis, :orders commande(s)',
+        'created' => 'Catégorie d\'affaire créée.',
+        'updated' => 'Catégorie d\'affaire mise à jour.',
+        'code_locked' => 'Le code ne se modifie pas.',
+    ],
+
     'stage_label' => 'Étape',
     'stages' => [
         'visit' => 'Visite',
