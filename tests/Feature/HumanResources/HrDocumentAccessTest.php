@@ -118,6 +118,30 @@ class HrDocumentAccessTest extends TestCase
     }
 
     /** @test */
+    public function the_documents_listing_only_shows_employee_folders_to_their_owner_and_hr()
+    {
+        $this->withoutVite();
+
+        $employee = User::factory()->create();
+        $colleague = User::factory()->create();
+        $hr = User::factory()->create();
+        $hr->givePermissionTo('human-resources-menu');
+
+        $fileId = $this->attachDocumentTo($employee, $hr);
+
+        $listedFor = fn (User $user) => $this->actingAs($user)
+            ->get(route('documents.index'))
+            ->assertOk()
+            ->viewData('documents')
+            ->pluck('id')
+            ->all();
+
+        $this->assertNotContains($fileId, $listedFor($colleague));
+        $this->assertContains($fileId, $listedFor($employee));
+        $this->assertContains($fileId, $listedFor($hr));
+    }
+
+    /** @test */
     public function human_resources_can_read_any_employee_folder()
     {
         $employee = User::factory()->create();

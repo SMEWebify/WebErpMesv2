@@ -1,6 +1,57 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import FileViewer from './files/FileViewer.jsx';
+
+function PreviewModal({ doc, translations, onClose }) {
+    const viewerTrans = translations.viewer ?? {};
+    const t = useCallback((key) => viewerTrans[key] ?? key, [viewerTrans]);
+
+    useEffect(() => {
+        const onKey = (event) => { if (event.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [onClose]);
+
+    return (
+        <>
+            <div className="modal-backdrop fade show" style={{ zIndex: 1040 }} onClick={onClose} />
+            <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1050 }} onClick={onClose}>
+                <div className="modal-dialog modal-xl modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title text-truncate">
+                                <i className={`${doc.icon} me-2`} />
+                                {doc.name}
+                            </h5>
+                            <button type="button" className="btn-close" aria-label={translations.close} onClick={onClose} />
+                        </div>
+                        <div className="modal-body">
+                            <FileViewer file={doc} t={t} />
+                        </div>
+                        <div className="modal-footer">
+                            <a className="btn btn-outline-secondary" href={doc.view_url} target="_blank" rel="noopener noreferrer">
+                                <i className="fas fa-up-right-from-square me-1" />
+                                {t('open_new_tab')}
+                            </a>
+                            <a className="btn btn-primary" href={doc.download_url}>
+                                <i className="fas fa-download me-1" />
+                                {t('download')}
+                            </a>
+                            <button type="button" className="btn btn-secondary" onClick={onClose}>
+                                {translations.close}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
 
 export default function DocumentTable({ initialDocuments, translations }) {
+    const [previewDoc, setPreviewDoc] = useState(null);
+    const closePreview = useCallback(() => setPreviewDoc(null), []);
+    const viewerT = (key) => translations.viewer?.[key] ?? key;
+
     const documents = useMemo(
         () =>
             initialDocuments.map((doc) => ({
@@ -29,6 +80,7 @@ export default function DocumentTable({ initialDocuments, translations }) {
         { key: 'hashtags', label: translations.hashtags, sortable: true },
         { key: 'uploaded_by', label: translations.uploaded_by, sortable: true },
         { key: 'linked_entities', label: translations.linked_entities, sortable: false },
+        { key: 'actions', label: translations.actions, sortable: false },
     ]);
 
     const [sortState, setSortState] = useState({ key: 'created_at', direction: 'desc' });
@@ -56,7 +108,12 @@ export default function DocumentTable({ initialDocuments, translations }) {
             if (filters.uploader && doc.uploaded_by !== filters.uploader) return false;
 
             if (filters.search) {
-                const haystack = [doc.name, doc.original_file_name, doc.comment]
+                const haystack = [
+                    doc.name,
+                    doc.original_file_name,
+                    doc.comment,
+                    ...doc.linked_entities.map((entity) => entity.label),
+                ]
                     .filter(Boolean)
                     .join(' ')
                     .toLowerCase();
@@ -156,7 +213,18 @@ export default function DocumentTable({ initialDocuments, translations }) {
             case 'name':
                 return (
                     <>
-                        <span className="fw-semibold">{doc.name}</span>
+                        <a
+                            href={doc.is_viewable ? doc.view_url : doc.download_url}
+                            className="fw-semibold"
+                            onClick={(event) => {
+                                if (!doc.is_viewable) return;
+                                event.preventDefault();
+                                setPreviewDoc(doc);
+                            }}
+                        >
+                            <i className={`${doc.icon || 'fas fa-file'} me-2 text-muted`} />
+                            {doc.name}
+                        </a>
                         {doc.original_file_name && doc.original_file_name !== doc.name && (
                             <small className="d-block text-muted">{doc.original_file_name}</small>
                         )}
@@ -204,15 +272,51 @@ export default function DocumentTable({ initialDocuments, translations }) {
                     >
                         {doc.linked_entities.length ? (
                             doc.linked_entities.map((entity, i) => (
-                                <li key={`${doc.id}-entity-${i}`}>
+                                <li key={`${doc.id}-entity-${i}`} className="text-nowrap">
                                     <i className="fas fa-link me-2 text-muted"></i>
-                                    {entity}
+                                    <span className="text-muted">{entity.type} : </span>
+                                    {entity.url ? (
+                                        <a href={entity.url}>{entity.label}</a>
+                                    ) : (
+                                        entity.label
+                                    )}
                                 </li>
                             ))
                         ) : (
                             <li className="text-muted">—</li>
                         )}
                     </ul>
+                );
+            case 'actions':
+                return (
+                    <div className="btn-group btn-group-sm text-nowrap">
+                        {doc.is_viewable && (
+                            <button
+                                type="button"
+                                className="btn btn-outline-primary"
+                                title={translations.preview}
+                                onClick={() => setPreviewDoc(doc)}
+                            >
+                                <i className="fas fa-eye" />
+                            </button>
+                        )}
+                        <a
+                            className="btn btn-outline-secondary"
+                            href={doc.view_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={viewerT('open_new_tab')}
+                        >
+                            <i className="fas fa-up-right-from-square" />
+                        </a>
+                        <a
+                            className="btn btn-outline-secondary"
+                            href={doc.download_url}
+                            title={viewerT('download')}
+                        >
+                            <i className="fas fa-download" />
+                        </a>
+                    </div>
                 );
             default:
                 return doc[column.key] ?? '—';
@@ -405,6 +509,10 @@ export default function DocumentTable({ initialDocuments, translations }) {
                     </tbody>
                 </table>
             </div>
+
+            {previewDoc && (
+                <PreviewModal doc={previewDoc} translations={translations} onClose={closePreview} />
+            )}
         </div>
     );
 }

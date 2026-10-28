@@ -70,6 +70,53 @@ class FileConfidentiality
         return $owners === [(int) $user->id];
     }
 
+    /**
+     * Files this user may not see, for listings that span the whole GED.
+     *
+     * Same rule as allowsFile(), resolved for every confidential file at once
+     * (one query per confidential class) rather than file by file.
+     *
+     * @return array<int, int>
+     */
+    public static function hiddenFileIds(User $user): array
+    {
+        if (self::isHr($user)) {
+            return [];
+        }
+
+        $attachments = DB::table('fileables')
+            ->whereIn('fileable_type', FileableRegistry::confidentialClasses())
+            ->get(['file_id', 'fileable_type', 'fileable_id']);
+
+        if ($attachments->isEmpty()) {
+            return [];
+        }
+
+        $ownerOf = [];
+
+        foreach ($attachments->where('fileable_type', '!=', User::class)->groupBy('fileable_type') as $class => $rows) {
+            $ownerOf[$class] = $class::query()
+                ->whereIn('id', $rows->pluck('fileable_id')->unique()->all())
+                ->pluck('user_id', 'id')
+                ->all();
+        }
+
+        $owners = [];
+
+        foreach ($attachments as $attachment) {
+            $owners[$attachment->file_id][] = $attachment->fileable_type === User::class
+                ? (int) $attachment->fileable_id
+                : (int) ($ownerOf[$attachment->fileable_type][$attachment->fileable_id] ?? 0);
+        }
+
+        return collect($owners)
+            ->reject(fn (array $ids) => array_values(array_unique($ids)) === [(int) $user->id])
+            ->keys()
+            ->map(static fn ($id) => (int) $id)
+            ->values()
+            ->all();
+    }
+
     public static function isHr(User $user): bool
     {
         return $user->hasRole('Admin') || $user->can(self::HR_PERMISSION);
