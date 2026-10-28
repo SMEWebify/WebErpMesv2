@@ -518,6 +518,24 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
+## Motifs de perte (devis, opportunités)
+
+Référentiel `loss_reasons` (écran Méthodes → Motifs de perte, `methods-menu` ; 5 motifs
+insérés par la migration, désactivables, jamais supprimés) ; colonnes nullable
+`loss_reason_id` + `loss_comment` sur `quotes` et `opportunities`.
+- **Règle** (`App\Services\Workflow\LossReasonRecorder`) : motif exigé quand le document
+  **entre** en perdu (devis 4, opportunité 5) et qu'au moins un motif est actif. Un document
+  déjà perdu reste valide sans motif ; le renseigner après coup (`*.json.loss-reason`) est
+  facultatif. Posée sur `quotes.json.statu`, `opportunities.json.statu`, `kanban-move`.
+- Refus = 422 portant `loss_reason` (config de la fenêtre) : `resources/js/lib/lossReason.jsx`
+  (`sendWithLossReason`) ouvre la fenêtre et renvoie la requête. `ArrowSteps` reçoit la config
+  d'avance (`<x-document-header :loss>`) et affiche le motif d'un document perdu.
+- Devis perdu → opportunité perdue (`UpdateOpportunityStatus`) avec le motif du devis si
+  l'opportunité n'en a pas.
+- Indicateur « pertes commerciales » : `QuoteLossStats` (3 requêtes, trames exclues, devis sans
+  motif comptés « non renseigné »), carte du tableau de bord de l'index des devis.
+- Tests : `tests/Feature/LossReasonTest.php`, `resources/js/tests/components/lossReason.test.jsx`.
+
 ## Encours client et relances de factures
 
 Un seul calcul sert aux deux : `App\Services\Receivables\ReceivablesService`.

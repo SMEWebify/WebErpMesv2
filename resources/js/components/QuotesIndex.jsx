@@ -4,6 +4,7 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { csrfToken, apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
+import QuoteLossStats from './quotes/QuoteLossStats.jsx';
 import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
 
 // ---------------------------------------------------------------------------
@@ -280,12 +281,12 @@ function QuotesByUser({ quotesByUser, trans }) {
 // Dashboard Tab
 // ---------------------------------------------------------------------------
 
-function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
+function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, endpoints, trans }) {
     return (
         <div>
             <KPICards kpi={kpi} topCustomers={topCustomers} trans={trans} />
             <div className="row">
-                <div className="col-md-3">
+                <div className="col-md-3 mb-3">
                     <QuoteRateWidget
                         data={chartData.quotesDataRate}
                         trans={{ ...trans, quote_rate_title: trans.statistiques }}
@@ -312,6 +313,12 @@ function DashboardTab({ kpi, chartData, topCustomers, quotesByUser, trans }) {
                     </div>
                 </div>
             </div>
+            <QuoteLossStats
+                endpoint={endpoints?.lossStats}
+                trans={trans.losses ?? {}}
+                currency={trans.currency}
+                locale={trans.locale}
+            />
         </div>
     );
 }
@@ -1147,6 +1154,7 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
                         chartData={chartData}
                         topCustomers={topCustomers}
                         quotesByUser={quotesByUser}
+                        endpoints={endpoints}
                         trans={trans}
                     />
                 )}

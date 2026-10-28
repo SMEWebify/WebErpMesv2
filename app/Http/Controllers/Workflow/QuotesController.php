@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\AffairCategory;
+use App\Services\Quotes\QuoteLossStats;
+use App\Services\Workflow\LossReasonRecorder;
 use App\Events\QuoteStatusChanged;
 use App\Models\Planning\Task;
 use App\Models\Methods\MethodsServices;
@@ -746,11 +748,14 @@ class QuotesController extends Controller
         ], 201);
     }
 
-    public function changeStatusJson(Request $request, $id)
+    public function changeStatusJson(Request $request, $id, LossReasonRecorder $losses)
     {
+        $statu = (int) $request->input('statu');
+        // Hors du try : un motif de perte manquant est une 422, pas une erreur serveur.
+        $lossFields = $losses->fieldsForStatusChange($request, Quotes::findOrFail($id), $statu, LossReasonRecorder::KIND_QUOTE);
+
         try {
-            $statu = (int) $request->input('statu');
-            Quotes::where('id', $id)->update(['statu' => $statu]);
+            Quotes::where('id', $id)->update(['statu' => $statu] + $lossFields);
             QuoteLines::where('quotes_id', $id)
                 ->where('statu', '<', $statu)
                 ->update(['statu' => $statu]);
@@ -760,5 +765,21 @@ class QuotesController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed'], 500);
         }
+    }
+
+    /** Motif de perte d'un devis déjà perdu (saisie après coup, ou correction). */
+    public function lossReasonJson(Request $request, int $id, LossReasonRecorder $losses)
+    {
+        $losses->record($request, Quotes::findOrFail($id), LossReasonRecorder::KIND_QUOTE);
+
+        return response()->json(['success' => true]);
+    }
+
+    /** Pertes commerciales par motif et par catégorie d'affaire (tableau de bord des devis). */
+    public function lossStatsJson(Request $request, QuoteLossStats $stats)
+    {
+        $period = in_array($request->get('period'), QuoteLossStats::PERIODS, true) ? $request->get('period') : '12m';
+
+        return response()->json($stats->compute($period));
     }
 }

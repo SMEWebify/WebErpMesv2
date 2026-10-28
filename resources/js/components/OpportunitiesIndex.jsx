@@ -3,6 +3,7 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
 import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
+import { sendWithLossReason } from '../lib/lossReason.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -360,11 +361,14 @@ function KanbanBoard({ endpoints, trans, currency, locale }) {
         setItems(prev => prev.map(i => i.id === dragItem.id ? { ...i, statu: statusId } : i));
         setDragItem(null);
         setDragOver(null);
+        const restore = () => setItems(prev => prev.map(i => i.id === dragItem.id ? { ...i, statu: dragItem.statu } : i));
         try {
+            // Vers « Perdue » : le serveur demande le motif (422), la fenêtre s'ouvre et la requête repart.
             const url = endpoints.kanbanMove.replace('__ID__', dragItem.id);
-            await apiFetch(url, { method: 'PUT', body: JSON.stringify({ statu: statusId }) });
+            const result = await sendWithLossReason(url, { statu: statusId }, { method: 'PUT' });
+            if (!result.ok) restore();
         } catch {
-            setItems(prev => prev.map(i => i.id === dragItem.id ? { ...i, statu: dragItem.statu } : i));
+            restore();
         }
     };
 

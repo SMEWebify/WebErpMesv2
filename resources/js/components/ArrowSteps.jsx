@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { askLossReason, sendWithLossReason } from '../lib/lossReason.jsx';
 
 const STYLE_ID = 'arrow-steps-react-v1';
 
@@ -100,7 +101,13 @@ function injectStyles() {
     document.head.appendChild(el);
 }
 
-export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl }) {
+/**
+ * `loss` (facultatif) : configuration de la fenêtre « motif de perte »
+ * (LossReasonRecorder::dialog() + `endpoint` de saisie après coup). Le passage
+ * à l'étape perdue ouvre la fenêtre avant d'envoyer le statut ; une fois perdu,
+ * le motif s'affiche sous les flèches avec un bouton pour le renseigner ou le corriger.
+ */
+export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl, loss = null }) {
     const [busy, setBusy]   = useState(false);
     const [error, setError] = useState('');
 
@@ -118,31 +125,55 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
 
     const currentIndex = steps.findIndex(s => s.value === currentStatu);
 
+    const hasLossChoices = !!loss && (loss.reasons?.length ?? 0) > 0;
+
     const go = async (value) => {
         if (busy || value === currentStatu) return;
         setBusy(true);
         setError('');
+
+        let payload = { statu: value };
+        if (hasLossChoices && value === loss.status) {
+            const extra = await askLossReason(loss);
+            if (!extra) { setBusy(false); return; }
+            payload = { ...payload, ...extra };
+        }
+
         try {
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ statu: value }),
-            });
-            if (res.ok) {
+            // Sans configuration posée sur la page, une 422 « motif manquant » ouvre quand même la fenêtre.
+            const result = await sendWithLossReason(endpoint, payload);
+            if (result.ok) {
                 window.location.href = redirectUrl;
                 return;
             }
-            const data = await res.json().catch(() => ({}));
-            setError(data.error ?? data.message ?? 'Erreur lors du changement de statut.');
+            if (!result.cancelled) {
+                setError(result.data.error ?? result.data.message ?? 'Erreur lors du changement de statut.');
+            }
         } catch {
             setError('Erreur lors du changement de statut.');
         }
         setBusy(false);
     };
+
+    const editLoss = async () => {
+        const extra = await askLossReason(loss);
+        if (!extra) return;
+        setBusy(true);
+        setError('');
+        try {
+            const result = await sendWithLossReason(loss.endpoint, extra);
+            if (result.ok) {
+                window.location.href = redirectUrl;
+                return;
+            }
+            setError(result.data.message ?? loss.texts?.error ?? '');
+        } catch {
+            setError(loss.texts?.error ?? '');
+        }
+        setBusy(false);
+    };
+
+    const showLoss = !!loss && currentStatu === loss.status && (hasLossChoices || !!loss.current?.label);
 
     return (
         <div className="as-track" ref={trackRef}>
@@ -168,6 +199,18 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl 
                     );
                 })}
             </div>
+            {showLoss && (
+                <div className="small mt-1 text-body-secondary">
+                    <i className="fas fa-heart-broken me-1 text-danger" />
+                    {loss.texts?.label} : <strong className="text-body">{loss.current?.label ?? loss.texts?.none}</strong>
+                    {loss.current?.loss_comment && <span className="ms-1">— {loss.current.loss_comment}</span>}
+                    {hasLossChoices && (
+                        <button type="button" className="btn btn-link btn-sm p-0 ms-2 align-baseline" onClick={editLoss} disabled={busy}>
+                            {loss.current?.loss_reason_id ? loss.texts?.edit : loss.texts?.fill}
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

@@ -82,6 +82,7 @@ return [
     'methods_standard_bom_trans_key'           => 'Nomenclature standard',
     'operation_transition_delays_trans_key'    => 'Délais inter-opérations',
     'affair_categories_trans_key'              => 'Catégories d\'affaire',
+    'loss_reasons_trans_key'                   => 'Motifs de perte',
     'accounting_trans_key'                     => 'Comptabilité',
     'payment_conditions_trans_key'             => 'Conditions de paiement',
     'payment_methods_trans_key'                => 'Méthode de paiement',

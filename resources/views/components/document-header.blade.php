@@ -8,6 +8,8 @@
     'statu'    => null,
     'endpoint' => null,
     'redirect' => null,
+    // Motif de perte (LossReasonRecorder::dialog() + endpoint) : fenêtre ouverte au passage en perdu.
+    'loss'     => null,
 ])
 
 @once
@@ -78,7 +80,8 @@
              data-steps="{{ is_string($steps) ? $steps : json_encode($steps) }}"
              data-statu="{{ $statu }}"
              data-endpoint="{{ $endpoint }}"
-             data-redirect="{{ $redirect }}"></div>
+             data-redirect="{{ $redirect }}"
+             @if($loss) data-loss="{{ json_encode($loss) }}" @endif></div>
     @else
         <div class="doc-header__steps"></div>
     @endif

@@ -33,6 +33,7 @@
     'storeAddress'   => route('quotes.json.address.store'),
     'storeContact'   => route('quotes.json.contact.store'),
     'templates'      => route('quotes.json.templates'),
+    'lossStats'      => route('quotes.json.loss-stats'),
   ];
 
   $reactTrans = [
@@ -110,6 +111,7 @@
     'all_affair_categories'    => __('affairs.category.all'),
     'no_affair_category'       => __('affairs.category.none'),
     'affair_category_inactive' => __('affairs.category.inactive'),
+    'losses'     => __('losses.stats') + ['error' => __('losses.dialog.error')],
     'currency'   => app('Factory')->curency ?? 'EUR',
     'locale'     => str_replace('_', '-', config('app.locale')),
   ];

@@ -16,6 +16,8 @@ $oppSteps = json_encode([
     ['value' => 5, 'label' => __('general_content.closed_lost_trans_key')],
     ['value' => 6, 'label' => __('general_content.informational_trans_key')],
 ]);
+$lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opportunity, 'opportunity')
+    + ['endpoint' => route('opportunities.json.loss-reason', $Opportunity->id)];
 @endphp
 
 @section('content_header')
@@ -23,7 +25,8 @@ $oppSteps = json_encode([
                        previous="{{ $previousUrl }}" list="{{ route('opportunities') }}" next="{{ $nextUrl }}"
                        :steps="$oppSteps" statu="{{ $Opportunity->statu }}"
                        endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"
-                       redirect="{{ route('opportunities.show', $Opportunity->id) }}"/>
+                       redirect="{{ route('opportunities.show', $Opportunity->id) }}"
+                       :loss="$lossDialog"/>
 @stop
 
 @section('right-sidebar')

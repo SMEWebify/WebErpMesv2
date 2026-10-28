@@ -20,6 +20,7 @@ use App\Services\NotificationService;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\AffairCategory;
+use App\Services\Workflow\LossReasonRecorder;
 use App\Notifications\QuoteNotification;
 use App\Services\OpportunitiesKPIService;
 use App\Models\Accounting\AccountingDelivery;
@@ -165,12 +166,13 @@ class OpportunitiesController extends Controller
         ]));
     }
 
-    public function kanbanMoveJson(Request $request, int $id)
+    public function kanbanMoveJson(Request $request, int $id, LossReasonRecorder $losses)
     {
         abort_unless(auth()->check(), 403);
         $validated   = $request->validate(['statu' => 'required|integer|between:1,6']);
         $opportunity = Opportunities::findOrFail($id);
-        $opportunity->update(['statu' => $validated['statu']]);
+        $lossFields  = $losses->fieldsForStatusChange($request, $opportunity, (int) $validated['statu'], LossReasonRecorder::KIND_OPPORTUNITY);
+        $opportunity->update(['statu' => $validated['statu']] + $lossFields);
         return response()->json(['ok' => true]);
     }
 
@@ -487,14 +489,26 @@ class OpportunitiesController extends Controller
                         ->with('success', 'Successfully created new quote');
     }
 
-    public function changeStatusJson(Request $request, $id)
+    public function changeStatusJson(Request $request, $id, LossReasonRecorder $losses)
     {
+        $statu = (int) $request->input('statu');
+        // Hors du try : un motif de perte manquant est une 422, pas une erreur serveur.
+        $lossFields = $losses->fieldsForStatusChange($request, Opportunities::findOrFail($id), $statu, LossReasonRecorder::KIND_OPPORTUNITY);
+
         try {
-            Opportunities::where('id', $id)->update(['statu' => (int) $request->input('statu')]);
+            Opportunities::where('id', $id)->update(['statu' => $statu] + $lossFields);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed'], 500);
         }
+    }
+
+    /** Motif de perte d'une opportunité déjà perdue (saisie après coup, ou correction). */
+    public function lossReasonJson(Request $request, int $id, LossReasonRecorder $losses)
+    {
+        $losses->record($request, Opportunities::findOrFail($id), LossReasonRecorder::KIND_OPPORTUNITY);
+
+        return response()->json(['success' => true]);
     }
 }
 

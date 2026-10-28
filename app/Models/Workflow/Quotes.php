@@ -54,6 +54,8 @@ class Quotes extends Model
                             'change_approved_at',
                             'is_template',
                             'affair_category_id',
+                            'loss_reason_id',
+                            'loss_comment',
                         ];
 
     protected $casts = [
@@ -201,6 +203,11 @@ class Quotes extends Model
         return $this->belongsTo(AffairCategory::class, 'affair_category_id');
     }
 
+    public function lossReason()
+    {
+        return $this->belongsTo(LossReason::class, 'loss_reason_id');
+    }
+
     // Relationship with the Orders associated with the Quote
     public function Orders()
     {
@@ -285,7 +292,9 @@ class Quotes extends Model
                                                 'change_requested_by',
                                                 'change_reason',
                                                 'change_approved_at',
-                                                'affair_category_id', ]);
+                                                'affair_category_id',
+                                                'loss_reason_id',
+                                                'loss_comment', ]);
         // Chain fluent methods for configuration options
     }
 }

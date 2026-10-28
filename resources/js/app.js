@@ -1675,6 +1675,7 @@ async function mountArrowSteps() {
                 currentStatu: parseInt(el.dataset.statu ?? '0', 10),
                 endpoint:     el.dataset.endpoint ?? '',
                 redirectUrl:  el.dataset.redirect  ?? '',
+                loss:         parse('loss'),
             })
         );
     });

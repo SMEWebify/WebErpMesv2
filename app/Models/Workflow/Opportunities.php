@@ -37,6 +37,8 @@ class Opportunities extends Model
         'probality',
         'comment',
         'affair_category_id',
+        'loss_reason_id',
+        'loss_comment',
     ];
 
     // Only log changes
@@ -81,6 +83,11 @@ class Opportunities extends Model
     public function affairCategory()
     {
         return $this->belongsTo(AffairCategory::class, 'affair_category_id');
+    }
+
+    public function lossReason()
+    {
+        return $this->belongsTo(LossReason::class, 'loss_reason_id');
     }
 
     // Relationship with the lead associated with the Opportunities
@@ -146,7 +153,9 @@ class Opportunities extends Model
                                                 'statu',
                                                 'probality',
                                                 'comment',
-                                                'affair_category_id',]);
+                                                'affair_category_id',
+                                                'loss_reason_id',
+                                                'loss_comment',]);
         // Chain fluent methods for configuration options
     }
 }

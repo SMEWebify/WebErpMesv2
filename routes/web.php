@@ -305,6 +305,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
+        Route::post('/{id}/json/loss-reason', 'App\Http\Controllers\Workflow\OpportunitiesController@lossReasonJson')->name('opportunities.json.loss-reason');
         Route::get('/{id}/json/summary', 'App\Http\Controllers\Workflow\OpportunitySummaryController@summary')->name('opportunities.json.summary');
         Route::get('/{id}/json/timeline', 'App\Http\Controllers\Workflow\OpportunitySummaryController@timeline')->name('opportunities.json.timeline');
         Route::get('/{id}/visit', 'App\Http\Controllers\Workflow\OpportunityVisitsController@show')->name('opportunities.visit');
@@ -338,11 +339,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address', 'App\Http\Controllers\Workflow\QuotesController@storeAddressJson')->name('quotes.json.address.store');
         Route::post('/json/contact', 'App\Http\Controllers\Workflow\QuotesController@storeContactJson')->name('quotes.json.contact.store');
         Route::get('/json/templates', 'App\Http\Controllers\Workflow\QuotesController@templatesJson')->name('quotes.json.templates');
+        Route::get('/json/loss-stats', 'App\Http\Controllers\Workflow\QuotesController@lossStatsJson')->name('quotes.json.loss-stats');
         Route::post('/{id}/duplicate', 'App\Http\Controllers\Workflow\QuotesController@duplicate')->name('quotes.duplicate');
         Route::post('/{id}/save-as-template', 'App\Http\Controllers\Workflow\QuotesController@saveAsTemplate')->name('quotes.save-template');
         Route::delete('/{id}/template', 'App\Http\Controllers\Workflow\QuotesController@destroyTemplate')->name('quotes.template.destroy');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\QuotesController@changeStatusJson')->name('quotes.json.statu');
+        Route::post('/{id}/json/loss-reason', 'App\Http\Controllers\Workflow\QuotesController@lossReasonJson')->name('quotes.json.loss-reason');
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
@@ -1427,6 +1430,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Methods\AffairCategoriesController@index')->name('methods.affair-category');
             Route::post('/create', 'App\Http\Controllers\Methods\AffairCategoriesController@store')->name('methods.affair-category.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\AffairCategoriesController@update')->name('methods.affair-category.update');
+        });
+
+        // Motifs de perte (devis et opportunités perdus)
+        Route::group(['prefix' => 'loss-reason', 'middleware' => ['permission:methods-menu']], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\LossReasonsController@index')->name('methods.loss-reason');
+            Route::post('/create', 'App\Http\Controllers\Methods\LossReasonsController@store')->name('methods.loss-reason.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Methods\LossReasonsController@update')->name('methods.loss-reason.update');
         });
     });
 

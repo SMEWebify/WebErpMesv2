@@ -11,6 +11,8 @@ $arrowSteps = json_encode([
     ['value' => 5, 'label' => __('general_content.closed_trans_key')],
     ['value' => 6, 'label' => __('general_content.obsolete_trans_key')],
 ]);
+$lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quote, 'quote')
+    + ['endpoint' => route('quotes.json.loss-reason', $Quote->id)];
 @endphp
 
 @section('content_header')
@@ -24,7 +26,8 @@ $arrowSteps = json_encode([
                        previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"
                        :steps="$arrowSteps" statu="{{ $Quote->statu }}"
                        endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
-                       redirect="{{ route('quotes.show', $Quote->id) }}"/>
+                       redirect="{{ route('quotes.show', $Quote->id) }}"
+                       :loss="$lossDialog"/>
     @endif
 @stop
 

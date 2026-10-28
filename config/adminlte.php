@@ -1255,6 +1255,11 @@ return [
                     'url'  => 'methods/affair-category',
                     'icon_color' => 'indigo',
                 ],
+                [
+                    'text' => 'loss_reasons_trans_key',
+                    'url'  => 'methods/loss-reason',
+                    'icon_color' => 'red',
+                ],
             ],
         ],
         [
