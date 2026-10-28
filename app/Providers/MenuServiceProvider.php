@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Integrations\PdpIncomingInvoice;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
@@ -36,12 +37,16 @@ class MenuServiceProvider extends ServiceProvider
                 return DeliveryLines::whereIn('invoice_status', ['1', '3'])->count();
             });
 
+            // Mêmes règles que les écrans (PurchaseReceiptService / PurchaseInvoiceService) :
+            // avec « <= » le badge comptait aussi les lignes entièrement reçues ou facturées.
             $purchasesWaitingReceiptCount = Cache::remember('menu_purchases_receipt', 60, function () {
-                return PurchaseLines::whereColumn('receipt_qty', '<=', 'qty')->count();
+                return PurchaseLines::whereColumn('receipt_qty', '<', 'qty')->whereHas('purchase')->count();
             });
 
             $purchasesWaitingInvoiceCount = Cache::remember('menu_purchases_invoice', 60, function () {
-                return PurchaseLines::whereColumn('invoiced_qty', '<=', 'qty')->count();
+                return PurchaseReceiptLines::whereHas('purchaseLines', function ($query) {
+                    $query->whereColumn('invoiced_qty', '<', 'qty')->whereHas('purchase');
+                })->count();
             });
 
             $incomingInvoicesCount = Cache::remember('menu_incoming_invoices', 60, function () {
