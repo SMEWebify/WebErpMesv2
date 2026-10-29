@@ -2,6 +2,8 @@
 
 return [
     'history' => 'Historique',
+    'copies' => 'Copies et versions',
+    'copies_button' => 'Copier…',
     'referent' => 'Devis référent',
     'revision_short' => 'Indice :revision',
     'variant_short' => 'Variante : :label',

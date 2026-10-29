@@ -390,71 +390,58 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                   <td><x-pdf-print-menu :route="route('pdf.quote', ['Document' => $Quote->id])" /></td>
                 </tr>
                 @unless($Quote->is_template)
+                {{-- Copies et versions regroupées : dupliquer, nouvel indice, variante, trame. --}}
                 <tr>
-                  <td style="width:50%">
-                    {{ __('general_content.duplicate_quote_trans_key') }}
-                    <div class="small text-muted">{{ __('general_content.duplicate_quote_help_trans_key') }}</div>
-                  </td>
+                  <td style="width:50%">{{ __('quote_revisions.copies') }}</td>
                   <td>
-                    <form method="POST" action="{{ route('quotes.duplicate', ['id' => $Quote->id]) }}">
-                      @csrf
-                      <button type="submit" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-copy me-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-copy me-1"></i>{{ __('quote_revisions.copies_button') }}
                       </button>
-                    </form>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:50%">
-                    {{ __('quote_revisions.new_revision') }}
-                    <div class="small text-muted">{{ __('quote_revisions.new_revision_help') }}</div>
-                  </td>
-                  <td>
-                    @if($NewerRevision)
-                      <div class="small text-muted">
-                        {{ __('quote_revisions.superseded_by') }}
-                        <a href="{{ route('quotes.show', ['id' => $NewerRevision->id]) }}">{{ $NewerRevision->code }}</a>
-                      </div>
-                    @else
-                    <form method="POST" action="{{ route('quotes.revision', ['id' => $Quote->id]) }}"
-                          onsubmit="return confirm(@js(__('quote_revisions.new_revision_confirm')))">
-                      @csrf
-                      <button type="submit" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-code-branch me-1"></i>{{ __('quote_revisions.new_revision') }}
-                      </button>
-                    </form>
-                    @endif
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:50%">
-                    {{ __('quote_revisions.new_variant') }}
-                    <div class="small text-muted">{{ __('quote_revisions.new_variant_help') }}</div>
-                  </td>
-                  <td>
-                    <form method="POST" action="{{ route('quotes.variant', ['id' => $Quote->id]) }}">
-                      @csrf
-                      <input type="text" name="variant_label" class="form-control form-control-sm mb-1" required maxlength="100"
-                             title="{{ __('quote_revisions.variant_label') }}"
-                             placeholder="{{ __('quote_revisions.variant_label') }}">
-                      <button type="submit" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:50%">{{ __('general_content.save_as_template_trans_key') }}</td>
-                  <td>
-                    <form method="POST" action="{{ route('quotes.save-template', ['id' => $Quote->id]) }}">
-                      @csrf
-                      <input type="text" name="template_label" class="form-control form-control-sm mb-1" required maxlength="255"
-                             title="{{ __('general_content.template_label_trans_key') }}"
-                             placeholder="{{ __('general_content.template_label_trans_key') }}" value="{{ $Quote->label }}">
-                      <button type="submit" class="btn btn-sm btn-outline-info">
-                        <i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}
-                      </button>
-                    </form>
+                      <ul class="dropdown-menu dropdown-menu-end" style="width: 19rem;">
+                        <li>
+                          <form method="POST" action="{{ route('quotes.duplicate', ['id' => $Quote->id]) }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-wrap">
+                              <i class="fas fa-copy fa-fw me-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
+                              <div class="small text-body-secondary ms-4">{{ __('general_content.duplicate_quote_help_trans_key') }}</div>
+                            </button>
+                          </form>
+                        </li>
+                        <li>
+                          @if($NewerRevision)
+                            <div class="dropdown-item-text text-wrap text-body-secondary">
+                              <i class="fas fa-code-branch fa-fw me-1"></i>{{ __('quote_revisions.new_revision') }}
+                              <div class="small ms-4">
+                                {{ __('quote_revisions.superseded_by') }}
+                                <a href="{{ route('quotes.show', ['id' => $NewerRevision->id]) }}">{{ $NewerRevision->code }}</a>
+                              </div>
+                            </div>
+                          @else
+                          <form method="POST" action="{{ route('quotes.revision', ['id' => $Quote->id]) }}"
+                                onsubmit="return confirm(@js(__('quote_revisions.new_revision_confirm')))">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-wrap">
+                              <i class="fas fa-code-branch fa-fw me-1"></i>{{ __('quote_revisions.new_revision') }}
+                              <div class="small text-body-secondary ms-4">{{ __('quote_revisions.new_revision_help') }}</div>
+                            </button>
+                          </form>
+                          @endif
+                        </li>
+                        <li>
+                          <button type="button" class="dropdown-item text-wrap" data-bs-toggle="modal" data-bs-target="#quoteVariantModal">
+                            <i class="fas fa-clone fa-fw me-1"></i>{{ __('quote_revisions.new_variant') }}…
+                            <div class="small text-body-secondary ms-4">{{ __('quote_revisions.new_variant_help') }}</div>
+                          </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                          <button type="button" class="dropdown-item text-wrap" data-bs-toggle="modal" data-bs-target="#quoteTemplateModal">
+                            <i class="fas fa-layer-group fa-fw me-1"></i>{{ __('general_content.save_as_template_trans_key') }}…
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                 </tr>
                 @endunless
@@ -489,6 +476,47 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                 @endforelse
               </table>
             </x-adminlte-card>
+            @unless($Quote->is_template)
+            <div class="modal fade" id="quoteVariantModal" tabindex="-1" aria-labelledby="quoteVariantModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <form method="POST" action="{{ route('quotes.variant', ['id' => $Quote->id]) }}" class="modal-content">
+                  @csrf
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="quoteVariantModalLabel"><i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('general_content.close_trans_key') }}"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="small text-body-secondary">{{ __('quote_revisions.new_variant_help') }}</p>
+                    <label for="variant_label" class="form-label">{{ __('quote_revisions.variant_label') }}</label>
+                    <input type="text" name="variant_label" id="variant_label" class="form-control" required maxlength="100">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('general_content.cancel_trans_key') }}</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="modal fade" id="quoteTemplateModal" tabindex="-1" aria-labelledby="quoteTemplateModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <form method="POST" action="{{ route('quotes.save-template', ['id' => $Quote->id]) }}" class="modal-content">
+                  @csrf
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="quoteTemplateModalLabel"><i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('general_content.close_trans_key') }}"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label for="template_label" class="form-label">{{ __('general_content.template_label_trans_key') }}</label>
+                    <input type="text" name="template_label" id="template_label" class="form-control" required maxlength="255" value="{{ $Quote->label }}">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('general_content.cancel_trans_key') }}</button>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            @endunless
             @include('include.email-list', ['mailsList'=> $Quote->emailLogs,])
           </div>
         </div>

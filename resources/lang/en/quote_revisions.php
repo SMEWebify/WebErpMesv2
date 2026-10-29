@@ -2,6 +2,8 @@
 
 return [
     'history' => 'History',
+    'copies' => 'Copies and versions',
+    'copies_button' => 'Copy…',
     'referent' => 'Reference quote',
     'revision_short' => 'Revision :revision',
     'variant_short' => 'Variant: :label',
