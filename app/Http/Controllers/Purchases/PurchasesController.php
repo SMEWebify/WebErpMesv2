@@ -22,6 +22,7 @@ use App\Services\Purchases\SupplierQualification;
 use App\Models\Companies\SupplierQualificationOverride;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\StorePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 
@@ -336,11 +337,18 @@ class PurchasesController extends Controller
      */
     public function storePurchaseOrderFromRFQ(Request $request, $id)
     { 
-        if (!$request->PurchaseQuotationLine) {
+        $PurchasesQuotationData = PurchasesQuotation::findOrFail($id);
+
+        // Only lines of this quotation, in their display order.
+        $quotationLines = PurchaseQuotationLines::where('purchases_quotation_id', $PurchasesQuotationData->id)
+            ->whereIn('id', (array) $request->input('PurchaseQuotationLine', []))
+            ->orderBy('ordre')
+            ->orderBy('id')
+            ->get();
+
+        if ($quotationLines->isEmpty()) {
             return redirect()->back()->withErrors(['msg' => 'no lines selected']);
         }
-    
-        $PurchasesQuotationData = PurchasesQuotation::findOrFail($id);
 
         // La demande de prix reste libre ; c'est la commande qui en sort qui est contrôlée.
         $qualification = app(SupplierQualification::class);
@@ -364,11 +372,10 @@ class PurchasesController extends Controller
         $qualification->recordOverride($supplierCheck, $purchaseOrder);
 
         $this->purchaseOrderService->processPurchaseQuotationLines(
-            $request->PurchaseQuotationLine,
-            $request->PurchaseQuotationLineTaskid,
+            $quotationLines,
             $purchaseOrder,
             $statusUpdate->id,
-            $request->PurchaseQuotationLinePrice,
+            (array) $request->input('PurchaseQuotationLinePrice', []),
         );
 
         // Déclencher l'événement PurchaseCreated

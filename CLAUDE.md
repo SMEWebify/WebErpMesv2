@@ -144,8 +144,10 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
 | `php artisan wem:purchases:backfill-line-totals [--dry-run] [-v]` | **À lancer une fois après déploiement.** Recalcule `purchase_lines.unit_price_after_discount` / `total_selling_price` (prix × qté × (1 − remise)) des lignes où ils diffèrent : l'écran React des lignes d'achat ne les renseignait pas, d'où 0 € sur « En attente de facturation ». Les écritures comptables passées ne sont pas touchées |
+| `php artisan wem:purchases:fix-swapped-contacts [--dry-run] [-v]` | **À lancer une fois après déploiement.** Remet contact et adresse dans leur colonne sur les commandes d'achat et demandes de prix créées depuis l'écran « Demande d'achat », qui les inversait. Ne corrige que les inversions certaines (aucun des deux ne correspond au fournisseur, les deux inversés oui) ; les cas ambigus sont seulement listés |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
 | `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables pour les appareils de contrôle qualité à étalonner |
+| `php artisan gmao:generate-work-orders [--dry-run]` | Crée les ordres de travail préventifs des plans de maintenance arrivés à échéance (génération automatique cochée, plans périodiques et à date fixe) |
 | `php artisan ldap:import-users` | Importe les utilisateurs depuis l'Active Directory LDAP |
 | `php artisan rgpd:erase-contact` | Anonymise les données personnelles d'un contact |
 | `php artisan rgpd:export-contact` | Exporte les données personnelles d'un contact (droit d'accès RGPD) |
@@ -162,6 +164,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
 | Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
 | Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis et de dérogations en attente |
+| Quotidien à 06h00 | `gmao:generate-work-orders` | GMAO : ordres de travail préventifs des plans arrivés à échéance |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
 
@@ -314,7 +317,6 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
-## Plans de contrôle (bullage) — lot 1 du chantier FAI
 ## Guides utilisateur (menu « Guides »)
 
 `/guides` liste les pas à pas illustrés, `/guides/{slug}` en affiche un. **Un guide = un dossier**
@@ -330,6 +332,7 @@ captures dans `img/`. Ajouter un guide = déposer un dossier : ni route, ni migr
   `TRAINING_EMAIL` / `TRAINING_PASSWORD` du `.env`). Jamais sur une instance client.
 - Tests : `tests/Feature/GuidesTest.php`.
 
+## Plans de contrôle (bullage) — lot 1 du chantier FAI
 
 Écran « Plans qualité » (`/quality/plans`, menu Qualité → Inspection), bulleur
 (`/quality/plans/{plan}/bubbler`) et onglet « Plans de contrôle » de la fiche article.
@@ -858,9 +861,6 @@ visa) et `document_check_by / _at / _result / _comment` (hors `$fillable`, écri
 - Tests : `tests/Feature/Purchases/ReceiptDocumentCheckTest.php`,
   `resources/js/tests/lib/receiptDocumentCheck.test.js`.
 
-## Nesting (imbrication tôle)
-
-L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul
 ## Lots : coulée et certificat matière
 
 `batches` porte `heat_number` (indexé), `supplier_batch_code`, `certificate_type` (EN 10204,
@@ -885,6 +885,9 @@ descente complète reste un chantier séparé.
 - Tests : `tests/Feature/Products/BatchHeatTraceabilityTest.php`,
   `resources/js/tests/components/batchHeat.test.jsx`.
 
+## Nesting (imbrication tôle)
+
+L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul
 local (l'ancien shelf packer `nestSheets()` et le parsing DXF/SVG navigateur ont été
 retirés de `NestingPage.jsx`).
 
@@ -1074,9 +1077,12 @@ Absence de l'écran Temps, qui porte le select `statu`.
 en attente. Avant ça la distinction des deux vues était visuelle et non appliquée :
 n'importe qui pouvait POSTer `statu=2` sur sa demande, et le solde n'aurait rien voulu dire.
 
-Ce qui manque encore : aucune notification (pas d'`AbsenceNotification`, le valideur doit
-aller voir l'écran), et `users.supervisor_id` est saisi sur la fiche salarié mais ne route
-aucune validation — c'est « les RH valident », pas « mon manager valide ».
+**Notifications** (`App\Services\HumanResources\AbsenceNotifier`, cloche seulement,
+`AbsenceRequestNotification`) : une nouvelle demande prévient les RH (`human-resources-menu`
+ou rôle Admin) et le responsable `users.supervisor_id` ; un changement de `statu` vers
+validé / refusé prévient le salarié. Celui qui agit n'est jamais notifié. Le responsable est
+**prévenu** mais ne valide pas : la validation reste aux RH (`AbsenceController`).
+Tests : `tests/Feature/HumanResources/AbsenceNotificationTest.php`.
 
 ### Notes de frais — justificatifs et lecture IA
 - **Justificatifs dans la GED**, alias `expense-report` (`UserExpenseReport`), **confidentiel**
@@ -1179,8 +1185,8 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   paquet npm, comme pour le passage 5 → 6 (#1189).
 
 #### RH — reste à faire
-- **Notification d'absence** : le workflow de validation existe (voir plus haut), mais aucune
-  notification n'est émise et `users.supervisor_id` ne route pas la validation
+- **Validation d'absence par le responsable** : `users.supervisor_id` reçoit la notification
+  d'une demande mais ne peut pas la valider (droit RH uniquement)
 - **Absences absentes de la capacité planning** : `PlanningController` ne tient compte que des
   jours fériés, pas des congés validés
 - **Alerte de péremption des habilitations** : `expiration_date` est affichée sur la matrice
@@ -1227,6 +1233,43 @@ Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
   un `.xlsx` est accepté mais lu par `fgetcsv` (l. 95) ; `array_key_exists($request->x,
   $importData)` teste le n° de colonne contre la liste des lignes au lieu de la ligne
   courante (lignes de devis l. 658-664, commandes l. 734, sociétés l. 378-386).
+
+#### Facturation bâtiment (marchés de travaux)
+Besoin identifié sur un prospect (oct. 2026 : cuisines, bâtiment léger, serrurerie / pliage
+à façon). À confirmer avant de développer : facture-t-il des marchés (situations) ou de
+simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « existe ».
+- **Situations de travaux** (facturation à l'avancement) : facture n = cumul à date
+  (% d'avancement par ligne ou montant) − cumul déjà facturé. Pas d'imbrication avec
+  `invoiced_remaining_qty` (quantités entières par ligne) : prévoir un avancement par ligne
+  de commande et un récapitulatif cumulé sur le PDF (marché, situations antérieures,
+  présente situation). Factur-X : facture ordinaire (380) qui porte le montant de la
+  période — vérifier le traitement attendu par la PDP.
+- **Acomptes** — issue **#558** (ouverte depuis 2024, user story) → discussion **#409**
+  « Fonctionnement d'un Acompte » (workflow : demande d'acompte sur la commande → facture
+  d'acompte → paiement → confirmation → production / livraison → facture finale qui déduit
+  l'acompte). `invoice_type = 4` et le code Factur-X 386 existent, mais aucun code n'en
+  crée. Points que #409 ne traite pas et à trancher : TVA exigible à l'encaissement de
+  l'acompte (facture d'acompte avec TVA), déduction sur la finale en ligne négative
+  ventilée par taux, écritures (compte 4191 clients – avances reçues), acompte en % ou
+  montant, plusieurs acomptes par commande, et blocage éventuel du lancement tant qu'il
+  n'est pas payé. Sert aussi aux situations de travaux.
+- **Retenue de garantie** (5 % max, loi 71-584) : déduite du net à payer, sans effet sur
+  la base HT ni la TVA ; libération à 1 an (ou caution bancaire qui la remplace). Suivi de
+  l'échéance de libération, et prise en compte dans `ReceivablesService` (reste dû hors
+  retenue, retenue à échoir séparée), sinon les relances partent sur la retenue.
+- **Autoliquidation sous-traitance BTP** (art. 283-2 nonies CGI) : **existe en partie** —
+  un taux de TVA peut porter la catégorie EN 16931 `AE` et sa mention légale
+  (`AccountingVat`). Reste à vérifier le rendu PDF / FEC et la proposer par défaut quand
+  la société cliente est donneur d'ordre BTP.
+- **TVA réduite rénovation** (10 % / 5,5 %) : les taux se créent déjà ; manque la
+  mention / le rattachement de l'attestation client (GED).
+- **Prorata / compte prorata** et **révision de prix** (indices BT) : uniquement si le
+  prospect le demande, pas en premier lot.
+- Lien avec l'**import DPGF** ci-dessus : le DPGF chiffré devient le marché de référence
+  des situations.
+- Pliage à façon (cornières, couvertines, bavettes) : **ne pas développer de configurateur**,
+  intégrer le partenaire **Atoutpli** (import de ses exports → lignes de devis + DXF dans la
+  GED). Formats / API à obtenir auprès d'Atoutpli.
 
 #### Stock — suite de la refonte
 - **Stock projeté** (courbe temporelle physique + PO en attente − réservations) : algo `projectionForProduct(daysHorizon)`, colonne "Rupture prévue à J+X" sur écran Statut du stock, courbe chart.js sur fiche produit

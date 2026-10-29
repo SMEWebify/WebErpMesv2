@@ -205,28 +205,30 @@ class PurchaseOrderService
      *
      * This method processes purchase quotation lines and updates the task status and quotation line.
      *
-     * @param array $quotationLines The quotation lines to process.
-     * @param array $taskIds The task IDs associated with the quotation lines.
+     * The task is read from the quotation line itself and the price is looked up
+     * by quotation line id: the form only posts the checked lines, so pairing
+     * arrays by position attached the wrong task and price to a line.
+     *
+     * @param \Illuminate\Support\Collection<int, PurchaseQuotationLines> $quotationLines The quotation lines to process.
      * @param \App\Models\Purchases\Purchases $purchaseOrder The purchase order.
      * @param int $statusUpdateId The ID of the status update.
+     * @param array $prices Proposed prices keyed by quotation line id.
      */
-    public function processPurchaseQuotationLines($quotationLines, $taskIds, $purchaseOrder, $statusUpdateId, $prices)
+    public function processPurchaseQuotationLines($quotationLines, $purchaseOrder, $statusUpdateId, $prices)
     {
         $accountingVat = $this->getAccountingVat();
         $ordre = 10;
-        foreach ($quotationLines as $key => $line) {
-            $taskId = $taskIds[$key] ?? null;
-            $price = $prices[$key] ?? null;
-            $quotationLine = PurchaseQuotationLines::find($line);
-            $task = $taskId ? Task::find($taskId) : null;
+        foreach ($quotationLines as $quotationLine) {
+            $price = $prices[$quotationLine->id] ?? null;
+            $task = $quotationLine->tasks_id ? Task::find($quotationLine->tasks_id) : null;
 
             if ($task) {
                 $this->createPurchaseOrderLine($purchaseOrder->id, $task, $accountingVat->id, $ordre, $price);
                 $this->updateTaskStatus($task->id, $statusUpdateId);
-                $this->updateQuotationLine($line, $task->getQualityRequiredAttribute());
-            } elseif ($quotationLine) {
+                $this->updateQuotationLine($quotationLine->id, $task->getQualityRequiredAttribute());
+            } else {
                 $this->createPurchaseOrderLineFromQuotationLine($purchaseOrder->id, $quotationLine, $accountingVat->id, $ordre, $price);
-                $this->updateQuotationLine($line, $quotationLine->qty_to_order);
+                $this->updateQuotationLine($quotationLine->id, $quotationLine->qty_to_order);
             }
             $ordre += 10;
         }

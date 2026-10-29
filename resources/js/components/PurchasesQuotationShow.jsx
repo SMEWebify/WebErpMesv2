@@ -727,7 +727,6 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                                             {line.qty_to_order > line.qty_accepted && (
                                                 <div className="mb-3 mb-0">
                                                     <div className="form-check ">
-                                                        <input type="hidden" value={line.task_id ?? 0} name="PurchaseQuotationLineTaskid[]" />
                                                         <input
                                                             className="form-check-input"
                                                             type="checkbox"
@@ -741,7 +740,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                                                     <input
                                                         type="number"
                                                         className="form-control form-control-sm"
-                                                        name="PurchaseQuotationLinePrice[]"
+                                                        name={`PurchaseQuotationLinePrice[${line.id}]`}
                                                         id={`price-${line.id}`}
                                                         step="0.001"
                                                         defaultValue={line.unit_price ?? 0}
