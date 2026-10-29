@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Services\TaskService;
 use App\Services\Production\ProductionRelease;
+use App\Services\Production\TaskRelease;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Planning\TaskActivities;
@@ -402,7 +403,7 @@ class TaskController extends Controller
                             }, 'tasks.OrderLines.order', 'tasks.service']);
 
         // Retrieve filtered tasks
-        $tasks = $tasksQuery->get();
+        $tasks = $this->withPhaseRelease($tasksQuery->get());
 
         return view('workflow/kanban-index', compact('tasks', 'services'));
     }
@@ -452,7 +453,31 @@ class TaskController extends Controller
                         ->orderBy('order', 'ASC')
                         ->with('tasks.OrderLines.order')
                         ->with('tasks.service')->get();
-        return  $tasks;
+        return  $this->withPhaseRelease($tasks);
+    }
+
+    /**
+     * Visa de libération des phases sur les cartes du Kanban : `phase_release`
+     * (état + avertissement si une précédente attend son visa) posé sur les
+     * seules tâches concernées. Aucun poste à visa = cartes inchangées.
+     */
+    private function withPhaseRelease($statuses)
+    {
+        $release = app(TaskRelease::class);
+        $tasks   = $statuses->flatMap(fn ($status) => $status->tasks);
+        $states  = $release->states($tasks);
+
+        foreach ($states === [] ? [] : $tasks as $task) {
+            $info = $states[$task->id] ?? null;
+            if ($info !== null) {
+                $task->setAttribute('phase_release', [
+                    'state'   => $info['state'],
+                    'warning' => $release->warningText($info['pending']),
+                ]);
+            }
+        }
+
+        return $statuses;
     }
 
     /**

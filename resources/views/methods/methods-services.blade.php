@@ -40,7 +40,12 @@
                 </td>
                 <td>{{ $MethodsService->ordre }}</td>
                 <td>{{ $MethodsService->code }}</td>
-                <td>{{ $MethodsService->label }}</td>
+                <td>
+                  {{ $MethodsService->label }}
+                  @if($MethodsService->requires_release)
+                    <span class="badge text-bg-warning ms-1" title="{{ __('task_release.requires_release') }}"><i class="fas fa-stamp"></i></span>
+                  @endif
+                </td>
                 <td>
                   @if($MethodsService->type  == 1){{ __('general_content.productive_trans_key') }} @endif
                   @if($MethodsService->type  == 2){{ __('general_content.raw_material_trans_key') }} @endif
@@ -127,6 +132,18 @@
                             <label class="form-check-label" for="is_nesting_{{ $MethodsService->id }}">
                               Moyen de débit (nesting)
                             </label>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <div class="form-check form-switch">
+                            <input type="hidden" name="requires_release" value="0">
+                            <input type="checkbox" class="form-check-input"
+                              id="requires_release_{{ $MethodsService->id }}" name="requires_release" value="1"
+                              @if($MethodsService->requires_release) checked @endif>
+                            <label class="form-check-label" for="requires_release_{{ $MethodsService->id }}">
+                              {{ __('task_release.requires_release') }}
+                            </label>
+                            <div class="form-text">{{ __('task_release.requires_release_help') }}</div>
                           </div>
                         </div>
                         <div class="mb-3">
@@ -248,6 +265,14 @@
                 <input type="hidden" name="is_nesting" value="0">
                 <input type="checkbox" class="form-check-input" id="is_nesting_new" name="is_nesting" value="1">
                 <label class="form-check-label" for="is_nesting_new">Moyen de débit (nesting)</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input type="hidden" name="requires_release" value="0">
+                <input type="checkbox" class="form-check-input" id="requires_release_new" name="requires_release" value="1">
+                <label class="form-check-label" for="requires_release_new">{{ __('task_release.requires_release') }}</label>
+                <div class="form-text">{{ __('task_release.requires_release_help') }}</div>
               </div>
             </div>
             <div class="mb-3">

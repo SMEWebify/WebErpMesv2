@@ -81,10 +81,23 @@ class Task extends Model
 
     protected $appends = ["open"];
 
+    // released_at / released_by / release_comment (visa de libération de la
+    // phase) restent hors $fillable : seul App\Services\Production\TaskRelease les écrit.
     protected $casts = [
         'due_date' => 'date',
         'priority' => 'integer',
+        'released_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        // Une opération recopiée (duplication, gamme, retour) n'a jamais été visée.
+        static::replicating(function (Task $task) {
+            $task->released_at = null;
+            $task->released_by = null;
+            $task->release_comment = null;
+        });
+    }
 
     /**
      * Memoization per-instance (request-scoped) pour éviter les rappels DB
@@ -114,6 +127,12 @@ class Task extends Model
     public function service()
     {
         return $this->belongsTo(MethodsServices::class, 'methods_services_id');
+    }
+
+    /** Auteur du visa de libération de la phase. */
+    public function releasedBy()
+    {
+        return $this->belongsTo(User::class, 'released_by');
     }
 
     /**

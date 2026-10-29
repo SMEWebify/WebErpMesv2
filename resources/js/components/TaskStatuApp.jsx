@@ -327,7 +327,14 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
     const [refusal, setRefusal] = useState(null);
     const layout = `ts-run${stack ? ' ts-run--stack' : ''}`;
 
+    // Visa de libération : une précédente non libérée avertit, sans jamais bloquer.
+    const releaseWarning = task.phase_release?.warning ?? null;
+
     async function action(type) {
+        if (type === 'start' && releaseWarning) {
+            const confirmText = task.phase_release?.labels?.start_confirm ?? 'Démarrer quand même ?';
+            if (!window.confirm(`${releaseWarning}\n\n${confirmText}`)) return;
+        }
         setBusy(true);
         setRefusal(null);
         try {
@@ -341,8 +348,17 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
         }
     }
 
+    const warningBanner = releaseWarning && (
+        <div className="ts-alert ts-alert--warn" role="status">
+            <i className="fas fa-exclamation-triangle me-1" />
+            {releaseWarning}
+        </div>
+    );
+
     if (task.service?.type !== 1) {
         return (
+            <>
+            {warningBanner}
             <div className={`${layout} ts-run--duo`}>
                 <a className="ts-run__btn ts-run__btn--start" href={purchasesRequestUrl}>
                     <i className="fas fa-cash-register" />
@@ -358,6 +374,7 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
                     {t('end_trans_key')}
                 </button>
             </div>
+            </>
         );
     }
 
@@ -387,12 +404,93 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
                     {refusal ?? task.release_blocked}
                 </div>
             )}
+            {warningBanner}
             <div className={layout}>
  {btn(canStart, 'start', 'fas fa-play', t('play_trans_key'), 'start', running ? ' ts-run__btn--is-active' : '')}
                 {btn(canPause, 'pause', 'fas fa-pause', t('pause_trans_key'), 'pause')}
                 {btn(canFinish, 'stop', 'fas fa-stop', t('end_trans_key'), 'finish')}
             </div>
         </>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// PhaseReleaseCard — visa de libération de la phase (postes qui le demandent)
+// ---------------------------------------------------------------------------
+function PhaseReleaseCard({ task, apiBase, onReload }) {
+    const release = task.phase_release;
+    const [comment, setComment] = useState('');
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState(null);
+
+    if (!release?.state) return null;
+    const l = (key, fallback) => release.labels?.[key] ?? fallback;
+
+    async function send(method) {
+        if (method === 'DELETE' && !window.confirm(l('revoke_confirm', 'Annuler le visa ?'))) return;
+        setBusy(true);
+        setError(null);
+        try {
+            await apiFetch(`${apiBase}/${task.id}/release`, method, method === 'POST' ? { comment } : null);
+            setComment('');
+            onReload();
+        } catch (e) {
+            setError(e?.message ?? String(e));
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    const tone = release.state === 'released' ? ' ts-alert--ok' : release.state === 'awaiting' ? ' ts-alert--warn' : '';
+
+    return (
+        <Card title={l('title', 'Visa de libération')} tight>
+            <div className={`ts-alert${tone} mb-2`}>
+                <i className="fas fa-stamp me-1" />
+                {l(`state_${release.state}`, release.state)}
+                {release.state === 'released' && release.released_at && (
+                    <div className="small mt-1">
+                        {l('released_on', 'Libérée le :date par :user')
+                            .replace(':date', release.released_at)
+                            .replace(':user', release.released_by ?? '—')}
+                    </div>
+                )}
+                {release.state === 'released' && release.comment && (
+                    <div className="small mt-1 fst-italic">{release.comment}</div>
+                )}
+            </div>
+
+            {error && <div className="ts-alert ts-alert--warn mb-2" role="alert">{error}</div>}
+
+            {release.can_release && release.state === 'awaiting' && (
+                <>
+                    <textarea
+                        className="form-control mb-2"
+                        rows={2}
+                        maxLength={2000}
+                        placeholder={l('comment', 'Commentaire (facultatif)')}
+                        aria-label={l('comment', 'Commentaire (facultatif)')}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                    />
+                    <button type="button" className="ts-btn ts-btn--primary w-100" disabled={busy} onClick={() => send('POST')}>
+                        <i className="fas fa-stamp me-1" />
+                        {l('release', 'Viser et libérer')}
+                    </button>
+                </>
+            )}
+
+            {release.can_release && release.state === 'released' && (
+                <button type="button" className="ts-btn ts-btn--sm" disabled={busy} onClick={() => send('DELETE')}>
+                    <i className="fas fa-undo me-1" />
+                    {l('revoke', 'Annuler le visa')}
+                </button>
+            )}
+
+            {!release.can_release && release.state === 'awaiting' && (
+                <div className="small text-body-secondary">{l('no_permission', '')}</div>
+            )}
+        </Card>
     );
 }
 
@@ -975,6 +1073,8 @@ function TaskDetail({
                             stack
                         />
                     </Card>
+
+                    <PhaseReleaseCard task={task} apiBase={apiBase} onReload={reload} />
 
                     <Card title={t('qty_trans_key')} tight>
                         <div className="ts-declare ts-declare--stack">

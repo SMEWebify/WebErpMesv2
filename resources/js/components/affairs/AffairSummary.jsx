@@ -294,6 +294,11 @@ function SectionRows({ type, rows, trans, locale, currency }) {
                                     {formatNumber(row.hours_actual ?? 0, locale)} / {formatNumber(row.hours_planned ?? 0, locale)} h
                                 </span>,
                             ],
+                            // Visa de libération des phases : absent tant qu'aucun poste n'en demande.
+                            row.awaiting_release > 0 && [
+                                c.awaiting_release ?? 'Phases à viser',
+                                <span className="badge text-bg-warning"><i className="fas fa-stamp me-1" />{row.awaiting_release}</span>,
+                            ],
                         ]} />
                         <div className="row g-2 mt-1">
                             <div className="col-6"><Progress label={c.delivered ?? 'Livré'} value={row.delivered_pct} color="info" /></div>

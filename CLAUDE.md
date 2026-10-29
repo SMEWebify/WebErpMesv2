@@ -616,6 +616,27 @@ affichage** BPF (colonne, bandeau, badges).
 - Tests : `tests/Feature/Production/ProductionReleaseTest.php`,
   `resources/js/tests/lib/productionRelease.test.js`.
 
+## Visa de libération des phases (tâches de l'OF)
+
+`methods_services.requires_release` (case « Visa de libération requis » de l'écran Postes de
+charge, **faux par défaut**) ; `tasks.released_at` / `released_by` / `release_comment` (hors
+`$fillable`, remis à null par `Task::replicating`). Aucun poste coché = une requête, rien
+d'affiché : fonctionnement d'avant.
+- **Écriture unique** : `App\Services\Production\TaskRelease::release($task, $user, $source)`
+  (`manual` exige `task-release`, Admin par migration ; `siteflow` / `api` sans utilisateur
+  possible). Refus : poste sans visa, tâche non terminée (statut « Finished »), déjà libérée.
+  Source et commentaire tracés par activitylog (`task_released`, `task_release_revoked`).
+  Routes `production.task.statu.api.release` (POST / DELETE, `permission:task-release`).
+- **Tâche suivante** : avertissement seulement — **jamais de blocage serveur** (test). Précédente
+  = liens fin-début du `DependencyGraph` de la gamme (liens saisis, sinon opération précédente) ;
+  SS / FF ignorés. Écran tâche : bandeau + confirmation au Play ; carte « Visa de libération ».
+- Kanban : `phase_release` posé sur les cartes concernées (`TaskController::withPhaseRelease`,
+  nombre de requêtes constant), badges `lib/taskRelease.js`. Synthèse d'affaire : blocage
+  `task_awaiting_release` par commande et `awaiting_release` des commandes, par jointure dans
+  `loadTasks` (toujours 9 requêtes).
+- Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
+  `resources/js/tests/lib/taskRelease.test.js`.
+
 ## Journal des consultations (traçabilité des accès, nucléaire)
 
 Les modifications sont tracées par activitylog ; les **lectures** des fiches sensibles le

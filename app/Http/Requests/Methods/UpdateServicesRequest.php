@@ -32,6 +32,7 @@ class UpdateServicesRequest extends FormRequest
             'companies_ids'   => 'nullable|array',
             'companies_ids.*' => 'integer|exists:companies,id',
             'is_nesting'      => 'nullable|boolean',
+            'requires_release' => 'nullable|boolean',
         ];
     }
 }

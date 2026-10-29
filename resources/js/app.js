@@ -24,9 +24,12 @@ async function mountKanbanBoard() {
     const initialData = element.dataset.initialData
         ? JSON.parse(element.dataset.initialData)
         : [];
+    const releaseTrans = element.dataset.releaseTrans
+        ? JSON.parse(element.dataset.releaseTrans)
+        : {};
 
     createRoot(element).render(
-        React.createElement(KanbanBoard, { initialData })
+        React.createElement(KanbanBoard, { initialData, releaseTrans })
     );
 }
 

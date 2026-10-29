@@ -1003,6 +1003,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/Task/Statu/Api/{id}/date',          'App\Http\Controllers\Api\TaskStatuController@updateDate')->name('production.task.statu.api.date');
         Route::put('/Task/Statu/Api/{id}/resource',      'App\Http\Controllers\Api\TaskStatuController@updateResource')->name('production.task.statu.api.resource');
         Route::post('/Task/Statu/Api/{id}/nc',           'App\Http\Controllers\Api\TaskStatuController@createNc')->name('production.task.statu.api.nc');
+        // Visa de libération de la phase (postes de charge qui le demandent)
+        Route::post('/Task/Statu/Api/{id}/release',      'App\Http\Controllers\Api\TaskStatuController@release')->middleware('permission:task-release')->name('production.task.statu.api.release');
+        Route::delete('/Task/Statu/Api/{id}/release',    'App\Http\Controllers\Api\TaskStatuController@revokeRelease')->middleware('permission:task-release')->name('production.task.statu.api.release.revoke');
         // Onglet Contrôle : mesures du plan de contrôle validé de l'article
         Route::get('/Task/Statu/Api/{id}/inspection',           'App\Http\Controllers\Inspection\InspectionDossierController@taskShow')->name('production.task.statu.api.inspection');
         Route::post('/Task/Statu/Api/{id}/inspection/measure',  'App\Http\Controllers\Inspection\InspectionDossierController@taskMeasure')->name('production.task.statu.api.inspection.measure');

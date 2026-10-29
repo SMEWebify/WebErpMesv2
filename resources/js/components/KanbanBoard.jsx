@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { formatQty } from '../utils';
 import { formatDuration } from '../lib/duration.js';
+import { releaseBadges, mergePhaseRelease } from '../lib/taskRelease.js';
 import {
     DndContext,
     DragOverlay,
@@ -18,7 +19,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-function TaskCard({ task }) {
+function TaskCard({ task, releaseTrans }) {
+    const badges = releaseBadges(task.phase_release, releaseTrans);
+
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: task.id,
     });
@@ -49,6 +52,16 @@ function TaskCard({ task }) {
                     {task.order_lines.label} || qty {formatQty(task.order_lines.qty)}
                 </span>
                 <br />
+                {badges.length > 0 && (
+                    <div className="mb-1">
+                        {badges.map((badge) => (
+                            <span key={badge.key} className={`badge ${badge.className} me-1`} title={badge.title}>
+                                <i className={`${badge.icon} me-1`} />
+                                {badge.label}
+                            </span>
+                        ))}
+                    </div>
+                )}
                 <div className="float-end">
                     <div className="row">
                         <div className="col-4">
@@ -73,7 +86,7 @@ function TaskCard({ task }) {
     );
 }
 
-function KanbanColumn({ status, columnId }) {
+function KanbanColumn({ status, columnId, releaseTrans }) {
     const { setNodeRef, isOver } = useDroppable({ id: columnId });
 
     return (
@@ -96,7 +109,7 @@ function KanbanColumn({ status, columnId }) {
                         strategy={verticalListSortingStrategy}
                     >
                         {status.tasks.map((task) => (
-                            <TaskCard key={task.id} task={task} />
+                            <TaskCard key={task.id} task={task} releaseTrans={releaseTrans} />
                         ))}
                     </SortableContext>
                     {status.tasks.length === 0 && (
@@ -110,7 +123,7 @@ function KanbanColumn({ status, columnId }) {
     );
 }
 
-export default function KanbanBoard({ initialData }) {
+export default function KanbanBoard({ initialData, releaseTrans = {} }) {
     const [statuses, setStatuses] = useState(initialData || []);
     const [activeTask, setActiveTask] = useState(null);
 
@@ -201,7 +214,10 @@ export default function KanbanBoard({ initialData }) {
     }
 
     function syncToServer(columns) {
-        axios.put('/task/sync', { columns }).catch((err) => {
+        axios.put('/task/sync', { columns }).then((response) => {
+            // Visa de libération : une tâche passée en « Finished » devient « à viser ».
+            setStatuses((current) => mergePhaseRelease(current, response?.data));
+        }).catch((err) => {
             const message = err?.response?.data?.message;
             if (err?.response?.status === 422 && message) {
                 if (beforeDrag.current) setStatuses(beforeDrag.current);
@@ -222,11 +238,11 @@ export default function KanbanBoard({ initialData }) {
         >
             <div className="row">
                 {statuses.map((status, index) => (
-                    <KanbanColumn key={status.title} status={status} columnId={columnId(index)} />
+                    <KanbanColumn key={status.title} status={status} columnId={columnId(index)} releaseTrans={releaseTrans} />
                 ))}
             </div>
             <DragOverlay>
-                {activeTask && <TaskCard task={activeTask} />}
+                {activeTask && <TaskCard task={activeTask} releaseTrans={releaseTrans} />}
             </DragOverlay>
         </DndContext>
     );

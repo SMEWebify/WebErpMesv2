@@ -28,7 +28,8 @@
     </form>
 
     <div id="card"
-         data-initial-data='@json($tasks, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+         data-initial-data='@json($tasks, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+         data-release-trans='@json(__('task_release'), JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
     </div>
 @stop
 

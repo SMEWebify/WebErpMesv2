@@ -379,6 +379,33 @@ class AffairSummaryServiceTest extends TestCase
         $this->assertEquals(4, $summary['blockers'][0]['params']['received']);
     }
 
+    public function test_finished_phase_awaiting_release_is_flagged(): void
+    {
+        $line = $this->order($this->quote(['statu' => 3]));
+        $service = \App\Models\Methods\MethodsServices::factory()->create(['type' => 1, 'requires_release' => true]);
+        $this->task($line, 'Finished', ['label' => 'Pliage', 'methods_services_id' => $service->id]);
+        $this->task($line, 'Finished', ['label' => 'Soudure', 'methods_services_id' => $service->id])
+            ->forceFill(['released_at' => now()])->save();
+        $plain = \App\Models\Methods\MethodsServices::factory()->create(['type' => 1, 'requires_release' => false]);
+        $this->task($line, 'Finished', ['label' => 'Laser', 'methods_services_id' => $plain->id]);
+
+        $summary = $this->summary();
+        $this->assertSame(['task_awaiting_release'], $this->blockerCodes($summary));
+        $this->assertSame(1, $summary['blockers'][0]['params']['count']);
+        $this->assertSame('Pliage', $summary['blockers'][0]['params']['label']);
+        $this->assertSame(1, $summary['sections']['orders'][0]['awaiting_release']);
+    }
+
+    public function test_without_release_services_no_phase_is_flagged(): void
+    {
+        $line = $this->order($this->quote(['statu' => 3]));
+        $this->task($line, 'Finished', ['label' => 'Pliage']);
+
+        $summary = $this->summary();
+        $this->assertSame([], $this->blockerCodes($summary));
+        $this->assertSame(0, $summary['sections']['orders'][0]['awaiting_release']);
+    }
+
     public function test_suspended_task_is_flagged(): void
     {
         $line = $this->order($this->quote(['statu' => 3]));

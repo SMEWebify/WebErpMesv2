@@ -17,6 +17,8 @@ use App\Services\QualityNonConformityService;
 use App\Services\Files\FileKindResolver;
 use App\Services\Inspection\TaskInspection;
 use App\Services\Production\ProductionRelease;
+use App\Services\Production\TaskRelease;
+use App\Services\Production\TaskReleaseException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -207,6 +209,9 @@ class TaskStatuController extends Controller
             'inspection'          => app(TaskInspection::class)->summary($task),
             // bon pour fabrication : message si le démarrage est bloqué, sinon null
             'release_blocked'     => $this->productionRelease->blockingReason($task),
+            // visa de libération de la phase : null si le poste n'en demande pas
+            // et qu'aucune précédente n'attend son visa (écran inchangé)
+            'phase_release'       => app(TaskRelease::class)->payload($task, Auth::user()),
         ]);
     }
 
@@ -387,6 +392,36 @@ class TaskStatuController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    // -------------------------------------------------------------------------
+    // POST|DELETE /production/Task/Statu/Api/{id}/release (permission task-release)
+    // -------------------------------------------------------------------------
+    public function release(Request $request, int $id, TaskRelease $release)
+    {
+        $validated = $request->validate(['comment' => 'nullable|string|max:2000']);
+        $task = Task::with('service', 'status')->findOrFail($id);
+
+        try {
+            $release->release($task, Auth::user(), TaskRelease::SOURCE_MANUAL, $validated['comment'] ?? null);
+        } catch (TaskReleaseException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => __('task_release.released_ok')]);
+    }
+
+    public function revokeRelease(int $id, TaskRelease $release)
+    {
+        $task = Task::findOrFail($id);
+
+        try {
+            $release->revoke($task, Auth::user());
+        } catch (TaskReleaseException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => __('task_release.revoked_ok')]);
     }
 
     // -------------------------------------------------------------------------

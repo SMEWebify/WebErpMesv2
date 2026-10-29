@@ -50,6 +50,7 @@ class AffairSummaryService
         'purchase_late'     => 'chase_supplier',
         'purchase_partial'  => 'chase_supplier',
         'task_suspended'    => 'resume_task',
+        'task_awaiting_release' => 'release_task',
         'order_late'        => 'update_delivery_date',
         'order_postponed'   => 'update_delivery_date',
         'invoice_overdue'   => 'chase_payment',
@@ -119,6 +120,7 @@ class AffairSummaryService
             $order->invoiced_pct  = $count ? (int) round(100 * $orderLines->where('invoice_status', 3)->count() / $count) : 0;
             $order->hours_planned = round((float) $orderTasks->sum('planned_hours'), 2);
             $order->hours_actual  = round((float) $orderTasks->sum('actual_hours'), 2);
+            $order->awaiting_release = $orderTasks->where('awaiting_release', true)->count();
             $order->next_delivery_date = $orderLines
                 ->filter(fn ($l) => (int) $l->delivery_status < 3 && $l->due_date)
                 ->min('due_date');
@@ -190,6 +192,7 @@ class AffairSummaryService
                 'invoiced_pct'       => $o->invoiced_pct,
                 'hours_planned'      => $o->hours_planned,
                 'hours_actual'       => $o->hours_actual,
+                'awaiting_release'   => $o->awaiting_release,
                 'url'                => route('orders.show', $o->id),
             ])->values()->all(),
             'purchases' => $purchaseLines->groupBy('purchases_id')->map(function ($group) {
@@ -325,11 +328,14 @@ class AffairSummaryService
 
         $lineById = $lines->keyBy('id');
 
+        // Poste de charge joint (pas de requête en plus) pour le visa de libération.
         $tasks = Task::query()
             ->leftJoin('statuses', 'statuses.id', '=', 'tasks.status_id')
+            ->leftJoin('methods_services', 'methods_services.id', '=', 'tasks.methods_services_id')
             ->whereIn('tasks.order_lines_id', $lineById->keys()->all())
             ->toBase()
-            ->get(['tasks.id', 'tasks.label', 'tasks.order_lines_id', 'tasks.seting_time', 'tasks.unit_time', 'tasks.qty', 'statuses.title as status_title']);
+            ->get(['tasks.id', 'tasks.label', 'tasks.order_lines_id', 'tasks.seting_time', 'tasks.unit_time', 'tasks.qty', 'statuses.title as status_title',
+                'tasks.released_at', 'methods_services.requires_release']);
 
         $activities = $tasks->isEmpty() ? collect() : TaskActivities::query()
             ->whereIn('task_id', $tasks->pluck('id')->all())
@@ -350,6 +356,10 @@ class AffairSummaryService
             $task->planned_hours = round((float) $task->seting_time + (float) $task->unit_time * $qty, 2);
             $task->actual_hours  = round(Task::workedSecondsFrom($taskActivities) / 3600, 2);
             $task->started       = $taskActivities->isNotEmpty();
+            // Phase terminée sur un poste à visa, pas encore libérée (TaskRelease).
+            $task->awaiting_release = (bool) $task->requires_release
+                && $task->released_at === null
+                && strcasecmp((string) $task->status_title, 'Finished') === 0;
 
             return $task;
         });
@@ -483,6 +493,14 @@ class AffairSummaryService
         foreach ($tasks->filter(fn ($t) => strcasecmp((string) $t->status_title, 'Suspended') === 0) as $task) {
             $blockers[] = $this->blocker('task_suspended', 'warning', 'orders', $task->order_code,
                 null, $task->orders_id ? route('orders.show', $task->orders_id) : null, ['label' => $task->label]);
+        }
+
+        // Phase terminée en attente de visa de libération : un blocage par commande.
+        // Rien tant qu'aucun poste de charge ne demande de visa.
+        foreach ($tasks->where('awaiting_release', true)->groupBy('orders_id') as $orderId => $group) {
+            $blockers[] = $this->blocker('task_awaiting_release', 'warning', 'orders', $group->first()->order_code,
+                null, $orderId ? route('orders.show', $orderId) : null,
+                ['count' => $group->count(), 'label' => $group->pluck('label')->filter()->implode(', ')]);
         }
 
         // Commande en retard : une ligne non livrée dont l'échéance est passée

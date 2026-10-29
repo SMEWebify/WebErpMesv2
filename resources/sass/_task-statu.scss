@@ -1061,6 +1061,12 @@
     color: var(--ts-warn);
 }
 
+.ts-alert--ok {
+    border-color: var(--ts-ok);
+    background: var(--ts-ok-soft);
+    color: var(--ts-ok);
+}
+
 .ts-badges {
     display: flex;
     flex-wrap: wrap;
