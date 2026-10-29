@@ -55,8 +55,9 @@ return new class extends Migration
         Schema::create('purchase_order_quality_clauses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchases_id')->constrained('purchases')->cascadeOnDelete();
+            // Nom explicite : celui généré dépasse les 64 caractères admis par MySQL.
             $table->foreignId('purchase_quality_clause_id')->nullable()
-                ->constrained('purchase_quality_clauses')->nullOnDelete();
+                ->constrained('purchase_quality_clauses', 'id', 'po_quality_clauses_clause_id_foreign')->nullOnDelete();
             $table->string('code', 30);
             $table->string('label');
             $table->text('text_fr');

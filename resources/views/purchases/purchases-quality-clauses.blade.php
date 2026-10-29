@@ -77,8 +77,8 @@
                 </td>
                 @endforeach
                 <td class="text-end">
-                  <button type="submit" class="btn btn-sm btn-teal" form="rule-form-{{ $clause->id }}" title="{{ __('purchase_quality.add_rule') }}">
-                    <i class="fa-solid fa-plus"></i>
+                  <button type="submit" class="btn btn-sm btn-teal text-nowrap" form="rule-form-{{ $clause->id }}">
+                    <i class="fa-solid fa-plus me-1"></i>{{ __('purchase_quality.add_rule') }}
                   </button>
                 </td>
               </tr>
