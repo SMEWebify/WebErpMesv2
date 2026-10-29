@@ -41,6 +41,7 @@ return [
     'receipt_section'      => 'Batch / heat',
     'receipt_hint'         => 'A batch is created when the product is batch-tracked or a heat number is entered.',
     'receipt_created'      => 'Batch created',
+    'receipt_untracked_warning' => 'The product requires no traceability, but a batch will be created to keep this heat.',
     // Task screen
     'consumed_batches'     => 'Consumed batches',
 ];

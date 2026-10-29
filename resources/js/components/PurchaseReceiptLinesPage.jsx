@@ -293,7 +293,14 @@ export function initialBatchForm(line) {
     };
 }
 
-export function BatchFields({ form, onChange, certificateTypes, texts = {}, errors = {} }) {
+// Article non suivi par lot (tracability_type ≠ 2) mais coulée ou lot fournisseur saisi :
+// la mise en stock créera quand même un lot, l'opérateur doit le savoir.
+export function createsUntrackedBatch(form, tracabilityType) {
+    if (Number(tracabilityType) === 2) return false;
+    return (form.heat_number ?? '').trim() !== '' || (form.supplier_batch_code ?? '').trim() !== '';
+}
+
+export function BatchFields({ form, onChange, certificateTypes, tracabilityType, texts = {}, errors = {} }) {
     const choices = [...(certificateTypes ?? [])];
     if (form.certificate_type && !choices.includes(form.certificate_type)) choices.push(form.certificate_type);
 
@@ -322,7 +329,11 @@ export function BatchFields({ form, onChange, certificateTypes, texts = {}, erro
                 {choices.map((value) => <option key={value} value={value}>{value}</option>)}
             </select>
             {errors.certificate_type && <div className="invalid-feedback d-block">{errors.certificate_type[0]}</div>}
-            <div className="form-text">{texts.hint}</div>
+            {createsUntrackedBatch(form, tracabilityType)
+                ? <div className="alert alert-warning py-1 px-2 mt-2 mb-0 small" role="status">
+                      <i className="fas fa-exclamation-triangle me-1" />{texts.untracked_warning}
+                  </div>
+                : <div className="form-text">{texts.hint}</div>}
         </fieldset>
     );
 }
@@ -526,7 +537,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                             )}
 
                             <BatchFields form={batchForm} onChange={setBatch} certificateTypes={certificateTypes}
-                                texts={batchTexts} errors={errors} />
+                                tracabilityType={line?.product_tracability_type} texts={batchTexts} errors={errors} />
                         </>
                     )}
                 </div>

@@ -190,7 +190,8 @@ class BatchHeatTraceabilityTest extends TestCase
 
         $this->getJson(route('purchases.receipt.lines.json', ['id' => $line->purchase_receipt_id]))
             ->assertOk()
-            ->assertJsonPath('lines.0.batches.0.heat_number', 'C-555');
+            ->assertJsonPath('lines.0.batches.0.heat_number', 'C-555')
+            ->assertJsonPath('lines.0.product_tracability_type', 1);
     }
 
     // ------------------------------------------------------------------

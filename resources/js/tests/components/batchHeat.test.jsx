@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { BatchFields, BatchList, initialBatchForm } from '../../components/PurchaseReceiptLinesPage.jsx';
+import { BatchFields, BatchList, createsUntrackedBatch, initialBatchForm } from '../../components/PurchaseReceiptLinesPage.jsx';
 import { ConsumedBatches } from '../../components/TaskStatuApp.jsx';
 
 const TEXTS = {
@@ -46,6 +46,28 @@ describe('BatchFields', () => {
                 texts={TEXTS} errors={{ certificate_type: ['Valeur invalide'] }} />
         );
         expect(screen.getByText('Valeur invalide')).toBeTruthy();
+    });
+});
+
+describe('lot créé sur un article non suivi', () => {
+    const untracked = { ...TEXTS, untracked_warning: 'L\'article ne demande aucune traçabilité, mais un lot va être créé.' };
+    const withHeat = { heat_number: 'C-1', supplier_batch_code: '', certificate_type: '' };
+
+    it('ne prévient que si une coulée ou un lot fournisseur est saisi sur un article non suivi', () => {
+        expect(createsUntrackedBatch(withHeat, 1)).toBe(true);
+        expect(createsUntrackedBatch({ ...withHeat, heat_number: '', supplier_batch_code: 'L-7' }, null)).toBe(true);
+        expect(createsUntrackedBatch(withHeat, 2)).toBe(false);
+        expect(createsUntrackedBatch({ ...withHeat, heat_number: '  ' }, 1)).toBe(false);
+    });
+
+    it('affiche l\'avertissement à la place de l\'aide', () => {
+        const { rerender } = render(<BatchFields form={withHeat} onChange={() => {}} tracabilityType={1} texts={untracked} />);
+        expect(screen.getByRole('status').textContent).toContain('aucune traçabilité');
+        expect(screen.queryByText(TEXTS.hint)).toBeNull();
+
+        rerender(<BatchFields form={withHeat} onChange={() => {}} tracabilityType={2} texts={untracked} />);
+        expect(screen.queryByRole('status')).toBeNull();
+        expect(screen.getByText(TEXTS.hint)).toBeTruthy();
     });
 });
 

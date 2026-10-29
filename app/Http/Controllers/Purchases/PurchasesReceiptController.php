@@ -273,6 +273,7 @@ class PurchasesReceiptController extends Controller
             'batchTexts'           => [
                 'section'             => __('batches.receipt_section'),
                 'hint'                => __('batches.receipt_hint'),
+                'untracked_warning'   => __('batches.receipt_untracked_warning'),
                 'created'             => __('batches.receipt_created'),
                 'heat_number'         => __('batches.heat_number'),
                 'heat_short'          => __('batches.heat_short'),
@@ -474,6 +475,7 @@ class PurchasesReceiptController extends Controller
                 'purchaseLines.purchase',
                 'purchaseLines.tasks.OrderLines.order',
                 'purchaseLines.tasks.Component',
+                'purchaseLines.product',
                 'inspector',
                 'documentChecker',
                 'qualityNonConformity',
@@ -546,6 +548,10 @@ class PurchasesReceiptController extends Controller
             'product_id'                 => $productId,
             'product_url'                => $productId
                 ? route('products.show', ['id' => $productId])
+                : null,
+            // 2 = suivi par lot : sinon le tiroir prévient qu'une coulée saisie crée un lot
+            'product_tracability_type'   => $productId
+                ? (int) (($task?->component_id ? $task->Component : $purchaseLine->product)?->tracability_type)
                 : null,
             'selling_price'              => $purchaseLine->selling_price,
             'tasks_id'                   => $purchaseLine->tasks_id,

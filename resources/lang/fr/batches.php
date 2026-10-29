@@ -41,6 +41,7 @@ return [
     'receipt_section'      => 'Lot / coulée',
     'receipt_hint'         => 'Un lot est créé si l\'article est suivi par lot ou si une coulée est saisie.',
     'receipt_created'      => 'Lot créé',
+    'receipt_untracked_warning' => 'L\'article ne demande aucune traçabilité, mais un lot va être créé pour garder cette coulée.',
     // Écran tâche
     'consumed_batches'     => 'Lots consommés',
 ];
