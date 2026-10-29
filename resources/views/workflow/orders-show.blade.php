@@ -73,7 +73,7 @@ if (!$orderHasInvoicedLines) {
 <div class="card mb-3">
   <div class="card-header p-2">
     <ul class="nav nav-pills" id="DocumentTabs">
-      <li class="nav-item"><a class="nav-link" href="#Order" data-bs-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Order" data-bs-toggle="tab" title="{{ __('general_content.order_info_trans_key') }}" aria-label="{{ __('general_content.order_info_trans_key') }}"><i class="fas fa-info-circle"></i></a></li>
       {{-- Revue de contrat (commande client) ; une commande interne n'y garde que la demande de changement. --}}
       <li class="nav-item">
         <a class="nav-link" href="#ContractReview" data-bs-toggle="tab">
@@ -412,7 +412,7 @@ if (!$orderHasInvoicedLines) {
             <i class="fas fa-spinner fa-spin me-2"></i>
           </div>
         </div>
-        @include('workflow.partials.order-review-timeline')
+        @include('workflow.partials.review-timeline')
       </div>
       @php
         $orderLineEndpoints = [

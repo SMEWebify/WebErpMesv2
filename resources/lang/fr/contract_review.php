@@ -2,6 +2,7 @@
 
 return [
     'tab' => 'Revue de contrat',
+    'quote_tab' => 'Revue',
     'title' => 'Revue de contrat',
     'intro' => 'Avant de lancer la commande, vérifier qu\'elle correspond à l\'offre et que l\'entreprise peut la tenir. Le visa fige la revue.',
 

@@ -344,6 +344,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/revision', 'App\Http\Controllers\Workflow\QuotesController@newRevision')->name('quotes.revision');
         Route::post('/{id}/variant', 'App\Http\Controllers\Workflow\QuotesController@newVariant')->name('quotes.variant');
         Route::post('/{id}/family/close', 'App\Http\Controllers\Workflow\QuotesController@closeFamily')->name('quotes.family.close');
+        Route::post('/{id}/review', 'App\Http\Controllers\Workflow\QuotesController@updateReview')->whereNumber('id')->name('quotes.review.update');
         Route::post('/{id}/save-as-template','App\Http\Controllers\Workflow\QuotesController@saveAsTemplate')->name('quotes.save-template');
         Route::delete('/{id}/template', 'App\Http\Controllers\Workflow\QuotesController@destroyTemplate')->name('quotes.template.destroy');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware('audit.access:quote,id')->name('quotes.show');

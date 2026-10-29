@@ -2,6 +2,7 @@
 
 return [
     'tab' => 'Contract review',
+    'quote_tab' => 'Review',
     'title' => 'Contract review',
     'intro' => 'Before launching the order, check that it matches the offer and that the company can deliver it. The sign-off freezes the review.',
 

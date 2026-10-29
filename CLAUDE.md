@@ -600,7 +600,12 @@ qui remplace le bloc « Suivi des revues et changements » du formulaire Informa
 - **Demande de changement** (`orders.json.change-request`) : modifiable même revue figée.
 - **Documents contractuels** : GED de la commande, rôle `contractuel` (`FileRole::CONTRACTUAL`),
   listés dans l'onglet. Historique (activitylog) dans l'onglet, plus dans Logs.
-- Tests : `tests/Feature/ContractReviewTest.php`, `resources/js/tests/lib/contractReview.test.js`.
+- **Devis** : pas de visa ; le même bloc est sorti du formulaire Informations vers un onglet
+  « Revue » (Blade, `quotes.review.update`, mêmes champs et règles qu'avant, historique
+  `workflow/partials/review-timeline` partagé avec la commande). Onglet Informations des
+  deux fiches = icône « i ».
+- Tests : `tests/Feature/ContractReviewTest.php`, `tests/Feature/QuoteReviewTabTest.php`,
+  `resources/js/tests/lib/contractReview.test.js`.
 
 ## Reports de date des lignes de commande
 

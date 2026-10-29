@@ -184,6 +184,28 @@ class QuotesController extends Controller
      * @param UpdateQuoteRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
+    /**
+     * Onglet « Revue » : revue et demande de changement, enregistrées à part du
+     * formulaire Informations (mêmes champs et mêmes règles qu'avant).
+     */
+    public function updateReview(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'reviewed_by' => 'nullable|exists:users,id',
+            'reviewed_at' => 'nullable|date',
+            'review_decision' => 'nullable|in:pending,approved,rejected',
+            'change_requested_by' => 'nullable|exists:users,id',
+            'change_reason' => 'nullable|string',
+            'change_approved_at' => 'nullable|date',
+        ]);
+
+        $Quote = Quotes::withTemplates()->findOrFail($id);
+        $Quote->update($validated);
+
+        return redirect()->to(route('quotes.show', ['id' => $Quote->id]) . '#Review')
+            ->with('success', __('general_content.quote_update_success_trans_key'));
+    }
+
     public function update(UpdateQuoteRequest $request)
     {
         $validated = $request->validated();
