@@ -56,6 +56,9 @@ class Quotes extends Model
                             'affair_category_id',
                             'loss_reason_id',
                             'loss_comment',
+                            'parent_quote_id',
+                            'revision',
+                            'variant_label',
                         ];
 
     protected $casts = [
@@ -208,6 +211,35 @@ class Quotes extends Model
         return $this->belongsTo(LossReason::class, 'loss_reason_id');
     }
 
+    // Devis référent d'un indice ou d'une variante (null pour le référent lui-même)
+    public function parentQuote()
+    {
+        return $this->belongsTo(Quotes::class, 'parent_quote_id');
+    }
+
+    // Indices et variantes rattachés à ce devis référent
+    public function derivedQuotes()
+    {
+        return $this->hasMany(Quotes::class, 'parent_quote_id');
+    }
+
+    /**
+     * Indice et variante imprimés sous le numéro du PDF, null s'il n'y a ni l'un
+     * ni l'autre : un devis sans indice s'imprime alors comme avant.
+     */
+    public function printRevisionCaption(): ?string
+    {
+        $parts = [];
+        if (filled($this->revision)) {
+            $parts[] = __('quote_revisions.pdf_revision', ['revision' => $this->revision]);
+        }
+        if (filled($this->variant_label)) {
+            $parts[] = __('quote_revisions.pdf_variant', ['label' => $this->variant_label]);
+        }
+
+        return $parts ? implode(' · ', $parts) : null;
+    }
+
     // Relationship with the Orders associated with the Quote
     public function Orders()
     {
@@ -294,7 +326,10 @@ class Quotes extends Model
                                                 'change_approved_at',
                                                 'affair_category_id',
                                                 'loss_reason_id',
-                                                'loss_comment', ]);
+                                                'loss_comment',
+                                                'parent_quote_id',
+                                                'revision',
+                                                'variant_label', ]);
         // Chain fluent methods for configuration options
     }
 }

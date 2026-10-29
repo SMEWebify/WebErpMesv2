@@ -52,7 +52,7 @@
                     <td colspan="2" align="center" style="width: 400%; background-color: {{ $Factory->pdf_header_font_color }}">
                         <h2>{{ $typeDocumentName }}</h2>
                         <h3>{{ $Document->code }}</h3>
-                    </td>
+                    @if($Document instanceof \App\Models\Workflow\Quotes && $Document->printRevisionCaption())<div>{{ $Document->printRevisionCaption() }}</div>@endif</td>
                 </tr>
                 <tr>
                     <td align="left" style="width: 40%;">

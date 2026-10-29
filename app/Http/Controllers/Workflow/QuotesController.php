@@ -27,6 +27,8 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\QuoteCalculatorService;
 use App\Services\Quotes\QuoteDuplicator;
+use App\Services\Quotes\QuoteRevisionRefused;
+use App\Services\Quotes\QuoteRevisions;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\QuoteProjectEstimate;
 use App\Models\Companies\CompaniesAddresses;
@@ -146,6 +148,11 @@ class QuotesController extends Controller
             })
             ->filter(fn ($entry) => !empty($entry['changes']))
             ->values();
+        // Indices et variantes : une trame n'en a pas.
+        $revisions = app(QuoteRevisions::class);
+        $QuoteFamily = $id->is_template ? collect() : $revisions->family($id);
+        $NewerRevision = $id->is_template ? null : $revisions->newerRevision($id);
+        $OpenSiblings = (int) $id->statu === QuoteRevisions::STATU_WON ? $revisions->openSiblings($id) : collect();
         return view('workflow/quotes-show', [
             'Quote' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -167,6 +174,9 @@ class QuotesController extends Controller
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
             'projectEstimate' => $projectEstimate,
+            'QuoteFamily' => $QuoteFamily,
+            'NewerRevision' => $NewerRevision,
+            'OpenSiblings' => $OpenSiblings,
         ]);
     }
     
@@ -593,6 +603,63 @@ class QuotesController extends Controller
 
         return redirect()->route('quotes.show', ['id' => $quote->id])
             ->with('success', 'Devis ' . $source->code . ' dupliqué en ' . $quote->code);
+    }
+
+    // -------------------------------------------------------------------------
+    // Indices et variantes
+    // -------------------------------------------------------------------------
+
+    public function newRevision(int $id, QuoteRevisions $revisions)
+    {
+        $source = Quotes::findOrFail($id);
+
+        try {
+            $quote = $revisions->newRevision($source);
+        } catch (QuoteRevisionRefused $e) {
+            return redirect()->route('quotes.show', ['id' => $source->id])->with('error', $e->getMessage());
+        }
+
+        $this->notificationService->sendNotification(QuoteNotification::class, $quote, 'quotes_notification');
+        event(new QuoteCreated($quote));
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])
+            ->with('success', __('quote_revisions.revision_created', ['source' => $source->code, 'code' => $quote->code]));
+    }
+
+    public function newVariant(Request $request, int $id, QuoteRevisions $revisions)
+    {
+        $validated = $request->validate([
+            'variant_label' => 'required|string|max:100',
+        ]);
+
+        $source = Quotes::findOrFail($id);
+
+        try {
+            $quote = $revisions->newVariant($source, $validated['variant_label']);
+        } catch (QuoteRevisionRefused $e) {
+            return redirect()->route('quotes.show', ['id' => $source->id])->with('error', $e->getMessage());
+        }
+
+        $this->notificationService->sendNotification(QuoteNotification::class, $quote, 'quotes_notification');
+        event(new QuoteCreated($quote));
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])
+            ->with('success', __('quote_revisions.variant_created', ['source' => $source->code, 'code' => $quote->code]));
+    }
+
+    /** Devis gagné : clôt les autres devis encore ouverts de sa famille. */
+    public function closeFamily(int $id, QuoteRevisions $revisions)
+    {
+        $quote = Quotes::findOrFail($id);
+
+        try {
+            $closed = $revisions->closeOpenSiblings($quote);
+        } catch (QuoteRevisionRefused $e) {
+            return redirect()->route('quotes.show', ['id' => $quote->id])->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])
+            ->with('success', __('quote_revisions.family_closed', ['codes' => $closed->pluck('code')->implode(', ')]));
     }
 
     public function saveAsTemplate(Request $request, int $id, QuoteDuplicator $duplicator)

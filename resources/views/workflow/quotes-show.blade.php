@@ -83,6 +83,22 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
+            @if($OpenSiblings->isNotEmpty())
+            {{-- Devis gagné : les autres indices / variantes encore ouverts de la famille peuvent être clos. --}}
+            <div class="callout callout-warning d-flex flex-wrap align-items-center justify-content-between" style="gap:.5rem">
+              <div>
+                <i class="fas fa-code-branch me-2 text-warning"></i>
+                {{ __('quote_revisions.close_family_prompt', ['codes' => $OpenSiblings->pluck('code')->implode(', ')]) }}
+              </div>
+              <form method="POST" action="{{ route('quotes.family.close', ['id' => $Quote->id]) }}"
+                    onsubmit="return confirm(@js(__('quote_revisions.close_family_confirm')))">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-warning">
+                  <i class="fas fa-lock me-1"></i>{{ __('quote_revisions.close_family') }}
+                </button>
+              </form>
+            </div>
+            @endif
             <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
                 @csrf 
@@ -325,6 +341,48 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             @endcan
 
 
+            @if($QuoteFamily->count() > 1)
+            @php
+              $quoteStatuLabels = [
+                1 => ['general_content.open_trans_key', 'text-bg-info'],
+                2 => ['general_content.send_trans_key', 'text-bg-primary'],
+                3 => ['general_content.win_trans_key', 'text-bg-success'],
+                4 => ['general_content.lost_trans_key', 'text-bg-danger'],
+                5 => ['general_content.closed_trans_key', 'text-bg-secondary'],
+                6 => ['general_content.obsolete_trans_key', 'text-bg-secondary'],
+              ];
+            @endphp
+            <x-adminlte-card title="{{ __('quote_revisions.history') }}" theme="secondary" theme-mode="outline" icon="fas fa-code-branch" collapsible>
+              <ul class="list-unstyled mb-0">
+                @foreach($QuoteFamily as $member)
+                <li class="d-flex justify-content-between align-items-start py-1 @if(!$loop->last) border-bottom @endif">
+                  <div>
+                    @if($member->id === $Quote->id)
+                      <strong>{{ $member->code }}</strong>
+                    @else
+                      <a href="{{ route('quotes.show', ['id' => $member->id]) }}">{{ $member->code }}</a>
+                    @endif
+                    <div class="small text-body-secondary">
+                      @if(!$member->parent_quote_id)
+                        {{ __('quote_revisions.referent') }}
+                      @else
+                        @if($member->revision){{ __('quote_revisions.revision_short', ['revision' => $member->revision]) }}@endif
+                        @if($member->revision && $member->variant_label) · @endif
+                        @if($member->variant_label){{ __('quote_revisions.variant_short', ['label' => $member->variant_label]) }}@endif
+                      @endif
+                      · {{ $member->created_at?->format('d/m/Y') }}
+                    </div>
+                  </div>
+                  @php
+                    [$statuKey, $statuClass] = $quoteStatuLabels[(int) $member->statu] ?? ['general_content.undefined_trans_key', 'text-bg-secondary'];
+                  @endphp
+                  <span class="badge {{ $statuClass }}">{{ __($statuKey) }}</span>
+                </li>
+                @endforeach
+              </ul>
+            </x-adminlte-card>
+            @endif
+
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <table class="table table-hover">
                 <tr>
@@ -342,6 +400,45 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                       @csrf
                       <button type="submit" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-copy me-1"></i>{{ __('general_content.duplicate_quote_trans_key') }}
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:50%">
+                    {{ __('quote_revisions.new_revision') }}
+                    <div class="small text-muted">{{ __('quote_revisions.new_revision_help') }}</div>
+                  </td>
+                  <td>
+                    @if($NewerRevision)
+                      <div class="small text-muted">
+                        {{ __('quote_revisions.superseded_by') }}
+                        <a href="{{ route('quotes.show', ['id' => $NewerRevision->id]) }}">{{ $NewerRevision->code }}</a>
+                      </div>
+                    @else
+                    <form method="POST" action="{{ route('quotes.revision', ['id' => $Quote->id]) }}"
+                          onsubmit="return confirm(@js(__('quote_revisions.new_revision_confirm')))">
+                      @csrf
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-code-branch me-1"></i>{{ __('quote_revisions.new_revision') }}
+                      </button>
+                    </form>
+                    @endif
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:50%">
+                    {{ __('quote_revisions.new_variant') }}
+                    <div class="small text-muted">{{ __('quote_revisions.new_variant_help') }}</div>
+                  </td>
+                  <td>
+                    <form method="POST" action="{{ route('quotes.variant', ['id' => $Quote->id]) }}">
+                      @csrf
+                      <input type="text" name="variant_label" class="form-control form-control-sm mb-1" required maxlength="100"
+                             title="{{ __('quote_revisions.variant_label') }}"
+                             placeholder="{{ __('quote_revisions.variant_label') }}">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}
                       </button>
                     </form>
                   </td>

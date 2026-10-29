@@ -28,6 +28,11 @@ class QuoteDuplicator
         'change_reason'       => null,
         'change_approved_at'  => null,
         'csv_file_name'       => null,
+        // Une copie est un devis indépendant : l'indice ou la variante est
+        // reposé par QuoteRevisions, jamais hérité de la source.
+        'parent_quote_id'     => null,
+        'revision'            => null,
+        'variant_label'       => null,
     ];
 
     public function __construct(

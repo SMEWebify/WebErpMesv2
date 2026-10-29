@@ -449,6 +449,27 @@ le vrai client est choisi à l'instanciation (« Nouveau devis » → « Partir 
   nomenclature est recopiée sur toute sa profondeur (les niveaux inférieurs ne portent que
   `sub_assembly_id`).
 
+## Indices et variantes de devis
+
+`quotes.parent_quote_id` (référent), `revision`, `variant_label`, nullable. Famille **à plat** :
+indices et variantes pointent tous vers le référent racine, qui garde les trois colonnes à null
+(indice « A » implicite). `App\Services\Quotes\QuoteRevisions`, copies par `QuoteDuplicator`.
+- **Nouvel indice** (`quotes.revision`) : `QT-0001` → `QT-0001-B` → `QT-0001-C` ; le précédent
+  passe en **6 Obsolète** s'il était ouvert / envoyé (gagné ou perdu : inchangé). Seul le dernier
+  indice d'une ligne se révise (sinon refus, flash `error`).
+- **Variante** (`quotes.variant`, libellé obligatoire) : `QT-0001-V1`, `-V2`…, ouverte en
+  parallèle, origine non touchée ; chaîne d'indices propre (`QT-0001-V1-B`). Une ligne de la
+  famille = code sans suffixe d'indice (`baseCode()`).
+- **Devis gagné** : la fiche propose de clore les autres devis ouverts / envoyés de la famille
+  (`quotes.family.close` → **5 Fermé**, pas Perdu : ni motif de perte ni opportunité perdue).
+- « Dupliquer » et « Enregistrer comme trame » ne recopient **jamais** le lien (`QuoteDuplicator::RESET`).
+- **PDF** : légende « Indice B · Variante : … » sous le numéro (`Quotes::printRevisionCaption()`),
+  seulement si renseignée et seulement pour un devis (l'ARC a sa propre `revision`) ; `@if` collé
+  à `</td>` pour qu'un devis sans indice s'imprime à l'identique. Une vue `print/custom/pdf-sales`
+  ne l'affiche pas tant qu'elle n'en reprend pas le bloc.
+- Fiche : carte « Historique » (référent, indices, variantes, statuts). Aucune permission dédiée
+  (même droit que « Dupliquer »). Tests : `tests/Feature/QuoteRevisionTest.php`.
+
 ## Lignes de présentation (sections, sous-totaux, textes, masquage, forfait)
 
 `quote_lines`, `order_lines` et `order_confirmation_lines` portent `line_type`
