@@ -5,6 +5,7 @@ return [
     'short' => 'Dossier',
     'validated' => 'Dossier validé',
     'not_validated' => 'Dossier à valider',
+    'pending_title' => 'Dossier de fin de fabrication exigé et non validé : BL et facture seront refusés.',
     'validated_on' => 'Dossier validé le :date par :user',
     'source_siteflow' => 'Siteflow',
 

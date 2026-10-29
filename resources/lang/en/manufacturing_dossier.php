@@ -5,6 +5,7 @@ return [
     'short' => 'File',
     'validated' => 'File validated',
     'not_validated' => 'File to validate',
+    'pending_title' => 'End-of-manufacturing file required and not validated: delivery note and invoice will be refused.',
     'validated_on' => 'File validated on :date by :user',
     'source_siteflow' => 'Siteflow',
 

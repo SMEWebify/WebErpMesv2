@@ -228,6 +228,8 @@ class InvoicesController extends Controller
         ];
 
         $reactTrans = [
+            'dossier_pending'       => __('manufacturing_dossier.not_validated'),
+            'dossier_pending_title' => __('manufacturing_dossier.pending_title'),
             'company'         => __('general_content.sort_companie_trans_key'),
             'date_from'       => __('general_content.delivery_note_date_from_trans_key'),
             'date_to'         => __('general_content.delivery_note_date_to_trans_key'),
@@ -318,6 +320,8 @@ class InvoicesController extends Controller
                 'companie_url'    => $l->OrderLine?->order?->companies_id ? route('companies.show', ['id' => $l->OrderLine->order->companies_id]) : null,
                 'line_code'       => $l->OrderLine?->code,
                 'line_label'      => $l->OrderLine?->label,
+                // Dossier de fin de fabrication exigé et non validé : la facture sera refusée.
+                'dossier_pending' => (bool) $l->OrderLine?->dossier_required && $l->OrderLine?->dossier_validated_at === null,
                 'unit_label'      => $l->OrderLine?->Unit?->label,
                 'selling_price'   => $l->OrderLine?->selling_price,
                 'discount'        => $l->OrderLine?->discount,

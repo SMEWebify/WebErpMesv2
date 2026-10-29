@@ -439,7 +439,14 @@ export default function InvoicesRequest({
                                                 : trans.internal_order}
                                         </td>
                                         <td>{line.line_code}</td>
-                                        <td>{line.line_label}</td>
+                                        <td>
+                                            {line.line_label}
+                                            {line.dossier_pending && (
+                                                <span className="badge text-bg-danger ms-1" title={trans.dossier_pending_title}>
+                                                    <i className="fas fa-folder me-1" />{trans.dossier_pending}
+                                                </span>
+                                            )}
+                                        </td>
                                         <td>{formatQty(line.qty)}</td>
                                         <td>{line.unit_label}</td>
                                         <td>{line.selling_price}</td>

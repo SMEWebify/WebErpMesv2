@@ -426,7 +426,14 @@ export default function DeliverysRequest({
                                                 : trans.internal_order}
                                         </td>
                                         <td>{line.code}</td>
-                                        <td>{line.label}</td>
+                                        <td>
+                                            {line.label}
+                                            {line.dossier_pending && (
+                                                <span className="badge text-bg-danger ms-1" title={trans.dossier_pending_title}>
+                                                    <i className="fas fa-folder me-1" />{trans.dossier_pending}
+                                                </span>
+                                            )}
+                                        </td>
                                         <td>
                                             {taskStatus && (
                                                 <span className={`badge ${taskStatus.badge}`}>

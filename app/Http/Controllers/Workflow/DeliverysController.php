@@ -101,6 +101,8 @@ class DeliverysController extends Controller
         ];
 
         $reactTrans = [
+            'dossier_pending'       => __('manufacturing_dossier.not_validated'),
+            'dossier_pending_title' => __('manufacturing_dossier.pending_title'),
             'company'        => __('general_content.sort_companie_trans_key'),
             'external_id'    => __('general_content.external_id_trans_key'),
             'label'          => __('general_content.label_trans_key'),
@@ -189,6 +191,8 @@ class DeliverysController extends Controller
                 'label'                   => $l->label,
                 'tasks_status'            => $l->tasks_status,
                 'delivered_remaining_qty' => $l->delivered_remaining_qty,
+                // Dossier de fin de fabrication exigé et non validé : le BL sera refusé.
+                'dossier_pending'         => (bool) $l->dossier_required && $l->dossier_validated_at === null,
                 'selling_price'           => $l->selling_price,
                 'discount'                => $l->discount,
                 'delivery_date'           => $l->delivery_date,

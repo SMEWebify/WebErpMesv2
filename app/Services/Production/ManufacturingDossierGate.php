@@ -130,7 +130,7 @@ class ManufacturingDossierGate
 
     /**
      * Réponse 422 lisible par tous les écrans de création (`message`, `error`,
-     * `errors.lines` et `errors.general` selon l'écran), ou null si rien ne bloque.
+     * `errors.lines` selon l'écran), ou null si rien ne bloque.
      *
      * @param  Collection<int, array{id: int, label: string}>  $blocking
      */
@@ -145,7 +145,7 @@ class ManufacturingDossierGate
         return response()->json([
             'message'       => $message,
             'error'         => $message,
-            'errors'        => ['lines' => [$message], 'general' => $message],
+            'errors'        => ['lines' => [$message]],
             'dossier_lines' => $blocking->values()->all(),
         ], 422);
     }

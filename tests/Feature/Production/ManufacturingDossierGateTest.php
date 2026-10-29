@@ -172,9 +172,37 @@ class ManufacturingDossierGateTest extends TestCase
         $this->assertDatabaseHas('deliverys', ['code' => 'BL-DOSSIER-1']);
     }
 
+    public function test_the_delivery_request_screen_flags_the_lines_awaiting_their_dossier(): void
+    {
+        $pending   = $this->requiring($this->line());
+        $validated = $this->validated($this->requiring($this->line()));
+        $free      = $this->line();
+
+        $rows = collect($this->getJson(route('deliverys-request.company-data', ['company_id' => $this->customer->id]))
+            ->assertOk()->json('lines'))->keyBy('id');
+
+        $this->assertTrue($rows[$pending->id]['dossier_pending']);
+        $this->assertFalse($rows[$validated->id]['dossier_pending']);
+        $this->assertFalse($rows[$free->id]['dossier_pending']);
+    }
+
     // ------------------------------------------------------------------
     // Factures
     // ------------------------------------------------------------------
+
+    public function test_the_invoice_request_screen_flags_the_lines_awaiting_their_dossier(): void
+    {
+        $pending = $this->line();
+        $pendingDelivery = $this->deliveryLine($pending);
+        $this->requiring($pending);
+        $freeDelivery = $this->deliveryLine($this->line());
+
+        $rows = collect($this->getJson(route('invoices-request.lines', ['company_id' => $this->customer->id]))
+            ->assertOk()->json('lines'))->keyBy('id');
+
+        $this->assertTrue($rows[$pendingDelivery->id]['dossier_pending']);
+        $this->assertFalse($rows[$freeDelivery->id]['dossier_pending']);
+    }
 
     public function test_direct_invoicing_refuses_and_creates_neither_invoice_nor_delivery(): void
     {
