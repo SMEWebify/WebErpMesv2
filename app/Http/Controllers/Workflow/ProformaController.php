@@ -21,6 +21,7 @@ use App\Services\InvoiceService;
 use App\Services\AccountingEntryService;
 use App\Models\Accounting\AccountingEntry;
 use App\Services\InvoiceLineService;
+use App\Services\Production\ManufacturingDossierGate;
 use App\Services\OrderService;
 use App\Services\Quotes\QuoteLineToOrderLineConverter;
 use App\Services\SelectDataService;
@@ -431,6 +432,12 @@ class ProformaController extends Controller
         $proforma = Invoices::where('invoice_type', 3)->findOrFail($id);
 
         abort_unless(in_array($proforma->statu, [1, 2, 3]), 422);
+
+        // La proforma devient une facture : même contrôle du dossier de fin de fabrication.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLines($proforma->invoiceLines()->pluck('order_line_id')))) {
+            return $refusal;
+        }
 
         DB::transaction(function () use ($proforma) {
             $newCode = $this->documentCodeGenerator->generateDocumentCode('invoice');

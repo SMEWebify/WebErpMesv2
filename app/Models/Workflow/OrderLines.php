@@ -59,10 +59,13 @@ class OrderLines extends Model
                         ];
 
     // released_for_production_* ne sont pas $fillable : seul ProductionRelease les écrit.
+    // dossier_* non plus : seul ManufacturingDossierGate les écrit (exigence reprise de la catégorie à la création).
     protected $casts = [
         'hide_on_pdf' => 'boolean',
         'pdf_package' => 'integer',
         'released_for_production_at' => 'datetime',
+        'dossier_required' => 'boolean',
+        'dossier_validated_at' => 'datetime',
     ];
 
     /**
@@ -108,6 +111,12 @@ class OrderLines extends Model
     public function releasedBy()
     {
         return $this->belongsTo(\App\Models\User::class, 'released_for_production_by');
+    }
+
+    /** Auteur de la validation du dossier de fin de fabrication (ManufacturingDossierGate). */
+    public function dossierValidatedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'dossier_validated_by');
     }
 
     public function quoteLine()
@@ -394,7 +403,8 @@ class OrderLines extends Model
     public function getActivitylogOptions(): LogOptions
     {
         // BPF et indice tracés : qui a libéré quelle ligne, et pourquoi le BPF est tombé.
-        return LogOptions::defaults()->logOnly(['orders_id', 'code', 'label', 'statu', 'ind', 'released_for_production_at', 'released_for_production_by']);
+        return LogOptions::defaults()->logOnly(['orders_id', 'code', 'label', 'statu', 'ind', 'released_for_production_at', 'released_for_production_by',
+            'dossier_required', 'dossier_validated_at', 'dossier_validated_by', 'dossier_source']);
         // Chain fluent methods for configuration options
     }
 }

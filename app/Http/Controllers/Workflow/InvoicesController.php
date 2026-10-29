@@ -24,6 +24,7 @@ use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Services\CustomFieldService;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\InvoiceLineService;
+use App\Services\Production\ManufacturingDossierGate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
@@ -346,6 +347,12 @@ class InvoicesController extends Controller
             'lines.*'                => 'integer',
         ]);
 
+        // Dossier de fin de fabrication exigé et pas encore validé : la ligne ne se facture pas.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLinesOfDeliveryLines($validated['lines']))) {
+            return $refusal;
+        }
+
         $invoice = $this->invoiceService->createInvoice(
             $validated['code'],
             $validated['label'],
@@ -406,6 +413,13 @@ class InvoicesController extends Controller
 
         if ($deliveryLines->isEmpty()) {
             return response()->json(['message' => 'No lines to invoice'], 422);
+        }
+
+        // Dossier de fin de fabrication exigé et pas encore validé : rien n'est généré,
+        // les lignes à valider sont listées.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLines($deliveryLines->pluck('order_line_id')))) {
+            return $refusal;
         }
 
         $deliveryLines->load('OrderLine');
@@ -522,6 +536,13 @@ class InvoicesController extends Controller
             $DeliveryData->companies_contacts_id
         );
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
+
+        // Dossier de fin de fabrication exigé et pas encore validé : retour au BL, rien n'est créé.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        $toInvoice   = $DeliveryLines->filter(fn ($l) => in_array((int) $l->invoice_status, [1, 3], true));
+        if ($refusal = $dossierGate->refusalMessage($dossierGate->blockingLines($toInvoice->pluck('order_line_id')))) {
+            return redirect()->back()->with('error', $refusal);
+        }
 
         $InvoiceCreated = $this->invoiceService->createInvoice(
             $code,

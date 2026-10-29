@@ -464,6 +464,12 @@ if (!$orderHasInvoicedLines) {
             $orderLineEndpoints['releaseMany'] = route('orders.lines.json.release', ['orderId' => $Order->id]);
           }
         }
+        // Dossier de fin de fabrication : badge sur les lignes qui l'exigent, actions groupées pour dossier-validate.
+        $canValidateDossier = Auth::user()->can(\App\Services\Production\ManufacturingDossierGate::PERMISSION);
+        $orderLineDossier = ['can_validate' => $canValidateDossier] + __('manufacturing_dossier');
+        if ($canValidateDossier) {
+          $orderLineEndpoints['dossierMany'] = route('orders.lines.json.dossier', ['orderId' => $Order->id]);
+        }
       @endphp
       <div class="tab-pane " id="Lines">
         <div class="card mb-3">
@@ -475,7 +481,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease]) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

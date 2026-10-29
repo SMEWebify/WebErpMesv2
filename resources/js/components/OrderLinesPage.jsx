@@ -8,6 +8,7 @@ import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
+import { dossierState, dossierValidatedText, dossierActionIds } from '../lib/manufacturingDossier.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -807,6 +808,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {}, releaseTrans = null,
+    dossierTrans = null,
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -935,6 +937,17 @@ function LineRow({
                           <i className="fas fa-check me-1" />{releaseTrans.short}
                       </span>
                     : <span className="badge text-bg-warning ms-1">{releaseTrans.not_released}</span>)}
+                {/* Dossier de fin de fabrication : seulement sur les lignes qui l'exigent ou l'ont validé */}
+                {dossierTrans && dossierState(line.dossier) === 'validated' && (
+                    <span className="badge text-bg-success ms-1" title={dossierValidatedText(dossierTrans.validated_on, line.dossier)}>
+                        <i className="fas fa-folder-open me-1" />{dossierTrans.validated}
+                    </span>
+                )}
+                {dossierTrans && dossierState(line.dossier) === 'pending' && (
+                    <span className="badge text-bg-danger ms-1" title={dossierTrans.label}>
+                        <i className="fas fa-folder me-1" />{dossierTrans.not_validated}
+                    </span>
+                )}
             </td>
 
             {/* Delivery status — cliquable si des BL existent */}
@@ -1024,6 +1037,8 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     const delaysTrans = trans.delays ?? {};
     const tagTrans    = trans.equipment_tags ?? {};
     const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
+    const dossierTrans = trans.dossier ?? null; // dossier de fin de fabrication
+    const [dossierMenuOpen, setDossierMenuOpen] = useState(false);
     const [lines, setLines]             = useState([]);
     const [orderStatu, setOrderStatu]   = useState(Number(initialStatu));
     const [orderType]                   = useState(Number(initialType));
@@ -1331,6 +1346,36 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         }
     };
 
+    const handleDossierMany = async (action) => {
+        setDossierMenuOpen(false);
+        const ids = dossierActionIds(lines, selected, action);
+        if (ids.length === 0) {
+            showFlash('warning', dossierTrans.bulk_none);
+            return;
+        }
+        if (action === 'revoke' && !window.confirm(dossierTrans.revoke_confirm)) return;
+        if (action === 'waive' && !window.confirm(dossierTrans.waive_confirm)) return;
+        try {
+            const res  = await apiFetch(endpoints.dossierMany, {
+                method: 'POST',
+                body: JSON.stringify({ line_ids: ids, action }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showFlash('danger', data.message ?? 'Erreur');
+                return;
+            }
+            const states = data.lines ?? {};
+            setLines((prev) => prev.map((l) => (states[l.id] ? { ...l, dossier: states[l.id] } : l)));
+            showFlash((data.done ?? []).length > 0 ? 'success' : 'warning', data.message);
+            if ((data.refused ?? []).length > 0) {
+                window.alert(`${dossierTrans.bulk_refused}\n${data.refused.map((r) => `${r.code} — ${r.message}`).join('\n')}`);
+            }
+        } catch {
+            showFlash('danger', 'Erreur réseau');
+        }
+    };
+
     const handleReleaseMany = async () => {
         const ids = releasableIds(lines, selected);
         if (ids.length === 0) {
@@ -1505,6 +1550,28 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                     {releaseTrans.bulk_action} ({releasableIds(lines, selected).length})
                                 </button>
                             )}
+                            {dossierTrans?.can_validate && endpoints.dossierMany && (
+                                <div className="dropdown">
+                                    <button type="button" className="btn btn-info btn-sm dropdown-toggle"
+                                        aria-expanded={dossierMenuOpen} title={dossierTrans.label}
+                                        onClick={() => setDossierMenuOpen((open) => !open)}>
+                                        <i className="fas fa-folder-open me-1" />
+                                        {dossierTrans.actions}
+                                    </button>
+                                    {dossierMenuOpen && (
+                                        <ul className="dropdown-menu show">
+                                            {['validate', 'revoke', 'require', 'waive'].map((action) => (
+                                                <li key={action}>
+                                                    <button type="button" className="dropdown-item"
+                                                        onClick={() => handleDossierMany(action)}>
+                                                        {dossierTrans[`action_${action}`]} ({dossierActionIds(lines, selected, action).length})
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            )}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
                                 <i className="fas fa-folder me-1" />
                                 Nouveau BL ({selected.size})
@@ -1594,6 +1661,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 t={delaysTrans}
                                 tagTrans={tagTrans}
                                 releaseTrans={releaseTrans}
+                                dossierTrans={dossierTrans}
                                 onDragStart={(e) => handleDragStart(e, index)}
                                 onDragEnter={(e) => handleDragEnter(e, index)}
                                 onDragEnd={handleDragEnd}

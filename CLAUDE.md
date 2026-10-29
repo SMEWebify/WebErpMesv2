@@ -637,6 +637,31 @@ d'affiché : fonctionnement d'avant.
 - Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/taskRelease.test.js`.
 
+## Dossier de fin de fabrication (BL et facture bloqués)
+
+`order_lines.dossier_required` (faux par défaut), `dossier_validated_at` / `_by`, `dossier_source`
+(`manual` | `siteflow`), hors `$fillable`, écrits seulement par
+`App\Services\Production\ManufacturingDossierGate`. Aucune option : une ligne sans exigence
+n'est jamais concernée, donc rien ne change tant qu'on n'exige rien.
+- **Exigence** : reprise à la création de la ligne de `affair_categories.requires_manufacturing_dossier`
+  (`OrderLinesObserver::creating`, écran Catégories d'affaire), puis réglable ligne par ligne.
+  Changer la catégorie ne touche pas les lignes existantes. Ligne de présentation : jamais.
+  Une copie garde l'exigence, **jamais** la validation.
+- **Bloqué (422 `dossier_lines`)** : `deliverys-request.store`, `orders.lines.json.store-delivery`,
+  `orders.lines.json.store-invoice` (facturation directe, contrôlée avant de créer facture et
+  BL automatique), `invoices-request.store`, `invoices-request.generate-all` (rien n'est
+  généré), `invoices.store.from.delivery` (retour avec `error`), `proformas.convert`. Création
+  de proforma non contrôlée (payée avant fabrication). Un nouveau chemin BL / facture doit
+  appeler `blockingLines()` / `jsonRefusal()`.
+- **Validation** : `orders.lines.json.dossier` (`action` = validate | revoke | require | waive),
+  permission `dossier-validate` (Admin par migration), menu « Dossier » des lignes cochées de
+  la fiche commande. Annulation refusée dès que la ligne est livrée ou facturée, même en
+  partie. Siteflow (flux 5) appellera `validate($line, null, SOURCE_SITEFLOW)`. Tracé par activitylog.
+- Synthèse d'affaire : blocage `dossier_unvalidated` (une ligne par commande, reste à livrer
+  ou à facturer), sans requête en plus.
+- Tests : `tests/Feature/Production/ManufacturingDossierGateTest.php`,
+  `resources/js/tests/lib/manufacturingDossier.test.js`.
+
 ## Journal des consultations (traçabilité des accès, nucléaire)
 
 Les modifications sont tracées par activitylog ; les **lectures** des fiches sensibles le

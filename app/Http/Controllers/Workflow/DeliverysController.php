@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Quality\DerogationDeliveryGuard;
+use App\Services\Production\ManufacturingDossierGate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
@@ -230,6 +231,12 @@ class DeliverysController extends Controller
         // Une pièce en attente de la décision du client sur une dérogation ne part pas.
         if ($refusal = app(DerogationDeliveryGuard::class)->refusal(array_column($validated['lines'], 'order_line_id'))) {
             return response()->json(['message' => $refusal, 'errors' => ['lines' => [$refusal]]], 422);
+        }
+
+        // Dossier de fin de fabrication exigé et pas encore validé : la pièce ne part pas.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLines(array_column($validated['lines'], 'order_line_id')))) {
+            return $refusal;
         }
 
         // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).

@@ -234,7 +234,14 @@
                 'X-CSRF-TOKEN': @json(csrf_token()),
             },
         }).then(function (response) {
-            if (!response.ok) throw new Error(response.status);
+            if (!response.ok) {
+                // Un refus métier (dossier de fin de fabrication…) porte son motif.
+                return response.json().catch(function () { return {}; }).then(function (data) {
+                    var error = new Error(response.status);
+                    error.reason = data && data.message;
+                    throw error;
+                });
+            }
             return response.json();
         });
     }
@@ -255,7 +262,7 @@
             if (!confirm('Convertir cette proforma en facture réelle ? Un nouveau numéro de facture lui sera attribué.')) return;
             post(@json(route('proformas.convert', $Proforma->id)))
                 .then(function (res) { window.location.href = res.redirect; })
-                .catch(function () { alert('Erreur lors de la conversion.'); });
+                .catch(function (error) { alert(error.reason || 'Erreur lors de la conversion.'); });
         });
     }
 })();

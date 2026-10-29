@@ -17,6 +17,7 @@ class StoreAffairCategoryRequest extends FormRequest
             'code'  => 'required|string|max:30|unique:affair_categories,code',
             'label' => 'required|string|max:255',
             'ordre' => 'nullable|integer|min:0',
+            'requires_manufacturing_dossier' => 'boolean',
             'required_services'   => 'nullable|array',
             'required_services.*' => 'integer|exists:methods_services,id',
         ];

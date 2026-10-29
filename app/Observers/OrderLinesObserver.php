@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Planning\Task;
 use App\Models\Workflow\OrderLineDelayHistory;
 use App\Models\Workflow\OrderLines;
+use App\Services\Production\ManufacturingDossierGate;
 use App\Services\StockReservationService;
 use App\Support\OrderLineDelayContext;
 use Carbon\Carbon;
@@ -33,6 +34,18 @@ class OrderLinesObserver
         if ($orderLine->released_for_production_at !== null || $orderLine->released_for_production_by !== null) {
             $orderLine->released_for_production_at = null;
             $orderLine->released_for_production_by = null;
+        }
+
+        // Dossier de fin de fabrication : jamais validé à la création (copie comprise) ;
+        // exigence reprise de la catégorie d'affaire, sauf si la ligne la porte déjà (copie).
+        $orderLine->dossier_validated_at = null;
+        $orderLine->dossier_validated_by = null;
+        $orderLine->dossier_source       = null;
+
+        if (! ManufacturingDossierGate::isArticle($orderLine)) {
+            $orderLine->dossier_required = false;
+        } elseif (! array_key_exists('dossier_required', $orderLine->getAttributes())) {
+            $orderLine->dossier_required = ManufacturingDossierGate::requiredByDefault($orderLine->orders_id);
         }
     }
 

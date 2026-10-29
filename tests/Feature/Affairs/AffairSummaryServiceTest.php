@@ -440,6 +440,34 @@ class AffairSummaryServiceTest extends TestCase
         $this->assertSame(6, $summary['blockers'][0]['params']['days']);
     }
 
+    public function test_unvalidated_manufacturing_dossier_is_flagged_once_per_order(): void
+    {
+        $quote = $this->quote(['statu' => 3]);
+        $line  = $this->order($quote);
+        $line->forceFill(['dossier_required' => true])->save();
+        $second = OrderLines::factory()->create([
+            'orders_id' => $line->orders_id, 'qty' => 1, 'selling_price' => 100, 'discount' => 0,
+            'delivered_qty' => 0, 'delivery_status' => 1, 'invoice_status' => 1, 'delivery_date' => '2026-12-15',
+        ]);
+        $second->forceFill(['dossier_required' => true])->save();
+
+        $summary = $this->summary();
+        $this->assertSame(['dossier_unvalidated'], $this->blockerCodes($summary));
+        $this->assertSame('warning', $summary['blockers'][0]['severity']);
+        $this->assertSame(2, $summary['blockers'][0]['params']['lines']);
+        $this->assertSame('validate_dossier', $summary['next_action']['code']);
+    }
+
+    public function test_validated_or_completed_dossier_is_not_flagged(): void
+    {
+        $quote = $this->quote(['statu' => 3]);
+        $this->order($quote)->forceFill(['dossier_required' => true, 'dossier_validated_at' => $this->now])->save();
+        $this->order($quote, [], ['delivery_status' => 3, 'invoice_status' => 3])->forceFill(['dossier_required' => true])->save();
+        $this->order($quote, ['statu' => 6])->forceFill(['dossier_required' => true])->save();
+
+        $this->assertNotContains('dossier_unvalidated', $this->blockerCodes($this->summary()));
+    }
+
     public function test_late_order_is_not_also_flagged_as_postponed(): void
     {
         $quote = $this->quote(['statu' => 3]);

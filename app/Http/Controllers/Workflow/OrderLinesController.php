@@ -15,6 +15,8 @@ use App\Services\ImportCsvService;
 use App\Services\DeliveryService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Quality\DerogationDeliveryGuard;
+use App\Services\Production\ManufacturingDossierGate;
+use App\Services\Production\ManufacturingDossierException;
 use App\Services\DeliveryLineService;
 use App\Services\InvoiceService;
 use App\Services\InvoiceLineService;
@@ -236,6 +238,78 @@ class OrderLinesController extends Controller
     }
 
     /**
+     * POST — dossier de fin de fabrication des lignes cochées d'une commande
+     * (permission dossier-validate). `action` : validate | revoke | require | waive.
+     * Chaque ligne est jugée seule : les refus sont rendus avec leur motif.
+     */
+    public function dossierManyJson(Request $request, int $orderId, ManufacturingDossierGate $gate)
+    {
+        $request->validate([
+            'line_ids'   => 'required|array|min:1',
+            'line_ids.*' => 'integer',
+            'action'     => 'required|in:validate,revoke,require,waive',
+        ]);
+        $action = $request->input('action');
+
+        $lines = OrderLines::query()
+            ->where('orders_id', $orderId)
+            ->whereIn('id', $request->input('line_ids'))
+            ->orderBy('ordre')
+            ->get();
+
+        $done    = [];
+        $refused = [];
+
+        foreach ($lines as $line) {
+            try {
+                match ($action) {
+                    'validate' => $gate->validate($line, Auth::user()),
+                    'revoke'   => $gate->revoke($line),
+                    'require'  => $gate->setRequired($line, true),
+                    'waive'    => $gate->setRequired($line, false),
+                };
+                $done[] = $line->id;
+            } catch (ManufacturingDossierException $e) {
+                $refused[] = ['id' => $line->id, 'code' => $line->code ?: '#' . $line->id, 'message' => $e->getMessage()];
+            }
+        }
+
+        $states = OrderLines::with('dossierValidatedBy:id,name')->whereIn('id', $lines->pluck('id'))->get()
+            ->mapWithKeys(fn (OrderLines $l) => [$l->id => $this->dossierPayload($l)]);
+
+        return response()->json([
+            'done'    => $done,
+            'refused' => $refused,
+            'lines'   => $states,
+            'message' => __('manufacturing_dossier.bulk_result.' . $action, ['count' => count($done)]),
+        ]);
+    }
+
+    private function dossierPayload(OrderLines $line): array
+    {
+        return [
+            'required'     => (bool) $line->dossier_required,
+            'validated_at' => $line->dossier_validated_at?->toIso8601String(),
+            'validated_by' => $line->dossierValidatedBy?->name,
+            'source'       => $line->dossier_source,
+        ];
+    }
+
+    /**
+     * Lignes cochées qui appartiennent bien à la commande : les autres sont
+     * ignorées par la création du BL ou de la facture, donc pas contrôlées.
+     *
+     * @return array<int, int>
+     */
+    private function linesOfOrder(int $orderId, ?array $lineIds): array
+    {
+        return OrderLines::where('orders_id', $orderId)
+            ->whereIn('id', array_map('intval', (array) $lineIds))
+            ->pluck('id')
+            ->all();
+    }
+
+    /**
      * @param \App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest $request
      * @param int $idOrder
      * @return \Illuminate\Http\RedirectResponse
@@ -326,6 +400,7 @@ class OrderLinesController extends Controller
                 'InvoiceLines:id,order_line_id,qty,invoices_id',
                 'InvoiceLines.invoice:id,code',
                 'releasedBy:id,name',
+                'dossierValidatedBy:id,name',
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('orders_id', $orderId)
@@ -770,6 +845,7 @@ class OrderLinesController extends Controller
             'picture'              => $l->OrderLineDetails?->picture,
             'task_url'             => route('task.manage', ['id_type' => 'order_lines_id', 'id_page' => $l->orders_id, 'id_line' => $l->id]),
             'release'              => $this->releasePayload($l),
+            'dossier'              => $this->dossierPayload($l),
             'detail_url'           => route('orders.lines.detail.edit', ['idOrder' => $l->orders_id, 'id' => $l->id]),
             'delivery_lines'       => ($l->relationLoaded('DeliveryLines') ? $l->DeliveryLines : collect())->map(fn ($dl) => [
                 'id'           => $dl->id,
@@ -831,6 +907,12 @@ class OrderLinesController extends Controller
         // Une pièce en attente de la décision du client sur une dérogation ne part pas.
         if ($refusal = app(DerogationDeliveryGuard::class)->refusal($request->input('line_ids'))) {
             return response()->json(['error' => $refusal], 422);
+        }
+
+        // Dossier de fin de fabrication exigé et pas encore validé : la pièce ne part pas.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLines($this->linesOfOrder($orderId, $request->input('line_ids'))))) {
+            return $refusal;
         }
 
         // Le BL n'ajoute rien à l'encours (déjà compté dans la commande).
@@ -916,6 +998,13 @@ class OrderLinesController extends Controller
 
         $order = Orders::findOrFail($orderId);
         abort_if($order->statu == 6, 422, __('general_content.order_canceled_no_document_trans_key'));
+
+        // Dossier de fin de fabrication exigé et pas encore validé : ni facture ni BL
+        // automatique. Contrôlé avant toute création, rien n'est à défaire.
+        $dossierGate = app(ManufacturingDossierGate::class);
+        if ($refusal = $dossierGate->jsonRefusal($dossierGate->blockingLines($this->linesOfOrder($orderId, $request->input('line_ids'))))) {
+            return $refusal;
+        }
 
         $lineIds           = $request->input('line_ids');
         $removeFromStock   = (bool) $request->input('remove_from_stock', false);

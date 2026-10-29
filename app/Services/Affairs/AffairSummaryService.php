@@ -53,6 +53,7 @@ class AffairSummaryService
         'task_awaiting_release' => 'release_task',
         'order_late'        => 'update_delivery_date',
         'order_postponed'   => 'update_delivery_date',
+        'dossier_unvalidated' => 'validate_dossier',
         'invoice_overdue'   => 'chase_payment',
         'visit_unvalidated' => 'finish_visit',
     ];
@@ -310,6 +311,7 @@ class AffairSummaryService
                 orders.code as order_code,
                 COALESCE(order_lines.delivery_date, orders.validity_date) as due_date,
                 order_lines.promised_delivery_date as promised_date,
+                order_lines.dossier_required, order_lines.dossier_validated_at,
                 ROUND(order_lines.qty * order_lines.selling_price * (1 - COALESCE(order_lines.discount, 0) / 100.0), 2) as amount')
             ->toBase()
             ->get();
@@ -527,6 +529,16 @@ class AffairSummaryService
             $blockers[] = $this->blocker('order_postponed', 'warning', 'orders', $group->first()->order_code,
                 $promised, route('orders.show', $orderId),
                 ['days' => (int) Carbon::parse($promised)->startOfDay()->diffInDays($today), 'lines' => $group->count()]);
+        }
+
+        // Dossier de fin de fabrication exigé et non validé alors qu'il reste à livrer
+        // ou à facturer : BL et facture sont refusés (ManufacturingDossierGate).
+        $dossierLines = $lines->filter(fn ($l) => (bool) $l->dossier_required && $l->dossier_validated_at === null
+            && !in_array((int) $l->order_statu, self::ORDER_INACTIVE, true)
+            && ((int) $l->delivery_status < 3 || (int) $l->invoice_status < 3));
+        foreach ($dossierLines->groupBy('orders_id') as $orderId => $group) {
+            $blockers[] = $this->blocker('dossier_unvalidated', 'warning', 'orders', $group->first()->order_code,
+                null, route('orders.show', $orderId), ['lines' => $group->count()]);
         }
 
         // Facture échue impayée.

@@ -418,6 +418,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{orderId}/lines/json/{id}/breakdown',             'App\Http\Controllers\Workflow\OrderLinesController@breakDownLineJson')->name('orders.lines.json.breakdown');
         Route::post('/{orderId}/lines/json/{id}/move',                  'App\Http\Controllers\Workflow\OrderLinesController@moveLineJson')->name('orders.lines.json.move');
         Route::post('/{orderId}/lines/json/release',                    'App\Http\Controllers\Workflow\OrderLinesController@releaseManyJson')->middleware('permission:production-release')->name('orders.lines.json.release');
+        Route::post('/{orderId}/lines/json/dossier',                    'App\Http\Controllers\Workflow\OrderLinesController@dossierManyJson')->middleware('permission:dossier-validate')->name('orders.lines.json.dossier');
         Route::post('/{orderId}/lines/json/reorder',                    'App\Http\Controllers\Workflow\OrderLinesController@reorderJson')->name('orders.lines.json.reorder');
         Route::post('/{orderId}/lines/json/price-increase',             'App\Http\Controllers\Workflow\OrderLinesController@priceIncreaseJson')->name('orders.lines.json.price-increase');
         Route::get('/{idOrder}/lines/{id}/detail-edit',                 'App\Http\Controllers\Workflow\OrderLinesController@detailEdit')->middleware('audit.access:order-line,id')->name('orders.lines.detail.edit');

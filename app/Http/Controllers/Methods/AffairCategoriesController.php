@@ -31,6 +31,7 @@ class AffairCategoriesController extends Controller
             'label'  => $request->validated('label'),
             'ordre'  => (int) ($request->validated('ordre') ?? 0),
             'active' => true,
+            'requires_manufacturing_dossier' => $request->boolean('requires_manufacturing_dossier'),
         ]);
         $category->requiredServices()->sync($request->validated('required_services') ?? []);
 
@@ -45,6 +46,8 @@ class AffairCategoriesController extends Controller
             'label'  => $request->validated('label'),
             'ordre'  => (int) ($request->validated('ordre') ?? 0),
             'active' => $request->boolean('active'),
+            // Vaut pour les lignes créées ensuite : les lignes existantes gardent leur exigence.
+            'requires_manufacturing_dossier' => $request->boolean('requires_manufacturing_dossier'),
         ]);
         // Le formulaire de modification envoie toujours la liste : vide = plus aucune exigence.
         $category->requiredServices()->sync($request->validated('required_services') ?? []);

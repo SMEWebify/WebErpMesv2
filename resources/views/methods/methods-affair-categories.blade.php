@@ -20,6 +20,7 @@
                 <th>{{ __('affairs.category.code') }}</th>
                 <th>{{ __('general_content.label_trans_key') }}</th>
                 <th>{{ __('affairs.category.required_services') }}</th>
+                <th>{{ __('manufacturing_dossier.label') }}</th>
                 <th>{{ __('affairs.category.active') }}</th>
                 <th>{{ __('affairs.category.usage') }}</th>
                 <th></th>
@@ -37,6 +38,13 @@
                   @empty
                     <span class="text-body-secondary">—</span>
                   @endforelse
+                </td>
+                <td>
+                  @if ($category->requires_manufacturing_dossier)
+                    <span class="badge text-bg-info" title="{{ __('affairs.category.requires_dossier') }}"><i class="fas fa-folder-open me-1"></i>{{ __('manufacturing_dossier.short') }}</span>
+                  @else
+                    <span class="text-body-secondary">—</span>
+                  @endif
                 </td>
                 <td>
                   @if ($category->active)
@@ -86,6 +94,12 @@
                           </x-adminlte-select-bs>
                           <div class="form-text">{{ __('affairs.category.required_services_help') }}</div>
                         </div>
+                        <div class="form-check form-switch mb-3">
+                          <input type="hidden" name="requires_manufacturing_dossier" value="0">
+                          <input type="checkbox" class="form-check-input" name="requires_manufacturing_dossier" value="1" id="requires_dossier_{{ $category->id }}" @checked($category->requires_manufacturing_dossier)>
+                          <label class="form-check-label" for="requires_dossier_{{ $category->id }}">{{ __('affairs.category.requires_dossier') }}</label>
+                          <div class="form-text">{{ __('affairs.category.requires_dossier_help') }}</div>
+                        </div>
                         <div class="form-check form-switch">
                           <input type="hidden" name="active" value="0">
                           <input type="checkbox" class="form-check-input" name="active" value="1" id="active_{{ $category->id }}" @checked($category->active)>
@@ -100,7 +114,7 @@
                 </td>
               </tr>
               @empty
-              <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}" />
+              <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}" />
               @endforelse
             </tbody>
           </table>
@@ -142,6 +156,12 @@
               @endforeach
             </x-adminlte-select-bs>
             <div class="form-text">{{ __('affairs.category.required_services_help') }}</div>
+          </div>
+          <div class="form-check form-switch">
+            <input type="hidden" name="requires_manufacturing_dossier" value="0">
+            <input type="checkbox" class="form-check-input" name="requires_manufacturing_dossier" value="1" id="requires_dossier_new" @checked(old('requires_manufacturing_dossier'))>
+            <label class="form-check-label" for="requires_dossier_new">{{ __('affairs.category.requires_dossier') }}</label>
+            <div class="form-text">{{ __('affairs.category.requires_dossier_help') }}</div>
           </div>
           <x-slot name="footerSlot">
             <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
