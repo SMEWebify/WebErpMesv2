@@ -771,6 +771,39 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - Tests : `tests/Feature/Purchases/SupplierReceiptRatingTest.php`,
   `resources/js/tests/components/receiptSupplierRating.test.jsx`.
 
+## Fournisseur qualifié obligatoire (commandes d'achat)
+
+`App\Services\Purchases\SupplierQualification`. Option `purchases.require_qualified_supplier`
+(`PURCHASES_REQUIRE_QUALIFIED_SUPPLIER`, **false** par défaut) : inactive = aucun contrôle
+**et aucun affichage** (badges, carte, bouton d'export).
+- **Qualifié** = dernière évaluation **formelle** (`supplier_ratings` sans `purchase_receipt_id`,
+  la plus récente par `created_at`) au statut `approved`, `next_review_at` nulle ou ≥ aujourd'hui.
+  Sinon `unqualified` (aucune évaluation, ou autre statut) ou `review_overdue`. `states()` :
+  une requête pour une liste de fournisseurs (test de comptage).
+- **Contrôlés** (422 portant `supplier_qualification`) : `purchases.json.store`, `purchases.store`
+  (formulaire), `purchases.orders.store` (demande de prix → commande, formulaire : passe-droit
+  saisi dans l'écran), `purchases.request.store` en PU (tâches sous-traitées / matière),
+  `purchases.reorder.store` (tous les fournisseurs avant toute création, un motif pour toutes),
+  validation `purchases.json.statu` (statut non validé → 2/3/4 ; annuler reste libre),
+  changement de fournisseur d'une commande déjà validée (`purchase.update`, refus sans
+  passe-droit : repasser « en cours »). Un nouveau chemin de création doit appeler
+  `check()` / `guardJson()` / `recordOverride()`.
+- **Non contrôlés** : demandes de prix (PQ), commande `MANUAL-…` créée par une ligne de
+  réception manuelle (marchandise déjà reçue), statuts posés par la réception.
+- **Passe-droit** : `supplier_override` + `supplier_override_reason` (≥ 3 caractères), permission
+  `unqualified-supplier-override` (Admin par migration), sinon 403. Tracé dans
+  `supplier_qualification_overrides` (polymorphe, `context` create | validate | supplier_change,
+  état et dates de l'évaluation au moment du forçage). Vaut pour **cette** commande : un
+  passe-droit donné à la création couvre sa validation (même fournisseur).
+- **Front** : `resources/js/lib/supplierQualification.jsx` (badge, libellé d'option, fenêtre,
+  `sendWithSupplierOverride`), branché sur la création (PurchasesIndex), la demande d'achat,
+  le réappro, les flèches de statut (`ArrowSteps`) et la demande de prix. Carte
+  `include/supplier-qualification-card` sur la fiche commande et l'onglet évaluation de la
+  fiche société. Export CSV `purchases.suppliers.qualified.export` (`?scope=all` : tous avec
+  leur état), disponible même option inactive.
+- Tests : `tests/Feature/Purchases/SupplierQualificationTest.php`,
+  `resources/js/tests/components/supplierQualification.test.jsx`.
+
 ## Clauses qualité des commandes d'achat (criticité)
 
 Criticité = `certificate_type` (EN 10204 : 2.1, 2.2, 3.1, 3.2), `construction_code` (RCC-M,

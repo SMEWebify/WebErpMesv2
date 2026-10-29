@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { askLossReason, sendWithLossReason } from '../lib/lossReason.jsx';
+import { sendWithSupplierOverride } from '../lib/supplierQualification.jsx';
 
 const STYLE_ID = 'arrow-steps-react-v1';
 
@@ -141,12 +142,15 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl,
 
         try {
             // Sans configuration posée sur la page, une 422 « motif manquant » ouvre quand même la fenêtre.
-            const result = await sendWithLossReason(endpoint, payload);
+            // Une 422 « fournisseur non qualifié » (validation d'une commande d'achat) ouvre celle du passe-droit.
+            const result = await sendWithSupplierOverride(endpoint, payload, {
+                send: (body) => sendWithLossReason(endpoint, body),
+            });
             if (result.ok) {
                 window.location.href = redirectUrl;
                 return;
             }
-            if (!result.cancelled) {
+            if (!result.cancelled || result.refused) {
                 setError(result.data.error ?? result.data.message ?? 'Erreur lors du changement de statut.');
             }
         } catch {

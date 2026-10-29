@@ -3,7 +3,16 @@
 @section('title', __('general_content.purchase_list_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.purchase_list_trans_key') }}</h1>
+  @if (config('purchases.require_qualified_supplier'))
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h1 class="mb-0">{{ __('general_content.purchase_list_trans_key') }}</h1>
+      <a href="{{ route('purchases.suppliers.qualified.export') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-file-csv me-1"></i>{{ __('supplier_qualification.export') }}
+      </a>
+    </div>
+  @else
+    <h1>{{ __('general_content.purchase_list_trans_key') }}</h1>
+  @endif
 @stop
 
 @section('content')

@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 
 // Réapprovisionnement : propositions d'achat calculées par ReorderService
 // (seuil mini + besoins réservés − stock − en commande), éditables, puis une
 // commande d'achat BROUILLON par fournisseur. Rien n'est envoyé au fournisseur.
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-}
 
 const fmt = (n, d = 3) => Number(n || 0).toLocaleString('fr-FR', { maximumFractionDigits: d });
 const money = (n, cur) => `${Number(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 3 })} ${cur}`;
@@ -24,6 +21,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
     const imposed = Object.keys(quantities).length > 0;
     const [rows, setRows] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
+    const [qualification, setQualification] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -39,6 +37,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
             if (!res.ok) throw new Error(`Erreur ${res.status}`);
             const data = await res.json();
             setSuppliers(data.suppliers);
+            setQualification(data.supplier_qualification ?? null);
             setRows(data.rows.map((r) => {
                 const qty = quantities[r.product_id] ?? r.suggested_qty;
                 return {
@@ -80,23 +79,20 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
         return g;
     }, [selected]);
     const supplierLabel = (id) => suppliers.find((s) => String(s.id) === String(id))?.label ?? `#${id}`;
+    const supplierStatus = (id) => suppliers.find((s) => String(s.id) === String(id))?.qualification ?? null;
 
     async function submit() {
         setSaving(true); setError(null);
         try {
-            const res = await fetch(endpoints.store, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({
-                    lines: selected.map((r) => ({
-                        product_id: r.product_id, companies_id: +r.supplier, qty: +r.qty, price: +r.price || 0,
-                        stock_locations_id: r.stock_locations_id,
-                    })),
-                }),
+            // Fournisseur non qualifié : fenêtre de passe-droit (un motif pour toutes les commandes) puis renvoi
+            const { ok, status, data } = await sendWithSupplierOverride(endpoints.store, {
+                lines: selected.map((r) => ({
+                    product_id: r.product_id, companies_id: +r.supplier, qty: +r.qty, price: +r.price || 0,
+                    stock_locations_id: r.stock_locations_id,
+                })),
             });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                setError(data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || `Erreur ${res.status}`));
+            if (!ok) {
+                setError(data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || `Erreur ${status}`));
             } else {
                 setCreated(data.purchases);
             }
@@ -196,13 +192,14 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
                                                     <option value="">— choisir —</option>
                                                     {r.preferred_suppliers.length > 0 && (
                                                         <optgroup label="Fournisseurs préférés">
-                                                            {r.preferred_suppliers.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+                                                            {r.preferred_suppliers.map((s) => <option key={s.id} value={s.id}>{supplierOptionLabel(s.label, supplierStatus(s.id), qualification)}</option>)}
                                                         </optgroup>
                                                     )}
                                                     <optgroup label="Tous les fournisseurs">
-                                                        {suppliers.filter((s) => !preferredIds.has(String(s.id))).map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+                                                        {suppliers.filter((s) => !preferredIds.has(String(s.id))).map((s) => <option key={s.id} value={s.id}>{supplierOptionLabel(s.label, s.qualification, qualification)}</option>)}
                                                     </optgroup>
                                                 </select>
+                                                {r.supplier && <SupplierQualificationBadge status={supplierStatus(r.supplier)} config={qualification} className="mt-1" />}
                                             </td>
                                             <td>
                                                 <input type="number" min="0" step="0.001" className="form-control form-control-sm text-end" value={r.price}

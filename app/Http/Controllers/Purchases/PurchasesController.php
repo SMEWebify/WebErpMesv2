@@ -18,6 +18,8 @@ use App\Services\PurchaseOrderService;
 use App\Models\Companies\CompaniesContacts;
 use App\Services\PurchaseCalculatorService;
 use App\Services\Purchases\PurchaseQualityClauses;
+use App\Services\Purchases\SupplierQualification;
+use App\Models\Companies\SupplierQualificationOverride;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Http\Requests\Purchases\StorePurchaseRequest;
@@ -247,7 +249,32 @@ class PurchasesController extends Controller
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
             'qualityClauses' => app(PurchaseQualityClauses::class)->forOrder($id),
+            'supplierQualification' => $this->supplierQualificationCard($id),
         ]);
+    }
+
+    /**
+     * Badge de qualification du fournisseur et passe-droits de la commande
+     * (fiche commande) ; null quand l'option est inactive.
+     */
+    private function supplierQualificationCard(Purchases $purchase): ?array
+    {
+        $qualification = app(SupplierQualification::class);
+        if (! $qualification->enabled() || ! $purchase->companies_id) {
+            return null;
+        }
+
+        $state = $qualification->stateOf((int) $purchase->companies_id);
+
+        return [
+            'status'    => $state['status'],
+            'detail'    => $state['status'] === SupplierQualification::QUALIFIED ? null : $qualification->detail($state),
+            'overrides' => SupplierQualificationOverride::with('user:id,name')
+                ->where('document_type', $purchase->getMorphClass())
+                ->where('document_id', $purchase->id)
+                ->latest()
+                ->get(),
+        ];
     }
 
     /**
@@ -286,8 +313,15 @@ class PurchasesController extends Controller
         if ($purchaseData === false) {
             return redirect()->back()->with('error', __('general_content.no_default_address_contact_vat_error_trans_key'));
         }
-    
+
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->check((int) $purchaseData['companies_id']);
+        if ($refusal = $qualification->guardForm($request, $supplierCheck)) {
+            return redirect()->back()->withInput()->with('error', $refusal);
+        }
+
         $purchaseOrderCreated = Purchases::create($purchaseData);
+        $qualification->recordOverride($supplierCheck, $purchaseOrderCreated);
     
         return redirect()->route('purchases.show', ['id' => $purchaseOrderCreated->id])
                             ->with('success', __('general_content.purchase_order_created_success_trans_key'));
@@ -307,7 +341,14 @@ class PurchasesController extends Controller
         }
     
         $PurchasesQuotationData = PurchasesQuotation::findOrFail($id);
-    
+
+        // La demande de prix reste libre ; c'est la commande qui en sort qui est contrôlée.
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->check((int) $PurchasesQuotationData->companies_id);
+        if ($refusal = $qualification->guardForm($request, $supplierCheck)) {
+            return redirect()->back()->with('error', $refusal);
+        }
+
         $purchaseOrder = $this->purchaseOrderService->createPurchaseOrderFromQuotation($PurchasesQuotationData);
     
         if (!$purchaseOrder) {
@@ -319,7 +360,9 @@ class PurchasesController extends Controller
         if (!$statusUpdate) {
             return redirect()->back()->with('error', __('general_content.no_supplied_in_progress_status_error_trans_key'));
         }
-    
+
+        $qualification->recordOverride($supplierCheck, $purchaseOrder);
+
         $this->purchaseOrderService->processPurchaseQuotationLines(
             $request->PurchaseQuotationLine,
             $request->PurchaseQuotationLineTaskid,
@@ -409,7 +452,14 @@ class PurchasesController extends Controller
 
         $validated['user_id'] = Auth::id();
 
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->check((int) $validated['companies_id']);
+        if ($refusal = $qualification->guardJson($request, $supplierCheck)) {
+            return $refusal;
+        }
+
         $purchase = Purchases::create($validated);
+        $qualification->recordOverride($supplierCheck, $purchase);
 
         return response()->json([
             'redirect' => route('purchases.show', ['id' => $purchase->id]),
@@ -419,14 +469,19 @@ class PurchasesController extends Controller
     public function selectDataJson()
     {
         $nextCode = $this->purchaseOrderService->generatePurchaseCode();
+        $suppliers = $this->SelectDataService->getSupplier();
+        $qualification = app(SupplierQualification::class);
+        $statuses = $qualification->statusMap($suppliers->pluck('id'));
 
         return response()->json([
             'next_code' => $nextCode,
-            'suppliers' => $this->SelectDataService->getSupplier()->map(fn ($c) => [
-                'id'    => $c->id,
-                'label' => $c->label ?? $c->last_name,
-                'code'  => $c->code,
+            'suppliers' => $suppliers->map(fn ($c) => [
+                'id'            => $c->id,
+                'label'         => $c->label ?? $c->last_name,
+                'code'          => $c->code,
+                'qualification' => $statuses[$c->id] ?? null,
             ]),
+            'supplier_qualification' => $qualification->badgeConfig(),
             'users' => User::select('id', 'name')->get(),
         ]);
     }
@@ -498,21 +553,40 @@ class PurchasesController extends Controller
     public function updatePurchase(UpdatePurchaseRequest $request)
     {
         $Purchases = Purchases::find($request->id);
+
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->checkSupplierChange($Purchases, (int) $request->companies_id);
+        if ($refusal = $qualification->guardForm($request, $supplierCheck)) {
+            return redirect()->back()->withInput()->with('error', $refusal);
+        }
+
         $Purchases->label=$request->label;
         $Purchases->companies_id=$request->companies_id;
         $Purchases->companies_contacts_id=$request->companies_contacts_id;
         $Purchases->companies_addresses_id=$request->companies_addresses_id;
         $Purchases->comment=$request->comment;
         $Purchases->save();
+        $qualification->recordOverride($supplierCheck, $Purchases);
 
         return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', __('general_content.purchase_order_updated_success_trans_key'));
     }
 
     public function changeStatusJson(Request $request, $id)
     {
+        $purchase = Purchases::findOrFail($id);
+        $statu = (int) $request->input('statu');
+
+        // Validation (« en cours » → commandée / reçue) : fournisseur qualifié exigé si l'option est active
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->checkValidation($purchase, $statu);
+        if ($refusal = $qualification->guardJson($request, $supplierCheck)) {
+            return $refusal;
+        }
+
         try {
             // Par le modèle : la sortie de « en cours » fige les clauses qualité (Purchases::booted)
-            Purchases::findOrFail($id)->update(['statu' => (int) $request->input('statu')]);
+            $purchase->update(['statu' => $statu]);
+            $qualification->recordOverride($supplierCheck, $purchase);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed'], 500);

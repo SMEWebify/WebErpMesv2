@@ -10,6 +10,7 @@ use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseQuotationService;
 use App\Services\PurchaseOrderService;
+use App\Services\Purchases\SupplierQualification;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
@@ -63,14 +64,20 @@ class PurchasesRFQController extends Controller
      */
     public function request()
     {
+        $suppliers = $this->SelectDataService->getSupplier();
+        $qualification = app(SupplierQualification::class);
+        $statuses = $qualification->statusMap($suppliers->pluck('id'));
+
         $reactProps = [
             'lastPurchaseCode'    => $this->purchaseOrderService->generatePurchaseCode(),
             'lastQuotationCode'   => $this->purchaseQuotationService->generatePurchasesQuotationCode(),
-            'suppliers'           => $this->SelectDataService->getSupplier()->map(fn($c) => [
-                'id'    => $c->id,
-                'code'  => $c->code,
-                'label' => $c->label,
+            'suppliers'           => $suppliers->map(fn($c) => [
+                'id'            => $c->id,
+                'code'          => $c->code,
+                'label'         => $c->label,
+                'qualification' => $statuses[$c->id] ?? null,
             ])->values(),
+            'supplierQualification' => $qualification->badgeConfig(),
         ];
 
         $reactEndpoints = [
@@ -203,6 +210,13 @@ class PurchasesRFQController extends Controller
                 return response()->json(['message' => 'No status "Supplied" or "In progress" in kanban'], 422);
             }
 
+            // Commande (tâches sous-traitées ou achats de matière) : fournisseur qualifié exigé si l'option est active
+            $qualification = app(SupplierQualification::class);
+            $supplierCheck = $qualification->check((int) $validated['companies_id']);
+            if ($refusal = $qualification->guardJson($request, $supplierCheck)) {
+                return $refusal;
+            }
+
             $purchase = $this->purchaseOrderService->createPurchaseOrder(
                 $validated['companies_id'],
                 $validated['code'],
@@ -214,6 +228,8 @@ class PurchasesRFQController extends Controller
             if (!$purchase) {
                 return response()->json(['message' => 'Failed to create purchase order'], 422);
             }
+
+            $qualification->recordOverride($supplierCheck, $purchase);
 
             if (!empty($validated['task_ids'])) {
                 $data = collect($validated['task_ids'])->mapWithKeys(fn($id) => [$id => ['task_id' => $id]])->toArray();
@@ -427,10 +443,14 @@ class PurchasesRFQController extends Controller
 
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchasesQuotation(), $id->id);
 
-        $suppliers = $this->SelectDataService->getSupplier()->map(fn($c) => [
-            'id'    => $c->id,
-            'code'  => $c->code,
-            'label' => $c->label,
+        $supplierRows = $this->SelectDataService->getSupplier();
+        $qualification = app(SupplierQualification::class);
+        $statuses = $qualification->statusMap($supplierRows->pluck('id'));
+        $suppliers = $supplierRows->map(fn($c) => [
+            'id'            => $c->id,
+            'code'          => $c->code,
+            'label'         => $c->label,
+            'qualification' => $statuses[$c->id] ?? null,
         ])->values();
 
         $addresses = $this->SelectDataService->getAddress($id->companies_id)->map(fn($a) => [
@@ -449,6 +469,17 @@ class PurchasesRFQController extends Controller
             'addresses'  => $addresses,
             'contacts'   => $contacts,
             'currency'   => $currency,
+            // Passe-droit saisi dans le formulaire « nouvelle commande » si le fournisseur n'est pas qualifié
+            'supplierQualification' => $qualification->badgeConfig() + [
+                'can_override' => (bool) auth()->user()?->can(SupplierQualification::OVERRIDE_PERMISSION),
+                'override_texts' => [
+                    'blocked'      => __('supplier_qualification.blocked_create'),
+                    'no_permission'=> __('supplier_qualification.no_permission'),
+                    'reason_label' => __('supplier_qualification.override_reason'),
+                    'reason_help'  => __('supplier_qualification.override_reason_help'),
+                    'override'     => __('supplier_qualification.override'),
+                ],
+            ],
         ];
 
         $reactEndpoints = [

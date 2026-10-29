@@ -519,6 +519,10 @@
           ];
         @endphp
 
+        @if($supplierQualification)
+          @include('include.supplier-qualification-card', ['qualification' => $supplierQualification, 'showDocument' => true])
+        @endif
+
         @if($needsRequalification)
           <x-adminlte-alert theme="danger" title="{{ $requalificationAlertLabel }}">
             {{ __('general_content.supplier_requalification_overdue_trans_key', ['days' => abs($daysUntilNextReview ?? 0)]) }}

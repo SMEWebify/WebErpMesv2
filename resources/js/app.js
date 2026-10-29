@@ -320,6 +320,7 @@ async function mountPurchasesQuotationShow() {
         React.createElement(PurchasesQuotationShow, {
             initialQuotation:  parse('quotation')  ?? {},
             suppliers:         parse('suppliers')  ?? [],
+            supplierQualification: parse('supplierQualification'),
             initialAddresses:  parse('addresses')  ?? [],
             initialContacts:   parse('contacts')   ?? [],
             currency:          element.dataset.currency ?? 'EUR',
@@ -343,6 +344,7 @@ async function mountPurchasesRequest() {
             lastPurchaseCode:  element.dataset.lastPurchaseCode  ?? '',
             lastQuotationCode: element.dataset.lastQuotationCode ?? '',
             suppliers:         parse('suppliers')  ?? [],
+            supplierQualification: parse('supplierQualification'),
             endpoints:         parse('endpoints')  ?? {},
             trans:             parse('trans')       ?? {},
         })

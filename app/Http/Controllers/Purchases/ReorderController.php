@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Purchases;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsTools;
 use App\Services\SelectDataService;
+use App\Services\Purchases\SupplierQualification;
 use App\Services\Stock\ReorderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -55,10 +56,19 @@ class ReorderController extends Controller
         // une liste explicite (« Commander » sur un outil) propose l'article même sans manque
         $explicit = !empty($validated['products']);
 
+        $suppliers = $this->selectDataService->getSupplier();
+        $qualification = app(SupplierQualification::class);
+        $statuses = $qualification->statusMap($suppliers->pluck('id'));
+
         return response()->json([
             'rows'      => $this->reorderService->suggestions($ids, !$explicit),
-            'suppliers' => $this->selectDataService->getSupplier()
-                ->map(fn ($c) => ['id' => $c->id, 'label' => trim($c->code . ' - ' . $c->label)])->values(),
+            'suppliers' => $suppliers
+                ->map(fn ($c) => [
+                    'id'            => $c->id,
+                    'label'         => trim($c->code . ' - ' . $c->label),
+                    'qualification' => $statuses[$c->id] ?? null,
+                ])->values(),
+            'supplier_qualification' => $qualification->badgeConfig(),
         ]);
     }
 
@@ -75,11 +85,20 @@ class ReorderController extends Controller
             'lines.*.companies_id.required' => 'Choisissez un fournisseur pour chaque ligne cochée.',
         ]);
 
+        // Une commande par fournisseur : tous contrôlés avant d'en créer une seule, un motif pour toutes
+        $qualification = app(SupplierQualification::class);
+        $supplierCheck = $qualification->checkMany(array_column($validated['lines'], 'companies_id'));
+        if ($refusal = $qualification->guardJson($request, $supplierCheck)) {
+            return $refusal;
+        }
+
         try {
             $purchases = $this->reorderService->createDraftPurchases($validated['lines']);
         } catch (RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        $purchases->each(fn ($purchase) => $qualification->recordOverride($supplierCheck, $purchase));
 
         return response()->json([
             'purchases' => $purchases->map(fn ($p) => [

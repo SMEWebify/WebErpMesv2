@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiFetchWithStatus as apiFetch } from '../lib/http';
 import { SortIcon } from './table';
+import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -10,6 +11,7 @@ export default function PurchasesRequest({
     lastPurchaseCode,
     lastQuotationCode,
     suppliers,
+    supplierQualification = null,
     endpoints,
     trans,
 }) {
@@ -130,22 +132,26 @@ export default function PurchasesRequest({
 
         setSubmitting(true);
         try {
-            const data = await apiFetch(endpoints.store, {
-                method: 'POST',
-                body: JSON.stringify(body),
-            });
-            window.location.href = data.redirect;
-        } catch (err) {
-            if (err.status === 422 && err.data?.errors) {
-                setErrors(err.data.errors);
-            } else if (err.data?.message) {
-                setErrors({ general: err.data.message });
+            // Commande à un fournisseur non qualifié : fenêtre de passe-droit puis renvoi
+            const result = await sendWithSupplierOverride(endpoints.store, body);
+            if (result.ok) {
+                window.location.href = result.data.redirect;
+                return;
+            }
+            if (result.status === 422 && result.data?.errors) {
+                setErrors(result.data.errors);
+            } else if (result.data?.message) {
+                setErrors({ general: result.data.message });
             } else {
                 setErrors({ general: 'An error occurred. Please try again.' });
             }
-            setSubmitting(false);
+        } catch {
+            setErrors({ general: 'An error occurred. Please try again.' });
         }
+        setSubmitting(false);
     }
+
+    const selectedSupplier = suppliers.find(c => String(c.id) === String(companyId));
 
     function fieldError(key) {
         const e = errors[key];
@@ -216,10 +222,15 @@ export default function PurchasesRequest({
                                     >
                                         <option value="">{suppliers.length ? trans.select_company : trans.no_company}</option>
                                         {suppliers.map(c => (
-                                            <option key={c.id} value={c.id}>{c.label}</option>
+                                            <option key={c.id} value={c.id}>{supplierOptionLabel(c.label, c.qualification, supplierQualification)}</option>
                                         ))}
                                     </select>
                                 </div>
+                                {selectedSupplier && (
+                                    <div className="mt-1">
+                                        <SupplierQualificationBadge status={selectedSupplier.qualification} config={supplierQualification} />
+                                    </div>
+                                )}
                                 {fieldError('companies_id')}
                             </div>
                         )}

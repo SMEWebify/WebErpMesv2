@@ -14,10 +14,12 @@
 @section('right-sidebar')
 
 @section('content')
+@include('include.alert-result')
 <div
     id="purchases-quotation-show-app"
     data-quotation="{{ json_encode($reactProps['quotation']) }}"
     data-suppliers="{{ json_encode($reactProps['suppliers']) }}"
+    data-supplier-qualification="{{ json_encode($reactProps['supplierQualification']) }}"
     data-addresses="{{ json_encode($reactProps['addresses']) }}"
     data-contacts="{{ json_encode($reactProps['contacts']) }}"
     data-currency="{{ $reactProps['currency'] }}"

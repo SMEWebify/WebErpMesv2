@@ -16,6 +16,7 @@
     data-last-purchase-code="{{ $reactProps['lastPurchaseCode'] }}"
     data-last-quotation-code="{{ $reactProps['lastQuotationCode'] }}"
     data-suppliers='@json($reactProps['suppliers'], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+    data-supplier-qualification='@json($reactProps['supplierQualification'], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
     data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
     data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
 </div>

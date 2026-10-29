@@ -3,6 +3,7 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
+import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -617,11 +618,20 @@ function CreateModal({ endpoints, trans, onClose }) {
     const save = async () => {
         setSaving(true); setErrors({});
         try {
-            const data = await apiFetch(endpoints.store, { method: 'POST', body: JSON.stringify(form) });
-            if (data.redirect) window.location.href = data.redirect;
-        } catch (e) { setErrors(e.errors ?? {}); }
+            // Fournisseur non qualifié : fenêtre de passe-droit puis renvoi
+            const result = await sendWithSupplierOverride(endpoints.store, form);
+            if (result.ok) {
+                if (result.data.redirect) window.location.href = result.data.redirect;
+            } else if (result.data.supplier_qualification) {
+                setErrors({ companies_id: [result.data.message] });
+            } else {
+                setErrors(result.data.errors ?? {});
+            }
+        } catch { setErrors({}); }
         finally { setSaving(false); }
     };
+    const qualificationConfig = selectData?.supplier_qualification;
+    const selectedSupplier = (selectData?.suppliers ?? []).find(c => String(c.id) === String(form.companies_id));
 
     if (loadingData) return (
         <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1050 }}>
@@ -662,10 +672,15 @@ function CreateModal({ endpoints, trans, onClose }) {
                                         value={form.companies_id} onChange={e => set('companies_id', e.target.value)}>
                                         <option value="">—</option>
                                         {(selectData?.suppliers ?? []).map(c => (
-                                            <option key={c.id} value={c.id}>{c.label ?? c.code}</option>
+                                            <option key={c.id} value={c.id}>{supplierOptionLabel(c.label ?? c.code, c.qualification, qualificationConfig)}</option>
                                         ))}
                                     </select>
                                     {errors.companies_id && <div className="invalid-feedback">{errors.companies_id[0]}</div>}
+                                    {selectedSupplier && (
+                                        <div className="mt-1">
+                                            <SupplierQualificationBadge status={selectedSupplier.qualification} config={qualificationConfig} />
+                                        </div>
+                                    )}
                                 </div>
                                 {/* Contact */}
                                 <div className="col-md-6 mb-2">

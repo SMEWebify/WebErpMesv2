@@ -567,6 +567,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/reorder', 'App\Http\Controllers\Purchases\ReorderController@index')->name('purchases.reorder');
         Route::get('/reorder/json', 'App\Http\Controllers\Purchases\ReorderController@json')->name('purchases.reorder.json');
         Route::post('/reorder', 'App\Http\Controllers\Purchases\ReorderController@store')->name('purchases.reorder.store');
+        // Liste des fournisseurs qualifiés (CSV, ?scope=all pour tous avec leur état)
+        Route::get('/suppliers/qualified/export', 'App\Http\Controllers\Purchases\SupplierQualificationController@export')->name('purchases.suppliers.qualified.export');
         // Clauses qualité d'achat (avant /{id})
         Route::group(['prefix' => 'quality-clauses', 'middleware' => ['permission:purchase-quality-clauses-manage']], function () {
             Route::get('/', 'App\Http\Controllers\Purchases\PurchaseQualityClausesController@index')->name('purchases.quality-clauses');

@@ -40,6 +40,8 @@ use App\Http\Requests\Companies\UpdateCompanieJsonRequest;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Carbon\Carbon;
 use App\Models\Methods\MethodsServices;
+use App\Models\Companies\SupplierQualificationOverride;
+use App\Services\Purchases\SupplierQualification;
 
 class CompaniesController extends Controller
 {
@@ -344,7 +346,24 @@ class CompaniesController extends Controller
             ])
             ->all();
 
+        // Qualification fournisseur (option purchases.require_qualified_supplier) : badge et passe-droits
+        $supplierQualification = null;
+        $qualification = app(SupplierQualification::class);
+        if ($qualification->enabled() && (int) $id->statu_supplier === 2) {
+            $state = $qualification->stateOf($id->id);
+            $supplierQualification = [
+                'status'    => $state['status'],
+                'detail'    => $state['status'] === SupplierQualification::QUALIFIED ? null : $qualification->detail($state),
+                'overrides' => SupplierQualificationOverride::with(['user:id,name', 'document'])
+                    ->where('companies_id', $id->id)
+                    ->latest()
+                    ->take(10)
+                    ->get(),
+            ];
+        }
+
         return view('companies/companies-show', compact('Companie',
+                                                        'supplierQualification',
                                                         'userSelect',
                                                         'previousUrl',
                                                         'nextUrl',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { csrfToken, apiFetchWithStatus as apiFetch } from '../lib/http';
+import { QUALIFIED, SupplierQualificationBadge, showsBadge, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -67,7 +68,7 @@ function ArrowSteps({ statu, onChangeStatu, disabled }) {
 // Info Tab (left col)
 // ---------------------------------------------------------------------------
 
-function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans, onUpdated, onSupplierChange }) {
+function InfoForm({ quotation, suppliers, supplierQualification, addresses, contacts, endpoints, trans, onUpdated, onSupplierChange }) {
     const [label,      setLabel]      = useState(quotation.label ?? '');
     const [companiesId,setCompaniesId]= useState(quotation.companies_id ?? '');
     const [addressId,  setAddressId]  = useState(quotation.companies_addresses_id ?? '');
@@ -178,7 +179,7 @@ function InfoForm({ quotation, suppliers, addresses, contacts, endpoints, trans,
                                 <select className="form-select" value={companiesId} onChange={handleSupplierChange}>
                                     <option value="">{trans.select_supplier}</option>
                                     {suppliers.map(s => (
-                                        <option key={s.id} value={s.id}>{s.code} - {s.label}</option>
+                                        <option key={s.id} value={s.id}>{supplierOptionLabel(`${s.code} - ${s.label}`, s.qualification, supplierQualification)}</option>
                                     ))}
                                 </select>
                             </div>
@@ -560,7 +561,43 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
 // Lines Tab
 // ---------------------------------------------------------------------------
 
-function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChange }) {
+/**
+ * Fournisseur de la demande de prix non qualifié (option active) : la commande qui en
+ * sort sera refusée, sauf passe-droit motivé saisi ici et envoyé avec le formulaire.
+ */
+function OrderSupplierCheck({ status, config }) {
+    if (!showsBadge(config, status) || status === QUALIFIED) return null;
+    const texts = config.override_texts ?? {};
+
+    return (
+        <div className="alert alert-warning">
+            <div className="mb-2">
+                <SupplierQualificationBadge status={status} config={config} className="me-2" />
+                {texts.blocked}
+            </div>
+            {config.can_override ? (
+                <>
+                    <input type="hidden" name="supplier_override" value="1" />
+                    <label className="form-label fw-bold mb-1" htmlFor="supplier-override-reason">{texts.reason_label} *</label>
+                    <textarea
+                        id="supplier-override-reason"
+                        name="supplier_override_reason"
+                        className="form-control"
+                        rows={2}
+                        minLength={3}
+                        maxLength={2000}
+                        required
+                    />
+                    <div className="form-text">{texts.reason_help}</div>
+                </>
+            ) : (
+                <div className="small">{texts.no_permission}</div>
+            )}
+        </div>
+    );
+}
+
+function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChange, supplierStatus = null, supplierQualification = null }) {
     const [lines,       setLines]       = useState(quotation.lines ?? []);
     const [editingLine, setEditingLine] = useState(null);
 
@@ -614,6 +651,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                 <div className="col-12 table-responsive">
                     <form method="POST" action={endpoints.storeOrder}>
                         <input type="hidden" name="_token" value={csrfToken()} />
+                        <OrderSupplierCheck status={supplierStatus} config={supplierQualification} />
                         <table className="table table-striped">
                             <thead>
                                 <tr>
@@ -752,6 +790,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
 export default function PurchasesQuotationShow({
     initialQuotation,
     suppliers,
+    supplierQualification = null,
     initialAddresses,
     initialContacts,
     currency,
@@ -827,6 +866,7 @@ export default function PurchasesQuotationShow({
                                 <InfoForm
                                     quotation={quotation}
                                     suppliers={suppliers}
+                                    supplierQualification={supplierQualification}
                                     addresses={initialAddresses}
                                     contacts={initialContacts}
                                     endpoints={endpoints}
@@ -849,6 +889,8 @@ export default function PurchasesQuotationShow({
                             endpoints={endpoints}
                             onLinesChange={lines => setQuotation(prev => ({ ...prev, lines }))}
                             trans={trans}
+                            supplierStatus={suppliers.find(s => String(s.id) === String(quotation.companies_id))?.qualification ?? null}
+                            supplierQualification={supplierQualification}
                         />
                     )}
                 </div>
