@@ -25,16 +25,14 @@ class CustomerPriceListController extends Controller
             CustomerPriceList::create($validated);
         } catch (QueryException $exception) {
             if (Str::contains($exception->getMessage(), 'customer_price_lists_unique')) {
-                return redirect()
-                    ->route('products.show', ['id' => $product->id])
+                return $this->backToPrices($product)
                     ->withErrors(['customer_price_list' => __('general_content.customer_price_list_unique_error_trans_key')], 'customerPriceList');
             }
 
             throw $exception;
         }
 
-        return redirect()
-            ->route('products.show', ['id' => $product->id])
+        return $this->backToPrices($product)
             ->with('success', 'Successfully added customer price.');
     }
 
@@ -55,16 +53,14 @@ class CustomerPriceListController extends Controller
             $priceList->update($validated);
         } catch (QueryException $exception) {
             if (Str::contains($exception->getMessage(), 'customer_price_lists_unique')) {
-                return redirect()
-                    ->route('products.show', ['id' => $product->id])
+                return $this->backToPrices($product)
                     ->withErrors(['customer_price_list' => __('general_content.customer_price_list_unique_error_trans_key')], 'customerPriceList');
             }
 
             throw $exception;
         }
 
-        return redirect()
-            ->route('products.show', ['id' => $product->id])
+        return $this->backToPrices($product)
             ->with('success', 'Successfully updated customer price.');
     }
 
@@ -79,9 +75,16 @@ class CustomerPriceListController extends Controller
 
         $priceList->delete();
 
-        return redirect()
-            ->route('products.show', ['id' => $product->id])
+        return $this->backToPrices($product)
             ->with('success', 'Successfully deleted customer price.');
+    }
+
+    /**
+     * Retour sur la fiche article, onglet « Tarifs » ouvert.
+     */
+    protected function backToPrices(Products $product)
+    {
+        return redirect()->to(route('products.show', ['id' => $product->id]) . '#Prices');
     }
 
     /**

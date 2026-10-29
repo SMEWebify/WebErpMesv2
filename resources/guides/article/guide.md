@@ -87,8 +87,11 @@ dimensions. **Soumettre** ouvre la fiche de l'article.
 ![Fiche article](img/03-fiche.png)
 
 1. Les onglets de la fiche :
-   - **Détail produit** : toutes les informations de la création, plus la nature de TVA, le
-     plan de contrôle et la **grille tarifaire client** (prix par client et par quantité) ;
+   - **Détail produit** : toutes les informations de la création, plus la nature de TVA et le
+     plan de contrôle ;
+   - **Tarifs** (article vendu) : la **grille tarifaire client**, des paliers de prix par
+     quantité pour tous les clients, un type de client ou un client précis, avec l'écart au
+     prix de vente de base ;
    - **Découpage technique et nomenclature** : la gamme et les matières (section 4) ;
    - **Stock** : les lignes de stock de l'article (section 7) ;
    - **Historique** : les devis, commandes et achats de l'article ;

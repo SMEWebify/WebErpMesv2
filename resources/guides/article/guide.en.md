@@ -89,8 +89,9 @@ Then **Sold** and **Purchased** (an item can be both), **traceability**, the **s
 ![Item record](img/03-fiche.png)
 
 1. The record's tabs:
-   - **Product detail**: everything from creation, plus VAT nature, control plan and the
-     **customer price list** (price per customer and quantity);
+   - **Product detail**: everything from creation, plus VAT nature and control plan;
+   - **Prices** (sold items): the **customer price list**, price breaks by quantity for all
+     customers, a customer type or a given customer, with the gap to the base selling price;
    - **Technical breakdown and bill of materials**: routing and materials (section 4);
    - **Stock**: the item's stock lines (section 7);
    - **History**: quotes, orders and purchases of the item;

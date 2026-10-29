@@ -8,6 +8,21 @@
 @stop
 
 @section('content')
+@php
+  // Grille tarifaire client (onglet « Tarifs ») : affichée pour un article vendu, ou dès qu'elle a des paliers.
+  $showPricesTab = $Product->sold == 1 || $CustomerPriceLists->isNotEmpty();
+  $customerTypeOptions = [
+      ['value' => '', 'label' => __('general_content.all_customer_types_trans_key')],
+      ['value' => '1', 'label' => __('general_content.legal_entity_trans_key')],
+      ['value' => '2', 'label' => __('general_content.individual_trans_key')],
+  ];
+  $customerTypeLabels = collect($customerTypeOptions)->pluck('label', 'value');
+  // Saisie refusée par la validation : la fenêtre se rouvre avec les valeurs tapées.
+  $priceListReopen = session()->hasOldInput('min_qty') && $errors->getBag('customerPriceList')->any()
+      ? ['id' => old('_price_list_id'), 'companiesId' => old('companies_id'), 'customerType' => old('customer_type'),
+         'minQty' => old('min_qty'), 'maxQty' => old('max_qty'), 'price' => old('price')]
+      : null;
+@endphp
 
 
 
@@ -16,6 +31,9 @@
     <x-adminlte-card title="{{ __('general_content.product_info_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
         <ul class="nav nav-tabs" id="productTab" role="tablist">
           <li class="nav-item"><a class="nav-link active" href="#Product" data-bs-toggle="tab"><i class="fas fa-info-circle"></i> {{ __('general_content.product_info_trans_key') }}</a></li>
+          @if($showPricesTab)
+          <li class="nav-item"><a class="nav-link" href="#Prices" data-bs-toggle="tab"><i class="fas fa-tags"></i> {{ __('price_list.tab') }} @if($CustomerPriceLists->isNotEmpty())<span class="badge text-bg-secondary ms-1">{{ $CustomerPriceLists->count() }}</span>@endif</a></li>
+          @endif
           <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-bs-toggle="tab"><i class="fas fa-cogs"></i> {{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
           @can('stock-lot-serial-management')
           <li class="nav-item"><a class="nav-link" href="#Stock" data-bs-toggle="tab"><i class="fas fa-boxes"></i> {{ __('general_content.stock_trans_key') }} ({{ $Product->StockLocationProductCount() }})</a></li>
@@ -37,8 +55,8 @@
         </ul>
       <!-- /.card-header -->
       <div class="tab-content">
+        @include('include.alert-result')
         <div class="tab-pane active" id="Product">
-          @include('include.alert-result')
           <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
               @csrf
               <div class="card card-body mb-3">
@@ -362,187 +380,134 @@
               <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
             </div>
           </form>
-          @php
-            $customerTypeOptions = [
-                ['value' => '', 'label' => __('general_content.all_customer_types_trans_key')],
-                ['value' => '1', 'label' => __('general_content.legal_entity_trans_key')],
-                ['value' => '2', 'label' => __('general_content.individual_trans_key')],
-            ];
-            $customerTypeLabels = collect($customerTypeOptions)->pluck('label', 'value');
-          @endphp
-          <x-adminlte-card title="{{ __('general_content.customer_price_grid_trans_key') }}" theme="info" maximizable>
-            <form method="POST" action="{{ route('products.customer-price-list.store', ['product' => $Product->id]) }}">
-              @csrf
-              <div class="row">
-                <div class="mb-3 col-md-4">
-                  <label for="price_list_companies_id">{{ __('general_content.customer_trans_key') }}</label>
-                  <select class="form-select" name="companies_id" id="price_list_companies_id">
-                    <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
-                    @foreach($CustomerSelect as $customer)
-                    <option value="{{ $customer->id }}" @if((string) old('companies_id', '') === (string) $customer->id) selected @endif>{{ $customer->label }}</option>
-                    @endforeach
-                  </select>
-                  @error('companies_id', 'customerPriceList')
-                  <small class="text-danger d-block">{{ $message }}</small>
-                  @enderror
-                </div>
-                <div class="mb-3 col-md-3">
-                  <label for="price_list_customer_type">{{ __('general_content.customer_type_trans_key') }}</label>
-                  <select class="form-select" name="customer_type" id="price_list_customer_type">
-                    @foreach($customerTypeOptions as $option)
-                    <option value="{{ $option['value'] }}" @if((string) old('customer_type', '') === (string) $option['value']) selected @endif>{{ $option['label'] }}</option>
-                    @endforeach
-                  </select>
-                  @error('customer_type', 'customerPriceList')
-                  <small class="text-danger d-block">{{ $message }}</small>
-                  @enderror
-                </div>
-                <div class="mb-3 col-md-2">
-                  <label for="price_list_min_qty">{{ __('general_content.quantite_min_trans_key') }}</label>
-                  <input type="number" class="form-control" name="min_qty" id="price_list_min_qty" value="{{ old('min_qty') }}" min="1">
-                  @error('min_qty', 'customerPriceList')
-                  <small class="text-danger d-block">{{ $message }}</small>
-                  @enderror
-                </div>
-                <div class="mb-3 col-md-2">
-                  <label for="price_list_max_qty">{{ __('general_content.quantite_max_trans_key') }}</label>
-                  <input type="number" class="form-control" name="max_qty" id="price_list_max_qty" value="{{ old('max_qty') }}" min="1">
-                  @error('max_qty', 'customerPriceList')
-                  <small class="text-danger d-block">{{ $message }}</small>
-                  @enderror
-                </div>
-                <div class="mb-3 col-md-3">
-                  <label for="price_list_price">{{ __('general_content.price_trans_key') }}</label>
-                  <div class="input-group">
-                    <span class="input-group-text">{{ $Factory->curency }}</span>
-                    <input type="number" step="0.01" class="form-control" name="price" id="price_list_price" value="{{ old('price') }}" min="0">
-                  </div>
-                  @error('price', 'customerPriceList')
-                  <small class="text-danger d-block">{{ $message }}</small>
-                  @enderror
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12 d-flex justify-content-between align-items-center">
-                  <small class="text-muted">{{ __('general_content.customer_price_list_create_help_trans_key') }}</small>
-                  <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.add_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
-                </div>
-              </div>
-            </form>
-            @php $customerPriceListErrors = $errors->getBag('customerPriceList'); @endphp
-            @if($customerPriceListErrors->has('customer_price_list'))
-            <div class="alert alert-warning mt-3 mb-0">
-              {{ $customerPriceListErrors->first('customer_price_list') }}
-            </div>
-            @endif
-            <div class="table-responsive mt-3">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>{{ __('general_content.source_trans_key') }}</th>
-                    <th>{{ __('general_content.quantite_min_trans_key') }}</th>
-                    <th>{{ __('general_content.quantite_max_trans_key') }}</th>
-                    <th>{{ __('general_content.price_trans_key') }}</th>
-                    <th class="text-end">{{ __('general_content.action_trans_key') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse($CustomerPriceLists as $priceList)
-                  @php
-                    $scopeLabel = __('general_content.customer_trans_key');
-                    if($priceList->companies_id){
-                      $scopeLabel = __('general_content.companie_trans_key') . ' - ' . ($priceList->company->label ?? ('#' . $priceList->companies_id));
-                    }elseif(!is_null($priceList->customer_type)){
-                      $typeLabel = $customerTypeLabels[(string) $priceList->customer_type] ?? __('general_content.customer_type_trans_key');
-                      $scopeLabel = __('general_content.customer_type_trans_key') . ' - ' . $typeLabel;
-                    }
-                  @endphp
-                  <tr>
-                    <td>{{ $scopeLabel }}</td>
-                    <td>{{ $priceList->min_qty }}</td>
-                    <td>
-                      @if(is_null($priceList->max_qty))
-                        &infin;
-                      @else
-                        {{ $priceList->max_qty }}
-                      @endif
-                    </td>
-                    <td>{{ number_format($priceList->price, 2) }} {{ $Factory->curency }}</td>
-                    <td class="text-end">
-                      <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#customerPriceListEdit{{ $priceList->id }}">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <form method="POST" action="{{ route('products.customer-price-list.destroy', ['product' => $Product->id, 'priceList' => $priceList->id]) }}" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ __('general_content.delete_trans_key') }} ?');">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </form>
-                      <x-adminlte-modal id="customerPriceListEdit{{ $priceList->id }}" title="{{ __('general_content.update_trans_key') }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('products.customer-price-list.update', ['product' => $Product->id, 'priceList' => $priceList->id]) }}">
-                          @csrf
-                          @method('PUT')
-                          <div class="row">
-                            <div class="mb-3 col-md-6">
-                              <label for="price_list_companies_id_{{ $priceList->id }}">{{ __('general_content.customer_trans_key') }}</label>
-                              <select class="form-select" name="companies_id" id="price_list_companies_id_{{ $priceList->id }}">
-                                <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
-                                @foreach($CustomerSelect as $customer)
-                                <option value="{{ $customer->id }}" @if($priceList->companies_id === $customer->id) selected @endif>{{ $customer->label }}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                            <div class="mb-3 col-md-6">
-                              <label for="price_list_customer_type_{{ $priceList->id }}">{{ __('general_content.customer_type_trans_key') }}</label>
-                              <select class="form-select" name="customer_type" id="price_list_customer_type_{{ $priceList->id }}">
-                                @foreach($customerTypeOptions as $option)
-                                <option value="{{ $option['value'] }}" @if((string) $priceList->customer_type === (string) $option['value']) selected @endif>{{ $option['label'] }}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="mb-3 col-md-4">
-                              <label for="price_list_min_qty_{{ $priceList->id }}">{{ __('general_content.quantite_min_trans_key') }}</label>
-                              <input type="number" class="form-control" name="min_qty" id="price_list_min_qty_{{ $priceList->id }}" value="{{ $priceList->min_qty }}" min="1">
-                            </div>
-                            <div class="mb-3 col-md-4">
-                              <label for="price_list_max_qty_{{ $priceList->id }}">{{ __('general_content.quantite_max_trans_key') }}</label>
-                              <input type="number" class="form-control" name="max_qty" id="price_list_max_qty_{{ $priceList->id }}" value="{{ $priceList->max_qty }}" min="1">
-                            </div>
-                            <div class="mb-3 col-md-4">
-                              <label for="price_list_price_{{ $priceList->id }}">{{ __('general_content.price_trans_key') }}</label>
-                              <div class="input-group">
-                                <span class="input-group-text">{{ $Factory->curency }}</span>
-                                <input type="number" step="0.01" class="form-control" name="price" id="price_list_price_{{ $priceList->id }}" value="{{ $priceList->price }}" min="0">
-                              </div>
-                            </div>
-                          </div>
-                          <div class="text-end">
-                            <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                          </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </td>
-                  </tr>
-                  @empty
-                  <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}" />
-                  @endforelse
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>{{ __('general_content.source_trans_key') }}</th>
-                    <th>{{ __('general_content.quantite_min_trans_key') }}</th>
-                    <th>{{ __('general_content.quantite_max_trans_key') }}</th>
-                    <th>{{ __('general_content.price_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </x-adminlte-card>
         </div>
+        @if($showPricesTab)
+        <div class="tab-pane" id="Prices">
+          @php
+            $basePrice = (float) $Product->selling_price;
+            $priceListErrors = $errors->getBag('customerPriceList');
+            // Du plus large au plus précis ; la priorité appliquée est l'inverse (cf. priority_help).
+            $priceGroups = $CustomerPriceLists
+                ->groupBy(fn ($p) => $p->companies_id ? 'c' . $p->companies_id : (! is_null($p->customer_type) ? 't' . $p->customer_type : 'all'))
+                ->sortBy(fn ($rows, $key) => $key === 'all' ? '0' : ($key[0] === 't' ? '1' . $key : '2' . ($rows->first()->company->label ?? $key)))
+                ->map(function ($rows, $key) use ($customerTypeLabels) {
+                    $first = $rows->first();
+                    $rows = $rows->sortBy('min_qty')->values();
+                    $overlap = false;
+                    foreach ($rows as $i => $row) {
+                        $next = $rows->get($i + 1);
+                        if ($next && (is_null($row->max_qty) || $next->min_qty <= $row->max_qty)) {
+                            $overlap = true;
+                        }
+                    }
+
+                    return [
+                        'label' => $key === 'all'
+                            ? __('price_list.scope_all')
+                            : ($key[0] === 't'
+                                ? __('price_list.group_type', ['type' => $customerTypeLabels[(string) $first->customer_type] ?? $first->customer_type])
+                                : __('price_list.group_company', ['company' => $first->company->label ?? ('#' . $first->companies_id)])),
+                        'icon' => $key === 'all' ? 'fa-globe' : ($key[0] === 't' ? 'fa-users' : 'fa-building'),
+                        'rows' => $rows,
+                        'overlap' => $overlap,
+                    ];
+                });
+          @endphp
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div>
+              <span class="text-body-secondary">{{ __('price_list.base_price') }} :</span>
+              <b>{{ number_format($basePrice, 2, ',', ' ') }} {{ $Factory->curency }}</b>
+            </div>
+            <button type="button" class="btn btn-success btn-sm" data-price-list-open>
+              <i class="fas fa-plus me-1"></i>{{ __('price_list.add') }}
+            </button>
+          </div>
+
+          @if($priceListErrors->any())
+          <div class="alert alert-warning">
+            <ul class="mb-0">
+              @foreach($priceListErrors->all() as $message)
+              <li>{{ $message }}</li>
+              @endforeach
+            </ul>
+          </div>
+          @endif
+
+          @if($priceGroups->isEmpty())
+          <p class="text-body-secondary text-center py-4 mb-0">{{ __('price_list.empty') }}</p>
+          @else
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-2">
+              <thead>
+                <tr>
+                  <th>{{ __('price_list.quantity') }}</th>
+                  <th class="text-end">{{ __('general_content.price_trans_key') }}</th>
+                  <th class="text-end">{{ __('price_list.gap') }}</th>
+                  <th class="text-end" style="width: 1%"></th>
+                </tr>
+              </thead>
+              @foreach($priceGroups as $group)
+              <tbody>
+                <tr class="table-light">
+                  <th colspan="4">
+                    <i class="fas {{ $group['icon'] }} me-1 text-body-secondary"></i>{{ $group['label'] }}
+                    @if($group['overlap'])
+                    <span class="badge text-bg-warning ms-2"><i class="fas fa-triangle-exclamation me-1"></i>{{ __('price_list.overlap') }}</span>
+                    @endif
+                  </th>
+                </tr>
+                @foreach($group['rows'] as $priceList)
+                @php
+                  $gap = $basePrice > 0 ? ($priceList->price - $basePrice) / $basePrice * 100 : null;
+                @endphp
+                <tr>
+                  <td class="ps-4">
+                    @if(is_null($priceList->max_qty))
+                      &ge; {{ $priceList->min_qty }}
+                    @elseif($priceList->max_qty == $priceList->min_qty)
+                      {{ $priceList->min_qty }}
+                    @else
+                      {{ $priceList->min_qty }} – {{ $priceList->max_qty }}
+                    @endif
+                  </td>
+                  <td class="text-end fw-semibold">{{ number_format($priceList->price, 2, ',', ' ') }} {{ $Factory->curency }}</td>
+                  <td class="text-end text-body-secondary">
+                    @if(! is_null($gap))
+                      {{ $gap > 0 ? '+' : '' }}{{ number_format($gap, 1, ',', ' ') }} %
+                    @else
+                      —
+                    @endif
+                  </td>
+                  <td class="text-end text-nowrap">
+                    <button type="button" class="btn btn-sm btn-outline-primary" title="{{ __('price_list.edit') }}"
+                      data-price-list-open
+                      data-id="{{ $priceList->id }}"
+                      data-companies-id="{{ $priceList->companies_id }}"
+                      data-customer-type="{{ $priceList->customer_type }}"
+                      data-min-qty="{{ $priceList->min_qty }}"
+                      data-max-qty="{{ $priceList->max_qty }}"
+                      data-price="{{ $priceList->price }}">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <form method="POST" action="{{ route('products.customer-price-list.destroy', ['product' => $Product->id, 'priceList' => $priceList->id]) }}" class="d-inline">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('general_content.delete_trans_key') }}" onclick="return confirm(@js(__('price_list.delete_confirm')));">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+              @endforeach
+            </table>
+          </div>
+          <small class="text-body-secondary"><i class="fas fa-circle-info me-1"></i>{{ __('price_list.priority_help') }}</small>
+          @endif
+        </div>
+        @endif
         <div class="tab-pane " id="TechnicalInfo">
           @php
           $taskManageEndpoints = [
@@ -986,6 +951,84 @@
 </form>
 @endif
 
+@if($showPricesTab)
+{{-- Fenêtre unique d'ajout / modification d'un palier de la grille tarifaire (onglet « Tarifs »). --}}
+<div class="modal fade" id="priceListModal" tabindex="-1" aria-labelledby="priceListModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" class="modal-content" id="priceListForm"
+      data-store-url="{{ route('products.customer-price-list.store', ['product' => $Product->id]) }}"
+      data-update-url="{{ route('products.customer-price-list.update', ['product' => $Product->id, 'priceList' => '__ID__']) }}"
+      data-title-add="{{ __('price_list.add') }}"
+      data-title-edit="{{ __('price_list.edit') }}"
+      @if($priceListReopen) data-reopen='@json($priceListReopen)' @endif
+    >
+      @csrf
+      <input type="hidden" name="_method" value="POST">
+      <input type="hidden" name="_price_list_id" value="">
+      <div class="modal-header">
+        <h5 class="modal-title" id="priceListModalTitle">{{ __('price_list.add') }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label d-block">{{ __('price_list.scope') }}</label>
+        <div class="btn-group mb-3" role="group">
+          <input type="radio" class="btn-check" name="_scope" id="price_scope_all" value="all" checked>
+          <label class="btn btn-outline-secondary" for="price_scope_all"><i class="fas fa-globe me-1"></i>{{ __('price_list.scope_all') }}</label>
+          <input type="radio" class="btn-check" name="_scope" id="price_scope_type" value="type">
+          <label class="btn btn-outline-secondary" for="price_scope_type"><i class="fas fa-users me-1"></i>{{ __('price_list.scope_type') }}</label>
+          <input type="radio" class="btn-check" name="_scope" id="price_scope_company" value="company">
+          <label class="btn btn-outline-secondary" for="price_scope_company"><i class="fas fa-building me-1"></i>{{ __('price_list.scope_company') }}</label>
+        </div>
+
+        <div class="mb-3 d-none" data-scope-field="type">
+          <label class="form-label" for="price_list_customer_type">{{ __('price_list.scope_type') }}</label>
+          <select class="form-select" name="customer_type" id="price_list_customer_type">
+            @foreach($customerTypeOptions as $option)
+              @if($option['value'] !== '')
+              <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+              @endif
+            @endforeach
+          </select>
+        </div>
+
+        <div class="mb-3 d-none" data-scope-field="company">
+          <x-adminlte-select-bs name="companies_id" id="price_list_companies_id" label="{{ __('price_list.scope_company') }}">
+            <option value="">—</option>
+            @foreach($CustomerSelect as $customer)
+            <option value="{{ $customer->id }}">{{ $customer->label }}</option>
+            @endforeach
+          </x-adminlte-select-bs>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label class="form-label" for="price_list_min_qty">{{ __('general_content.quantite_min_trans_key') }}</label>
+            <input type="number" class="form-control" name="min_qty" id="price_list_min_qty" min="1" step="1" required>
+          </div>
+          <div class="mb-3 col-md-4">
+            <label class="form-label" for="price_list_max_qty">{{ __('general_content.quantite_max_trans_key') }}</label>
+            <input type="number" class="form-control" name="max_qty" id="price_list_max_qty" min="1" step="1" placeholder="∞">
+            <small class="text-body-secondary">{{ __('price_list.max_qty_help') }}</small>
+          </div>
+          <div class="mb-3 col-md-4">
+            <label class="form-label" for="price_list_price">{{ __('general_content.price_trans_key') }}</label>
+            <div class="input-group">
+              <input type="number" step="0.01" class="form-control" name="price" id="price_list_price" min="0" required>
+              <span class="input-group-text">{{ $Factory->curency }}</span>
+            </div>
+            <small class="text-body-secondary" id="price_list_gap"></small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('general_content.cancel_trans_key') }}</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>{{ __('general_content.save_trans_key') }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+@endif
+
 {{-- Modal historique des prix --}}
 @php $canPurchasesPriceHist = auth()->user()?->can('purchases-menu') ? 'true' : 'false'; @endphp
 <div class="modal fade" id="priceHistoryModal" tabindex="-1" role="dialog" aria-labelledby="priceHistoryModalLabel" aria-hidden="true">
@@ -1036,6 +1079,14 @@
       bootstrap.Tooltip.getOrCreateInstance(el);
     });
 
+    // Onglet désigné par l'ancre (#Prices après un ajout de palier…).
+    if (location.hash) {
+      var hashTab = document.querySelector('#productTab a[data-bs-toggle="tab"][href="' + CSS.escape(location.hash) + '"]');
+      if (hashTab) bootstrap.Tab.getOrCreateInstance(hashTab).show();
+    }
+
+    initPriceListModal();
+
     // Ouvre l'historique des prix directement sur la section demandée par le bouton.
     var modal = document.getElementById('priceHistoryModal');
     if (!modal) return;
@@ -1053,5 +1104,81 @@
       }, { once: true });
     });
   });
+
+  // Grille tarifaire : une seule fenêtre pour ajouter ou modifier un palier.
+  function initPriceListModal() {
+    var form = document.getElementById('priceListForm');
+    if (!form) return;
+    var modalEl = document.getElementById('priceListModal');
+    var basePrice = {{ (float) $Product->selling_price }};
+    var companySelect = form.querySelector('[name="companies_id"]');
+    var typeSelect = form.querySelector('[name="customer_type"]');
+    var priceInput = form.querySelector('[name="price"]');
+    var gapEl = document.getElementById('price_list_gap');
+
+    function setCompany(value) {
+      if (companySelect.tomselect) {
+        companySelect.tomselect.setValue(value || '', true);
+      } else {
+        companySelect.value = value || '';
+      }
+    }
+
+    function applyScope(scope) {
+      form.querySelectorAll('[data-scope-field]').forEach(function (el) {
+        el.classList.toggle('d-none', el.dataset.scopeField !== scope);
+      });
+    }
+
+    function showGap() {
+      var price = parseFloat(priceInput.value);
+      if (!(basePrice > 0) || isNaN(price)) { gapEl.textContent = ''; return; }
+      var gap = (price - basePrice) / basePrice * 100;
+      gapEl.textContent = (gap > 0 ? '+' : '') + gap.toFixed(1).replace('.', ',') + ' %';
+    }
+
+    function open(data) {
+      var editing = !!data.id;
+      form.action = editing ? form.dataset.updateUrl.replace('__ID__', data.id) : form.dataset.storeUrl;
+      form.querySelector('[name="_method"]').value = editing ? 'PUT' : 'POST';
+      form.querySelector('[name="_price_list_id"]').value = data.id || '';
+      document.getElementById('priceListModalTitle').textContent = editing ? form.dataset.titleEdit : form.dataset.titleAdd;
+
+      // Un client prime sur le type de client, comme dans le calcul du prix des lignes.
+      var scope = data.companiesId ? 'company' : (data.customerType ? 'type' : 'all');
+      form.querySelector('[name="_scope"][value="' + scope + '"]').checked = true;
+      applyScope(scope);
+      setCompany(data.companiesId);
+      if (data.customerType) typeSelect.value = data.customerType;
+      form.querySelector('[name="min_qty"]').value = data.minQty || '';
+      form.querySelector('[name="max_qty"]').value = data.maxQty || '';
+      priceInput.value = data.price || '';
+      showGap();
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
+
+    document.querySelectorAll('[data-price-list-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () { open(btn.dataset); });
+    });
+    form.querySelectorAll('[name="_scope"]').forEach(function (radio) {
+      radio.addEventListener('change', function () { applyScope(radio.value); });
+    });
+    priceInput.addEventListener('input', showGap);
+
+    // Seul le champ de la portée choisie part : les autres sont vidés à l'envoi.
+    form.addEventListener('submit', function (e) {
+      var scope = form.querySelector('[name="_scope"]:checked').value;
+      if (scope === 'company' && !companySelect.value) {
+        e.preventDefault();
+        (companySelect.tomselect ? companySelect.tomselect : companySelect).focus();
+        return;
+      }
+      if (scope !== 'company') setCompany('');
+      typeSelect.disabled = scope !== 'type';
+    });
+    modalEl.addEventListener('hidden.bs.modal', function () { typeSelect.disabled = false; });
+
+    if (form.dataset.reopen) open(JSON.parse(form.dataset.reopen));
+  }
 </script>
 @stop
