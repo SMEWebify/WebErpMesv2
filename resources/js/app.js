@@ -713,6 +713,7 @@ async function mountSetupWizard() {
         React.createElement(SetupWizard, {
             endpoints: parse('endpoints') ?? {},
             initial:   parse('initial')   ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }

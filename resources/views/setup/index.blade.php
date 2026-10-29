@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Configuration initiale - {{ config('app.name') }}</title>
+    <title>{{ __('setup.title') }} -{{ config('app.name') }}</title>
     @viteReactRefresh
     @vite(['resources/sass/standalone.scss', 'resources/js/app.js'])
 </head>
@@ -14,6 +14,7 @@
     id="setup-wizard-app"
     data-endpoints='@json($endpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
     data-initial='@json($initial, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+    data-trans='@json($trans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
 ></div>
 
 </body>

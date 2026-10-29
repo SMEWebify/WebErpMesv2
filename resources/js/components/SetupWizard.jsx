@@ -1,8 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, createContext, useContext } from 'react';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+// Textes de resources/lang/{locale}/setup.php, passés par la vue
+const TransContext = createContext({});
+const useTrans = () => useContext(TransContext);
+
+function fmt(text, vars) {
+    return Object.entries(vars).reduce((s, [k, v]) => s.replace(`:${k}`, v), text ?? '');
+}
+
+let serverError = 'Erreur serveur';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -21,7 +31,7 @@ async function apiFetch(url, body) {
     const json = await res.json();
     if (!res.ok) {
         const msg = json.message
-            ?? (json.errors ? Object.values(json.errors).flat().join(' ') : 'Erreur serveur');
+            ?? (json.errors ? Object.values(json.errors).flat().join(' ') : serverError);
         throw new Error(msg);
     }
     return json;
@@ -39,7 +49,7 @@ async function apiFetchForm(url, formData) {
     const json = await res.json();
     if (!res.ok) {
         const msg = json.message
-            ?? (json.errors ? Object.values(json.errors).flat().join(' ') : 'Erreur serveur');
+            ?? (json.errors ? Object.values(json.errors).flat().join(' ') : serverError);
         throw new Error(msg);
     }
     return json;
@@ -50,14 +60,14 @@ async function apiFetchForm(url, formData) {
 // ---------------------------------------------------------------------------
 
 const STEPS = [
-    { id: 1, title: 'Société',             icon: 'fa-building' },
-    { id: 2, title: 'TVA',                 icon: 'fa-percent' },
-    { id: 3, title: 'Cond. paiement',      icon: 'fa-calendar-alt' },
-    { id: 4, title: 'Moyen paiement',      icon: 'fa-credit-card' },
-    { id: 5, title: 'Livraison',           icon: 'fa-truck' },
-    { id: 6, title: 'Unité',               icon: 'fa-ruler' },
-    { id: 7, title: 'Rôle & Droits',       icon: 'fa-user-shield' },
-    { id: 8, title: 'Budget prévisionnel', icon: 'fa-chart-bar' },
+    { id: 1, key: 'company',           title: 'Société',             icon: 'fa-building' },
+    { id: 2, key: 'vat',               title: 'TVA',                 icon: 'fa-percent' },
+    { id: 3, key: 'payment_condition', title: 'Cond. paiement',      icon: 'fa-calendar-alt' },
+    { id: 4, key: 'payment_method',    title: 'Moyen paiement',      icon: 'fa-credit-card' },
+    { id: 5, key: 'delivery',          title: 'Livraison',           icon: 'fa-truck' },
+    { id: 6, key: 'unit',              title: 'Unité',               icon: 'fa-ruler' },
+    { id: 7, key: 'role',              title: 'Rôle & Droits',       icon: 'fa-user-shield' },
+    { id: 8, key: 'budget',            title: 'Budget prévisionnel', icon: 'fa-chart-bar' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -94,6 +104,7 @@ function Input({ value, onChange, placeholder, type = 'text', min }) {
 // ---------------------------------------------------------------------------
 
 function LogoUpload({ preview, onFile, onRemove }) {
+    const t = useTrans();
     const inputRef = useRef(null);
     const [drag, setDrag]  = useState(false);
 
@@ -112,7 +123,7 @@ function LogoUpload({ preview, onFile, onRemove }) {
     return (
         <div className="mb-3 mb-4">
             <label className="fw-bold mb-2">
-                Logo de l&apos;entreprise <small className="text-muted fw-normal">(optionnel — PNG, JPG, SVG, max 2 Mo)</small>
+                {t.logo?.label} <small className="text-muted fw-normal">{t.logo?.hint}</small>
             </label>
             <div
                 onClick={() => !preview && inputRef.current?.click()}
@@ -142,7 +153,7 @@ function LogoUpload({ preview, onFile, onRemove }) {
                             className="btn btn-sm btn-danger"
                             style={{ position: 'absolute', top: 6, right: 6 }}
                             onClick={e => { e.stopPropagation(); onRemove(); }}
-                            title="Supprimer le logo"
+                            title={t.logo?.remove}
                         >
                             <i className="fas fa-times" />
                         </button>
@@ -152,13 +163,13 @@ function LogoUpload({ preview, onFile, onRemove }) {
                             style={{ position: 'absolute', bottom: 6, right: 6, fontSize: '0.75rem' }}
                             onClick={e => { e.stopPropagation(); inputRef.current?.click(); }}
                         >
-                            Changer
+                            {t.logo?.change}
                         </button>
                     </>
                 ) : (
                     <div className="text-center text-muted py-2">
                         <i className="fas fa-image fa-2x mb-2 d-block" style={{ color: '#adb5bd' }} />
-                        <span style={{ fontSize: '0.85rem' }}>Cliquez ou déposez votre logo ici</span>
+                        <span style={{ fontSize: '0.85rem' }}>{t.logo?.drop}</span>
                     </div>
                 )}
             </div>
@@ -174,51 +185,54 @@ function LogoUpload({ preview, onFile, onRemove }) {
 }
 
 function StepCompany({ data, onChange, logoPreview, onLogoFile, onLogoRemove }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
+    const ph = t.placeholders ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
             <LogoUpload preview={logoPreview} onFile={onLogoFile} onRemove={onLogoRemove} />
-            <Field label="Nom de la société" required>
-                <Input value={data.name}    onChange={f('name')}    placeholder="Ex : Dupont Industrie" />
+            <Field label={l.company_name} required>
+                <Input value={data.name}    onChange={f('name')}    placeholder={ph.company_name} />
             </Field>
             <div className="row">
                 <div className="col-md-8">
-                    <Field label="Adresse">
-                        <Input value={data.address} onChange={f('address')} placeholder="15 rue des Acacias" />
+                    <Field label={l.address}>
+                        <Input value={data.address} onChange={f('address')} placeholder={ph.address} />
                     </Field>
                 </div>
                 <div className="col-md-4">
-                    <Field label="Code postal">
-                        <Input value={data.zipcode} onChange={f('zipcode')} placeholder="75001" />
+                    <Field label={l.zipcode}>
+                        <Input value={data.zipcode} onChange={f('zipcode')} placeholder={ph.zipcode} />
                     </Field>
                 </div>
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <Field label="Ville">
-                        <Input value={data.city}  onChange={f('city')}  placeholder="Paris" />
+                    <Field label={l.city}>
+                        <Input value={data.city}  onChange={f('city')}  placeholder={ph.city} />
                     </Field>
                 </div>
                 <div className="col-md-6">
-                    <Field label="Téléphone">
-                        <Input value={data.phone} onChange={f('phone')} placeholder="+33 1 23 45 67 89" />
+                    <Field label={l.phone}>
+                        <Input value={data.phone} onChange={f('phone')} placeholder={ph.phone} />
                     </Field>
                 </div>
             </div>
             <div className="row">
                 <div className="col-md-6">
-                    <Field label="Email">
-                        <Input value={data.mail}    onChange={f('mail')}    type="email" placeholder="contact@societe.fr" />
+                    <Field label={l.mail}>
+                        <Input value={data.mail}    onChange={f('mail')}    type="email" placeholder={ph.mail} />
                     </Field>
                 </div>
                 <div className="col-md-3">
-                    <Field label="SIREN">
-                        <Input value={data.siren}   onChange={f('siren')}   placeholder="123 456 789" />
+                    <Field label={l.siren}>
+                        <Input value={data.siren}   onChange={f('siren')}   placeholder={ph.siren} />
                     </Field>
                 </div>
                 <div className="col-md-3">
-                    <Field label="N° TVA intracom.">
-                        <Input value={data.vat_num} onChange={f('vat_num')} placeholder="FR12345678901" />
+                    <Field label={l.vat_num}>
+                        <Input value={data.vat_num} onChange={f('vat_num')} placeholder={ph.vat_num} />
                     </Field>
                 </div>
             </div>
@@ -227,25 +241,25 @@ function StepCompany({ data, onChange, logoPreview, onLogoFile, onLogoRemove }) 
 }
 
 function StepVat({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">
-                TVA appliquée par défaut sur vos devis et commandes.
-            </p>
+            <p className="text-muted mb-3">{t.intro?.vat}</p>
             <div className="row">
                 <div className="col-md-3">
-                    <Field label="Code" required>
-                        <Input value={data.code}  onChange={f('code')}  placeholder="TVA20" />
+                    <Field label={l.code} required>
+                        <Input value={data.code}  onChange={f('code')}  placeholder={t.defaults?.vat_code} />
                     </Field>
                 </div>
                 <div className="col-md-6">
-                    <Field label="Libellé" required>
-                        <Input value={data.label} onChange={f('label')} placeholder="TVA 20%" />
+                    <Field label={l.label} required>
+                        <Input value={data.label} onChange={f('label')} placeholder={t.defaults?.vat_label} />
                     </Field>
                 </div>
                 <div className="col-md-3">
-                    <Field label="Taux (%)" required>
+                    <Field label={l.rate} required>
                         <Input value={data.rate}  onChange={f('rate')}  type="number" placeholder="20" />
                     </Field>
                 </div>
@@ -255,35 +269,37 @@ function StepVat({ data, onChange }) {
 }
 
 function StepPaymentCondition({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">Conditions de paiement par défaut.</p>
+            <p className="text-muted mb-3">{t.intro?.payment_condition}</p>
             <div className="row">
                 <div className="col-md-3">
-                    <Field label="Code" required>
-                        <Input value={data.code}  onChange={f('code')}  placeholder="NET30" />
+                    <Field label={l.code} required>
+                        <Input value={data.code}  onChange={f('code')}  placeholder={t.defaults?.payment_condition_code} />
                     </Field>
                 </div>
                 <div className="col-md-9">
-                    <Field label="Libellé" required>
-                        <Input value={data.label} onChange={f('label')} placeholder="Net 30 jours" />
+                    <Field label={l.label} required>
+                        <Input value={data.label} onChange={f('label')} placeholder={t.defaults?.payment_condition} />
                     </Field>
                 </div>
             </div>
             <div className="row">
                 <div className="col-md-4">
-                    <Field label="Nombre de mois" required>
+                    <Field label={l.months} required>
                         <Input value={data.months} onChange={f('months')} type="number" placeholder="0" />
                     </Field>
                 </div>
                 <div className="col-md-4">
-                    <Field label="Nombre de jours" required>
+                    <Field label={l.days} required>
                         <Input value={data.days}   onChange={f('days')}   type="number" placeholder="30" />
                     </Field>
                 </div>
                 <div className="col-md-4">
-                    <Field label="Fin de mois">
+                    <Field label={l.month_end}>
                         <div className="form-check form-switch mt-2">
                             <input
                                 type="checkbox"
@@ -292,7 +308,7 @@ function StepPaymentCondition({ data, onChange }) {
                                 checked={data.month_end === 1}
                                 onChange={e => onChange({ ...data, month_end: e.target.checked ? 1 : 0 })}
                             />
-                            <label className="form-check-label" htmlFor="month_end">Fin de mois</label>
+                            <label className="form-check-label" htmlFor="month_end">{l.month_end}</label>
                         </div>
                     </Field>
                 </div>
@@ -302,19 +318,21 @@ function StepPaymentCondition({ data, onChange }) {
 }
 
 function StepPaymentMethod({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">Moyen de paiement par défaut.</p>
+            <p className="text-muted mb-3">{t.intro?.payment_method}</p>
             <div className="row">
                 <div className="col-md-3">
-                    <Field label="Code" required>
-                        <Input value={data.code}  onChange={f('code')}  placeholder="VIR" />
+                    <Field label={l.code} required>
+                        <Input value={data.code}  onChange={f('code')}  placeholder={t.defaults?.payment_method_code} />
                     </Field>
                 </div>
                 <div className="col-md-9">
-                    <Field label="Libellé" required>
-                        <Input value={data.label} onChange={f('label')} placeholder="Virement bancaire" />
+                    <Field label={l.label} required>
+                        <Input value={data.label} onChange={f('label')} placeholder={t.defaults?.payment_method} />
                     </Field>
                 </div>
             </div>
@@ -323,19 +341,21 @@ function StepPaymentMethod({ data, onChange }) {
 }
 
 function StepDelivery({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">Mode de livraison par défaut.</p>
+            <p className="text-muted mb-3">{t.intro?.delivery}</p>
             <div className="row">
                 <div className="col-md-3">
-                    <Field label="Code" required>
-                        <Input value={data.code}  onChange={f('code')}  placeholder="EXW" />
+                    <Field label={l.code} required>
+                        <Input value={data.code}  onChange={f('code')}  placeholder={t.defaults?.delivery_code} />
                     </Field>
                 </div>
                 <div className="col-md-9">
-                    <Field label="Libellé" required>
-                        <Input value={data.label} onChange={f('label')} placeholder="Ex Works — départ usine" />
+                    <Field label={l.label} required>
+                        <Input value={data.label} onChange={f('label')} placeholder={t.defaults?.delivery} />
                     </Field>
                 </div>
             </div>
@@ -343,39 +363,35 @@ function StepDelivery({ data, onChange }) {
     );
 }
 
-const UNIT_TYPES = [
-    { value: 1, label: 'Masse' },
-    { value: 2, label: 'Longueur' },
-    { value: 3, label: 'Surface' },
-    { value: 4, label: 'Volume' },
-    { value: 5, label: 'Autre' },
-];
+const UNIT_TYPES = [1, 2, 3, 4, 5];
 
 function StepUnit({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">Unité de mesure par défaut sur les lignes devis/commande.</p>
+            <p className="text-muted mb-3">{t.intro?.unit}</p>
             <div className="row">
                 <div className="col-md-3">
-                    <Field label="Code" required>
-                        <Input value={data.code}  onChange={f('code')}  placeholder="U" />
+                    <Field label={l.code} required>
+                        <Input value={data.code}  onChange={f('code')}  placeholder={t.defaults?.unit_code} />
                     </Field>
                 </div>
                 <div className="col-md-5">
-                    <Field label="Libellé" required>
-                        <Input value={data.label} onChange={f('label')} placeholder="Unité" />
+                    <Field label={l.label} required>
+                        <Input value={data.label} onChange={f('label')} placeholder={t.defaults?.unit} />
                     </Field>
                 </div>
                 <div className="col-md-4">
-                    <Field label="Type" required>
+                    <Field label={l.type} required>
                         <select
                             className="form-select"
                             value={data.type}
                             onChange={e => onChange({ ...data, type: parseInt(e.target.value, 10) })}
                         >
-                            {UNIT_TYPES.map(t => (
-                                <option key={t.value} value={t.value}>{t.label}</option>
+                            {UNIT_TYPES.map(type => (
+                                <option key={type} value={type}>{t.unit_types?.[type] ?? type}</option>
                             ))}
                         </select>
                     </Field>
@@ -386,6 +402,8 @@ function StepUnit({ data, onChange }) {
 }
 
 function StepRole({ data, onChange, existingRoles, availablePermissions }) {
+    const t = useTrans();
+    const r = t.role ?? {};
     const hasRoles = existingRoles.length > 0;
     const allNames = availablePermissions.map(p => p.name);
     const allChecked = allNames.length > 0 && allNames.every(n => data.permissions.includes(n));
@@ -406,7 +424,7 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
             {/* Rôle */}
             {hasRoles ? (
                 <>
-                    <Field label="Sélectionner un rôle existant ou en créer un" required>
+                    <Field label={r.select_or_create} required>
                         <select
                             className="form-select"
                             value={data.role_id ?? ''}
@@ -416,14 +434,14 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
                                 role_name: '',
                             })}
                         >
-                            <option value="">— Créer un nouveau rôle —</option>
+                            <option value="">{r.create_new}</option>
                             {existingRoles.map(r => (
                                 <option key={r.id} value={r.id}>{r.name}</option>
                             ))}
                         </select>
                     </Field>
                     {!data.role_id && (
-                        <Field label="Nom du nouveau rôle" required>
+                        <Field label={r.new_name} required>
                             <Input
                                 value={data.role_name}
                                 onChange={val => onChange({ ...data, role_name: val })}
@@ -433,7 +451,7 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
                     )}
                 </>
             ) : (
-                <Field label="Nom du rôle à créer" required>
+                <Field label={r.name_to_create} required>
                     <Input
                         value={data.role_name}
                         onChange={val => onChange({ ...data, role_name: val, role_id: null })}
@@ -446,15 +464,13 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
             {availablePermissions.length > 0 && (
                 <div className="mt-3">
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                        <label className="fw-bold mb-0">
-                            Permissions attribuées à ce rôle
-                        </label>
+                        <label className="fw-bold mb-0">{r.permissions}</label>
                         <button
                             type="button"
                             className="btn btn-sm btn-outline-secondary"
                             onClick={toggleAll}
                         >
-                            {allChecked ? 'Tout décocher' : 'Tout cocher'}
+                            {allChecked ? r.uncheck_all : r.check_all}
                         </button>
                     </div>
                     <div
@@ -485,7 +501,7 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
                         </div>
                     </div>
                     <small className="text-muted">
-                        {data.permissions.length} / {availablePermissions.length} permission(s) sélectionnée(s)
+                        {fmt(r.selected, { count: data.permissions.length, total: availablePermissions.length })}
                     </small>
                 </div>
             )}
@@ -493,27 +509,22 @@ function StepRole({ data, onChange, existingRoles, availablePermissions }) {
     );
 }
 
-const MONTHS = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-];
-
 function StepEstimatedBudget({ data, onChange }) {
+    const t = useTrans();
+    const l = t.fields ?? {};
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
-            <p className="text-muted mb-3">
-                Budget prévisionnel mensuel pour l&apos;année en cours — utilisé dans les graphiques du tableau de bord.
-            </p>
+            <p className="text-muted mb-3">{t.intro?.budget}</p>
             <div className="row mb-3">
                 <div className="col-md-3">
-                    <Field label="Année" required>
+                    <Field label={l.year} required>
                         <Input value={data.year} onChange={f('year')} type="number" placeholder={String(new Date().getFullYear())} />
                     </Field>
                 </div>
             </div>
             <div className="row">
-                {MONTHS.map((month, i) => {
+                {(t.months ?? []).map((month, i) => {
                     const key = `amount${i + 1}`;
                     return (
                         <div key={key} className="col-6 col-md-3 mb-2">
@@ -593,7 +604,12 @@ function StepDonut({ current, total }) {
 // Progress bar
 // ---------------------------------------------------------------------------
 
+function stepTitle(t, s) {
+    return t.steps?.[s.key] ?? s.title;
+}
+
 function ProgressBar({ currentStep, total }) {
+    const t = useTrans();
     const pct = Math.round(((currentStep - 1) / (total - 1)) * 100);
     return (
         <div className="mb-4">
@@ -618,7 +634,7 @@ function ProgressBar({ currentStep, total }) {
                                 ? <i className="fas fa-check" style={{ fontSize: '0.6rem' }} />
                                 : s.id}
                         </div>
-                        <span className="d-none d-lg-block" style={{ lineHeight: 1.2 }}>{s.title}</span>
+                        <span className="d-none d-lg-block" style={{ lineHeight: 1.2 }}>{stepTitle(t, s)}</span>
                     </div>
                 ))}
             </div>
@@ -637,11 +653,16 @@ function ProgressBar({ currentStep, total }) {
 // ---------------------------------------------------------------------------
 
 const DEFAULT_COMPANY  = { name: '', address: '', city: '', zipcode: '', phone: '', mail: '', siren: '', vat_num: '' };
-const DEFAULT_VAT      = { code: 'TVA20', label: 'TVA 20%', rate: '20' };
-const DEFAULT_PC       = { code: 'NET30', label: 'Net 30 jours', months: 0, days: 30, month_end: 0 };
-const DEFAULT_PM       = { code: 'VIR',   label: 'Virement bancaire' };
-const DEFAULT_DEL      = { code: 'EXW',   label: 'Ex Works — départ usine' };
-const DEFAULT_UNIT     = { code: 'U',     label: 'Unité', type: 5 };
+// Valeurs proposées, dans la langue de l'utilisateur (setup.defaults)
+function defaults(d = {}) {
+    return {
+        vat:  { code: d.vat_code ?? 'TVA20', label: d.vat_label ?? 'TVA 20%', rate: '20' },
+        pc:   { code: d.payment_condition_code ?? 'NET30', label: d.payment_condition ?? 'Net 30 jours', months: 0, days: 30, month_end: 0 },
+        pm:   { code: d.payment_method_code ?? 'VIR', label: d.payment_method ?? 'Virement bancaire' },
+        del:  { code: d.delivery_code ?? 'EXW', label: d.delivery ?? 'Ex Works — départ usine' },
+        unit: { code: d.unit_code ?? 'U', label: d.unit ?? 'Unité', type: 5 },
+    };
+}
 const DEFAULT_BUDGET   = {
     year: new Date().getFullYear(),
     amount1: 0, amount2: 0, amount3: 0, amount4: 0,
@@ -653,7 +674,11 @@ const DEFAULT_BUDGET   = {
 // Main wizard
 // ---------------------------------------------------------------------------
 
-export default function SetupWizard({ endpoints, initial }) {
+export default function SetupWizard({ endpoints, initial, trans = {} }) {
+    const t = trans;
+    const e = t.errors ?? {};
+    if (t.server_error) serverError = t.server_error;
+    const [D] = useState(() => defaults(t.defaults));
     const [step, setStep]       = useState(initial.firstStep ?? 1);
     const [loading, setLoading] = useState(false);
     const [error, setError]     = useState(null);
@@ -674,16 +699,16 @@ export default function SetupWizard({ endpoints, initial }) {
     }
 
     const [company, setCompany] = useState({ ...DEFAULT_COMPANY,  ...initial.company });
-    const [vat,     setVat]     = useState({ ...DEFAULT_VAT,      ...initial.vat });
-    const [pc,      setPc]      = useState({ ...DEFAULT_PC,       ...initial.paymentCondition });
-    const [pm,      setPm]      = useState({ ...DEFAULT_PM,       ...initial.paymentMethod });
-    const [del,     setDel]     = useState({ ...DEFAULT_DEL,      ...initial.delivery });
-    const [unit,    setUnit]    = useState({ ...DEFAULT_UNIT,      ...initial.unit });
+    const [vat,     setVat]     = useState({ ...D.vat,            ...initial.vat });
+    const [pc,      setPc]      = useState({ ...D.pc,             ...initial.paymentCondition });
+    const [pm,      setPm]      = useState({ ...D.pm,             ...initial.paymentMethod });
+    const [del,     setDel]     = useState({ ...D.del,            ...initial.delivery });
+    const [unit,    setUnit]    = useState({ ...D.unit,           ...initial.unit });
     const [role,    setRole]    = useState({
         // Si l'user a déjà un rôle → le pré-sélectionner,
         // sinon pré-sélectionner le premier rôle existant s'il y en a un
         role_id:     initial.userRoleId ?? (initial.roles?.length > 0 ? initial.roles[0].id : null),
-        role_name:   (initial.roles?.length > 0) ? '' : 'Administrateur',
+        role_name:   (initial.roles?.length > 0) ? '' : (t.defaults?.role ?? 'Administrateur'),
         permissions: initial.userPermissions ?? availablePermissions.map(p => p.name),
     });
     const [budget, setBudget]   = useState({
@@ -708,29 +733,29 @@ export default function SetupWizard({ endpoints, initial }) {
     function validate() {
         switch (step) {
             case 1:
-                if (!company.name?.trim()) return 'Le nom de la société est obligatoire.';
+                if (!company.name?.trim()) return e.company_name;
                 break;
             case 2:
-                if (!vat.code?.trim() || !vat.label?.trim()) return 'Code et libellé sont obligatoires.';
-                if (isNaN(parseFloat(vat.rate))) return 'Le taux TVA doit être un nombre.';
+                if (!vat.code?.trim() || !vat.label?.trim()) return e.code_label;
+                if (isNaN(parseFloat(vat.rate))) return e.vat_rate;
                 break;
             case 3:
-                if (!pc.code?.trim() || !pc.label?.trim()) return 'Code et libellé sont obligatoires.';
+                if (!pc.code?.trim() || !pc.label?.trim()) return e.code_label;
                 break;
             case 4:
-                if (!pm.code?.trim() || !pm.label?.trim()) return 'Code et libellé sont obligatoires.';
+                if (!pm.code?.trim() || !pm.label?.trim()) return e.code_label;
                 break;
             case 5:
-                if (!del.code?.trim() || !del.label?.trim()) return 'Code et libellé sont obligatoires.';
+                if (!del.code?.trim() || !del.label?.trim()) return e.code_label;
                 break;
             case 6:
-                if (!unit.code?.trim() || !unit.label?.trim()) return 'Code et libellé sont obligatoires.';
+                if (!unit.code?.trim() || !unit.label?.trim()) return e.code_label;
                 break;
             case 7:
-                if (!role.role_id && !role.role_name?.trim()) return 'Sélectionnez ou créez un rôle.';
+                if (!role.role_id && !role.role_name?.trim()) return e.role;
                 break;
             case 8:
-                if (!budget.year || isNaN(parseInt(budget.year))) return 'L\'année est obligatoire.';
+                if (!budget.year || isNaN(parseInt(budget.year))) return e.year;
                 break;
         }
         return null;
@@ -773,6 +798,7 @@ export default function SetupWizard({ endpoints, initial }) {
     const isLast = step === STEPS.length;
 
     return (
+        <TransContext.Provider value={t}>
         <div
             className="min-vh-100 d-flex align-items-center justify-content-center py-5"
             style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
@@ -783,10 +809,10 @@ export default function SetupWizard({ endpoints, initial }) {
                 <div className="text-center mb-4">
                     <h2 className="text-white fw-bold mb-1">
                         <i className="fas fa-cogs me-2" />
-                        Configuration initiale
+                        {t.title}
                     </h2>
                     <p className="text-white-50">
-                        Étape {step} sur {STEPS.length} — {STEPS[step - 1].title}
+                        {fmt(t.step_of, { step, total: STEPS.length, title: stepTitle(t, STEPS[step - 1]) })}
                     </p>
                 </div>
 
@@ -799,7 +825,7 @@ export default function SetupWizard({ endpoints, initial }) {
                         {/* Step title */}
                         <h4 className="mb-4 d-flex align-items-center" style={{ color: '#1a1a2e' }}>
                             <StepDonut current={step} total={STEPS.length} />
-                            {STEPS[step - 1].title}
+                            {stepTitle(t, STEPS[step - 1])}
                         </h4>
 
                         {/* Error */}
@@ -842,7 +868,7 @@ export default function SetupWizard({ endpoints, initial }) {
                                 onClick={handlePrev}
                                 disabled={step === 1 || loading}
                             >
-                                <i className="fas fa-arrow-left me-1" /> Précédent
+                                <i className="fas fa-arrow-left me-1" /> {t.previous}
                             </button>
                             <button
                                 className="btn btn-primary px-4"
@@ -853,17 +879,18 @@ export default function SetupWizard({ endpoints, initial }) {
                                     <span className="spinner-border spinner-border-sm me-2" role="status" />
                                 )}
                                 {isLast
-                                    ? <><i className="fas fa-check me-1" /> Terminer</>
-                                    : <>Suivant <i className="fas fa-arrow-right ms-1" /></>}
+                                    ? <><i className="fas fa-check me-1" /> {t.finish}</>
+                                    : <>{t.next} <i className="fas fa-arrow-right ms-1" /></>}
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <p className="text-center text-white-50 mt-3" style={{ fontSize: '0.8rem' }}>
-                    Ces paramètres sont modifiables à tout moment dans les réglages.
+                    {t.footer}
                 </p>
             </div>
         </div>
+        </TransContext.Provider>
     );
 }

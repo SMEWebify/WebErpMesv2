@@ -17,32 +17,15 @@ use Spatie\Permission\Models\Permission;
 class SetupController extends Controller
 {
     /**
-     * Permissions par défaut avec leurs libellés affichés dans le wizard.
+     * Permissions créées par défaut ; libellés affichés dans le wizard : setup.permissions.
      */
     private const DEFAULT_PERMISSIONS = [
-        'companies-menu'             => 'CRM — Sociétés',
-        'leads-menu'                 => 'CRM — Prospects',
-        'opportunities-menu'         => 'CRM — Opportunités',
-        'quotes-menu'                => 'Commercial — Devis',
-        'orders-menu'                => 'Commercial — Commandes',
-        'scheduling-menu'            => 'Production — Planification',
-        'deliverys-menu'             => 'Commercial — Livraisons',
-        'invoices-menu'              => 'Comptabilité — Factures',
-        'products-menu'              => 'Produits — Catalogue',
-        'stock-lot-serial-management'=> 'Produits — Lots & Séries',
-        'purchases-menu'             => 'Achats',
-        'quality-menu'               => 'Qualité',
-        'settings-time-menu'         => 'Temps — Paramètres',
-        'methods-menu'               => 'Méthodes',
-        'accounting-menu'            => 'Comptabilité',
-        'human-resources-menu'       => 'Ressources humaines',
-        'documents-menu'             => 'Documents',
-        'reports-menu'               => 'Rapports',
-        'spreadsheet-menu'           => 'Tableur',
-        'osh-menu'                   => 'Santé & Sécurité (SST)',
-        'your-company-menu'          => 'Administration — Société',
-        'asset_manager'              => 'Gestionnaire d\'actifs',
-        'asset-menu'                 => 'Menu Actifs',
+        'companies-menu', 'leads-menu', 'opportunities-menu', 'quotes-menu', 'orders-menu',
+        'scheduling-menu', 'deliverys-menu', 'invoices-menu', 'products-menu',
+        'stock-lot-serial-management', 'purchases-menu', 'quality-menu', 'settings-time-menu',
+        'methods-menu', 'accounting-menu', 'human-resources-menu', 'documents-menu',
+        'reports-menu', 'spreadsheet-menu', 'osh-menu', 'your-company-menu', 'asset_manager',
+        'asset-menu',
     ];
 
     public function index()
@@ -59,10 +42,11 @@ class SetupController extends Controller
         $userRole = auth()->user()->roles()->first();
         $budget   = EstimatedBudgets::where('year', now()->year)->first();
 
+        $permissionLabels = __('setup.permissions');
         $permissions = Permission::all(['id', 'name'])->map(fn ($p) => [
             'id'    => $p->id,
             'name'  => $p->name,
-            'label' => self::DEFAULT_PERMISSIONS[$p->name] ?? $p->name,
+            'label' => $permissionLabels[$p->name] ?? $p->name,
         ])->values()->toArray();
 
         $userPermissions = $userRole
@@ -135,7 +119,10 @@ class SetupController extends Controller
             'step8' => route('setup.estimated-budget'),
         ];
 
-        return view('setup.index', compact('initial', 'endpoints'));
+        $trans = __('setup');
+        unset($trans['permissions']);
+
+        return view('setup.index', compact('initial', 'endpoints', 'trans'));
     }
 
     public function saveCompany(Request $request)
@@ -353,7 +340,7 @@ class SetupController extends Controller
             return; // seeder déjà passé ou permissions déjà créées, on ne touche à rien
         }
 
-        foreach (array_keys(self::DEFAULT_PERMISSIONS) as $name) {
+        foreach (self::DEFAULT_PERMISSIONS as $name) {
             Permission::create(['name' => $name]);
         }
     }

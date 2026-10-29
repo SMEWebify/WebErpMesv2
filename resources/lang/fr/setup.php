@@ -1,0 +1,143 @@
+<?php
+
+return [
+    'title'          => 'Configuration initiale',
+    'step_of'        => 'Étape :step sur :total — :title',
+    'footer'         => 'Ces paramètres sont modifiables à tout moment dans les réglages.',
+    'previous'       => 'Précédent',
+    'next'           => 'Suivant',
+    'finish'         => 'Terminer',
+    'server_error'   => 'Erreur serveur',
+
+    'steps' => [
+        'company'           => 'Société',
+        'vat'               => 'TVA',
+        'payment_condition' => 'Cond. paiement',
+        'payment_method'    => 'Moyen paiement',
+        'delivery'          => 'Livraison',
+        'unit'              => 'Unité',
+        'role'              => 'Rôle & Droits',
+        'budget'            => 'Budget prévisionnel',
+    ],
+
+    'fields' => [
+        'code'          => 'Code',
+        'label'         => 'Libellé',
+        'type'          => 'Type',
+        'company_name'  => 'Nom de la société',
+        'address'       => 'Adresse',
+        'zipcode'       => 'Code postal',
+        'city'          => 'Ville',
+        'phone'         => 'Téléphone',
+        'mail'          => 'Email',
+        'siren'         => 'SIREN',
+        'vat_num'       => 'N° TVA intracom.',
+        'rate'          => 'Taux (%)',
+        'months'        => 'Nombre de mois',
+        'days'          => 'Nombre de jours',
+        'month_end'     => 'Fin de mois',
+        'year'          => 'Année',
+    ],
+
+    'placeholders' => [
+        'company_name' => 'Ex : Dupont Industrie',
+        'address'      => '15 rue des Acacias',
+        'zipcode'      => '75001',
+        'city'         => 'Paris',
+        'phone'        => '+33 1 23 45 67 89',
+        'mail'         => 'contact@societe.fr',
+        'siren'        => '123 456 789',
+        'vat_num'      => 'FR12345678901',
+        'role_name'    => 'Ex : Administrateur',
+    ],
+
+    'logo' => [
+        'label'  => 'Logo de l\'entreprise',
+        'hint'   => '(optionnel — PNG, JPG, SVG, max 2 Mo)',
+        'drop'   => 'Cliquez ou déposez votre logo ici',
+        'remove' => 'Supprimer le logo',
+        'change' => 'Changer',
+    ],
+
+    'intro' => [
+        'vat'               => 'TVA appliquée par défaut sur vos devis et commandes.',
+        'payment_condition' => 'Conditions de paiement par défaut.',
+        'payment_method'    => 'Moyen de paiement par défaut.',
+        'delivery'          => 'Mode de livraison par défaut.',
+        'unit'              => 'Unité de mesure par défaut sur les lignes devis/commande.',
+        'budget'            => 'Budget prévisionnel mensuel pour l\'année en cours — utilisé dans les graphiques du tableau de bord.',
+    ],
+
+    // Valeurs proposées par défaut (enregistrées telles quelles si l'utilisateur les garde)
+    'defaults' => [
+        'vat_code'               => 'TVA20',
+        'vat_label'              => 'TVA 20%',
+        'payment_condition_code' => 'NET30',
+        'payment_condition'      => 'Net 30 jours',
+        'payment_method_code'    => 'VIR',
+        'payment_method'         => 'Virement bancaire',
+        'delivery_code'          => 'EXW',
+        'delivery'               => 'Ex Works — départ usine',
+        'unit_code'              => 'U',
+        'unit'                   => 'Unité',
+        'role'                   => 'Administrateur',
+    ],
+
+    'unit_types' => [
+        1 => 'Masse',
+        2 => 'Longueur',
+        3 => 'Surface',
+        4 => 'Volume',
+        5 => 'Autre',
+    ],
+
+    'role' => [
+        'select_or_create' => 'Sélectionner un rôle existant ou en créer un',
+        'create_new'       => '— Créer un nouveau rôle —',
+        'new_name'         => 'Nom du nouveau rôle',
+        'name_to_create'   => 'Nom du rôle à créer',
+        'permissions'      => 'Permissions attribuées à ce rôle',
+        'check_all'        => 'Tout cocher',
+        'uncheck_all'      => 'Tout décocher',
+        'selected'         => ':count / :total permission(s) sélectionnée(s)',
+    ],
+
+    'months' => [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+    ],
+
+    'errors' => [
+        'company_name'  => 'Le nom de la société est obligatoire.',
+        'code_label'    => 'Code et libellé sont obligatoires.',
+        'vat_rate'      => 'Le taux TVA doit être un nombre.',
+        'role'          => 'Sélectionnez ou créez un rôle.',
+        'year'          => 'L\'année est obligatoire.',
+    ],
+
+    'permissions' => [
+        'companies-menu'              => 'CRM — Sociétés',
+        'leads-menu'                  => 'CRM — Prospects',
+        'opportunities-menu'          => 'CRM — Opportunités',
+        'quotes-menu'                 => 'Commercial — Devis',
+        'orders-menu'                 => 'Commercial — Commandes',
+        'scheduling-menu'             => 'Production — Planification',
+        'deliverys-menu'              => 'Commercial — Livraisons',
+        'invoices-menu'               => 'Comptabilité — Factures',
+        'products-menu'               => 'Produits — Catalogue',
+        'stock-lot-serial-management' => 'Produits — Lots & Séries',
+        'purchases-menu'              => 'Achats',
+        'quality-menu'                => 'Qualité',
+        'settings-time-menu'          => 'Temps — Paramètres',
+        'methods-menu'                => 'Méthodes',
+        'accounting-menu'             => 'Comptabilité',
+        'human-resources-menu'        => 'Ressources humaines',
+        'documents-menu'              => 'Documents',
+        'reports-menu'                => 'Rapports',
+        'spreadsheet-menu'            => 'Tableur',
+        'osh-menu'                    => 'Santé & Sécurité (SST)',
+        'your-company-menu'           => 'Administration — Société',
+        'asset_manager'               => 'Gestionnaire d\'actifs',
+        'asset-menu'                  => 'Menu Actifs',
+    ],
+];

@@ -1,0 +1,143 @@
+<?php
+
+return [
+    'title'          => 'Initial setup',
+    'step_of'        => 'Step :step of :total — :title',
+    'footer'         => 'These settings can be changed at any time in the settings.',
+    'previous'       => 'Previous',
+    'next'           => 'Next',
+    'finish'         => 'Finish',
+    'server_error'   => 'Server error',
+
+    'steps' => [
+        'company'           => 'Company',
+        'vat'               => 'VAT',
+        'payment_condition' => 'Payment terms',
+        'payment_method'    => 'Payment method',
+        'delivery'          => 'Delivery',
+        'unit'              => 'Unit',
+        'role'              => 'Role & Rights',
+        'budget'            => 'Estimated budget',
+    ],
+
+    'fields' => [
+        'code'          => 'Code',
+        'label'         => 'Label',
+        'type'          => 'Type',
+        'company_name'  => 'Company name',
+        'address'       => 'Address',
+        'zipcode'       => 'Postal code',
+        'city'          => 'City',
+        'phone'         => 'Phone',
+        'mail'          => 'Email',
+        'siren'         => 'Company ID (SIREN)',
+        'vat_num'       => 'VAT number',
+        'rate'          => 'Rate (%)',
+        'months'        => 'Number of months',
+        'days'          => 'Number of days',
+        'month_end'     => 'End of month',
+        'year'          => 'Year',
+    ],
+
+    'placeholders' => [
+        'company_name' => 'e.g. Smith Manufacturing',
+        'address'      => '15 Main Street',
+        'zipcode'      => '10001',
+        'city'         => 'New York',
+        'phone'        => '+1 212 555 0100',
+        'mail'         => 'contact@company.com',
+        'siren'        => '123 456 789',
+        'vat_num'      => 'FR12345678901',
+        'role_name'    => 'e.g. Administrator',
+    ],
+
+    'logo' => [
+        'label'  => 'Company logo',
+        'hint'   => '(optional — PNG, JPG, SVG, max 2 MB)',
+        'drop'   => 'Click or drop your logo here',
+        'remove' => 'Remove logo',
+        'change' => 'Change',
+    ],
+
+    'intro' => [
+        'vat'               => 'VAT applied by default on your quotes and orders.',
+        'payment_condition' => 'Default payment terms.',
+        'payment_method'    => 'Default payment method.',
+        'delivery'          => 'Default delivery method.',
+        'unit'              => 'Default unit of measure on quote/order lines.',
+        'budget'            => 'Monthly estimated budget for the current year — used in the dashboard charts.',
+    ],
+
+    // Values offered by default (saved as is if the user keeps them)
+    'defaults' => [
+        'vat_code'               => 'VAT20',
+        'vat_label'              => 'VAT 20%',
+        'payment_condition_code' => 'NET30',
+        'payment_condition'      => 'Net 30 days',
+        'payment_method_code'    => 'TRF',
+        'payment_method'         => 'Bank transfer',
+        'delivery_code'          => 'EXW',
+        'delivery'               => 'Ex Works',
+        'unit_code'              => 'U',
+        'unit'                   => 'Unit',
+        'role'                   => 'Administrator',
+    ],
+
+    'unit_types' => [
+        1 => 'Mass',
+        2 => 'Length',
+        3 => 'Area',
+        4 => 'Volume',
+        5 => 'Other',
+    ],
+
+    'role' => [
+        'select_or_create' => 'Select an existing role or create one',
+        'create_new'       => '— Create a new role —',
+        'new_name'         => 'New role name',
+        'name_to_create'   => 'Name of the role to create',
+        'permissions'      => 'Permissions granted to this role',
+        'check_all'        => 'Check all',
+        'uncheck_all'      => 'Uncheck all',
+        'selected'         => ':count / :total permission(s) selected',
+    ],
+
+    'months' => [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December',
+    ],
+
+    'errors' => [
+        'company_name'  => 'The company name is required.',
+        'code_label'    => 'Code and label are required.',
+        'vat_rate'      => 'The VAT rate must be a number.',
+        'role'          => 'Select or create a role.',
+        'year'          => 'The year is required.',
+    ],
+
+    'permissions' => [
+        'companies-menu'              => 'CRM — Companies',
+        'leads-menu'                  => 'CRM — Leads',
+        'opportunities-menu'          => 'CRM — Opportunities',
+        'quotes-menu'                 => 'Sales — Quotes',
+        'orders-menu'                 => 'Sales — Orders',
+        'scheduling-menu'             => 'Production — Scheduling',
+        'deliverys-menu'              => 'Sales — Deliveries',
+        'invoices-menu'               => 'Accounting — Invoices',
+        'products-menu'               => 'Products — Catalogue',
+        'stock-lot-serial-management' => 'Products — Lots & Serials',
+        'purchases-menu'              => 'Purchasing',
+        'quality-menu'                => 'Quality',
+        'settings-time-menu'          => 'Time — Settings',
+        'methods-menu'                => 'Methods',
+        'accounting-menu'             => 'Accounting',
+        'human-resources-menu'        => 'Human resources',
+        'documents-menu'              => 'Documents',
+        'reports-menu'                => 'Reports',
+        'spreadsheet-menu'            => 'Spreadsheet',
+        'osh-menu'                    => 'Health & Safety (OSH)',
+        'your-company-menu'           => 'Administration — Company',
+        'asset_manager'               => 'Asset manager',
+        'asset-menu'                  => 'Assets menu',
+    ],
+];
