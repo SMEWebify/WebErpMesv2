@@ -82,6 +82,8 @@
     'customer_reference'     => __('general_content.customer_reference_trans_key'),
     'days_late'              => __('general_content.days_late_trans_key'),
     'total_amount'           => __('general_content.total_trans_key'),
+    'contract_review'        => __('contract_review.column'),
+    'contract_review_status' => __('contract_review.status'),
     'payment_condition'      => __('general_content.payment_conditions_trans_key'),
     'payment_method'         => __('general_content.payment_method_trans_key'),
     'delivery'               => __('general_content.delivery_constraint_trans_key'),

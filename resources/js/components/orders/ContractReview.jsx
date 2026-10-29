@@ -1,0 +1,354 @@
+// Onglet « Revue de contrat » de la fiche commande (ISO 19443).
+//
+// Préparation (check-list, écarts) enregistrable par tous ; visa validé / rejeté
+// réservé à la permission `contract-review-approve`, auteur et date posés par le
+// serveur, revue figée ensuite. À côté : la demande de changement, qui reste
+// modifiable après le visa. Rien ici ne bloque la production.
+
+import React, { useCallback, useEffect, useState } from 'react';
+import { apiRequest } from '../../lib/http';
+import { reviewBadge, uncheckedItems, decisionBlocker, draftPayload } from '../../lib/contractReview';
+
+function StatusBadge({ status, trans }) {
+    const badge = reviewBadge(status);
+    if (!badge) return null;
+    return (
+        <span className={`badge ${badge.className}`}>
+            <i className={`fas ${badge.icon} me-1`} />
+            {trans.status?.[status] ?? status}
+        </span>
+    );
+}
+
+function openDocumentsTab(event) {
+    const link = document.querySelector('a[href="#Documents"][data-bs-toggle="tab"]');
+    if (!link || !window.bootstrap?.Tab) return;
+    event.preventDefault();
+    window.bootstrap.Tab.getOrCreateInstance(link).show();
+}
+
+function ReviewCard({ state, trans, endpoints, onState }) {
+    const [checklist, setChecklist] = useState(state.checklist ?? []);
+    const [gaps, setGaps]           = useState(state.gaps ?? '');
+    const [busy, setBusy]           = useState(false);
+    const [message, setMessage]     = useState(null);
+
+    useEffect(() => {
+        setChecklist(state.checklist ?? []);
+        setGaps(state.gaps ?? '');
+    }, [state]);
+
+    const frozen = state.frozen;
+    const unchecked = uncheckedItems(checklist);
+
+    const send = async (url, method, body, okText) => {
+        setBusy(true);
+        setMessage(null);
+        try {
+            const res = await apiRequest(url, { method, body: JSON.stringify(body) });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                setMessage({ type: 'danger', text: data.message ?? trans.error });
+                // Revue visée entre-temps par quelqu'un d'autre : relire l'état.
+                if (res.status === 409) onState(null);
+                return;
+            }
+            onState(data.state);
+            if (okText) setMessage({ type: 'success', text: okText });
+        } catch {
+            setMessage({ type: 'danger', text: trans.error });
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const save = () => send(endpoints.update, 'PUT', draftPayload(checklist, gaps), trans.saved);
+
+    const decide = (decision) => {
+        const blocker = decisionBlocker(decision, checklist, gaps);
+        if (blocker) {
+            setMessage({ type: 'warning', text: trans.errors?.[blocker]?.replace(':items', unchecked.map(i => i.label).join(', ')) });
+            return;
+        }
+        if (!window.confirm(decision === 'approved' ? trans.approve_confirm : trans.reject_confirm)) return;
+        send(endpoints.decide, 'POST', { ...draftPayload(checklist, gaps), decision }, null);
+    };
+
+    const toggle = (key) => setChecklist(items => items.map(item => (item.key === key ? { ...item, checked: !item.checked } : item)));
+
+    return (
+        <div className="card card-outline card-info mb-3">
+            <div className="card-header d-flex align-items-center flex-wrap gap-2">
+                <h3 className="card-title mb-0 me-auto">
+                    <i className="fas fa-clipboard-check me-2" />
+                    {trans.title}
+                </h3>
+                <StatusBadge status={state.status} trans={trans} />
+            </div>
+            <div className="card-body">
+                <p className="small text-body-secondary">{trans.intro}</p>
+
+                {frozen && (
+                    <div className={`alert ${state.decision === 'rejected' ? 'alert-danger' : 'alert-success'} py-2`}>
+                        <i className="fas fa-lock me-1" />
+                        {trans.frozen}
+                        {state.reviewed_at && (
+                            <div className="small">
+                                {trans.visa?.replace(':date', state.reviewed_at).replace(':user', state.reviewed_by ?? '—')}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {message && <div className={`alert alert-${message.type} py-2`}>{message.text}</div>}
+
+                <h6 className="fw-bold">{trans.checklist_title}</h6>
+                <ul className="list-unstyled mb-3">
+                    {checklist.map(item => (
+                        <li key={item.key} className="form-check mb-1">
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id={`review-item-${item.key}`}
+                                checked={Boolean(item.checked)}
+                                disabled={frozen || busy || item.configured === false}
+                                onChange={() => toggle(item.key)}
+                            />
+                            <label className="form-check-label" htmlFor={`review-item-${item.key}`}>
+                                {item.label}
+                                {item.configured === false && (
+                                    <span className="small text-body-secondary ms-1">({trans.checklist_removed})</span>
+                                )}
+                            </label>
+                        </li>
+                    ))}
+                </ul>
+
+                <label className="form-label fw-bold" htmlFor="review-gaps">{trans.gaps}</label>
+                {frozen ? (
+                    <p className="mb-3" style={{ whiteSpace: 'pre-line' }}>
+                        {state.gaps || <span className="text-body-secondary">{trans.no_gaps}</span>}
+                    </p>
+                ) : (
+                    <>
+                        <textarea
+                            id="review-gaps"
+                            className="form-control"
+                            rows={4}
+                            maxLength={10000}
+                            value={gaps}
+                            disabled={busy}
+                            onChange={e => setGaps(e.target.value)}
+                        />
+                        <div className="form-text mb-3">{trans.gaps_help}</div>
+                    </>
+                )}
+
+                {!frozen && unchecked.length > 0 && gaps.trim() === '' && (
+                    <div className="small text-warning-emphasis mb-2">
+                        <i className="fas fa-exclamation-triangle me-1" />
+                        {trans.unchecked_warning}
+                    </div>
+                )}
+            </div>
+            {!frozen && (
+                <div className="card-footer d-flex flex-wrap gap-2 align-items-center">
+                    <button type="button" className="btn btn-outline-primary btn-sm" onClick={save} disabled={busy}>
+                        <i className="fas fa-save me-1" />
+                        {busy ? trans.saving : trans.save}
+                    </button>
+                    <span className="flex-grow-1" />
+                    {state.can_approve ? (
+                        <>
+                            <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => decide('rejected')} disabled={busy}>
+                                <i className="fas fa-times me-1" />
+                                {trans.reject}
+                            </button>
+                            <button type="button" className="btn btn-success btn-sm" onClick={() => decide('approved')} disabled={busy}>
+                                <i className="fas fa-stamp me-1" />
+                                {trans.approve}
+                            </button>
+                        </>
+                    ) : (
+                        <span className="small text-body-secondary">
+                            <i className="fas fa-user-lock me-1" />
+                            {trans.visa_reserved}
+                        </span>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function DocumentsCard({ documents, trans }) {
+    return (
+        <div className="card card-outline card-secondary mb-3">
+            <div className="card-header">
+                <h3 className="card-title mb-0">
+                    <i className="far fa-file-alt me-2" />
+                    {trans.documents}
+                </h3>
+            </div>
+            <div className="card-body">
+                <p className="small text-body-secondary">{trans.documents_help}</p>
+                {documents.length === 0 ? (
+                    <p className="small text-warning-emphasis">
+                        <i className="fas fa-exclamation-triangle me-1" />
+                        {trans.no_documents}
+                    </p>
+                ) : (
+                    <ul className="list-unstyled small">
+                        {documents.map(doc => (
+                            <li key={doc.id} className="text-truncate">
+                                <i className="fas fa-paperclip me-1 text-body-secondary" />
+                                <a href={doc.url} target="_blank" rel="noopener">{doc.name}</a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                <a href="#Documents" className="btn btn-outline-secondary btn-sm" onClick={openDocumentsTab}>
+                    <i className="far fa-folder-open me-1" />
+                    {trans.open_documents}
+                </a>
+            </div>
+        </div>
+    );
+}
+
+function ChangeCard({ change, users, trans, endpoint, onState }) {
+    const [form, setForm]       = useState(change);
+    const [busy, setBusy]       = useState(false);
+    const [message, setMessage] = useState(null);
+
+    useEffect(() => setForm(change), [change]);
+
+    const set = (key, value) => setForm(f => ({ ...f, [key]: value }));
+
+    const save = async () => {
+        setBusy(true);
+        setMessage(null);
+        try {
+            const res = await apiRequest(endpoint, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    change_requested_by: form.requested_by || null,
+                    change_reason: form.reason || null,
+                    change_approved_at: form.approved_at || null,
+                }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                setMessage({ type: 'danger', text: data.message ?? trans.error });
+                return;
+            }
+            onState(data.state);
+            setMessage({ type: 'success', text: trans.change?.saved });
+        } catch {
+            setMessage({ type: 'danger', text: trans.error });
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    return (
+        <div className="card card-outline card-warning mb-3">
+            <div className="card-header d-flex align-items-center gap-2">
+                <h3 className="card-title mb-0 me-auto">
+                    <i className="fas fa-exchange-alt me-2" />
+                    {trans.change?.title}
+                </h3>
+                {change.pending && <span className="badge text-bg-warning">{trans.change?.pending}</span>}
+            </div>
+            <div className="card-body">
+                <p className="small text-body-secondary">{trans.change?.help}</p>
+                {message && <div className={`alert alert-${message.type} py-2`}>{message.text}</div>}
+                <div className="mb-2">
+                    <label className="form-label" htmlFor="change-requested-by">{trans.change_requested_by}</label>
+                    <select
+                        id="change-requested-by"
+                        className="form-select form-select-sm"
+                        value={form.requested_by ?? ''}
+                        disabled={busy}
+                        onChange={e => set('requested_by', e.target.value)}
+                    >
+                        <option value="">{trans.select_user}</option>
+                        {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
+                </div>
+                <div className="mb-2">
+                    <label className="form-label" htmlFor="change-reason">{trans.change_reason}</label>
+                    <textarea
+                        id="change-reason"
+                        className="form-control form-control-sm"
+                        rows={3}
+                        value={form.reason ?? ''}
+                        disabled={busy}
+                        onChange={e => set('reason', e.target.value)}
+                    />
+                </div>
+                <div className="mb-2">
+                    <label className="form-label" htmlFor="change-approved-at">{trans.change_approved_at}</label>
+                    <input
+                        id="change-approved-at"
+                        type="datetime-local"
+                        className="form-control form-control-sm"
+                        value={form.approved_at ?? ''}
+                        disabled={busy}
+                        onChange={e => set('approved_at', e.target.value)}
+                    />
+                </div>
+            </div>
+            <div className="card-footer">
+                <button type="button" className="btn btn-outline-primary btn-sm" onClick={save} disabled={busy}>
+                    <i className="fas fa-save me-1" />
+                    {busy ? trans.saving : trans.change?.save}
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default function ContractReview({ state: initialState, endpoints, users = [], trans }) {
+    const [state, setState] = useState(initialState);
+
+    const reload = useCallback(async () => {
+        try {
+            const res = await apiRequest(endpoints.show, { method: 'GET' });
+            if (res.ok) setState((await res.json()).state);
+        } catch { /* l'état affiché reste celui de la page */ }
+    }, [endpoints.show]);
+
+    // Un document ajouté dans l'onglet GED apparaît au retour sur l'onglet revue.
+    useEffect(() => {
+        const link = document.querySelector('a[href="#ContractReview"][data-bs-toggle="tab"]');
+        if (!link) return undefined;
+        link.addEventListener('shown.bs.tab', reload);
+        return () => link.removeEventListener('shown.bs.tab', reload);
+    }, [reload]);
+
+    const onState = (next) => (next ? setState(next) : reload());
+
+    // Commande interne : pas de revue de contrat, seulement la demande de changement.
+    if (!state.applicable) {
+        return (
+            <div className="row">
+                <div className="col-lg-6">
+                    <ChangeCard change={state.change ?? {}} users={users} trans={trans} endpoint={endpoints.change} onState={onState} />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="row">
+            <div className="col-lg-8">
+                <ReviewCard state={state} trans={trans} endpoints={endpoints} onState={onState} />
+            </div>
+            <div className="col-lg-4">
+                <DocumentsCard documents={state.documents ?? []} trans={trans} />
+                <ChangeCard change={state.change ?? {}} users={users} trans={trans} endpoint={endpoints.change} onState={onState} />
+            </div>
+        </div>
+    );
+}

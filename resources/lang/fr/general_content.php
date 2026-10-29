@@ -1609,6 +1609,7 @@ return [
     'file_role_controle_trans_key'             => 'Contrôle qualité',
     'file_role_document_signe_trans_key'       => 'Document signé',
     'file_role_accord_client_trans_key'        => 'Accord client',
+    'file_role_contractuel_trans_key'          => 'Document contractuel',
     'file_role_autre_trans_key'                => 'Autre',
 
     // Plan de charge (grille services x jours)

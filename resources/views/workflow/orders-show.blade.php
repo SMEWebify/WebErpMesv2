@@ -74,6 +74,21 @@ if (!$orderHasInvoicedLines) {
   <div class="card-header p-2">
     <ul class="nav nav-pills" id="DocumentTabs">
       <li class="nav-item"><a class="nav-link" href="#Order" data-bs-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
+      {{-- Revue de contrat (commande client) ; une commande interne n'y garde que la demande de changement. --}}
+      <li class="nav-item">
+        <a class="nav-link" href="#ContractReview" data-bs-toggle="tab">
+          @if($ContractReviewState['applicable'])
+            @php $reviewBadge = ['done' => 'text-bg-success', 'rejected' => 'text-bg-danger'][$ContractReviewState['status']] ?? 'text-bg-warning'; @endphp
+            <i class="fas fa-clipboard-check"></i> {{ __('contract_review.tab') }}
+            <span class="badge {{ $reviewBadge }} ms-1">{{ __('contract_review.status.' . $ContractReviewState['status']) }}</span>
+          @else
+            <i class="fas fa-exchange-alt"></i> {{ __('contract_review.change.title') }}
+          @endif
+          @if($ContractReviewState['change']['pending'])
+            <span class="badge text-bg-warning ms-1" title="{{ __('contract_review.change.pending') }}"><i class="fas fa-exchange-alt"></i></span>
+          @endif
+        </a>
+      </li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-bs-toggle="tab">Lignes ({{ $Order->OrderLines->filter->isArticle()->count() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Site" data-bs-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-bs-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
@@ -112,6 +127,17 @@ if (!$orderHasInvoicedLines) {
                 </a>
               </div>
             @endif
+          </div>
+        @endif
+
+        {{-- Revue de contrat non visée : avertissement seulement, rien n'est bloqué. --}}
+        @if($ContractReviewState['applicable'] && $ContractReviewState['status'] !== 'done')
+          <div class="alert {{ $ContractReviewState['status'] === 'rejected' ? 'alert-danger' : 'alert-warning' }} d-flex flex-wrap align-items-center gap-2 py-2 mb-3">
+            <i class="fas fa-clipboard-check"></i>
+            <span class="me-auto">{{ __('contract_review.warning_' . $ContractReviewState['status']) }}</span>
+            <a href="#ContractReview" class="btn btn-sm btn-outline-secondary" onclick="event.preventDefault(); bootstrap.Tab.getOrCreateInstance(document.querySelector('a[href=&quot;#ContractReview&quot;]')).show();">
+              {{ __('contract_review.warning_link') }}
+            </a>
           </div>
         @endif
 
@@ -229,76 +255,6 @@ if (!$orderHasInvoicedLines) {
                 </div>
                 <div class="row">
                   <x-FormTextareaComment  comment="{{ $Order->comment }}" />
-                </div>
-                <div class="row mt-3">
-                  <div class="col-12">
-                    <h5 class="text-info">{{ __('general_content.review_change_tracking_trans_key') }}</h5>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="mb-3 col-md-6">
-                    <label for="reviewed_by">{{ __('general_content.reviewed_by_trans_key') }}</label>
-                    <select class="form-select" name="reviewed_by" id="reviewed_by">
-                      <option value="">{{ __('general_content.select_user_trans_key') }}</option>
-                      @foreach($Reviewers as $user)
-                        <option value="{{ $user->id }}" @selected(old('reviewed_by', $Order->reviewed_by) == $user->id)>{{ $user->name }}</option>
-                      @endforeach
-                    </select>
-                    @error('reviewed_by')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
-                  <div class="mb-3 col-md-6">
-                    <label for="reviewed_at">{{ __('general_content.review_date_trans_key') }}</label>
-                    <input type="datetime-local" class="form-control" name="reviewed_at" id="reviewed_at" value="{{ old('reviewed_at', optional($Order->reviewed_at)->format('Y-m-d\\TH:i')) }}">
-                    @error('reviewed_at')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="mb-3 col-md-6">
-                    <label for="review_decision">{{ __('general_content.decision_trans_key') }}</label>
-                    <select class="form-select" name="review_decision" id="review_decision">
-                      <option value="">{{ __('general_content.undefined_trans_key') }}</option>
-                      <option value="pending" @selected(old('review_decision', $Order->review_decision) === 'pending')>{{ __('general_content.pending_trans_key') }}</option>
-                      <option value="approved" @selected(old('review_decision', $Order->review_decision) === 'approved')>{{ __('general_content.approved_trans_key') }}</option>
-                      <option value="rejected" @selected(old('review_decision', $Order->review_decision) === 'rejected')>{{ __('general_content.rejected_trans_key') }}</option>
-                    </select>
-                    @error('review_decision')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
-                  <div class="mb-3 col-md-6">
-                    <label for="change_requested_by">{{ __('general_content.change_requested_by_trans_key') }}</label>
-                    <select class="form-select" name="change_requested_by" id="change_requested_by">
-                      <option value="">{{ __('general_content.select_user_trans_key') }}</option>
-                      @foreach($Reviewers as $user)
-                        <option value="{{ $user->id }}" @selected(old('change_requested_by', $Order->change_requested_by) == $user->id)>{{ $user->name }}</option>
-                      @endforeach
-                    </select>
-                    @error('change_requested_by')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="mb-3 col-md-12">
-                    <label for="change_reason">{{ __('general_content.change_reason_trans_key') }}</label>
-                    <textarea class="form-control" name="change_reason" id="change_reason" rows="3">{{ old('change_reason', $Order->change_reason) }}</textarea>
-                    @error('change_reason')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="mb-3 col-md-6">
-                    <label for="change_approved_at">{{ __('general_content.change_approved_at_trans_key') }}</label>
-                    <input type="datetime-local" class="form-control" name="change_approved_at" id="change_approved_at" value="{{ old('change_approved_at', optional($Order->change_approved_at)->format('Y-m-d\\TH:i')) }}">
-                    @error('change_approved_at')
-                      <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                  </div>
                 </div>
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -429,7 +385,35 @@ if (!$orderHasInvoicedLines) {
             @include('include.email-list', ['mailsList'=> $Order->emailLogs,])
           </div>
         </div>
-      </div>   
+      </div>
+      @php
+        $contractReviewTrans = __('contract_review') + [
+          'change_requested_by' => __('general_content.change_requested_by_trans_key'),
+          'change_reason'       => __('general_content.change_reason_trans_key'),
+          'change_approved_at'  => __('general_content.change_approved_at_trans_key'),
+          'select_user'         => __('general_content.select_user_trans_key'),
+        ];
+        $contractReviewEndpoints = [
+          'show'   => route('orders.json.contract-review', ['id' => $Order->id]),
+          'update' => route('orders.json.contract-review.update', ['id' => $Order->id]),
+          'decide' => route('orders.json.contract-review.decide', ['id' => $Order->id]),
+          'change' => route('orders.json.change-request', ['id' => $Order->id]),
+        ];
+        $contractReviewUsers = $Reviewers->map(fn ($u) => ['id' => $u->id, 'name' => $u->name])->values();
+        $contractReviewFlags = JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG;
+      @endphp
+      <div class="tab-pane" id="ContractReview">
+        <div data-react="contract-review"
+             data-state='@json($ContractReviewState, $contractReviewFlags)'
+             data-endpoints='@json($contractReviewEndpoints, $contractReviewFlags)'
+             data-users='@json($contractReviewUsers, $contractReviewFlags)'
+             data-trans='@json($contractReviewTrans, $contractReviewFlags)'>
+          <div class="text-center py-4 text-body-secondary">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+          </div>
+        </div>
+        @include('workflow.partials.order-review-timeline')
+      </div>
       @php
         $orderLineEndpoints = [
           'lines'           => route('orders.lines.json.for-order',        ['orderId' => $Order->id]),
@@ -786,92 +770,6 @@ if (!$orderHasInvoicedLines) {
         ])
       </div>
       <div class="tab-pane " id="Logs">
-        <x-adminlte-card title="{{ __('general_content.review_timeline_trans_key') }}" theme="info" icon="fas fa-history" class="mb-4">
-          @php
-            $reviewersById = $Reviewers->keyBy('id');
-            $fieldLabels = [
-              'reviewed_by' => __('general_content.reviewed_by_trans_key'),
-              'reviewed_at' => __('general_content.review_date_trans_key'),
-              'review_decision' => __('general_content.decision_trans_key'),
-              'change_requested_by' => __('general_content.change_requested_by_trans_key'),
-              'change_reason' => __('general_content.change_reason_trans_key'),
-              'change_approved_at' => __('general_content.change_approved_at_trans_key'),
-            ];
-            $formatReviewValue = function ($field, $value) use ($reviewersById) {
-                if (is_null($value) || $value === '') {
-                    return __('general_content.undefined_trans_key');
-                }
-
-                if (in_array($field, ['reviewed_by', 'change_requested_by'], true)) {
-                    return optional($reviewersById->get((int) $value))->name ?? __('general_content.undefined_trans_key');
-                }
-
-                if (in_array($field, ['reviewed_at', 'change_approved_at'], true)) {
-                    try {
-                        return \Carbon\Carbon::parse($value)->format('d/m/Y H:i');
-                    } catch (\Exception $e) {
-                        return $value;
-                    }
-                }
-
-                if ($field === 'review_decision') {
-                    return match ($value) {
-                        'approved' => __('general_content.approved_trans_key'),
-                        'rejected' => __('general_content.rejected_trans_key'),
-                        'pending' => __('general_content.pending_trans_key'),
-                        default => $value,
-                    };
-                }
-
-                return $value;
-            };
-          @endphp
-          @if($ReviewTimeline->isEmpty())
-            <p class="mb-0 text-muted">{{ __('general_content.no_data_trans_key') }}</p>
-          @else
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>{{ __('general_content.created_trans_key') }}</th>
-                    <th>{{ __('general_content.user_trans_key') }}</th>
-                    <th>{{ __('general_content.description_trans_key') }}</th>
-                    <th>{{ __('general_content.changes_trans_key') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($ReviewTimeline as $entry)
-                    <tr>
-                      <td>{{ optional($entry['created_at'])->format('d/m/Y H:i') }}</td>
-                      <td>{{ $entry['causer'] ?? __('general_content.undefined_trans_key') }}</td>
-                      <td>{{ $entry['description'] }}</td>
-                      <td>
-                        <table class="table table-sm mb-0">
-                          <thead>
-                            <tr>
-                              <th>{{ __('general_content.label_trans_key') }}</th>
-                              <th>{{ __('general_content.previous_trans_key') }}</th>
-                              <th>{{ __('general_content.new_trans_key') }}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            @foreach($entry['changes'] as $change)
-                              <tr>
-                                <td>{{ $fieldLabels[$change['field']] ?? \Illuminate\Support\Str::headline($change['field']) }}</td>
-                                <td>{{ $formatReviewValue($change['field'], $change['old']) }}</td>
-                                <td>{{ $formatReviewValue($change['field'], $change['new']) }}</td>
-                              </tr>
-                            @endforeach
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          @endif
-        </x-adminlte-card>
         @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Orders', 'logsSubjectId' => $Order->id])
       </div>
 

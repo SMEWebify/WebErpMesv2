@@ -11,6 +11,7 @@ use App\Models\Workflow\AffairCategory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Services\Production\ProductionRelease;
+use App\Services\Workflow\ContractReview;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Services\OrderService;
@@ -185,7 +186,7 @@ class OrdersController extends Controller
         $currentMarginPercentageFormatted = number_format($currentMarginPercentage, 2, '.', ',') . ' %';
 
         $leadTime = $this->orderKPIService->getLeadTime($id);
-        $reviewFields = ['reviewed_by', 'reviewed_at', 'review_decision', 'change_requested_by', 'change_reason', 'change_approved_at'];
+        $reviewFields = ['reviewed_by', 'reviewed_at', 'review_decision', 'review_gaps', 'review_checklist', 'change_requested_by', 'change_reason', 'change_approved_at'];
         $ReviewTimeline = Activity::query()
             ->where('subject_type', Orders::class)
             ->where('subject_id', $id->id)
@@ -225,6 +226,7 @@ class OrdersController extends Controller
             'MethodsLocationsSelect' => $MethodsLocationsSelect,
             'Reviewers' => $Reviewers,
             'ReviewTimeline' => $ReviewTimeline,
+            'ContractReviewState' => app(ContractReview::class)->state($id, auth()->user()),
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
@@ -261,16 +263,9 @@ class OrdersController extends Controller
         // Retrieve the order
         $order = Orders::findOrFail($request->id);
 
-        $previousDecision = $order->review_decision;
-
-        // Update the order using mass assignment
+        // Update the order using mass assignment. La revue de contrat (et l'ARC
+        // qu'elle crée une fois validée) passe par App\Services\Workflow\ContractReview.
         $order->update($request->validated());
-
-        // La revue approuvée constitue l'ARC. Tant qu'il reste en cours, il est
-        // resynchronisé plutôt que dupliqué : c'est une photo de la commande.
-        if ($order->review_decision === 'approved' && $previousDecision !== 'approved' && $order->type == 1) {
-            $this->orderConfirmationService->createFromOrder($order, auth()->id());
-        }
 
         if ($request->boolean('apply_delivery_date') && $order->wasChanged('validity_date') && $order->validity_date) {
             $factory = app('Factory');
@@ -370,6 +365,7 @@ class OrdersController extends Controller
                 'total_amount'       => round((float) $o->total_amount, 2),
                 'affair_category'    => $o->affairCategory ? ['id' => $o->affairCategory->id, 'code' => $o->affairCategory->code, 'label' => $o->affairCategory->label] : null,
                 'matched_equipment_tags' => $matchedTags[$o->id] ?? [],
+                'contract_review'    => ContractReview::stateFor($o->review_decision, (int) $o->type),
                 'url'                => route('orders.show', ['id' => $o->id]),
             ]),
             'meta' => [

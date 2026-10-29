@@ -5,6 +5,7 @@ import { askCreditOverride } from '../lib/creditLimit';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
+import { reviewBadge } from '../lib/contractReview';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -383,6 +384,17 @@ function DashboardTab({ kpi, chartData, topCustomers, trans }) {
 // OrdersTable — colonnes déclarées, rendu par le DataTable partagé
 // ---------------------------------------------------------------------------
 
+function ContractReviewBadge({ status, trans }) {
+    const badge = reviewBadge(status);
+    if (!badge) return <span className="text-body-secondary">—</span>;
+    const label = trans.contract_review_status?.[status] ?? status;
+    return (
+        <span className={`badge ${badge.className}`} title={label}>
+            <i className={`fas ${badge.icon} me-1`} />{label}
+        </span>
+    );
+}
+
 function orderColumns(trans, currency, locale) {
     return [
         { key: 'code',               label: trans.code               ?? 'Code',     sortable: true,                bold: true,
@@ -409,6 +421,10 @@ function orderColumns(trans, currency, locale) {
           render: o => o.contact?.name ?? '—', filterValue: o => o.contact?.name, filter: 'text' },
         { key: 'statu',              label: trans.status             ?? 'Status',   sortable: true,                align: 'center',
           render: o => <StatusBadge statu={o.statu} config={STATUS_CONFIG} trans={trans} />, mobile: 'badge' },
+        // Revue de contrat : indicateur seulement, une revue à faire ne bloque rien.
+        { key: 'contract_review',    label: trans.contract_review    ?? 'Review',                                  align: 'center',
+          render: o => <ContractReviewBadge status={o.contract_review} trans={trans} />,
+          filterValue: o => trans.contract_review_status?.[o.contract_review] ?? '', filter: 'text' },
         { key: 'validity_date',      label: trans.validity_date      ?? 'Delivery', sortable: true,                align: 'center',
           render: o => formatDate(o.validity_date, locale), filter: 'date' },
         { key: 'created_at',         label: trans.created_at         ?? 'Created',  sortable: true,                align: 'center',

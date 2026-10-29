@@ -34,12 +34,8 @@ class UpdateOrderRequest extends FormRequest
             'accounting_payment_methods_id' => 'required_if:type,1|nullable|exists:accounting_payment_methods,id',
             'accounting_deliveries_id' => 'required_if:type,1|nullable|exists:accounting_deliveries,id',
             'comment' => 'nullable|string',
-            'reviewed_by' => 'nullable|exists:users,id',
-            'reviewed_at' => 'nullable|date',
-            'review_decision' => 'nullable|in:pending,approved,rejected',
-            'change_requested_by' => 'nullable|exists:users,id',
-            'change_reason' => 'nullable|string',
-            'change_approved_at' => 'nullable|date',
+            // Revue de contrat et demande de changement : onglet dédié
+            // (OrderContractReviewController), jamais par ce formulaire.
             // Absent du formulaire tant que le référentiel est vide : ne rien écraser.
             'affair_category_id' => 'sometimes|nullable|integer|exists:affair_categories,id',
         ];

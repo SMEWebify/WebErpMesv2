@@ -1702,6 +1702,22 @@ async function mountAffairSummary() {
     });
 }
 
+// Onglet « Revue de contrat » de la fiche commande (workflow/orders-show).
+async function mountContractReview() {
+    const el = document.querySelector('[data-react="contract-review"]');
+    if (!el) return;
+    const { default: ContractReview } = await import('./components/orders/ContractReview.jsx');
+    const parse = (k) => { try { return JSON.parse(el.dataset[k] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(ContractReview, {
+            state:     parse('state')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            users:     parse('users')     ?? [],
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 async function mountAffairTimeline() {
     const els = document.querySelectorAll('[data-react="affair-timeline"]');
     if (!els.length) return;
@@ -1844,6 +1860,7 @@ mountFileManagers();
 mountOpportunityVisit();
 mountAffairSummary();
 mountAffairTimeline();
+mountContractReview();
 mountArrowSteps();
 mountStockCurrentApp();
 mountChatLive();

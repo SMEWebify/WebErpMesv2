@@ -65,8 +65,10 @@ class Orders extends Model
                         ];
     // NOTE: 'id' removed from fillable (was present before) — mass-assigning PK is always wrong.
 
+    // review_gaps / review_checklist : hors $fillable, écrits par App\Services\Workflow\ContractReview.
     protected $casts = [
         'reviewed_at' => 'datetime',
+        'review_checklist' => 'array',
         'change_approved_at' => 'datetime',
         'n2p_last_push_at' => 'datetime',
         'n2p_last_status_event_at' => 'datetime',
@@ -368,6 +370,8 @@ class Orders extends Model
                                                 'reviewed_by',
                                                 'reviewed_at',
                                                 'review_decision',
+                                                'review_gaps',
+                                                'review_checklist',
                                                 'change_requested_by',
                                                 'change_reason',
                                                 'change_approved_at',

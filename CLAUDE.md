@@ -577,6 +577,31 @@ client, 3 validé, 4 annulé.
   `wem:esign:sync` relisent devis et dérogations.
 - Tests : `tests/Feature/Quality/DerogationApprovalTest.php`, `tests/Feature/ESignature/DerogationSignatureTest.php`.
 
+## Revue de contrat des commandes (ISO 19443)
+
+Onglet « Revue de contrat » de la fiche commande (React `components/orders/ContractReview.jsx`),
+qui remplace le bloc « Suivi des revues et changements » du formulaire Informations.
+`App\Services\Workflow\ContractReview`, routes `orders.json.contract-review*`.
+- **Colonnes** : `reviewed_by` / `reviewed_at` / `review_decision` (2024) + `review_gaps` (écarts
+  avec l'offre) et `review_checklist` (JSON clé → bool, points de `config('orders.review_checklist')`,
+  libellés `contract_review.checklist.*`), hors `$fillable` pour les deux dernières.
+  `UpdateOrderRequest` ne porte plus aucun champ de revue ni de changement.
+- **Préparation** (check-list, écarts) : tout utilisateur du module. **Visa** (`approved` |
+  `rejected`) : permission `contract-review-approve` (Admin par migration), sinon 403 ;
+  `reviewed_by` / `reviewed_at` posés par le serveur. Rejet, ou validation avec un point non
+  coché → écarts obligatoires (422). Revue visée = **figée** (409) ; un ancien `pending` vaut
+  « à faire ». Commande interne (type 2) : pas de revue (422), l'onglet n'affiche que la
+  demande de changement.
+- **Validation** → ARC préparé (`OrderConfirmationService::createFromOrder`, déplacé
+  d'`OrdersController::update`).
+- **Jamais bloquant** : bandeau sur l'onglet Informations et colonne « Revue » de l'index
+  (`contract_review` = done | rejected | todo | null). Seul effet existant : une revue rejetée
+  ou un changement non approuvé refusent le BPF (`ProductionRelease::releaseRefusal`).
+- **Demande de changement** (`orders.json.change-request`) : modifiable même revue figée.
+- **Documents contractuels** : GED de la commande, rôle `contractuel` (`FileRole::CONTRACTUAL`),
+  listés dans l'onglet. Historique (activitylog) dans l'onglet, plus dans Logs.
+- Tests : `tests/Feature/ContractReviewTest.php`, `resources/js/tests/lib/contractReview.test.js`.
+
 ## Reports de date des lignes de commande
 
 `delivery_date` / `internal_delay` ne gardent que la dernière valeur saisie ; chaque

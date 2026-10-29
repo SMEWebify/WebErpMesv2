@@ -22,6 +22,8 @@ class FileRole
     public const SIGNED = 'document_signe';
     // Accord écrit du client sur une dérogation (courrier, e-mail, fiche signée)
     public const CUSTOMER_APPROVAL = 'accord_client';
+    // Pièce contractuelle d'une commande (bon de commande client, cahier des charges, CGA…)
+    public const CONTRACTUAL = 'contractuel';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -47,6 +49,7 @@ class FileRole
             self::CONTROL,
             self::SIGNED,
             self::CUSTOMER_APPROVAL,
+            self::CONTRACTUAL,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,

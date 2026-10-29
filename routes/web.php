@@ -405,6 +405,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware('audit.access:order,id')->name('orders.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OrdersController@changeStatusJson')->name('orders.json.statu');
         Route::get('/{id}/json/purchase-history', 'App\Http\Controllers\Workflow\OrdersController@purchaseHistoryJson')->name('orders.json.purchase-history');
+        // Revue de contrat (visa contrôlé par ContractReview : contract-review-approve)
+        Route::get('/{id}/json/contract-review',           'App\Http\Controllers\Workflow\OrderContractReviewController@show')->name('orders.json.contract-review');
+        Route::put('/{id}/json/contract-review',           'App\Http\Controllers\Workflow\OrderContractReviewController@update')->name('orders.json.contract-review.update');
+        Route::post('/{id}/json/contract-review/decision', 'App\Http\Controllers\Workflow\OrderContractReviewController@decide')->name('orders.json.contract-review.decide');
+        Route::put('/{id}/json/change-request',            'App\Http\Controllers\Workflow\OrderContractReviewController@change')->name('orders.json.change-request');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
