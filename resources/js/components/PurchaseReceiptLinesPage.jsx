@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useProductSearch from '../hooks/useProductSearch';
 import { apiRequest as apiFetch } from '../lib/http';
+import DocumentCheckDrawer, { CertificateCell, DecisionBadge, StatusBadge } from './purchases/DocumentCheckDrawer.jsx';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -33,9 +34,10 @@ const EMPTY_INSPECTION = {
     create_non_conformity: false,
     new_nc_label: '',
     new_nc_comment: '',
+    received_certificate_type: '',
 };
 
-function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved }) {
+function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, onClose, onSaved }) {
     const [form, setForm]     = useState(EMPTY_INSPECTION);
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -52,9 +54,16 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
             create_non_conformity: false,
             new_nc_label: '',
             new_nc_comment: '',
+            received_certificate_type:  line.received_certificate_type  ?? '',
         });
         setErrors({});
     }, [open, line]);
+
+    const dcTexts = documentCheck?.texts ?? {};
+    const certificateChoices = [...(documentCheck?.certificateTypes ?? [])];
+    if (line?.received_certificate_type && !certificateChoices.includes(line.received_certificate_type)) {
+        certificateChoices.push(line.received_certificate_type);
+    }
 
     const set = (field, value) => setForm((f) => ({ ...f, [field]: value }));
 
@@ -185,6 +194,23 @@ function InspectionDrawer({ open, line, selectData, endpoints, onClose, onSaved 
                                     ))}
                                 </select>
                             </div>
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="mb-1 small fw-bold">
+                                {dcTexts.received_certificate}
+                                {line?.required_certificate_type && (
+                                    <span className="fw-normal text-body-secondary ms-1">({dcTexts.required_certificate} : {line.required_certificate_type})</span>
+                                )}
+                            </label>
+                            <select className={`form-select form-select-sm ${errors.received_certificate_type ? 'is-invalid' : ''}`}
+                                value={form.received_certificate_type}
+                                onChange={(e) => set('received_certificate_type', e.target.value)}>
+                                <option value="">{dcTexts.none}</option>
+                                {certificateChoices.map((value) => <option key={value} value={value}>{value}</option>)}
+                            </select>
+                            {errors.received_certificate_type && <div className="invalid-feedback d-block">{errors.received_certificate_type[0]}</div>}
+                            {line?.document_check_result && <div className="form-text">{dcTexts.received_reset_hint}</div>}
                         </div>
 
                         <div className="mb-3 mb-3">
@@ -569,7 +595,7 @@ function ManualLineForm({ endpoints, onAdded }) {
 // LineRow
 // ---------------------------------------------------------------------------
 
-function LineRow({ line, onInspect, onStock }) {
+function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
     const hasInspection = !!(line.inspection_date || line.inspection_result || line.inspected_by);
     const hasStock      = !!(line.stock_location_products_id);
     const hasProduct    = !!(line.product_id);
@@ -674,6 +700,15 @@ function LineRow({ line, onInspect, onStock }) {
                     : <span className="text-muted">—</span>}
             </td>
 
+            {/* Contrôle documentaire */}
+            <td><CertificateCell line={line} texts={dcTexts} /></td>
+            <td>
+                {line.document_check_status === 'not_required'
+                    ? <span className="text-muted">—</span>
+                    : <StatusBadge status={line.document_check_status} texts={dcTexts} />}
+            </td>
+            <td><DecisionBadge decision={line.final_decision} texts={dcTexts} /></td>
+
             {/* Actions */}
             <td style={{ whiteSpace: 'nowrap' }}>
                 <button
@@ -684,6 +719,14 @@ function LineRow({ line, onInspect, onStock }) {
                     onClick={() => onInspect(line)}
                 >
                     <i className="fas fa-clipboard-check" />
+                </button>
+                <button
+                    type="button"
+                    className={`btn btn-sm me-1 ${line.document_check_at ? 'btn-teal' : 'btn-outline-secondary'}`}
+                    title={dcTexts.drawer_title}
+                    onClick={() => onDocumentCheck(line)}
+                >
+                    <i className="fas fa-file-shield" />
                 </button>
                 {hasProduct && (
                     <button
@@ -705,13 +748,15 @@ function LineRow({ line, onInspect, onStock }) {
 // PurchaseReceiptLinesPage — main component
 // ---------------------------------------------------------------------------
 
-export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints }) {
+export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints, documentCheck = {} }) {
     const [lines, setLines]               = useState([]);
     const [selectData, setSelectData]     = useState({});
     const [loading, setLoading]           = useState(true);
     const [flash, setFlash]               = useState(null);
     const [inspectionLine, setInspectionLine] = useState(null);
     const [stockLine, setStockLine]       = useState(null);
+    const [documentLine, setDocumentLine] = useState(null);
+    const dcTexts = documentCheck.texts ?? {};
 
     const showFlash = (type, msg) => {
         setFlash({ type, msg });
@@ -732,6 +777,12 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
     const handleInspectionSaved = (updatedLine) => {
         setLines((prev) => prev.map((l) => l.id === updatedLine.id ? updatedLine : l));
         showFlash('success', 'Inspection mise à jour');
+    };
+
+    const handleDocumentCheckSaved = (updatedLine) => {
+        setLines((prev) => prev.map((l) => l.id === updatedLine.id ? updatedLine : l));
+        setDocumentLine(null);
+        showFlash('success', dcTexts.saved);
     };
 
     const handleStockSaved = (lineId, data) => {
@@ -788,19 +839,22 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                             <th>Date insp.</th>
                             <th>Inspecté par</th>
                             <th>NC</th>
+                            <th>{dcTexts.certificate}</th>
+                            <th>{dcTexts.document}</th>
+                            <th>{dcTexts.decision}</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={16} className="text-center py-4">
+                                <td colSpan={19} className="text-center py-4">
                                     <i className="fas fa-spinner fa-spin me-2" />Chargement…
                                 </td>
                             </tr>
                         ) : lines.length === 0 ? (
                             <tr>
-                                <td colSpan={16} className="text-center py-4 text-muted">
+                                <td colSpan={19} className="text-center py-4 text-muted">
                                     Aucune ligne dans ce bon de réception.
                                 </td>
                             </tr>
@@ -811,6 +865,8 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                                     line={line}
                                     onInspect={(l) => setInspectionLine(l)}
                                     onStock={(l) => setStockLine(l)}
+                                    onDocumentCheck={(l) => setDocumentLine(l)}
+                                    dcTexts={dcTexts}
                                 />
                             ))
                         )}
@@ -826,7 +882,7 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                                 <td className="text-end">
                                     {totalRejected > 0 && <span className="badge text-bg-danger">{fmt(totalRejected)}</span>}
                                 </td>
-                                <td colSpan={5} />
+                                <td colSpan={8} />
                             </tr>
                         </tfoot>
                     )}
@@ -839,8 +895,18 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                 line={inspectionLine}
                 selectData={selectData}
                 endpoints={endpoints}
+                documentCheck={documentCheck}
                 onClose={() => setInspectionLine(null)}
                 onSaved={handleInspectionSaved}
+            />
+
+            {/* Visa documentaire */}
+            <DocumentCheckDrawer
+                line={documentLine}
+                endpoint={endpoints.documentCheck}
+                config={documentCheck}
+                onClose={() => setDocumentLine(null)}
+                onSaved={handleDocumentCheckSaved}
             />
 
             {/* Stock overlay */}

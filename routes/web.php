@@ -635,6 +635,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/receipt/line/{purchaseReceiptLine}/inspection', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineInspection')->middleware(['auth'])->name('purchase.receipts.lines.update');
         Route::post('/receipt/{id}/manual-line', 'App\Http\Controllers\Purchases\PurchasesReceiptController@storeManualReceiptLine')->middleware(['auth'])->name('purchase.receipts.lines.manual');
         Route::get('/receipt/{id}/lines/json', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receiptLinesJson')->middleware(['auth'])->name('purchases.receipt.lines.json');
+        // Visa documentaire des lignes de réception (certificats) : liste qualité, visa sous permission
+        Route::get('/receipt/document-check', 'App\Http\Controllers\Purchases\ReceiptDocumentCheckController@index')->name('purchases.receipt.document-check');
+        Route::get('/receipt/document-check/json', 'App\Http\Controllers\Purchases\ReceiptDocumentCheckController@listJson')->name('purchases.receipt.document-check.json');
+        Route::post('/receipt/line/{purchaseReceiptLine}/document-check', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineDocumentCheck')->middleware('permission:reception-document-check')->name('purchase.receipts.lines.document-check');
         // Notation rapide du fournisseur à la réception (facultative)
         Route::post('/receipt/{receipt}/rating', 'App\Http\Controllers\Purchases\PurchaseReceiptRatingController@store')->whereNumber('receipt')->name('purchase.receipts.rating.store');
         Route::post('/invoice/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@updatePurchaseInvoice')->middleware(['auth'])->name('invoice.update');

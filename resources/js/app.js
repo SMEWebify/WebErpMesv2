@@ -816,6 +816,20 @@ async function mountPurchaseReceiptLinesPage() {
             receiptStatu: parseInt(element.dataset.receiptStatu, 10),
             userId:       parseInt(element.dataset.userId, 10),
             endpoints:    parse('endpoints') ?? {},
+            documentCheck: parse('documentCheck') ?? {},
+        })
+    );
+}
+
+async function mountReceiptDocumentCheck() {
+    const element = document.getElementById('receipt-document-check-app');
+    if (!element) return;
+
+    const { default: ReceiptDocumentCheckApp } = await import('./components/purchases/ReceiptDocumentCheckApp.jsx');
+    createRoot(element).render(
+        React.createElement(ReceiptDocumentCheckApp, {
+            endpoints: parseJsonAttribute(element.dataset.endpoints) ?? {},
+            config:    parseJsonAttribute(element.dataset.documentCheck) ?? {},
         })
     );
 }
@@ -1441,6 +1455,7 @@ mountQuoteLinesPage();
 mountOrderLinesPage();
 mountPurchaseLinesPage();
 mountPurchaseReceiptLinesPage();
+mountReceiptDocumentCheck();
 mountReceiptSupplierRating();
 mountLoadPlanningIndex();
 mountConstructionSitePage();

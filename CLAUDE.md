@@ -781,7 +781,7 @@ et `purchase_lines` (tiroir de l'écran des lignes, badges sous la désignation)
   des attributs à la création (tous les chemins : écran, demande d'achat, réappro, réception) ;
   une valeur fournie, même vide, est gardée. L'écran préremplit au choix de l'article
   (`lib/purchaseCriticality.js`). En mise à jour, un champ absent de la requête n'est pas touché.
-  Le type de certificat de la ligne servira au contrôle documentaire à la réception.
+  Le type de certificat de la ligne sert au visa documentaire de la réception (section suivante).
 - **Référentiel** : `purchase_quality_clauses` (code, libellé, texte FR/EN, actif, jamais
   supprimée) + `purchase_quality_clause_rules` (critère vide = toute valeur ; une règle **sans
   critère ne s'applique à rien**). Écran Achats → Clauses qualité (`/purchases/quality-clauses`,
@@ -800,6 +800,30 @@ et `purchase_lines` (tiroir de l'écran des lignes, badges sous la désignation)
 - Tests : `tests/Feature/Purchases/PurchaseQualityClausesTest.php`,
   `tests/Feature/Purchases/PurchasePdfLegacyRenderingTest.php`,
   `resources/js/tests/lib/purchaseCriticality.test.js`.
+
+## Visa documentaire des réceptions (certificats)
+
+Distinct du contrôle physique (`inspected_by`, `accepted_qty`…). `purchase_receipt_lines` porte
+`received_certificate_type` (certificat EN 10204 reçu, saisi dans le tiroir d'inspection ou au
+visa) et `document_check_by / _at / _result / _comment` (hors `$fillable`, écrits seulement par
+`App\Services\Purchases\ReceiptDocumentCheck`). `_result` : `pending` | `compliant` |
+`non_compliant`, null = pas encore visé.
+- **Concernée** = la ligne d'achat exige un certificat (`purchase_lines.certificate_type`) ou un
+  certificat a été reçu. Aucune ligne antérieure ne l'est : rien ne change pour l'existant.
+- **Écart** (`certificateGap`) : manquant, ou rang inférieur (ordre de
+  `config('purchase_quality.certificate_types')`) ; un rang supérieur couvre l'exigence. Signalé,
+  jamais bloquant ; un visa « conforme » malgré un écart exige un commentaire (422).
+- **Visa** : `purchase.receipts.lines.document-check`, `permission:reception-document-check`
+  (Admin par migration). Changer le certificat reçu efface un visa déjà posé.
+- **Décision finale** (`decision()`) = physique ET documentaire conformes ; physique déduit des
+  champs existants (pièce rejetée = non conforme, inspection datée ou pièces acceptées = conforme).
+- **NC** : un non-conforme peut créer une NC fournisseur (type 2) reliée par
+  `quality_non_conformity_id` ; une NC déjà liée est gardée.
+- **Liste qualité** `/purchases/receipt/document-check` (menu Qualité, React
+  `components/purchases/ReceiptDocumentCheckApp.jsx`), tiroir partagé avec la fiche réception.
+- **Le visa ne touche pas au stock** (quarantaine = chantier séparé, test).
+- Tests : `tests/Feature/Purchases/ReceiptDocumentCheckTest.php`,
+  `resources/js/tests/lib/receiptDocumentCheck.test.js`.
 
 ## Nesting (imbrication tôle)
 

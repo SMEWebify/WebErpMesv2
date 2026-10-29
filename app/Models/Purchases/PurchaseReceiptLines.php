@@ -28,6 +28,8 @@ class PurchaseReceiptLines extends Model
         'rejected_qty',
         'inspection_result',
         'quality_non_conformity_id',
+        'received_certificate_type',
+        // document_check_* : hors $fillable, écrits seulement par ReceiptDocumentCheck
     ];
 
     /**
@@ -37,6 +39,7 @@ class PurchaseReceiptLines extends Model
      */
     protected $casts = [
         'inspection_date' => 'date',
+        'document_check_at' => 'datetime',
     ];
 
     public function purchaseReceipt()
@@ -62,6 +65,11 @@ class PurchaseReceiptLines extends Model
     public function inspector()
     {
         return $this->belongsTo(User::class, 'inspected_by');
+    }
+
+    public function documentChecker()
+    {
+        return $this->belongsTo(User::class, 'document_check_by');
     }
 
     public function qualityNonConformity()

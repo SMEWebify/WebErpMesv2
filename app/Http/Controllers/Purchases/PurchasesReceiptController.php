@@ -15,7 +15,10 @@ use App\Services\CustomFieldService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseReceiptService;
+use App\Services\Purchases\PurchaseCriticality;
+use App\Services\Purchases\ReceiptDocumentCheck;
 use App\Services\Purchases\SupplierReceiptRating;
+use Illuminate\Validation\Rule;
 use App\Services\QualityNonConformityService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
@@ -247,6 +250,7 @@ class PurchasesReceiptController extends Controller
             'storeNewStock'    => route('products.stockline.store.from.purchase.order'),
             'entryExistingStock' => route('products.stockline.entry.from.purchase.order'),
             'productSearch'    => route('products.json.search'),
+            'documentCheck'    => route('purchase.receipts.lines.document-check', ['purchaseReceiptLine' => '__ID__']),
         ];
 
         // Notation rapide : la fenêtre s'ouvre seule juste après la création (?rate=1)
@@ -265,6 +269,7 @@ class PurchasesReceiptController extends Controller
             'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay,
             'reactEndpoints'       => $reactEndpoints,
             'supplierRating'       => $supplierRating,
+            'documentCheck'        => ReceiptDocumentCheckController::frontConfig(request()),
         ]);
     }
 
@@ -460,6 +465,7 @@ class PurchasesReceiptController extends Controller
                 'purchaseLines.tasks.OrderLines.order',
                 'purchaseLines.tasks.Component',
                 'inspector',
+                'documentChecker',
                 'qualityNonConformity',
                 'StockLocationProducts',
             ])
@@ -550,7 +556,62 @@ class PurchasesReceiptController extends Controller
             'order_line_qty'             => $orderLine?->qty,
             'task_qty'                   => $task?->qty,
             'order_line_label'           => $orderLine?->label,
+            // Contrôle documentaire (certificat exigé / reçu, visa qualité)
+            'required_certificate_type'  => ReceiptDocumentCheck::requiredCertificate($line),
+            'received_certificate_type'  => $line->received_certificate_type,
+            'certificate_gap'            => ReceiptDocumentCheck::gapFor($line),
+            'document_check_status'      => ReceiptDocumentCheck::documentStatus($line),
+            'document_check_result'      => $line->document_check_result,
+            'document_check_comment'     => $line->document_check_comment,
+            'document_check_at'          => $line->document_check_at?->format('Y-m-d H:i'),
+            'document_checker_name'      => $line->documentChecker?->name,
+            'physical_status'            => ReceiptDocumentCheck::physicalStatus($line),
+            'final_decision'             => ReceiptDocumentCheck::decision($line),
         ];
+    }
+
+    /**
+     * Visa documentaire d'une ligne de réception (permission reception-document-check,
+     * posée sur la route).
+     */
+    public function updateLineDocumentCheck(Request $request, PurchaseReceiptLines $purchaseReceiptLine, ReceiptDocumentCheck $documentCheck)
+    {
+        $validated = $request->validate([
+            'document_check_result'     => ['required', Rule::in(ReceiptDocumentCheck::RESULTS)],
+            'document_check_comment'    => 'nullable|string|max:2000',
+            'received_certificate_type' => $this->receivedCertificateRules($purchaseReceiptLine),
+            'create_non_conformity'     => 'nullable|boolean',
+        ]);
+
+        $documentCheck->record(
+            $purchaseReceiptLine,
+            $request->user(),
+            $validated['document_check_result'],
+            $validated['document_check_comment'] ?? null,
+            $request->boolean('create_non_conformity'),
+            $request->exists('received_certificate_type'),
+            $validated['received_certificate_type'] ?? null,
+        );
+
+        $purchaseReceiptLine->load([
+            'purchaseLines.purchase',
+            'purchaseLines.tasks.OrderLines.order',
+            'purchaseLines.tasks.Component',
+            'inspector',
+            'documentChecker',
+            'qualityNonConformity',
+            'StockLocationProducts',
+        ]);
+
+        return response()->json(['line' => $this->serializeReceiptLine($purchaseReceiptLine)]);
+    }
+
+    /** Types EN 10204 de la configuration, plus la valeur déjà portée par la ligne. */
+    private function receivedCertificateRules(PurchaseReceiptLines $line): array
+    {
+        return PurchaseCriticality::validationRules([
+            'certificate_type' => $line->received_certificate_type,
+        ])['certificate_type'];
     }
 
     /**
@@ -568,6 +629,7 @@ class PurchasesReceiptController extends Controller
             'create_non_conformity' => 'nullable|boolean',
             'new_nc_label' => 'nullable|string|max:255',
             'new_nc_comment' => 'nullable|string|max:1000',
+            'received_certificate_type' => $this->receivedCertificateRules($purchaseReceiptLine),
         ]);
 
         $purchaseReceiptLine->loadMissing('purchaseLines.purchase', 'purchaseLines.tasks.OrderLines');
@@ -603,6 +665,11 @@ class PurchasesReceiptController extends Controller
             $validated['quality_non_conformity_id'] = $qualityNonConformity->id;
         }
 
+        // Certificat reçu : seulement s'il est envoyé ; le changer efface un visa documentaire déjà posé
+        if ($request->exists('received_certificate_type')) {
+            app(ReceiptDocumentCheck::class)->receivedCertificateChanged($purchaseReceiptLine, $validated['received_certificate_type'] ?? null);
+        }
+
         $purchaseReceiptLine->update([
             'inspected_by' => $validated['inspected_by'] ?? null,
             'inspection_date' => $validated['inspection_date'] ?? null,
@@ -618,6 +685,7 @@ class PurchasesReceiptController extends Controller
                 'purchaseLines.tasks.OrderLines.order',
                 'purchaseLines.tasks.Component',
                 'inspector',
+                'documentChecker',
                 'qualityNonConformity',
                 'StockLocationProducts',
             ]);
@@ -702,6 +770,7 @@ class PurchasesReceiptController extends Controller
                 'purchaseLines.tasks.OrderLines.order',
                 'purchaseLines.tasks.Component',
                 'inspector',
+                'documentChecker',
                 'qualityNonConformity',
                 'StockLocationProducts',
             ]);

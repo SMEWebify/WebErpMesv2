@@ -124,6 +124,7 @@
           data-receipt-statu="{{ $PurchaseReceipt->statu }}"
           data-user-id="{{ Auth::id() }}"
           data-endpoints="{{ json_encode($reactEndpoints) }}"
+          data-document-check="{{ json_encode($documentCheck) }}"
         ></div>
       </div>
       <div class="tab-pane" id="Documents">

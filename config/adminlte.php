@@ -1155,6 +1155,13 @@ return [
                     'icon_color' => 'danger',
                 ],
                 [
+                    // Lignes de réception en attente de visa documentaire (certificats)
+                    'text' => 'receipt_document_check_trans_key',
+                    'url'  => 'purchases/receipt/document-check',
+                    'icon_color' => 'teal',
+                    'can'  => ['reception-document-check'],
+                ],
+                [
                     // Plans qualité (bullage) ; l'ancien écran reste lié depuis la page.
                     'text' => 'inspection_trans_key',
                     'url'  => 'quality/plans',

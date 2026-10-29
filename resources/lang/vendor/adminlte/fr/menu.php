@@ -84,6 +84,7 @@ return [
     'affair_categories_trans_key'              => 'Catégories d\'affaire',
     'loss_reasons_trans_key'                   => 'Motifs de perte',
     'purchase_quality_clauses_trans_key'       => 'Clauses qualité',
+    'receipt_document_check_trans_key'         => 'Visa documentaire réception',
     'accounting_trans_key'                     => 'Comptabilité',
     'payment_conditions_trans_key'             => 'Conditions de paiement',
     'payment_methods_trans_key'                => 'Méthode de paiement',
