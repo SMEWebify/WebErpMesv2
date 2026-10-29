@@ -87,6 +87,21 @@ class FileRole
     }
 
     /**
+     * Roles offered on a batch (heat), in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forBatches(): array
+    {
+        return [
+            self::CERTIFICATE,
+            self::CONTROL,
+            self::PHOTO,
+            self::OTHER,
+        ];
+    }
+
+    /**
      * Roles offered on an employee folder, in display order.
      *
      * @return array<int, string>

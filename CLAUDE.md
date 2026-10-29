@@ -670,7 +670,7 @@ sont dans `activity_log` avec `log_name = access` (causer, sujet, `properties.ro
 - Middleware `audit.access:{type},{paramètre}` (`LogReadAccess`) posé sur `opportunities.show`,
   `quotes.show`, `orders.show`, `orders.lines.detail.edit`, `files.raw`, `files.download`.
   Écriture dans `terminate()` seulement (GET 2xx, utilisateur connecté), sujet jamais chargé.
-  Types autorisés : `AccessLogger::SUBJECTS` (`batch` prêt, aucune fiche lot n'existe encore).
+  Types autorisés : `AccessLogger::SUBJECTS` (`batch` posé sur la fiche lot `products.batches.show`).
 - Dédoublonnage : `Cache::add` par (utilisateur, sujet), fenêtre `audit.dedup_minutes` (10).
 - Écran `admin/access-log` + export CSV, permission `audit-access-log` (rôle Admin, migration).
   L'historique partagé (`LogsViewerController`, ouvert à tous) **exclut** `access`.
@@ -828,6 +828,30 @@ visa) et `document_check_by / _at / _result / _comment` (hors `$fillable`, écri
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul
+## Lots : coulée et certificat matière
+
+`batches` porte `heat_number` (indexé), `supplier_batch_code`, `certificate_type` (EN 10204,
+`config('purchase_quality.certificate_types')`), `companies_id` (fournisseur) et
+`purchase_receipt_line_id`, tous nullable. Pose les liens de la traçabilité ; la remontée /
+descente complète reste un chantier séparé.
+- **Création à la réception** (`BatchService::createFromReceiptLine`, tiroir « Mise en stock »
+  de la fiche réception, `storeFromPurchaseOrder` et `entryFromPurchaseOrder`) : un lot est créé
+  si l'article est suivi par lot (`tracability_type = 2`, l'ancien n° `BATCH-…` devient le code
+  du lot) **ou** si une coulée / un lot fournisseur est saisi. Sinon mouvement sans lot, comme
+  avant. Certificat repris de `received_certificate_type` de la ligne s'il n'est pas saisi.
+- **Lien mouvement → lot** : `StockService::createStockMove` rattache `batch_id` quand
+  `tracability` est le code d'un lot (sorties manuelles, transferts). `goodQtyStock` (sortie
+  depuis l'écran tâche) répartit la sortie **par lot, en FIFO** (premier mouvement du lot) :
+  une ligne par lot, une seule sans lot comme avant.
+- **Certificat** : GED du lot, alias `batch` (permission `stock-lot-serial-management`), rôles
+  `FileRole::forBatches()`. Fiche lot `/products/batches/{batch}` (coulée, réception, GED,
+  mouvements), journal des consultations `audit.access:batch`.
+- **Affichage** : recherche par coulée / lot fournisseur / code sur l'écran des lots, coulée
+  sur l'historique de l'article (type `batch`, porteurs de la permission), sur les mouvements
+  de la ligne de stock et dans « Lots consommés » de l'écran tâche (`consumed_batches`).
+- Tests : `tests/Feature/Products/BatchHeatTraceabilityTest.php`,
+  `resources/js/tests/components/batchHeat.test.jsx`.
+
 local (l'ancien shelf packer `nestSheets()` et le parsing DXF/SVG navigateur ont été
 retirés de `NestingPage.jsx`).
 

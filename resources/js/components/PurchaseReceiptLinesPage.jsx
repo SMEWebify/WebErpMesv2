@@ -268,10 +268,70 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
 // StockDrawer
 // ---------------------------------------------------------------------------
 
-function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, onClose, onSaved }) {
+export function BatchList({ batches, texts = {} }) {
+    if (!batches || batches.length === 0) return null;
+    return (
+        <div className="mt-2 small">
+            {batches.map((b) => (
+                <div key={b.id}>
+                    <i className="fas fa-fire me-1" />
+                    <a href={b.url} className="alert-link">{b.code}</a>
+                    {b.heat_number && <span className="ms-1">— {texts.heat_short} {b.heat_number}</span>}
+                    {b.certificate_type && <span className="badge text-bg-info ms-1">{b.certificate_type}</span>}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// Champs du lot saisis à la mise en stock : le certificat reçu de la ligne est proposé.
+export function initialBatchForm(line) {
+    return {
+        heat_number:         '',
+        supplier_batch_code: '',
+        certificate_type:    line?.received_certificate_type ?? '',
+    };
+}
+
+export function BatchFields({ form, onChange, certificateTypes, texts = {}, errors = {} }) {
+    const choices = [...(certificateTypes ?? [])];
+    if (form.certificate_type && !choices.includes(form.certificate_type)) choices.push(form.certificate_type);
+
+    return (
+        <fieldset className="border rounded p-2 mt-3">
+            <legend className="float-none w-auto px-1 mb-1 small fw-bold">
+                <i className="fas fa-fire me-1" />{texts.section}
+            </legend>
+            <div className="row gx-2">
+                <div className="col-md-6 mb-2">
+                    <label className="mb-1 small" htmlFor="batch-heat-number">{texts.heat_number}</label>
+                    <input id="batch-heat-number" type="text" className={`form-control form-control-sm ${errors.heat_number ? 'is-invalid' : ''}`}
+                        value={form.heat_number} onChange={(e) => onChange('heat_number', e.target.value)} />
+                    {errors.heat_number && <div className="invalid-feedback d-block">{errors.heat_number[0]}</div>}
+                </div>
+                <div className="col-md-6 mb-2">
+                    <label className="mb-1 small" htmlFor="batch-supplier-code">{texts.supplier_batch_code}</label>
+                    <input id="batch-supplier-code" type="text" className={`form-control form-control-sm ${errors.supplier_batch_code ? 'is-invalid' : ''}`}
+                        value={form.supplier_batch_code} onChange={(e) => onChange('supplier_batch_code', e.target.value)} />
+                </div>
+            </div>
+            <label className="mb-1 small" htmlFor="batch-certificate">{texts.certificate_type}</label>
+            <select id="batch-certificate" className={`form-select form-select-sm ${errors.certificate_type ? 'is-invalid' : ''}`}
+                value={form.certificate_type} onChange={(e) => onChange('certificate_type', e.target.value)}>
+                <option value="">{texts.none}</option>
+                {choices.map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+            {errors.certificate_type && <div className="invalid-feedback d-block">{errors.certificate_type[0]}</div>}
+            <div className="form-text">{texts.hint}</div>
+        </fieldset>
+    );
+}
+
+function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, certificateTypes, batchTexts = {}, onClose, onSaved }) {
     const [activeTab, setActiveTab]         = useState('new');
     const [stockLocationId, setStockLocationId] = useState('');
     const [existingStockId, setExistingStockId] = useState('');
+    const [batchForm, setBatchForm]         = useState(initialBatchForm(null));
     const [saving, setSaving]               = useState(false);
     const [errors, setErrors]               = useState({});
 
@@ -279,9 +339,12 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
         if (!open) return;
         setStockLocationId('');
         setExistingStockId('');
+        setBatchForm(initialBatchForm(line));
         setErrors({});
         setActiveTab('new');
     }, [open, line?.id]);
+
+    const setBatch = (field, value) => setBatchForm((f) => ({ ...f, [field]: value }));
 
     const filteredStockProducts = (line?.product_id)
         ? (selectData.stock_location_products ?? []).filter((slp) => slp.products_id == line.product_id)
@@ -303,6 +366,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                 purchase_receipt_line_id: line.id,
                 user_id:                 userId,
                 stock_locations_id:      stockLocationId,
+                ...batchForm,
             };
             const res  = await apiFetch(endpoints.storeNewStock, { method: 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
@@ -330,6 +394,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                 component_price:          line.selling_price,
                 typ_move:                 3,
                 stock_location_products_id: existingStockId,
+                ...batchForm,
             };
             const res  = await apiFetch(endpoints.entryExistingStock, { method: 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
@@ -386,6 +451,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                             <i className="fas fa-check-circle me-2" />
                             Stock assigné :{' '}
                             <a href={line.stock_url} className="fw-bold alert-link">{line.stock_code}</a>
+                            <BatchList batches={line.batches} texts={batchTexts} />
                         </div>
                     ) : !hasProduct ? (
                         <div className="alert alert-warning">
@@ -458,6 +524,9 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, o
                                     </div>
                                 </form>
                             )}
+
+                            <BatchFields form={batchForm} onChange={setBatch} certificateTypes={certificateTypes}
+                                texts={batchTexts} errors={errors} />
                         </>
                     )}
                 </div>
@@ -748,7 +817,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
 // PurchaseReceiptLinesPage — main component
 // ---------------------------------------------------------------------------
 
-export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints, documentCheck = {} }) {
+export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints, documentCheck = {}, batchTexts = {} }) {
     const [lines, setLines]               = useState([]);
     const [selectData, setSelectData]     = useState({});
     const [loading, setLoading]           = useState(true);
@@ -787,10 +856,13 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
 
     const handleStockSaved = (lineId, data) => {
         setLines((prev) => prev.map((l) => l.id === lineId
-            ? { ...l, stock_location_products_id: data.stock_location_products_id, stock_code: data.stock_code, stock_url: data.stock_url }
+            ? { ...l, stock_location_products_id: data.stock_location_products_id, stock_code: data.stock_code, stock_url: data.stock_url,
+                batches: data.batch ? [...(l.batches ?? []), data.batch] : l.batches }
             : l
         ));
-        showFlash('success', 'Ligne mise en stock avec succès');
+        showFlash('success', data.batch
+            ? `Ligne mise en stock avec succès — ${batchTexts.created ?? ''} ${data.batch.code}`
+            : 'Ligne mise en stock avec succès');
     };
 
     const handleManualLineAdded = (newLine) => {
@@ -917,6 +989,8 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                 selectData={selectData}
                 endpoints={endpoints}
                 userId={userId}
+                certificateTypes={documentCheck.certificateTypes}
+                batchTexts={batchTexts}
                 onClose={() => setStockLine(null)}
                 onSaved={handleStockSaved}
             />

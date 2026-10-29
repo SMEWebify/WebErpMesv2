@@ -751,6 +751,9 @@
               'tasks_status'    => __('general_content.tasks_status_trans_key'),
               'delivery_status' => __('general_content.delivery_status_trans_key'),
               'invoice_status'  => __('general_content.invoice_status_trans_key'),
+              'type_batch'      => __('batches.batch'),
+              'batch_statu_1'   => __('batches.open'),
+              'batch_statu_2'   => __('batches.closed'),
             ];
           @endphp
           @php $canPurchases = auth()->user()?->can('purchases-menu') ? 'true' : 'false'; @endphp

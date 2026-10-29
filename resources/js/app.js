@@ -817,6 +817,7 @@ async function mountPurchaseReceiptLinesPage() {
             userId:       parseInt(element.dataset.userId, 10),
             endpoints:    parse('endpoints') ?? {},
             documentCheck: parse('documentCheck') ?? {},
+            batchTexts:   parse('batchTexts') ?? {},
         })
     );
 }

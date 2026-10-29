@@ -270,6 +270,16 @@ class PurchasesReceiptController extends Controller
             'reactEndpoints'       => $reactEndpoints,
             'supplierRating'       => $supplierRating,
             'documentCheck'        => ReceiptDocumentCheckController::frontConfig(request()),
+            'batchTexts'           => [
+                'section'             => __('batches.receipt_section'),
+                'hint'                => __('batches.receipt_hint'),
+                'created'             => __('batches.receipt_created'),
+                'heat_number'         => __('batches.heat_number'),
+                'heat_short'          => __('batches.heat_short'),
+                'supplier_batch_code' => __('batches.supplier_batch_code'),
+                'certificate_type'    => __('batches.certificate_type'),
+                'none'                => __('batches.none'),
+            ],
         ]);
     }
 
@@ -468,6 +478,7 @@ class PurchasesReceiptController extends Controller
                 'documentChecker',
                 'qualityNonConformity',
                 'StockLocationProducts',
+                'batches',
             ])
             ->get();
 
@@ -567,6 +578,15 @@ class PurchasesReceiptController extends Controller
             'document_checker_name'      => $line->documentChecker?->name,
             'physical_status'            => ReceiptDocumentCheck::physicalStatus($line),
             'final_decision'             => ReceiptDocumentCheck::decision($line),
+            // Lots créés à la mise en stock (coulée, lot fournisseur)
+            'batches'                    => $line->batches->map(fn ($b) => [
+                'id'                  => $b->id,
+                'code'                => $b->code,
+                'heat_number'         => $b->heat_number,
+                'supplier_batch_code' => $b->supplier_batch_code,
+                'certificate_type'    => $b->certificate_type,
+                'url'                 => route('products.batches.show', ['batch' => $b->id]),
+            ])->values(),
         ];
     }
 

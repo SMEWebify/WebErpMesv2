@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Planning\Status;
+use App\Models\Products\Batch;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
 use App\Services\Files\FileRole;
@@ -643,6 +644,31 @@ class ProductsController extends Controller
                     'url'   => route('purchases.show', ['id' => $l->purchases_id]),
                 ]);
             });
+
+        // Lots reçus (coulée, fournisseur) : réservés aux porteurs de l'écran des lots
+        if (auth()->user()?->can('stock-lot-serial-management')) {
+            Batch::where('product_id', $id)
+                ->with('supplier:id,label')
+                ->get()
+                ->each(function ($b) use (&$items) {
+                    $label = collect([
+                        $b->heat_number ? __('batches.heat_short') . ' ' . $b->heat_number : null,
+                        $b->supplier_batch_code,
+                        $b->certificate_type,
+                        $b->supplier?->label,
+                    ])->filter()->implode(' — ');
+
+                    $items->push([
+                        'type'  => 'batch',
+                        'id'    => $b->id,
+                        'code'  => $b->code,
+                        'label' => $label,
+                        'statu' => $b->closed_at ? 2 : 1,
+                        'date'  => $b->created_at?->format('Y-m-d'),
+                        'url'   => route('products.batches.show', ['batch' => $b->id]),
+                    ]);
+                });
+        }
 
         return response()->json(
             $items->sortByDesc('date')->values()

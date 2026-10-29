@@ -61,7 +61,11 @@
                   <td>{{ $StockMove->UserManagement['name'] }}</td>
                   <td>{{ $StockMove->GetPrettyCreatedAttribute() }}</td>
                   <td>{{ $StockMove->qty }}</td>
-                  <td>{{ $StockMove->tracability }}</td>
+                  <td>{{ $StockMove->tracability }}
+                    @if($StockMove->batch?->heat_number)
+                      <br><a href="{{ route('products.batches.show', ['batch' => $StockMove->batch_id]) }}" class="small">{{ __('batches.heat_short') }} {{ $StockMove->batch->heat_number }}</a>
+                    @endif
+                  </td>
                   <td>
                   @if($StockMove->order_line_id)
                     @can('orders-menu')

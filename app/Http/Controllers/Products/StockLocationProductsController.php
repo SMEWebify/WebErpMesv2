@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Products;
 
 use App\Models\Planning\Task;
+use App\Services\BatchService;
 use App\Services\StockService;
+use App\Models\Products\Batch;
+use Illuminate\Support\Facades\DB;
 use App\Models\Products\Stocks;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
@@ -24,12 +27,15 @@ class StockLocationProductsController extends Controller
 
     protected $stockCalculationService;    
     protected $stockService;
+    protected $batchService;
 
     public function __construct(StockCalculationService $stockCalculationService,
-                                StockService $stockService)
+                                StockService $stockService,
+                                BatchService $batchService)
     {
         $this->stockCalculationService = $stockCalculationService;
         $this->stockService = $stockService;
+        $this->batchService = $batchService;
     }
     
     /**
@@ -39,7 +45,7 @@ class StockLocationProductsController extends Controller
     public function show($id)
     {
         
-        $StockMoves = StockMove::where('stock_location_products_id', $id)->orderby('created_at', 'desc')->get();
+        $StockMoves = StockMove::with('batch')->where('stock_location_products_id', $id)->orderby('created_at', 'desc')->get();
         $StockLocationProduct = StockLocationProducts::findOrFail($id);
         $Product = Products::findOrFail($StockLocationProduct->products_id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
@@ -163,49 +169,55 @@ class StockLocationProductsController extends Controller
      */
     public function storeFromPurchaseOrder(StoreStockLocationProductsRequest $request)
     {
+        $lotData = $request->validate(BatchService::receiptRules());
         $purchaseReceiptLine = PurchaseReceiptLines::findOrFail($request->purchase_receipt_line_id);
         $receivedQty = $this->resolveAcceptedQty($purchaseReceiptLine);
 
-        $StockLocationProduct = StockLocationProducts::create($request->only('code',
-                                                                'user_id', 
-                                                                'stock_locations_id',
-                                                                'products_id', 
-                                                                'mini_qty',
-                                                                'end_date',
-                                                                'addressing',
-                                            ));
+        [$StockLocationProduct, $batch] = DB::transaction(function () use ($request, $purchaseReceiptLine, $receivedQty, $lotData) {
+            $StockLocationProduct = StockLocationProducts::create($request->only('code',
+                                                                    'user_id',
+                                                                    'stock_locations_id',
+                                                                    'products_id',
+                                                                    'mini_qty',
+                                                                    'end_date',
+                                                                    'addressing',
+                                                ));
 
-        $product = Products::find($StockLocationProduct->products_id);
-        if ($product->tracability_type == 2) {
-            $tracability = $this->stockService->generateBatchNumber();
-        } else {
-            $tracability = null;
-        }
+            $product = Products::find($StockLocationProduct->products_id);
+            // Lot créé si l'article est suivi par lot (comme le n° BATCH-… d'avant,
+            // qui devient son code) ou si une coulée est saisie.
+            $batch = $this->receiptBatch($purchaseReceiptLine, $product, $lotData);
+            $tracability = $batch?->code;
 
-        $data = [
-            'user_id' => $request->user_id,
-            'qty' => $receivedQty,
-            'stock_location_products_id' => $StockLocationProduct->id,
-            'task_id' => $request->task_id,
-            'purchase_receipt_line_id' => $request->purchase_receipt_line_id,
-            'typ_move' => 3,
-            'component_price' => $request->component_price,
-            'x_size' => $product->x_size,
-            'y_size' => $product->y_size,
-            'z_size' => $product->z_size,
-            'tracability' => $tracability,
-        ];
+            $data = [
+                'user_id' => $request->user_id,
+                'qty' => $receivedQty,
+                'stock_location_products_id' => $StockLocationProduct->id,
+                'task_id' => $request->task_id,
+                'purchase_receipt_line_id' => $request->purchase_receipt_line_id,
+                'batch_id' => $batch?->id,
+                'typ_move' => 3,
+                'component_price' => $request->component_price,
+                'x_size' => $product->x_size,
+                'y_size' => $product->y_size,
+                'z_size' => $product->z_size,
+                'tracability' => $tracability,
+            ];
 
-        $this->stockService->createStockMove($data);
+            $this->stockService->createStockMove($data);
 
-        // Mise à jour de la ligne de réception de l'achat
-        $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $StockLocationProduct->id);
+            // Mise à jour de la ligne de réception de l'achat
+            $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $StockLocationProduct->id);
+
+            return [$StockLocationProduct, $batch];
+        });
 
         if ($request->wantsJson()) {
             return response()->json([
                 'stock_location_products_id' => $StockLocationProduct->id,
                 'stock_code'                 => $StockLocationProduct->code,
                 'stock_url'                  => route('products.stockline.show', ['id' => $StockLocationProduct->id]),
+                'batch'                      => $this->batchPayload($batch),
             ]);
         }
 
@@ -218,22 +230,35 @@ class StockLocationProductsController extends Controller
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
+        $lotData = $request->validate(BatchService::receiptRules());
         $purchaseReceiptLine = PurchaseReceiptLines::findOrFail($request->purchase_receipt_line_id);
         $receivedQty = $this->resolveAcceptedQty($purchaseReceiptLine);
+        $slp = StockLocationProducts::find($request->stock_location_products_id);
 
-        $data = $request->only('user_id', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
-        $data['qty'] = $receivedQty;
-        $this->stockService->createStockMove($data);
+        $batch = DB::transaction(function () use ($request, $purchaseReceiptLine, $receivedQty, $lotData, $slp) {
+            $data = $request->only('user_id', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
+            $data['qty'] = $receivedQty;
 
-        // Mise à jour de la ligne de réception de l'achat
-        $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $request->stock_location_products_id);
+            $batch = $this->receiptBatch($purchaseReceiptLine, $slp ? Products::find($slp->products_id) : null, $lotData);
+            if ($batch) {
+                $data['batch_id'] = $batch->id;
+                $data['tracability'] = $batch->code;
+            }
+
+            $this->stockService->createStockMove($data);
+
+            // Mise à jour de la ligne de réception de l'achat
+            $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $request->stock_location_products_id);
+
+            return $batch;
+        });
 
         if ($request->wantsJson()) {
-            $slp = StockLocationProducts::find($request->stock_location_products_id);
             return response()->json([
                 'stock_location_products_id' => (int) $request->stock_location_products_id,
                 'stock_code'                 => $slp?->code,
                 'stock_url'                  => route('products.stockline.show', ['id' => $request->stock_location_products_id]),
+                'batch'                      => $this->batchPayload($batch),
             ]);
         }
 
@@ -315,6 +340,31 @@ class StockLocationProductsController extends Controller
                 ->route('products.stockline.show', ['id' => $request->source_stock_location_products_id])
                 ->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Lot créé à la mise en stock d'une ligne de réception, ou null si l'article
+     * n'est pas suivi par lot et qu'aucune coulée n'est saisie.
+     */
+    private function receiptBatch(PurchaseReceiptLines $line, ?Products $product, array $lotData): ?Batch
+    {
+        if (! $product || ! $this->batchService->receiptNeedsBatch($product, $lotData)) {
+            return null;
+        }
+
+        return $this->batchService->createFromReceiptLine($line, $product->id, $lotData);
+    }
+
+    private function batchPayload(?Batch $batch): ?array
+    {
+        return $batch ? [
+            'id'                  => $batch->id,
+            'code'                => $batch->code,
+            'heat_number'         => $batch->heat_number,
+            'supplier_batch_code' => $batch->supplier_batch_code,
+            'certificate_type'    => $batch->certificate_type,
+            'url'                 => route('products.batches.show', ['batch' => $batch->id]),
+        ] : null;
     }
 
     private function resolveAcceptedQty(PurchaseReceiptLines $purchaseReceiptLine): int

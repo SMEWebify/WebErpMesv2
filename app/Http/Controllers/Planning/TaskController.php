@@ -592,6 +592,8 @@ class TaskController extends Controller
             'end_trans_key'                      => __('general_content.end_trans_key'),
             'new_purchase_document_trans_key'    => __('general_content.new_purchase_document_trans_key'),
             'remove_from_stock_trans_key'        => __('general_content.remove_from_stock_trans_key'),
+            'consumed_batches_trans_key'         => __('batches.consumed_batches'),
+            'heat_trans_key'                     => __('batches.heat_short'),
             'good_rejected_trans_key'            => __('general_content.good_rejected_trans_key'),
             'quantity_rejected_trans_key'        => __('general_content.quantity_rejected_trans_key'),
             'end_date_trans_key'                 => __('general_content.end_date_trans_key'),

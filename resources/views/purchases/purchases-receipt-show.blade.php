@@ -125,6 +125,7 @@
           data-user-id="{{ Auth::id() }}"
           data-endpoints="{{ json_encode($reactEndpoints) }}"
           data-document-check="{{ json_encode($documentCheck) }}"
+          data-batch-texts="{{ json_encode($batchTexts) }}"
         ></div>
       </div>
       <div class="tab-pane" id="Documents">

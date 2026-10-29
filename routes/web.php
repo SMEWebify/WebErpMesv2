@@ -880,6 +880,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::group(['prefix' => 'batches', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\BatchesController@index')->name('products.batches');
+            Route::get('/{batch}', 'App\Http\Controllers\Products\BatchesController@show')->whereNumber('batch')->middleware('audit.access:batch,batch')->name('products.batches.show');
         });
 
         // Stock routes

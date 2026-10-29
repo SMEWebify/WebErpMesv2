@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use App\Models\Products\Batch;
 use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +61,12 @@ class PurchaseReceiptLines extends Model
     public function StockMove()
     {
         return $this->hasMany(StockMove::class);
+    }
+
+    // Lots (coulées) créés à la mise en stock de la ligne
+    public function batches()
+    {
+        return $this->hasMany(Batch::class, 'purchase_receipt_line_id');
     }
 
     public function inspector()

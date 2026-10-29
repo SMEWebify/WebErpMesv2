@@ -4,6 +4,7 @@ namespace App\Services\Files;
 
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Companies\Companies;
+use App\Models\Products\Batch;
 use App\Models\Products\Inventory;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
@@ -48,6 +49,8 @@ class FileableRegistry
         'purchase' => Purchases::class,
         'purchase-receipt' => PurchaseReceipt::class,
         'stock-move' => StockMove::class,
+        // Lot / coulée : certificat matière.
+        'batch' => Batch::class,
         'non-conformity' => QualityNonConformity::class,
         'derogation' => QualityDerogation::class,
         // Counting XLSX archived at inventory validation.
@@ -82,6 +85,7 @@ class FileableRegistry
      */
     private const PERMISSIONS = [
         'product' => 'products-menu',
+        'batch' => 'stock-lot-serial-management',
     ];
 
     public static function permissionFor(string $alias): ?string

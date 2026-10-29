@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Events\OrderLineUpdated;
+use App\Models\Products\Batch;
 use App\Models\Products\StockMove;
 use App\Services\StockCalculationService;
 use App\Models\Products\StockLocation;
@@ -28,6 +29,12 @@ class StockService
 
     public function createStockMove(array $data): StockMove
     {
+        // Un n° de traçabilité qui est le code d'un lot rattache le mouvement au lot
+        // (sortie, transfert) : c'est ce lien que suit la traçabilité lot → tâche.
+        if (empty($data['batch_id']) && ! empty($data['tracability'])) {
+            $data['batch_id'] = Batch::where('code', $data['tracability'])->value('id');
+        }
+
         $move = StockMove::create($data);
 
         if (

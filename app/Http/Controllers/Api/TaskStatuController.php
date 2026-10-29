@@ -9,6 +9,7 @@ use App\Services\TaskService;
 use App\Models\Planning\TaskActivities;
 use App\Models\Planning\TaskResources;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Products\Batch;
 use App\Models\Products\StockMove;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Products\StockReservation;
@@ -201,6 +202,8 @@ class TaskStatuController extends Controller
             // stock
             'stock_locations'     => $stockLocations,
             'reservation'         => $reservation,
+            // lots (coulées) consommés sur la tâche ; vide sans suivi par lot
+            'consumed_batches'    => $this->consumedBatches($task),
             // timeline
             'timeline'            => $timeline,
             // documents (plan, 3D, DXF...) shown by the operator viewer
@@ -502,13 +505,19 @@ class TaskStatuController extends Controller
                     continue;
                 }
 
-                StockMove::create([
-                    'user_id'                    => $userId,
-                    'qty'                        => $toWithdraw,
-                    'stock_location_products_id' => $stock->id,
-                    'task_id'                    => $id,
-                    'typ_move'                   => 2,
-                ]);
+                // Une sortie par lot présent sur l'emplacement (le plus ancien d'abord) :
+                // la tâche garde ainsi la coulée consommée. Sans lot, une seule sortie.
+                foreach ($this->splitByBatch($stock->id, $toWithdraw) as [$batchId, $tracability, $part]) {
+                    StockMove::create([
+                        'user_id'                    => $userId,
+                        'qty'                        => $part,
+                        'stock_location_products_id' => $stock->id,
+                        'task_id'                    => $id,
+                        'batch_id'                   => $batchId,
+                        'tracability'                => $tracability,
+                        'typ_move'                   => 2,
+                    ]);
+                }
 
                 $remaining -= $toWithdraw;
                 if ($remaining <= 0) break;
@@ -520,6 +529,86 @@ class TaskStatuController extends Controller
         $this->taskService->recordTaskActivity($id, TaskActivities::TYPE_DECLARE_GOOD, $qty, 0);
 
         return response()->json(['success' => true, 'negative_stock' => $negativeStock]);
+    }
+
+    /**
+     * Répartit une sortie sur les lots d'un emplacement, en FIFO (ordre du premier
+     * mouvement de chaque lot ; le stock sans lot compte comme un lot). Seuls les
+     * soldes positifs sont prélevés ; un reliquat éventuel part sans lot.
+     *
+     * @return array<int, array{0: int|null, 1: string|null, 2: float}>
+     */
+    private function splitByBatch(int $stockLocationProductId, float $qty): array
+    {
+        $buckets = StockMove::where('stock_location_products_id', $stockLocationProductId)
+            ->groupBy('batch_id')
+            ->selectRaw("
+                batch_id,
+                MIN(id) AS first_id,
+                COALESCE(SUM(CASE
+                    WHEN typ_move IN (1,3,5,12,14) THEN qty
+                    WHEN typ_move IN (2,4,6,9,15)  THEN -qty
+                    ELSE 0
+                END), 0) AS balance
+            ")
+            ->orderBy('first_id')
+            ->get();
+
+        if ($buckets->whereNotNull('batch_id')->isEmpty()) {
+            return [[null, null, $qty]];
+        }
+
+        $codes = Batch::whereIn('id', $buckets->pluck('batch_id')->filter())->pluck('code', 'id');
+
+        $parts = [];
+        foreach ($buckets as $bucket) {
+            $take = min((float) $bucket->balance, $qty);
+            if ($take <= 0) {
+                continue;
+            }
+            $batchId = $bucket->batch_id ? (int) $bucket->batch_id : null;
+            $parts[] = [$batchId, $batchId ? $codes[$batchId] ?? null : null, $take];
+            $qty -= $take;
+            if ($qty <= 0) {
+                break;
+            }
+        }
+
+        if ($qty > 0) {
+            $parts[] = [null, null, $qty];
+        }
+
+        return $parts;
+    }
+
+    /**
+     * Lots consommés par la tâche (sorties type 2), regroupés par lot, avec leur coulée.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function consumedBatches(Task $task): array
+    {
+        $moves = $task->StockMove->where('typ_move', 2)->whereNotNull('batch_id');
+        if ($moves->isEmpty()) {
+            return [];
+        }
+
+        $batches = Batch::whereIn('id', $moves->pluck('batch_id')->unique())->get()->keyBy('id');
+        $canSee  = Auth::user()?->can('stock-lot-serial-management');
+
+        return $moves->groupBy('batch_id')->map(function ($group, $batchId) use ($batches, $canSee) {
+            $batch = $batches->get($batchId);
+
+            return [
+                'id'                  => (int) $batchId,
+                'code'                => $batch?->code,
+                'heat_number'         => $batch?->heat_number,
+                'supplier_batch_code' => $batch?->supplier_batch_code,
+                'certificate_type'    => $batch?->certificate_type,
+                'qty'                 => (float) $group->sum('qty'),
+                'url'                 => $canSee ? route('products.batches.show', ['batch' => $batchId]) : null,
+            ];
+        })->values()->all();
     }
 
     // -------------------------------------------------------------------------

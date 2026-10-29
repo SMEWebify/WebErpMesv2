@@ -752,6 +752,32 @@ function PartCard({ task, trans }) {
 }
 
 // ---------------------------------------------------------------------------
+// ConsumedBatches — lots (coulées) sortis du stock pour cette tâche
+// ---------------------------------------------------------------------------
+export function ConsumedBatches({ batches, trans }) {
+    const t = (key) => trans?.[key] ?? key;
+    if (!batches || batches.length === 0) return null;
+
+    return (
+        <div className="mt-2">
+            <div className="small fw-semibold text-body-secondary mb-1">{t('consumed_batches_trans_key')}</div>
+            <ul className="list-unstyled small mb-0">
+                {batches.map((b) => (
+                    <li key={b.id} className="d-flex flex-wrap align-items-center gap-1 mb-1">
+                        {b.url ? <a href={b.url}>{b.code}</a> : <span>{b.code}</span>}
+                        {b.heat_number && (
+                            <span className="badge text-bg-secondary">{t('heat_trans_key')} {b.heat_number}</span>
+                        )}
+                        {b.certificate_type && <span className="badge text-bg-info">{b.certificate_type}</span>}
+                        <span className="text-body-secondary ms-auto">× {b.qty}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // StockWithdrawalCard — only when the task consumes a component
 // ---------------------------------------------------------------------------
 function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
@@ -799,6 +825,7 @@ function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
                     </button>
                 </div>
             </form>
+            <ConsumedBatches batches={task.consumed_batches} trans={trans} />
         </Card>
     );
 }

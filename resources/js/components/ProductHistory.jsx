@@ -42,6 +42,17 @@ const TYPE_CONFIG = {
             4: { label: 'Annulé',   badge: 'text-bg-danger' },
         },
     },
+    // Lot reçu : le libellé porte la coulée, le lot fournisseur et le certificat
+    batch: {
+        label:   'Lot',
+        color:   '#20c997',
+        bg:      'var(--bs-tertiary-bg)',
+        icon:    'fas fa-fire',
+        statuses: {
+            1: { label: 'Ouvert',   badge: 'text-bg-success' },
+            2: { label: 'Clôturé', badge: 'text-bg-secondary' },
+        },
+    },
 };
 
 // ---------------------------------------------------------------------------
@@ -57,17 +68,19 @@ function formatDate(dateStr) {
     }
 }
 
-function statusInfo(type, statu) {
+function statusInfo(type, statu, trans = {}) {
     const cfg = TYPE_CONFIG[type]?.statuses?.[statu];
+    const label = trans[`${type}_statu_${statu}`];
+    if (cfg && label) return { ...cfg, label };
     return cfg ?? { label: `Statut ${statu}`, badge: 'text-bg-secondary' };
 }
 
 // ---------------------------------------------------------------------------
 // TimelineItem
 // ---------------------------------------------------------------------------
-function TimelineItem({ item }) {
+function TimelineItem({ item, trans = {} }) {
     const cfg   = TYPE_CONFIG[item.type] ?? {};
-    const statu = statusInfo(item.type, item.statu);
+    const statu = statusInfo(item.type, item.statu, trans);
 
     return (
         <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
@@ -107,7 +120,7 @@ function TimelineItem({ item }) {
                             color: cfg.color ?? '#6c757d',
                             marginBottom: 2,
                         }}>
-                            {cfg.label ?? item.type}
+                            {trans[`type_${item.type}`] ?? cfg.label ?? item.type}
                         </span>
 
                         <div style={{ fontWeight: 600, fontSize: 13 }}>
@@ -139,7 +152,7 @@ function TimelineItem({ item }) {
 // ---------------------------------------------------------------------------
 // ProductHistory
 // ---------------------------------------------------------------------------
-export default function ProductHistory({ endpoint, canPurchases = true }) {
+export default function ProductHistory({ endpoint, canPurchases = true, trans = {} }) {
     const [items,       setItems]       = useState([]);
     const [loading,     setLoading]     = useState(true);
     const [error,       setError]       = useState(null);
@@ -204,7 +217,7 @@ export default function ProductHistory({ endpoint, canPurchases = true }) {
                             }}
                         >
                             <i className={`${cfg.icon} me-1`} style={{ fontSize: 10 }} />
-                            {cfg.label} ({count})
+                            {trans[`type_${type}`] ?? cfg.label} ({count})
                         </button>
                     );
                 })}
@@ -239,7 +252,7 @@ export default function ProductHistory({ endpoint, canPurchases = true }) {
                         </div>
                     );
                 }
-                return <TimelineItem key={`${entry.item.type}-${entry.item.id}`} item={entry.item} />;
+                return <TimelineItem key={`${entry.item.type}-${entry.item.id}`} item={entry.item} trans={trans} />;
             })}
         </div>
     );
