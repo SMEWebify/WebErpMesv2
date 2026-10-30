@@ -145,6 +145,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
 | `php artisan wem:purchases:backfill-line-totals [--dry-run] [-v]` | **À lancer une fois après déploiement.** Recalcule `purchase_lines.unit_price_after_discount` / `total_selling_price` (prix × qté × (1 − remise)) des lignes où ils diffèrent : l'écran React des lignes d'achat ne les renseignait pas, d'où 0 € sur « En attente de facturation ». Les écritures comptables passées ne sont pas touchées |
 | `php artisan wem:purchases:fix-swapped-contacts [--dry-run] [-v]` | **À lancer une fois après déploiement.** Remet contact et adresse dans leur colonne sur les commandes d'achat et demandes de prix créées depuis l'écran « Demande d'achat », qui les inversait. Ne corrige que les inversions certaines (aucun des deux ne correspond au fournisseur, les deux inversés oui) ; les cas ambigus sont seulement listés |
+| `php artisan wem:orders:calculated-price-lines [--all]` | **Lecture seule.** Liste les lignes de commande encore en prix calculé (prix stocké / prix de la gamme), par défaut sur les commandes sorties de préparation. Aussi signalé par `wem:diagnostics` |
 | `php artisan stock:recalculate-cump [--dry-run]` | Recalcule le CUMP historique pour tous les emplacements produit (`--dry-run` pour simuler) |
 | `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables pour les appareils de contrôle qualité à étalonner |
 | `php artisan gmao:generate-work-orders [--dry-run]` | Crée les ordres de travail préventifs des plans de maintenance arrivés à échéance (génération automatique cochée, plans périodiques et à date fixe) |
@@ -317,7 +318,6 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
-## Guides utilisateur (menu « Guides »)
 ## Base article : lecture / écriture (products-menu, products-edit)
 
 `products-menu` = **lecture** de la base article (index, fiche, gamme, nomenclature, GED) ;
@@ -339,6 +339,7 @@ utilisateurs qui avaient `products-menu` (rien ne change pour l'existant).
 - Fiche en lecture : bandeau `products.read_only`, formulaire en `fieldset disabled`, gamme
   `data-statu="0"`, GED `fileManagerCanEdit = false`. Tests : `tests/Feature/Products/ProductEditPermissionTest.php`.
 
+## Guides utilisateur (menu « Guides »)
 
 `/guides` liste les pas à pas illustrés, `/guides/{slug}` en affiche un. **Un guide = un dossier**
 `resources/guides/{slug}/` : `guide.md` (en-tête YAML `title`, `summary`, `category`, `order`,
@@ -688,6 +689,23 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
 - Dossier d'affaire : blocage `order_postponed` (date promise dépassée, date actuelle non) et
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
+
+## Prix figé des lignes de commande (prix calculé)
+
+`order_lines.use_calculated_price` fait relire le prix sur la gamme à chaque lecture
+(`OrderLines::getSellingPriceAttribute()`). `App\Services\Workflow\OrderLineCalculatedPrice` :
+- **Activation** libre tant que la commande est **en préparation** = statut 1 **et** revue de
+  contrat non validée (`review_decision ≠ approved`). Au-delà : permission
+  `order-price-recalculate` (Admin par migration, sinon 403) **et** motif ≥ 3 caractères (422
+  `reason_required`), tracé par activitylog (`calculated_price_enabled`).
+- **Toujours refusée** (422, même avec la permission) sur une ligne livrée ou facturée, même en
+  partie, et sur une ligne de présentation.
+- **Désactivation** toujours permise : le prix calculé du moment est d'abord écrit dans
+  `selling_price` (`calculated_price_disabled`, ancien et nouveau prix).
+- Écran des lignes (modal des tâches) : `calculated_price` du JSON de ligne
+  (`can_enable`, `needs_reason`, `blocked_reason`), `lib/calculatedPrice.js`.
+- Lignes déjà en prix calculé : **non modifiées**, listées par `wem:orders:calculated-price-lines`.
+- Tests : `tests/Feature/OrderLineCalculatedPriceTest.php`, `resources/js/tests/lib/calculatedPrice.test.js`.
 
 ## Repères d'équipement (nucléaire)
 

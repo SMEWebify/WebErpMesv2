@@ -5,6 +5,7 @@ import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
+import { calculatedPriceToggle, isValidReason } from '../lib/calculatedPrice';
 import { askCreditOverride } from '../lib/creditLimit';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
@@ -173,11 +174,16 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
 // TaskModal
 // ---------------------------------------------------------------------------
 
-function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPrice, onLineUpdated, onClose }) {
+function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPrice, calculatedPriceState, trans = {}, onLineUpdated, onClose }) {
     const [tasks, setTasks]         = useState(null);
     const [taskUrl, setTaskUrl]     = useState('#');
     const [calcPrice, setCalcPrice] = useState(useCalculatedPrice);
     const [toggling, setToggling]   = useState(false);
+    const [priceState, setPriceState] = useState(calculatedPriceState ?? null);
+    const [askReason, setAskReason] = useState(false);
+    const [reason, setReason]       = useState('');
+    const [toggleError, setToggleError] = useState(null);
+    const toggle = calculatedPriceToggle(priceState, calcPrice);
 
     useEffect(() => {
         if (!lineId || !endpoints.tasks) return;
@@ -192,16 +198,28 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
             .catch(() => setTasks([]));
     }, [lineId]);
 
-    const handleToggle = async () => {
+    const handleToggle = async (withReason = null) => {
+        // Commande sortie de préparation : motif demandé avant d'activer.
+        if (!toggle.enabled && toggle.needsReason && withReason === null) {
+            setAskReason(true);
+            return;
+        }
         setToggling(true);
+        setToggleError(null);
         const res = await apiFetch(endpoints.calculatedPrice.replace('__ID__', lineId), {
             method: 'PATCH',
-            body: JSON.stringify({ enable: !calcPrice }),
+            body: JSON.stringify({ enable: !toggle.enabled, reason: withReason }),
         });
+        const data = await res.json().catch(() => ({}));
         if (res.ok) {
-            const data = await res.json();
-            setCalcPrice(!calcPrice);
+            setCalcPrice(Boolean(data.line?.use_calculated_price));
+            setPriceState(data.line?.calculated_price ?? null);
+            setAskReason(false);
+            setReason('');
             onLineUpdated(data.line);
+        } else {
+            setToggleError(data.message ?? 'Erreur');
+            if (data.reason_required) setAskReason(true);
         }
         setToggling(false);
     };
@@ -282,19 +300,61 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                         <i className="fas fa-folder me-1" />Gérer les tâches
                     </a>
                     {!isReadOnly && (
-                        <button
-                            type="button"
-                            className={`btn btn-sm ${calcPrice ? 'btn-warning' : 'btn-success'}`}
-                            onClick={handleToggle}
-                            disabled={toggling}
-                        >
-                            {toggling
-                                ? <i className="fas fa-spinner fa-spin me-1" />
-                                : <i className={`fas ${calcPrice ? 'fa-toggle-on' : 'fa-toggle-off'} me-1`} />}
-                            {calcPrice ? 'Désactiver prix calculé' : 'Activer prix calculé'}
-                        </button>
+                        <div className="d-flex align-items-center flex-wrap" style={{ gap: '0.5rem' }}>
+                            {toggle.explanation && (
+                                <small className="text-body-secondary" style={{ maxWidth: 380 }}>
+                                    <i className="fas fa-lock me-1" />{toggle.explanation}
+                                </small>
+                            )}
+                            <button
+                                type="button"
+                                className={`btn btn-sm ${toggle.enabled ? 'btn-warning' : 'btn-success'}`}
+                                onClick={() => handleToggle()}
+                                disabled={toggling || toggle.disabled}
+                                title={toggle.enabled ? (trans.disable_title ?? '') : (toggle.explanation ?? '')}
+                            >
+                                {toggling
+                                    ? <i className="fas fa-spinner fa-spin me-1" />
+                                    : <i className={`fas ${toggle.enabled ? 'fa-toggle-on' : 'fa-toggle-off'} me-1`} />}
+                                {toggle.enabled
+                                    ? (trans.disable ?? 'Désactiver prix calculé')
+                                    : (trans.enable ?? 'Activer prix calculé')}
+                            </button>
+                        </div>
                     )}
                 </div>
+                {!isReadOnly && (askReason || toggleError) && (
+                    <div className="border-top px-3 py-2">
+                        {toggleError && <div className="alert alert-danger py-1 px-2 mb-2 small">{toggleError}</div>}
+                        {askReason && (
+                            <>
+                                <label className="form-label small mb-1" htmlFor="calc-price-reason">
+                                    {trans.reason_title ?? 'Motif de la réactivation du prix calculé ?'}
+                                </label>
+                                <div className="d-flex" style={{ gap: '0.5rem' }}>
+                                    <input
+                                        id="calc-price-reason"
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        value={reason}
+                                        maxLength={500}
+                                        placeholder={trans.reason_placeholder ?? ''}
+                                        onChange={(e) => setReason(e.target.value)}
+                                    />
+                                    <button type="button" className="btn btn-sm btn-success"
+                                        disabled={toggling || !isValidReason(reason)}
+                                        onClick={() => handleToggle(reason.trim())}>
+                                        {trans.confirm ?? 'Activer'}
+                                    </button>
+                                    <button type="button" className="btn btn-sm btn-outline-secondary"
+                                        onClick={() => { setAskReason(false); setReason(''); setToggleError(null); }}>
+                                        {trans.cancel ?? 'Annuler'}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
             </div>
         </>
     );
@@ -1704,9 +1764,15 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                     endpoints={endpoints}
                     isReadOnly={isReadOnly}
                     useCalculatedPrice={taskModalLine.use_calculated_price}
+                    calculatedPriceState={taskModalLine.calculated_price}
+                    trans={trans.calculated_price ?? {}}
                     onLineUpdated={(updatedLine) => {
                         setLines((prev) => prev.map((l) => l.id === updatedLine.id ? updatedLine : l));
-                        setTaskModalLine((prev) => prev ? { ...prev, use_calculated_price: updatedLine.use_calculated_price } : null);
+                        setTaskModalLine((prev) => prev ? {
+                            ...prev,
+                            use_calculated_price: updatedLine.use_calculated_price,
+                            calculated_price: updatedLine.calculated_price,
+                        } : null);
                     }}
                     onClose={() => setTaskModalLine(null)}
                 />

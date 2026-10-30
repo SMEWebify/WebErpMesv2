@@ -43,6 +43,8 @@ use App\Models\Planning\Task;
 use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Production\ProductionRelease;
 use App\Services\Production\ProductionReleaseException;
+use App\Services\Workflow\OrderLineCalculatedPrice;
+use App\Services\Workflow\OrderLineCalculatedPriceException;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -405,7 +407,8 @@ class OrderLinesController extends Controller
             ->withCount(['Task', 'SubAssembly'])
             ->where('orders_id', $orderId)
             ->orderBy('ordre', 'asc')
-            ->get();
+            ->get()
+            ->each(fn (OrderLines $l) => $l->setRelation('order', $order));
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
@@ -786,13 +789,26 @@ class OrderLinesController extends Controller
         ]);
     }
 
-    public function toggleCalculatedPriceJson(int $orderId, int $id, Request $request)
+    /**
+     * PATCH — active ou désactive le prix calculé (OrderLineCalculatedPrice) :
+     * activation figée hors préparation sauf permission + motif, désactivation
+     * qui enregistre d'abord le prix calculé du moment.
+     */
+    public function toggleCalculatedPriceJson(int $orderId, int $id, Request $request, OrderLineCalculatedPrice $calculatedPrice)
     {
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
 
-        $enable = (bool) $request->input('enable');
-        $line->update(['use_calculated_price' => $enable ? 1 : 0]);
+        try {
+            $line = $request->boolean('enable')
+                ? $calculatedPrice->enable($line, Auth::user(), is_scalar($request->input('reason')) ? (string) $request->input('reason') : null)
+                : $calculatedPrice->disable($line, Auth::user());
+        } catch (OrderLineCalculatedPriceException $e) {
+            return response()->json([
+                'message'         => $e->getMessage(),
+                'reason_required' => $e->reasonRequired(),
+            ], $e->status());
+        }
 
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
@@ -830,6 +846,9 @@ class OrderLinesController extends Controller
             'selling_price'        => $rawPrice,
             'effective_price'      => $effectivePrice,
             'use_calculated_price' => (bool) $l->use_calculated_price,
+            'calculated_price'     => $l->order
+                ? app(OrderLineCalculatedPrice::class)->state($l, $l->order, Auth::user())
+                : null,
             'formatted_price'      => Number::currency($effectivePrice, $currency, $locale),
             'discount'             => $l->discount,
             'accounting_vats_id'   => $l->accounting_vats_id,

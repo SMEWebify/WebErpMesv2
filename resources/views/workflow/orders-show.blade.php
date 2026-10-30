@@ -473,7 +473,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier]) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

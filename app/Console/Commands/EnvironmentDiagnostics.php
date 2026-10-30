@@ -74,6 +74,16 @@ class EnvironmentDiagnostics extends Command
             'warn'
         );
 
+        $calculatedPriceLines = $this->calculatedPriceLinesOutsidePreparation();
+        if ($calculatedPriceLines !== null) {
+            $warnings += $this->check(
+                $calculatedPriceLines === 0,
+                'No validated order line uses the calculated price.',
+                "{$calculatedPriceLines} validated order line(s) still use the calculated price (price follows the routing); run \"php artisan wem:orders:calculated-price-lines\".",
+                'warn'
+            );
+        }
+
         if ($failures === 0 && $warnings === 0) {
             $this->info('Diagnostics completed without issues.');
             return self::SUCCESS;
@@ -134,6 +144,24 @@ class EnvironmentDiagnostics extends Command
         }
 
         return !empty(env('PUSHER_APP_ID')) && !empty(env('PUSHER_APP_KEY')) && !empty(env('PUSHER_APP_SECRET'));
+    }
+
+    /**
+     * Lignes en prix calculé sur une commande sortie de préparation (statut > 1
+     * ou revue validée). Null si la base est injoignable : le contrôle est sauté.
+     */
+    private function calculatedPriceLinesOutsidePreparation(): ?int
+    {
+        try {
+            return \App\Models\Workflow\OrderLines::query()
+                ->join('orders', 'orders.id', '=', 'order_lines.orders_id')
+                ->where('order_lines.use_calculated_price', true)
+                ->where(fn ($q) => $q->where('orders.statu', '!=', \App\Services\Workflow\OrderLineCalculatedPrice::PREPARATION_STATUS)
+                    ->orWhere('orders.review_decision', \App\Services\Workflow\ContractReview::APPROVED))
+                ->count();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function isWritable(string $path): bool
