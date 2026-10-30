@@ -69,6 +69,14 @@ return [
         'location' => 'Emplacement',
         'lot' => 'Lot matière',
     ],
+    'batches' => [
+        'consumed' => 'Lots consommés',
+        'code' => 'Lot',
+        'heat_number' => 'coulée',
+        'supplier_batch' => 'lot fournisseur',
+        'certificate' => 'certificat EN 10204',
+        'qty' => 'qté',
+    ],
     'ops' => [
         'seq' => 'N°',
         'operation' => 'Opération',

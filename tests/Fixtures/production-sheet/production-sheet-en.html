@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Job traveler: CMD-2026-042</title>
+    <style>
+        @page { margin: 12mm 10mm; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 9.5px;
+            color: #0f172a;
+            margin: 0;
+        }
+        .sheet { page-break-after: always; }
+        .sheet:last-child { page-break-after: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            border: 1px solid #94a3b8;
+            padding: 3px 5px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #e2e8f0;
+            font-weight: bold;
+            font-size: 8.5px;
+            text-transform: uppercase;
+        }
+        .section { margin-top: 6px; }
+        .section-title {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 3px 6px;
+        }
+        .label {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: bold;
+            width: 17%;
+        }
+        .header-title { font-size: 18px; font-weight: bold; letter-spacing: 0.05em; }
+        .header-of { font-size: 22px; font-weight: bold; margin-top: 4px; }
+        .header-meta { font-size: 10px; color: #334155; margin-top: 4px; line-height: 1.5; }
+        .qr { width: 80px; height: 80px; }
+        .part-image { max-width: 150px; max-height: 120px; }
+        .center { text-align: center; }
+        .right { text-align: right; }
+        .muted { color: #64748b; }
+        .ops td { height: 18px; vertical-align: middle; }
+        .ops .seq { width: 5%; text-align: center; font-weight: bold; }
+        .write-line td { height: 18px; vertical-align: middle; }
+        .nowrap { white-space: nowrap; }
+        .ops td.barcode-cell { padding: 2px 6px; text-align: center; }
+        .task-barcode { display: block; margin: 0 auto; width: 100%; height: 22px; }
+        .big-qty { font-size: 13px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="sheet order-cover">
+    <table>
+        <tr>
+            <td style="width: 78%; border-right: none;">
+                <div class="header-title">ORDER SHEET</div>
+                <div class="header-of">Order CMD-2026-042</div>
+                <div class="header-meta">
+                    <strong>Customer :</strong> ACME
+                                            &nbsp;·&nbsp; <strong>Customer ref. :</strong> PO-77
+                                        <br>
+                    <strong>Printed :</strong> 01/10/2026 08:00
+                </div>
+            </td>
+            <td style="width: 22%; border-left: none;" class="center">
+                                    <img src="data:image/png;base64,ORDERQR" alt="" class="qr">
+                    <div class="muted">Scan to open the order</div>
+                            </td>
+        </tr>
+    </table>
+
+    <div class="section">
+        <div class="section-title">Summary</div>
+        <table>
+            <tr>
+                <td class="label">Lines</td>
+                <td class="big-qty">2</td>
+                <td class="label">Total qty</td>
+                <td class="big-qty">10</td>
+                <td class="label">Delivered qty</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td class="label">Earliest due date</td>
+                <td class="big-qty">15/11/2026</td>
+                <td class="label">Material</td>
+                <td colspan="3">INOX 304L 2 mm</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Lines to manufacture</div>
+        <table>
+            <tr>
+                <th style="width: 6%;" class="center">Sheet</th>
+                <th style="width: 7%;">Line</th>
+                <th style="width: 18%;">Part number</th>
+                <th>Description</th>
+                <th style="width: 15%;">Material</th>
+                <th style="width: 8%;" class="right">Qty</th>
+                <th style="width: 10%;">Due date</th>
+                <th style="width: 5%;" class="center">&#9744;</th>
+            </tr>
+                            <tr class="write-line">
+                    <td class="center">1</td>
+                    <td>1</td>
+                    <td><strong>LINE-1</strong></td>
+                    <td>Platine</td>
+                    <td>
+                        INOX 304L
+                         — 2 mm                     </td>
+                    <td class="right">5</td>
+                    <td>15/11/2026</td>
+                    <td></td>
+                </tr>
+                            <tr class="write-line">
+                    <td class="center">2</td>
+                    <td>2</td>
+                    <td><strong>LINE-2</strong></td>
+                    <td>Platine</td>
+                    <td>
+                        —
+                                            </td>
+                    <td class="right">5</td>
+                    <td>15/11/2026</td>
+                    <td></td>
+                </tr>
+                    </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Packing &amp; shipping</div>
+        <table>
+            <tr class="write-line">
+                <td class="label">Packed by</td>
+                <td style="width: 23%;"></td>
+                <td class="label" style="width: 8%;">Date</td>
+                <td style="width: 17%;"></td>
+                <td class="label" style="width: 8%;">Sign-off</td>
+                <td style="width: 17%;"></td>
+            </tr>
+            <tr class="write-line">
+                <td class="label">Delivery note / shipped by</td>
+                <td></td>
+                <td class="label">Date</td>
+                <td></td>
+                <td class="label">Sign-off</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Notes / non-conformities</div>
+        <table>
+            <tr><td style="height: 70px;"></td></tr>
+        </table>
+    </div>
+</div>
+
+        <div class="sheet">
+        
+        <table>
+            <tr>
+                <td style="width: 78%; border-right: none;">
+                    <div class="header-title">JOB TRAVELER</div>
+                    <div class="header-of">LINE-1</div>
+                    <div class="header-meta">
+                        <strong>Order :</strong> CMD-2026-042
+                         &nbsp;·&nbsp; <strong>Line :</strong> 1                         <br>
+                        <strong>Customer :</strong> ACME
+                         (PO-77)                     </div>
+                </td>
+                <td style="width: 22%; border-left: none;" class="center">
+                                            <img src="data:image/png;base64,ORDERQR" alt="" class="qr">
+                                        <div class="muted">Sheet 1 / 2</div>
+                </td>
+            </tr>
+        </table>
+
+        
+        <div class="section">
+            <div class="section-title">Part</div>
+            <table>
+                <tr>
+                    <td class="label">Part number</td>
+                    <td>PLAT-01</td>
+                    <td class="label">Revision</td>
+                    <td>B</td>
+                    <td rowspan="7" class="center" style="width: 24%; vertical-align: middle;">
+                                                    <span class="muted">No image</span>
+                                            </td>
+                </tr>
+                <tr>
+                    <td class="label">Description</td>
+                    <td colspan="3">Platine</td>
+                </tr>
+                                <tr>
+                    <td class="label">Equipment tags</td>
+                    <td colspan="3"><strong>1RCP001PO</strong></td>
+                </tr>
+                                <tr>
+                    <td class="label">Material</td>
+                    <td>INOX 304L</td>
+                    <td class="label">Thickness</td>
+                    <td>2 mm</td>
+                </tr>
+                <tr>
+                    <td class="label">Dimensions</td>
+                    <td>300 × 150 mm</td>
+                    <td class="label">Unit weight</td>
+                    <td>1,25 kg</td>
+                </tr>
+                <tr>
+                    <td class="label">Bends</td>
+                    <td>4</td>
+                    <td class="label">Finish</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="label">Drawing</td>
+                    <td colspan="3">—</td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Launch</div>
+            <table>
+                <tr>
+                    <td class="label">Qty to produce</td>
+                    <td class="big-qty">5 U</td>
+                    <td class="label">Due date</td>
+                    <td class="big-qty">15/11/2026</td>
+                    <td class="label">Internal due date</td>
+                    <td>10/11/2026</td>
+                </tr>
+                <tr>
+                    <td class="label">Planned start</td>
+                    <td>02/11/2026 08:00</td>
+                    <td class="label">Planned end</td>
+                    <td>03/11/2026 17:00</td>
+                    <td class="label">Printed</td>
+                    <td>01/10/2026 08:00</td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Material &amp; bill of materials</div>
+                        <table>
+                    <tr>
+                        <th class="center" style="width: 5%;">No.</th>
+                        <th style="width: 22%;">Component</th>
+                        <th>Description</th>
+                        <th style="width: 10%;" class="right">Qty / part</th>
+                        <th style="width: 15%;">Location</th>
+                        <th style="width: 15%;">Material lot</th>
+                    </tr>
+                                            <tr class="write-line">
+                            <td class="center">1</td>
+                            <td>TOLE-304-2 Tôle inox 2 mm</td>
+                            <td>Tôle</td>
+                            <td class="right">1,5</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                                            <tr class="write-line">
+                            <td class="center">2</td>
+                            <td>VIS-M6 Vis M6</td>
+                            <td>Vis</td>
+                            <td class="right">4</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                                </table>
+                        <table>
+                <tr class="write-line">
+                    <td class="label">Lot / heat no.</td>
+                    <td style="width: 33%;"></td>
+                    <td class="label">Mill certificate</td>
+                    <td style="width: 33%;"></td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">
+                Routing — operation sign-off
+                                    <span style="font-weight: normal; text-transform: none;">— total planned time: 2h00</span>
+                            </div>
+            <table class="ops">
+                <tr>
+                    <th class="center">No.</th>
+                    <th style="width: 14%;">Operation</th>
+                    <th style="width: 14%;">Work center</th>
+                    <th style="width: 8%;">Std time</th>
+                    <th style="width: 10%;">Date</th>
+                    <th style="width: 9%;">Operator</th>
+                    <th style="width: 8%;">Good qty</th>
+                    <th style="width: 8%;">Scrap qty</th>
+                    <th style="width: 7%;">Actual time</th>
+                    <th style="width: 7%;">Sign-off</th>
+                                            <th class="center" style="width: 14%;">Scan</th>
+                                    </tr>
+                                    <tr>
+                        <td class="seq">10</td>
+                        <td>
+                            <strong>Découpe laser</strong>
+                                                            <div class="muted" style="font-size: 8px;">LAS</div>
+                                                    </td>
+                        <td>Laser 1</td>
+                        <td>30 min</td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td>
+                                                    <td class="barcode-cell">
+                                                                    <img src="data:image/png;base64,BAR10" alt="" class="task-barcode">
+                                                            </td>
+                                            </tr>
+                                    <tr>
+                        <td class="seq">20</td>
+                        <td>
+                            <strong>Pliage</strong>
+                                                            <div class="muted" style="font-size: 8px;">PLI</div>
+                                                    </td>
+                        <td>Plieuse 1</td>
+                        <td>1h30</td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td>
+                                                    <td class="barcode-cell">
+                                                                    <img src="data:image/png;base64,BAR20" alt="" class="task-barcode">
+                                                            </td>
+                                            </tr>
+                                                    <tr>
+                        <td class="seq"></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        <td></td>                    </tr>
+                            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Quality checks</div>
+            <table>
+                <tr>
+                    <th style="width: 20%;">Check</th>
+                    <th style="width: 32%;">Result</th>
+                    <th style="width: 14%;">Date</th>
+                    <th style="width: 18%;">Operator</th>
+                    <th style="width: 16%;">Sign-off</th>
+                </tr>
+                                    <tr class="write-line">
+                        <td>First article</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                                    <tr class="write-line">
+                        <td>In-process check</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                                    <tr class="write-line">
+                        <td>Final inspection</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Notes / non-conformities</div>
+            <table>
+                                    <tr>
+                        <td><strong>Notes :</strong> Ébavurer soigneusement</td>
+                    </tr>
+                                <tr class="write-line"><td>&#9744; Non-conformity raised &nbsp; NCR no. : ______________</td></tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Batch release</div>
+            <table>
+                <tr class="write-line">
+                    <td class="label" style="width: 14%;">Qty released</td>
+                    <td style="width: 11%;"></td>
+                    <td class="label" style="width: 14%;">Qty scrapped</td>
+                    <td style="width: 11%;"></td>
+                    <td class="label" style="width: 8%;">Date</td>
+                    <td style="width: 17%;"></td>
+                    <td class="label" style="width: 8%;">Sign-off</td>
+                    <td style="width: 17%;"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+        <div class="sheet">
+        
+        <table>
+            <tr>
+                <td style="width: 78%; border-right: none;">
+                    <div class="header-title">JOB TRAVELER</div>
+                    <div class="header-of">LINE-2</div>
+                    <div class="header-meta">
+                        <strong>Order :</strong> CMD-2026-042
+                         &nbsp;·&nbsp; <strong>Line :</strong> 2                         <br>
+                        <strong>Customer :</strong> ACME
+                         (PO-77)                     </div>
+                </td>
+                <td style="width: 22%; border-left: none;" class="center">
+                                            <img src="data:image/png;base64,ORDERQR" alt="" class="qr">
+                                        <div class="muted">Sheet 2 / 2</div>
+                </td>
+            </tr>
+        </table>
+
+        
+        <div class="section">
+            <div class="section-title">Part</div>
+            <table>
+                <tr>
+                    <td class="label">Part number</td>
+                    <td>LINE-2</td>
+                    <td class="label">Revision</td>
+                    <td>B</td>
+                    <td rowspan="6" class="center" style="width: 24%; vertical-align: middle;">
+                                                    <span class="muted">No image</span>
+                                            </td>
+                </tr>
+                <tr>
+                    <td class="label">Description</td>
+                    <td colspan="3">Platine</td>
+                </tr>
+                                <tr>
+                    <td class="label">Material</td>
+                    <td>—</td>
+                    <td class="label">Thickness</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="label">Dimensions</td>
+                    <td>—</td>
+                    <td class="label">Unit weight</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="label">Bends</td>
+                    <td>—</td>
+                    <td class="label">Finish</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="label">Drawing</td>
+                    <td colspan="3">—</td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Launch</div>
+            <table>
+                <tr>
+                    <td class="label">Qty to produce</td>
+                    <td class="big-qty">5 U</td>
+                    <td class="label">Due date</td>
+                    <td class="big-qty">15/11/2026</td>
+                    <td class="label">Internal due date</td>
+                    <td>10/11/2026</td>
+                </tr>
+                <tr>
+                    <td class="label">Planned start</td>
+                    <td>—</td>
+                    <td class="label">Planned end</td>
+                    <td>—</td>
+                    <td class="label">Printed</td>
+                    <td>01/10/2026 08:00</td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Material &amp; bill of materials</div>
+                        <table>
+                <tr class="write-line">
+                    <td class="label">Lot / heat no.</td>
+                    <td style="width: 33%;"></td>
+                    <td class="label">Mill certificate</td>
+                    <td style="width: 33%;"></td>
+                </tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">
+                Routing — operation sign-off
+                                    <span style="font-weight: normal; text-transform: none;">— total planned time: 15 min</span>
+                            </div>
+            <table class="ops">
+                <tr>
+                    <th class="center">No.</th>
+                    <th style="width: 14%;">Operation</th>
+                    <th style="width: 14%;">Work center</th>
+                    <th style="width: 8%;">Std time</th>
+                    <th style="width: 10%;">Date</th>
+                    <th style="width: 13%;">Operator</th>
+                    <th style="width: 8%;">Good qty</th>
+                    <th style="width: 8%;">Scrap qty</th>
+                    <th style="width: 7%;">Actual time</th>
+                    <th style="width: 13%;">Sign-off</th>
+                                    </tr>
+                                    <tr>
+                        <td class="seq">10</td>
+                        <td>
+                            <strong>Découpe</strong>
+                                                    </td>
+                        <td>—</td>
+                        <td>15 min</td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td>
+                                            </tr>
+                                                    <tr>
+                        <td class="seq"></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                            </tr>
+                                    <tr>
+                        <td class="seq"></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                            </tr>
+                            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Quality checks</div>
+            <table>
+                <tr>
+                    <th style="width: 20%;">Check</th>
+                    <th style="width: 32%;">Result</th>
+                    <th style="width: 14%;">Date</th>
+                    <th style="width: 18%;">Operator</th>
+                    <th style="width: 16%;">Sign-off</th>
+                </tr>
+                                    <tr class="write-line">
+                        <td>First article</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                                    <tr class="write-line">
+                        <td>In-process check</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                                    <tr class="write-line">
+                        <td>Final inspection</td>
+                        <td class="nowrap">&#9744; Pass &nbsp;&nbsp; &#9744; Fail</td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Notes / non-conformities</div>
+            <table>
+                                <tr class="write-line"><td>&#9744; Non-conformity raised &nbsp; NCR no. : ______________</td></tr>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <div class="section-title">Batch release</div>
+            <table>
+                <tr class="write-line">
+                    <td class="label" style="width: 14%;">Qty released</td>
+                    <td style="width: 11%;"></td>
+                    <td class="label" style="width: 14%;">Qty scrapped</td>
+                    <td style="width: 11%;"></td>
+                    <td class="label" style="width: 8%;">Date</td>
+                    <td style="width: 17%;"></td>
+                    <td class="label" style="width: 8%;">Sign-off</td>
+                    <td style="width: 17%;"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

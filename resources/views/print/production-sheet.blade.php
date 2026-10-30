@@ -1,6 +1,9 @@
 {{-- Fiche suiveuse (ex-instruction de fabrication) — même structure et même rendu
      que la fiche suiveuse Nest2Prod : page de garde commande, puis une fiche par
-     ligne article. Données préparées par App\Services\Documents\ProductionSheetBuilder. --}}
+     ligne article. Données préparées par App\Services\Documents\ProductionSheetBuilder.
+     Lots consommés (coulées) : imprimés seulement s'il y en a. Les @if / @endif qui les
+     entourent sont collés à <td> / </td> ou en colonne 0, pour qu'une fiche sans lot garde
+     exactement son rendu (tests/Fixtures/production-sheet, à ne jamais régénérer). --}}
 @php
     $t = static fn (string $key, array $replace = []) => __('production_sheet.' . $key, $replace);
     $emptyValue = $t('empty_value');
@@ -344,7 +347,11 @@
                             <td>{{ $display($component['label']) }}</td>
                             <td class="right">{{ $formatNumber($component['qty'], 3) }}</td>
                             <td></td>
-                            <td></td>
+                            <td>@if (! empty($component['batches']))
+                                @foreach ($component['batches'] as $batch)
+                                    <div class="batch"><strong>{{ $display($batch['heat_number']) }}</strong> <span class="muted">({{ $batch['code'] }}@if (filled($batch['certificate_type'])) · {{ $batch['certificate_type'] }}@endif) × {{ $formatNumber($batch['qty'], 3) }}</span></div>
+                                @endforeach
+@endif</td>
                         </tr>
                     @endforeach
             </table>
@@ -403,6 +410,23 @@
                             </td>
                         @endif
                     </tr>
+@if (! empty($operation['batches']))
+                    <tr class="op-batches">
+                        <td class="seq"></td>
+                        <td colspan="{{ $hasBarcode ? 10 : 9 }}">
+                            <strong>{{ $t('batches.consumed') }} :</strong>
+                            @foreach ($operation['batches'] as $batch)
+                                <div class="batch">
+                                    {{ $t('batches.code') }} <strong>{{ $display($batch['code']) }}</strong>
+                                    · {{ $t('batches.heat_number') }} <strong>{{ $display($batch['heat_number']) }}</strong>
+                                    · {{ $t('batches.supplier_batch') }} {{ $display($batch['supplier_batch_code']) }}
+                                    · {{ $t('batches.certificate') }} {{ $display($batch['certificate_type']) }}
+                                    · {{ $t('batches.qty') }} {{ $formatNumber($batch['qty'], 3) }}
+                                </div>
+                            @endforeach
+                        </td>
+                    </tr>
+@endif
                 @endforeach
                 @for ($i = 0; $i < ($hasBarcode ? 1 : 2); $i++)
                     <tr>

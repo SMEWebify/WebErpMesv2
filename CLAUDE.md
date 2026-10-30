@@ -1081,6 +1081,11 @@ descente complète reste un chantier séparé.
 - **Affichage** : recherche par coulée / lot fournisseur / code sur l'écran des lots, coulée
   sur l'historique de l'article (type `batch`, porteurs de la permission), sur les mouvements
   de la ligne de stock et dans « Lots consommés » de l'écran tâche (`consumed_batches`).
+- **Fiche suiveuse** (`print/production-sheet`) : `ProductionSheetBuilder::consumedBatches()` relit en
+  **une requête** les sorties (typ_move 2) avec lot de toutes les tâches de la commande ; coulée dans
+  la colonne « Lot matière » du composant (vide = à remplir au poste), ligne « Lots consommés » sous
+  l'opération. Sans lot, HTML identique aux références `tests/Fixtures/production-sheet`
+  (`ProductionSheetLegacyRenderingTest`, **ne jamais les régénérer**).
 - Tests : `tests/Feature/Products/BatchHeatTraceabilityTest.php`,
   `resources/js/tests/components/batchHeat.test.jsx`.
 
@@ -1383,6 +1388,17 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   (contrôle visuel). Remplacer `public/vendor/fontawesome-free/{css,webfonts}` par ceux du
   paquet npm, comme pour le passage 5 → 6 (#1189).
 
+#### Administration — écran des droits
+- **Page dédiée aux droits, triés par section** (Ventes, Production, Achats, Qualité, Stock,
+  Comptabilité, RH, Administration…) : aujourd'hui `admin/factory-roles-permissions` liste les
+  45 droits à plat, par ordre de création, dans une fenêtre par rôle. Cible : une matrice
+  rôles × droits groupée par section, avec la description (`permissions.descriptions`).
+  Section rangée à côté de la description (même fichier de langue ou liste en config), pas en
+  base. Un droit inconnu (créé à la main) tombe dans « Autres ».
+- Au passage : la liste déroulante « Nouvelle permission » est écrite en dur dans la vue
+  (18 droits, il en manque la plupart) ; et l'attribution de rôle sans contrôle de
+  `HumanResourcesController@UpdateUser` (voir RH).
+
 #### RH — reste à faire
 - **Validation d'absence par le responsable** : `users.supervisor_id` reçoit la notification
   d'une demande mais ne peut pas la valider (droit RH uniquement)
@@ -1482,6 +1498,15 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
 - **Quarantaine réception** : `storeFromPurchaseOrder` met directement en stock, pas d'étape "zone d'attente / contrôle qualité" avant validation
 - **Alerte réappro auto** : `mini_qty` sert uniquement au coloriage UI, aucun event / notification / mail déclenché quand stock < mini_qty
 - **Validation qty négative sur autres flux stock** : `StoreStockMoveRequest` durci (commit f29bad10) mais `UpdateStockMoveRequest` reste à vérifier
+- **Pré-affectation de coulée à une tâche** (avant production) : aujourd'hui la coulée n'est connue
+  qu'à la consommation (fiche suiveuse = lots déjà sortis). `stock_reservations` ne convient pas :
+  quantité seule, recalculée et purgée à chaque mouvement par `StockReservationService`. Cible :
+  table additive `task_batch_allocations` (tâche, lot, qté, auteur), plusieurs lots par tâche ;
+  disponible d'un lot = solde − affectations des autres tâches ; `goodQtyStock` sort d'abord les
+  lots affectés puis le FIFO ; coulée « prévue » imprimée sur la fiche suiveuse (rendu sans
+  affectation inchangé). À trancher : qui affecte (magasin / méthodes avec droit dédié, ou
+  opérateur), écart de coulée = avertissement ou blocage, articles concernés (`tracability_type = 2`
+  ou tout article ayant des lots)
 - **Retirer StockCurrentApp** (composant + mount app.js + endpoint `stockCurrentJson`) une fois l'écran Statut du stock validé en usage réel
 
 ### ⚠️ À vérifier

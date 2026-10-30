@@ -69,6 +69,14 @@ return [
         'location' => 'Location',
         'lot' => 'Material lot',
     ],
+    'batches' => [
+        'consumed' => 'Consumed batches',
+        'code' => 'Batch',
+        'heat_number' => 'heat',
+        'supplier_batch' => 'supplier batch',
+        'certificate' => 'EN 10204 cert.',
+        'qty' => 'qty',
+    ],
     'ops' => [
         'seq' => 'No.',
         'operation' => 'Operation',

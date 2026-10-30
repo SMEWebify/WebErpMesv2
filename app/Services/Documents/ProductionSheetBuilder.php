@@ -12,6 +12,7 @@ use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -49,7 +50,11 @@ class ProductionSheetBuilder
 
         $orderUrl = route('orders.show', ['id' => $order->id]);
 
-        $sheets = $lines->map(fn (OrderLines $line) => $this->sheet($line))->values();
+        $batches = $this->consumedBatches(
+            $lines->flatMap(fn (OrderLines $line) => $line->TechnicalCut->concat($line->BOM))->pluck('id')
+        );
+
+        $sheets = $lines->map(fn (OrderLines $line) => $this->sheet($line, $batches))->values();
 
         return [
             'orderCode' => $order->code,
@@ -65,7 +70,41 @@ class ProductionSheetBuilder
         ];
     }
 
-    private function sheet(OrderLines $line): array
+    /**
+     * Lots sortis du stock par les tâches de la fiche (sorties typ_move 2 portant
+     * un lot), en une requête pour toute la commande, regroupés par tâche puis
+     * par lot dans l'ordre de consommation. Mêmes règles que les « Lots
+     * consommés » de l'écran tâche (TaskStatuController::consumedBatches).
+     *
+     * @param  Collection<int, int>  $taskIds
+     * @return Collection<int, array<int, array{code: ?string, heat_number: ?string, supplier_batch_code: ?string, certificate_type: ?string, qty: float}>>
+     */
+    private function consumedBatches(Collection $taskIds): Collection
+    {
+        if ($taskIds->isEmpty()) {
+            return collect();
+        }
+
+        return DB::table('stock_moves')
+            ->join('batches', 'batches.id', '=', 'stock_moves.batch_id')
+            ->whereIn('stock_moves.task_id', $taskIds->unique()->values())
+            ->where('stock_moves.typ_move', 2)
+            ->groupBy('stock_moves.task_id', 'batches.id', 'batches.code', 'batches.heat_number', 'batches.supplier_batch_code', 'batches.certificate_type')
+            ->orderBy('stock_moves.task_id')
+            ->orderByRaw('MIN(stock_moves.id)')
+            ->selectRaw('stock_moves.task_id, batches.code, batches.heat_number, batches.supplier_batch_code, batches.certificate_type, SUM(stock_moves.qty) AS qty')
+            ->get()
+            ->groupBy('task_id')
+            ->map(fn (Collection $rows) => $rows->map(fn ($row) => [
+                'code' => $row->code,
+                'heat_number' => $row->heat_number,
+                'supplier_batch_code' => $row->supplier_batch_code,
+                'certificate_type' => $row->certificate_type,
+                'qty' => (float) $row->qty,
+            ])->values()->all());
+    }
+
+    private function sheet(OrderLines $line, Collection $batches): array
     {
         $details = $line->OrderLineDetails;
         $operations = $line->TechnicalCut;
@@ -104,12 +143,14 @@ class ProductionSheetBuilder
                 // Stockage en heures (TimeDisplay) : la fiche affiche en h/min.
                 'planned_time_min' => (float) $task->TotalTime() * 60,
                 'barcode_src' => $this->taskBarcode($task),
+                'batches' => $batches->get($task->id, []),
             ])->values()->all(),
             'components' => $line->BOM->map(fn (Task $task) => [
                 'ordre' => $task->ordre,
                 'label' => $task->label,
                 'component' => trim(($task->Component?->code ?? '') . ' ' . ($task->Component?->label ?? '')),
                 'qty' => $task->qty,
+                'batches' => $batches->get($task->id, []),
             ])->values()->all(),
         ];
     }
