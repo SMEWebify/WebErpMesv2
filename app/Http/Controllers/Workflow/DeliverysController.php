@@ -14,6 +14,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Packaging;
 use App\Services\SelectDataService;
 use App\Services\DeliveryService;
+use App\Services\Delivery\PackagingContent;
 use App\Services\DeliveryLineService;
 use App\Services\DeliveryDataService;
 use App\Services\StockService;
@@ -442,12 +443,11 @@ class DeliverysController extends Controller
      * @param Deliverys $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function packagingsStore(StorePackagingRequest $request, Deliverys $id)
+    public function packagingsStore(StorePackagingRequest $request, Deliverys $id, PackagingContent $content)
     {
-        // Création et sauvegarde du packaging
-        Packaging::create(
-            $request->only([
-                'deliverys_id',
+        // Création du colis et de son contenu (lignes du BL) : tout ou rien
+        DB::transaction(function () use ($request, $id, $content) {
+            $packaging = Packaging::create(['deliverys_id' => $id->id] + $request->only([
                 'code',
                 'type',
                 'status',
@@ -462,8 +462,10 @@ class DeliverysController extends Controller
                 'load_comment',
             ]) + [
                 'user_id' => Auth::id(),
-            ]
-        );
+            ]);
+
+            $content->sync($packaging, (array) $request->input('content', []));
+        });
 
         // Redirection avec un message de succès
         return redirect()->route('deliverys.show', ['id' => $id->id])->with('success', 'Successfully add packaging');
@@ -527,22 +529,29 @@ class DeliverysController extends Controller
         ]);
     }
 
-    public function packagingsUpdate(UpdatePackagingRequest $request, Deliverys $id)
+    public function packagingsUpdate(UpdatePackagingRequest $request, Deliverys $id, PackagingContent $content)
     {
-        $packaging = Packaging::findOrFail($request->id);
-        $packaging->update([
-            'code' => $request->code,
-            'type' => $request->type,
-            'status' => $request->status,
-            'gross_weight' => $request->gross_weight,
-            'net_weight' => $request->net_weight,
-            'length' => $request->length,
-            'width' => $request->width,
-            'height' => $request->height,
-            'comment' => $request->comment,
-            'packing_date' => $request->packing_date,
-            'loaded_date' => $request->loaded_date,
-        ]);
+        $packaging = Packaging::where('deliverys_id', $id->id)->findOrFail($request->id);
+
+        // Colis et contenu (lignes du BL) : tout ou rien
+        DB::transaction(function () use ($packaging, $request, $content) {
+            $packaging->update([
+                'code' => $request->code,
+                'type' => $request->type,
+                // Le formulaire n'envoie pas le statut : garder l'actuel (colonne non nulle)
+                'status' => $request->input('status', $packaging->status),
+                'gross_weight' => $request->gross_weight,
+                'net_weight' => $request->net_weight,
+                'length' => $request->length,
+                'width' => $request->width,
+                'height' => $request->height,
+                'comment' => $request->comment,
+                'packing_date' => $request->packing_date,
+                'loaded_date' => $request->loaded_date,
+            ]);
+
+            $content->sync($packaging, (array) $request->input('content', []));
+        });
 
         return redirect()->route('deliverys.show', ['id' =>  $packaging->deliverys_id])->with('success', 'Successfully update packaging');
     }

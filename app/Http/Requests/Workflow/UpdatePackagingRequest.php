@@ -33,6 +33,9 @@ class UpdatePackagingRequest extends FormRequest
             'packing_date' => 'nullable|date',
             'loaded_date' => 'nullable|date',
             'load_comment' => 'nullable|string',
+            // Contenu du colis : id de ligne du BL => quantité (PackagingContent)
+            'content' => 'nullable|array',
+            'content.*' => 'nullable|numeric|min:0',
         ];
     }
 }

@@ -1,0 +1,6 @@
+{
+    "label": "packing_list.layout",
+    "prices": true,
+    "with": ["packages"],
+    "order": 10
+}

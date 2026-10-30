@@ -39,6 +39,12 @@ class Packaging extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Contenu du colis : quantités des lignes du BL (liste de colisage)
+    public function lines()
+    {
+        return $this->hasMany(PackagingLine::class);
+    }
+
         // Mutator pour arrondir gross_weight à 2 décimales
         public function setGrossWeightAttribute($value)
         {

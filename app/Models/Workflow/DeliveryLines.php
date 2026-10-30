@@ -44,6 +44,12 @@ class DeliveryLines extends Model
 
         return (float) $unitWeight * (float) $this->qty;
     }
+    // Quantités de la ligne rangées dans les colis du BL
+    public function packagingLines()
+    {
+        return $this->hasMany(PackagingLine::class, 'delivery_line_id');
+    }
+
     public function InvoiceLines()
     {
         return $this->belongsTo(InvoiceLines::class, 'delivery_line_id');

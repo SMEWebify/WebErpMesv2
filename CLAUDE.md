@@ -538,6 +538,22 @@ signature et relances appellent `DocumentPdfService::render($doc)` sans modèle,
   `print/custom` aux textes écrits en dur reste dans sa langue.
 - Tests : `tests/Feature/PdfLayoutTest.php`.
 
+## Liste de colisage (BL)
+
+Modèle `print/layouts/packing-list/pdf-delivery` (`with: ["packages"]`) du menu d'impression
+de la fiche BL (`<x-pdf-print-menu base="print/pdf-delivery">`, modèle par défaut libellé
+« Bon de livraison »). `pdf.delivery` passe désormais par `DocumentPdfService` ; sans paramètre,
+BL identique (référence `delivery-standard.html` de `SalesPdfLegacyRenderingTest`).
+- **Contenu des colis** : `packaging_lines` (colis, ligne de BL, quantité ; une ligne peut être
+  répartie). Saisi dans les formulaires de l'onglet Packaging (`include/packaging-content-fields`),
+  enregistré par `App\Services\Delivery\PackagingContent` : refus (erreur de validation, colis
+  non créé) si une ligne est colisée au-delà de sa quantité livrée tous colis confondus, ou
+  si la ligne est d'un autre BL.
+- **PDF** (`App\Services\Documents\PackingList`) : par colis n°, dimensions, poids net / brut,
+  lignes (quantité, repères d'équipement) ; bloc « hors colis » = quantité livrée non colisée ;
+  totaux nombre de colis et poids (saisis sur les colis, jamais déduits des articles). Aucun prix.
+- Tests : `tests/Feature/PackingListTest.php`.
+
 ## Signature électronique des devis (DocuSign)
 
 Le client signe un devis depuis son **lien public** (`/guest/quote/{uuid}`) : bouton

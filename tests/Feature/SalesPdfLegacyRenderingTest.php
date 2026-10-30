@@ -11,6 +11,8 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Methods\MethodsUnits;
 use App\Models\User;
+use App\Models\Workflow\DeliveryLines;
+use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
@@ -171,7 +173,87 @@ class SalesPdfLegacyRenderingTest extends TestCase
         );
     }
 
+    /**
+     * Bon de livraison : la référence delivery-standard.html a été rendue AVANT la
+     * liste de colisage. Le BL par défaut — vue de base, puis service d'impression
+     * sans paramètre — reste identique, même quand le BL porte des colis.
+     */
+    public function test_a_delivery_note_renders_as_before(): void
+    {
+        $delivery = $this->makeDelivery();
+
+        $this->assertMatchesReference('delivery-standard.html', $this->renderDelivery($delivery->fresh()));
+    }
+
+    public function test_the_default_layout_of_the_print_service_renders_the_delivery_note_reference(): void
+    {
+        $delivery = $this->makeDelivery();
+        $this->resolvedSuffix(true);
+
+        if (class_exists(\App\Models\Workflow\PackagingLine::class)) {
+            $line = $delivery->DeliveryLines()->first();
+            $box  = \App\Models\Workflow\Packaging::create([
+                'deliverys_id' => $delivery->id, 'code' => 'C1', 'type' => 'Caisse', 'user_id' => auth()->id(),
+                'gross_weight' => 50, 'net_weight' => 40, 'length' => 1200, 'width' => 800, 'height' => 600,
+            ]);
+            \App\Models\Workflow\PackagingLine::create(['packaging_id' => $box->id, 'delivery_line_id' => $line->id, 'qty' => 2]);
+        }
+
+        $this->assertMatchesReference(
+            'delivery-standard.html',
+            $this->serviceHtml($delivery->fresh(), null, __('general_content.delivery_notes_trans_key'), 'Bon de livraison')
+        );
+    }
+
     // ---------------------------------------------------------------------
+
+    /**
+     * Prépare les variables du BL comme PrintController::generatePdf avant la
+     * liste de colisage, sur la vue standard.
+     */
+    private function renderDelivery($Document): string
+    {
+        $Factory             = app('Factory');
+        $formattedTotalPrice = Number::currency(0, 'EUR', config('app.locale'));
+        $formattedSubPrice   = Number::currency(0, 'EUR', config('app.locale'));
+        $vatPrice            = 0;
+        $normalizeCurrency   = fn ($value) => str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value);
+        $image               = null;
+        $customCss           = null;
+        $printRows           = null;
+        $typeDocumentName    = 'Bon de livraison';
+
+        $Document->Lines = $Document->DeliveryLines;
+        unset($Document->DeliveryLines);
+
+        $html = view('print/pdf-delivery', compact(
+            'typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice',
+            'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency', 'printRows'
+        ))->render();
+
+        return str_replace([date('Y-m-d'), '&copy; ' . date('Y')], ['{{today}}', '&copy; {{year}}'], $html);
+    }
+
+    private function makeDelivery(): Deliverys
+    {
+        $order    = $this->makeOrder();
+        $delivery = Deliverys::create([
+            'uuid' => '00000000-0000-0000-0000-000000000003', 'code' => 'DN-0001', 'label' => 'Escalier',
+            'companies_id' => $order->companies_id, 'companies_contacts_id' => $order->companies_contacts_id,
+            'companies_addresses_id' => $order->companies_addresses_id, 'statu' => 1,
+            'user_id' => auth()->id(), 'comment' => 'Commentaire du BL', 'customer_reference' => 'REF-CLIENT',
+        ]);
+
+        foreach ($order->OrderLines()->orderBy('ordre')->get() as $i => $orderLine) {
+            DeliveryLines::create([
+                'deliverys_id' => $delivery->id, 'order_line_id' => $orderLine->id,
+                'ordre' => $i + 1, 'qty' => $i === 0 ? 5 : $orderLine->qty, 'statu' => 1,
+            ]);
+        }
+        $order->OrderLines()->orderBy('ordre')->first()->update(['equipment_tag' => ['1RCP/001', '1RCP/002']]);
+
+        return $delivery;
+    }
 
     /**
      * Le service imprime la vue personnalisée quand elle existe (PdfThemeResolver).

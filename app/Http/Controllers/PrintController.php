@@ -64,12 +64,12 @@ class PrintController extends Controller
     }
 
     /**
-     * Devis, commande, AR : même rendu que les e-mails (DocumentPdfService), avec
+     * Devis, commande, AR, BL : même rendu que les e-mails (DocumentPdfService), avec
      * le modèle d'impression (?layout=) et la langue (?lang=) choisis dans le menu
      * d'impression. Sans paramètre : le PDF d'avant. Une valeur hors liste → 404,
      * elle n'est jamais assemblée en nom de vue.
      */
-    private function salesPdf(Request $request, $Document): \Symfony\Component\HttpFoundation\Response
+    private function salesPdf(Request $request, $Document, string $baseView = 'print/pdf-sales'): \Symfony\Component\HttpFoundation\Response
     {
         $layout = $request->query('layout');
         $locale = $request->query('lang');
@@ -77,7 +77,7 @@ class PrintController extends Controller
         $locale = is_string($locale) && $locale !== '' ? $locale : null;
 
         $registry = app(PdfLayoutRegistry::class);
-        abort_unless($registry->find('print/pdf-sales', $layout) && $registry->supportsLanguage($locale), 404);
+        abort_unless($registry->find($baseView, $layout) && $registry->supportsLanguage($locale), 404);
 
         $service = app(DocumentPdfService::class);
         $bytes   = $service->render($Document, $layout, $locale);
@@ -105,13 +105,16 @@ class PrintController extends Controller
     }
 
     /**
+     * BL, avec le menu d'impression : modèle (?layout=packing-list → liste de
+     * colisage) et langue. Sans paramètre : le BL d'avant (même HTML, couvert par
+     * SalesPdfLegacyRenderingTest), rendu par DocumentPdfService comme l'e-mail.
+     *
      * @param Deliverys $Document
-     * @return \Illuminate\Contracts\View\View
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getDeliveryPdf(Deliverys $Document)
+    public function getDeliveryPdf(Request $request, Deliverys $Document)
     {
-        $typeDocumentName = __('general_content.delivery_notes_trans_key');
-        return $this->generatePdf($Document, $typeDocumentName, null, 'print/pdf-delivery');
+        return $this->salesPdf($request, $Document, 'print/pdf-delivery');
     }
 
     /**

@@ -136,7 +136,7 @@ $deliverySteps = [
                 <table class="table table-hover">
                     <tr>
                         <td style="width:50%">{{ __('general_content.delivery_notes_trans_key') }}</td>
-                        <td><x-ButtonTextPDF route="{{ route('pdf.delivery', ['Document' => $Delivery->id])}}" /></td>
+                        <td><x-pdf-print-menu :route="route('pdf.delivery', ['Document' => $Delivery->id])" base="print/pdf-delivery" /></td>
                     </tr>
                     @if(config('mail.default') && config('mail.from.address'))
                     <tr>
@@ -305,7 +305,7 @@ $deliverySteps = [
                                     </button>
                                     <!-- Modal {{ $Packaging->id }} -->
                                     <x-adminlte-modal id="Packaging{{ $Packaging->id }}" title="Update {{ $Packaging->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                                        <form method="POST" action="{{ route('deliverys.packagings.update', ['id' => $Packaging->id]) }}" enctype="multipart/form-data">
+                                        <form method="POST" action="{{ route('deliverys.packagings.update', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
 
@@ -387,6 +387,8 @@ $deliverySteps = [
                                                   <input type="datetime-local" class="form-control" name="loaded_date" id="loaded_date" value="{{ $Packaging->loaded_date }}">
                                                 </div>
                                               </div>
+
+                                              @include('include.packaging-content-fields', ['Packaging' => $Packaging])
 
                                             </div>
                                             <div class="card-footer">
@@ -499,7 +501,9 @@ $deliverySteps = [
                     <input type="datetime-local" class="form-control" name="loaded_date" id="loaded_date">
                   </div>
                 </div>
-                
+
+                @include('include.packaging-content-fields', ['Packaging' => null])
+
                 <div class="card-footer">
                   <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>

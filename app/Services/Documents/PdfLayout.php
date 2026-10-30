@@ -14,6 +14,7 @@ final class PdfLayout
     public const WITH_DETAILS   = 'details';    // description longue, caractéristiques, exigences
     public const WITH_PLANS     = 'plans';      // vignette du plan principal
     public const WITH_ESTIMATES = 'estimates';  // blocs « estimation de projet » cochés pour le PDF (devis)
+    public const WITH_PACKAGES  = 'packages';   // colis, contenu, hors colis et totaux (BL, PackingList)
 
     /**
      * @param  string|array<string,string>|null  $label  clé de traduction, texte, ou textes par langue

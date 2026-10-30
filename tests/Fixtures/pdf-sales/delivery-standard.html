@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Bon de livraison - #DN-0001</title>
+        <style type="text/css">
+            @page {
+                margin: 370px 25px 50px 25px;
+            }
+            body {
+                margin: 0px; 
+                border: 1px solid #dddddd;
+            }
+            * {
+                font-family: Verdana, Arial, sans-serif;
+            }
+            a {
+                color: #000;
+                text-decoration: none;
+            }
+            table {
+                font-size: smaller;
+                border-collapse:collapse;
+            }
+            tfoot tr td {
+                font-weight: bold;
+                font-size: smaller;
+            }
+            table th
+            {
+                padding: 10px;
+                margin-top:30px;
+            }
+            header { position: fixed; top: -370px; left: 0px; right: 0px; ; height: 370px; }
+            footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: #dddddd; height: 50px; }
+            footer .pagenum:before {
+                content: counter(page);
+            }
+        </style>
+            </head>
+    <body>
+        <header>
+            <table width="100%; border: none; ">
+                <tr>
+                    <td align="left" style="width: 50%; background-color: #dddddd">
+                                            </td>
+                    <td colspan="2" align="center" style="width: 400%; background-color: #dddddd">
+                        <h2>Bon de livraison</h2>
+                        <h3>DN-0001</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="width: 40%;">
+                        <h3>Métallerie Dupont</h3>
+                        <pre>
+12 rue des Forges
+35000 Rennes
+Phone number : 02 99 00 00 00
+E-mail : contact@dupont.test
+<br />
+<br />
+Date : {{today}}
+                        </pre>
+                    </td>
+                    <td align="left" style="width: 50%;">
+                                                    <h3>Client Test SARL </h3>
+                            <pre>
+M. Jean Martin
+3 allée des Chênes
+44000 Nantes Loire-Atlantique
+France
+Phone number : 06 00 00 00 00
+E-mail : jean@client.test
+<br />
+Identifier: REF-CLIENT
+Order: Escalier
+                            </pre>
+                                            </td>
+                </tr>
+            </table>
+        </header>
+
+        <footer>
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td align="left" style="width: 40%;">
+                            &copy; {{year}} - Métallerie Dupont
+                        </td>
+                        <td align="right" style="width: 40%;">
+                            <div class="pagenum-container">Page <span class="pagenum"></span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </footer>
+
+        <main>
+            <table style="width: 100%; " >
+                <thead>
+                    <tr>
+                        <th align="center">Order</th>
+                        <th align="center">Reference</th>
+                        <th align="center">Description</th>
+                        <th align="center">Qty</th>
+                        <th align="center">Unit</th>
+                        <th align="center">Delivered qty</th>
+                        <th align="center">Remaining qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                        <tr>
+                        <td align="center">OR-0001</td>
+                        <td align="center">GC-01</td>
+                        <td align="center">Garde-corps acier<br>Equipment tag : 1RCP/001, 1RCP/002</td>
+                        <td align="center">12</td>
+                        <td align="center">Mètre linéaire</td>
+                        <td align="center">5</td>
+                        <td align="center">12</td>
+                    </tr>
+                                        <tr>
+                        <td align="center">OR-0001</td>
+                        <td align="center">MC-02</td>
+                        <td align="center">Main courante inox</td>
+                        <td align="center">12</td>
+                        <td align="center">Mètre linéaire</td>
+                        <td align="center">12</td>
+                        <td align="center">12</td>
+                    </tr>
+                                        <tr>
+                        <td align="center">OR-0001</td>
+                        <td align="center">TL-03</td>
+                        <td align="center">Thermolaquage</td>
+                        <td align="center">1</td>
+                        <td align="center">Unité</td>
+                        <td align="center">1</td>
+                        <td align="center">1</td>
+                    </tr>
+                                    </tbody>
+            </table>
+            <hr style="color: #6c757d">
+            <table width="100%">
+                <tr>
+                    <td align="left" style="width: 50%;">
+                                                <p class="lead"><strong>Comment :</strong></p>
+                        <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                            Commentaire du BL
+                        </p>
+                                            </td>
+                </tr>
+            </table>
+        </main>
+    </body>
+</html>

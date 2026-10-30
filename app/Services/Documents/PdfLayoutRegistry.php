@@ -34,6 +34,9 @@ class PdfLayoutRegistry
     /** Vues de base dont les lignes savent s'imprimer sans prix (SalesLayoutRows). */
     public const PRICELESS = ['print/pdf-sales'];
 
+    /** Libellé du modèle par défaut quand « Court » ne veut rien dire pour ce document. */
+    private const DEFAULT_LABELS = ['print/pdf-delivery' => 'packing_list.delivery_note'];
+
     private const NAME = '/^[a-z0-9][a-z0-9_-]{0,39}$/';
 
     /** @var array<string, array<string, PdfLayout>> */
@@ -71,7 +74,7 @@ class PdfLayoutRegistry
     private function discover(string $baseViewKey): array
     {
         $file    = basename($baseViewKey);
-        $layouts = [self::DEFAULT => new PdfLayout(self::DEFAULT, null, label: 'pdf_layouts.short', order: 0)];
+        $layouts = [self::DEFAULT => new PdfLayout(self::DEFAULT, null, label: self::DEFAULT_LABELS[$baseViewKey] ?? 'pdf_layouts.short', order: 0)];
         $roots   = [
             'custom'   => config('pdf.custom_layouts_path', 'print/custom/layouts'),
             'standard' => config('pdf.layouts_path', 'print/layouts'),

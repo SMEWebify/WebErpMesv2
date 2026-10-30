@@ -48,6 +48,7 @@ class DocumentPdfService
         private readonly SalesPrintLayout $salesPrintLayout,
         private readonly PdfLayoutRegistry $layouts,
         private readonly SalesLayoutRows $salesLayoutRows,
+        private readonly PackingList $packingList,
     ) {}
 
     public function fileName($document): string
@@ -190,7 +191,12 @@ class DocumentPdfService
             return [$this->themeResolver->resolveForDocument($document, $viewKey, $factory), $data];
         }
 
-        return [$layout->view, $data + compact('layout', 'layoutRows', 'estimates')];
+        // Liste de colisage (BL) : colis, contenu, hors colis, totaux.
+        $packingList = $layout->wants(PdfLayout::WITH_PACKAGES) && $document instanceof Deliverys
+            ? $this->packingList->build($document->Lines ?? collect(), $document->packaging)
+            : null;
+
+        return [$layout->view, $data + compact('layout', 'layoutRows', 'estimates', 'packingList')];
     }
 
     /**
