@@ -4,7 +4,7 @@
   $marginPct = fn ($value) => $value === null ? '—' : number_format($value, 2, ',', ' ') . ' %';
   $marginClass = $Margin['below_threshold'] ? 'text-danger' : 'text-success';
 @endphp
-<x-adminlte-card title="{{ __('quote_margin.title') }}" theme="secondary" theme-mode="outline" icon="fas fa-percentage" collapsible>
+<x-adminlte-card title="{{ __('quote_margin.title') }}" theme="secondary" theme-mode="outline" icon="fas fa-percentage" collapsible="collapsed">
   <p class="small text-body-secondary mb-2"><i class="fas fa-lock me-1"></i>{{ __('quote_margin.internal') }}</p>
   <div class="table-responsive p-0">
     <table class="table table-sm mb-2">

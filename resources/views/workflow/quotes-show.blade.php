@@ -199,14 +199,15 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" theme-mode="outline" collapsible="collapsed" maximizable>
               @include('include.sub-total-price')
             </x-adminlte-card>
 
             @include('include.quote-margin-card')
 
             @can('scheduling-menu')
-            <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" theme-mode="outline" collapsible maximizable>
+            {{-- Repliée par défaut ; dépliée quand elle affiche le résultat d'une simulation. --}}
+            <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" theme-mode="outline" :collapsible="session('delivery_simulation') ? true : 'collapsed'" maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
                 <div class="mb-3">
