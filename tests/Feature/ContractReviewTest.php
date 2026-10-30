@@ -222,21 +222,7 @@ class ContractReviewTest extends TestCase
             ->assertJsonPath('state.decision', null);
     }
 
-    public function test_the_change_request_stays_editable_after_the_sign_off(): void
-    {
-        $order = $this->order([
-            'review_decision' => 'approved', 'reviewed_by' => $this->user->id, 'reviewed_at' => now(),
-        ]);
-
-        $this->putJson(route('orders.json.change-request', $order->id), [
-            'change_requested_by' => $this->user->id,
-            'change_reason' => 'Nouvel indice B du plan client',
-        ])->assertOk()->assertJsonPath('state.change.pending', true);
-
-        $order->refresh();
-        $this->assertSame('Nouvel indice B du plan client', $order->change_reason);
-        $this->assertSame('approved', $order->review_decision);
-    }
+    // Changement après le visa : avenant (tests/Feature/OrderAmendmentTest.php).
 
     public function test_an_internal_order_has_no_contract_review(): void
     {

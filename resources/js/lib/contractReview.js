@@ -43,3 +43,34 @@ export function draftPayload(checklist, gaps) {
         ),
     };
 }
+
+// ---------------------------------------------------------------------------
+// Avenants (App\Services\Workflow\OrderAmendments)
+// ---------------------------------------------------------------------------
+
+export const AMENDMENT_BADGES = {
+    pending:   { className: 'text-bg-warning',   icon: 'fa-hourglass-half' },
+    approved:  { className: 'text-bg-success',   icon: 'fa-check-circle' },
+    rejected:  { className: 'text-bg-danger',    icon: 'fa-times-circle' },
+    cancelled: { className: 'text-bg-secondary', icon: 'fa-ban' },
+};
+
+export function amendmentBadge(status) {
+    return AMENDMENT_BADGES[status] ?? AMENDMENT_BADGES.cancelled;
+}
+
+/**
+ * Raison de ne pas proposer la création d'un avenant, null si possible :
+ * commande interne, ou avenant déjà ouvert (un seul à la fois).
+ */
+export function amendmentBlocker(state) {
+    if (!state?.applicable) return 'not_applicable';
+    if (state.pending_amendment) return 'pending_exists';
+    return null;
+}
+
+/** Écart TTC après − avant, null tant que l'avenant n'est pas visé. */
+export function amendmentDelta(amendment) {
+    if (amendment?.amount_after === null || amendment?.amount_after === undefined) return null;
+    return Math.round((amendment.amount_after - amendment.amount_before) * 100) / 100;
+}

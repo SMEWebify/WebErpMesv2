@@ -3,20 +3,24 @@
 namespace App\Http\Controllers\Workflow;
 
 use App\Http\Controllers\Controller;
+use App\Models\Workflow\OrderAmendment;
 use App\Models\Workflow\Orders;
 use App\Services\Workflow\ContractReview;
 use App\Services\Workflow\ContractReviewException;
+use App\Services\Workflow\OrderAmendments;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
  * Onglet « Revue de contrat » de la fiche commande : préparation, visa et
- * demande de changement (règles dans App\Services\Workflow\ContractReview).
+ * avenants (règles dans App\Services\Workflow\ContractReview).
  */
 class OrderContractReviewController extends Controller
 {
-    public function __construct(private ContractReview $review)
-    {
+    public function __construct(
+        private ContractReview $review,
+        private OrderAmendments $amendments,
+    ) {
     }
 
     public function show(Orders $id): JsonResponse
@@ -41,20 +45,33 @@ class OrderContractReviewController extends Controller
     }
 
     /**
-     * Demande de changement : hors visa, modifiable même revue figée
-     * (un changement arrive justement après la revue).
+     * Avenant : possible même revue figée (il arrive justement après la revue), il la rouvre.
+     * Remplace l'ancienne demande de changement (colonnes change_* d'orders, lues seulement).
      */
-    public function change(Request $request, Orders $id): JsonResponse
+    public function storeAmendment(Request $request, Orders $id): JsonResponse
     {
         $data = $request->validate([
-            'change_requested_by' => 'nullable|exists:users,id',
-            'change_reason' => 'nullable|string',
-            'change_approved_at' => 'nullable|date',
+            'reason' => 'required|string|max:10000',
+            'requested_by' => 'nullable|exists:users,id',
+            'amendment_date' => 'nullable|date',
         ]);
 
-        $id->update($data);
+        return $this->respond(function () use ($id, $data, $request) {
+            $this->amendments->create($id, $data, $request->user());
 
-        return response()->json(['state' => $this->review->state($id->fresh(), $request->user())]);
+            return $id->fresh();
+        });
+    }
+
+    public function cancelAmendment(Request $request, Orders $id, OrderAmendment $amendment): JsonResponse
+    {
+        abort_unless((int) $amendment->order_id === (int) $id->id, 404);
+
+        return $this->respond(function () use ($id, $amendment, $request) {
+            $this->amendments->cancel($amendment, $request->user());
+
+            return $id->fresh();
+        });
     }
 
     private function validateDraft(Request $request): array

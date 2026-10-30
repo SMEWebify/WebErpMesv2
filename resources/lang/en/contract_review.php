@@ -59,6 +59,45 @@ return [
         'saved' => 'Change request saved.',
     ],
 
+    // Amendments (replace the change request)
+    'amendment' => [
+        'title' => 'Amendments',
+        'help' => 'An amendment (revision, quantity, lead time, price…) reopens the contract review: the order goes back to "review to do", and no production release is given, until the review is signed off. The original quote is not changed.',
+        'number' => 'Amendment no. :number',
+        'new' => 'New amendment',
+        'reason' => 'Reason',
+        'requested_by' => 'Requested by',
+        'date' => 'Date',
+        'create' => 'Create the amendment and reopen the review',
+        'create_confirm' => 'Create the amendment? The contract review will be reopened until it is signed off.',
+        'created' => 'Amendment created: the contract review is reopened.',
+        'cancel' => 'Cancel the amendment',
+        'cancel_confirm' => 'Cancel this amendment? The contract review will go back to its state before the amendment.',
+        'cancelled_ok' => 'Amendment cancelled: the previous review is restored.',
+        'amount_before' => 'Incl. VAT before',
+        'amount_after' => 'Incl. VAT after',
+        'amount_pending' => 'at sign-off',
+        'decision' => 'Sign-off',
+        'none' => 'No amendment.',
+        'pending_exists' => 'An amendment is already open: sign off the contract review or cancel it before creating another one.',
+        'reopened' => 'Review reopened by amendment no. :number: signing it off signs off the amendment.',
+        'warning' => 'Amendment no. :number is awaiting the contract review sign-off.',
+        'status' => [
+            'pending' => 'Awaiting sign-off',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected',
+            'cancelled' => 'Cancelled',
+        ],
+        'legacy' => 'Former change request',
+        'legacy_help' => 'Entered before amendments existed, kept for the record.',
+        'legacy_approved_at' => 'Approved on',
+        'errors' => [
+            'not_applicable' => 'An internal order has no amendment.',
+            'already_pending' => 'An amendment is already awaiting sign-off on this order.',
+            'closed' => 'This amendment is already closed.',
+        ],
+    ],
+
     'history' => 'Review history',
 
     // Refusals

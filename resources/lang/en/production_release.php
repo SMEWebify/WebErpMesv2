@@ -24,6 +24,7 @@ return [
     'not_released_yet' => 'This line is not released for production.',
     'review_rejected' => 'The order review was rejected: the line cannot be released.',
     'change_pending' => 'A change request is awaiting approval on the order: the line cannot be released until it is approved.',
+    'amendment_pending' => 'An amendment is awaiting the contract review sign-off: the line cannot be released until then.',
     'already_started' => 'A task of this line has already started: the release can no longer be revoked.',
 
     // Screens

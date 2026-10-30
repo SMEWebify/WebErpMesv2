@@ -597,14 +597,24 @@ qui remplace le bloc « Suivi des revues et changements » du formulaire Informa
 - **Jamais bloquant** : bandeau sur l'onglet Informations et colonne « Revue » de l'index
   (`contract_review` = done | rejected | todo | null). Seul effet existant : une revue rejetée
   ou un changement non approuvé refusent le BPF (`ProductionRelease::releaseRefusal`).
-- **Demande de changement** (`orders.json.change-request`) : modifiable même revue figée.
+- **Avenants** (`order_amendments`, `App\Services\Workflow\OrderAmendments`, routes
+  `orders.json.amendments.*`) : numéro par commande, motif, demandeur, date, TTC avant (à la
+  création) / après (au visa), décision. Créer un avenant (tout utilisateur du module, même revue
+  figée) recopie la revue en place dans `previous_review` puis vide décision / auteur / date :
+  la commande repasse « à faire » (check-list et écarts gardés comme base). **Le visa de la revue
+  est le visa de l'avenant** (`ContractReview::decide` → `closeOnDecision`, nouvel ARC si validé).
+  Un seul avenant ouvert (409) ; annulation (`contract-review-approve`) = revue d'avant rétablie.
+  Commande interne : pas d'avenant (422). Un avenant ouvert refuse le BPF. Devis jamais touché.
+- **Ancienne demande de changement** : colonnes `change_requested_by / change_reason /
+  change_approved_at` d'`orders` **lues seulement** (carte en lecture, refus de BPF conservé) ;
+  la route `orders.json.change-request` est supprimée.
 - **Documents contractuels** : GED de la commande, rôle `contractuel` (`FileRole::CONTRACTUAL`),
   listés dans l'onglet. Historique (activitylog) dans l'onglet, plus dans Logs.
 - **Devis** : pas de visa ; le même bloc est sorti du formulaire Informations vers un onglet
   « Revue » (Blade, `quotes.review.update`, mêmes champs et règles qu'avant, historique
   `workflow/partials/review-timeline` partagé avec la commande). Onglet Informations des
   deux fiches = icône « i ».
-- Tests : `tests/Feature/ContractReviewTest.php`, `tests/Feature/QuoteReviewTabTest.php`,
+- Tests : `tests/Feature/ContractReviewTest.php`, `tests/Feature/OrderAmendmentTest.php`, `tests/Feature/QuoteReviewTabTest.php`,
   `resources/js/tests/lib/contractReview.test.js`.
 
 ## Reports de date des lignes de commande

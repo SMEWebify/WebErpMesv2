@@ -183,6 +183,18 @@ class Orders extends Model
         return $this->belongsTo(User::class, 'change_requested_by');
     }
 
+    // Avenants, du plus ancien au plus récent (change_* : ancienne demande, lue pour l'historique).
+    public function amendments()
+    {
+        return $this->hasMany(OrderAmendment::class, 'order_id')->orderBy('number');
+    }
+
+    // Avenant en attente de visa : au plus un, il tient la revue de contrat ouverte.
+    public function pendingAmendment()
+    {
+        return $this->hasOne(OrderAmendment::class, 'order_id')->where('status', OrderAmendment::PENDING);
+    }
+
     public function OrderSite()
     {
         return $this->hasOne(OrderSite::class, 'order_id', 'id');

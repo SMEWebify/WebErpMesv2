@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { decisionBlocker, draftPayload, reviewBadge, uncheckedItems } from '../../lib/contractReview.js';
+import {
+    amendmentBadge, amendmentBlocker, amendmentDelta, decisionBlocker, draftPayload, reviewBadge, uncheckedItems,
+} from '../../lib/contractReview.js';
 
 const checklist = [
     { key: 'requirements_understood', label: 'Exigences comprises', checked: true, configured: true },
@@ -55,5 +57,44 @@ describe('draftPayload', () => {
 
     it('envoie null pour des écarts vides', () => {
         expect(draftPayload([], ' ').review_gaps).toBeNull();
+    });
+});
+
+describe('amendmentBadge', () => {
+    it('donne un badge par statut d’avenant', () => {
+        expect(amendmentBadge('pending').className).toBe('text-bg-warning');
+        expect(amendmentBadge('approved').className).toBe('text-bg-success');
+        expect(amendmentBadge('rejected').className).toBe('text-bg-danger');
+        expect(amendmentBadge('cancelled').className).toBe('text-bg-secondary');
+    });
+
+    it('retombe sur un badge neutre pour un statut inconnu', () => {
+        expect(amendmentBadge('autre').className).toBe('text-bg-secondary');
+    });
+});
+
+describe('amendmentBlocker', () => {
+    it('propose la création sur une commande client sans avenant ouvert', () => {
+        expect(amendmentBlocker({ applicable: true, pending_amendment: null })).toBeNull();
+    });
+
+    it('refuse un second avenant ouvert', () => {
+        expect(amendmentBlocker({ applicable: true, pending_amendment: { id: 3, number: 2 } })).toBe('pending_exists');
+    });
+
+    it('refuse sur une commande interne', () => {
+        expect(amendmentBlocker({ applicable: false })).toBe('not_applicable');
+        expect(amendmentBlocker(null)).toBe('not_applicable');
+    });
+});
+
+describe('amendmentDelta', () => {
+    it('vaut null tant que l’avenant n’est pas visé', () => {
+        expect(amendmentDelta({ amount_before: 1200, amount_after: null })).toBeNull();
+    });
+
+    it('calcule l’écart TTC arrondi au centime', () => {
+        expect(amendmentDelta({ amount_before: 1200, amount_after: 1500.456 })).toBe(300.46);
+        expect(amendmentDelta({ amount_before: 1200.1, amount_after: 1000 })).toBe(-200.1);
     });
 });

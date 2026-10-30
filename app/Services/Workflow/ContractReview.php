@@ -3,6 +3,7 @@
 namespace App\Services\Workflow;
 
 use App\Models\User;
+use App\Models\Workflow\OrderAmendment;
 use App\Models\Workflow\Orders;
 use App\Services\Files\FileRole;
 use App\Services\OrderConfirmationService;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Lang;
  *
  * Rien ne bloque la production sur une revue manquante : l'écran avertit seulement.
  * Une revue rejetée garde le refus de BPF existant (ProductionRelease).
+ *
+ * Un avenant (OrderAmendments) rouvre la revue ; le visa suivant le clôt.
  */
 class ContractReview
 {
@@ -35,8 +38,10 @@ class ContractReview
     public const STATE_REJECTED = 'rejected';
     public const STATE_TODO = 'todo';
 
-    public function __construct(private OrderConfirmationService $confirmations)
-    {
+    public function __construct(
+        private OrderConfirmationService $confirmations,
+        private OrderAmendments $amendments,
+    ) {
     }
 
     /**
@@ -148,6 +153,8 @@ class ContractReview
                 'reviewed_at' => now(),
             ])->save();
 
+            $this->amendments->closeOnDecision($order, $decision, $user);
+
             return $order;
         });
 
@@ -178,7 +185,10 @@ class ContractReview
      */
     public function state(Orders $order, ?User $viewer): array
     {
-        $order->loadMissing('reviewer:id,name');
+        $order->loadMissing(['reviewer:id,name', 'changeRequester:id,name']);
+        $amendments = $this->amendments->history($order);
+        $pending = collect($amendments)->firstWhere('status', OrderAmendment::PENDING);
+        $legacyPending = $order->change_requested_by !== null && $order->change_approved_at === null;
         $checklist = (array) ($order->review_checklist ?? []);
 
         // Points configurés, puis ceux d'une revue passée retirés depuis de la config.
@@ -209,11 +219,17 @@ class ContractReview
                 ])
                 ->values()
                 ->all(),
-            'change' => [
-                'requested_by' => $order->change_requested_by,
+            'amendments' => $amendments,
+            'pending_amendment' => $pending ? ['id' => $pending['id'], 'number' => $pending['number']] : null,
+            // Ancienne demande de changement (colonnes d'orders) : lecture seule, pour l'historique.
+            'legacy_change' => ($order->change_requested_by || $order->change_reason || $order->change_approved_at) ? [
+                'requested_by' => $order->changeRequester?->name,
                 'reason' => $order->change_reason,
-                'approved_at' => $order->change_approved_at?->format('Y-m-d\TH:i'),
-                'pending' => $order->change_requested_by !== null && $order->change_approved_at === null,
+                'approved_at' => $order->change_approved_at?->format('d/m/Y H:i'),
+                'pending' => $legacyPending,
+            ] : null,
+            'change' => [
+                'pending' => $pending !== null || $legacyPending,
             ],
         ];
     }

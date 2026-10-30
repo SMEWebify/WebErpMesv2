@@ -24,6 +24,7 @@ return [
     'not_released_yet' => 'Cette ligne n\'a pas de bon pour fabrication.',
     'review_rejected' => 'La revue de la commande est rejetée : pas de bon pour fabrication.',
     'change_pending' => 'Une demande de changement est en attente d\'approbation sur la commande : pas de bon pour fabrication avant son approbation.',
+    'amendment_pending' => 'Un avenant attend le visa de la revue de contrat : pas de bon pour fabrication avant ce visa.',
     'already_started' => 'Une tâche de cette ligne a déjà démarré : le bon pour fabrication ne peut plus être annulé.',
 
     // Écrans

@@ -59,6 +59,45 @@ return [
         'saved' => 'Demande de changement enregistrée.',
     ],
 
+    // Avenants (remplacent la demande de changement)
+    'amendment' => [
+        'title' => 'Avenants',
+        'help' => 'Un avenant (indice, quantité, délai, prix…) rouvre la revue de contrat : la commande repasse « revue à faire », et aucun bon pour fabrication n\'est donné, jusqu\'au visa de la revue. Le devis d\'origine n\'est pas modifié.',
+        'number' => 'Avenant n° :number',
+        'new' => 'Nouvel avenant',
+        'reason' => 'Motif',
+        'requested_by' => 'Demandeur',
+        'date' => 'Date',
+        'create' => 'Créer l\'avenant et rouvrir la revue',
+        'create_confirm' => 'Créer l\'avenant ? La revue de contrat sera rouverte jusqu\'à son visa.',
+        'created' => 'Avenant créé : la revue de contrat est rouverte.',
+        'cancel' => 'Annuler l\'avenant',
+        'cancel_confirm' => 'Annuler cet avenant ? La revue de contrat reviendra à son état d\'avant l\'avenant.',
+        'cancelled_ok' => 'Avenant annulé : la revue précédente est rétablie.',
+        'amount_before' => 'TTC avant',
+        'amount_after' => 'TTC après',
+        'amount_pending' => 'au visa',
+        'decision' => 'Visa',
+        'none' => 'Aucun avenant.',
+        'pending_exists' => 'Un avenant est déjà ouvert : le viser (revue de contrat) ou l\'annuler avant d\'en créer un autre.',
+        'reopened' => 'Revue rouverte par l\'avenant n° :number : la viser vise l\'avenant.',
+        'warning' => 'L\'avenant n° :number attend le visa de la revue de contrat.',
+        'status' => [
+            'pending' => 'En attente de visa',
+            'approved' => 'Validé',
+            'rejected' => 'Rejeté',
+            'cancelled' => 'Annulé',
+        ],
+        'legacy' => 'Ancienne demande de changement',
+        'legacy_help' => 'Saisie avant les avenants, conservée pour l\'historique.',
+        'legacy_approved_at' => 'Approuvée le',
+        'errors' => [
+            'not_applicable' => 'Une commande interne n\'a pas d\'avenant.',
+            'already_pending' => 'Un avenant est déjà en attente de visa sur cette commande.',
+            'closed' => 'Cet avenant est déjà clos.',
+        ],
+    ],
+
     'history' => 'Historique de la revue',
 
     // Refus

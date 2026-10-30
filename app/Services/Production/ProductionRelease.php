@@ -122,8 +122,12 @@ class ProductionRelease
         if ($order?->review_decision === 'rejected') {
             return __('production_release.review_rejected');
         }
+        // Ancienne demande de changement (colonnes d'orders), puis avenant en attente de visa.
         if ($order && $order->change_requested_by && $order->change_approved_at === null) {
             return __('production_release.change_pending');
+        }
+        if ($order && $order->pendingAmendment()->exists()) {
+            return __('production_release.amendment_pending');
         }
 
         return null;

@@ -2,12 +2,16 @@
 //
 // Préparation (check-list, écarts) enregistrable par tous ; visa validé / rejeté
 // réservé à la permission `contract-review-approve`, auteur et date posés par le
-// serveur, revue figée ensuite. À côté : la demande de changement, qui reste
-// modifiable après le visa. Rien ici ne bloque la production.
+// serveur, revue figée ensuite. À côté : les avenants. Créer un avenant rouvre
+// la revue ; son visa est celui de la revue. L'ancienne demande de changement
+// (colonnes de la commande) n'est plus qu'affichée. Rien ici ne bloque la production.
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { apiRequest } from '../../lib/http';
-import { reviewBadge, uncheckedItems, decisionBlocker, draftPayload } from '../../lib/contractReview';
+import {
+    reviewBadge, uncheckedItems, decisionBlocker, draftPayload,
+    amendmentBadge, amendmentBlocker, amendmentDelta,
+} from '../../lib/contractReview';
 
 function StatusBadge({ status, trans }) {
     const badge = reviewBadge(status);
@@ -97,6 +101,13 @@ function ReviewCard({ state, trans, endpoints, onState }) {
                                 {trans.visa?.replace(':date', state.reviewed_at).replace(':user', state.reviewed_by ?? '—')}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {state.pending_amendment && (
+                    <div className="alert alert-warning py-2">
+                        <i className="fas fa-file-signature me-1" />
+                        {trans.amendment?.reopened?.replace(':number', state.pending_amendment.number)}
                     </div>
                 )}
 
@@ -216,34 +227,45 @@ function DocumentsCard({ documents, trans }) {
     );
 }
 
-function ChangeCard({ change, users, trans, endpoint, onState }) {
-    const [form, setForm]       = useState(change);
+function formatAmount(value, currency) {
+    if (value === null || value === undefined) return '—';
+    try {
+        return new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency }).format(value);
+    } catch {
+        return Number(value).toFixed(2);
+    }
+}
+
+function AmendmentForm({ users, trans, endpoint, onState }) {
+    const t = trans.amendment ?? {};
+    const today = new Date().toISOString().slice(0, 10);
+    const [form, setForm]       = useState({ reason: '', requested_by: '', amendment_date: today });
     const [busy, setBusy]       = useState(false);
     const [message, setMessage] = useState(null);
 
-    useEffect(() => setForm(change), [change]);
-
     const set = (key, value) => setForm(f => ({ ...f, [key]: value }));
 
-    const save = async () => {
+    const submit = async () => {
+        if (form.reason.trim() === '' || !window.confirm(t.create_confirm)) return;
         setBusy(true);
         setMessage(null);
         try {
             const res = await apiRequest(endpoint, {
-                method: 'PUT',
+                method: 'POST',
                 body: JSON.stringify({
-                    change_requested_by: form.requested_by || null,
-                    change_reason: form.reason || null,
-                    change_approved_at: form.approved_at || null,
+                    reason: form.reason.trim(),
+                    requested_by: form.requested_by || null,
+                    amendment_date: form.amendment_date || null,
                 }),
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
                 setMessage({ type: 'danger', text: data.message ?? trans.error });
+                if (res.status === 409) onState(null);
                 return;
             }
-            onState(data.state);
-            setMessage({ type: 'success', text: trans.change?.saved });
+            setForm({ reason: '', requested_by: '', amendment_date: today });
+            onState(data.state, t.created);
         } catch {
             setMessage({ type: 'danger', text: trans.error });
         } finally {
@@ -252,23 +274,28 @@ function ChangeCard({ change, users, trans, endpoint, onState }) {
     };
 
     return (
-        <div className="card card-outline card-warning mb-3">
-            <div className="card-header d-flex align-items-center gap-2">
-                <h3 className="card-title mb-0 me-auto">
-                    <i className="fas fa-exchange-alt me-2" />
-                    {trans.change?.title}
-                </h3>
-                {change.pending && <span className="badge text-bg-warning">{trans.change?.pending}</span>}
+        <div className="border rounded p-2 mb-3 bg-body-tertiary">
+            <h6 className="fw-bold">{t.new}</h6>
+            {message && <div className={`alert alert-${message.type} py-2`}>{message.text}</div>}
+            <div className="mb-2">
+                <label className="form-label" htmlFor="amendment-reason">{t.reason} *</label>
+                <textarea
+                    id="amendment-reason"
+                    className="form-control form-control-sm"
+                    rows={3}
+                    maxLength={10000}
+                    value={form.reason}
+                    disabled={busy}
+                    onChange={e => set('reason', e.target.value)}
+                />
             </div>
-            <div className="card-body">
-                <p className="small text-body-secondary">{trans.change?.help}</p>
-                {message && <div className={`alert alert-${message.type} py-2`}>{message.text}</div>}
-                <div className="mb-2">
-                    <label className="form-label" htmlFor="change-requested-by">{trans.change_requested_by}</label>
+            <div className="row g-2 mb-2">
+                <div className="col-sm-7">
+                    <label className="form-label" htmlFor="amendment-requested-by">{t.requested_by}</label>
                     <select
-                        id="change-requested-by"
+                        id="amendment-requested-by"
                         className="form-select form-select-sm"
-                        value={form.requested_by ?? ''}
+                        value={form.requested_by}
                         disabled={busy}
                         onChange={e => set('requested_by', e.target.value)}
                     >
@@ -276,36 +303,177 @@ function ChangeCard({ change, users, trans, endpoint, onState }) {
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
-                <div className="mb-2">
-                    <label className="form-label" htmlFor="change-reason">{trans.change_reason}</label>
-                    <textarea
-                        id="change-reason"
-                        className="form-control form-control-sm"
-                        rows={3}
-                        value={form.reason ?? ''}
-                        disabled={busy}
-                        onChange={e => set('reason', e.target.value)}
-                    />
-                </div>
-                <div className="mb-2">
-                    <label className="form-label" htmlFor="change-approved-at">{trans.change_approved_at}</label>
+                <div className="col-sm-5">
+                    <label className="form-label" htmlFor="amendment-date">{t.date}</label>
                     <input
-                        id="change-approved-at"
-                        type="datetime-local"
+                        id="amendment-date"
+                        type="date"
                         className="form-control form-control-sm"
-                        value={form.approved_at ?? ''}
+                        value={form.amendment_date}
                         disabled={busy}
-                        onChange={e => set('approved_at', e.target.value)}
+                        onChange={e => set('amendment_date', e.target.value)}
                     />
                 </div>
             </div>
-            <div className="card-footer">
-                <button type="button" className="btn btn-outline-primary btn-sm" onClick={save} disabled={busy}>
-                    <i className="fas fa-save me-1" />
-                    {busy ? trans.saving : trans.change?.save}
+            <button type="button" className="btn btn-warning btn-sm" onClick={submit} disabled={busy || form.reason.trim() === ''}>
+                <i className="fas fa-file-signature me-1" />
+                {busy ? trans.saving : t.create}
+            </button>
+        </div>
+    );
+}
+
+function AmendmentItem({ amendment, canCancel, trans, onState }) {
+    const t = trans.amendment ?? {};
+    const badge = amendmentBadge(amendment.status);
+    const delta = amendmentDelta(amendment);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState(null);
+
+    const cancel = async () => {
+        if (!window.confirm(t.cancel_confirm)) return;
+        setBusy(true);
+        setError(null);
+        try {
+            const res = await apiRequest(amendment.cancel_url, { method: 'POST', body: '{}' });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                setError(data.message ?? trans.error);
+                if (res.status === 409) onState(null);
+                return;
+            }
+            onState(data.state, t.cancelled_ok);
+        } catch {
+            setError(trans.error);
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    return (
+        <li className="list-group-item px-0">
+            <div className="d-flex align-items-center flex-wrap gap-2">
+                <strong className="me-auto">{t.number?.replace(':number', amendment.number)}</strong>
+                <span className="small text-body-secondary">{amendment.date}</span>
+                <span className={`badge ${badge.className}`}>
+                    <i className={`fas ${badge.icon} me-1`} />
+                    {t.status?.[amendment.status] ?? amendment.status}
+                </span>
+            </div>
+            <div className="small mt-1" style={{ whiteSpace: 'pre-line' }}>{amendment.reason}</div>
+            <div className="small text-body-secondary mt-1">
+                {amendment.requested_by && <div>{t.requested_by} : {amendment.requested_by}</div>}
+                <div>
+                    {t.amount_before} : {formatAmount(amendment.amount_before, trans.currency)}
+                    {' → '}
+                    {t.amount_after} : {amendment.amount_after === null ? t.amount_pending : formatAmount(amendment.amount_after, trans.currency)}
+                    {delta !== null && delta !== 0 && (
+                        <span className={`ms-1 ${delta > 0 ? 'text-success' : 'text-danger'}`}>
+                            ({delta > 0 ? '+' : ''}{formatAmount(delta, trans.currency)})
+                        </span>
+                    )}
+                </div>
+                {amendment.reviewed_at && (
+                    <div>
+                        {t.decision} : {amendment.reviewed_at} — {amendment.reviewed_by ?? '—'}
+                    </div>
+                )}
+                {amendment.review_gaps && (
+                    <div style={{ whiteSpace: 'pre-line' }}>{trans.gaps} : {amendment.review_gaps}</div>
+                )}
+            </div>
+            {error && <div className="alert alert-danger py-1 small mt-1 mb-0">{error}</div>}
+            {canCancel && amendment.cancel_url && (
+                <button type="button" className="btn btn-outline-secondary btn-sm mt-2" onClick={cancel} disabled={busy}>
+                    <i className="fas fa-undo me-1" />
+                    {t.cancel}
                 </button>
+            )}
+        </li>
+    );
+}
+
+function AmendmentsCard({ state, users, trans, endpoint, onState }) {
+    const t = trans.amendment ?? {};
+    const [notice, setNotice] = useState(null);
+    const amendments = state.amendments ?? [];
+    const blocker = amendmentBlocker(state);
+
+    const handle = (next, okText) => {
+        onState(next);
+        setNotice(okText ?? null);
+    };
+
+    return (
+        <div className="card card-outline card-warning mb-3">
+            <div className="card-header d-flex align-items-center gap-2">
+                <h3 className="card-title mb-0 me-auto">
+                    <i className="fas fa-file-signature me-2" />
+                    {t.title}
+                </h3>
+                {state.pending_amendment && <span className="badge text-bg-warning">{t.status?.pending}</span>}
+            </div>
+            <div className="card-body">
+                <p className="small text-body-secondary">{t.help}</p>
+                {notice && <div className="alert alert-success py-2">{notice}</div>}
+
+                {blocker === null && <AmendmentForm users={users} trans={trans} endpoint={endpoint} onState={handle} />}
+                {blocker === 'pending_exists' && (
+                    <p className="small text-warning-emphasis">
+                        <i className="fas fa-info-circle me-1" />
+                        {t.pending_exists}
+                    </p>
+                )}
+
+                {amendments.length === 0 ? (
+                    <p className="small text-body-secondary mb-0">{t.none}</p>
+                ) : (
+                    <ul className="list-group list-group-flush">
+                        {amendments.map(a => (
+                            <AmendmentItem key={a.id} amendment={a} canCancel={state.can_approve} trans={trans} onState={handle} />
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
+    );
+}
+
+// Ancienne demande de changement (colonnes de la commande) : lecture seule.
+function LegacyChangeCard({ change, trans }) {
+    const t = trans.amendment ?? {};
+    return (
+        <div className="card card-outline card-secondary mb-3">
+            <div className="card-header d-flex align-items-center gap-2">
+                <h3 className="card-title mb-0 me-auto">
+                    <i className="fas fa-exchange-alt me-2" />
+                    {t.legacy}
+                </h3>
+                {change.pending && <span className="badge text-bg-warning">{trans.change?.pending}</span>}
+            </div>
+            <div className="card-body small">
+                <p className="text-body-secondary">{t.legacy_help}</p>
+                <dl className="mb-0">
+                    <dt>{t.requested_by}</dt>
+                    <dd>{change.requested_by ?? '—'}</dd>
+                    <dt>{t.reason}</dt>
+                    <dd style={{ whiteSpace: 'pre-line' }}>{change.reason || '—'}</dd>
+                    <dt>{t.legacy_approved_at}</dt>
+                    <dd className="mb-0">{change.approved_at ?? '—'}</dd>
+                </dl>
+            </div>
+        </div>
+    );
+}
+
+function SideCards({ state, users, trans, endpoints, onState }) {
+    return (
+        <>
+            {state.applicable && (
+                <AmendmentsCard state={state} users={users} trans={trans} endpoint={endpoints.amendments} onState={onState} />
+            )}
+            {state.legacy_change && <LegacyChangeCard change={state.legacy_change} trans={trans} />}
+        </>
     );
 }
 
@@ -329,12 +497,14 @@ export default function ContractReview({ state: initialState, endpoints, users =
 
     const onState = (next) => (next ? setState(next) : reload());
 
-    // Commande interne : pas de revue de contrat, seulement la demande de changement.
+    // Commande interne : ni revue ni avenant, seulement une ancienne demande de changement éventuelle.
     if (!state.applicable) {
         return (
             <div className="row">
                 <div className="col-lg-6">
-                    <ChangeCard change={state.change ?? {}} users={users} trans={trans} endpoint={endpoints.change} onState={onState} />
+                    {state.legacy_change
+                        ? <LegacyChangeCard change={state.legacy_change} trans={trans} />
+                        : <p className="text-body-secondary">{trans.errors?.not_applicable}</p>}
                 </div>
             </div>
         );
@@ -347,7 +517,7 @@ export default function ContractReview({ state: initialState, endpoints, users =
             </div>
             <div className="col-lg-4">
                 <DocumentsCard documents={state.documents ?? []} trans={trans} />
-                <ChangeCard change={state.change ?? {}} users={users} trans={trans} endpoint={endpoints.change} onState={onState} />
+                <SideCards state={state} users={users} trans={trans} endpoints={endpoints} onState={onState} />
             </div>
         </div>
     );

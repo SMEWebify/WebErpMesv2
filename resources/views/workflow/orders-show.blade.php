@@ -85,7 +85,7 @@ if (!$orderHasInvoicedLines) {
             <i class="fas fa-exchange-alt"></i> {{ __('contract_review.change.title') }}
           @endif
           @if($ContractReviewState['change']['pending'])
-            <span class="badge text-bg-warning ms-1" title="{{ __('contract_review.change.pending') }}"><i class="fas fa-exchange-alt"></i></span>
+            <span class="badge text-bg-warning ms-1" title="{{ $ContractReviewState['pending_amendment'] ? __('contract_review.amendment.status.pending') : __('contract_review.change.pending') }}"><i class="fas fa-exchange-alt"></i></span>
           @endif
         </a>
       </li>
@@ -134,7 +134,13 @@ if (!$orderHasInvoicedLines) {
         @if($ContractReviewState['applicable'] && $ContractReviewState['status'] !== 'done')
           <div class="alert {{ $ContractReviewState['status'] === 'rejected' ? 'alert-danger' : 'alert-warning' }} d-flex flex-wrap align-items-center gap-2 py-2 mb-3">
             <i class="fas fa-clipboard-check"></i>
-            <span class="me-auto">{{ __('contract_review.warning_' . $ContractReviewState['status']) }}</span>
+            <span class="me-auto">
+              @if($ContractReviewState['pending_amendment'])
+                {{ __('contract_review.amendment.warning', ['number' => $ContractReviewState['pending_amendment']['number']]) }}
+              @else
+                {{ __('contract_review.warning_' . $ContractReviewState['status']) }}
+              @endif
+            </span>
             <a href="#ContractReview" class="btn btn-sm btn-outline-secondary" onclick="event.preventDefault(); bootstrap.Tab.getOrCreateInstance(document.querySelector('a[href=&quot;#ContractReview&quot;]')).show();">
               {{ __('contract_review.warning_link') }}
             </a>
@@ -388,16 +394,14 @@ if (!$orderHasInvoicedLines) {
       </div>
       @php
         $contractReviewTrans = __('contract_review') + [
-          'change_requested_by' => __('general_content.change_requested_by_trans_key'),
-          'change_reason'       => __('general_content.change_reason_trans_key'),
-          'change_approved_at'  => __('general_content.change_approved_at_trans_key'),
-          'select_user'         => __('general_content.select_user_trans_key'),
+          'select_user' => __('general_content.select_user_trans_key'),
+          'currency'    => app('Factory')->curency ?? 'EUR',
         ];
         $contractReviewEndpoints = [
           'show'   => route('orders.json.contract-review', ['id' => $Order->id]),
           'update' => route('orders.json.contract-review.update', ['id' => $Order->id]),
           'decide' => route('orders.json.contract-review.decide', ['id' => $Order->id]),
-          'change' => route('orders.json.change-request', ['id' => $Order->id]),
+          'amendments' => route('orders.json.amendments.store', ['id' => $Order->id]),
         ];
         $contractReviewUsers = $Reviewers->map(fn ($u) => ['id' => $u->id, 'name' => $u->name])->values();
         $contractReviewFlags = JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG;
