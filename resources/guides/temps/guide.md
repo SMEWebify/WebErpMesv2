@@ -180,7 +180,7 @@ avec le nombre de jours décomptés. **Modifier** sur une demande :
 ![Valider la demande](img/11-absence-validation.png)
 
 1. **Statut** : « Validée » ou « Non-validée » (refus).
-2. **Mettre à jours**.
+2. **Mettre à jour**.
 
 ![Demandes d'absence](img/12-absences.png)
 

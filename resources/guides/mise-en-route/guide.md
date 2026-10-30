@@ -176,7 +176,7 @@ activée) ou est importé de l'annuaire de l'entreprise (LDAP). Il doit ensuite 
 adresse e-mail** : la configuration e-mail (étape 8) doit donc être faite avant.
 
 Pour lui donner ses droits : ouvrez sa fiche, onglet **RH information**, choisissez son
-**Rôle**, puis « Mettre à jours ».
+**Rôle**, puis « Mettre à jour ».
 
 ![Rôle de l'utilisateur](img/13-utilisateur-role.png)
 

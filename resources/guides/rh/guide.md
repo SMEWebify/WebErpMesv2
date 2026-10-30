@@ -178,7 +178,7 @@ frais**, et ouvre la note avec **Modifier** :
 ![Soumettre la note](img/10-note-soumission.png)
 
 1. **Statuts** : « Soumise ».
-2. **Mettre à jours**.
+2. **Mettre à jour**.
 
 Une note soumise ne se modifie plus : ses dépenses et ses justificatifs sont figés jusqu'à
 la décision des RH.
@@ -198,7 +198,7 @@ notes soumises, avec leur montant. **Voir** ouvre la note et ses justificatifs.
 
 1. **Statuts** : **Approuvée**, ou **Retour** pour la renvoyer au salarié (justificatif
    manquant, montant à corriger).
-2. **Mettre à jours**.
+2. **Mettre à jour**.
 
 Une note retournée redevient modifiable par le salarié, qui la corrige puis la soumet à
 nouveau.

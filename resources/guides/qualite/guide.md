@@ -195,7 +195,7 @@ Une fois le traitement terminé, ouvrez la non-conformité avec son crayon.
 ![Non-conformité résolue](img/11-nc-resolue.png)
 
 > ⚠️ Le bouton **Résolue** ferme la fenêtre **sans enregistrer** les autres champs modifiés.
-> Si vous avez changé quelque chose, cliquez d'abord sur **Mettre à jours**, rouvrez la
+> Si vous avez changé quelque chose, cliquez d'abord sur **Mettre à jour**, rouvrez la
 > fiche, puis cliquez sur **Résolue**.
 >
 > 💡 Choisir « Résolue » dans la liste des statuts n'enregistre pas de date de clôture : la

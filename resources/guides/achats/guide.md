@@ -48,7 +48,7 @@ Un fournisseur est un tiers comme un autre (menu **Tiers**, « Ajouter un tiers 
 réglages le rendent utilisable dans les achats.
 
 **1.1 L'activer comme fournisseur.** Onglet « Détail » de la fiche : réglez **Etat
-fournisseur** sur « Actif », puis « Mettre à jours ».
+fournisseur** sur « Actif », puis « Mettre à jour ».
 
 ![Etat fournisseur Actif](img/01-fournisseur-etat.png)
 
