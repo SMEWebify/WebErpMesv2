@@ -82,10 +82,10 @@ Sur la fiche, onglet « Détail », réglez **Etat client** sur « Prospect »�
 
 ![Etat client = Prospect](img/05-tiers-statut-prospect.png)
 
-… puis cliquez sur « Mettre à jours » en bas de la fiche. Un message vert confirme
+… puis cliquez sur « Mettre à jour » en bas de la fiche. Un message vert confirme
 l'enregistrement.
 
-![Bouton Mettre à jours](img/06-tiers-mettre-a-jour.png)
+![Bouton Mettre à jour](img/06-tiers-mettre-a-jour.png)
 
 ### 2.3 Ajouter l'adresse
 

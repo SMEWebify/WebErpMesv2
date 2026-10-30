@@ -80,7 +80,7 @@ await step('1. Créer le prospect', async () => {
     await statu.selectOption('3');
     const update = page.locator('#Company button[type=submit].btn-info').first();
     await shot('tiers-statut-prospect', { title: 'Onglet « Détail » : « Etat client » = Prospect', highlight: statu });
-    await shot('tiers-mettre-a-jour', { title: 'Enregistrer avec « Mettre à jours » en bas de la fiche', highlight: update });
+    await shot('tiers-mettre-a-jour', { title: 'Enregistrer avec « Mettre à jour » en bas de la fiche', highlight: update });
     await update.click();
     await page.locator('.alert-success').first().waitFor();
 

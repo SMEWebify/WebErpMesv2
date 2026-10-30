@@ -87,7 +87,7 @@ L'incident est créé **En cours**. Une fois les actions menées, cliquez sur so
 
 1. **Statuts** : Résolue.
 2. **Temps de résolution** : malgré son libellé, c'est la **date** de résolution.
-3. **Mettre à jours**.
+3. **Mettre à jour**.
 
 ![Registre des incidents](img/05-incidents-liste.png)
 

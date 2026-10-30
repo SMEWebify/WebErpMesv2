@@ -1,5 +1,5 @@
 // Guide « Comptabilité » : paramétrage comptable et lien avec l'expert-comptable.
-// LECTURE SEULE : aucun « Soumettre », « Ajouter », « + », « Mettre à jours », aucune
+// LECTURE SEULE : aucun « Soumettre », « Ajouter », « + », « Mettre à jour », aucune
 // corbeille, ni « Verrouiller », ni les boutons CSV / XLS / PDF des exports (définitifs).
 // Les fenêtres « Modifier » sont ouvertes pour la capture puis fermées sans enregistrer.
 // Usage : node tools/training/scenarios/comptabilite.mjs   (HEADED=1 pour voir le navigateur)

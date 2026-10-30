@@ -454,7 +454,7 @@ return [
     'delete_trans_key'                         => 'Supprimer',
     'view_all_trans_key'                       => 'Tout voir',
     'submit_trans_key'                         => 'Soumettre',
-    'update_trans_key'                         => 'Mettre à jours',
+    'update_trans_key'                         => 'Mettre à jour',
     'success_update_trans_key'                 => 'Fiche mise à jour avec succès.',
     'upload_trans_key'                         => 'Télécharger',
     'refresh_trans_key'                        => 'Rafraichir la page',

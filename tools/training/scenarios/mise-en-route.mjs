@@ -1,5 +1,5 @@
 // Guide « Mise en route d'une instance » : tour des écrans de réglage, en lecture seule.
-// N'enregistre rien : aucun « Soumettre », « Mettre à jours », « Ajout », aucune corbeille.
+// N'enregistre rien : aucun « Soumettre », « Mettre à jour », « Ajout », aucune corbeille.
 // Les données réelles de la société (adresse, e-mail, téléphone, IBAN) sont masquées par
 // TRAINING_PRIVATE (.env).
 // Usage : node tools/training/scenarios/mise-en-route.mjs   (HEADED=1 pour voir le navigateur)
