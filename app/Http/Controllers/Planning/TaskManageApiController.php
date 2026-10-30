@@ -22,6 +22,7 @@ use App\Models\Planning\TaskDependency;
 use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Planning\DependencyEdge;
 use App\Services\Planning\DependencyGraph;
+use App\Services\Products\ProductCatalogAccess;
 use App\Support\Planning\DependencyNotation;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
@@ -356,6 +357,7 @@ class TaskManageApiController extends Controller
     public function storeTaskJson(string $idType, string $idPage, string $idLine, Request $request)
     {
         abort_unless(auth()->check(), 403);
+        $this->abortUnlessCanEditContext($idType, $idLine);
 
         if ($idType !== 'nomenclature_lines_id') {
             $this->abortIfDocumentLocked($idType, $idPage);
@@ -424,6 +426,7 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $task = Task::findOrFail($id);
+        $this->abortUnlessCanEditTask($task);
 
         $validated = $request->validate([
             'label'               => 'required|string|max:255',
@@ -470,6 +473,7 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $task = Task::findOrFail($id);
+        $this->abortUnlessCanEditTask($task);
         $orderLineId = $task->order_lines_id;
         $task->delete();
 
@@ -489,6 +493,7 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $task = Task::findOrFail($id);
+        $this->abortUnlessCanEditTask($task);
 
         // Copie et liens ensemble : pas de double à moitié lié si un lien échoue.
         $new = DB::transaction(function () use ($task) {
@@ -545,6 +550,7 @@ class TaskManageApiController extends Controller
         ]);
 
         $task = Task::findOrFail($id);
+        $this->abortUnlessCanEditTask($task);
 
         if (! in_array((int) $task->type, [1, 7], true)) {
             return response()->json(['errors' => ['planned_qty' => [__('planning.dependency_not_schedulable')]]], 422);
@@ -600,6 +606,7 @@ class TaskManageApiController extends Controller
         ]);
 
         $task    = Task::findOrFail($id);
+        $this->abortUnlessCanEditTask($task);
         $routing = $this->routingTasks($task)->keyBy('id');
 
         try {
@@ -801,6 +808,7 @@ class TaskManageApiController extends Controller
     public function storeSubAssemblyJson(string $idType, string $idPage, string $idLine, Request $request)
     {
         abort_unless(auth()->check(), 403);
+        $this->abortUnlessCanEditContext($idType, $idLine);
         $this->abortIfDocumentLocked($idType, $idPage);
 
         $validated = $request->validate([
@@ -826,6 +834,7 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $sa = SubAssembly::findOrFail($id);
+        $this->abortUnlessCanEditSubAssembly($sa);
 
         $validated = $request->validate([
             'ordre'      => 'required|numeric|gt:0',
@@ -848,7 +857,9 @@ class TaskManageApiController extends Controller
     {
         abort_unless(auth()->check(), 403);
 
-        SubAssembly::findOrFail($id)->delete();
+        $sa = SubAssembly::findOrFail($id);
+        $this->abortUnlessCanEditSubAssembly($sa);
+        $sa->delete();
 
         return response()->json(['message' => 'Deleted']);
     }
@@ -862,6 +873,7 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
 
         $sa  = SubAssembly::findOrFail($id);
+        $this->abortUnlessCanEditSubAssembly($sa);
         $new = $sa->replicate();
         $new->ordre = $sa->ordre + 1;
         $new->save();
@@ -877,6 +889,7 @@ class TaskManageApiController extends Controller
     public function importCsvJson(string $idType, string $idPage, string $idLine, Request $request)
     {
         abort_unless(auth()->check(), 403);
+        $this->abortUnlessCanEditContext($idType, $idLine);
 
         $request->validate(['csv_file' => 'required|file|mimes:csv,txt']);
 
@@ -954,6 +967,7 @@ class TaskManageApiController extends Controller
     public function applyNomenclatureJson(string $idType, string $idPage, string $idLine, int $nomenclatureId)
     {
         abort_unless(auth()->check(), 403);
+        $this->abortUnlessCanEditContext($idType, $idLine);
 
         $standardTasks = MethodsStandardTask::with('service:id,code')
             ->where('methods_nomenclature_standard_id', $nomenclatureId)
@@ -1008,6 +1022,28 @@ class TaskManageApiController extends Controller
         }
 
         CheckOrderLineTaskStatus::syncOrderLine((int) $idLine);
+    }
+
+    /**
+     * Gamme et nomenclature d'un article : écriture réservée à products-edit.
+     * Les lignes de devis / commande ne sont pas concernées (ProductCatalogAccess).
+     */
+    private function abortUnlessCanEditContext(string $idType, string $idLine): void
+    {
+        abort_if(ProductCatalogAccess::contextIsProduct($idType, $idLine)
+            && ! ProductCatalogAccess::canEdit(auth()->user()), 403);
+    }
+
+    private function abortUnlessCanEditTask(Task $task): void
+    {
+        abort_if(ProductCatalogAccess::taskIsProduct($task)
+            && ! ProductCatalogAccess::canEdit(auth()->user()), 403);
+    }
+
+    private function abortUnlessCanEditSubAssembly(SubAssembly $subAssembly): void
+    {
+        abort_if(ProductCatalogAccess::subAssemblyIsProduct($subAssembly)
+            && ! ProductCatalogAccess::canEdit(auth()->user()), 403);
     }
 
     private function abortIfDocumentLocked(string $idType, string $idPage): void

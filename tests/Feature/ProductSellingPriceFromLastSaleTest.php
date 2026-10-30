@@ -37,8 +37,10 @@ class ProductSellingPriceFromLastSaleTest extends TestCase
         ]);
 
         Permission::findOrCreate('products-menu');
+
+        Permission::findOrCreate('products-edit');
         $user = User::factory()->create();
-        $user->givePermissionTo('products-menu');
+        $user->givePermissionTo(['products-menu', 'products-edit']);
         $this->actingAs($user);
 
         MethodsUnits::factory()->create();

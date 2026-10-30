@@ -8,6 +8,7 @@ use App\Models\Planning\Status;
 use App\Models\Products\Batch;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
+use App\Services\Products\ProductCatalogAccess;
 use App\Services\Files\FileRole;
 use App\Services\SelectDataService;
 use App\Services\CustomFieldService;
@@ -86,13 +87,19 @@ class ProductsController extends Controller
             'byFamily'  => $byFamily,
         ];
 
+        $canEdit = ProductCatalogAccess::canEdit(Auth::user());
+
         $reactEndpoints = [
             'list'         => route('products.json.list'),
-            'store'        => route('products.json.store'),
             'selectData'   => route('products.json.select-data'),
         ];
 
-        $canMerge = Auth::user()->can('products-merge');
+        // Lecture seule : sans endpoint de création, l'écran n'affiche pas le bouton.
+        if ($canEdit) {
+            $reactEndpoints['store'] = route('products.json.store');
+        }
+
+        $canMerge = $canEdit && Auth::user()->can('products-merge');
         if ($canMerge) {
             $reactEndpoints['duplicates']   = route('products.json.duplicates');
             $reactEndpoints['mergeBaseUrl'] = url('/products/json/merge');
@@ -424,6 +431,7 @@ class ProductsController extends Controller
             'CustomFields' => $CustomFields,
             'CustomerPriceLists' => $customerPriceLists,
             'productPicture' => $productPicture,
+            'canEditProduct' => ProductCatalogAccess::canEdit(Auth::user()),
         ]));
     }
 

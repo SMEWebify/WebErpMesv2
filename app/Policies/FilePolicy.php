@@ -5,6 +5,8 @@ namespace App\Policies;
 use App\Models\File;
 use App\Models\User;
 use App\Services\Files\FileConfidentiality;
+use App\Services\Files\FileableRegistry;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Documents are readable by any authenticated user of the factory — the routes
@@ -43,12 +45,38 @@ class FilePolicy
 
     public function update(User $user, File $file): bool
     {
-        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file);
+        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file)
+            && $this->mayWriteAttachments($user, $file);
     }
 
     public function delete(User $user, File $file): bool
     {
-        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file);
+        return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file)
+            && $this->mayWriteAttachments($user, $file);
+    }
+
+    /**
+     * A document attached to an entity whose writes are reserved (item master:
+     * products-edit) is only altered by a holder of that permission, whatever
+     * the entity named in the request.
+     */
+    private function mayWriteAttachments(User $user, File $file): bool
+    {
+        $guarded = FileableRegistry::writePermissionsByClass();
+
+        $classes = DB::table('fileables')
+            ->where('file_id', $file->id)
+            ->whereIn('fileable_type', array_keys($guarded))
+            ->distinct()
+            ->pluck('fileable_type');
+
+        foreach ($classes as $class) {
+            if (! $user->can($guarded[$class])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

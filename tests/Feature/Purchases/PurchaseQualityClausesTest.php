@@ -259,7 +259,8 @@ class PurchaseQualityClausesTest extends TestCase
     {
         $product = $this->product(['nuclear_level' => 'N2']);
         Permission::findOrCreate('products-menu');
-        $this->user->givePermissionTo('products-menu');
+        Permission::findOrCreate('products-edit');
+        $this->user->givePermissionTo(['products-menu', 'products-edit']);
 
         // La fiche article elle-même n'est pas rendue sous SQLite (DATEDIFF) : on vérifie
         // son enregistrement.

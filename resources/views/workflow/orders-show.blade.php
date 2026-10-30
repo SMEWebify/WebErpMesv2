@@ -440,6 +440,10 @@ if (!$orderHasInvoicedLines) {
           'createProducts'  => route('orders.lines.json.create-products',  ['orderId' => $Order->id]),
           'linkProducts'    => route('orders.lines.json.link-products',    ['orderId' => $Order->id]),
         ];
+        if (! \App\Services\Products\ProductCatalogAccess::canEdit(Auth::user())) {
+          // Créer un article depuis une ligne = écrire dans la base article (products-edit).
+          unset($orderLineEndpoints['createProducts']);
+        }
         if (config('cad.line_import')) {
           $orderLineEndpoints['importCad'] = route('orders.lines.json.import-cad', ['orderId' => $Order->id]);
         }

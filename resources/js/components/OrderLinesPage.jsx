@@ -1525,10 +1525,12 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                             )}
 
                             {/* Action buttons */}
-                            <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
-                                <i className="fas fa-barcode me-1" />
-                                Créer produits ({selected.size})
-                            </button>
+                            {endpoints.createProducts && (
+                                <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
+                                    <i className="fas fa-barcode me-1" />
+                                    Créer produits ({selected.size})
+                                </button>
+                            )}
                             {(() => {
                                 const linkableCount = [...selected].filter((id) => {
                                     const line = lines.find((l) => l.id === id);

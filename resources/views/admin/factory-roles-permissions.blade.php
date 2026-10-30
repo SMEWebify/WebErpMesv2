@@ -135,6 +135,7 @@
                                         <option value="deliverys-menu">deliverys-menu</option>
                                         <option value="invoices-menu">invoices-menu</option>
                                         <option value="products-menu">products-menu</option>
+                                        <option value="products-edit">products-edit</option>
                                         <option value="purchases-menu">purchases-menu</option>
                                         <option value="quality-menu">quality-menu</option>
                                         <option value="settings-time-menu">settings-time-menu</option>

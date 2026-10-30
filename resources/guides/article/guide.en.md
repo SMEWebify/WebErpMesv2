@@ -21,8 +21,10 @@ on shelf A1 of the store with a minimum stock of 10 parts.
 
 ## Before you start
 
-- The item list requires the **products-menu** permission; stock, batches, serial numbers
-  and inventories require **stock-lot-serial-management**.
+- The item list and item page require the **products-menu** permission (read); creating,
+  editing or duplicating an item, its routing, bill of materials or documents also requires
+  **products-edit**. Stock, batches, serial numbers and inventories require
+  **stock-lot-serial-management**.
 - **Services** (laser, bending…), **families** and **units** come from Methods (see the
   guide "Methods").
 

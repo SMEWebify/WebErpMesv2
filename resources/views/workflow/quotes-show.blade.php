@@ -573,6 +573,10 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             // Une trame ne se convertit pas en commande.
             unset($quoteLineEndpoints['storeOrder']);
           }
+          if (! \App\Services\Products\ProductCatalogAccess::canEdit(Auth::user())) {
+            // Créer un article depuis une ligne = écrire dans la base article (products-edit).
+            unset($quoteLineEndpoints['createProduct'], $quoteLineEndpoints['createProducts']);
+          }
           if (config('cad.line_import')) {
             $quoteLineEndpoints['importCad'] = route('quotes.lines.json.import-cad', ['quoteId' => $Quote->id]);
           }

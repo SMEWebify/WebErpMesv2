@@ -7,6 +7,7 @@ use App\Models\Planning\Task;
 use App\Services\TaskService;
 use App\Services\Production\ProductionRelease;
 use App\Services\Production\TaskRelease;
+use App\Services\Products\ProductCatalogAccess;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Planning\TaskActivities;
@@ -377,6 +378,14 @@ class TaskController extends Controller
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, Something goes wrong ']);
+        }
+
+        // Gamme d'un article sans products-edit : consultation seulement (écritures refusées
+        // par TaskManageApiController).
+        if (in_array($id_type, ['products_id', 'sub_assembly_id'], true)
+            && ProductCatalogAccess::contextIsProduct($id_type, $id_type === 'sub_assembly_id' ? $id_line : $id_page)
+            && ! ProductCatalogAccess::canEdit(auth()->user())) {
+            $Document->statu = 0;
         }
 
         $Factory = app('Factory');

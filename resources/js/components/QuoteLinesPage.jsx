@@ -985,7 +985,7 @@ function LineRow({
                                     <i className="fas fa-trash fa-fw me-2" />Supprimer
                                 </button>
                             )}
-                            {quoteStatu === 1 && line.code && line.label && (
+                            {quoteStatu === 1 && onCreateProduct && line.code && line.label && (
                                 <button className="dropdown-item"
                                     onClick={() => { onCreateProduct(line.id); setMenuOpen(false); }}>
                                     <i className="fas fa-barcode fa-fw me-2 text-success" />Créer un produit
@@ -1614,7 +1614,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
-                {quoteStatu === 1 && selected.size > 0 && (
+                {endpoints.createProducts && quoteStatu === 1 && selected.size > 0 && (
                     <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
                         <i className="fas fa-barcode me-1" />
                         Créer produits ({selected.size})
@@ -1764,7 +1764,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 onDelete={handleDelete}
                                 onDuplicate={handleDuplicate}
                                 onBreakDown={handleBreakDown}
-                                onCreateProduct={handleCreateProduct}
+                                onCreateProduct={endpoints.createProduct ? handleCreateProduct : null}
                                 onOpenTaskModal={setTaskModalLine}
                                 onToggleSelect={handleToggleSelect}
                                 selected={selected.has(line.id)}

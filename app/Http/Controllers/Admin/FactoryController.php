@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\Products\ProductCatalogAccess;
 use App\Models\DocumentCodeTemplate;
 use App\Models\Planning\Status;
 use Illuminate\Http\Request;
@@ -224,6 +225,9 @@ class FactoryController extends Controller
     */
     public function storeOrUpdateCustomField(Request $request, $id, $type)
     {
+        // Les champs personnalisés d'un article font partie de la base article.
+        abort_if($type === 'product' && ! ProductCatalogAccess::canEdit($request->user()), 403);
+
         // Validate the form data
         $validatedData = $request->validate([
             'custom_fields' => 'nullable|array', // You can add additional validation rules here

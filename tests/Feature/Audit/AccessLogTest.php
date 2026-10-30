@@ -40,9 +40,10 @@ class AccessLogTest extends TestCase
         MethodsUnits::factory()->create();
         MethodsFamilies::factory()->create();
         Permission::findOrCreate('products-menu');
+        Permission::findOrCreate('products-edit');
 
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('products-menu');
+        $this->user->givePermissionTo(['products-menu', 'products-edit']);
         $this->actingAs($this->user);
 
         config(['audit.log_reads' => true, 'audit.dedup_minutes' => 10]);

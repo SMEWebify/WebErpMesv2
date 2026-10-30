@@ -1,6 +1,8 @@
     <div class="col-md-6">
         <form method="POST" action="{{ route('admin.factory.custom.field.value.store.update', ['id' => $id,'type' => $type, ]) }}">
             @csrf
+            {{-- $customFieldsReadOnly (facultatif) : valeurs affichées sans enregistrement possible. --}}
+            <fieldset class="border-0 p-0 m-0" @disabled($customFieldsReadOnly ?? false)>
             <div class="card-body">
                 @php
                     $defaultCategoryLabel = __('general_content.custom_fields_default_category_trans_key');
@@ -49,8 +51,11 @@
                     <p class="text-muted">{{ __('general_content.no_data_trans_key') }}</p>
                 @endforelse
             </div>
+            </fieldset>
+            @unless($customFieldsReadOnly ?? false)
             <div class="card-footer">
                 <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
+            @endunless
         </form>
     </div>

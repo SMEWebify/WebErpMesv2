@@ -628,11 +628,14 @@ function ListTab({ endpoints, trans }) {
                     <i className="fas fa-shopping-cart me-1" />{trans.purchased}
                 </button>
 
-                <div className="ms-auto">
-                    <button className="btn btn-success" onClick={() => setShowModal(true)}>
-                        <i className="fas fa-plus me-1" />{trans.new_product}
-                    </button>
-                </div>
+                {/* Sans products-edit, le serveur ne fournit pas l'endpoint de création. */}
+                {endpoints.store && (
+                    <div className="ms-auto">
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>
+                            <i className="fas fa-plus me-1" />{trans.new_product}
+                        </button>
+                    </div>
+                )}
             </div>
 
             <ProductsTable

@@ -53,7 +53,7 @@ class FileApiController extends Controller
      */
     public function store(StoreFilesRequest $request): JsonResponse
     {
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
 
         $hashtags = $this->storage->normalizeHashtags($request->input('hashtags'));
         $role = $request->input('role');
@@ -97,7 +97,7 @@ class FileApiController extends Controller
     {
         $this->authorize('update', $file);
 
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
 
         // Route model binding gives us a File without pivot, so read the current
         // attachment from the entity side.
@@ -149,7 +149,7 @@ class FileApiController extends Controller
     {
         $this->authorize('delete', $file);
 
-        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request);
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
 
         abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
 
@@ -208,9 +208,11 @@ class FileApiController extends Controller
     }
 
     /**
-     * Resolve the whitelisted entity a request targets.
+     * Resolve the whitelisted entity a request targets. $write: attaching,
+     * editing or detaching, which some aliases reserve to a further permission
+     * (item master: products-edit).
      */
-    private function resolveEntity(?string $alias, int|string|null $id, ?Request $request = null): Model
+    private function resolveEntity(?string $alias, int|string|null $id, ?Request $request = null, bool $write = false): Model
     {
         $request ??= request();
 
@@ -218,6 +220,9 @@ class FileApiController extends Controller
 
         $permission = FileableRegistry::permissionFor($alias);
         abort_if($permission !== null && ! $request->user()?->can($permission), 403);
+
+        $writePermission = $write ? FileableRegistry::writePermissionFor($alias) : null;
+        abort_if($writePermission !== null && ! $request->user()?->can($writePermission), 403);
 
         $entity = FileableRegistry::find($alias, $id);
 

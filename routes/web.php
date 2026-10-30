@@ -372,8 +372,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
         Route::get('/{quoteId}/lines/json/required-operations', 'App\Http\Controllers\Workflow\QuoteLinesController@requiredOperationsJson')->name('quotes.lines.json.required-operations');
         Route::post('/{quoteId}/lines/json/import-cad', 'App\Http\Controllers\Workflow\QuoteLinesController@importCadJson')->name('quotes.lines.json.import-cad');
-        Route::post('/{quoteId}/lines/json/create-products',    'App\Http\Controllers\Workflow\QuoteLinesController@createProductsFromLinesJson')->name('quotes.lines.json.create-products');
-        Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->name('quotes.lines.json.create-product');
+        Route::post('/{quoteId}/lines/json/create-products',    'App\Http\Controllers\Workflow\QuoteLinesController@createProductsFromLinesJson')->middleware('permission:products-edit')->name('quotes.lines.json.create-products');
+        Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->middleware('permission:products-edit')->name('quotes.lines.json.create-product');
         Route::get('/{quoteId}/lines/json/{id}/tasks', 'App\Http\Controllers\Workflow\QuoteLinesController@tasksForLineJson')->name('quotes.lines.json.tasks');
         Route::patch('/{quoteId}/lines/json/{id}/calculated-price', 'App\Http\Controllers\Workflow\QuoteLinesController@toggleCalculatedPriceJson')->name('quotes.lines.json.calculated-price');
         Route::patch('/{quoteId}/lines/json/{id}/presentation', 'App\Http\Controllers\Workflow\QuoteLinesController@presentationJson')->name('quotes.lines.json.presentation');
@@ -439,7 +439,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
         Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
         Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
-        Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->name('orders.lines.json.create-products');
+        Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->middleware('permission:products-edit')->name('orders.lines.json.create-products');
         Route::post('/{orderId}/lines/json/link-products',              'App\Http\Controllers\Workflow\OrderLinesController@linkProductsToLinesJson')->name('orders.lines.json.link-products');
         Route::post('/{orderId}/lines/json/import-cad',                 'App\Http\Controllers\Workflow\OrderLinesController@importCadJson')->name('orders.lines.json.import-cad');
         //import
@@ -850,13 +850,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
         Route::get('/json/search', 'App\Http\Controllers\Products\ProductsController@searchJson')->name('products.json.search');
 
-        // Catalogue screens and writes. products-menu used to only hide the menu
-        // entry, so any role (asset_manager included) could read and edit
-        // products by URL — GHSA-rqxq-q992-xj2h.
+        // Catalogue screens. products-menu used to only hide the menu entry, so
+        // any role (asset_manager included) could read and edit products by URL
+        // — GHSA-rqxq-q992-xj2h. products-menu now reads the catalogue,
+        // products-edit (below) writes it.
         Route::middleware('permission:products-menu')->group(function () {
             //index product route
             Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
 
+            // JSON API endpoints for React ProductsIndex
+            Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
+            Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
+            Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
+        });
+
+        // Catalogue writes: reserved to the technical department (products-edit).
+        Route::middleware(['permission:products-menu', 'permission:products-edit'])->group(function () {
             //product route
             Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
             Route::post('/supplier', 'App\Http\Controllers\Products\ProductsController@StoreSupplier')->name('products.supplier.create');
@@ -866,11 +875,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/{id}/selling-price/from-last-sale', 'App\Http\Controllers\Products\ProductsController@updateSellingPriceFromLastSale')->name('products.selling-price.from-last-sale');
             Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
 
-            // JSON API endpoints for React ProductsIndex
-            Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
             Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
-            Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
-            Route::get('/{id}/json/price-history', 'App\Http\Controllers\Products\ProductsController@priceHistoryJson')->name('products.json.price-history');
 
             Route::group(['prefix' => '{product}/customer-price-list'], function () {
                 Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
@@ -882,8 +887,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
         });
 
-        // Merge duplicates (permission réservée)
-        Route::group(['middleware' => ['permission:products-merge']], function () {
+        // Merge duplicates (permission réservée, et écriture dans la base article)
+        Route::group(['middleware' => ['permission:products-merge', 'permission:products-edit']], function () {
             Route::get('/json/duplicates', 'App\Http\Controllers\Products\ProductsController@duplicatesJson')->name('products.json.duplicates');
             Route::get('/json/merge/{master}/{duplicate}/preview', 'App\Http\Controllers\Products\ProductsController@mergePreviewJson')->name('products.json.merge.preview');
             Route::post('/json/merge/{master}/{duplicate}', 'App\Http\Controllers\Products\ProductsController@mergeJson')->name('products.json.merge');

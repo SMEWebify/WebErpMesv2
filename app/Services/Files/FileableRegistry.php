@@ -88,9 +88,41 @@ class FileableRegistry
         'batch' => 'stock-lot-serial-management',
     ];
 
+    /**
+     * Permission required, on top of the read one, to attach, edit or detach
+     * documents on an alias: the item master is read by sales (products-menu)
+     * but only the technical department writes to it (products-edit).
+     *
+     * @var array<string, string>
+     */
+    private const WRITE_PERMISSIONS = [
+        'product' => 'products-edit',
+    ];
+
     public static function permissionFor(string $alias): ?string
     {
         return self::PERMISSIONS[$alias] ?? null;
+    }
+
+    public static function writePermissionFor(string $alias): ?string
+    {
+        return self::WRITE_PERMISSIONS[$alias] ?? null;
+    }
+
+    /**
+     * Model classes guarded by a write permission, keyed by class.
+     *
+     * @return array<class-string<Model>, string>
+     */
+    public static function writePermissionsByClass(): array
+    {
+        $byClass = [];
+
+        foreach (self::WRITE_PERMISSIONS as $alias => $permission) {
+            $byClass[self::MAP[$alias]] = $permission;
+        }
+
+        return $byClass;
     }
 
     /**

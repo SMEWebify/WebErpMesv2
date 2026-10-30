@@ -21,7 +21,7 @@ class SetupController extends Controller
      */
     private const DEFAULT_PERMISSIONS = [
         'companies-menu', 'leads-menu', 'opportunities-menu', 'quotes-menu', 'orders-menu',
-        'scheduling-menu', 'deliverys-menu', 'invoices-menu', 'products-menu',
+        'scheduling-menu', 'deliverys-menu', 'invoices-menu', 'products-menu', 'products-edit',
         'stock-lot-serial-management', 'purchases-menu', 'quality-menu', 'settings-time-menu',
         'methods-menu', 'accounting-menu', 'human-resources-menu', 'documents-menu',
         'reports-menu', 'spreadsheet-menu', 'osh-menu', 'your-company-menu', 'asset_manager',

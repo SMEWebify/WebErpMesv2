@@ -318,6 +318,27 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 `TaskStatuApp` continuent de les lire sans modification.
 
 ## Guides utilisateur (menu « Guides »)
+## Base article : lecture / écriture (products-menu, products-edit)
+
+`products-menu` = **lecture** de la base article (index, fiche, gamme, nomenclature, GED) ;
+`products-edit` = **écriture** (création, modification, duplication, fusion — avec
+`products-merge` —, fournisseurs, grille tarifaire, champs personnalisés `type=product`, import
+CSV, gamme / nomenclature de l'article, dépôt / modification / détachement de fichiers sur
+l'alias `product`). Migration `2026_10_30_000060` : donnée à Admin, à tous les rôles et
+utilisateurs qui avaient `products-menu` (rien ne change pour l'existant).
+- `App\Services\Products\ProductCatalogAccess` : `canEdit()`, et rattachement à un article
+  d'une tâche / d'un sous-ensemble **par l'objet visé** (chaîne `sub_assembly_id` remontée),
+  jamais par le seul `id_type` de l'URL. Posé dans `TaskManageApiController` (toutes les écritures).
+- GED : `FileableRegistry::WRITE_PERMISSIONS` (contrôlé par `resolveEntity(..., write: true)`)
+  **et** `FilePolicy::update/delete` (fichier attaché à un article, même déposé par soi).
+- Restent ouverts aux devis / commandes : sélecteurs (`products.json.search`, `select-data`),
+  « Décomposer » (gamme de l'article copiée dans la ligne). « Créer l'article » depuis une ligne
+  de devis / commande exige `products-edit` (middleware de route + endpoint retiré du front).
+- Non couvert : API Sanctum `api.product.store/update` (intégrations), création d'outil
+  presse plieuse (`ToolStockService`).
+- Fiche en lecture : bandeau `products.read_only`, formulaire en `fieldset disabled`, gamme
+  `data-statu="0"`, GED `fileManagerCanEdit = false`. Tests : `tests/Feature/Products/ProductEditPermissionTest.php`.
+
 
 `/guides` liste les pas à pas illustrés, `/guides/{slug}` en affiche un. **Un guide = un dossier**
 `resources/guides/{slug}/` : `guide.md` (en-tête YAML `title`, `summary`, `category`, `order`,

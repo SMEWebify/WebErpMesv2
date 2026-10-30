@@ -56,9 +56,16 @@
       <!-- /.card-header -->
       <div class="tab-content">
         @include('include.alert-result')
+        @unless($canEditProduct)
+        <div class="alert alert-info py-2 mt-2">
+          <i class="fas fa-eye me-2"></i>{{ __('products.read_only') }}
+        </div>
+        @endunless
         <div class="tab-pane active" id="Product">
           <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
               @csrf
+              {{-- Lecture seule (products-menu sans products-edit) : champs désactivés, pas d'enregistrement. --}}
+              <fieldset class="border-0 p-0 m-0" @disabled(! $canEditProduct)>
               <div class="card card-body mb-3">
                 <div class="row">
                     <div class="mb-3 col-md-4">
@@ -376,9 +383,12 @@
                   </div>
                 </div>
               </div>
+              </fieldset>
+            @if($canEditProduct)
             <div class="card-footer">
               <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
             </div>
+            @endif
           </form>
         </div>
         @if($showPricesTab)
@@ -419,9 +429,11 @@
               <span class="text-body-secondary">{{ __('price_list.base_price') }} :</span>
               <b>{{ number_format($basePrice, 2, ',', ' ') }} {{ $Factory->curency }}</b>
             </div>
+            @if($canEditProduct)
             <button type="button" class="btn btn-success btn-sm" data-price-list-open>
               <i class="fas fa-plus me-1"></i>{{ __('price_list.add') }}
             </button>
+            @endif
           </div>
 
           @if($priceListErrors->any())
@@ -480,6 +492,7 @@
                     @endif
                   </td>
                   <td class="text-end text-nowrap">
+                    @if($canEditProduct)
                     <button type="button" class="btn btn-sm btn-outline-primary" title="{{ __('price_list.edit') }}"
                       data-price-list-open
                       data-id="{{ $priceList->id }}"
@@ -497,6 +510,7 @@
                         <i class="fas fa-trash"></i>
                       </button>
                     </form>
+                    @endif
                   </td>
                 </tr>
                 @endforeach
@@ -531,7 +545,7 @@
             data-id-type="products_id"
             data-id-page="{{ $Product->id }}"
             data-id-line="{{ $Product->id }}"
-            data-statu="1"
+            data-statu="{{ $canEditProduct ? 1 : 0 }}"
             data-currency="{{ app('Factory')->curency ?? '€' }}"
             data-endpoints="{{ json_encode($taskManageEndpoints) }}"
           ></div>
@@ -576,7 +590,7 @@
         @endcan
         @if($CustomFields->count() > 0)
         <div class="tab-pane" id="CustomFields">
-          @include('include.custom-fields-form', ['id' => $Product->id, 'type' => 'product'])
+          @include('include.custom-fields-form', ['id' => $Product->id, 'type' => 'product', 'customFieldsReadOnly' => ! $canEditProduct])
         </div>
         @endif
         @if($Product->purchased == 1 )
@@ -617,6 +631,7 @@
                             </button>
                             <!-- Modal {{ $preferredSuppliers->id }} -->
                             <x-adminlte-modal id="preferredSuppliers{{ $preferredSuppliers->id }}" title="{{ __('general_content.price_by_qty_trans_key') }} {{ $preferredSuppliers->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                              @if($canEditProduct)
                               <form method="POST" action="{{ route('products.supplier.qty.price.create', ['id' => $Product->id]) }} }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
@@ -641,6 +656,7 @@
                                   <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                 </div>
                               </form>
+                              @endif
                               <div class="card-body">
                                 <div class="row">
                                   <div class="card-body table-responsive p-0">
@@ -697,6 +713,7 @@
                 </div>
               </x-adminlte-card>
             </div>
+            @if($canEditProduct)
             <div class="col-md-6">
               <form  method="POST" action="{{ route('products.supplier.create') }}" class="form-horizontal" enctype="multipart/form-data">
                 <x-adminlte-card title="{{ __('general_content.supplier_trans_key') }}" theme="secondary" maximizable>
@@ -722,6 +739,7 @@
                 </x-adminlte-card>
               </form>
             </div>
+            @endif
           </div>
           <!-- /.row -->
         </div>
@@ -801,6 +819,7 @@
           @include('include.file-manager-mount', [
             'fileableType' => 'product',
             'fileableId'   => $Product->id,
+            'fileManagerCanEdit' => $canEditProduct,
           ])
         </div>
         <div class="tab-pane" id="ControlPlans">
@@ -916,11 +935,13 @@
     @endif
 
     <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
+      @if($canEditProduct)
       <p>
         <a href="{{ route('products.duplicate', $Product->id)}}" class="btn btn-sm btn-outline-secondary w-100 mb-2">
           <i class="fa fa-copy"></i> {{ __('general_content.duplicate_product_trans_key') }}
         </a>
       </p>
+      @endif
       <p>
         @php echo '<img src="data:image/jpeg;base64,' . DNS1D::getBarcodePNG  (strval($Product->id), $Factory->task_barre_code, 4,60,array(1,1,1), true). '" alt="barcode"   />'; @endphp
       </p>

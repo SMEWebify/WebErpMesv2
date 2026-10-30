@@ -19,8 +19,10 @@ puis pliée, rangée sur l'étagère A1 du magasin avec un stock minimum de 10 p
 
 ## Avant de commencer
 
-- La liste des articles demande la permission **products-menu** ; le stock, les lots, les
-  numéros de série et les inventaires demandent **stock-lot-serial-management**.
+- La liste et la fiche des articles demandent la permission **products-menu** (lecture) ;
+  créer, modifier, dupliquer un article, sa gamme, sa nomenclature ou ses documents demande
+  en plus **products-edit**. Le stock, les lots, les numéros de série et les inventaires
+  demandent **stock-lot-serial-management**.
 - Les **services** (laser, pliage…), **familles** et **unités** viennent des Méthodes
   (voir le guide « Les Méthodes »).
 
