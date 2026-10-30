@@ -7,6 +7,11 @@
 @stop
 
 @section('content')
+@php
+    // Description de chaque droit (resources/lang/*/permissions.php) ; absente = nom seul.
+    $permissionDescriptions = __('permissions.descriptions');
+    $permissionDescriptions = is_array($permissionDescriptions) ? $permissionDescriptions : [];
+@endphp
 <div class="card mb-3">
     <div class="card-header p-2">
         <ul class="nav nav-pills"><li class="nav-item"><a class="nav-link active" href="#Role" data-bs-toggle="tab">{{ __('general_content.roles_trans_key') }}</a></li>
@@ -53,7 +58,7 @@
                                         <div class="row">
                                             @forelse ($Role->permissions->pluck('name') as $RolePermission)
                                             <div class="col-2">
-                                                <button type="button" class="btn w-100 btn-outline-success btn-sm disabled">{{ $RolePermission}}</button>
+                                                <span class="d-block" title="{{ $permissionDescriptions[$RolePermission] ?? '' }}"><button type="button" class="btn w-100 btn-outline-success btn-sm disabled">{{ $RolePermission}}</button></span>
                                             </div>
                                             @empty
                                             <button type="button" class="btn w-100 btn-outline-danger btn-sm disabled">{{__('general_content.no_permissions_trans_key') }}</button>
@@ -82,6 +87,9 @@
                                                         <div class="form-check ">
                                                             <input class="form-check-input" type="checkbox" name="permission[]" id="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" @if($Role->permissions->contains($Permission)) checked @endif value="{{ $Permission->id }}">
                                                             <label for="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" class="form-check-label">{{ $Permission->name }}</label>
+                                                            @if (! empty($permissionDescriptions[$Permission->name]))
+                                                            <div class="form-text mt-0">{{ $permissionDescriptions[$Permission->name] }}</div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -168,7 +176,12 @@
                             <tbody>
                                 @forelse ($Permissions as $Permission)
                                 <tr>
-                                    <td>{{ $Permission->name }}</td>
+                                    <td>
+                                        {{ $Permission->name }}
+                                        @if (! empty($permissionDescriptions[$Permission->name]))
+                                        <div class="small text-body-secondary">{{ $permissionDescriptions[$Permission->name] }}</div>
+                                        @endif
+                                    </td>
                                     <!--<td>{{ $Permission->groupe_name }}</td>-->
                                     <td>{{ $Permission->created_at }}</td>
                                     <td class="text-end">
@@ -219,6 +232,9 @@
                                 <div class="form-check ">
                                     <input class="form-check-input" type="checkbox" name="permission[]" id="checkDefault{{ $Permission->id }}" value="{{ $Permission->id }}">
                                     <label for="checkDefault{{ $Permission->id }}" class="form-check-label">{{ $Permission->name }}</label>
+                                    @if (! empty($permissionDescriptions[$Permission->name]))
+                                    <div class="form-text mt-0">{{ $permissionDescriptions[$Permission->name] }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

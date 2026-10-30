@@ -318,6 +318,13 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+## Description des droits
+
+Écran Votre société → Rôles et permissions : chaque droit affiche une description sous son
+nom (`resources/lang/{fr,en}/permissions.php`, clé `descriptions.{nom}`). **Un nouveau droit
+(migration ou seeder) doit y être décrit** dans les deux langues, sinon
+`tests/Feature/PermissionDescriptionsTest.php` échoue. Un droit créé à la main s'affiche sans description.
+
 ## Base article : lecture / écriture (products-menu, products-edit)
 
 `products-menu` = **lecture** de la base article (index, fiche, gamme, nomenclature, GED) ;
