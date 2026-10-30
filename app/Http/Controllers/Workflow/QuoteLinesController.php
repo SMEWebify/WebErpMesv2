@@ -17,6 +17,7 @@ use App\Services\OrderService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Receivables\ReceivablesService;
 use App\Services\Quotes\QuoteLineCopier;
+use App\Services\Quotes\QuoteMargin;
 use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Quotes\QuoteLineToOrderLineConverter;
 use App\Services\Quotes\RequiredOperationsChecker;
@@ -257,10 +258,13 @@ class QuoteLinesController extends Controller
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $locale   = config('app.locale', 'fr');
+        // Marge de toutes les lignes en une fois (requêtes en nombre constant).
+        $margins  = app(QuoteMargin::class)->forLines($lines)['lines'];
 
         return response()->json([
-            'lines'       => $lines->map(fn ($l) => $this->formatLineJson($l, $currency, $locale)),
+            'lines'       => $lines->map(fn ($l) => $this->formatLineJson($l, $currency, $locale, $margins[$l->id] ?? null)),
             'quote_statu' => $quote->statu,
+            'margin_threshold' => (float) config('quotes.margin_alert_threshold', 0),
         ]);
     }
 
@@ -648,10 +652,14 @@ class QuoteLinesController extends Controller
         return view('workflow.quote-line-detail-edit', compact('line', 'idQuote', 'factory', 'productCustomFields'));
     }
 
-    private function formatLineJson(QuoteLines $l, string $currency, string $locale): array
+    private function formatLineJson(QuoteLines $l, string $currency, string $locale, ?array $margin = null): array
     {
         $rawPrice       = (float) ($l->getRawOriginal('selling_price') ?? 0);
         $effectivePrice = (float) $l->selling_price;
+        // Marge interne (jamais imprimée) ; une ligne de présentation n'en a pas.
+        if ($margin === null && $l->isArticle()) {
+            $margin = app(QuoteMargin::class)->forLines(collect([$l]))['lines'][$l->id] ?? null;
+        }
 
         return [
             'id'                   => $l->id,
@@ -689,6 +697,7 @@ class QuoteLinesController extends Controller
             'line_type'            => $l->line_type ?? SalesLineType::Article->value,
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
+            'margin'               => $margin,
         ];
     }
 

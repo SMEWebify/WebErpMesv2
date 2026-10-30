@@ -496,6 +496,23 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
   une ligne non article absente du payload.
 
+## Marge du devis (interne)
+
+`App\Services\Quotes\QuoteMargin`, **jamais imprimée** (aucune vue `print/` ne la lit).
+- **Coût unitaire d'une ligne article** = opérations types 1/7 (`unit_cost × lineShare`, réglage déjà
+  réparti par TaskManagePage) + nomenclature types 2-6/8 (`unit_cost × qty`) + sous-ensembles
+  (`qty × coût du sous-ensemble`, même règle, toute la profondeur). Opération portant
+  `sub_assembly_id` comptée avec son sous-ensemble seulement. Requêtes constantes (+1 par niveau).
+- Vente = formule de `QuoteCalculatorService::getSubTotal()`. Marge % **sur le coût** (comme
+  `methods_services.margin`) ; une ligne sans coût est comptée au prix de vente et signalée.
+- Fiche : carte « Marge (interne) » (`include/quote-margin-card`). Lignes : `margin` dans le JSON,
+  colonne masquable (`quote_lines_margin_column`), ligne `table-danger` sous
+  `config('quotes.margin_alert_threshold')` (`QUOTES_MARGIN_ALERT_THRESHOLD`, 0).
+- **Marge globale** (`quotes.margin.apply`) : prix = coût × (1 + taux) / (1 − remise), prix calculé
+  désactivé, lignes sans coût inchangées. Refusée si une ligne a une ligne de commande ou si le
+  devis a une commande (même rouvert), et hors statut 1. Les commandes ne sont jamais touchées.
+- Tests : `tests/Feature/QuoteMarginTest.php`, `resources/js/tests/lib/quoteMargin.test.js`.
+
 ## Modèles d'impression (devis, commande, AR)
 
 Menu PDF des fiches devis et AR (`<x-pdf-print-menu>`) : modèle + langue (`?layout=&lang=` sur

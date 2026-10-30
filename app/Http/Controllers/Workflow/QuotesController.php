@@ -27,6 +27,8 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\QuoteCalculatorService;
 use App\Services\Quotes\QuoteDuplicator;
+use App\Services\Quotes\QuoteMargin;
+use App\Services\Quotes\QuoteMarginRefused;
 use App\Services\Quotes\QuoteRevisionRefused;
 use App\Services\Quotes\QuoteRevisions;
 use Illuminate\Support\Facades\DB;
@@ -153,7 +155,14 @@ class QuotesController extends Controller
         $QuoteFamily = $id->is_template ? collect() : $revisions->family($id);
         $NewerRevision = $id->is_template ? null : $revisions->newerRevision($id);
         $OpenSiblings = (int) $id->statu === QuoteRevisions::STATU_WON ? $revisions->openSiblings($id) : collect();
+        // Marge : information interne, jamais transmise aux vues d'impression.
+        $quoteMargin = app(QuoteMargin::class);
+        $Margin = $quoteMargin->forQuote($id)['totals'] + [
+            'converted' => $quoteMargin->isConverted($id),
+            'currency'  => $currency,
+        ];
         return view('workflow/quotes-show', [
+            'Margin' => $Margin,
             'Quote' => $id,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
@@ -180,6 +189,29 @@ class QuotesController extends Controller
         ]);
     }
     
+    /**
+     * Marge globale : prix de vente des lignes recalculé depuis leur coût.
+     * Refusée sur un devis converti (prix figé) ; la commande n'est jamais touchée.
+     */
+    public function applyMargin(Request $request, int $id, QuoteMargin $margin)
+    {
+        $quote = Quotes::withTemplates()->findOrFail($id);
+        $validated = $request->validate(['margin_rate' => 'required|numeric|min:0|max:10000']);
+
+        try {
+            $result = $margin->apply($quote, (float) $validated['margin_rate']);
+        } catch (QuoteMarginRefused $e) {
+            return redirect()->route('quotes.show', ['id' => $quote->id])->with('error', $e->getMessage());
+        }
+
+        $message = trans_choice('quote_margin.applied', $result['updated'], ['count' => $result['updated']]);
+        if ($result['skipped'] > 0) {
+            $message .= ' ' . __('quote_margin.applied_skipped', ['count' => $result['skipped']]);
+        }
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])->with('success', $message);
+    }
+
     /**
      * @param UpdateQuoteRequest $request
      * @return \Illuminate\Http\RedirectResponse

@@ -8,6 +8,7 @@ import { apiRequest as apiFetch } from '../lib/http';
 import { askCreditOverride } from '../lib/creditLimit';
 import { askRequiredOperationsOverride } from '../lib/requiredOperations.jsx';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
+import { marginLevel, formatMarginRate, readMarginColumnVisible, writeMarginColumnVisible } from '../lib/quoteMargin.js';
 import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
 
 // ---------------------------------------------------------------------------
@@ -647,7 +648,7 @@ const PRESENTATION_LABELS = {
 };
 
 function PresentationRow({
-    line, info, sectionLabel, quoteStatu, units, currency, autoEdit,
+    line, info, sectionLabel, quoteStatu, units, currency, autoEdit, extraColumns = 0,
     onSaveLabel, onDelete, onPresentation,
     canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
 }) {
@@ -701,7 +702,7 @@ function PresentationRow({
                 <i className="fas fa-grip-vertical me-1" style={{ color: '#aaa' }} />
                 <span className="text-muted small">{line.ordre}</span>
             </td>
-            <td colSpan={11}>
+            <td colSpan={11 + extraColumns}>
                 <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
                     <span className="badge text-bg-light border" title={PRESENTATION_LABELS[type]}>
                         <i className={`fas fa-fw ${type === LINE_TYPES.SECTION ? 'fa-heading' : type === LINE_TYPES.SUBTOTAL ? 'fa-equals' : 'fa-paragraph'}`} />
@@ -786,6 +787,7 @@ function PresentationRow({
 function LineRow({
     line, quoteStatu, onEdit, onDelete, onDuplicate, onBreakDown, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
     info, onToggleHidden, onInsert,
+    showMargin = false, marginThreshold = 0, marginTrans = {}, currency,
     // drag props
     canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, tagTrans = {},
 }) {
@@ -815,6 +817,16 @@ function LineRow({
     };
 
     const cfg      = STATUS_CONFIG[line.statu] ?? { badge: 'text-bg-secondary', label: '—' };
+    const level    = marginLevel(line.margin, marginThreshold);
+    const money    = (v) => Number(v ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: currency || 'EUR' });
+    const marginTitle = level === 'none'
+        ? (marginTrans.no_cost ?? 'Pas de coût de revient')
+        : [
+            `${marginTrans.unit_cost ?? 'Coût unitaire'} : ${money(line.margin.unit_cost)}`,
+            `${marginTrans.cost_total ?? 'Coût de revient'} : ${money(line.margin.cost_total)}`,
+            `${marginTrans.sale_total ?? 'Prix de vente HT'} : ${money(line.margin.sale_total)}`,
+            ...(level === 'below' ? [(marginTrans.below_threshold ?? 'Marge sous le seuil de :threshold %').replace(':threshold', marginThreshold)] : []),
+        ].join('\n');
 
     const rowStyle = {
         opacity:        isDragging  ? 0.4  : (line.hide_on_pdf ? 0.55 : 1),
@@ -825,6 +837,7 @@ function LineRow({
 
     return (
         <tr
+            className={showMargin && level === 'below' ? 'table-danger' : undefined}
             draggable={canDrag}
             onDragStart={canDrag ? onDragStart : undefined}
             onDragEnter={canDrag ? onDragEnter : undefined}
@@ -896,6 +909,23 @@ function LineRow({
 
             {/* Discount */}
             <td className="text-end">{line.discount} %</td>
+
+            {/* Margin — interne, jamais imprimée */}
+            {showMargin && (
+                <td className="text-end text-nowrap" title={marginTitle}>
+                    {level === 'none' ? (
+                        <span className="text-body-secondary">—</span>
+                    ) : (
+                        <>
+                            <span className={`fw-bold ${level === 'below' ? 'text-danger' : 'text-success'}`}>
+                                {level === 'below' && <i className="fas fa-exclamation-triangle me-1" />}
+                                {formatMarginRate(line.margin.margin_rate)}
+                            </span>
+                            <div className="small text-body-secondary">{money(line.margin.margin)}</div>
+                        </>
+                    )}
+                </td>
+            )}
 
             {/* VAT */}
             <td className="small">{line.vat_label ?? '—'}</td>
@@ -1186,6 +1216,9 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
 
 export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints, trans = {} }) {
     const tagTrans = trans.equipment_tags ?? {};
+    const marginTrans = trans.quote_margin ?? {};
+    const [showMargin, setShowMargin]           = useState(() => readMarginColumnVisible());
+    const [marginThreshold, setMarginThreshold] = useState(0);
     const [lines, setLines]             = useState([]);
     const [quoteStatu, setQuoteStatu]   = useState(Number(initialStatu));
     const [selectData, setSelectData]   = useState({});
@@ -1235,6 +1268,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             const ls = linesData.lines ?? [];
             setLines(ls);
             setQuoteStatu(Number(linesData.quote_statu ?? initialStatu));
+            setMarginThreshold(Number(linesData.margin_threshold ?? 0));
             const next = ls.reduce((m, l) => Math.max(m, l.ordre), 0) + 1;
             setSelectData({ ...sd, _nextOrdre: next });
         })
@@ -1522,6 +1556,23 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         setSelected((s) => { const ns = new Set(s); ns.has(id) ? ns.delete(id) : ns.add(id); return ns; });
     };
 
+    const handleToggleMargin = () => {
+        setShowMargin((v) => { writeMarginColumnVisible(!v); return !v; });
+    };
+
+    // La gamme se modifie dans la fenêtre des tâches : le coût, donc la marge, a pu changer.
+    const handleCloseTaskModal = async () => {
+        setTaskModalLine(null);
+        try {
+            const res  = await fetch(endpoints.lines, { headers: { Accept: 'application/json' } });
+            const data = await res.json();
+            if (res.ok) setLines(data.lines ?? []);
+        } catch {
+            // marge rafraîchie au prochain chargement
+        }
+    };
+    const extraColumns = showMargin ? 1 : 0;
+
     const filteredLines = lines
         .filter((l) => {
             const q = search.toLowerCase();
@@ -1622,7 +1673,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                         )}
                     </div>
                 )}
-                <span className="badge text-bg-secondary ms-auto">
+                <button type="button"
+                    className={`btn btn-sm ms-auto ${showMargin ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                    onClick={handleToggleMargin} aria-pressed={showMargin}
+                    title={`${marginTrans.column_toggle ?? 'Afficher la colonne marge'} — ${marginTrans.internal ?? 'Information interne : jamais imprimée sur les documents client.'}`}>
+                    <i className="fas fa-percentage me-1" />{marginTrans.column ?? 'Marge'}
+                </button>
+                <span className="badge text-bg-secondary">
                     {articleCount} ligne{articleCount > 1 ? 's' : ''}
                 </span>
             </div>
@@ -1660,6 +1717,11 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                             <th>Unité</th>
                             <th className="text-end">Prix</th>
                             <th className="text-end">Remise</th>
+                            {showMargin && (
+                                <th className="text-end" title={marginTrans.internal}>
+                                    <i className="fas fa-lock me-1 text-body-secondary" />{marginTrans.column ?? 'Marge'}
+                                </th>
+                            )}
                             <th>TVA</th>
                             <th>Livraison</th>
                             <th>Statut</th>
@@ -1669,13 +1731,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={13} className="text-center py-4">
+                                <td colSpan={13 + extraColumns} className="text-center py-4">
                                     <i className="fas fa-spinner fa-spin me-2" />Chargement…
                                 </td>
                             </tr>
                         ) : filteredLines.length === 0 ? (
                             <tr>
-                                <td colSpan={13} className="text-center py-4 text-muted">
+                                <td colSpan={13 + extraColumns} className="text-center py-4 text-muted">
                                     {search ? 'Aucune ligne ne correspond.' : 'Aucune ligne dans ce devis.'}
                                     {!search && quoteStatu === 1 && (
                                         <button className="btn btn-link p-0 ms-2" onClick={handleOpenCreate}>
@@ -1694,6 +1756,10 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 canDrag={canDrag}
                                 quoteStatu={quoteStatu}
                                 tagTrans={tagTrans}
+                                showMargin={showMargin}
+                                marginThreshold={marginThreshold}
+                                marginTrans={marginTrans}
+                                currency={selectData.currency}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 onDuplicate={handleDuplicate}
@@ -1718,6 +1784,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 units={selectData.units}
                                 currency={selectData.currency}
                                 autoEdit={autoEditId === line.id}
+                                extraColumns={extraColumns}
                                 onSaveLabel={handleSaveLabel}
                                 onDelete={handleDelete}
                                 onPresentation={handlePresentation}
@@ -1792,7 +1859,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                         setLines((prev) => prev.map((l) => l.id === updatedLine.id ? updatedLine : l));
                         setTaskModalLine((prev) => prev ? { ...prev, use_calculated_price: updatedLine.use_calculated_price } : null);
                     }}
-                    onClose={() => setTaskModalLine(null)}
+                    onClose={handleCloseTaskModal}
                 />
             )}
         </div>

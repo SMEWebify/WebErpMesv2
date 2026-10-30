@@ -203,6 +203,8 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            @include('include.quote-margin-card')
+
             @can('scheduling-menu')
             <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" theme-mode="outline" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
@@ -581,7 +583,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               data-quote-id="{{ $Quote->id }}"
               data-quote-statu="{{ $Quote->statu }}"
               data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
-              data-trans="{{ json_encode(['equipment_tags' => __('equipment_tags')]) }}"
+              data-trans="{{ json_encode(['equipment_tags' => __('equipment_tags'), 'quote_margin' => __('quote_margin')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...
