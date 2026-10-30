@@ -39,6 +39,7 @@ class Purchases extends Model
 
     protected $casts = [
         'quality_clauses_frozen_at' => 'datetime',
+        'ordered_at'                => 'datetime',
     ];
 
     /**
@@ -47,6 +48,27 @@ class Purchases extends Model
      */
     protected static function booted(): void
     {
+        // Passage de « en cours » à commandée : point de départ de l'attente de l'AR
+        // fournisseur (App\Services\Purchases\SupplierAcknowledgement). Retour en cours = effacé.
+        static::creating(function (Purchases $purchase) {
+            if ($purchase->ordered_at === null && ! in_array((int) ($purchase->statu ?? 1), [1, 5], true)) {
+                $purchase->ordered_at = now();
+            }
+        });
+
+        static::updating(function (Purchases $purchase) {
+            if (! $purchase->isDirty('statu')) {
+                return;
+            }
+
+            $statu = (int) $purchase->statu;
+            if ($statu === 1) {
+                $purchase->ordered_at = null;
+            } elseif ((int) $purchase->getOriginal('statu') === 1 && $statu !== 5) {
+                $purchase->ordered_at = now();
+            }
+        });
+
         static::updated(function (Purchases $purchase) {
             if (! $purchase->wasChanged('statu')) {
                 return;

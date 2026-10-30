@@ -800,6 +800,7 @@ async function mountPurchaseLinesPage() {
             purchaseId:    parseInt(element.dataset.purchaseId, 10),
             purchaseStatu: parseInt(element.dataset.purchaseStatu, 10),
             endpoints:     parse('endpoints') ?? {},
+            ack:           parse('ack'),
         })
     );
 }

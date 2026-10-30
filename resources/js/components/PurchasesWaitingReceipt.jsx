@@ -41,18 +41,22 @@ function formatDeliveryDate(dateStr) {
 // DeliveryDateCell
 // ---------------------------------------------------------------------------
 
-function DeliveryDateCell({ date }) {
+// Date de référence : confirmée par le fournisseur (AR) si elle existe, sinon demandée.
+function DeliveryDateCell({ date, confirmed, confirmedTitle }) {
     const parsed = formatDeliveryDate(date);
     if (!parsed) return <span className="text-muted">-</span>;
+    const mark = confirmed
+        ? <i className="fas fa-handshake ms-1" title={confirmedTitle} />
+        : null;
     if (parsed.isPast) {
         return (
-            <span className="badge text-bg-danger">
+            <span className="badge text-bg-danger" title={confirmed ? confirmedTitle : undefined}>
                 <i className="fas fa-exclamation-triangle me-1" />
-                {parsed.formatted}
+                {parsed.formatted}{mark}
             </span>
         );
     }
-    return <span className="badge text-bg-success">{parsed.formatted}</span>;
+    return <span className="badge text-bg-success" title={confirmed ? confirmedTitle : undefined}>{parsed.formatted}{mark}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -134,7 +138,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
             {/* Qty */}
             <td>{new Intl.NumberFormat('fr-FR').format(line.qty)}</td>
             {/* Delivery date */}
-            <td><DeliveryDateCell date={line.delivery_date} /></td>
+            <td><DeliveryDateCell date={line.delivery_date} confirmed={line.delivery_date_confirmed} confirmedTitle={trans.confirmed_date} /></td>
             {/* Checkbox */}
             <td>
                 <div className="form-check ">

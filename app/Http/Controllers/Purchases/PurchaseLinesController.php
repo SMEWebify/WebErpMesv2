@@ -17,6 +17,7 @@ use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseReceiptService;
 use App\Services\SelectDataService;
 use App\Services\Purchases\PurchaseCriticality;
+use App\Services\Purchases\SupplierAcknowledgement;
 
 class PurchaseLinesController extends Controller
 {
@@ -219,6 +220,10 @@ class PurchaseLinesController extends Controller
         $newLine->label      = $line->label . '#dup' . $line->id;
         $newLine->receipt_qty  = 0;
         $newLine->invoiced_qty = 0;
+        // L'AR porte sur la ligne d'origine : la copie l'attend encore
+        $newLine->supplier_ack_at         = null;
+        $newLine->supplier_ack_reference  = null;
+        $newLine->confirmed_delivery_date = null;
         $newLine->save();
 
         $newLine->load([
@@ -258,6 +263,39 @@ class PurchaseLinesController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    // -------------------------------------------------------------------------
+    // POST /{purchaseId}/lines/json/acknowledge — AR fournisseur
+    // -------------------------------------------------------------------------
+
+    public function acknowledgeJson(int $purchaseId, Request $request, SupplierAcknowledgement $acknowledgement)
+    {
+        $purchase = Purchases::findOrFail($purchaseId);
+
+        $validated = $request->validate([
+            'ack_at'                          => 'required|date',
+            'reference'                       => 'nullable|string|max:100',
+            'lines'                           => 'required|array|min:1',
+            'lines.*.id'                      => 'required|integer',
+            'lines.*.confirmed_delivery_date' => 'nullable|date',
+        ]);
+
+        $updated = $acknowledgement->record($purchase, $validated['lines'], $validated['ack_at'], $validated['reference'] ?? null);
+
+        $updated->each->load([
+            'unit:id,label,code',
+            'VAT:id,label,rate',
+            'product:id,code,label',
+            'purchaseReceiptLines:id,purchase_line_id,receipt_qty,purchase_receipt_id',
+            'purchaseReceiptLines.purchaseReceipt:id,code',
+        ]);
+
+        $currency = app('Factory')->curency ?? 'EUR';
+
+        return response()->json([
+            'lines' => $updated->map(fn ($l) => $this->formatLineJson($l, $currency, config('app.locale')))->values(),
+        ]);
     }
 
     // -------------------------------------------------------------------------
@@ -354,6 +392,11 @@ class PurchaseLinesController extends Controller
             'vat_label'          => $l->VAT?->label,
             'vat_rate'           => $l->VAT?->rate,
             'delivery_date'      => $l->delivery_date,
+            'confirmed_delivery_date' => $l->confirmed_delivery_date,
+            'reference_delivery_date' => SupplierAcknowledgement::referenceDate($l),
+            'ack_gap_days'       => SupplierAcknowledgement::gapDays($l),
+            'supplier_ack_at'    => $l->supplier_ack_at,
+            'supplier_ack_reference' => $l->supplier_ack_reference,
             'certificate_type'   => $l->certificate_type,
             'construction_code'  => $l->construction_code,
             'nuclear_level'      => $l->nuclear_level,

@@ -3,6 +3,8 @@ import { formatQty } from '../utils';
 import useProductSearch from '../hooks/useProductSearch';
 import { apiRequest as apiFetch } from '../lib/http';
 import { CRITICALITY_FIELDS, applyProductCriticality, criticalityChoices, criticalityBadges } from '../lib/purchaseCriticality';
+import { canAcknowledge, referenceDate, gapBadgeClass, formatGap } from '../lib/supplierAck';
+import SupplierAckModal from './purchases/SupplierAckModal';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -119,7 +121,7 @@ function ReceiptPopover({ items, badgeClass, badgeLabel }) {
 // DeliveryDateBadge
 // ---------------------------------------------------------------------------
 
-function DeliveryDateBadge({ dateStr }) {
+function DeliveryDateBadge({ dateStr, title = 'Date de livraison prévue' }) {
     if (!dateStr) return <span className="text-muted">—</span>;
 
     const formatted = formatDate(dateStr);
@@ -130,10 +132,43 @@ function DeliveryDateBadge({ dateStr }) {
     const isPast = date < now;
 
     return (
-        <span className={`badge ${isPast ? 'text-bg-danger' : 'text-bg-success'}`} title="Date de livraison prévue">
+        <span className={`badge ${isPast ? 'text-bg-danger' : 'text-bg-success'}`} title={title}>
             {isPast && <i className="fas fa-exclamation-triangle me-1" style={{ fontSize: 9 }} />}
             {formatted}
         </span>
+    );
+}
+
+// Livraison : date de référence (confirmée par l'AR, sinon demandée), écart avec la
+// demande et état de l'AR fournisseur.
+function DeliveryCell({ line, ackEnabled, t }) {
+    const confirmed = !!line.confirmed_delivery_date;
+    const gapClass  = gapBadgeClass(line.ack_gap_days);
+
+    return (
+        <>
+            <DeliveryDateBadge
+                dateStr={referenceDate(line)}
+                title={confirmed ? t.confirmed_title : t.requested_title}
+            />
+            {confirmed && line.delivery_date && (
+                <div className="small text-body-secondary">
+                    {t.requested_short} {formatDate(line.delivery_date)}
+                    {gapClass && <span className={`badge ${gapClass} ms-1`}>{formatGap(line.ack_gap_days, t.day_unit)}</span>}
+                </div>
+            )}
+            {line.supplier_ack_at
+                ? (
+                    <div className="small text-body-secondary" title={line.supplier_ack_reference ?? ''}>
+                        <i className="fas fa-handshake me-1" />
+                        {t.ack_short} {formatDate(line.supplier_ack_at)}
+                        {line.supplier_ack_reference ? ` · ${line.supplier_ack_reference}` : ''}
+                    </div>
+                )
+                : ackEnabled && line.qty > 0 && (
+                    <div><span className="badge text-bg-secondary">{t.missing}</span></div>
+                )}
+        </>
     );
 }
 
@@ -534,6 +569,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onToggleSelect, selected,
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
+    ackEnabled, onAcknowledge, ackTrans,
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -644,7 +680,7 @@ function LineRow({
 
             {/* Date livraison */}
             <td className="small" style={{ whiteSpace: 'nowrap' }}>
-                <DeliveryDateBadge dateStr={line.delivery_date} />
+                <DeliveryCell line={line} ackEnabled={ackEnabled} t={ackTrans} />
             </td>
 
             {/* Prix */}
@@ -690,6 +726,12 @@ function LineRow({
                                     <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
                                 </button>
                             )}
+                            {ackEnabled && line.qty > 0 && (
+                                <button className="dropdown-item"
+                                    onClick={() => { onAcknowledge(line.id); setMenuOpen(false); }}>
+                                    <i className="fas fa-handshake fa-fw me-2 text-primary" />{ackTrans.action}
+                                </button>
+                            )}
                             {!isReadOnly && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
@@ -708,7 +750,7 @@ function LineRow({
 // PurchaseLinesPage — composant principal
 // ---------------------------------------------------------------------------
 
-export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialStatu, endpoints }) {
+export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialStatu, endpoints, ack = null }) {
     const [lines, setLines]             = useState([]);
     const [purchaseStatu, setPurchaseStatu] = useState(Number(initialStatu));
     const [selectData, setSelectData]   = useState({});
@@ -725,6 +767,10 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
     const [dragOver, setDragOver]       = useState(null);
 
     const isReadOnly = purchaseStatu !== 1;
+    // AR fournisseur : commande passée (ni en cours, ni annulée)
+    const ackEnabled = !!ack && canAcknowledge(purchaseStatu);
+    const ackTrans   = ack?.trans ?? {};
+    const [ackModal, setAckModal] = useState({ open: false, lineId: null });
 
     const showFlash = (type, msg) => {
         setFlash({ type, msg });
@@ -855,6 +901,13 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
         }
     };
 
+    const handleAckSaved = (savedLines, fileError) => {
+        const byId = Object.fromEntries(savedLines.map((l) => [l.id, l]));
+        setLines((prev) => prev.map((l) => byId[l.id] ?? l));
+        setAckModal({ open: false, lineId: null });
+        showFlash(fileError ? 'warning' : 'success', fileError ?? ackTrans.saved);
+    };
+
     const handleToggleSelect = (id) => {
         setSelected((s) => { const ns = new Set(s); ns.has(id) ? ns.delete(id) : ns.add(id); return ns; });
     };
@@ -930,6 +983,12 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                         <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
                     )}
                 </div>
+                {ackEnabled && lines.some((l) => l.qty > 0) && (
+                    <button type="button" className="btn btn-sm btn-outline-primary"
+                        onClick={() => setAckModal({ open: true, lineId: null })}>
+                        <i className="fas fa-handshake me-1" />{ackTrans.action}
+                    </button>
+                )}
                 <span className="badge text-bg-secondary ms-auto">
                     {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
                 </span>
@@ -1023,6 +1082,9 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                                 onDragEnd={handleDragEnd}
                                 isDragOver={dragOver === index}
                                 isDragging={dragIndexRef.current === index}
+                                ackEnabled={ackEnabled}
+                                onAcknowledge={(id) => setAckModal({ open: true, lineId: id })}
+                                ackTrans={ackTrans}
                             />
                         ))}
                     </tbody>
@@ -1038,6 +1100,17 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                     )}
                 </table>
             </div>
+
+            {ackEnabled && (
+                <SupplierAckModal
+                    open={ackModal.open}
+                    onlyLineId={ackModal.lineId}
+                    lines={[...lines].sort((a, b) => a.ordre - b.ordre)}
+                    ack={ack}
+                    onClose={() => setAckModal({ open: false, lineId: null })}
+                    onSaved={handleAckSaved}
+                />
+            )}
 
             {/* Drawer */}
             <LineDrawer

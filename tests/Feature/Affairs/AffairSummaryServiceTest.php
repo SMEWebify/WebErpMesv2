@@ -360,6 +360,24 @@ class AffairSummaryServiceTest extends TestCase
         $this->assertSame(['purchase_late'], $this->blockerCodes($this->summary()));
     }
 
+    public function test_the_supplier_confirmed_date_is_the_reference_for_purchase_delays(): void
+    {
+        $task = $this->task($this->order($this->quote(['statu' => 3])));
+        // Demandée au 1er, confirmée par l'AR au 15 : pas encore en retard le 7.
+        $this->purchaseLine($task, 2, ['delivery_date' => '2026-10-01', 'confirmed_delivery_date' => '2026-10-15']);
+
+        $summary = $this->summary();
+        $this->assertSame([], $summary['blockers']);
+        $this->assertSame('2026-10-15', $summary['sections']['purchases'][0]['next_delivery_date']);
+
+        // Confirmée plus tôt que demandée et dépassée : en retard, à la date confirmée.
+        $this->purchaseLine($task, 2, ['delivery_date' => '2026-10-20', 'confirmed_delivery_date' => '2026-10-05']);
+
+        $summary = $this->summary();
+        $this->assertSame(['purchase_late'], $this->blockerCodes($summary));
+        $this->assertSame('2026-10-05', $summary['blockers'][0]['date']);
+    }
+
     public function test_fully_received_or_canceled_purchase_is_not_flagged(): void
     {
         $task = $this->task($this->order($this->quote(['statu' => 3])));

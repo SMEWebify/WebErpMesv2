@@ -34,4 +34,18 @@ return [
 
     'on_time_tolerance_days' => (int) env('PURCHASES_ON_TIME_TOLERANCE_DAYS', 0),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Accusé de réception fournisseur : délai d'alerte
+    |--------------------------------------------------------------------------
+    |
+    | Une commande d'achat passée (commandée ou partiellement reçue) dont une
+    | ligne n'a pas d'AR N jours après la commande apparaît dans la liste
+    | « Commandes sans AR » du menu Achats. Rien n'est bloqué.
+    | (App\Services\Purchases\SupplierAcknowledgement)
+    |
+    */
+
+    'ack_overdue_days' => (int) env('PURCHASES_ACK_OVERDUE_DAYS', 3),
+
 ];

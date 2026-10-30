@@ -1610,6 +1610,7 @@ return [
     'file_role_document_signe_trans_key'       => 'Signed document',
     'file_role_accord_client_trans_key'        => 'Customer approval',
     'file_role_contractuel_trans_key'          => 'Contract document',
+    'file_role_ar_fournisseur_trans_key'       => 'Supplier acknowledgement',
     'file_role_autre_trans_key'                => 'Other',
 
     // Load planning (services x days heat grid)

@@ -83,6 +83,7 @@ return [
     'operation_transition_delays_trans_key'    => 'Délais inter-opérations',
     'affair_categories_trans_key'              => 'Catégories d\'affaire',
     'loss_reasons_trans_key'                   => 'Motifs de perte',
+    'purchases_without_ack_trans_key'          => 'Commandes sans AR',
     'purchase_quality_clauses_trans_key'       => 'Clauses qualité',
     'receipt_document_check_trans_key'         => 'Visa documentaire réception',
     'accounting_trans_key'                     => 'Comptabilité',

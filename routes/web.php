@@ -650,6 +650,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/receipt/{id}/manual-line', 'App\Http\Controllers\Purchases\PurchasesReceiptController@storeManualReceiptLine')->middleware(['auth'])->name('purchase.receipts.lines.manual');
         Route::get('/receipt/{id}/lines/json', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receiptLinesJson')->middleware(['auth'])->name('purchases.receipt.lines.json');
         // Visa documentaire des lignes de réception (certificats) : liste qualité, visa sous permission
+        Route::get('/acknowledgements/missing', 'App\Http\Controllers\Purchases\SupplierAcknowledgementController@index')->name('purchases.acknowledgements.missing');
+
         Route::get('/receipt/document-check', 'App\Http\Controllers\Purchases\ReceiptDocumentCheckController@index')->name('purchases.receipt.document-check');
         Route::get('/receipt/document-check/json', 'App\Http\Controllers\Purchases\ReceiptDocumentCheckController@listJson')->name('purchases.receipt.document-check.json');
         Route::post('/receipt/line/{purchaseReceiptLine}/document-check', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineDocumentCheck')->middleware('permission:reception-document-check')->name('purchase.receipts.lines.document-check');
@@ -665,6 +667,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{purchaseId}/lines/json/{id}',            'App\Http\Controllers\Purchases\PurchaseLinesController@destroyLineJson')->name('purchases.lines.json.destroy');
         Route::post('/{purchaseId}/lines/json/{id}/duplicate',    'App\Http\Controllers\Purchases\PurchaseLinesController@duplicateLineJson')->name('purchases.lines.json.duplicate');
         Route::post('/{purchaseId}/lines/json/reorder',           'App\Http\Controllers\Purchases\PurchaseLinesController@reorderJson')->name('purchases.lines.json.reorder');
+        Route::post('/{purchaseId}/lines/json/acknowledge',       'App\Http\Controllers\Purchases\PurchaseLinesController@acknowledgeJson')->name('purchases.lines.json.acknowledge');
         Route::post('/{purchaseId}/lines/json/store-receipt',     'App\Http\Controllers\Purchases\PurchaseLinesController@storeReceiptJson')->name('purchases.lines.json.store-receipt');
 
         Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');

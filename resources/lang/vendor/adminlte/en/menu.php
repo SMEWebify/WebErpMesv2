@@ -83,6 +83,7 @@ return [
     'operation_transition_delays_trans_key'    => 'Inter-operation delays',
     'affair_categories_trans_key'              => 'Business categories',
     'loss_reasons_trans_key'                   => 'Loss reasons',
+    'purchases_without_ack_trans_key'          => 'Orders without ack.',
     'purchase_quality_clauses_trans_key'       => 'Quality clauses',
     'receipt_document_check_trans_key'         => 'Receipt document review',
     'accounting_trans_key'                     => 'Accounting',

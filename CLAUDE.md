@@ -891,8 +891,8 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 de réception (`getAverageReceptionDelayBySupplier`, inchangé).
 - **Ligne mesurée** = ligne d'achat entièrement réceptionnée (somme des `receipt_qty` ≥ `qty`),
   à la date de sa **dernière** réception ; une ligne encore partielle n'est pas mesurée.
-- **Référence** : `purchase_lines.confirmed_delivery_date` (colonne nullable, saisie à venir
-  avec l'accusé de réception fournisseur), sinon `delivery_date`. Sans aucune des deux : hors
+- **Référence** : `purchase_lines.confirmed_delivery_date` (saisie avec l'accusé de réception
+  fournisseur, section suivante), sinon `delivery_date`. Sans aucune des deux : hors
   taux, comptée à part (`undated`).
 - À l'heure si dernière réception ≤ référence + `purchases.on_time_tolerance_days`
   (`PURCHASES_ON_TIME_TOLERANCE_DAYS`, 0), comparaison à la journée.
@@ -903,6 +903,29 @@ de réception (`getAverageReceptionDelayBySupplier`, inchangé).
   `badgeClass()` et `lib/supplierOnTime.js`.
 - Tests : `tests/Feature/Purchases/SupplierOnTimeDeliveryTest.php`,
   `resources/js/tests/lib/supplierOnTime.test.js`.
+
+## Accusé de réception fournisseur (commandes d'achat)
+
+`App\Services\Purchases\SupplierAcknowledgement`. Colonnes nullable `purchase_lines.supplier_ack_at`,
+`supplier_ack_reference` (hors `$fillable`, écrites seulement par le service) et
+`confirmed_delivery_date` ; `purchases.ordered_at` posé par `Purchases::booted` au passage de
+« en cours » à commandée (effacé au retour en cours, nul pour l'existant).
+- **Saisie** : bouton « AR reçu » (toutes les lignes) et menu de la ligne, fiche commande
+  (`purchases.lines.json.acknowledge`), même lignes verrouillées. Date confirmée par ligne, par
+  défaut la date demandée ; une nouvelle saisie remplace la précédente (activitylog). Refus 422
+  sur une commande en cours (1) ou annulée (5), ou une ligne d'une autre commande. Pas de
+  permission dédiée (même droit que les lignes). Document facultatif déposé dans la GED de la
+  commande, rôle `ar_fournisseur` (`FileRole::SUPPLIER_ACK`). Une ligne dupliquée n'a pas d'AR.
+- **Ligne** : date de référence en badge, date demandée et écart (`gapDays()`, `lib/supplierAck.js`).
+- **Liste** `/purchases/acknowledgements/missing` (menu Achats, badge) : commandes au statut 2
+  ou 3, passées depuis ≥ `purchases.ack_overdue_days` (`PURCHASES_ACK_OVERDUE_DAYS`, 3) jours
+  (`ordered_at`, sinon `created_at`), avec une ligne de quantité non nulle sans AR. Informatif.
+- **Date de référence des retards** = date confirmée, sinon demandée (`referenceDate()`,
+  `REFERENCE_SQL`) : synthèse d'affaire (`purchase_late`, prochaine date), écran « En attente de
+  réception », retard proposé à la notation (`SupplierReceiptRating::daysLate`), taux à l'heure.
+  Les écrans de planning (Gantt, charge) ne lisent aucune date d'achat.
+- Tests : `tests/Feature/Purchases/SupplierAcknowledgementTest.php`, `AffairSummaryServiceTest`,
+  `resources/js/tests/lib/supplierAck.test.js`.
 
 ## Fournisseur qualifié obligatoire (commandes d'achat)
 

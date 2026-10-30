@@ -8,6 +8,7 @@ use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
+use App\Services\Purchases\SupplierAcknowledgement;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
@@ -49,6 +50,11 @@ class MenuServiceProvider extends ServiceProvider
                 })->count();
             });
 
+            // Commandes d'achat passées depuis N jours sans AR fournisseur (SupplierAcknowledgement)
+            $purchasesWithoutAckCount = Cache::remember('menu_purchases_without_ack', 60, function () {
+                return app(SupplierAcknowledgement::class)->overdueCount();
+            });
+
             $incomingInvoicesCount = Cache::remember('menu_incoming_invoices', 60, function () {
                 return PdpIncomingInvoice::whereIn('status', [
                     PdpIncomingInvoice::STATUS_RECEIVED,
@@ -75,6 +81,13 @@ class MenuServiceProvider extends ServiceProvider
                 'url'         => 'invoices/request',
                 'label'       => $invoicesRequestsCount,
                 'label_color' => 'warning',
+            ]);
+
+            $event->menu->addAfter('purchase_list', [
+                'text'        => 'purchases_without_ack_trans_key',
+                'url'         => 'purchases/acknowledgements/missing',
+                'label'       => $purchasesWithoutAckCount ?: null,
+                'label_color' => 'danger',
             ]);
 
             $event->menu->addBefore('po_receipt', [

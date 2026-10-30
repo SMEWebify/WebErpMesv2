@@ -24,6 +24,8 @@ class FileRole
     public const CUSTOMER_APPROVAL = 'accord_client';
     // Pièce contractuelle d'une commande (bon de commande client, cahier des charges, CGA…)
     public const CONTRACTUAL = 'contractuel';
+    // Accusé de réception d'une commande d'achat envoyé par le fournisseur
+    public const SUPPLIER_ACK = 'ar_fournisseur';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -50,6 +52,7 @@ class FileRole
             self::SIGNED,
             self::CUSTOMER_APPROVAL,
             self::CONTRACTUAL,
+            self::SUPPLIER_ACK,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,

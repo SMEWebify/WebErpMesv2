@@ -16,6 +16,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
+use App\Services\Purchases\SupplierAcknowledgement;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
@@ -205,7 +206,7 @@ class AffairSummaryService
                     'amount'             => round((float) $group->sum('total_selling_price'), 2),
                     'lines'              => $group->count(),
                     'received_lines'     => $group->filter(fn ($l) => (float) $l->receipt_qty >= (float) $l->qty)->count(),
-                    'next_delivery_date' => $this->date($group->filter(fn ($l) => (float) $l->receipt_qty < (float) $l->qty)->min('delivery_date')),
+                    'next_delivery_date' => $this->date($group->filter(fn ($l) => (float) $l->receipt_qty < (float) $l->qty)->min('reference_date')),
                     'url'                => route('purchases.show', $first->purchases_id),
                 ];
             })->values()->all(),
@@ -384,8 +385,11 @@ class AffairSummaryService
             ->get([
                 'purchase_lines.id', 'purchase_lines.purchases_id', 'purchase_lines.tasks_id', 'purchase_lines.label',
                 'purchase_lines.qty', 'purchase_lines.receipt_qty', 'purchase_lines.total_selling_price',
-                'purchase_lines.delivery_date', 'purchases.code as purchase_code', 'purchases.statu as purchase_statu',
-            ]);
+                'purchase_lines.delivery_date', 'purchase_lines.confirmed_delivery_date',
+                'purchases.code as purchase_code', 'purchases.statu as purchase_statu',
+            ])
+            // Date de référence des retards : confirmée par le fournisseur (AR), sinon demandée
+            ->each(fn ($line) => $line->reference_date = SupplierAcknowledgement::referenceDate($line));
     }
 
     /**
@@ -475,11 +479,12 @@ class AffairSummaryService
                 continue;
             }
 
-            // Achat en retard : commandé, date de livraison passée, pas entièrement reçu.
+            // Achat en retard : commandé, date de référence (confirmée, sinon demandée) passée,
+            // pas entièrement reçu.
             if (in_array($statu, self::PURCHASE_AWAITING, true)
-                && $line->delivery_date && Carbon::parse($line->delivery_date)->lt($today)) {
+                && $line->reference_date && Carbon::parse($line->reference_date)->lt($today)) {
                 $blockers[] = $this->blocker('purchase_late', 'danger', 'purchases', $line->purchase_code,
-                    $line->delivery_date, route('purchases.show', $line->purchases_id), ['label' => $line->label]);
+                    $line->reference_date, route('purchases.show', $line->purchases_id), ['label' => $line->label]);
                 continue;
             }
 

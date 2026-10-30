@@ -171,7 +171,8 @@ class PurchaseLines extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu']);
+        // AR fournisseur et date confirmée : qui a changé la date de référence des retards
+        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu', 'confirmed_delivery_date', 'supplier_ack_at', 'supplier_ack_reference']);
         // Chain fluent methods for configuration options
     }
 }

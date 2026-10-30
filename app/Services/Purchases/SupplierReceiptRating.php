@@ -96,8 +96,9 @@ class SupplierReceiptRating
         $promised = DB::table('purchase_receipt_lines')
             ->join('purchase_lines', 'purchase_lines.id', '=', 'purchase_receipt_lines.purchase_line_id')
             ->where('purchase_receipt_lines.purchase_receipt_id', $receipt->id)
-            ->whereNotNull('purchase_lines.delivery_date')
-            ->min('purchase_lines.delivery_date');
+            // Date de référence : confirmée par le fournisseur (AR), sinon demandée
+            ->whereRaw(SupplierAcknowledgement::REFERENCE_SQL . ' IS NOT NULL')
+            ->min(DB::raw(SupplierAcknowledgement::REFERENCE_SQL));
 
         if (! $promised) {
             return null;

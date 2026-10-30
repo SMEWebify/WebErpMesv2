@@ -1107,6 +1107,7 @@ return [
                     'url'  => 'purchases/quotation',
                 ],
                 [
+                    'key'  => 'purchase_list',
                     'text' => 'purchase_list_trans_key',
                     'url'  => 'purchases',
                 ],

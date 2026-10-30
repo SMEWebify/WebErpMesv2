@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Purchases;
 
+use App\Services\Purchases\SupplierAcknowledgement;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
 use App\Models\Purchases\Purchases;
@@ -93,6 +94,7 @@ class PurchasesReceiptController extends Controller
             'supplier'             => __('general_content.supplier_trans_key'),
             'description'          => __('general_content.description_trans_key'),
             'delivery_date'        => __('general_content.delivery_date_trans_key'),
+            'confirmed_date'       => __('supplier_ack.confirmed_date_hint'),
             'action'               => __('general_content.action_trans_key'),
             'add_to_document'      => __('general_content.add_to_document_trans_key'),
             'no_data'              => __('general_content.no_data_trans_key'),
@@ -132,7 +134,9 @@ class PurchasesReceiptController extends Controller
                 'code'              => $line->code,
                 'label'             => $line->label,
                 'qty'               => $line->qty,
-                'delivery_date'     => $line->delivery_date ? \Carbon\Carbon::parse($line->delivery_date)->format('Y-m-d') : null,
+                // Date de référence des retards : confirmée par le fournisseur (AR), sinon demandée
+                'delivery_date'     => SupplierAcknowledgement::referenceDate($line),
+                'delivery_date_confirmed' => (bool) $line->confirmed_delivery_date,
                 'purchases_id'      => $line->purchases_id,
                 'purchase_code'     => $line->purchase?->code,
                 'purchase_url'      => $line->purchases_id ? route('purchases.show', ['id' => $line->purchases_id]) : null,

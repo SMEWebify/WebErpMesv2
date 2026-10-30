@@ -193,6 +193,14 @@ $purchaseSteps = json_encode([
                   'reorder'       => route('purchases.lines.json.reorder',       ['purchaseId' => $Purchase->id]),
                   'storeReceipt'  => route('purchases.lines.json.store-receipt', ['purchaseId' => $Purchase->id]),
               ]) }}"
+              data-ack="{{ json_encode([
+                  'purchaseId' => $Purchase->id,
+                  'endpoints'  => [
+                      'acknowledge' => route('purchases.lines.json.acknowledge', ['purchaseId' => $Purchase->id]),
+                      'fileStore'   => route('files.json.store'),
+                  ],
+                  'trans' => __('supplier_ack.screen'),
+              ]) }}"
           ></div>
       </div>
       @if($CustomFields)
