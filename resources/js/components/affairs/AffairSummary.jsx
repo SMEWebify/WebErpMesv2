@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
     request, fmt, formatDate, formatAmount, formatNumber, todayIso, StatusBadge,
 } from './affairShared.jsx';
+import { criticalityClass, statusClass } from '../../lib/affairRisks.js';
 
 /**
  * Synthèse d'une affaire (onglet par défaut de la fiche opportunité) :
@@ -161,6 +162,59 @@ function NextActionCard({ action, trans }) {
                 <h3 className="card-title m-0 fs-6">{trans.next_action_title ?? 'Prochaine action'}</h3>
             </div>
             <div className="card-body d-flex align-items-center">{body}</div>
+        </div>
+    );
+}
+
+// ── Risques critiques ouverts ──────────────────────────────────────────────
+
+/** Ouvre l'onglet « Risques » de la fiche (même page). */
+function showRisksTab(event) {
+    const link = document.querySelector('a[data-bs-toggle="tab"][href="#Risks"]');
+    if (link && window.bootstrap?.Tab) {
+        event.preventDefault();
+        window.bootstrap.Tab.getOrCreateInstance(link).show();
+    }
+}
+
+function RisksCard({ risks, trans, locale }) {
+    if (!risks) return null;
+    const t = trans.risks ?? {};
+    const critical = risks.critical ?? [];
+
+    return (
+        <div className={`card mb-3 ${critical.length ? 'card-outline card-danger' : ''}`}>
+            <div className="card-header d-flex align-items-center gap-2">
+                <h3 className="card-title m-0 fs-6"><i className="fas fa-shield-alt me-1" />{t.card_title ?? 'Risques critiques ouverts'}</h3>
+                <span className={`badge ${critical.length ? 'text-bg-danger' : 'text-bg-success'}`}>{critical.length}</span>
+                <a href="#Risks" className="ms-auto small" onClick={showRisksTab}>{t.open_register ?? 'Voir le registre'}</a>
+            </div>
+            {critical.length === 0 ? (
+                <div className="card-body small">
+                    <span className="text-success"><i className="fas fa-check-circle me-1" />{t.card_none ?? 'Aucun risque critique ouvert.'}</span>
+                    {risks.active > 0 && (
+                        <span className="text-body-secondary ms-2">{fmt(t.card_summary, { active: risks.active, overdue: risks.overdue })}</span>
+                    )}
+                </div>
+            ) : (
+                <div className="list-group list-group-flush">
+                    {critical.map(risk => (
+                        <div key={risk.id} className="list-group-item d-flex flex-wrap align-items-center gap-2">
+                            <span className={`badge ${criticalityClass(risk.criticality, risks.threshold)}`}>{risk.criticality}</span>
+                            <span className="flex-grow-1 text-break" style={{ minWidth: 0 }}>
+                                {risk.label}
+                                <span className="small text-body-secondary ms-1">{t.categories?.[risk.category] ?? risk.category}</span>
+                            </span>
+                            <span className={`badge ${statusClass(risk.status)}`}>{t.statuses?.[risk.status] ?? risk.status}</span>
+                            {risk.due_date && (
+                                <span className={`small ${risk.overdue ? 'text-danger fw-bold' : 'text-body-secondary'}`}>
+                                    {formatDate(risk.due_date, locale)}
+                                </span>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
@@ -472,6 +526,8 @@ export default function AffairSummary({ endpoints = {}, trans = {}, locale = 'fr
                     </div>
 
                     <TotalsTiles totals={data.totals} trans={trans} locale={locale} currency={currency} />
+
+                    <RisksCard risks={data.risks} trans={trans} locale={locale} />
 
                     <DetailSections
                         sections={data.sections}

@@ -451,7 +451,7 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
 - **`AffairSummaryService`** : étape déduite des documents (`App\Enums\AffairStage`),
   blocages par règles explicites (devis expiré / envoyé sans réponse, achat en retard,
   réception partielle, tâche suspendue, commande en retard, facture échue, visite non
-  validée), prochaine action, montants. **9 requêtes quelle que soit la taille**, lectures
+  validée), prochaine action, montants. **10 requêtes quelle que soit la taille** (risques compris), lectures
   en `toBase()` (les accesseurs de prix feraient une requête par ligne) — couvert par un
   test de comptage. Seuils dans `config/affairs.php`.
 - **Permissions** : les sections d'un module dont l'utilisateur n'a pas le menu
@@ -460,6 +460,24 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
 - Front : `components/affairs/AffairSummary.jsx` et `AffairTimeline.jsx` (onglet
   `#TimeLine`, chargé quand il devient visible). Traductions `resources/lang/*/affairs.php`.
 - Tests : `tests/Feature/Affairs/`.
+
+### Registre des risques de l'affaire
+`affair_risks` (opportunité, commande de l'affaire facultative, catégorie de
+`config('affairs.risks.categories')`, probabilité et gravité 1-4, action de maîtrise, responsable,
+échéance, statut `open` | `mitigated` | `closed` | `occurred`), activitylog, **jamais supprimé**.
+`App\Services\Affairs\AffairRiskRegister`, routes `opportunities.json.risks*` (écriture sous
+`permission:opportunities-menu`), onglet « Risques » (`components/affairs/AffairRisks.jsx`, DataTable).
+- **Criticité** = P × G ; **actif** = ouvert ou survenu ; **critique** = actif et criticité ≥
+  `affairs.risks.critical_threshold` (`AFFAIRS_RISK_CRITICAL_THRESHOLD`, 9).
+- **Clôture d'un risque critique** (criticité avant **ou** après la saisie) : permission
+  `affair-risk-close` (Admin par migration), sinon 403. Autres statuts libres.
+- **Synthèse** : 10ᵉ requête ; blocages `risk_critical` (danger) et `risk_overdue` (warning, échéance
+  passée), tous deux possibles sur un même risque ; bloc `risks` (hors `sections`, `counts` inchangé)
+  pour la carte « Risques critiques ouverts ». Section `risks` toujours visible.
+- **Revue de contrat** : `affair_categories.requires_risk_register` (faux par défaut) →
+  `ContractReview::state()['risk_register']` non nul tant qu'aucun risque (affaire ou commande),
+  bandeau dans l'onglet ; **jamais bloquant** (test).
+- Tests : `tests/Feature/Affairs/AffairRiskRegisterTest.php`, `resources/js/tests/lib/affairRisks.test.js`.
 
 ## Trames de devis, duplication, copie de lignes
 
@@ -776,7 +794,7 @@ d'affiché : fonctionnement d'avant.
 - Kanban : `phase_release` posé sur les cartes concernées (`TaskController::withPhaseRelease`,
   nombre de requêtes constant), badges `lib/taskRelease.js`. Synthèse d'affaire : blocage
   `task_awaiting_release` par commande et `awaiting_release` des commandes, par jointure dans
-  `loadTasks` (toujours 9 requêtes).
+  `loadTasks` (sans requête en plus).
 - Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/taskRelease.test.js`.
 

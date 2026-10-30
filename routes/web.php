@@ -308,6 +308,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/json/loss-reason', 'App\Http\Controllers\Workflow\OpportunitiesController@lossReasonJson')->name('opportunities.json.loss-reason');
         Route::get('/{id}/json/summary', 'App\Http\Controllers\Workflow\OpportunitySummaryController@summary')->name('opportunities.json.summary');
         Route::get('/{id}/json/timeline', 'App\Http\Controllers\Workflow\OpportunitySummaryController@timeline')->name('opportunities.json.timeline');
+        // Registre des risques (clôture d'un risque critique contrôlée par AffairRiskRegister : affair-risk-close)
+        Route::get('/{id}/json/risks', 'App\Http\Controllers\Workflow\AffairRisksController@index')->name('opportunities.json.risks');
+        Route::post('/{id}/json/risks', 'App\Http\Controllers\Workflow\AffairRisksController@store')->middleware('permission:opportunities-menu')->name('opportunities.json.risks.store');
+        Route::put('/{id}/json/risks/{risk}', 'App\Http\Controllers\Workflow\AffairRisksController@update')->middleware('permission:opportunities-menu')->name('opportunities.json.risks.update');
         Route::get('/{id}/visit', 'App\Http\Controllers\Workflow\OpportunityVisitsController@show')->name('opportunities.visit');
         Route::post('/{id}/visits/json', 'App\Http\Controllers\Workflow\OpportunityVisitsController@store')->name('opportunities.visits.store');
 

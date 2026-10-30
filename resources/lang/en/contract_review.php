@@ -49,6 +49,11 @@ return [
     'warning_todo' => 'The contract review of this order has not been signed off.',
     'warning_rejected' => 'The contract review of this order was rejected.',
     'warning_link' => 'Open the review',
+    'risk_register' => [
+        'warning' => 'The affair category requires a risk register and no risk has been recorded. The sign-off remains possible.',
+        'link' => 'Record the affair risks',
+        'no_affair' => 'The order is not linked to any affair (opportunity): risks are recorded on the opportunity.',
+    ],
 
     // Change request
     'change' => [

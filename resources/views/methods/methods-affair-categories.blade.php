@@ -21,6 +21,7 @@
                 <th>{{ __('general_content.label_trans_key') }}</th>
                 <th>{{ __('affairs.category.required_services') }}</th>
                 <th>{{ __('manufacturing_dossier.label') }}</th>
+                <th>{{ __('affairs.risks.register') }}</th>
                 <th>{{ __('affairs.category.active') }}</th>
                 <th>{{ __('affairs.category.usage') }}</th>
                 <th></th>
@@ -42,6 +43,13 @@
                 <td>
                   @if ($category->requires_manufacturing_dossier)
                     <span class="badge text-bg-info" title="{{ __('affairs.category.requires_dossier') }}"><i class="fas fa-folder-open me-1"></i>{{ __('manufacturing_dossier.short') }}</span>
+                  @else
+                    <span class="text-body-secondary">—</span>
+                  @endif
+                </td>
+                <td>
+                  @if ($category->requires_risk_register)
+                    <span class="badge text-bg-warning" title="{{ __('affairs.category.requires_risk_register') }}"><i class="fas fa-shield-alt me-1"></i>{{ __('affairs.risks.required_short') }}</span>
                   @else
                     <span class="text-body-secondary">—</span>
                   @endif
@@ -99,6 +107,12 @@
                           <input type="checkbox" class="form-check-input" name="requires_manufacturing_dossier" value="1" id="requires_dossier_{{ $category->id }}" @checked($category->requires_manufacturing_dossier)>
                           <label class="form-check-label" for="requires_dossier_{{ $category->id }}">{{ __('affairs.category.requires_dossier') }}</label>
                           <div class="form-text">{{ __('affairs.category.requires_dossier_help') }}</div>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                          <input type="hidden" name="requires_risk_register" value="0">
+                          <input type="checkbox" class="form-check-input" name="requires_risk_register" value="1" id="requires_risks_{{ $category->id }}" @checked($category->requires_risk_register)>
+                          <label class="form-check-label" for="requires_risks_{{ $category->id }}">{{ __('affairs.category.requires_risk_register') }}</label>
+                          <div class="form-text">{{ __('affairs.category.requires_risk_register_help') }}</div>
                         </div>
                         <div class="form-check form-switch">
                           <input type="hidden" name="active" value="0">
@@ -162,6 +176,12 @@
             <input type="checkbox" class="form-check-input" name="requires_manufacturing_dossier" value="1" id="requires_dossier_new" @checked(old('requires_manufacturing_dossier'))>
             <label class="form-check-label" for="requires_dossier_new">{{ __('affairs.category.requires_dossier') }}</label>
             <div class="form-text">{{ __('affairs.category.requires_dossier_help') }}</div>
+          </div>
+          <div class="form-check form-switch mt-3">
+            <input type="hidden" name="requires_risk_register" value="0">
+            <input type="checkbox" class="form-check-input" name="requires_risk_register" value="1" id="requires_risks_new" @checked(old('requires_risk_register'))>
+            <label class="form-check-label" for="requires_risks_new">{{ __('affairs.category.requires_risk_register') }}</label>
+            <div class="form-text">{{ __('affairs.category.requires_risk_register_help') }}</div>
           </div>
           <x-slot name="footerSlot">
             <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

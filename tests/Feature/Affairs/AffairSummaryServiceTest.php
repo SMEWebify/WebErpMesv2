@@ -12,6 +12,7 @@ use App\Models\Planning\TaskActivities;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\Purchases;
 use App\Models\User;
+use App\Models\Workflow\AffairRisk;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\InvoicePayment;
 use App\Models\Workflow\Invoices;
@@ -245,13 +246,20 @@ class AffairSummaryServiceTest extends TestCase
                 $task = $this->task($line);
                 $this->purchaseLine($task, 2);
                 $this->invoice($line);
+                // Risques critiques et en retard : une seule requête quel qu'en soit le nombre
+                AffairRisk::forceCreate([
+                    'opportunities_id' => $this->opportunity->id, 'orders_id' => $line->orders_id,
+                    'label' => 'Risque ' . $i, 'category' => 'technical', 'probability' => 4, 'severity' => 4,
+                    'due_date' => '2026-10-01', 'status' => 'open',
+                ]);
             }
         };
 
         $count = function () {
+            $opportunity = $this->opportunity->fresh(); // hors comptage : seule la synthèse est mesurée
             DB::flushQueryLog();
             DB::enableQueryLog();
-            $this->summary();
+            $this->service->summarize($opportunity, null, $this->now);
             $queries = count(DB::getQueryLog());
             DB::disableQueryLog();
             return $queries;
@@ -263,7 +271,8 @@ class AffairSummaryServiceTest extends TestCase
         $large = $count();
 
         $this->assertSame($small, $large);
-        $this->assertLessThanOrEqual(10, $large);
+        // 9 requêtes historiques + 1 pour le registre des risques
+        $this->assertSame(10, $large);
     }
 
     // ------------------------------------------------------------------

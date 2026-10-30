@@ -54,5 +54,6 @@ return [
         'unqualified-supplier-override' => 'Créer ou valider une commande d\'achat chez un fournisseur non qualifié (motif obligatoire).',
         'contract-review-approve' => 'Viser (valider ou rejeter) la revue de contrat d\'une commande et ses avenants ; annuler un avenant.',
         'order-price-recalculate' => 'Activer le prix calculé d\'une ligne de commande sortie de préparation (motif obligatoire).',
+        'affair-risk-close' => 'Clôturer un risque critique du registre des risques d\'une affaire.',
     ],
 ];

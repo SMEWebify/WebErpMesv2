@@ -27,4 +27,21 @@ return [
 
     'visit_draft_hours' => (int) env('AFFAIRS_VISIT_DRAFT_HOURS', 48),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Risk register
+    |--------------------------------------------------------------------------
+    |
+    | Categories offered for an affair risk (labels in affairs.risks.categories)
+    | and the criticality (probability × severity, both 1-4) from which an
+    | active risk is critical: flagged in the summary, and closing it requires
+    | the `affair-risk-close` permission.
+    |
+    */
+
+    'risks' => [
+        'categories' => ['technical', 'schedule', 'quality', 'supply', 'contractual', 'safety'],
+        'critical_threshold' => (int) env('AFFAIRS_RISK_CRITICAL_THRESHOLD', 9),
+    ],
+
 ];

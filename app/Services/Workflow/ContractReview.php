@@ -5,6 +5,7 @@ namespace App\Services\Workflow;
 use App\Models\User;
 use App\Models\Workflow\OrderAmendment;
 use App\Models\Workflow\Orders;
+use App\Services\Affairs\AffairRiskRegister;
 use App\Services\Files\FileRole;
 use App\Services\OrderConfirmationService;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,10 @@ use Illuminate\Support\Facades\Lang;
  * Une revue rejetée garde le refus de BPF existant (ProductionRelease).
  *
  * Un avenant (OrderAmendments) rouvre la revue ; le visa suivant le clôt.
+ *
+ * Registre des risques : sur une catégorie d'affaire qui l'exige, l'état porte un
+ * avertissement tant qu'aucun risque n'est recensé (AffairRiskRegister) — le visa
+ * reste possible.
  */
 class ContractReview
 {
@@ -41,6 +46,7 @@ class ContractReview
     public function __construct(
         private OrderConfirmationService $confirmations,
         private OrderAmendments $amendments,
+        private AffairRiskRegister $risks,
     ) {
     }
 
@@ -231,6 +237,8 @@ class ContractReview
             'change' => [
                 'pending' => $pending !== null || $legacyPending,
             ],
+            // Avertissement seulement (null = rien à signaler ou option inactive).
+            'risk_register' => self::applies($order) ? $this->risks->contractReviewWarning($order) : null,
         ];
     }
 

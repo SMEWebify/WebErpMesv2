@@ -16,6 +16,13 @@ $oppSteps = json_encode([
     ['value' => 5, 'label' => __('general_content.closed_lost_trans_key')],
     ['value' => 6, 'label' => __('general_content.informational_trans_key')],
 ]);
+$riskEndpoints = [
+    'index'  => route('opportunities.json.risks', $Opportunity->id),
+    'store'  => route('opportunities.json.risks.store', $Opportunity->id),
+    'update' => route('opportunities.json.risks.update', ['id' => $Opportunity->id, 'risk' => '__RISK__']),
+];
+$riskCount = \App\Models\Workflow\AffairRisk::where('opportunities_id', $Opportunity->id)->count();
+$riskUsers = \App\Models\User::orderBy('name')->get(['id', 'name']);
 $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opportunity, 'opportunity')
     + ['endpoint' => route('opportunities.json.loss-reason', $Opportunity->id)];
 @endphp
@@ -39,6 +46,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opp
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Summary" data-bs-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{ __('affairs.summary_tab') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Opportunity" data-bs-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Risks" data-bs-toggle="tab"><i class="fas fa-shield-alt"></i> {{ __('affairs.risks.tab') }} ({{ $riskCount }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#TimeLine" data-bs-toggle="tab"><i class="fas fa-stream"></i> {{ __('affairs.timeline_tab') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Activities" data-bs-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Events" data-bs-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
@@ -175,6 +183,14 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opp
           </div>
         </div>
       </div>   
+      <div class="tab-pane" id="Risks">
+        <div data-react="affair-risks"
+             data-endpoints='@json($riskEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-trans='@json(__('affairs'), JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-users='@json($riskUsers, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+             data-can-edit="{{ auth()->user()->can('opportunities-menu') ? '1' : '0' }}"
+             data-locale="{{ app()->getLocale() }}"></div>
+      </div>
       <div class="tab-pane" id="TimeLine">
         <div data-react="affair-timeline"
              data-endpoint="{{ $affairEndpoints['timeline'] }}"

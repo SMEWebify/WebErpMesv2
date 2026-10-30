@@ -16,12 +16,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AffairCategory extends Model
 {
-    protected $fillable = ['code', 'label', 'ordre', 'active', 'requires_manufacturing_dossier'];
+    protected $fillable = ['code', 'label', 'ordre', 'active', 'requires_manufacturing_dossier', 'requires_risk_register'];
 
     protected $casts = [
         'ordre'  => 'integer',
         'active' => 'boolean',
         'requires_manufacturing_dossier' => 'boolean',
+        'requires_risk_register' => 'boolean',
     ];
 
     public function scopeOrdered(Builder $query): Builder

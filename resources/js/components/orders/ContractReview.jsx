@@ -111,6 +111,19 @@ function ReviewCard({ state, trans, endpoints, onState }) {
                     </div>
                 )}
 
+                {state.risk_register && !frozen && (
+                    // Catégorie d'affaire à registre des risques, aucun risque recensé : jamais bloquant.
+                    <div className="alert alert-warning py-2">
+                        <i className="fas fa-shield-alt me-1" />
+                        {trans.risk_register?.warning}
+                        {state.risk_register.opportunity_url ? (
+                            <a href={state.risk_register.opportunity_url} className="ms-1">{trans.risk_register?.link}</a>
+                        ) : (
+                            <div className="small">{trans.risk_register?.no_affair}</div>
+                        )}
+                    </div>
+                )}
+
                 {message && <div className={`alert alert-${message.type} py-2`}>{message.text}</div>}
 
                 <h6 className="fw-bold">{trans.checklist_title}</h6>

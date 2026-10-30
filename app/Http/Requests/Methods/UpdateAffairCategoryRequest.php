@@ -22,6 +22,7 @@ class UpdateAffairCategoryRequest extends FormRequest
             'ordre'  => 'nullable|integer|min:0',
             'active' => 'boolean',
             'requires_manufacturing_dossier' => 'boolean',
+            'requires_risk_register' => 'boolean',
             'required_services'   => 'nullable|array',
             'required_services.*' => 'integer|exists:methods_services,id',
         ];

@@ -54,5 +54,6 @@ return [
         'unqualified-supplier-override' => 'Create or validate a purchase order with an unqualified supplier (reason required).',
         'contract-review-approve' => 'Sign off (approve or reject) an order\'s contract review and its amendments; cancel an amendment.',
         'order-price-recalculate' => 'Enable the calculated price of an order line past preparation (reason required).',
+        'affair-risk-close' => 'Close a critical risk of an affair risk register.',
     ],
 ];

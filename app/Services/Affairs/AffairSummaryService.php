@@ -7,6 +7,7 @@ use App\Models\EmailLog;
 use App\Models\Planning\Task;
 use App\Models\Planning\TaskActivities;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Workflow\AffairRisk;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\InvoicePayment;
 use App\Models\Workflow\Opportunities;
@@ -28,7 +29,7 @@ use Illuminate\Support\Collection;
  * Les blocages sont des règles explicites et testées, pas une appréciation de
  * l'IA : le dirigeant doit pouvoir comprendre pourquoi une alerte s'affiche.
  *
- * Nombre de requêtes constant (9), quelle que soit la taille de l'affaire :
+ * Nombre de requêtes constant (10), quelle que soit la taille de l'affaire :
  * chaque niveau est chargé en une fois par whereIn sur le niveau précédent,
  * et les montants sont agrégés en SQL ou à partir des lignes déjà chargées.
  * Les lectures passent par toBase() : les accesseurs Eloquent (prix calculé,
@@ -36,7 +37,8 @@ use Illuminate\Support\Collection;
  *
  * Les sections masquées (permissions de l'utilisateur) disparaissent de la
  * réponse avec leurs blocages, montants et actions ; l'étape reste calculée
- * sur toute l'affaire.
+ * sur toute l'affaire. Les risques (registre de l'affaire) et les visites
+ * suivent l'opportunité : toujours visibles.
  */
 class AffairSummaryService
 {
@@ -57,6 +59,8 @@ class AffairSummaryService
         'dossier_unvalidated' => 'validate_dossier',
         'invoice_overdue'   => 'chase_payment',
         'visit_unvalidated' => 'finish_visit',
+        'risk_critical'     => 'treat_risk',
+        'risk_overdue'      => 'treat_risk',
     ];
 
     // quotes.statu
@@ -92,6 +96,7 @@ class AffairSummaryService
         $today   = $now->copy()->startOfDay();
         $visible = array_fill_keys($visibleSections ?? self::SECTIONS, true);
         $visible['visits'] = true;
+        $visible['risks'] = true;
 
         $quotes        = $this->loadQuotes($opportunity);
         $orders        = $this->loadOrders($quotes->pluck('id')->all());
@@ -107,6 +112,11 @@ class AffairSummaryService
             ->where('opportunities_id', $opportunity->id)
             ->where('type', 3) // visite sur site saisie à la main
             ->exists();
+        $risks         = AffairRisk::query()
+            ->where('opportunities_id', $opportunity->id)
+            ->whereIn('status', AffairRiskRegister::ACTIVE)
+            ->orderBy('id')
+            ->toBase()->get(['id', 'label', 'category', 'probability', 'severity', 'due_date', 'status']);
 
         $linesByOrder = $lines->groupBy('orders_id');
         $tasksByOrder = $tasks->groupBy('orders_id');
@@ -131,6 +141,7 @@ class AffairSummaryService
         });
 
         $blockers = $this->detectBlockers($quotes, $orders, $lines, $tasks, $purchaseLines, $invoices, $visits, $now, $today);
+        $blockers = array_merge($blockers, $this->riskBlockers($opportunity, $risks, $today));
         $stage    = $this->resolveStage($opportunity, $quotes, $orders, $lines, $tasks, $invoices, $visits, $onsiteEvent);
 
         $blockers = array_values(array_filter($blockers, fn ($b) => isset($visible[$b['section']])));
@@ -240,6 +251,7 @@ class AffairSummaryService
             'totals'      => $totals,
             'counts'      => array_map('count', $sections) + ['tasks' => isset($visible['orders']) ? $tasks->count() : null],
             'sections'    => $sections,
+            'risks'       => $this->riskSummary($risks, $today),
             'generated_at' => $now->toIso8601String(),
         ];
     }
@@ -568,6 +580,54 @@ class AffairSummaryService
         }
 
         return $blockers;
+    }
+
+    /**
+     * Risques actifs (ouverts ou survenus) : un blocage par risque critique, un par
+     * risque dont l'échéance de l'action de maîtrise est passée. Un risque critique
+     * en retard porte les deux : ce sont deux faits distincts.
+     */
+    private function riskBlockers(Opportunities $opportunity, Collection $risks, Carbon $today): array
+    {
+        $blockers = [];
+        $url = route('opportunities.show', $opportunity->id) . '#Risks';
+
+        foreach ($risks as $risk) {
+            $criticality = AffairRiskRegister::criticality($risk->probability, $risk->severity);
+            if (AffairRiskRegister::isCritical($risk->probability, $risk->severity)) {
+                $blockers[] = $this->blocker('risk_critical', 'danger', 'risks', null, null, $url,
+                    ['label' => $risk->label, 'criticality' => $criticality]);
+            }
+            if (AffairRiskRegister::isOverdue($risk->status, $risk->due_date, $today)) {
+                $blockers[] = $this->blocker('risk_overdue', 'warning', 'risks', null, $risk->due_date, $url,
+                    ['label' => $risk->label, 'days' => (int) Carbon::parse($risk->due_date)->startOfDay()->diffInDays($today)]);
+            }
+        }
+
+        return $blockers;
+    }
+
+    /** Carte « risques critiques ouverts » de la synthèse. */
+    private function riskSummary(Collection $risks, Carbon $today): array
+    {
+        $critical = $risks->filter(fn ($r) => AffairRiskRegister::isCritical($r->probability, $r->severity));
+
+        return [
+            'active'    => $risks->count(),
+            'overdue'   => $risks->filter(fn ($r) => AffairRiskRegister::isOverdue($r->status, $r->due_date, $today))->count(),
+            'threshold' => AffairRiskRegister::threshold(),
+            'critical'  => $critical
+                ->sortByDesc(fn ($r) => AffairRiskRegister::criticality($r->probability, $r->severity))
+                ->map(fn ($r) => [
+                    'id'          => (int) $r->id,
+                    'label'       => $r->label,
+                    'category'    => $r->category,
+                    'status'      => $r->status,
+                    'criticality' => AffairRiskRegister::criticality($r->probability, $r->severity),
+                    'due_date'    => $this->date($r->due_date),
+                    'overdue'     => AffairRiskRegister::isOverdue($r->status, $r->due_date, $today),
+                ])->values()->all(),
+        ];
     }
 
     private function blocker(string $code, string $severity, string $section, ?string $ref, $date, ?string $url, array $params = []): array

@@ -1704,6 +1704,23 @@ async function mountAffairSummary() {
     });
 }
 
+// Onglet « Risques » de la fiche opportunité (workflow/opportunities-show).
+async function mountAffairRisks() {
+    const el = document.querySelector('[data-react="affair-risks"]');
+    if (!el) return;
+    const { default: AffairRisks } = await import('./components/affairs/AffairRisks.jsx');
+    const parse = (k) => { try { return JSON.parse(el.dataset[k] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(AffairRisks, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+            users:     parse('users')     ?? [],
+            canEdit:   el.dataset.canEdit === '1',
+            locale:    el.dataset.locale || 'fr',
+        })
+    );
+}
+
 // Onglet « Revue de contrat » de la fiche commande (workflow/orders-show).
 async function mountContractReview() {
     const el = document.querySelector('[data-react="contract-review"]');
@@ -1861,6 +1878,7 @@ mountAccessLogApp();
 mountFileManagers();
 mountOpportunityVisit();
 mountAffairSummary();
+mountAffairRisks();
 mountAffairTimeline();
 mountContractReview();
 mountArrowSteps();

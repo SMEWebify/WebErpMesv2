@@ -49,6 +49,11 @@ return [
     'warning_todo' => 'La revue de contrat de cette commande n\'est pas visée.',
     'warning_rejected' => 'La revue de contrat de cette commande est rejetée.',
     'warning_link' => 'Ouvrir la revue',
+    'risk_register' => [
+        'warning' => 'La catégorie d\'affaire exige un registre des risques et aucun risque n\'est recensé. Le visa reste possible.',
+        'link' => 'Recenser les risques de l\'affaire',
+        'no_affair' => 'La commande n\'est rattachée à aucune affaire (opportunité) : les risques se recensent sur l\'opportunité.',
+    ],
 
     // Demande de changement
     'change' => [
