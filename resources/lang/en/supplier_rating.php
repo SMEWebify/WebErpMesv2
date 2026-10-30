@@ -46,4 +46,18 @@ return [
         'none'           => 'No rating and no non-compliant receipt over the period.',
         'receipt'        => 'Receipt',
     ],
+
+    // On-time delivery rate (App\Services\Purchases\SupplierOnTimeDelivery)
+    'on_time' => [
+        'title'     => 'On-time deliveries (:months months)',
+        'global'    => 'All suppliers',
+        'rate'      => 'On time',
+        'lines'     => 'Lines',
+        'detail'    => ':on_time line(s) on time out of :measured',
+        'undated'   => ':count line(s) with neither a requested nor a confirmed date, not counted',
+        'tolerance' => 'Tolerance: :days d',
+        'rule'      => 'Fully received line, at the date of its last receipt, against the confirmed date (otherwise the requested one).',
+        'none'      => 'No received line with a date over the period.',
+        'worst'     => 'Least punctual',
+    ],
 ];

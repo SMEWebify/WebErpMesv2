@@ -46,4 +46,18 @@ return [
         'none'           => 'Aucune évaluation ni réception non conforme sur la période.',
         'receipt'        => 'Réception',
     ],
+
+    // Taux de livraison à l'heure (App\Services\Purchases\SupplierOnTimeDelivery)
+    'on_time' => [
+        'title'     => 'Livraisons à l\'heure (:months mois)',
+        'global'    => 'Tous fournisseurs',
+        'rate'      => 'À l\'heure',
+        'lines'     => 'Lignes',
+        'detail'    => ':on_time ligne(s) à l\'heure sur :measured',
+        'undated'   => ':count ligne(s) sans date demandée ni confirmée, non comptée(s)',
+        'tolerance' => 'Tolérance : :days j',
+        'rule'      => 'Ligne entièrement reçue, à la date de sa dernière réception, contre la date confirmée (sinon demandée).',
+        'none'      => 'Aucune ligne réceptionnée et datée sur la période.',
+        'worst'     => 'Les moins ponctuels',
+    ],
 ];

@@ -17,6 +17,7 @@ use App\Services\CompanyService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Receivables\ReceivablesService;
 use App\Services\Purchases\SupplierReceiptRating;
+use App\Services\Purchases\SupplierOnTimeDelivery;
 use App\Models\Companies\CreditLimitOverride;
 use App\Services\OrderKPIService;
 use App\Services\QuoteKPIService;
@@ -305,6 +306,7 @@ class CompaniesController extends Controller
         // n'ont ni statut ni échéance, elles ne doivent pas masquer l'évaluation en cours.
         $latestEvaluation = $evaluationHistory->firstWhere('purchase_receipt_id', null);
         $rollingRating = app(SupplierReceiptRating::class)->rollingFor($Companie->id);
+        $onTimeDelivery = app(SupplierOnTimeDelivery::class)->forSupplier($Companie->id);
         $compositeScores = $evaluationHistory
             ->pluck('composite_score')
             ->filter();
@@ -377,7 +379,7 @@ class CompaniesController extends Controller
                                                         'evaluationHistory',
                                                         'latestEvaluation',
                                                         'averageCompositeScore',
-                                                        'rollingRating',
+                                                        'rollingRating', 'onTimeDelivery',
                                                         'needsRequalification',
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',

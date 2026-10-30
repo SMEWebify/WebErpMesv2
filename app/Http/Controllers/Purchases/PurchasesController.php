@@ -118,6 +118,12 @@ class PurchasesController extends Controller
             'next_review_at'  => optional(optional($s->latest_review)->next_review_at)->format('d/m/Y'),
         ])->values()->all();
 
+        $onTime = $this->purchaseKPIService->getSupplierOnTimeDelivery();
+        $reactOnTimeDelivery = [
+            'global'    => $onTime['global'],
+            'suppliers' => $onTime['suppliers']->all(),
+        ];
+
         $reactSuppliersToRequalify = $suppliersToRequalify->map(fn ($s) => [
             'label'            => $s->label,
             'evaluation_status'=> $s->evaluation_status,
@@ -206,6 +212,16 @@ class PurchasesController extends Controller
             'most_purchased_products' => __('general_content.most_purchased_products_trans_key'),
             'product'               => __('general_content.product_trans_key'),
             'qty_total'             => __('general_content.qty_total_trans_key'),
+            'on_time_title'         => __('supplier_rating.on_time.title', ['months' => $onTime['global']['window_months']]),
+            'on_time_global'        => __('supplier_rating.on_time.global'),
+            'on_time_rate'          => __('supplier_rating.on_time.rate'),
+            'on_time_lines'         => __('supplier_rating.on_time.lines'),
+            'on_time_detail'        => __('supplier_rating.on_time.detail'),
+            'on_time_undated'       => __('supplier_rating.on_time.undated'),
+            'on_time_tolerance'     => __('supplier_rating.on_time.tolerance', ['days' => $onTime['global']['tolerance_days']]),
+            'on_time_rule'          => __('supplier_rating.on_time.rule'),
+            'on_time_none'          => __('supplier_rating.on_time.none'),
+            'on_time_worst'         => __('supplier_rating.on_time.worst'),
         ];
 
         $reactTopProducts = $topProducts->map(fn ($p) => [
@@ -216,7 +232,7 @@ class PurchasesController extends Controller
         return view('purchases/purchases-index', compact(
             'reactKpi', 'reactChart', 'reactTopSuppliers', 'reactFastestSuppliers',
             'reactSlowestSuppliers', 'reactCompositeIndicators', 'reactSuppliersToRequalify',
-            'reactEndpoints', 'reactTrans', 'reactTopProducts'
+            'reactEndpoints', 'reactTrans', 'reactTopProducts', 'reactOnTimeDelivery'
         ));
     }
 

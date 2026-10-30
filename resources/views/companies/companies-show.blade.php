@@ -664,6 +664,25 @@
                   <p class="text-body-secondary small mb-0">{{ __('supplier_rating.company.none') }}</p>
                 @endif
               </div>
+              <hr>
+              <div id="supplier-on-time-delivery">
+                <strong>{{ __('supplier_rating.on_time.title', ['months' => $onTimeDelivery['window_months']]) }}</strong>
+                <span class="text-body-secondary small">{{ __('supplier_rating.company.since', ['date' => \Carbon\Carbon::parse($onTimeDelivery['since'])->format('d/m/Y')]) }}</span>
+                @if($onTimeDelivery['rate'] !== null)
+                  <div class="d-flex align-items-center gap-2 my-1">
+                    <span class="badge fs-6 {{ \App\Services\Purchases\SupplierOnTimeDelivery::badgeClass($onTimeDelivery['rate']) }}">{{ number_format($onTimeDelivery['rate'], 1, ',', ' ') }} %</span>
+                    <span class="small">{{ __('supplier_rating.on_time.detail', ['on_time' => $onTimeDelivery['on_time'], 'measured' => $onTimeDelivery['measured']]) }}</span>
+                  </div>
+                @else
+                  <p class="text-body-secondary small mb-1">{{ __('supplier_rating.on_time.none') }}</p>
+                @endif
+                <div class="small text-body-secondary">
+                  {{ __('supplier_rating.on_time.tolerance', ['days' => $onTimeDelivery['tolerance_days']]) }}
+                  @if($onTimeDelivery['undated'] > 0)
+                    · {{ __('supplier_rating.on_time.undated', ['count' => $onTimeDelivery['undated']]) }}
+                  @endif
+                </div>
+              </div>
             </x-adminlte-card>
           </div>
         </div>

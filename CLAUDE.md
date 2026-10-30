@@ -884,6 +884,26 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - Tests : `tests/Feature/Purchases/SupplierReceiptRatingTest.php`,
   `resources/js/tests/components/receiptSupplierRating.test.jsx`.
 
+## Livraison à l'heure des fournisseurs
+
+`App\Services\Purchases\SupplierOnTimeDelivery` (pendant achats du taux OTD client de `kpi.otd`),
+**une requête** pour tous les fournisseurs. Vrai taux à l'heure, servi à côté du délai moyen
+de réception (`getAverageReceptionDelayBySupplier`, inchangé).
+- **Ligne mesurée** = ligne d'achat entièrement réceptionnée (somme des `receipt_qty` ≥ `qty`),
+  à la date de sa **dernière** réception ; une ligne encore partielle n'est pas mesurée.
+- **Référence** : `purchase_lines.confirmed_delivery_date` (colonne nullable, saisie à venir
+  avec l'accusé de réception fournisseur), sinon `delivery_date`. Sans aucune des deux : hors
+  taux, comptée à part (`undated`).
+- À l'heure si dernière réception ≤ référence + `purchases.on_time_tolerance_days`
+  (`PURCHASES_ON_TIME_TOLERANCE_DAYS`, 0), comparaison à la journée.
+- Fenêtre : celle de la note glissante (`supplier_rating.window_months`), sur la date de
+  dernière réception. Réceptions / lignes / commandes supprimées ignorées.
+- Affichage : carte du tableau de bord Achats (`PurchaseKPIService::getSupplierOnTimeDelivery()`,
+  global + moins ponctuels) et fiche fournisseur sous la note glissante. Seuils du badge :
+  `badgeClass()` et `lib/supplierOnTime.js`.
+- Tests : `tests/Feature/Purchases/SupplierOnTimeDeliveryTest.php`,
+  `resources/js/tests/lib/supplierOnTime.test.js`.
+
 ## Fournisseur qualifié obligatoire (commandes d'achat)
 
 `App\Services\Purchases\SupplierQualification`. Option `purchases.require_qualified_supplier`

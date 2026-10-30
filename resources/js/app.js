@@ -230,6 +230,7 @@ async function mountPurchasesIndex() {
             slowestSuppliers:      parse('slowestSuppliers')      ?? [],
             compositeIndicators:   parse('compositeIndicators')   ?? [],
             suppliersToRequalify:  parse('suppliersToRequalify')  ?? [],
+            onTimeDelivery:        parse('onTimeDelivery')        ?? null,
             topProducts:           parse('topProducts')           ?? [],
             endpoints:             parse('endpoints')             ?? {},
             trans:                 parse('trans')                 ?? {},

@@ -4,6 +4,7 @@ import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
+import { onTimeBadgeClass, formatOnTimeRate } from '../lib/supplierOnTime';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -357,6 +358,55 @@ function CompositeIndicatorsCard({ indicators, trans }) {
 }
 
 // ---------------------------------------------------------------------------
+// On-time delivery (global + least punctual suppliers)
+// ---------------------------------------------------------------------------
+
+function OnTimeDeliveryCard({ data, trans, locale }) {
+    const global = data?.global;
+    if (!global || global.measured === 0) {
+        return <p className="text-body-secondary small mb-0">{trans.on_time_none ?? '—'}</p>;
+    }
+    return (
+        <div>
+            <div className="d-flex align-items-center gap-2 mb-1">
+                <span className={`badge fs-6 ${onTimeBadgeClass(global.rate)}`}>{formatOnTimeRate(global.rate, locale)}</span>
+                <span className="small">
+                    {trans.on_time_global}{' · '}
+                    {String(trans.on_time_detail ?? '').replace(':on_time', global.on_time).replace(':measured', global.measured)}
+                </span>
+            </div>
+            <div className="small text-body-secondary mb-2">
+                {trans.on_time_tolerance}
+                {global.undated > 0 && <> · {String(trans.on_time_undated ?? '').replace(':count', global.undated)}</>}
+            </div>
+            {data.suppliers?.length > 0 && (
+                <table className="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>{trans.on_time_worst ?? trans.supplier}</th>
+                            <th className="text-end">{trans.on_time_rate}</th>
+                            <th className="text-end">{trans.on_time_lines}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.suppliers.map(s => (
+                            <tr key={s.id}>
+                                <td style={{ fontSize: '0.82rem' }}>{s.label}</td>
+                                <td className="text-end" style={{ fontSize: '0.82rem' }}>
+                                    <span className={`badge ${onTimeBadgeClass(s.rate)}`}>{formatOnTimeRate(s.rate, locale)}</span>
+                                </td>
+                                <td className="text-end" style={{ fontSize: '0.82rem' }}>{s.on_time}/{s.measured}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+            <div className="small text-body-secondary mt-2">{trans.on_time_rule}</div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Suppliers to requalify table
 // ---------------------------------------------------------------------------
 
@@ -388,7 +438,7 @@ function SuppliersToRequalifyCard({ suppliers, trans }) {
 // Dashboard Tab
 // ---------------------------------------------------------------------------
 
-function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestSuppliers, compositeIndicators, suppliersToRequalify, topProducts, trans, currency, locale }) {
+function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestSuppliers, compositeIndicators, suppliersToRequalify, onTimeDelivery, topProducts, trans, currency, locale }) {
     return (
         <div>
             <KPICards kpi={kpi} trans={trans} currency={currency} locale={locale} />
@@ -502,9 +552,26 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
                 </div>
             </div>
 
-            {/* Suppliers to requalify */}
-            {suppliersToRequalify?.length > 0 && (
-                <div className="row">
+            <div className="row">
+                {/* On-time delivery */}
+                {onTimeDelivery && (
+                    <div className="col-md-6">
+                        <div className="card card-teal mb-3">
+                            <div className="card-header">
+                                <h3 className="card-title">
+                                    <i className="fas fa-truck-fast me-1" />
+                                    {trans.on_time_title}
+                                </h3>
+                            </div>
+                            <div className="card-body p-2">
+                                <OnTimeDeliveryCard data={onTimeDelivery} trans={trans} locale={locale} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Suppliers to requalify */}
+                {suppliersToRequalify?.length > 0 && (
                     <div className="col-md-6">
                         <div className="card card-danger mb-3">
                             <div className="card-header">
@@ -518,8 +585,8 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
@@ -905,7 +972,7 @@ function ListTab({ endpoints, trans, currency, locale, companieId }) {
 
 export default function PurchasesIndex({
     kpi, chartData, topSuppliers, fastestSuppliers, slowestSuppliers,
-    compositeIndicators, suppliersToRequalify, topProducts,
+    compositeIndicators, suppliersToRequalify, onTimeDelivery = null, topProducts,
     endpoints, trans, companieId = null,
 }) {
     const [activeTab, setActiveTab] = useIndexTab('purchases_index_tab', { forced: companieId ? 'list' : null });
@@ -940,6 +1007,7 @@ export default function PurchasesIndex({
                         slowestSuppliers={slowestSuppliers}
                         compositeIndicators={compositeIndicators}
                         suppliersToRequalify={suppliersToRequalify}
+                        onTimeDelivery={onTimeDelivery}
                         topProducts={topProducts}
                         trans={trans}
                         currency={currency}

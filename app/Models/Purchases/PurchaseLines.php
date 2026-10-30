@@ -37,6 +37,7 @@ class PurchaseLines extends Model
                             'receipt_qty',
                             'invoiced_qty',
                             'delivery_date',
+                            'confirmed_delivery_date',
                             'methods_units_id',
                             'accounting_vats_id',
                             'stock_locations_id',

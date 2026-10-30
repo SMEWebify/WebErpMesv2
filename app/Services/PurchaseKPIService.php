@@ -8,6 +8,7 @@ use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
+use App\Services\Purchases\SupplierOnTimeDelivery;
 use App\Services\Purchases\SupplierReceiptRating;
 
 class PurchaseKPIService
@@ -226,6 +227,32 @@ class PurchaseKPIService
             ->sortByDesc('composite_score')
             ->take($limit)
             ->values();
+    }
+
+    /**
+     * Taux de livraison à l'heure, global et par fournisseur (SupplierOnTimeDelivery) :
+     * fournisseurs les moins ponctuels d'abord, à volume égal le plus mesuré d'abord.
+     *
+     * @return array{global: array, suppliers: \Illuminate\Support\Collection}
+     */
+    public function getSupplierOnTimeDelivery(int $limit = 5): array
+    {
+        $summary = app(SupplierOnTimeDelivery::class)->summary();
+
+        $worst = $summary['suppliers']
+            ->filter(fn (array $stats) => $stats['measured'] > 0)
+            ->sortBy([['rate', 'asc'], ['measured', 'desc']])
+            ->take($limit);
+
+        $labels = Companies::whereIn('id', $worst->keys()->all())->pluck('label', 'id');
+
+        return [
+            'global'    => $summary['global'],
+            'suppliers' => $worst->map(fn (array $stats, int $id) => $stats + [
+                'id'    => $id,
+                'label' => $labels->get($id),
+            ])->values(),
+        ];
     }
 
     /**

@@ -20,4 +20,18 @@ return [
 
     'require_qualified_supplier' => (bool) env('PURCHASES_REQUIRE_QUALIFIED_SUPPLIER', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Livraison à l'heure des fournisseurs : tolérance
+    |--------------------------------------------------------------------------
+    |
+    | Une ligne d'achat est livrée à l'heure si sa dernière réception a lieu au
+    | plus tard N jours après la date confirmée par le fournisseur (à défaut,
+    | la date demandée). 0 = le jour même au plus tard.
+    | (App\Services\Purchases\SupplierOnTimeDelivery)
+    |
+    */
+
+    'on_time_tolerance_days' => (int) env('PURCHASES_ON_TIME_TOLERANCE_DAYS', 0),
+
 ];
