@@ -1,0 +1,48 @@
+<?php
+
+return [
+    'title'  => 'Change history',
+    'empty'  => 'No change recorded.',
+    'system' => 'System',
+    'yes'    => 'Yes',
+    'no'     => 'No',
+    'loading' => 'Loading…',
+    'error'  => 'History unavailable.',
+
+    'events' => [
+        'created'              => 'Created',
+        'updated'              => 'Updated',
+        'deleted'              => 'Deleted',
+        'restored'             => 'Restored',
+        'task_released'        => 'Phase released',
+        'task_release_revoked' => 'Release revoked',
+    ],
+
+    'fields' => [
+        'ind'                        => 'Revision',
+        'code'                       => 'Code',
+        'label'                      => 'Label',
+        'statu'                      => 'Status',
+        'type'                       => 'Type',
+        'user_id'                    => 'Owner',
+        'service_id'                 => 'Department',
+        'failure_id'                 => 'Failure',
+        'failure_comment'            => 'Failure comment',
+        'causes_id'                  => 'Cause',
+        'causes_comment'             => 'Cause comment',
+        'correction_id'              => 'Correction',
+        'correction_comment'         => 'Correction comment',
+        'companie_id'                => 'Company',
+        'order_lines_id'             => 'Order line',
+        'deliverys_id'               => 'Delivery note',
+        'delivery_line_id'           => 'Delivery note line',
+        'task_id'                    => 'Task',
+        'qty'                        => 'Quantity',
+        'resolution_date'            => 'Resolution date',
+        'pb_descp'                   => 'Problem description',
+        'cause'                      => 'Cause description',
+        'action'                     => 'Action description',
+        'color'                      => 'Colour',
+        'quality_non_conformitie_id' => 'Non-conformity',
+    ],
+];

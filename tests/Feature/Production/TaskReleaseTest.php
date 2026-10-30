@@ -127,6 +127,12 @@ class TaskReleaseTest extends TestCase
         $this->assertSame($task->id, (int) $log->subject_id);
         $this->assertSame(TaskRelease::SOURCE_MANUAL, $log->properties['source']);
 
+        // Les colonnes du visa sont aussi au journal du modèle, avec leur ancienne valeur.
+        $change = Activity::forSubject($task)->where('event', 'updated')->latest('id')->first();
+        $this->assertSame($this->user->id, (int) $change->properties['attributes']['released_by']);
+        $this->assertSame('Angles conformes', $change->properties['attributes']['release_comment']);
+        $this->assertNull($change->properties['old']['released_by']);
+
         $this->getJson(route('production.task.statu.api.show', $task->id))
             ->assertJsonPath('phase_release.state', TaskRelease::STATE_RELEASED)
             ->assertJsonPath('phase_release.comment', 'Angles conformes');

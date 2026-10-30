@@ -11,6 +11,14 @@ use App\Services\SelectDataService;
 use App\Services\DocumentCodeGenerator;
 use App\Models\Quality\QualityNonConformity;
 use App\Services\QualityNonConformityService;
+use App\Models\User;
+use App\Models\Planning\Task;
+use App\Support\ActivityHistory;
+use App\Models\Workflow\Deliverys;
+use App\Models\Quality\QualityCause;
+use App\Models\Quality\QualityFailure;
+use App\Models\Methods\MethodsServices;
+use App\Models\Quality\QualityCorrection;
 use App\Http\Requests\Quality\StoreQualityNonConformityRequest;
 use App\Http\Requests\Quality\UpdateQualityNonConformityRequest;
 
@@ -277,6 +285,42 @@ class QualityNonConformityController extends Controller
         $nc->save();
 
         return response()->json(['success' => true, 'statu' => 1]);
+    }
+
+    /** Historique des modifications de la NC (journal activitylog), pour la fiche. */
+    public function apiHistory($id): JsonResponse
+    {
+        $nc = QualityNonConformity::withTrashed()->findOrFail($id);
+
+        return response()->json(['data' => $this->history()->forSubject($nc)]);
+    }
+
+    private function history(): ActivityHistory
+    {
+        return new ActivityHistory(
+            [
+                'statu' => [
+                    1 => __('general_content.in_progress_trans_key'),
+                    2 => __('general_content.waiting_customer_data_trans_key'),
+                    3 => __('general_content.solved_trans_key'),
+                    4 => __('general_content.canceled_trans_key'),
+                ],
+                'type' => [
+                    1 => __('general_content.internal_trans_key'),
+                    2 => __('general_content.external_trans_key'),
+                ],
+            ],
+            [
+                'user_id'       => [User::class, 'name'],
+                'service_id'    => [MethodsServices::class, 'label'],
+                'failure_id'    => [QualityFailure::class, 'label'],
+                'causes_id'     => [QualityCause::class, 'label'],
+                'correction_id' => [QualityCorrection::class, 'label'],
+                'companie_id'   => [Companies::class, 'label'],
+                'deliverys_id'  => [Deliverys::class, 'code'],
+                'task_id'       => [Task::class, 'code'],
+            ],
+        );
     }
 
     private function formatNc(QualityNonConformity $nc): array

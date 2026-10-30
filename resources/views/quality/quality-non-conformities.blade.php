@@ -64,6 +64,10 @@
             'new_non_conformity'    => __('general_content.new_non_conformitie_trans_key'),
             'locked_by_order'       => 'Verrouillé (lié à une commande)',
             'error'                 => 'Erreur',
+            'history'               => __('activity_history.title'),
+            'history_empty'         => __('activity_history.empty'),
+            'history_loading'       => __('activity_history.loading'),
+            'history_error'         => __('activity_history.error'),
         ]) }}"
     ></div>
 @stop

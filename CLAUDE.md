@@ -741,6 +741,22 @@ sont dans `activity_log` avec `log_name = access` (causer, sujet, `properties.ro
 - Purge : `activitylog:clean` (rétention de `config/activitylog.php`), rien de spécifique.
 - Tests : `tests/Feature/Audit/AccessLogTest.php`.
 
+## Journal des modifications qualité (ISO 19443)
+
+`LogsActivity` (`logOnly` explicite + `logOnlyDirty` + `dontSubmitEmptyLogs` : champs modifiés
+seulement, jamais les horodatages) sur NC, actions, causes, corrections, défaillances, appareils
+de contrôle, AMDEC, cartographies de processus (`ProcessDiagram` : nom / description seulement,
+pas le graphe JSON) et dérogations.
+- Visas : `Task` journalise `released_*` (en plus de l'entrée `task_released`) ;
+  `PurchaseReceiptLines` journalise certificat reçu, `document_check_*` et NC liée, **en
+  modification seulement** (`$recordEvents = ['updated']`).
+- Lecture : `App\Support\ActivityHistory` (libellés `activity_history.fields`, valeurs codées et
+  clés étrangères résolues, une requête par référence). Fiche NC : `quality.nonConformitie.api.history`
+  + `components/ActivityHistory.jsx` ; fiche action : `include/activity-history` (`forSubjects`,
+  requêtes en nombre constant pour la page).
+- Une écriture de masse (`Model::where()->update()`) n'est pas journalisée : passer par le modèle.
+- Tests : `tests/Feature/Quality/QualityActivityLogTest.php`, `resources/js/tests/components/activityHistory.test.jsx`.
+
 ## Motifs de perte (devis, opportunités)
 
 Référentiel `loss_reasons` (écran Méthodes → Motifs de perte, `methods-menu` ; 5 motifs

@@ -6,8 +6,6 @@
     <h1>{{ __('general_content.action_trans_key') }}</h1>
 @stop
 
-@section('right-sidebar')
-
 @section('content')
 
       <x-InfocalloutComponent :note="__('general_content.action_note_trans_key')"  />
@@ -70,6 +68,7 @@
                       <strong >{{ __('general_content.action_description_trans_key') }} :</strong> 
                       {{ $QualityAction->action }}
                     </div>
+                    @include('include.activity-history', ['entries' => $ActionHistory[$QualityAction->id] ?? []])
                   </x-adminlte-modal>
 
                   <!-- Button Modal -->

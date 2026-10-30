@@ -1,0 +1,48 @@
+<?php
+
+return [
+    'title'  => 'Historique des modifications',
+    'empty'  => 'Aucune modification enregistrée.',
+    'system' => 'Système',
+    'yes'    => 'Oui',
+    'no'     => 'Non',
+    'loading' => 'Chargement…',
+    'error'  => 'Historique indisponible.',
+
+    'events' => [
+        'created'              => 'Création',
+        'updated'              => 'Modification',
+        'deleted'              => 'Suppression',
+        'restored'             => 'Restauration',
+        'task_released'        => 'Phase libérée',
+        'task_release_revoked' => 'Libération annulée',
+    ],
+
+    'fields' => [
+        'ind'                        => 'Indice',
+        'code'                       => 'Code',
+        'label'                      => 'Libellé',
+        'statu'                      => 'Statut',
+        'type'                       => 'Type',
+        'user_id'                    => 'Responsable',
+        'service_id'                 => 'Service',
+        'failure_id'                 => 'Défaillance',
+        'failure_comment'            => 'Commentaire défaillance',
+        'causes_id'                  => 'Cause',
+        'causes_comment'             => 'Commentaire cause',
+        'correction_id'              => 'Correction',
+        'correction_comment'         => 'Commentaire correction',
+        'companie_id'                => 'Société',
+        'order_lines_id'             => 'Ligne de commande',
+        'deliverys_id'               => 'Bon de livraison',
+        'delivery_line_id'           => 'Ligne de BL',
+        'task_id'                    => 'Tâche',
+        'qty'                        => 'Quantité',
+        'resolution_date'            => 'Date de résolution',
+        'pb_descp'                   => 'Description du problème',
+        'cause'                      => 'Description de la cause',
+        'action'                     => 'Description de l\'action',
+        'color'                      => 'Couleur',
+        'quality_non_conformitie_id' => 'Non-conformité',
+    ],
+];

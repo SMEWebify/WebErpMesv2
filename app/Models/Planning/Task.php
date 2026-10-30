@@ -894,7 +894,10 @@ class Task extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['code', 'quote_lines_id', 'order_lines_id', 'products_id']);
+        // released_* : visa de libération de phase (écrit par TaskRelease), journalisé avec
+        // l'ancienne valeur en plus de l'entrée « task_released ».
+        return LogOptions::defaults()->logOnly(['code', 'quote_lines_id', 'order_lines_id', 'products_id',
+            'released_at', 'released_by', 'release_comment']);
         // Chain fluent methods for configuration options
     }
 

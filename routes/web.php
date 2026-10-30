@@ -1297,6 +1297,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/api/{id}/update', 'App\Http\Controllers\Quality\QualityNonConformityController@apiUpdate')->name('quality.nonConformitie.api.update');
             Route::post('/api/{id}/close', 'App\Http\Controllers\Quality\QualityNonConformityController@apiClose')->name('quality.nonConformitie.api.close');
             Route::post('/api/{id}/reopen', 'App\Http\Controllers\Quality\QualityNonConformityController@apiReopen')->name('quality.nonConformitie.api.reopen');
+            Route::get('/api/{id}/history', 'App\Http\Controllers\Quality\QualityNonConformityController@apiHistory')->whereNumber('id')->name('quality.nonConformitie.api.history');
         });
     
         // Routes for Derogation

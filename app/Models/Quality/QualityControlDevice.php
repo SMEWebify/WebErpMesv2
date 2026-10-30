@@ -7,11 +7,13 @@ use App\Models\Methods\MethodsServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityControlDevice extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
     public const CALIBRATION_ALERT_THRESHOLD_DAYS = 7;
@@ -36,6 +38,20 @@ class QualityControlDevice extends Model
         'calibration_due_at' => 'datetime',
         'capability_index' => 'decimal:3',
     ];
+
+    /**
+     * Journal des modifications (ISO 19443) : seulement les champs modifiés,
+     * jamais les horodatages.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['code', 'label', 'service_id', 'user_id', 'serial_number', 'picture',
+                'calibrated_at', 'calibration_due_at', 'calibration_status', 'calibration_provider',
+                'location', 'capability_index'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function UserManagement()
     {

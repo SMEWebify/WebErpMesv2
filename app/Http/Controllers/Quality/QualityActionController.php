@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Quality;
 
 use Illuminate\Support\Facades\DB;
 use App\Services\SelectDataService;
+use App\Models\User;
+use App\Support\ActivityHistory;
 use App\Models\Quality\QualityAction;
+use App\Models\Quality\QualityNonConformity;
 use App\Services\DocumentCodeGenerator;
 use App\Http\Requests\Quality\StoreQualityActionRequest;
 use App\Http\Requests\Quality\UpdateQualityActionRequest;
@@ -35,10 +38,12 @@ class QualityActionController extends Controller
         $Lastaction = QualityAction::orderBy('id', 'desc')->first();
         $codeAction = $Lastaction ? $Lastaction->id : 0;
         $codeAction = $this->documentCodeGenerator->generateDocumentCode('action', $codeAction);
+        $ActionHistory = $this->history()->forSubjects(QualityAction::class, $QualityActions->pluck('id')->all());
 
         return view('quality/quality-actions', [
             'codeAction' => $codeAction,
             'QualityActions' => $QualityActions,
+            'ActionHistory' => $ActionHistory,
             'NonConformitysSelect' =>  $NonConformitysSelect,
             'userSelect' => $userSelect,
         ]);
@@ -88,5 +93,28 @@ class QualityActionController extends Controller
         $QualityAction->quality_non_conformitie_id=$request->quality_non_conformitie_id;
         $QualityAction->save();
         return redirect()->route('quality.action')->with('success', 'Successfully updated action.');
+    }
+
+    /** Lecture du journal des actions : statut et type en clair, responsable et NC par leur nom. */
+    private function history(): ActivityHistory
+    {
+        return new ActivityHistory(
+            [
+                'statu' => [
+                    1 => __('general_content.in_progress_trans_key'),
+                    2 => __('general_content.waiting_customer_data_trans_key'),
+                    3 => __('general_content.validate_trans_key'),
+                    4 => __('general_content.canceled_trans_key'),
+                ],
+                'type' => [
+                    1 => __('general_content.internal_trans_key'),
+                    2 => __('general_content.external_trans_key'),
+                ],
+            ],
+            [
+                'user_id'                    => [User::class, 'name'],
+                'quality_non_conformitie_id' => [QualityNonConformity::class, 'code'],
+            ],
+        );
     }
 }

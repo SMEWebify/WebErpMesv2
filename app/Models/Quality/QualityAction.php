@@ -4,12 +4,14 @@ namespace App\Models\Quality;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityAction extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['code',
@@ -22,6 +24,19 @@ class QualityAction extends Model
                             'action', 
                             'color', 
                             'quality_non_conformitie_id'];
+
+    /**
+     * Journal des modifications (ISO 19443) : seulement les champs modifiés,
+     * jamais les horodatages.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['code', 'label', 'statu', 'type', 'user_id', 'pb_descp', 'cause', 'action',
+                'color', 'quality_non_conformitie_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function UserManagement()
     {

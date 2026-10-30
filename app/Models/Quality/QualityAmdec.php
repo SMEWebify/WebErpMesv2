@@ -5,12 +5,14 @@ namespace App\Models\Quality;
 use App\Models\User;
 use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityAmdec extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= [
@@ -26,6 +28,19 @@ class QualityAmdec extends Model
                         'current_control',
                         'recommended_action'
                     ];
+
+    /**
+     * Journal des modifications (ISO 19443) : seulement les champs modifiés,
+     * jamais les horodatages.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['product_id', 'user_id', 'failure_mode', 'effect', 'cause', 'severity',
+                'occurrence', 'detection', 'rpn', 'current_control', 'recommended_action'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
 
     public function actions()

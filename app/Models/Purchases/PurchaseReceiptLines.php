@@ -11,10 +11,18 @@ use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class PurchaseReceiptLines extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
+
+    /**
+     * Seules les modifications sont journalisées : la création d'une ligne est déjà
+     * tracée par la réception, et une ligne neuve ne porte pas encore de visa.
+     */
+    protected static $recordEvents = ['updated'];
 
     // Fillable attributes for mass assignment
     protected $fillable= [
@@ -42,6 +50,19 @@ class PurchaseReceiptLines extends Model
         'inspection_date' => 'date',
         'document_check_at' => 'datetime',
     ];
+
+    /**
+     * Journal du visa documentaire (ISO 19443) : certificat reçu, visa, NC liée.
+     * Les autres champs de la ligne (quantités, inspection physique) ne sont pas tracés ici.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['received_certificate_type', 'document_check_by', 'document_check_at',
+                'document_check_result', 'document_check_comment', 'quality_non_conformity_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function purchaseReceipt()
     {

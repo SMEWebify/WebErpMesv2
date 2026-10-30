@@ -12,6 +12,7 @@ use App\Models\Quality\QualityNonConformity;
 use App\Models\User;
 use App\Services\Purchases\ReceiptDocumentCheck;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
@@ -102,6 +103,26 @@ class ReceiptDocumentCheckTest extends TestCase
         $this->assertSame($this->user->id, (int) $line->document_check_by);
         $this->assertNotNull($line->document_check_at);
         $this->assertSame('Certificat lu', $line->document_check_comment);
+    }
+
+    /** @test */
+    public function the_visa_is_written_to_the_activity_log_but_not_the_line_creation()
+    {
+        $this->allow();
+        $line = $this->receiptLine('3.1', '3.1');
+
+        $this->assertSame(0, Activity::forSubject($line)->count());
+
+        $this->check($line, ['document_check_result' => 'non_compliant', 'document_check_comment' => 'Certificat illisible'])
+            ->assertOk();
+
+        $log = Activity::forSubject($line)->sole();
+        $this->assertSame('updated', $log->event);
+        $this->assertSame($this->user->id, (int) $log->causer_id);
+        $this->assertSame('non_compliant', $log->properties['attributes']['document_check_result']);
+        $this->assertSame($this->user->id, (int) $log->properties['attributes']['document_check_by']);
+        $this->assertNull($log->properties['old']['document_check_result']);
+        $this->assertArrayNotHasKey('updated_at', $log->properties['attributes']);
     }
 
     /** @test */

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
+import ActivityHistory from './ActivityHistory';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -100,7 +101,7 @@ function SelectField({ label, name, value, onChange, options, nullable, disabled
 // ViewModal — read-only details
 // ---------------------------------------------------------------------------
 
-function ViewModal({ nc, trans, onClose }) {
+function ViewModal({ nc, trans, endpoints, onClose }) {
     if (!nc) return null;
     const t = k => trans[k] ?? k;
 
@@ -125,6 +126,10 @@ function ViewModal({ nc, trans, onClose }) {
             <p><strong>{t('service')} :</strong> {nc.service_label ?? 'N/A'}</p>
             <p><strong>{t('qty')} :</strong> {nc.qty ?? '—'}</p>
             <p><strong>{t('resolution_date')} :</strong> {nc.resolution_date ?? '—'}</p>
+            <hr />
+            <div className="mb-3">
+                <ActivityHistory url={`${endpoints.apiBase}/${nc.id}/history`} trans={trans} />
+            </div>
             <div className="text-end">
                 <button className="btn btn-secondary btn-sm" onClick={onClose}>{t('close')}</button>
             </div>
@@ -724,7 +729,7 @@ export default function NonConformitiesIndex({
             />
 
             {/* Modals */}
-            <ViewModal nc={viewNc} trans={trans} onClose={() => setViewNc(null)} />
+            <ViewModal nc={viewNc} trans={trans} endpoints={endpoints} onClose={() => setViewNc(null)} />
             <EditModal
                 nc={editNc}
                 trans={trans}

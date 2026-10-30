@@ -15,6 +15,8 @@ use App\Models\Quality\QualityFailure;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,7 +24,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityNonConformity extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['ind', 'code',
@@ -45,6 +47,21 @@ class QualityNonConformity extends Model
                         'task_id',
                         'qty',
                         'resolution_date'];
+
+    /**
+     * Journal des modifications (ISO 19443) : seulement les champs modifiés,
+     * jamais les horodatages.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['ind', 'code', 'label', 'statu', 'type', 'user_id', 'service_id',
+                'failure_id', 'failure_comment', 'causes_id', 'causes_comment', 'correction_id',
+                'correction_comment', 'companie_id', 'order_lines_id', 'deliverys_id', 'delivery_line_id',
+                'task_id', 'qty', 'resolution_date'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function service()
     {
