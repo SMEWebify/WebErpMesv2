@@ -5,6 +5,8 @@
 // - captures copiées dans images/<slug>/ ;
 // - en-tête YAML → ligne d'infos + résumé ; ```steps → étapes fléchées ;
 //   citations ⚠️ / 💡 → encadrés GitHub > [!WARNING] / > [!TIP] ;
+// - options du .env (`features:` de l'en-tête, blocs <!-- feature: x --> … <!-- /feature -->) :
+//   le wiki sert toutes les instances, les deux variantes sont donc gardées et signalées ;
 // - _Sidebar.md régénéré, et la liste des guides de Home.md réécrite entre
 //   <!-- guides:start --> et <!-- guides:end -->.
 // Ne supprime rien dans le wiki : le ménage des anciennes pages se fait à la main.
@@ -58,8 +60,34 @@ function callouts(body) {
     return out.join('\n');
 }
 
-function convert(body, slug) {
-    return callouts(body
+// Options citées par les guides (config/guides.php). Pas de nom de moteur : seulement la fonction.
+const FEATURES = {
+    'production-release': { env: 'PRODUCTION_REQUIRE_RELEASE=true', fr: 'bon pour fabrication obligatoire', en: 'mandatory release for production' },
+    'qualified-supplier': { env: 'PURCHASES_REQUIRE_QUALIFIED_SUPPLIER=true', fr: 'fournisseur qualifié obligatoire', en: 'mandatory qualified supplier' },
+    'access-log': { env: 'AUDIT_LOG_READS=true', fr: 'journal des consultations', en: 'access log' },
+    'commercial': { env: 'APP_COMMERCIAL=true', fr: 'version commerciale', en: 'commercial edition' },
+    'nesting': { fr: 'imbrication tôle (version commerciale)', en: 'sheet nesting (commercial edition)' },
+};
+const featureLabel = (name, lang) => {
+    const f = FEATURES[name] ?? {};
+    const label = f[lang] ?? name;
+    return (lang === 'fr' ? `« ${label} »` : `"${label}"`) + (f.env ? ` (\`${f.env}\`)` : '');
+};
+const featureList = meta => (meta.features ?? '').replace(/[[\]]/g, '').split(',').map(f => f.trim()).filter(Boolean);
+
+function features(body, lang) {
+    return body.replace(/<!--\s*feature:\s*(!?)\s*([a-z0-9-]+)\s*-->\n?([\s\S]*?)<!--\s*\/feature\s*-->\n?/g, (_, not, name, content) => {
+        const label = featureLabel(name, lang);
+        const open = lang === 'fr'
+            ? (not ? `Sans l'option ${label} :` : `Avec l'option ${label} :`)
+            : (not ? `Without the ${label} option:` : `With the ${label} option:`);
+        const close = lang === 'fr' ? `*Fin du passage propre à l'option ${label}.*` : `*End of the ${label} option section.*`;
+        return `> [!NOTE]\n> ${open}\n\n${content.trim()}\n\n${close}\n\n`;
+    });
+}
+
+function convert(body, slug, lang) {
+    return callouts(features(body, lang)
         .replace(/```steps\n([\s\S]*?)```/g, (_, list) => list.trim().split('\n')
             .map((s, i) => `**${i + 1}.** ${s.trim()}`).join(' → ') + '\n')
         .replace(/\]\(img\//g, `](images/${slug}/`));
@@ -102,7 +130,14 @@ for (const g of guides) {
         const page = [
             `*${info}*`, '',
             meta.summary ? `**${meta.summary}**\n` : '',
-            convert(body, g.slug).trim(), '',
+            ...featureList(meta).map(f => (lang === 'fr'
+                ? `> [!NOTE]
+> Ce guide ne concerne que les instances où l'option ${featureLabel(f, lang)} est activée.
+`
+                : `> [!NOTE]
+> This guide only applies to instances where the ${featureLabel(f, lang)} option is enabled.
+`)),
+            convert(body, g.slug, lang).trim(), '',
             '---',
             lang === 'fr'
                 ? '*Ce guide est aussi disponible dans l’application : menu Guides.*'

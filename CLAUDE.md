@@ -355,6 +355,11 @@ captures dans `img/`. Ajouter un guide = déposer un dossier : ni route, ni migr
 - `App\Services\Guides\GuideLibrary` lit, filtre (`can` : une permission suffit) et rend le
   Markdown (`html_input => escape`) avec deux extensions : bloc ```` ```steps ```` (frise
   d'étapes) et citations `> ⚠️` / `> 💡` (encadrés). Les `## ` forment le sommaire latéral.
+- **Options du `.env`** : `config('guides.features')` = liste blanche nom → clé de config
+  (`production-release`, `qualified-supplier`, `access-log`, `nesting`, `commercial`). En-tête
+  `features:` (toutes requises) = guide masqué tant qu'une option est inactive ; blocs
+  `<!-- feature: nom -->` … `<!-- /feature -->` (`!nom` = option inactive), retirés **avant**
+  la conversion (sommaire compris), non imbriquables. Nom inconnu = inactive.
 - Captures servies par `guides.media` (images du dossier `img/` seulement, `nosniff`).
 - Production des guides : agent `training-writer` + Playwright (`tools/training/`, scénarios
   rejoués sur l'instance **locale**, données préfixées `[FORMATION]`, identifiants

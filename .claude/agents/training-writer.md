@@ -43,6 +43,10 @@ Tu rédiges des fiches de formation pour **Nest2Prod ERP**, à destination des *
    - en-tête YAML obligatoire : `title`, puis `summary`, `category` (module : Ventes, Achats,
      Production…), `order`, `duration` (minutes), `icon` (Font Awesome), `updated` (AAAA-MM-JJ),
      et `can` (permission ou liste) si le guide ne concerne qu'un module réservé ;
+   - fonction soumise à une option du `.env` (liste `features` de `config/guides.php`) : guide
+     entier → `features: nom` dans l'en-tête ; simple passage → bloc `<!-- feature: nom -->` …
+     `<!-- /feature -->`, et `<!-- feature: !nom -->` pour le texte valable option désactivée.
+     Activer l'option sur l'instance locale **avant** de rejouer le scénario des captures ;
    - pas de titre `#` : le titre vient de l'en-tête ; les sections en `##` forment le sommaire ;
    - objectif en une phrase, **prérequis** (droits, paramétrage, données) ;
    - schéma du workflow : bloc ```` ```steps ```` avec une étape par ligne (pas de Mermaid) ;

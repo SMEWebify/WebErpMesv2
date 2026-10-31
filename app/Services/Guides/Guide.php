@@ -9,6 +9,7 @@ final class Guide
 {
     /**
      * @param  array<int, string>  $can  permissions dont une seule suffit ; vide = guide visible par tous
+     * @param  array<int, string>  $features  options de config('guides.features'), toutes requises
      */
     public function __construct(
         public readonly string $slug,
@@ -21,6 +22,7 @@ final class Guide
         public readonly array $can,
         public readonly ?string $updated,
         public readonly string $file,
+        public readonly array $features = [],
     ) {
     }
 }

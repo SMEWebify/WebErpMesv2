@@ -18,11 +18,14 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
  *
  * En-tête : title (obligatoire), summary, category, order, duration (minutes), icon
  * (classe Font Awesome), can (permission ou liste de permissions, une seule suffit),
- * updated (AAAA-MM-JJ).
+ * updated (AAAA-MM-JJ), features (option ou liste d'options de config('guides.features'),
+ * toutes requises : le guide est masqué tant qu'une est désactivée).
  *
  * Extensions du Markdown, pour rester lisible dans un éditeur comme dans l'appli :
  * - bloc ```steps (une étape par ligne) → frise d'étapes ;
- * - citation commençant par ⚠️ ou 💡 → encadré « attention » / « astuce ».
+ * - citation commençant par ⚠️ ou 💡 → encadré « attention » / « astuce » ;
+ * - `<!-- feature: nom -->` … `<!-- /feature -->` → passage affiché seulement si l'option
+ *   est active (`!nom` : seulement si elle ne l'est pas). Blocs non imbriquables.
  *
  * Ajouter un guide = déposer un dossier : ni migration, ni route, ni code.
  */
@@ -48,7 +51,7 @@ class GuideLibrary
 
         return collect($dirs ?: [])
             ->map(fn (string $dir) => $this->load(basename($dir), $locale))
-            ->filter(fn (?Guide $guide) => $guide && $this->allows($user, $guide))
+            ->filter(fn (?Guide $guide) => $guide && $this->allows($user, $guide) && $this->featuresEnabled($guide))
             ->sortBy([['category', 'asc'], ['order', 'asc'], ['title', 'asc']])
             ->values();
     }
@@ -57,7 +60,7 @@ class GuideLibrary
     {
         $guide = $this->load($slug, $locale);
 
-        return $guide && $this->allows($user, $guide) ? $guide : null;
+        return $guide && $this->allows($user, $guide) && $this->featuresEnabled($guide) ? $guide : null;
     }
 
     /**
@@ -66,6 +69,13 @@ class GuideLibrary
     public function render(Guide $guide): array
     {
         $content = $this->parse($guide->file)['content'];
+
+        // Avant la conversion : un titre retiré ne doit pas entrer dans le sommaire.
+        $content = preg_replace_callback(
+            '#<!--\s*feature:\s*(!?)\s*([a-z0-9-]+)\s*-->(.*?)<!--\s*/feature\s*-->\R?#s',
+            fn (array $m) => $this->featureEnabled($m[2]) !== ($m[1] === '!') ? $m[3] : '',
+            $content
+        );
 
         $html = (new GithubFlavoredMarkdownConverter([
             'html_input' => 'escape',
@@ -170,6 +180,7 @@ class GuideLibrary
             duration: isset($meta['duration']) ? (int) $meta['duration'] : null,
             icon: (string) ($meta['icon'] ?? 'fas fa-book-open'),
             can: array_values(array_filter((array) ($meta['can'] ?? []), 'is_string')),
+            features: array_values(array_filter((array) ($meta['features'] ?? []), 'is_string')),
             // YAML lit une date AAAA-MM-JJ comme un horodatage.
             updated: is_int($updated) ? date('Y-m-d', $updated) : ($updated ? (string) $updated : null),
             file: $file,
@@ -195,5 +206,20 @@ class GuideLibrary
         }
 
         return $user !== null && collect($guide->can)->contains(fn (string $permission) => $user->can($permission));
+    }
+
+    private function featuresEnabled(Guide $guide): bool
+    {
+        return collect($guide->features)->every(fn (string $feature) => $this->featureEnabled($feature));
+    }
+
+    /**
+     * Option de config('guides.features') ; un nom inconnu vaut « désactivée ».
+     */
+    public function featureEnabled(string $feature): bool
+    {
+        $key = config("guides.features.{$feature}");
+
+        return is_string($key) && (bool) config($key);
     }
 }
