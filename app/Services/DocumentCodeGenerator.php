@@ -11,6 +11,23 @@ class DocumentCodeGenerator
     //Default template if none found for given document type
     protected $defaultTemplate = '{type}-{id}';
 
+    /**
+     * Table dont la colonne `code` (unique) porte les codes du type. Un écran propose le code
+     * lu par peekNextCode() et l'enregistre tel quel ; tant que ce code n'était pas consommé,
+     * le compteur restait en retard et le code suivant était déjà pris (422 à la saisie, 500
+     * pour une facture créée depuis un BL). Les codes déjà pris sont donc sautés.
+     */
+    protected const CODE_TABLES = [
+        'invoice'        => 'invoices',
+        'proforma'       => 'invoices',
+        'order'          => 'orders',
+        'internal-order' => 'orders',
+        'delivery'       => 'deliverys',
+    ];
+
+    /** Garde-fou : un modèle sans {id} donne toujours le même code. */
+    protected const MAX_SKIPPED = 1000;
+
     public function peekNextCode(string $documentType): string
     {
         $templateModel = DocumentCodeTemplate::getTemplateForDocument($documentType);
@@ -28,8 +45,24 @@ class DocumentCodeGenerator
             ->first();
 
         $nextId = $counter ? (int) $counter->current_value + 1 : 1;
+        $code   = $this->applyTemplate($template, $nextId, $idPadding, $documentType);
 
-        return $this->applyTemplate($template, $nextId, $idPadding, $documentType);
+        for ($i = 0; $i < self::MAX_SKIPPED && $this->isTaken($documentType, $code); $i++) {
+            $code = $this->applyTemplate($template, ++$nextId, $idPadding, $documentType);
+        }
+
+        return $code;
+    }
+
+    /**
+     * Le code enregistré est celui que l'écran proposait : il est consommé, pour que le suivant
+     * ne soit pas le même. Un code saisi à la main ne touche pas au compteur.
+     */
+    public function consumeIfProposed(string $documentType, ?string $code): void
+    {
+        if ($code !== null && $code === $this->peekNextCode($documentType)) {
+            $this->generateDocumentCode($documentType);
+        }
     }
 
     public function generateDocumentCode(string $documentType, ?int $lastId = null)
@@ -41,9 +74,22 @@ class DocumentCodeGenerator
         $resetDay      = (int) ($templateModel?->yearly_reset_day ?? 1);
         $idPadding     = (int) ($templateModel?->id_padding ?? 0);
 
-        $id = $this->resolveNextSequence($documentType, $resetPeriod, $lastId, $resetMonth, $resetDay);
+        $id   = $this->resolveNextSequence($documentType, $resetPeriod, $lastId, $resetMonth, $resetDay);
+        $code = $this->applyTemplate($template, $id, $idPadding, $documentType);
 
-        return $this->applyTemplate($template, $id, $idPadding, $documentType);
+        for ($i = 0; $i < self::MAX_SKIPPED && $this->isTaken($documentType, $code); $i++) {
+            $id   = $this->resolveNextSequence($documentType, $resetPeriod, $lastId, $resetMonth, $resetDay);
+            $code = $this->applyTemplate($template, $id, $idPadding, $documentType);
+        }
+
+        return $code;
+    }
+
+    protected function isTaken(string $documentType, string $code): bool
+    {
+        $table = self::CODE_TABLES[$documentType] ?? null;
+
+        return $table !== null && DB::table($table)->where('code', $code)->exists();
     }
 
     protected function applyTemplate(string $template, int $id, int $idPadding, string $documentType): string

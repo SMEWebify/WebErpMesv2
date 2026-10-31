@@ -176,6 +176,9 @@ class ProformaController extends Controller
             'lines.*'                => 'integer',
         ]);
 
+        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+        $this->documentCodeGenerator->consumeIfProposed('proforma', $validated['code']);
+
         $proforma = Invoices::create([
             'uuid'                   => Str::uuid(),
             'code'                   => $validated['code'],
@@ -266,6 +269,9 @@ class ProformaController extends Controller
         $quote = Quotes::with('QuoteLines')->findOrFail($validated['quote_id']);
         $converter = app(QuoteLineToOrderLineConverter::class);
         $presentation = $validated['presentation'] ?? QuoteLineToOrderLineConverter::PRESENTATION_KEEP;
+
+        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+        $this->documentCodeGenerator->consumeIfProposed('proforma', $validated['code']);
 
         $order = DB::transaction(function () use ($quote, $validated, $converter, $presentation) {
             $orderCode = $this->documentCodeGenerator->generateDocumentCode('order');

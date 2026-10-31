@@ -251,6 +251,9 @@ class DeliverysController extends Controller
             return $refusal;
         }
 
+        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+        $this->documentCodeGenerator->consumeIfProposed('delivery', $validated['code']);
+
         $delivery = DB::transaction(function () use ($validated, $removeFromStock) {
             $delivery = $this->deliveryService->createDelivery(
                 $validated['code'],

@@ -442,6 +442,9 @@ class OrdersController extends Controller
             return $refusal;
         }
 
+        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+        app(DocumentCodeGenerator::class)->consumeIfProposed($type === 1 ? 'order' : 'internal-order', $validated['code']);
+
         $orderService = app(OrderService::class);
         $order = $orderService->createOrder(
             $validated['code'],

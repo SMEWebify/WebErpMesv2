@@ -357,6 +357,9 @@ class InvoicesController extends Controller
             return $refusal;
         }
 
+        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+        $this->documentCodeGenerator->consumeIfProposed('invoice', $validated['code']);
+
         $invoice = $this->invoiceService->createInvoice(
             $validated['code'],
             $validated['label'],
