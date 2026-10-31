@@ -1,10 +1,18 @@
 // Guide « Qualité » : réglage (défaillances, causes, corrections), appareils de mesure,
-// non-conformité → action corrective → dérogation → clôture, puis plans de contrôle, rapport
-// premier article, audits et retours en lecture seule. Données préfixées [FORMATION].
-// Ne clique jamais : « Nouveau plan de contrôle », « Ouvrir le bulleur », « Nouvelle version »,
-// « Contrôler », « Signer et dater », « Générer le PDF », ni les boutons de NC des pages publiques.
+// non-conformité → action corrective (validée, historique) → dérogation externe (fiche, accord
+// du client dans la GED, validation) → clôture et historique de la NC, liste du visa documentaire,
+// puis plans de contrôle, rapport premier article, audits et retours en lecture seule.
+// Données préfixées [FORMATION].
+// Ne clique jamais : « Envoyer pour signature » (DocuSign), « Relire l'état », « Nouveau plan de
+// contrôle », « Ouvrir le bulleur », « Nouvelle version », « Contrôler », « Signer et dater »,
+// « Générer le PDF », « Viser », ni les boutons de NC des pages publiques.
+// La dérogation n'est reliée à AUCUNE ligne de commande : une dérogation externe ouverte
+// bloquerait le BL de cette ligne pour les autres scénarios.
 // Usage : node tools/training/scenarios/qualite.mjs   (HEADED=1 pour voir le navigateur)
 import { readEnv, openSession, settle } from '../lib.mjs';
+import { mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 const env = readEnv();
 const BASE = (process.env.TRAINING_URL || env.TRAINING_URL || env.APP_URL || 'http://127.0.0.1:8001').replace(/\/$/, '');
@@ -102,7 +110,7 @@ await step('3. Appareils de mesure', async () => {
         await byLabel(form, /s[ée]rie/i, 'input').fill(d.serial);
         await byLabel(form, /Calibr|[ée]talonn[ée] le/i, 'input').fill(d.done);
         await byLabel(form, /[ÉE]ch[ée]ance/i, 'input').fill(d.due);
-        if (i === 0) await shot('appareil-creation', { title: 'Nouvel appareil de mesure', highlight: [byLabel(form, /ID externe|Code/, 'input'), byLabel(form, /s[ée]rie/i, 'input'), byLabel(form, /[ÉE]ch[ée]ance/i, 'input'), form.locator('button[type=submit]')] });
+        if (i === 0) await shot('appareil-creation', { title: 'Nouvel appareil de mesure', highlight: [byLabel(form, /ID externe|Code/, 'input'), byLabel(form, /s[ée]rie/i, 'input'), byLabel(form, /[ÉE]ch[ée]ance/i, 'input')] });
         await form.locator('button[type=submit]').click();
         await app().locator('td', { hasText: d.code }).first().waitFor();
     }
@@ -159,25 +167,105 @@ await step('5. Action corrective', async () => {
     const last = page.locator('.pagination .page-link').filter({ hasText: /^\d+$/ }).last();
     if (await last.count()) { await last.click(); await settle(page); }
     await shot('actions-liste', { title: 'Actions qualité' });
+    ids.actionUrl = page.url();
 });
 
-await step('6. Dérogation', async () => {
+await step('5b. Action validée et historique', async () => {
+    const row = () => page.locator('tr', { has: page.locator('td', { hasText: ids.action }) }).first();
+    await row().locator('button[data-bs-target^="#QualityAction"]:not([data-bs-target^="#QualityActionView"])').click();
+    const modal = page.locator('.modal.show');
+    await modal.waitFor();
+    await modal.locator('select[name="statu"]').selectOption('3');
+    await Promise.all([page.waitForNavigation(), modal.locator('button[type=submit]').click()]);
+    await settle(page);
+    await page.goto(ids.actionUrl);
+    await settle(page);
+    await row().locator('button[data-bs-target^="#QualityActionView"]').click();
+    const view = page.locator('.modal.show');
+    await view.waitFor();
+    await page.waitForTimeout(400);
+    const hist = view.locator('h6', { hasText: /Historique/ });
+    await shot('action-historique', { title: 'Historique des modifications de l’action', highlight: hist });
+    await view.locator('[data-bs-dismiss="modal"]').first().click().catch(() => {});
+});
+
+const ncRe = () => new RegExp(ids.nc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+const cardOf = title => page.locator('.card', { has: page.locator('.card-title', { hasText: title }) }).first();
+const toTop = loc => loc.evaluate(el => { el.scrollIntoView({ block: 'start', behavior: 'instant' }); window.scrollBy(0, -70); });
+
+await step('6. Dérogation : demande', async () => {
     await page.goto(u('/quality/derogation'));
     await settle(page);
     const form = page.locator('form[action$="/quality/derogation/create"]');
     await form.locator('[name="label"]').fill('[FORMATION] Acceptation du lot d’équerres à 91,5°');
+    // Interrupteur coché = interne ; décoché, la dérogation est externe (elle engage le client).
+    await form.locator('input[name="type"]').uncheck({ force: true });
     await pickUser(form, 'Admin');
-    await pickText(form.locator('[name="quality_non_conformitie_id"]'), new RegExp(ids.nc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    await pickText(form.locator('[name="quality_non_conformitie_id"]'), ncRe());
     await form.locator('[name="pb_descp"]').fill('Lot de 12 équerres : angle mesuré entre 91,5° et 92°');
     await form.locator('[name="proposal"]').fill('Livrer en l’état les pièces à 91,5°, reprendre les autres');
-    await form.locator('[name="reply"]').fill('En attente de la réponse du client');
-    await form.locator('[name="decision"]').fill('À confirmer après réponse du client');
-    await shot('derogation-creation', { title: 'Demande de dérogation', highlight: [form.locator('[name="proposal"]'), form.locator('[name="reply"]'), form.locator('[name="decision"]')] });
-    await Promise.all([page.waitForNavigation(), form.locator('button[type=submit]').click()]);
+    const sw = form.locator('input[name="type"]').locator('xpath=ancestor::div[1]');
+    const submit = form.locator('button[type=submit]');
+    await shot('derogation-creation', { title: 'Demande de dérogation', highlight: [sw, form.locator('[name="quality_non_conformitie_id"]'), form.locator('[name="proposal"]'), submit] });
+    await Promise.all([page.waitForURL(/\/quality\/derogation\/\d+/), submit.click()]);
     await settle(page);
+    ids.derogation = page.url().match(/derogation\/(\d+)/)[1];
 });
 
-await step('7. Clôture de la NC', async () => {
+await step('7. Dérogation : client et réponse', async () => {
+    const contact = page.locator('#derogation_contact');
+    if (await contact.locator('option').count() > 1) await contact.selectOption({ index: 1 });
+    await page.locator('#customer_reply_date').fill(inDays(0));
+    await page.locator('#customer_signatory').fill('M. Martin, responsable qualité du client');
+    await page.locator('textarea[name="reply"]').fill('Accord du client pour les 7 pièces à 91,5° ; les 5 autres sont reprises');
+    await page.locator('textarea[name="decision"]').fill('Livraison des 7 pièces sous dérogation, reprise des 5 autres');
+    const update = page.locator('form[action*="/quality/derogation/edit/"] button[type=submit]');
+    await toTop(cardOf(/Client concern/));
+    await shot('derogation-fiche', { title: 'Fiche dérogation : client et réponse', highlight: [page.locator('#derogation_companies_id'), contact, page.locator('#derogation_order_line'), page.locator('#customer_reply_date'), page.locator('#customer_signatory'), update] });
+    await Promise.all([page.waitForNavigation(), update.click()]);
+    await settle(page);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await shot('derogation-manque', { title: 'Ce qui manque pour valider, et l’accord DocuSign', highlight: [cardOf(/^Validation$/), cardOf(/DocuSign/)] });
+});
+
+await step('8. Dérogation : accord du client et validation', async () => {
+    // Un courrier d'accord fictif, dessiné par le navigateur.
+    const dir = join(tmpdir(), 'wem-training'); mkdirSync(dir, { recursive: true });
+    const letter = join(dir, 'accord-client-derogation.png');
+    const tab = await page.context().newPage();
+    await tab.setViewportSize({ width: 600, height: 420 });
+    await tab.setContent(`<body style="font:15px Georgia,serif;padding:32px;background:#fff">
+        <p><b>[FORMATION] Client exemple</b></p><p style="text-align:right">Le ${inDays(0)}</p>
+        <p>Objet : demande de dérogation — équerres support</p>
+        <p>Nous acceptons la livraison en l'état des 7 pièces mesurées à 91,5°, aux conditions proposées.
+        Les 5 autres pièces seront reprises avant livraison.</p>
+        <p style="margin-top:40px">M. Martin, responsable qualité</p></body>`);
+    await tab.screenshot({ path: letter });
+    await tab.close();
+
+    const docs = cardOf(/^Documents$/);
+    const role = docs.locator('.wem-dropzone-form select').first();
+    await role.waitFor();
+    await role.selectOption('accord_client');
+    await toTop(docs);
+    await shot('derogation-documents', { title: 'Joindre l’accord écrit du client', highlight: [role, docs.locator('[role=button]').first()] });
+    await docs.locator('input[type=file]').setInputFiles(letter);
+    await docs.getByText('accord-client-derogation', { exact: false }).first().waitFor({ timeout: 20000 });
+    await settle(page);
+
+    await page.reload();
+    await settle(page);
+    await page.locator('#statu').selectOption('3');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await shot('derogation-valider', { title: 'Passer la dérogation en « Validé »', highlight: [cardOf(/^Validation$/), page.locator('#statu')] });
+    await Promise.all([page.waitForNavigation(), page.locator('form[action*="/quality/derogation/edit/"] button[type=submit]').click()]);
+    await settle(page);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await cardOf(/^Validation$/).locator('.text-success').first().waitFor();
+    await shot('derogation-validee', { title: 'Dérogation validée', highlight: cardOf(/^Validation$/) });
+});
+
+await step('9. Clôture de la NC', async () => {
     await page.goto(u(`/quality/nonConformitie?search=${encodeURIComponent(ids.nc)}`));
     await settle(page);
     const row = page.locator('tr', { has: page.locator('td', { hasText: ids.nc }) }).first();
@@ -190,9 +278,30 @@ await step('7. Clôture de la NC', async () => {
     await modal.waitFor({ state: 'detached' });
     await settle(page);
     await shot('nc-resolue', { title: 'Non-conformité résolue' });
+    // Un clic sur la ligne ouvre le détail, avec l'historique des modifications.
+    await page.locator('tr', { has: page.locator('td', { hasText: ids.nc }) }).first().locator('td').nth(1).click();
+    const view = page.locator('.modal.show');
+    await view.waitFor();
+    await view.locator('li.list-group-item').first().waitFor();
+    await page.waitForTimeout(300);
+    const hist = view.locator('h6', { hasText: /Historique/ }).locator('xpath=..');
+    await shot('nc-historique', { title: 'Historique des modifications de la non-conformité', highlight: hist });
+    await view.locator('.btn-close').first().click();
 });
 
-await step('8. Plans de contrôle (lecture)', async () => {
+await step('10. Visa documentaire des réceptions (lecture)', async () => {
+    await page.goto(u('/purchases/receipt/document-check'));
+    await settle(page);
+    const filters = page.locator('.btn-group', { has: page.getByRole('button', { name: /En attente de visa/ }) }).first();
+    // Rien en attente : « Tous les visas » montre au moins des lignes déjà visées.
+    if (await page.getByText('Aucune ligne.').isVisible().catch(() => false)) {
+        await filters.getByRole('button', { name: /Tous les visas/ }).click();
+        await settle(page);
+    }
+    await shot('visa-documentaire', { title: 'Visa documentaire des réceptions', highlight: filters });
+});
+
+await step('11. Plans de contrôle (lecture)', async () => {
     await page.goto(u('/quality/plans'));
     await settle(page);
     await page.locator('.nav-link', { hasText: /Valid/ }).first().click();
@@ -201,13 +310,29 @@ await step('8. Plans de contrôle (lecture)', async () => {
     await page.goto(u('/quality/plans/1/bubbler'));
     await settle(page);
     await page.waitForTimeout(1500);
+    // Le plan de démonstration porte un cartouche (dessinateur, référence) : il est couvert
+    // d'un aplat, comme les données privées, avant la capture.
+    await page.evaluate(() => {
+        const c = [...document.querySelectorAll('canvas')].sort((a, b) => b.clientWidth * b.clientHeight - a.clientWidth * a.clientHeight)[0];
+        if (!c) return;
+        const r = c.getBoundingClientRect();
+        const cover = document.createElement('div');
+        cover.className = 'training-badge';
+        Object.assign(cover.style, {
+            position: 'fixed', left: `${r.left + r.width * 0.32}px`, top: `${r.top + r.height * 0.72}px`,
+            width: `${r.width * 0.68}px`, height: `${r.height * 0.28}px`, background: '#adb5bd', zIndex: 9999,
+        });
+        document.body.appendChild(cover);
+    });
     await shot('bulleur', { title: 'Plan bullé (validé, en lecture seule)' });
+    await page.evaluate(() => document.querySelectorAll('.training-badge').forEach(b => b.remove()));
     await page.goto(u('/quality/inspections/2/report'));
     await settle(page);
-    await shot('rapport-fai', { title: 'Rapport premier article' });
+    const drawingNo = page.getByText('N° de plan', { exact: true }).first().locator('xpath=following::input[1]');
+    await shot('rapport-fai', { title: 'Rapport premier article', mask: [drawingNo] });
 });
 
-await step('9. Audits et retours (lecture)', async () => {
+await step('12. Audits et retours (lecture)', async () => {
     // Les audits sont hors du groupe de langue : pas de /fr.
     await page.goto(`${BASE}/audit`);
     await settle(page);

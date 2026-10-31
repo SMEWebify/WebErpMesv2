@@ -1,6 +1,8 @@
-// Guide « Articles et stock » : liste et création d'un article, fiche (détail, gamme,
+// Guide « Articles et stock » : liste et création d'un article, fiche (détail, tarifs, gamme,
 // documents), puis organisation du stock (stock → emplacement → ligne), entrée, sortie,
-// statut du stock, numéros de série, inventaires. Données préfixées [FORMATION].
+// statut du stock, numéros de série, inventaires, lots (coulée, certificat).
+// Données préfixées [FORMATION]. La réception d'achat qui crée le lot est préparée par
+// tinker (commande et réception [FORMATION]) ; seule la mise en stock passe par l'écran.
 // Aucun mouvement de stock ne se supprime : le scénario n'en crée que sur sa propre ligne.
 // Ne clique jamais « Dupliqué produit », « Créer une commande interne », la carte des
 // commandes internes du stock, « Mettre à jour » d'un mouvement ni la validation d'inventaire.
@@ -85,6 +87,34 @@ await step('2. Créer l’article', async () => {
     await settle(page);
     ids.product = page.url().match(/products\/(\d+)/)?.[1];
     await shot('fiche', { title: 'Fiche article : onglets', highlight: page.locator('.nav-pills, .nav-tabs').first() });
+});
+
+await step('2b. Détail : plan de contrôle et criticité achat', async () => {
+    const sel = ['#control_plan_mode', '#certificate_type', '#construction_code', '#nuclear_level'].map(s => page.locator(s));
+    await sel[0].scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, -160));
+    await shot('detail-criticite', { title: 'Détail produit : plan de contrôle et criticité achat', highlight: sel });
+});
+
+await step('2c. Tarifs', async () => {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await openTab('#Prices');
+    await settle(page);
+    const add = page.locator('#Prices [data-price-list-open]').first();
+    await shot('tarifs-vide', { title: 'Onglet Tarifs : grille tarifaire client', highlight: add });
+    await add.click();
+    const modal = page.locator('#priceListModal');
+    await modal.waitFor({ state: 'visible' });
+    await page.waitForTimeout(400);
+    await modal.locator('#price_list_min_qty').fill('50');
+    await modal.locator('#price_list_price').fill('4');
+    await modal.locator('#price_list_price').dispatchEvent('input');
+    await shot('tarifs-palier', { title: 'Ajouter un palier', highlight: [modal.locator('.btn-group').first(), modal.locator('#price_list_min_qty'), modal.locator('#price_list_max_qty'), modal.locator('#price_list_price'), modal.locator('button[type=submit]')] });
+    await Promise.all([page.waitForNavigation(), modal.locator('button[type=submit]').click()]);
+    await settle(page);
+    if (!(await page.locator('#Prices').isVisible())) await openTab('#Prices');
+    await settle(page);
+    await shot('tarifs', { title: 'Paliers de prix par quantité' });
 });
 
 await step('3. Gamme', async () => {
@@ -192,7 +222,7 @@ await step('9. Statut du stock', async () => {
     await page.goto(u('/products/Stock/shortages'));
     await settle(page);
     const search = page.getByPlaceholder('Recherche...', { exact: true });
-    await search.fill('FORMATION');
+    await search.fill(CODE);
     await settle(page);
     await shot('statut', { title: 'Statut du stock : besoin, stock et minimum', highlight: search });
 });
@@ -206,12 +236,67 @@ await step('10. Numéros de série et inventaires (lecture)', async () => {
     await page.goto(u('/products/inventories'));
     await settle(page);
     await shot('inventaires', { title: 'Inventaires' });
-    const existing = tinker("echo App\\Models\\Products\\Inventory::where('status', 4)->value('id') ?? App\\Models\\Products\\Inventory::value('id');");
+    const existing = tinker("echo App\\Models\\Products\\Inventory::orderByDesc('id')->value('id');");
     if (existing) {
         await page.goto(u(`/products/inventories/${existing}`));
         await settle(page);
         await shot('inventaire', { title: 'Un inventaire : liste à compter, import, validation' });
     }
+});
+
+await step('11. Réception avec coulée : création du lot', async () => {
+    // Commande d'achat et réception [FORMATION] préparées en base : le parcours achat est
+    // décrit dans le guide « Achats ». Fournisseur [FORMATION] le plus récent.
+    const M = 'App\\Models\\';
+    const php = [
+        `$sup = ${M}Companies\\Companies::where('label', 'like', '[FORMATION]%')->where('statu_supplier', 2)->latest('id')->first();`,
+        `$p = ${M}Purchases\\Purchases::create(['code' => 'ACH-FORM-${stamp}', 'label' => '[FORMATION] Équerres ${stamp}', 'companies_id' => $sup->id, 'companies_contacts_id' => $sup->Contacts()->value('id'), 'companies_addresses_id' => $sup->Addresses()->value('id'), 'statu' => 1, 'user_id' => 1]);`,
+        `$l = ${M}Purchases\\PurchaseLines::create(['purchases_id' => $p->id, 'tasks_id' => 0, 'ordre' => 1, 'code' => '${CODE}', 'product_id' => ${ids.product}, 'label' => '[FORMATION] Équerre support 90°', 'qty' => 5, 'selling_price' => 3.2, 'discount' => 0, 'unit_price_after_discount' => 3.2, 'total_selling_price' => 16, 'receipt_qty' => 5, 'invoiced_qty' => 0, 'methods_units_id' => ${M}Methods\\MethodsUnits::value('id'), 'accounting_vats_id' => ${M}Accounting\\AccountingVat::value('id'), 'certificate_type' => '3.1']);`,
+        `$p->statu = 4; $p->save();`,
+        `$r = ${M}Purchases\\PurchaseReceipt::create(['code' => 'REC-FORM-${stamp}', 'label' => '[FORMATION] Réception ${stamp}', 'companies_id' => $sup->id, 'statu' => 1, 'user_id' => 1]);`,
+        `${M}Purchases\\PurchaseReceiptLines::create(['purchase_receipt_id' => $r->id, 'purchase_line_id' => $l->id, 'ordre' => 10, 'receipt_qty' => 5, 'received_certificate_type' => '3.1']);`,
+        `echo $r->id;`,
+    ].join(' ');
+    ids.receipt = tinker(php);
+    if (!/^\d+$/.test(ids.receipt)) throw new Error(`Réception non créée : ${ids.receipt}`);
+    await page.goto(u(`/purchases/receipt/${ids.receipt}`));
+    await settle(page);
+    await openTab('#PurchaseLines');
+    await settle(page);
+    await page.locator('button[title="Mise en stock"]').first().click();
+    await page.locator('#batch-heat-number').waitFor();
+    await page.getByRole('link', { name: /Existant/ }).click();
+    const sel = page.locator('#stock-existing-form select');
+    await sel.selectOption(String(ids.line));
+    await page.locator('#batch-heat-number').fill(`FORM-C${stamp}`);
+    await page.locator('#batch-supplier-code').fill('AO-24117');
+    await page.locator('#batch-certificate').selectOption('3.1');
+    await page.waitForTimeout(400);
+    const btn = page.getByRole('button', { name: /Mettre en stock/ });
+    await shot('lot-reception', { title: 'Mise en stock d’une réception : coulée et certificat', highlight: [sel, page.locator('#batch-heat-number'), page.locator('#batch-supplier-code'), page.locator('#batch-certificate'), btn] });
+    const [resp] = await Promise.all([page.waitForResponse(r => r.request().method() === 'POST' && /stock/i.test(r.url())), btn.click()]);
+    if (!resp.ok()) throw new Error(`Mise en stock refusée (${resp.status()}) : ${await resp.text()}`);
+    await settle(page);
+});
+
+await step('12. Lots : recherche par coulée et fiche lot', async () => {
+    await page.goto(u('/products/batches'));
+    await settle(page);
+    const search = page.locator('input[name="search"]');
+    await search.fill(`FORM-C${stamp}`);
+    await Promise.all([page.waitForNavigation(), page.locator('form[action*="batches"] button[type=submit]').click()]);
+    await settle(page);
+    const eye = page.locator('a[href*="/products/batches/"]').first();
+    await shot('lots', { title: 'Lots : recherche par coulée', highlight: [search, eye] });
+    await Promise.all([page.waitForNavigation(), eye.click()]);
+    await settle(page);
+    ids.batch = page.url().match(/batches\/(\d+)/)?.[1];
+    await page.waitForTimeout(1000);
+    await settle(page);
+    await shot('fiche-lot', { title: 'Fiche lot : identification, certificat, mouvements' });
+    await page.goto(u(`/products/stock/location/product/${ids.line}`));
+    await settle(page);
+    await shot('mouvements-lot', { title: 'Mouvement de la ligne de stock avec sa coulée', highlight: page.locator('table a[href*="/products/batches/"]').first() });
 });
 
 save({ scenario: 'article', ids, finishedAt: new Date().toISOString() });

@@ -1,96 +1,149 @@
 {
   "scenario": "atelier",
-  "task": {
-    "id": 528,
-    "label": "Pliage",
-    "methods_services_id": 3,
-    "open": true
+  "data": {
+    "order": 550,
+    "line": 2319,
+    "visa_service": 12,
+    "material": 583,
+    "cut": 584,
+    "check": 585,
+    "pack": 586,
+    "cut_service": 2
   },
-  "finishedAt": "2026-10-25T23:02:02.891Z",
+  "releaseEnabled": true,
+  "finishedAt": "2026-10-31T00:38:31.894Z",
   "steps": [
     {
       "n": 1,
       "file": "img/01-accueil-atelier.png",
       "title": "Accueil atelier : quatre tuiles",
-      "url": "http://127.0.0.1:8001/fr/workshop"
+      "url": "http://127.0.0.1:8007/fr/workshop"
     },
     {
       "n": 2,
       "file": "img/02-liste-atelier.png",
       "title": "Liste atelier : opérations à faire, filtres et échéances",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Lines"
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Lines"
     },
     {
       "n": 3,
       "file": "img/03-recherche-tache.png",
       "title": "Déclaration de production : recherche par n° d’opération",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu"
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu"
     },
     {
       "n": 4,
-      "file": "img/04-suivi-avant.png",
-      "title": "Écran de suivi d’une opération",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/04-suivi-sans-bpf.png",
+      "title": "Sans bon pour fabrication : Play grisé, bandeau d’explication",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 5,
-      "file": "img/05-suivi-en-cours.png",
-      "title": "En cours : pièces bonnes et rebuts déclarés",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/05-suivi-avant.png",
+      "title": "Écran de suivi d’une opération",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 6,
-      "file": "img/06-suivi-planification.png",
-      "title": "Carte de planification : date de fin, ressource",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/06-suivi-en-cours.png",
+      "title": "En cours : pièces bonnes et rebuts déclarés",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 7,
-      "file": "img/07-suivi-informations.png",
-      "title": "Onglet « Informations » : temps, coût, TRS, avancement",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/07-suivi-planification.png",
+      "title": "Carte de planification : date de fin, ressource",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 8,
-      "file": "img/08-suivi-termine.png",
-      "title": "Opération terminée : journal d’activité",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/08-suivi-informations.png",
+      "title": "Onglet « Informations » : temps, coût, TRS, avancement",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 9,
-      "file": "img/09-alerte-andon.png",
-      "title": "Signaler un problème : alerte Andon ou non-conformité",
-      "url": "http://127.0.0.1:8001/fr/workshop/Task/Statu/Id/528"
+      "file": "img/09-suivi-termine.png",
+      "title": "Opération terminée : journal d’activité",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 10,
-      "file": "img/10-liste-taches.png",
-      "title": "Planification › Liste des tâches",
-      "url": "http://127.0.0.1:8001/fr/production/Task"
+      "file": "img/10-alerte-andon.png",
+      "title": "Signaler un problème : alerte Andon ou non-conformité",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/584"
     },
     {
       "n": 11,
-      "file": "img/11-kanban.png",
-      "title": "Flux de travail (Kanban) filtré sur un service",
-      "url": "http://127.0.0.1:8001/fr/production/kanban?methods_services_id=3"
+      "file": "img/11-lots-consommes.png",
+      "title": "Matière sortie du stock : lot et coulée consommés",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/583"
     },
     {
       "n": 12,
-      "file": "img/12-planning-charge.png",
-      "title": "Planning de charge",
-      "url": "http://127.0.0.1:8001/fr/production/load-planning"
+      "file": "img/12-poste-visa.png",
+      "title": "Poste de charge : « Visa de libération requis »",
+      "url": "http://127.0.0.1:8007/fr/methods/service"
     },
     {
       "n": 13,
-      "file": "img/13-rapports.png",
-      "title": "Rapports atelier : réalisé, rebuts, charge machine, andon",
-      "url": "http://127.0.0.1:8001/fr/workshop/Reports"
+      "file": "img/13-visa-attente.png",
+      "title": "Opération terminée sur un poste à visa : en attente du visa",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/585"
     },
     {
       "n": 14,
-      "file": "img/14-andon.png",
+      "file": "img/14-visa-avertissement.png",
+      "title": "Opération suivante : avertissement, sans blocage",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/586"
+    },
+    {
+      "n": 15,
+      "file": "img/15-kanban-visa.png",
+      "title": "Kanban : pastille « À viser »",
+      "url": "http://127.0.0.1:8007/fr/production/kanban?methods_services_id=12"
+    },
+    {
+      "n": 16,
+      "file": "img/16-visa-libere.png",
+      "title": "Phase libérée : date, auteur, commentaire",
+      "url": "http://127.0.0.1:8007/fr/workshop/Task/Statu/Id/585"
+    },
+    {
+      "n": 17,
+      "file": "img/17-liste-taches.png",
+      "title": "Planification › Liste des tâches",
+      "url": "http://127.0.0.1:8007/fr/production/Task"
+    },
+    {
+      "n": 18,
+      "file": "img/18-kanban.png",
+      "title": "Flux de travail (Kanban) filtré sur un service",
+      "url": "http://127.0.0.1:8007/fr/production/kanban?methods_services_id=2"
+    },
+    {
+      "n": 19,
+      "file": "img/19-planning-charge.png",
+      "title": "Planning de charge",
+      "url": "http://127.0.0.1:8007/fr/production/load-planning"
+    },
+    {
+      "n": 20,
+      "file": "img/20-rapports.png",
+      "title": "Rapports atelier : réalisé, rebuts, charge machine, andon",
+      "url": "http://127.0.0.1:8007/fr/workshop/Reports"
+    },
+    {
+      "n": 21,
+      "file": "img/21-andon.png",
       "title": "Écran Andon : alertes à traiter",
-      "url": "http://127.0.0.1:8001/fr/workshop/andon"
+      "url": "http://127.0.0.1:8007/fr/workshop/andon"
+    },
+    {
+      "n": 22,
+      "file": "img/22-fiche-suiveuse.png",
+      "title": "Fiche commande : impression de la fiche suiveuse",
+      "url": "http://127.0.0.1:8007/fr/orders/550"
     }
   ]
 }

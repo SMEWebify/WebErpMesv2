@@ -1,95 +1,107 @@
 {
   "scenario": "gmao",
   "ids": {
-    "asset": "4",
-    "plan": "4",
-    "workOrder": "6"
+    "asset": "5",
+    "plan": "5",
+    "workOrder": "8"
   },
-  "finishedAt": "2026-10-26T00:19:24.794Z",
+  "finishedAt": "2026-10-31T00:24:32.881Z",
   "steps": [
     {
       "n": 1,
       "file": "img/01-tableau-de-bord.png",
       "title": "GMAO : tableau de bord",
-      "url": "http://127.0.0.1:8001/fr/gmao/dashboard"
+      "url": "http://127.0.0.1:8012/fr/gmao/dashboard"
     },
     {
       "n": 2,
       "file": "img/02-equipement-creation.png",
       "title": "Nouvel équipement, rattaché à sa ressource",
-      "url": "http://127.0.0.1:8001/fr/assets/create"
+      "url": "http://127.0.0.1:8012/fr/assets/create"
     },
     {
       "n": 3,
       "file": "img/03-equipement-fiche.png",
       "title": "Fiche équipement : ordres de travail et plans",
-      "url": "http://127.0.0.1:8001/fr/assets/4"
+      "url": "http://127.0.0.1:8012/fr/assets/5"
     },
     {
       "n": 4,
       "file": "img/04-plan-creation.png",
       "title": "Nouveau plan de maintenance préventive",
-      "url": "http://127.0.0.1:8001/fr/gmao/maintenance-plans/create?asset_id=4"
+      "url": "http://127.0.0.1:8012/fr/gmao/maintenance-plans/create?asset_id=5"
     },
     {
       "n": 5,
-      "file": "img/05-plan-fiche.png",
-      "title": "Fiche du plan : « Générer un ordre de travail »",
-      "url": "http://127.0.0.1:8001/fr/gmao/maintenance-plans/4"
+      "file": "img/05-plan-auto.png",
+      "title": "Génération automatique des ordres de travail",
+      "url": "http://127.0.0.1:8012/fr/gmao/maintenance-plans/create?asset_id=5"
     },
     {
       "n": 6,
-      "file": "img/06-ot-genere.png",
-      "title": "Ordre de travail préventif créé depuis le plan",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/6"
+      "file": "img/06-plan-fiche.png",
+      "title": "Fiche du plan : génération automatique et prochaine échéance",
+      "url": "http://127.0.0.1:8012/fr/gmao/maintenance-plans/5"
     },
     {
       "n": 7,
-      "file": "img/07-ot-execution.png",
-      "title": "Intervention : statut, technicien, horaires",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/6/edit"
+      "file": "img/07-ot-genere.png",
+      "title": "Ordre de travail préventif créé depuis le plan",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/8"
     },
     {
       "n": 8,
-      "file": "img/08-ot-compte-rendu.png",
-      "title": "Compte rendu d’intervention",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/6/edit"
+      "file": "img/08-plan-ordres.png",
+      "title": "Ordres de travail générés par le plan",
+      "url": "http://127.0.0.1:8012/fr/gmao/maintenance-plans/5"
     },
     {
       "n": 9,
-      "file": "img/09-ot-cloture.png",
-      "title": "Clôture : statut « Closed » et date de clôture",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/6/edit"
+      "file": "img/09-ot-execution.png",
+      "title": "Intervention : statut, technicien, horaires",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/8/edit"
     },
     {
       "n": 10,
-      "file": "img/10-ot-fiche.png",
-      "title": "Ordre de travail clôturé",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/6"
+      "file": "img/10-ot-compte-rendu.png",
+      "title": "Compte rendu d’intervention",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/8/edit"
     },
     {
       "n": 11,
-      "file": "img/11-ot-correctif.png",
-      "title": "Déclarer une panne : ordre de travail curatif",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/create?asset_id=4"
+      "file": "img/11-ot-cloture.png",
+      "title": "Clôture : statut « Clôturé » et date de clôture",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/8/edit"
     },
     {
       "n": 12,
-      "file": "img/12-ot-panne.png",
-      "title": "Description de la panne et arrêt machine",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders/create?asset_id=4"
+      "file": "img/12-ot-fiche.png",
+      "title": "Ordre de travail clôturé",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/8"
     },
     {
       "n": 13,
-      "file": "img/13-ot-liste.png",
-      "title": "Liste des ordres de travail",
-      "url": "http://127.0.0.1:8001/fr/gmao/work-orders"
+      "file": "img/13-ot-correctif.png",
+      "title": "Déclarer une panne : ordre de travail curatif",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/create?asset_id=5"
     },
     {
       "n": 14,
-      "file": "img/14-equipement-historique.png",
+      "file": "img/14-ot-panne.png",
+      "title": "Description de la panne et arrêt machine",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders/create?asset_id=5"
+    },
+    {
+      "n": 15,
+      "file": "img/15-ot-liste.png",
+      "title": "Liste des ordres de travail",
+      "url": "http://127.0.0.1:8012/fr/gmao/work-orders"
+    },
+    {
+      "n": 16,
+      "file": "img/16-equipement-historique.png",
       "title": "Fiche équipement : historique des interventions",
-      "url": "http://127.0.0.1:8001/fr/assets/4"
+      "url": "http://127.0.0.1:8012/fr/assets/5"
     }
   ]
 }

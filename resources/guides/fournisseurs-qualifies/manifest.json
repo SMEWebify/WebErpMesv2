@@ -1,0 +1,65 @@
+{
+  "scenario": "fournisseurs-qualifies",
+  "supplier": "[FORMATION] Laquage Armor 10310049",
+  "ids": {
+    "supplier": "90",
+    "purchase": "43"
+  },
+  "finishedAt": "2026-10-31T00:50:25.249Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-fiche-non-qualifie.png",
+      "title": "Onglet « Évaluations fournisseurs » : « Non qualifié », aucune commande à évaluer",
+      "url": "http://127.0.0.1:8013/fr/companies/90"
+    },
+    {
+      "n": 2,
+      "file": "img/02-creation-non-qualifie.png",
+      "title": "Nouvelle commande d’achat : le fournisseur porte « Non qualifié »",
+      "url": "http://127.0.0.1:8013/fr/purchases"
+    },
+    {
+      "n": 3,
+      "file": "img/03-fenetre-refus.png",
+      "title": "Fenêtre « Fournisseur non qualifié » : motif obligatoire",
+      "url": "http://127.0.0.1:8013/fr/purchases"
+    },
+    {
+      "n": 4,
+      "file": "img/04-passe-droit.png",
+      "title": "Motif saisi, puis « Commander quand même »",
+      "url": "http://127.0.0.1:8013/fr/purchases"
+    },
+    {
+      "n": 5,
+      "file": "img/05-commande-carte.png",
+      "title": "Fiche commande d’achat : carte « Qualification » et passe-droit tracé",
+      "url": "http://127.0.0.1:8013/fr/purchases/43"
+    },
+    {
+      "n": 6,
+      "file": "img/06-evaluation-approuvee.png",
+      "title": "Nouvelle évaluation : statut « Approuvé » et date de prochaine revue",
+      "url": "http://127.0.0.1:8013/fr/companies/90"
+    },
+    {
+      "n": 7,
+      "file": "img/07-fiche-qualifie.png",
+      "title": "Le fournisseur est « Qualifié »",
+      "url": "http://127.0.0.1:8013/fr/companies/90"
+    },
+    {
+      "n": 8,
+      "file": "img/08-creation-qualifie.png",
+      "title": "Fournisseur qualifié : badge vert, la commande se crée sans fenêtre",
+      "url": "http://127.0.0.1:8013/fr/purchases"
+    },
+    {
+      "n": 9,
+      "file": "img/09-export-csv.png",
+      "title": "Liste des fournisseurs qualifiés : « Fournisseurs qualifiés (CSV) »",
+      "url": "http://127.0.0.1:8013/fr/purchases"
+    }
+  ]
+}

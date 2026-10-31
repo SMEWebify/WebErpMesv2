@@ -1,0 +1,125 @@
+{
+  "scenario": "commande-revue-contrat",
+  "order": "[FORMATION] Supports tuyauterie 10310040",
+  "ids": {
+    "order": "562",
+    "line": 2330
+  },
+  "finishedAt": "2026-10-31T00:43:16.701Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-ligne-reperes.png",
+      "title": "Nouvelle ligne : repères d’équipement saisis",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 2,
+      "file": "img/02-commande-bandeau.png",
+      "title": "Fiche commande : bandeau « revue non visée » et onglet « Revue de contrat »",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 3,
+      "file": "img/03-index-revue.png",
+      "title": "Liste des commandes : recherche par repère et colonne « Revue »",
+      "url": "http://127.0.0.1:8005/fr/orders"
+    },
+    {
+      "n": 4,
+      "file": "img/04-revue-vide.png",
+      "title": "Onglet « Revue de contrat » : revue à faire",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 5,
+      "file": "img/05-revue-preparation.png",
+      "title": "Cocher les points revus, décrire les écarts, « Enregistrer la préparation »",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 6,
+      "file": "img/06-ged-role.png",
+      "title": "Onglet « Documents » : type « Document contractuel », puis déposer le fichier",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 7,
+      "file": "img/07-revue-documents.png",
+      "title": "Le document apparaît dans « Documents contractuels » ; cocher le point correspondant",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 8,
+      "file": "img/08-prix-preparation.png",
+      "title": "Fenêtre des tâches : « Activer prix calculé » libre en préparation",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 9,
+      "file": "img/09-revue-visa-boutons.png",
+      "title": "Visa : « Viser : revue validée » ou « Viser : revue rejetée »",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 10,
+      "file": "img/10-revue-figee.png",
+      "title": "Revue visée : figée, auteur et date posés",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 11,
+      "file": "img/11-prix-motif.png",
+      "title": "Commande validée : motif exigé pour réactiver le prix calculé",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 12,
+      "file": "img/12-report-motif.png",
+      "title": "Modifier la date de livraison : le champ « Motif du report » apparaît",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 13,
+      "file": "img/13-report-ligne.png",
+      "title": "La ligne affiche la nouvelle date et « Promise le » (date d’origine)",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 14,
+      "file": "img/14-report-historique.png",
+      "title": "Panneau de la ligne : « Historique des reports »",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 15,
+      "file": "img/15-avenant-formulaire.png",
+      "title": "Carte « Avenants » : motif, demandeur, date, puis créer",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 16,
+      "file": "img/16-avenant-revue-rouverte.png",
+      "title": "Avenant n° 1 en attente : la revue est rouverte",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 17,
+      "file": "img/17-avenant-annuler.png",
+      "title": "« Annuler l’avenant » rétablit la revue d’avant",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 18,
+      "file": "img/18-avenant-visa.png",
+      "title": "Viser la revue rouverte = viser l’avenant",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    },
+    {
+      "n": 19,
+      "file": "img/19-avenant-valide.png",
+      "title": "Avenant n° 2 validé : TTC avant / après",
+      "url": "http://127.0.0.1:8005/fr/orders/562"
+    }
+  ]
+}

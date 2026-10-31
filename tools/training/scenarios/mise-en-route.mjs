@@ -77,24 +77,50 @@ await step('2. Comptabilité', async () => {
     await shot('modes-paiement', { title: 'Modes de paiement' });
 });
 
-await step('3. Flux des tâches', async () => {
+await step('3. Catégories d’affaire et motifs de perte', async () => {
+    await open('/methods/affair-category');
+    // Formulaire de création (colonne de droite) : mêmes réglages que la fenêtre « Modifier ».
+    await shot('categories-affaire', {
+        title: 'Méthodes › Catégories d’affaire',
+        highlight: [
+            page.locator('#required_services_new'),
+            page.locator('#requires_dossier_new'),
+            page.locator('#requires_risks_new'),
+        ],
+    });
+    await open('/methods/loss-reason');
+    await shot('motifs-perte', { title: 'Méthodes › Motifs de perte' });
+});
+
+await step('4. Flux des tâches', async () => {
     await open('/admin/kanban-settings');
     await shot('flux-taches', { title: 'Flux des tâches : statuts des opérations' });
 });
 
-await step('4. Objectif de chiffre', async () => {
+await step('5. Objectif de chiffre', async () => {
     await open('/admin/estimated-budgets-settings');
     await shot('objectif-ca', { title: 'Objectif de chiffre d’affaires' });
 });
 
-await step('5. Rôles et permissions', async () => {
+await step('6. Rôles et permissions', async () => {
     await open('/admin/roles-permissions', '#Role');
-    await shot('roles', { title: 'Rôles et permissions' });
+    const edit = page.locator('#Role button[data-bs-toggle="modal"]').first();
+    await shot('roles', { title: 'Rôles et permissions', highlight: edit });
+    // Fenêtre « Modifier » : chaque droit avec sa description. Rien n'est enregistré.
+    await edit.click();
+    const modal = page.locator('.modal.show');
+    await modal.waitFor();
+    await page.waitForTimeout(400);
+    const right = modal.locator('label', { hasText: /^contract-review-approve$/ }).locator('xpath=..');
+    await shot('role-droits', { title: 'Fenêtre « Modifier » : chaque droit et sa description', highlight: right });
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
 });
 
-await step('6. Utilisateurs', async () => {
+await step('7. Utilisateurs', async () => {
     await open('/human-resources/users');
-    await shot('utilisateurs', { title: 'Liste des utilisateurs' });
+    // Colonne E-mail : masquée.
+    await shot('utilisateurs', { title: 'Liste des utilisateurs', mask: [page.locator('.app-main table tbody td:nth-child(3)')] });
     await page.locator('tr[data-row-href]').last().click();
     await page.waitForURL(/\/human-resources\/user\/\d+/);
     await settle(page);
@@ -104,18 +130,27 @@ await step('6. Utilisateurs', async () => {
     await shot('utilisateur-role', { title: 'Fiche salarié, onglet « RH information » : le rôle', highlight: role });
 });
 
-await step('7. E-mail', async () => {
+await step('8. E-mail', async () => {
     await open('/admin/integrations/mail');
     // Serveur, identifiant et expéditeur sont ceux de l'instance : masqués.
     await shot('email', { title: 'Configuration e-mail (SMTP)', mask: [page.locator('.app-main form input:not([type=hidden]):not([type=checkbox]), .app-main form select')] });
 });
 
-await step('8. Imports', async () => {
+await step('9. Imports', async () => {
     await open('/admin/imports-exports', '#CustomerImport');
     await shot('import-clients', { title: 'Imports/Exports : import des clients' });
 });
 
-await step('9. Apparence', async () => {
+await step('10. Journal des consultations', async () => {
+    await open('/admin/access-log');
+    // Utilisateurs, sujets consultés et adresses IP : masqués.
+    await shot('journal-consultations', {
+        title: 'Votre entreprise › Journal des consultations',
+        mask: [page.locator('.app-main table tbody td:nth-child(2), .app-main table tbody td:nth-child(4), .app-main table tbody td:last-child')],
+    });
+});
+
+await step('11. Apparence', async () => {
     await page.goto(u('/users/Profile/1#Appearance'));
     await settle(page);
     await page.locator('a[href="#Appearance"]').first().click().catch(() => {});

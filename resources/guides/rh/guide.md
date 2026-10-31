@@ -6,7 +6,7 @@ order: 10
 duration: 15
 icon: fas fa-users
 can: human-resources-menu
-updated: 2026-10-26
+updated: 2026-10-31
 ---
 
 **Objectif** : regrouper sur une seule fiche tout ce que l'entreprise sait d'un salarié, et
@@ -71,8 +71,21 @@ Onglet **RH information** :
 3. **Rôle** : le rôle qui ouvre les menus de l'ERP. « — » le laisse inchangé.
 
 Plus bas : niveau de rémunération, poste de travail, dates d'adhésion, de confirmation et
-de résiliation, statut de l'employé, section et **responsable** du salarié. **Mettre à
-jours** enregistre.
+de résiliation, et statut de l'employé. En bas du formulaire :
+
+![Superviseur et section](img/03-fiche-rh-superviseur.png)
+
+1. **Superviseur** : le responsable du salarié (chef d'équipe, chef d'atelier). Il est
+   prévenu dans sa **cloche de notifications** à chaque demande d'absence du salarié.
+2. **Section** : l'atelier ou le service du salarié.
+3. **Mettre à jour** enregistre la fiche.
+
+> ⚠️ Vérifiez la liste **Superviseur** à chaque modification de la fiche : c'est cette
+> personne qui recevra les demandes d'absence du salarié. Choisissez « — » s'il n'a pas de
+> responsable.
+>
+> 💡 Le superviseur est **prévenu**, il ne **valide** pas : la validation des absences reste
+> aux RH (voir le guide « Temps, horaires et congés »).
 
 > 💡 Le rôle ne se modifie qu'avec la permission d'administration de l'entreprise, et jamais
 > sur son propre compte.
@@ -86,7 +99,7 @@ jours** enregistre.
 
 Onglet **Contra** (contrats), carte **Nouveau contrat** :
 
-![Nouveau contrat](img/03-contrat.png)
+![Nouveau contrat](img/04-contrat.png)
 
 1. **Type de contrat** : CDI, CDD, intérim, apprentissage…
 2. **Date de début** (et **Date de fin** pour un contrat à durée déterminée).
@@ -96,7 +109,7 @@ Complétez le **statut** (Essais pendant la période d'essai, puis Actif), la **
 **date de signature**, la **durée de la période d'essai** en jours, la **position** et, si
 besoin, le coefficient et les salaires. **Soumettre**.
 
-![Contrats du salarié](img/04-contrats.png)
+![Contrats du salarié](img/05-contrats.png)
 
 Le contrat **Actif** compte : sa durée hebdomadaire sert à convertir en jours les absences
 saisies en heures.
@@ -108,7 +121,7 @@ saisies en heures.
 Onglet **Documents** : contrat signé, bulletins, arrêts de travail, diplômes, pièces
 d'identité.
 
-![Dossier du salarié](img/05-documents.png)
+![Dossier du salarié](img/06-documents.png)
 
 Déposez un fichier dans la zone prévue, puis choisissez son **type de document** (contrat,
 bulletin de paie, arrêt de travail, diplôme, pièce d'identité…).
@@ -124,7 +137,7 @@ bulletin de paie, arrêt de travail, diplôme, pièce d'identité…).
 Le salarié ouvre son **profil** (menu de son nom en haut à droite), onglet **Note de frais**,
 et crée une note par déplacement ou par mois :
 
-![Nouvelle note de frais](img/06-note-creation.png)
+![Nouvelle note de frais](img/07-note-creation.png)
 
 1. **Libellé** : le déplacement ou la période.
 2. **Date**.
@@ -139,14 +152,14 @@ Le bouton **Voir** de la note ouvre sa page : la liste des dépenses à gauche, 
 
 Déposez d'abord la photo du ticket (ou la facture en PDF) dans la carte **Justificatifs** :
 
-![Justificatif déposé](img/07-justificatif.png)
+![Justificatif déposé](img/08-justificatif.png)
 
 1. **Justificatifs** : glissez le fichier ou cliquez pour le choisir. Sur téléphone, le
    navigateur propose de prendre la photo.
 
 Puis, dans la carte de saisie :
 
-![Saisir la dépense](img/08-depense.png)
+![Saisir la dépense](img/09-depense.png)
 
 1. **Justificatif** : le ticket déposé. La liste ne propose que les justificatifs pas encore
    saisis.
@@ -154,7 +167,7 @@ Puis, dans la carte de saisie :
    montant et la TVA. Rien n'est enregistré : relisez avant d'envoyer.
 3. **Catégorie** : carburant, hôtel, repas…
 
-![Montant et TVA](img/08b-depense-montant.png)
+![Montant et TVA](img/10-depense-montant.png)
 
 1. **Montant** : le montant TTC payé.
 2. **Taxe** : le **taux** de TVA (10 pour 10 %), pas son montant.
@@ -163,7 +176,7 @@ Puis, dans la carte de saisie :
 La dépense peut aussi être rattachée à une **commande** client (frais refacturables) ; le
 **payeur** est celui qui a avancé la somme.
 
-![Note de frais](img/09-note.png)
+![Note de frais](img/11-note.png)
 
 > ⚠️ **Lire avec l'IA** envoie l'image du justificatif au fournisseur d'IA configuré par
 > votre administrateur. Sans fournisseur configuré, saisissez la dépense à la main.
@@ -175,7 +188,7 @@ La dépense peut aussi être rattachée à une **commande** client (frais refact
 Une fois toutes les dépenses saisies, le salarié revient dans son profil, onglet **Note de
 frais**, et ouvre la note avec **Modifier** :
 
-![Soumettre la note](img/10-note-soumission.png)
+![Soumettre la note](img/12-note-soumission.png)
 
 1. **Statuts** : « Soumise ».
 2. **Mettre à jour**.
@@ -188,13 +201,13 @@ la décision des RH.
 ## 8. La validation (RH)
 
 Menu **Ressources humaines › Note de frais**, onglet **Validation des note de frais** : les
-notes soumises, avec leur montant. **Voir** ouvre la note et ses justificatifs.
+notes soumises (et celles déjà approuvées), avec leur montant. **Voir** ouvre la note et ses justificatifs.
 
-![Notes à valider](img/11-validation-liste.png)
+![Notes à valider](img/13-validation-liste.png)
 
 **Modifier** sur la note :
 
-![Valider la note](img/12-validation.png)
+![Valider la note](img/14-validation.png)
 
 1. **Statuts** : **Approuvée**, ou **Retour** pour la renvoyer au salarié (justificatif
    manquant, montant à corriger).
@@ -220,7 +233,14 @@ nouveau.
 Onglet **Catégorie de dépense** : la liste proposée au salarié (carburant, hôtel, repas
 midi, repas soir…). **Nouvelle catégorie de dépense** en ajoute une.
 
-![Catégories de dépense](img/13-categories.png)
+![Catégories de dépense](img/15-categories.png)
+
+## Et ensuite ?
+
+- Créer les natures de congé et saisir les droits de chaque salarié : guide « Temps,
+  horaires et congés ».
+- Suivre les habilitations du salarié (CACES, habilitation électrique) : guide « Risques et
+  santé au travail ».
 
 ## Questions fréquentes
 
@@ -233,6 +253,11 @@ Elle n'est pas au statut « Soumise » : le salarié doit la soumettre depuis so
 **Un collègue peut-il voir mes justificatifs ?**
 Non : comme le dossier salarié, les justificatifs ne sont visibles que par le salarié de la
 note et par les RH.
+
+**Un salarié a un superviseur que personne n'a choisi.**
+Sa fiche a été enregistrée quand la liste **Superviseur** n'avait pas encore de choix vide :
+le premier nom de la liste a été retenu. Choisissez le bon responsable (ou « — ») et cliquez
+**Mettre à jour**.
 
 **Je ne peux pas modifier le rôle d'un salarié.**
 Il faut la permission d'administration de l'entreprise, et on ne modifie jamais son propre

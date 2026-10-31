@@ -69,6 +69,8 @@ await step('2. Informations RH', async () => {
     const section = await form.locator('[name="section_id"] option').evaluateAll(os => (os.find(o => /bend/i.test(o.text)) || os[1] || os[0]).value);
     await form.locator('[name="section_id"]').selectOption(section);
     await shot('fiche-rh', { title: 'Fiche salarié : informations RH', highlight: [form.locator('[name="job_title"]'), form.locator('[name="payroll_number"]'), form.locator('[name="role"]')] });
+    // Le superviseur reçoit les demandes d'absence du salarié (cloche) ; la liste n'a pas de choix vide.
+    await shot('fiche-rh-superviseur', { title: 'Fiche salarié : superviseur et section', highlight: [form.locator('[name="supervisor_id"]'), form.locator('[name="section_id"]'), submitOf(form)] });
     await submit(form);
 });
 

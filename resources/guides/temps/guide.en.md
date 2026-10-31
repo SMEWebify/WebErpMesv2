@@ -6,7 +6,7 @@ order: 40
 duration: 20
 icon: fas fa-user-clock
 can: settings-time-menu
-updated: 2026-10-26
+updated: 2026-10-31
 ---
 
 **Goal**: describe when the workshop works (shifts, public holidays), and manage leave from
@@ -165,12 +165,18 @@ The request is **to be approved**: the balance already counts it as "Pending" (4
 here), so the employee cannot book the same days twice. They can change it until it is
 handled.
 
+**Who is notified?** As soon as it is sent, an "Absence request to approve" notification
+arrives in the **bell** (top of the screen) of:
+
+- **HR** (human resources permission or administrator role);
+- the employee's **supervisor**, chosen on their employee record (guide "Human
+  resources — employee record and expense reports").
+
+Clicking the notification opens the **Times and absences** screen. Whoever sends the
+request is never notified of their own action.
+
 > ⚠️ The "Afternoon absence" type counts a full day: for a half-day, use "Morning absence"
 > or an absence in hours.
->
-> 💡 The request shows up in the notification bell of HR and of the employee's manager
-> (set on the employee record); the employee is told the same way once it is approved or
-> refused.
 
 ---
 
@@ -183,6 +189,16 @@ number of days charged. **Edit** on a request:
 
 1. **Status**: "Approved" or "Not approved" (refusal).
 2. **Update**.
+
+The employee then gets "Your absence from … to … is approved" (or "refused") in their
+bell; clicking it opens their profile.
+
+> ⚠️ The supervisor is **notified**, they do not **approve**: only people with the human
+> resources permission change the status of a request. Let them know if approval depends
+> on the team leader's agreement.
+>
+> 💡 Notifications only appear in the bell and in the **Notification history** tab of the
+> profile: no e-mail is sent.
 
 ![Leave requests](img/12-absences.png)
 
@@ -244,6 +260,13 @@ count clock-ins never closed, double entries and orphan exits.
 
   ![Time unit](img/17-unite-temps.png)
 
+## What next?
+
+- Assign the working pattern to the machines (**Methods › Resources**) for a realistic load
+  planning.
+- Fill in each employee's payroll number and supervisor: guide "Human resources — employee
+  record and expense reports".
+
 ## Frequently asked questions
 
 **A request counts 5 days instead of 4.**
@@ -254,6 +277,10 @@ No leave type is created or active: section 1.
 
 **An approved absence is missing from the payroll export.**
 It has no leave type, or it falls outside the selected month.
+
+**The supervisor received no notification.**
+Check the **Supervisor** on the employee record. If nobody (HR included) ever receives
+anything, tell your administrator: notifications are sent in the background by the server.
 
 **The load planning did not change after creating the pattern.**
 The pattern is assigned to no resource and is not the default pattern.

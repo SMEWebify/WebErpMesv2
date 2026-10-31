@@ -1,106 +1,156 @@
 {
   "scenario": "qualite",
   "ids": {
-    "nc": "NC-2026-26",
-    "action": "ACT-2026-26"
+    "nc": "NC-2026-31",
+    "action": "ACT-2026-32",
+    "actionUrl": "http://127.0.0.1:8009/fr/quality/action",
+    "derogation": "5"
   },
-  "finishedAt": "2026-10-26T00:49:55.519Z",
+  "finishedAt": "2026-10-31T00:34:53.755Z",
   "steps": [
     {
       "n": 1,
       "file": "img/01-tableau-de-bord.png",
       "title": "Tableau de bord qualité",
-      "url": "http://127.0.0.1:8001/fr/quality"
+      "url": "http://127.0.0.1:8009/fr/quality"
     },
     {
       "n": 2,
       "file": "img/02-reglage.png",
       "title": "Réglage : défaillances, causes et corrections types",
-      "url": "http://127.0.0.1:8001/fr/quality"
+      "url": "http://127.0.0.1:8009/fr/quality"
     },
     {
       "n": 3,
       "file": "img/03-appareil-creation.png",
       "title": "Nouvel appareil de mesure",
-      "url": "http://127.0.0.1:8001/fr/quality"
+      "url": "http://127.0.0.1:8009/fr/quality"
     },
     {
       "n": 4,
       "file": "img/04-appareils-liste.png",
       "title": "Appareils de mesure et alertes d’étalonnage",
-      "url": "http://127.0.0.1:8001/fr/quality"
+      "url": "http://127.0.0.1:8009/fr/quality"
     },
     {
       "n": 5,
       "file": "img/05-nc-creation.png",
       "title": "Déclarer une non-conformité",
-      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie"
+      "url": "http://127.0.0.1:8009/fr/quality/nonConformitie"
     },
     {
       "n": 6,
       "file": "img/06-nc-liste.png",
       "title": "Liste des non-conformités",
-      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie"
+      "url": "http://127.0.0.1:8009/fr/quality/nonConformitie"
     },
     {
       "n": 7,
       "file": "img/07-action-creation.png",
       "title": "Action corrective liée à la non-conformité",
-      "url": "http://127.0.0.1:8001/fr/quality/action"
+      "url": "http://127.0.0.1:8009/fr/quality/action"
     },
     {
       "n": 8,
       "file": "img/08-actions-liste.png",
       "title": "Actions qualité",
-      "url": "http://127.0.0.1:8001/fr/quality/action"
+      "url": "http://127.0.0.1:8009/fr/quality/action"
     },
     {
       "n": 9,
-      "file": "img/09-derogation-creation.png",
-      "title": "Demande de dérogation",
-      "url": "http://127.0.0.1:8001/fr/quality/derogation"
+      "file": "img/09-action-historique.png",
+      "title": "Historique des modifications de l’action",
+      "url": "http://127.0.0.1:8009/fr/quality/action"
     },
     {
       "n": 10,
-      "file": "img/10-nc-cloture.png",
-      "title": "Clôturer avec le bouton « Résolue »",
-      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie?search=NC-2026-26"
+      "file": "img/10-derogation-creation.png",
+      "title": "Demande de dérogation",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation"
     },
     {
       "n": 11,
-      "file": "img/11-nc-resolue.png",
-      "title": "Non-conformité résolue",
-      "url": "http://127.0.0.1:8001/fr/quality/nonConformitie?search=NC-2026-26"
+      "file": "img/11-derogation-fiche.png",
+      "title": "Fiche dérogation : client et réponse",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation/5"
     },
     {
       "n": 12,
-      "file": "img/12-plans-valides.png",
-      "title": "Plans qualité : plans validés",
-      "url": "http://127.0.0.1:8001/fr/quality/plans"
+      "file": "img/12-derogation-manque.png",
+      "title": "Ce qui manque pour valider, et l’accord DocuSign",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation/5"
     },
     {
       "n": 13,
-      "file": "img/13-bulleur.png",
-      "title": "Plan bullé (validé, en lecture seule)",
-      "url": "http://127.0.0.1:8001/fr/quality/plans/1/bubbler"
+      "file": "img/13-derogation-documents.png",
+      "title": "Joindre l’accord écrit du client",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation/5"
     },
     {
       "n": 14,
-      "file": "img/14-rapport-fai.png",
-      "title": "Rapport premier article",
-      "url": "http://127.0.0.1:8001/fr/quality/inspections/2/report"
+      "file": "img/14-derogation-valider.png",
+      "title": "Passer la dérogation en « Validé »",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation/5"
     },
     {
       "n": 15,
-      "file": "img/15-audits.png",
-      "title": "Audits internes : checklists ISO 9001",
-      "url": "http://127.0.0.1:8001/audit"
+      "file": "img/15-derogation-validee.png",
+      "title": "Dérogation validée",
+      "url": "http://127.0.0.1:8009/fr/quality/derogation/5"
     },
     {
       "n": 16,
-      "file": "img/16-retours.png",
+      "file": "img/16-nc-cloture.png",
+      "title": "Clôturer avec le bouton « Résolue »",
+      "url": "http://127.0.0.1:8009/fr/quality/nonConformitie?search=NC-2026-31"
+    },
+    {
+      "n": 17,
+      "file": "img/17-nc-resolue.png",
+      "title": "Non-conformité résolue",
+      "url": "http://127.0.0.1:8009/fr/quality/nonConformitie?search=NC-2026-31"
+    },
+    {
+      "n": 18,
+      "file": "img/18-nc-historique.png",
+      "title": "Historique des modifications de la non-conformité",
+      "url": "http://127.0.0.1:8009/fr/quality/nonConformitie?search=NC-2026-31"
+    },
+    {
+      "n": 19,
+      "file": "img/19-visa-documentaire.png",
+      "title": "Visa documentaire des réceptions",
+      "url": "http://127.0.0.1:8009/fr/purchases/receipt/document-check"
+    },
+    {
+      "n": 20,
+      "file": "img/20-plans-valides.png",
+      "title": "Plans qualité : plans validés",
+      "url": "http://127.0.0.1:8009/fr/quality/plans"
+    },
+    {
+      "n": 21,
+      "file": "img/21-bulleur.png",
+      "title": "Plan bullé (validé, en lecture seule)",
+      "url": "http://127.0.0.1:8009/fr/quality/plans/1/bubbler"
+    },
+    {
+      "n": 22,
+      "file": "img/22-rapport-fai.png",
+      "title": "Rapport premier article",
+      "url": "http://127.0.0.1:8009/fr/quality/inspections/2/report"
+    },
+    {
+      "n": 23,
+      "file": "img/23-audits.png",
+      "title": "Audits internes : checklists ISO 9001",
+      "url": "http://127.0.0.1:8009/audit"
+    },
+    {
+      "n": 24,
+      "file": "img/24-retours.png",
       "title": "Retours clients",
-      "url": "http://127.0.0.1:8001/fr/returns"
+      "url": "http://127.0.0.1:8009/fr/returns"
     }
   ]
 }

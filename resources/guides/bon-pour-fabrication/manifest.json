@@ -1,0 +1,55 @@
+{
+  "scenario": "bon-pour-fabrication",
+  "customer": "[FORMATION] Chaudronnerie Morel 10310051",
+  "ids": {
+    "customer": "91",
+    "order": "566",
+    "orderCode": "CMD-BPF-10310051",
+    "taskUrl": "http://127.0.0.1:8013/fr/production/Task/Statu/Id/630"
+  },
+  "finishedAt": "2026-10-31T00:54:02.881Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-commande-lignes-sans-bpf.png",
+      "title": "Fiche commande, onglet lignes : badge « Sans BPF » sur chaque ligne",
+      "url": "http://127.0.0.1:8013/fr/orders/566"
+    },
+    {
+      "n": 2,
+      "file": "img/02-tache-bloquee.png",
+      "title": "Écran de suivi : bandeau et « Play » grisé tant que la ligne n’a pas de BPF",
+      "url": "http://127.0.0.1:8013/fr/production/Task/Statu/Id/630"
+    },
+    {
+      "n": 3,
+      "file": "img/03-commande-bpf-groupe.png",
+      "title": "Cocher la ligne, puis « Bon pour fabrication (1) »",
+      "url": "http://127.0.0.1:8013/fr/orders/566"
+    },
+    {
+      "n": 4,
+      "file": "img/04-commande-bpf-donne.png",
+      "title": "La ligne libérée porte le badge « BPF », l’autre reste « Sans BPF »",
+      "url": "http://127.0.0.1:8013/fr/orders/566"
+    },
+    {
+      "n": 5,
+      "file": "img/05-tache-debloquee.png",
+      "title": "BPF donné : plus de bandeau, « Play » disponible",
+      "url": "http://127.0.0.1:8013/fr/production/Task/Statu/Id/630"
+    },
+    {
+      "n": 6,
+      "file": "img/06-index-lignes-bpf.png",
+      "title": "Lignes de commande : colonne « BPF », bouton « Bon pour fabrication » ou annulation",
+      "url": "http://127.0.0.1:8013/fr/orders/lines"
+    },
+    {
+      "n": 7,
+      "file": "img/07-taches-cadenas.png",
+      "title": "Liste des tâches : cadenas sur les tâches de production sans BPF",
+      "url": "http://127.0.0.1:8013/fr/production/Task"
+    }
+  ]
+}

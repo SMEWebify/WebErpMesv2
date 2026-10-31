@@ -6,7 +6,7 @@ order: 40
 duration: 20
 icon: fas fa-user-clock
 can: settings-time-menu
-updated: 2026-10-26
+updated: 2026-10-31
 ---
 
 **Objectif** : décrire quand l'atelier travaille (horaires, jours fériés), et gérer les
@@ -163,12 +163,18 @@ La demande part **à valider** : le solde la compte déjà « En attente » (4 j
 que le salarié ne pose pas deux fois le même reliquat. Il peut la modifier tant qu'elle
 n'est pas traitée.
 
+**Qui est prévenu ?** Dès l'envoi, une notification « Demande d'absence à valider » arrive
+dans la **cloche** (en haut de l'écran) :
+
+- des **RH** (permission ressources humaines ou rôle administrateur) ;
+- du **superviseur** du salarié, choisi sur sa fiche salarié (guide « Ressources
+  humaines — fiche salarié et notes de frais »).
+
+Un clic sur la notification ouvre l'écran **Temps et absences**. Celui qui envoie la
+demande n'est jamais prévenu de sa propre action.
+
 > ⚠️ Le type « Absence après-midi » compte une journée entière : pour une demi-journée,
 > utilisez « Absence matin » ou une absence en heures.
->
-> 💡 La demande arrive dans la cloche de notifications des RH et du responsable du salarié
-> (renseigné sur sa fiche) ; le salarié est prévenu de la même façon quand elle est validée
-> ou refusée.
 
 ---
 
@@ -181,6 +187,16 @@ avec le nombre de jours décomptés. **Modifier** sur une demande :
 
 1. **Statut** : « Validée » ou « Non-validée » (refus).
 2. **Mettre à jour**.
+
+Le salarié reçoit alors dans sa cloche « Votre absence du … au … est validée » (ou
+« refusée ») ; un clic ouvre son profil.
+
+> ⚠️ Le superviseur est **prévenu**, il ne **valide** pas : seules les personnes qui ont la
+> permission ressources humaines changent le statut d'une demande. Prévenez-les si la
+> validation dépend de l'accord du chef d'équipe.
+>
+> 💡 Les notifications n'apparaissent que dans la cloche et l'onglet **Notification
+> historique** du profil : aucun e-mail n'est envoyé.
 
 ![Demandes d'absence](img/12-absences.png)
 
@@ -245,6 +261,13 @@ orphelines.
 
   ![Unité des temps](img/17-unite-temps.png)
 
+## Et ensuite ?
+
+- Affecter le régime horaire aux machines (**Méthodes › Ressources**) pour un planning de
+  charge réaliste.
+- Renseigner le matricule paie et le superviseur de chaque salarié : guide « Ressources
+  humaines — fiche salarié et notes de frais ».
+
 ## Questions fréquentes
 
 **Une demande compte 5 jours au lieu de 4.**
@@ -256,6 +279,11 @@ Aucune nature n'est créée ou active : section 1.
 
 **L'absence validée n'apparaît pas dans l'export paie.**
 Elle n'a pas de nature de congé, ou elle tombe hors du mois choisi.
+
+**Le responsable n'a reçu aucune notification.**
+Vérifiez le **Superviseur** sur la fiche du salarié. Si personne (RH compris) ne reçoit
+jamais rien, signalez-le à votre administrateur : les notifications sont envoyées en
+arrière-plan par le serveur.
 
 **Le planning de charge n'a pas changé après la création du régime.**
 Le régime n'est affecté à aucune ressource et n'est pas le régime par défaut.

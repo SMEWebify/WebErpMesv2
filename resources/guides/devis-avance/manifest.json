@@ -1,0 +1,164 @@
+{
+  "scenario": "devis-avance",
+  "label": "[FORMATION] Garde-corps atelier 10310049",
+  "template": "[FORMATION] Trame garde-corps 10310049",
+  "ids": {
+    "quote": "577",
+    "layouts": [
+      "Court",
+      "Détaillé",
+      "Technique (sans prix)"
+    ],
+    "template": "578",
+    "fromTemplate": "579",
+    "revision": "580",
+    "variant": "581"
+  },
+  "finishedAt": "2026-10-31T00:52:41.713Z",
+  "steps": [
+    {
+      "n": 1,
+      "file": "img/01-nouveau-devis-trame.png",
+      "title": "Fenêtre « Nouveau devis » : « Partir d’une trame »",
+      "url": "http://127.0.0.1:8004/fr/quotes?tab=list"
+    },
+    {
+      "n": 2,
+      "file": "img/02-ligne-reperes.png",
+      "title": "Panneau de ligne : champ « Repères équipement »",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 3,
+      "file": "img/03-import-lignes.png",
+      "title": "Fenêtre « Importer des lignes d’un autre devis »",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 4,
+      "file": "img/04-ligne-menu-presentation.png",
+      "title": "Menu de la ligne : « Insérer une section au-dessus »…",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 5,
+      "file": "img/05-mise-en-page-menu.png",
+      "title": "Bouton « Mise en page » : section, sous-total, texte",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 6,
+      "file": "img/06-lignes-presentation.png",
+      "title": "Lignes avec sections, sous-total, texte, forfait et repères",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 7,
+      "file": "img/07-lignes-marge.png",
+      "title": "Bouton « Marge » : colonne de marge par ligne (interne)",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 8,
+      "file": "img/08-marge-carte.png",
+      "title": "Carte « Marge (interne) » : appliquer une marge globale",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 9,
+      "file": "img/09-marge-appliquee.png",
+      "title": "Marge appliquée : message et nouvelle marge",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 10,
+      "file": "img/10-revue.png",
+      "title": "Onglet « Revue » : relecteur, date, décision",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 11,
+      "file": "img/11-impression.png",
+      "title": "Carte « Options » : modèle, langue puis « PDF »",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 12,
+      "file": "img/12-copies-menu.png",
+      "title": "Menu « Copier… » : dupliquer, nouvel indice, variante, trame",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 13,
+      "file": "img/13-trame-modale.png",
+      "title": "Fenêtre « Enregistrer comme trame »",
+      "url": "http://127.0.0.1:8004/fr/quotes/577"
+    },
+    {
+      "n": 14,
+      "file": "img/14-trame-fiche.png",
+      "title": "Fiche de la trame : bandeau et « Nouveau devis depuis cette trame »",
+      "url": "http://127.0.0.1:8004/fr/quotes/578"
+    },
+    {
+      "n": 15,
+      "file": "img/15-trames-onglet.png",
+      "title": "Liste des devis, onglet « Trames de devis »",
+      "url": "http://127.0.0.1:8004/fr/quotes?tab=templates"
+    },
+    {
+      "n": 16,
+      "file": "img/16-devis-depuis-trame.png",
+      "title": "Nouveau devis : la trame est déjà choisie, reste le client",
+      "url": "http://127.0.0.1:8004/fr/quotes?tab=list&template=578"
+    },
+    {
+      "n": 17,
+      "file": "img/17-indice-cree.png",
+      "title": "Indice B créé : message, code et carte « Historique »",
+      "url": "http://127.0.0.1:8004/fr/quotes/580"
+    },
+    {
+      "n": 18,
+      "file": "img/18-variante-modale.png",
+      "title": "Fenêtre « Variante » : libellé obligatoire",
+      "url": "http://127.0.0.1:8004/fr/quotes/580"
+    },
+    {
+      "n": 19,
+      "file": "img/19-variante-gagnee.png",
+      "title": "Variante : passer au statut « Gagné »",
+      "url": "http://127.0.0.1:8004/fr/quotes/581"
+    },
+    {
+      "n": 20,
+      "file": "img/20-clore-famille.png",
+      "title": "Devis gagné : bandeau « Clore les autres »",
+      "url": "http://127.0.0.1:8004/fr/quotes/581"
+    },
+    {
+      "n": 21,
+      "file": "img/21-historique.png",
+      "title": "Carte « Historique » après clôture",
+      "url": "http://127.0.0.1:8004/fr/quotes/581"
+    },
+    {
+      "n": 22,
+      "file": "img/22-motif-perte.png",
+      "title": "Fenêtre « Devis perdu : pourquoi ? »",
+      "url": "http://127.0.0.1:8004/fr/quotes/579"
+    },
+    {
+      "n": 23,
+      "file": "img/23-motif-perte-affiche.png",
+      "title": "Motif affiché sous les flèches de statut",
+      "url": "http://127.0.0.1:8004/fr/quotes/579"
+    },
+    {
+      "n": 24,
+      "file": "img/24-pertes-commerciales.png",
+      "title": "Tableau de bord des devis : carte « Pertes commerciales »",
+      "url": "http://127.0.0.1:8004/fr/quotes"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ order: 20
 duration: 15
 icon: fas fa-tools
 can: asset_manager
-updated: 2026-10-26
+updated: 2026-10-31
 ---
 
 **Objectif** : tenir à jour la maintenance des machines de l'atelier. Chaque intervention,
@@ -81,43 +81,82 @@ La **fiche équipement** regroupe ses ordres de travail et ses plans de maintena
 ## 3. Planifier la maintenance préventive
 
 Depuis la fiche de l'équipement, **Nouveau plan de maintenance** : l'équipement est déjà
-choisi.
+choisi. Les plans existants se retrouvent aussi dans le menu **GMAO › Plans de
+maintenance**.
 
 ![Nouveau plan de maintenance](img/04-plan-creation.png)
 
-1. **Type de déclencheur** : périodique (calendrier), heures machine, cycles, ou date fixe.
+1. **Type de déclencheur** : **Périodique (calendrier)**, heures machine, cycles, ou **date
+   fixe** (une seule intervention, à une date donnée).
 2. **Valeur du déclencheur** : la fréquence, en clair (« mensuel », « 500 heures »…), pour
-   information.
-3. **Date fixe** : la date de la prochaine intervention (pour un plan périodique, la
-   première).
-4. **Générer automatiquement les ordres de travail** (cochée par défaut), avec la
-   **périodicité en jours** d'un plan périodique (7 = hebdomadaire, 30 = mensuel, 365 =
-   annuel) et le nombre de **jours d'avance** avec lequel l'ordre est créé (7 par défaut).
+   information seulement : ce n'est pas elle qui fixe le calendrier.
+3. **Date fixe** : la date de l'intervention. Pour un plan périodique, c'est la **première**
+   échéance.
 
-Complétez la **durée estimée**, la **compétence requise**, la **liste des actions** et les
-**pièces nécessaires** : ces informations sont recopiées dans chaque ordre de travail.
+Juste en dessous, l'encadré de génération automatique :
 
-![Fiche du plan](img/05-plan-fiche.png)
+![Génération automatique](img/05-plan-auto.png)
 
-La fiche affiche la **prochaine échéance** et la liste des ordres déjà générés par le plan.
+1. **Générer automatiquement les ordres de travail** : cochée par défaut.
+2. **Périodicité (jours)** : l'écart entre deux interventions d'un plan périodique (7 =
+   hebdomadaire, 30 = mensuel, 365 = annuel).
+3. **Créer l'ordre (jours avant l'échéance)** : l'avance avec laquelle l'ordre de travail
+   est créé, pour avoir le temps de commander les pièces (7 par défaut, 0 = le jour même).
+4. **Soumettre**.
 
-Chaque matin, un ordre **planifié** est créé quand l'échéance approche (moins les jours
-d'avance), sauf si le plan a déjà un ordre ouvert : un ordre en retard n'en empile pas
-d'autres. L'échéance suivante part de la date planifiée du précédent ordre, pas de sa date
-de clôture, pour que le calendrier ne dérive pas.
+Complétez aussi la **durée estimée**, la **compétence requise**, la **liste des actions** et
+les **pièces nécessaires** : ces informations sont recopiées dans chaque ordre de travail.
 
-1. **Générer un ordre de travail** crée l'intervention tout de suite, sans attendre.
+> ⚠️ Génération cochée, la **périodicité** est obligatoire pour un plan périodique, et la
+> **date fixe** pour un plan à date fixe : sans elles, le formulaire refuse
+> l'enregistrement.
+
+![Fiche du plan](img/06-plan-fiche.png)
+
+1. **Configuration du déclencheur** : la périodicité et la génération automatique (« Oui,
+   7 jour(s) avant l'échéance »). La carte **Informations de planification**, en dessous,
+   donne la **prochaine date planifiée**.
+2. **Générer un ordre de travail** crée l'intervention tout de suite, sans attendre (par
+   exemple pour avancer une vidange).
+
+### Ce qui se passe chaque matin
+
+Tous les jours à **6 h**, l'ERP passe en revue les plans dont la génération automatique est
+cochée et crée un ordre de travail **Planifié** pour chaque plan dont l'échéance approche
+(moins les jours d'avance). Personne n'a rien à faire : l'ordre apparaît dans la liste des
+ordres de travail, à la date de l'échéance.
+
+- **Un seul ordre ouvert par plan** : tant que l'ordre précédent n'est pas terminé ou
+  clôturé, le plan n'en crée pas d'autre. Un ordre en retard n'en empile donc pas d'autres
+  derrière lui.
+- **Le calendrier ne dérive pas** : l'échéance suivante part de la date **planifiée** de
+  l'ordre précédent, pas du jour où il a été clôturé. Une vidange prévue le 7 novembre et
+  faite le 10 revient le 7 décembre (périodicité 30).
+- **Plan à date fixe** : un seul ordre, à sa date.
 
 > ⚠️ Les heures machine et les cycles ne sont relevés nulle part : ces plans ne génèrent
-> rien tout seuls, il faut cliquer sur le bouton. Chaque clic crée un nouvel ordre.
+> rien tout seuls, il faut cliquer sur **Générer un ordre de travail**. Chaque clic crée un
+> nouvel ordre, même si un autre est déjà ouvert.
+>
+> 💡 La création automatique demande que les tâches planifiées de l'ERP tournent sur votre
+> serveur. Si aucun ordre n'apparaît jamais tout seul, signalez-le à votre administrateur.
 
 ---
 
 ## 4. L'ordre de travail
 
-L'ordre généré est **Planifié**, de type **Préventif**, à la date d'échéance du plan.
+L'ordre généré est **Planifié**, de type **Préventif**, à la date d'échéance du plan ; sa
+fiche rappelle le **plan de maintenance** d'où il vient.
 
-![Ordre de travail généré](img/06-ot-genere.png)
+![Ordre de travail généré](img/07-ot-genere.png)
+
+De retour sur la fiche du plan :
+
+![Ordres générés par le plan](img/08-plan-ordres.png)
+
+1. **Ordres de travail** : les ordres déjà créés par le plan, avec leur date planifiée et
+   leur statut. Ici, la vidange du 7 novembre est créée : la prochaine date planifiée passe
+   au 7 décembre.
 
 Les statuts se suivent dans cet ordre :
 
@@ -135,13 +174,13 @@ Les statuts se suivent dans cet ordre :
 
 **Modifier l'ordre de travail**, puis renseignez l'intervention :
 
-![Statut, technicien et horaires](img/07-ot-execution.png)
+![Statut, technicien et horaires](img/09-ot-execution.png)
 
 1. **Statuts** : « En cours » pendant l'intervention, « Terminé » une fois terminée.
 2. **Technicien assigné**.
 3. **Démarré le** et **Terminé le**.
 
-![Compte rendu](img/08-ot-compte-rendu.png)
+![Compte rendu](img/10-ot-compte-rendu.png)
 
 1. **Durée réelle** en minutes, à comparer à la durée estimée.
 2. **Actions réalisées** : ce qui a été fait, et ce qui a été constaté.
@@ -159,12 +198,13 @@ Enregistrez.
 
 Une fois l'intervention vérifiée, rouvrez l'ordre : statut **Clôturé**, puis **Clôturé le**.
 
-![Clôture](img/09-ot-cloture.png)
+![Clôture](img/11-ot-cloture.png)
 
 1. **Clôturé le** : la date de clôture.
-2. **Enregistrer**.
 
-![Ordre clôturé](img/10-ot-fiche.png)
+Puis **Enregistrer**, en bas du formulaire.
+
+![Ordre clôturé](img/12-ot-fiche.png)
 
 La fiche montre la chronologie complète : demandé, planifié, démarré, terminé, et la durée
 estimée en regard de la durée réelle.
@@ -175,14 +215,14 @@ estimée en regard de la durée réelle.
 
 Depuis la fiche de l'équipement, **Nouvel ordre de travail**.
 
-![Ordre curatif](img/11-ot-correctif.png)
+![Ordre curatif](img/13-ot-correctif.png)
 
 1. **Type** : **Curatif** pour une réparation (Préventif pour l'entretien planifié).
 2. **Priorité** : Basse, Moyenne, Haute ou Critique.
 
 En bas du formulaire, décrivez la panne :
 
-![Description de la panne](img/12-ot-panne.png)
+![Description de la panne](img/14-ot-panne.png)
 
 1. **Défaillance type** : la nature de la panne.
 2. **Gravité**.
@@ -201,19 +241,32 @@ Puis suivez l'intervention comme aux sections 5 et 6.
 Menu **GMAO › Ordres de travail** : tous les ordres de travail, avec leur équipement, leur type,
 leur priorité, leur statut et leur technicien.
 
-![Liste des ordres de travail](img/13-ot-liste.png)
+![Liste des ordres de travail](img/15-ot-liste.png)
 
 La **fiche équipement** garde l'historique de ses interventions :
 
-![Historique de l'équipement](img/14-equipement-historique.png)
+![Historique de l'équipement](img/16-equipement-historique.png)
+
+## Et ensuite ?
+
+- Renseigner la **durée réelle** et le **début de la panne** sur chaque ordre : ils
+  serviront aux indicateurs MTBF et MTTR du tableau de bord.
+- Affecter un **régime horaire** à la machine (guide « Temps, horaires et congés ») : un
+  arrêt machine se retire alors de sa vraie capacité dans le planning de charge.
 
 ## Questions fréquentes
 
 **Mon plan de maintenance n'a créé aucun ordre de travail à l'échéance.**
-Vérifiez sur la fiche du plan que la génération automatique est cochée et, pour un plan
-périodique, que la périodicité est renseignée. Un plan qui a déjà un ordre ouvert attend sa
-clôture. Les plans aux heures machine ou aux cycles ne génèrent rien tout seuls. Les plans
-créés avant cette fonction ont la génération décochée : modifiez-les pour l'activer.
+Les ordres sont créés chaque matin à 6 h, le nombre de jours d'avance choisi avant
+l'échéance. Vérifiez sur la fiche du plan que la génération automatique est cochée et, pour
+un plan périodique, que la périodicité est renseignée. Un plan qui a déjà un ordre ouvert
+attend que celui-ci soit terminé ou clôturé. Les plans aux heures machine ou aux cycles ne
+génèrent rien tout seuls. Les plans créés avant cette fonction ont la génération décochée :
+modifiez-les (**Modifier le plan**) pour l'activer.
+
+**Un plan à date fixe ne revient plus.**
+C'est normal : un plan à date fixe ne crée qu'un ordre. Pour une intervention qui revient,
+choisissez « Périodique (calendrier) » et une périodicité.
 
 **Les indicateurs MTBF et MTTR restent à « — ».**
 Ils ne sont pas encore calculés. La durée réelle et le début de la panne saisis sur chaque

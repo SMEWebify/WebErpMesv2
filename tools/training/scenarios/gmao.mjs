@@ -2,6 +2,7 @@
 // et clôture, plus un ordre correctif. Données préfixées [FORMATION].
 // Ne clique jamais « Supprimer » (sans confirmation, définitif pour plans et ordres) et ne
 // clique qu'une fois « Générer un ordre de travail » (chaque clic crée un ordre).
+// Ne lance pas gmao:generate-work-orders (tâche planifiée à 6 h) : elle traite tous les plans.
 // Usage : node tools/training/scenarios/gmao.mjs   (HEADED=1 pour voir le navigateur)
 import { readEnv, openSession, settle } from '../lib.mjs';
 
@@ -80,12 +81,19 @@ await step('3. Plan de maintenance', async () => {
     await page.fill('#required_skill', 'Mécanicien hydraulique');
     await page.fill('#actions', 'Vidange, contrôle du niveau, graissage des axes');
     await page.fill('#required_parts', 'Huile HLP46 20 L, filtre retour');
-    await shot('plan-creation', { title: 'Nouveau plan de maintenance préventive', highlight: [page.locator('#trigger_type'), page.locator('#trigger_value'), page.locator('#fixed_date'), submit()] });
+    // Génération automatique (cochée par défaut) : périodicité exigée pour un plan périodique.
+    if (!(await page.locator('#auto_generate').isChecked())) await page.locator('#auto_generate').check();
+    await page.fill('#interval_days', '30');
+    await page.fill('#lead_days', '7');
+    await shot('plan-creation', { title: 'Nouveau plan de maintenance préventive', highlight: [page.locator('#trigger_type'), page.locator('#trigger_value'), page.locator('#fixed_date')] });
+    const autoCard = page.locator('.card', { has: page.locator('#auto_generate') }).first();
+    await shot('plan-auto', { title: 'Génération automatique des ordres de travail', highlight: [autoCard.locator('.form-switch'), page.locator('#interval_days'), page.locator('#lead_days'), submit()] });
     await Promise.all([page.waitForURL(/maintenance-plans\/\d+$/), submit().click()]);
     await settle(page);
     ids.plan = page.url().match(/maintenance-plans\/(\d+)/)?.[1];
     const generate = page.locator('form[action$="/generate-work-order"] button');
-    await shot('plan-fiche', { title: 'Fiche du plan : « Générer un ordre de travail »', highlight: generate });
+    const trigger = page.locator('.card', { has: page.locator('.fa-bolt.text-muted') }).first();
+    await shot('plan-fiche', { title: 'Fiche du plan : génération automatique et prochaine échéance', highlight: [trigger, generate] });
 });
 
 await step('4. Ordre de travail généré', async () => {
@@ -94,6 +102,11 @@ await step('4. Ordre de travail généré', async () => {
     await settle(page);
     ids.workOrder = page.url().match(/work-orders\/(\d+)/)?.[1];
     await shot('ot-genere', { title: 'Ordre de travail préventif créé depuis le plan' });
+    // La fiche du plan liste les ordres qu'il a générés.
+    await page.goto(u(`/gmao/maintenance-plans/${ids.plan}`));
+    await settle(page);
+    const orders = page.locator('.card', { has: page.locator('.fa-wrench.text-muted') }).first();
+    await shot('plan-ordres', { title: 'Ordres de travail générés par le plan', highlight: orders });
 });
 
 await step('5. Exécuter et clôturer', async () => {
@@ -116,7 +129,7 @@ await step('5. Exécuter et clôturer', async () => {
     await settle(page);
     await page.locator('#status').selectOption('closed');
     await page.fill('#completed_at', inDays(0));
-    await shot('ot-cloture', { title: 'Clôture : statut « Closed » et date de clôture', highlight: [page.locator('#completed_at'), submit()] });
+    await shot('ot-cloture', { title: 'Clôture : statut « Clôturé » et date de clôture', highlight: [page.locator('#completed_at'), submit()] });
     await Promise.all([page.waitForURL(/work-orders\/\d+$/), submit().click()]);
     await settle(page);
     await page.goto(u(`/gmao/work-orders/${ids.workOrder}`));

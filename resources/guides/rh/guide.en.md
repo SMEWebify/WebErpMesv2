@@ -6,7 +6,7 @@ order: 10
 duration: 15
 icon: fas fa-users
 can: human-resources-menu
-updated: 2026-10-26
+updated: 2026-10-31
 ---
 
 **Goal**: gather on a single record everything the company knows about an employee, and
@@ -71,8 +71,21 @@ opens their record.
    payroll export; without it, the export falls back on the internal ID and flags it.
 3. **Role**: the role that opens the ERP menus. "—" leaves it unchanged.
 
-Below: pay grade, workstation, joining, confirmation and termination dates, employment
-status, section and the employee's **supervisor**. **Update** saves.
+Below: pay grade, workstation, joining, confirmation and termination dates, and employment
+status. At the bottom of the form:
+
+![Supervisor and section](img/03-fiche-rh-superviseur.png)
+
+1. **Supervisor**: the employee's manager (team leader, workshop manager). They are told in
+   their **notification bell** about every absence request of the employee.
+2. **Section**: the employee's workshop or department.
+3. **Update** saves the record.
+
+> ⚠️ Check the **Supervisor** list each time you edit the record: this person will receive
+> the employee's absence requests. Choose "—" if the employee has no manager.
+>
+> 💡 The supervisor is **notified**, they do not **approve**: approving absences stays with
+> HR (see the guide "Time, shifts and leave").
 
 > 💡 The role can only be changed with the company administration permission, and never on
 > one's own account.
@@ -86,7 +99,7 @@ status, section and the employee's **supervisor**. **Update** saves.
 
 **Contract** tab, **New contract** card:
 
-![New contract](img/03-contrat.png)
+![New contract](img/04-contrat.png)
 
 1. **Type of contract**: permanent, fixed-term, temp, apprenticeship…
 2. **Start date** (and **End date** for a fixed-term contract).
@@ -96,7 +109,7 @@ Fill in the **status** (Trial during the trial period, then Active), the **secti
 **signature date**, the **trial period** in days, the **position** and, if needed, the
 coefficient and salaries. **Submit**.
 
-![Employee contracts](img/04-contrats.png)
+![Employee contracts](img/05-contrats.png)
 
 The **Active** contract counts: its weekly duration converts absences entered in hours into
 days.
@@ -107,7 +120,7 @@ days.
 
 **Documents** tab: signed contract, payslips, sick notes, diplomas, ID documents.
 
-![Employee file](img/05-documents.png)
+![Employee file](img/06-documents.png)
 
 Drop a file in the upload area, then choose its **document type** (contract, payslip, sick
 note, diploma, ID…).
@@ -123,7 +136,7 @@ note, diploma, ID…).
 The employee opens their **profile** (menu with their name, top right), **Expense report**
 tab, and creates one report per trip or per month:
 
-![New expense report](img/06-note-creation.png)
+![New expense report](img/07-note-creation.png)
 
 1. **Label**: the trip or period.
 2. **Date**.
@@ -138,21 +151,21 @@ right.
 
 First drop the photo of the receipt (or the PDF invoice) in the **Receipts** card:
 
-![Receipt uploaded](img/07-justificatif.png)
+![Receipt uploaded](img/08-justificatif.png)
 
 1. **Receipts**: drag the file or click to choose it. On a phone, the browser offers to take
    the photo.
 
 Then, in the entry card:
 
-![Enter the expense](img/08-depense.png)
+![Enter the expense](img/09-depense.png)
 
 1. **Receipt**: the uploaded receipt. The list only offers receipts not yet entered.
 2. **Read with AI**: reads the receipt and pre-fills date, place, description, amount and
    VAT. Nothing is saved: check before submitting.
 3. **Category**: fuel, hotel, meals…
 
-![Amount and VAT](img/08b-depense-montant.png)
+![Amount and VAT](img/10-depense-montant.png)
 
 1. **Amount**: the amount paid, including VAT.
 2. **Tax**: the VAT **rate** (10 for 10 %), not its amount.
@@ -161,7 +174,7 @@ Then, in the entry card:
 The expense can also be linked to a customer **order** (rechargeable costs); the **payer**
 is whoever advanced the money.
 
-![Expense report](img/09-note.png)
+![Expense report](img/11-note.png)
 
 > ⚠️ **Read with AI** sends the receipt image to the AI provider set up by your
 > administrator. Without a provider, enter the expense by hand.
@@ -173,7 +186,7 @@ is whoever advanced the money.
 Once all expenses are entered, the employee goes back to their profile, **Expense report**
 tab, and opens the report with **Edit**:
 
-![Submit the report](img/10-note-soumission.png)
+![Submit the report](img/12-note-soumission.png)
 
 1. **Status**: "Submitted".
 2. **Update**.
@@ -185,14 +198,14 @@ decides.
 
 ## 8. Approval (HR)
 
-Menu **Human resources › Expenses**, **Expense validation** tab: submitted reports with
-their amount. **View** opens the report and its receipts.
+Menu **Human resources › Expenses**, **Expense validation** tab: submitted reports (and
+those already approved) with their amount. **View** opens the report and its receipts.
 
-![Reports to approve](img/11-validation-liste.png)
+![Reports to approve](img/13-validation-liste.png)
 
 **Edit** on the report:
 
-![Approve the report](img/12-validation.png)
+![Approve the report](img/14-validation.png)
 
 1. **Status**: **Approved**, or **Returned** to send it back to the employee (missing
    receipt, amount to correct).
@@ -217,7 +230,14 @@ A returned report can be changed again by the employee, who corrects and resubmi
 **Expense category** tab: the list offered to employees (fuel, hotel, lunch, dinner…).
 **New expense category** adds one.
 
-![Expense categories](img/13-categories.png)
+![Expense categories](img/15-categories.png)
+
+## What next?
+
+- Create the leave types and enter each employee's entitlements: guide "Time, shifts and
+  leave".
+- Follow the employee's authorisations (forklift licence, electrical clearance): guide
+  "Occupational health and safety".
 
 ## Frequently asked questions
 
@@ -229,6 +249,10 @@ It is not "Submitted": the employee must submit it from their profile.
 
 **Can a colleague see my receipts?**
 No: like the employee file, receipts are only visible to the report's employee and to HR.
+
+**An employee has a supervisor nobody chose.**
+Their record was saved when the **Supervisor** list had no empty choice yet: the first name
+of the list was kept. Choose the right manager (or "—") and click **Update**.
 
 **I cannot change an employee's role.**
 It takes the company administration permission, and nobody changes their own role.

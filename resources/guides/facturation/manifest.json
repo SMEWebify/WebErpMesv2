@@ -1,118 +1,200 @@
 {
   "scenario": "facturation",
+  "company": {
+    "id": 79,
+    "label": "[FORMATION] Chaudronnerie Morel 10310023",
+    "contact": 226,
+    "address": 230
+  },
+  "order": {
+    "id": 564,
+    "code": "CDE 311020265",
+    "condition": "30 jours fin de mois"
+  },
+  "delivery": {
+    "id": 43,
+    "pdf": "http://127.0.0.1:8008/fr/pdf/delivery/43?layout=packing-list&lang=fr"
+  },
   "main": {
-    "id": 46,
-    "code": "FAC2510260002",
-    "companies_id": 66
+    "id": 53,
+    "companies_id": 79,
+    "code": "FAC3110260003",
+    "computedDue": "2026-11-30"
   },
   "other": {
-    "id": 45,
-    "code": "FAC2510260001",
-    "companies_id": 64
+    "id": 54,
+    "companies_id": 79,
+    "code": "FAC3110260004"
   },
-  "finishedAt": "2026-10-25T22:47:27.779Z",
+  "finishedAt": "2026-10-31T00:47:06.963Z",
   "steps": [
     {
       "n": 1,
-      "file": "img/01-brouillon-lignes.png",
-      "title": "Brouillon : lignes encore modifiables",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/01-dossier-exiger.png",
+      "title": "Lignes cochées : menu « Dossier », « Exiger le dossier »",
+      "url": "http://127.0.0.1:8008/fr/orders/564"
     },
     {
       "n": 2,
-      "file": "img/02-brouillon-ajout-ligne.png",
-      "title": "Ajouter une ligne au brouillon (frais de port)",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/02-dossier-a-valider.png",
+      "title": "Badge « Dossier à valider » sur la ligne",
+      "url": "http://127.0.0.1:8008/fr/orders/564"
     },
     {
       "n": 3,
-      "file": "img/03-brouillon-echeance.png",
-      "title": "Onglet « Facture info » : date d’échéance",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/03-dossier-bl-refuse.png",
+      "title": "Création du BL refusée : dossier non validé",
+      "url": "http://127.0.0.1:8008/fr/orders/564"
     },
     {
       "n": 4,
-      "file": "img/04-emise.png",
-      "title": "Facture émise : statut « Envoyé », PDF disponible",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/04-dossier-attente-bl.png",
+      "title": "Attente de bons de livraison : badge « Dossier à valider »",
+      "url": "http://127.0.0.1:8008/fr/deliverys/request"
     },
     {
       "n": 5,
-      "file": "img/05-liste-facturx.png",
-      "title": "Liste des factures : bouton Factur-X",
-      "url": "http://127.0.0.1:8001/fr/invoices"
+      "file": "img/05-dossier-valider.png",
+      "title": "Menu « Dossier » : « Valider le dossier »",
+      "url": "http://127.0.0.1:8008/fr/orders/564"
     },
     {
       "n": 6,
-      "file": "img/06-reglement-saisie.png",
-      "title": "Saisir un règlement partiel",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/06-dossier-valide.png",
+      "title": "Badge « Dossier validé »",
+      "url": "http://127.0.0.1:8008/fr/orders/564"
     },
     {
       "n": 7,
-      "file": "img/07-reglement-partiel.png",
-      "title": "Règlement enregistré : reste dû affiché",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/07-colis-contenu.png",
+      "title": "Nouveau packaging : poids, dimensions et contenu du colis",
+      "url": "http://127.0.0.1:8008/fr/deliverys/43"
     },
     {
       "n": 8,
-      "file": "img/08-relances-liste.png",
-      "title": "Factures à relancer : niveau proposé",
-      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+      "file": "img/08-colis-liste.png",
+      "title": "Onglet Packaging : les colis du BL",
+      "url": "http://127.0.0.1:8008/fr/deliverys/43"
     },
     {
       "n": 9,
-      "file": "img/09-relance-appel.png",
-      "title": "Tracer un appel (aucun e-mail envoyé)",
-      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+      "file": "img/09-colis-impression.png",
+      "title": "Menu d’impression du BL : modèle « Liste de colisage »",
+      "url": "http://127.0.0.1:8008/fr/deliverys/43"
     },
     {
       "n": 10,
-      "file": "img/10-relance-enregistree.png",
-      "title": "Relance enregistrée",
-      "url": "http://127.0.0.1:8001/fr/invoices/reminders"
+      "file": "img/10-colis-pdf.png",
+      "title": "Liste de colisage imprimée (aperçu)",
+      "url": "http://127.0.0.1:8008/__training/view.html"
     },
     {
       "n": 11,
-      "file": "img/11-soldee.png",
-      "title": "Facture soldée : statut « Payé »",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/11-demande-facture.png",
+      "title": "Attente de facture : cocher les lignes livrées, « Nouvelle facture »",
+      "url": "http://127.0.0.1:8008/fr/invoices/request"
     },
     {
       "n": 12,
-      "file": "img/12-historique-relances.png",
-      "title": "Fiche facture : historique des relances",
-      "url": "http://127.0.0.1:8001/fr/invoices/46"
+      "file": "img/12-brouillon-lignes.png",
+      "title": "Brouillon : lignes encore modifiables",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
     },
     {
       "n": 13,
-      "file": "img/13-avoir-creation.png",
-      "title": "Facture émise : cocher les lignes, « Nouvel avoir »",
-      "url": "http://127.0.0.1:8001/fr/invoices/45"
+      "file": "img/13-brouillon-ajout-ligne.png",
+      "title": "Ajouter une ligne au brouillon (frais de port)",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
     },
     {
       "n": 14,
-      "file": "img/14-avoir-fiche.png",
-      "title": "Avoir créé, statut « En attente »",
-      "url": "http://127.0.0.1:8001/fr/credit-notes/3"
+      "file": "img/14-brouillon-echeance.png",
+      "title": "Onglet « Facture info » : échéance calculée (30 jours fin de mois)",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
     },
     {
       "n": 15,
-      "file": "img/15-encours.png",
-      "title": "Fiche société, tableau de bord : encours client",
-      "url": "http://127.0.0.1:8001/fr/companies/66"
+      "file": "img/15-emise.png",
+      "title": "Facture émise : statut « Envoyé », PDF disponible",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
     },
     {
       "n": 16,
-      "file": "img/16-export-fec.png",
-      "title": "Export FEC : journaux, période, écritures à exporter",
-      "url": "http://127.0.0.1:8001/fr/admin/imports-exports"
+      "file": "img/16-liste-facturx.png",
+      "title": "Liste des factures : bouton Factur-X",
+      "url": "http://127.0.0.1:8008/fr/invoices"
     },
     {
       "n": 17,
-      "file": "img/17-integrations-pdp.png",
+      "file": "img/17-reglement-saisie.png",
+      "title": "Saisir un règlement partiel",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
+    },
+    {
+      "n": 18,
+      "file": "img/18-reglement-partiel.png",
+      "title": "Règlement enregistré : reste dû affiché",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
+    },
+    {
+      "n": 19,
+      "file": "img/19-relances-liste.png",
+      "title": "Factures à relancer : niveau proposé",
+      "url": "http://127.0.0.1:8008/fr/invoices/reminders"
+    },
+    {
+      "n": 20,
+      "file": "img/20-relance-appel.png",
+      "title": "Tracer un appel (aucun e-mail envoyé)",
+      "url": "http://127.0.0.1:8008/fr/invoices/reminders"
+    },
+    {
+      "n": 21,
+      "file": "img/21-relance-enregistree.png",
+      "title": "Relance enregistrée",
+      "url": "http://127.0.0.1:8008/fr/invoices/reminders"
+    },
+    {
+      "n": 22,
+      "file": "img/22-soldee.png",
+      "title": "Facture soldée : statut « Payé »",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
+    },
+    {
+      "n": 23,
+      "file": "img/23-historique-relances.png",
+      "title": "Fiche facture : historique des relances",
+      "url": "http://127.0.0.1:8008/fr/invoices/53"
+    },
+    {
+      "n": 24,
+      "file": "img/24-avoir-creation.png",
+      "title": "Facture émise : cocher les lignes, « Nouvel avoir »",
+      "url": "http://127.0.0.1:8008/fr/invoices/54"
+    },
+    {
+      "n": 25,
+      "file": "img/25-avoir-fiche.png",
+      "title": "Avoir créé, statut « En attente »",
+      "url": "http://127.0.0.1:8008/fr/credit-notes/4"
+    },
+    {
+      "n": 26,
+      "file": "img/26-encours.png",
+      "title": "Fiche société, tableau de bord : encours client",
+      "url": "http://127.0.0.1:8008/fr/companies/79"
+    },
+    {
+      "n": 27,
+      "file": "img/27-export-fec.png",
+      "title": "Export FEC : journaux, période, écritures à exporter",
+      "url": "http://127.0.0.1:8008/fr/admin/imports-exports"
+    },
+    {
+      "n": 28,
+      "file": "img/28-integrations-pdp.png",
       "title": "Intégrations : facturation électronique (PDP)",
-      "url": "http://127.0.0.1:8001/fr/admin/integrations"
+      "url": "http://127.0.0.1:8008/fr/admin/integrations"
     }
   ]
 }

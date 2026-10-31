@@ -1,5 +1,5 @@
-// Parcours de vente complet : prospect → lead → opportunité → devis (ligne + gamme)
-// → commande → déclaration de production → BL → facture.
+// Parcours de vente complet : prospect → lead → opportunité (risque, catégorie) → devis (ligne + gamme)
+// → commande → bon pour fabrication (si exigé) → déclaration de production → BL → facture.
 // Usage : node tools/training/scenarios/vente-complete.mjs   (HEADED=1 pour voir le navigateur)
 // Toutes les données créées portent le préfixe [FORMATION].
 import { readEnv, openSession, field, settle, tab } from '../lib.mjs';
@@ -138,10 +138,54 @@ await step('3. Transformer le lead en opportunité', async () => {
     await settle(page);
 });
 
-await step('4a. Créer le devis', async () => {
+await step('3b. Recenser un risque de l’affaire', async () => {
     await shot('opportunite-synthese', { title: 'Opportunité créée — onglet « Synthèse »' });
+    const riskTab = page.locator('a[href="#Risks"]').first();
+    await riskTab.click();
+    await settle(page);
+    const add = page.locator('#Risks').getByRole('button', { name: 'Nouveau risque' });
+    await add.waitFor();
+    await shot('opportunite-risques', { title: 'Onglet « Risques » — « Nouveau risque »', highlight: [riskTab, add] });
+    await add.click();
+    const form = page.locator('#Risks form');
+    await form.waitFor();
+    await form.locator('#risk-label').fill('[FORMATION] Planéité après pliage hors tolérance');
+    await form.locator('#risk-category').selectOption('technical');
+    await form.locator('#risk-probability').selectOption('2');
+    await form.locator('#risk-severity').selectOption('3');
+    await form.locator('#risk-mitigation').fill('Essai de pliage sur une pièce avant la série');
+    await form.locator('#risk-owner').selectOption({ index: 1 });
+    const due = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+    await form.locator('#risk-due').fill(due);
+    const save = form.getByRole('button', { name: 'Enregistrer' });
+    await shot('opportunite-risque-form', { title: 'Fiche « Nouveau risque » remplie', highlight: [form.locator('#risk-label'), form.locator('#risk-probability'), form.locator('#risk-severity'), form.locator('#risk-mitigation'), save] });
+    await save.click();
+    await settle(page);
+    await page.locator('#Risks .alert-success').waitFor();
+    await shot('opportunite-risques-liste', { title: 'Risque enregistré dans le registre' });
+});
+
+await step('4a. Créer le devis', async () => {
     await page.locator('a[href="#Opportunity"]').first().click();
     await settle(page);
+    // Catégorie d'affaire : choisie sur l'opportunité, reprise par le devis puis la commande.
+    const pane = page.locator('#Opportunity');
+    const cat = pane.locator('select[name="affair_category_id"]');
+    if (await cat.count()) {
+        const opts = await cat.locator('option').allTextContents();
+        const pick = opts.findIndex(t => /m[ée]canique/i.test(t));
+        await cat.selectOption({ index: pick > 0 ? pick : 1 });
+        const prob = pane.locator('input[name="probality"]');
+        if (!(await prob.inputValue())) await prob.fill('50');
+        const budget = pane.locator('input[name="budget"]');
+        if (!(await budget.inputValue())) await budget.fill('850');
+        const update = pane.locator('form').first().getByRole('button', { name: /Mettre à jour/ });
+        await shot('opportunite-categorie', { title: 'Catégorie d’affaire de l’opportunité (puis « Mettre à jour » en bas du formulaire)', highlight: cat });
+        await update.click();
+        await settle(page);
+        await page.locator('a[href="#Opportunity"]').first().click();
+        await settle(page);
+    }
     const link = page.locator('a.btn-success[href*="/opportunities/store/quote/"]');
     const card = page.locator('.card', { has: link }).last();
     if (!(await link.isVisible())) {
@@ -154,7 +198,8 @@ await step('4a. Créer le devis', async () => {
     await page.waitForURL(/\/quotes\/\d+/);
     ids.quote = idFrom(page.url(), 'quotes');
     await settle(page);
-    await shot('devis-fiche', { title: 'Devis créé (statut Ouvert)' });
+    const copies = page.getByRole('button', { name: /Copier…/ });
+    await shot('devis-fiche', { title: 'Devis créé (statut Ouvert) — onglet « i », onglet « Revue », catégorie reprise, carte « Options »', highlight: [page.locator('a[href="#Quote"]').first(), page.locator('a[href="#Review"]').first(), page.locator('#Quote select[name="affair_category_id"]'), copies] });
 });
 
 await step('4b. Ajouter une ligne au devis', async () => {
@@ -236,10 +281,27 @@ await step('5. Convertir le devis en commande', async () => {
     await page.locator('tbody tr:visible', { hasText: 'PLT-450' }).locator('input[type=checkbox]').first().check();
     const btn = page.getByRole('button', { name: /Créer une commande/ });
     await shot('devis-vers-commande', { title: 'Cocher la ligne puis « Créer une commande »', highlight: [page.locator('tbody tr:visible', { hasText: 'PLT-450' }).locator('input[type=checkbox]').first(), btn] });
-    await Promise.all([page.waitForURL(/\/orders\/\d+/, { timeout: 30000 }), btn.click()]);
+    await Promise.all([page.waitForURL(/\/orders\/\d+/, { timeout: 90000 }), btn.click()]);
     ids.order = idFrom(page.url(), 'orders');
     await settle(page);
-    await shot('commande-fiche', { title: 'Commande créée depuis le devis' });
+    await shot('commande-fiche', { title: 'Commande créée depuis le devis — onglet « Revue de contrat »', highlight: [page.locator('a[href="#ContractReview"]').first(), page.getByText('Ouvrir la revue').first()] });
+});
+
+await step('6a. Donner le bon pour fabrication', async () => {
+    await openLines(`/orders/${ids.order}`);
+    const row = page.locator('tbody tr:visible', { hasText: 'PLT-450' });
+    const badge = row.locator('.badge', { hasText: 'Sans BPF' });
+    // Option « BPF obligatoire » inactive : rien à faire, l'atelier démarre directement.
+    if (!(await badge.count())) return;
+    const cb = row.locator('input[type=checkbox]').first();
+    await cb.check();
+    const btn = page.getByRole('button', { name: /Bon pour fabrication \(/ });
+    await shot('commande-bpf', { title: 'Cocher la ligne puis « Bon pour fabrication (1) »', highlight: [badge, cb, btn] });
+    await btn.click();
+    await settle(page);
+    const ok = row.locator('.badge.text-bg-success', { hasText: 'BPF' });
+    await ok.waitFor();
+    await shot('commande-bpf-donne', { title: 'Ligne libérée : badge « BPF »', highlight: ok });
 });
 
 await step('6. Déclarer la production', async () => {
@@ -280,7 +342,7 @@ await step('7. Créer le bon de livraison', async () => {
     await cb.check();
     const btn = page.getByRole('button', { name: /Nouveau BL/ });
     await shot('commande-vers-bl', { title: 'Cocher la ligne puis « Nouveau BL »', highlight: [cb, btn] });
-    await Promise.all([page.waitForURL(/\/deliverys\/\d+/, { timeout: 30000 }), btn.click()]);
+    await Promise.all([page.waitForURL(/\/deliverys\/\d+/, { timeout: 90000 }), btn.click()]);
     ids.delivery = idFrom(page.url(), 'deliverys');
     await settle(page);
 });
@@ -288,7 +350,7 @@ await step('7. Créer le bon de livraison', async () => {
 await step('8. Créer la facture', async () => {
     const link = page.locator('a.btn-primary[href*="/invoices/store/delevery/"]');
     await shot('bl-fiche', { title: 'Bon de livraison — « Nouvelle facture »', highlight: link });
-    await Promise.all([page.waitForURL(/\/invoices\/\d+/, { timeout: 30000 }), link.click()]);
+    await Promise.all([page.waitForURL(/\/invoices\/\d+/, { timeout: 90000 }), link.click()]);
     ids.invoice = idFrom(page.url(), 'invoices');
     await settle(page);
     await shot('facture-fiche', { title: 'Facture créée (statut En cours)' });
