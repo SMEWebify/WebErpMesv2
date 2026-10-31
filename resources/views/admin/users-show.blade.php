@@ -182,6 +182,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         <select class="form-select" name="supervisor_id" id="supervisor_id">
+                                            {{-- Sans choix vide, enregistrer la fiche d'un salarié sans responsable lui donnait le premier utilisateur de la liste. --}}
+                                            <option value="" @if(!$User->supervisor_id) selected @endif>—</option>
                                             @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}" @if($User->supervisor_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                             @endforeach
