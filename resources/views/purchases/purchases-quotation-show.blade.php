@@ -7,8 +7,9 @@
     h1="{{ __('general_content.requests_for_quotation_list_trans_key')}} : {{ $PurchaseQuotation->code }}"
     previous="{{ $previousUrl }}"
     list="{{ route('purchases.quotation') }}"
-    next="{{ $nextUrl }}"
-  />
+    next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="achats" section="consulter-le-fournisseur-la-demande-de-prix" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 @section('right-sidebar')

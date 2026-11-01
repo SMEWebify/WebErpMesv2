@@ -3,7 +3,7 @@
 @section('title', __('batches.title'))
 
 @section('content_header')
-    <h1>{{ __('batches.title') }}</h1>
+    <h1>{{ __('batches.title') }}<x-guide-help guide="article" section="les-lots-et-les-coulees" /></h1>
 @stop
 
 @section('content')

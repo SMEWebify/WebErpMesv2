@@ -3,7 +3,7 @@
 @section('title', __('general_content.leave_balances_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.leave_balances_trans_key') }} — {{ $PeriodLabel }}</h1>
+    <h1>{{ __('general_content.leave_balances_trans_key') }} — {{ $PeriodLabel }} <x-guide-help guide="temps" section="les-soldes" /></h1>
 @stop
 
 @section('content')

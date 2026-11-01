@@ -5,6 +5,7 @@ import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 import { onTimeBadgeClass, formatOnTimeRate } from '../lib/supplierOnTime';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -561,6 +562,7 @@ function DashboardTab({ kpi, chartData, topSuppliers, fastestSuppliers, slowestS
                                 <h3 className="card-title">
                                     <i className="fas fa-truck-fast me-1" />
                                     {trans.on_time_title}
+                                    <GuideHelp guide="achats" section="suivre-ses-fournisseurs" />
                                 </h3>
                             </div>
                             <div className="card-body p-2">

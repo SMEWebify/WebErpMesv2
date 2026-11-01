@@ -3,6 +3,7 @@ import {
     request, fmt, formatDate, formatAmount, formatNumber, todayIso, StatusBadge,
 } from './affairShared.jsx';
 import { criticalityClass, statusClass } from '../../lib/affairRisks.js';
+import GuideHelp from '../GuideHelp';
 
 /**
  * Synthèse d'une affaire (onglet par défaut de la fiche opportunité) :
@@ -100,7 +101,7 @@ function BlockersCard({ blockers, trans, locale, currency }) {
     return (
         <div className="card h-100 mb-0">
             <div className="card-header d-flex align-items-center gap-2">
-                <h3 className="card-title m-0 fs-6">{trans.blockers_title ?? 'Points bloquants'}</h3>
+                <h3 className="card-title m-0 fs-6">{trans.blockers_title ?? 'Points bloquants'}<GuideHelp guide="vente-complete" section="transformer-le-lead-en-opportunite" /></h3>
                 <span className={`badge ${list.length ? 'text-bg-danger' : 'text-bg-success'}`}>{list.length}</span>
             </div>
             {list.length === 0 ? (

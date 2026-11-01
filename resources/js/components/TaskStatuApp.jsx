@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { getTimeUnit, hoursToUnit, unitLabel } from '../lib/duration.js';
+import GuideHelp from './GuideHelp';
 
 // Le viewer embarque three.js / OCCT-WASM : chargé à la demande uniquement,
 // pour ne pas alourdir l'écran quand la tâche n'a aucun plan lié.
@@ -402,6 +403,7 @@ function RunControls({ task, apiBase, onReload, trans, purchasesRequestUrl, stac
                 <div className="ts-alert ts-alert--warn" role="alert">
                     <i className="fas fa-lock me-1" />
                     {refusal ?? task.release_blocked}
+                    {releaseBlocked && <GuideHelp guide="bon-pour-fabrication" section="ce-que-voit-loperateur" />}
                 </div>
             )}
             {warningBanner}
@@ -444,7 +446,7 @@ function PhaseReleaseCard({ task, apiBase, onReload }) {
     const tone = release.state === 'released' ? ' ts-alert--ok' : release.state === 'awaiting' ? ' ts-alert--warn' : '';
 
     return (
-        <Card title={l('title', 'Visa de libération')} tight>
+        <Card title={<>{l('title', 'Visa de libération')}<GuideHelp guide="atelier" section="le-visa-de-liberation-dune-phase" /></>} tight>
             <div className={`ts-alert${tone} mb-2`}>
                 <i className="fas fa-stamp me-1" />
                 {l(`state_${release.state}`, release.state)}
@@ -803,7 +805,7 @@ function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
     }
 
     return (
-        <Card title={t('remove_from_stock_trans_key')}>
+        <Card title={<>{t('remove_from_stock_trans_key')}<GuideHelp guide="atelier" section="sortir-la-matiere-du-stock" /></>}>
             {r && (
                 <div className="ts-badges">
                     <Pill>Demandé {r.requested}</Pill>

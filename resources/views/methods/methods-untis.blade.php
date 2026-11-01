@@ -3,7 +3,7 @@
 @section('title', __('general_content.units_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.units_trans_key') }}</h1>
+    <h1>{{ __('general_content.units_trans_key') }}<x-guide-help guide="methodes" section="unites-comment-on-compte" /></h1>
 @stop
 
 @section('right-sidebar')

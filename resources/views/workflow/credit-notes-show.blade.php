@@ -3,7 +3,9 @@
 @section('title', __('general_content.credit_note_trans_key')  . ' - ' . $CreditNotes->code)
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ __('general_content.credit_note_trans_key') }} : {{  $CreditNotes->code }}" previous="{{ $previousUrl }}" list="{{ route('credit-notes') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.credit_note_trans_key') }} : {{  $CreditNotes->code }}" previous="{{ $previousUrl }}" list="{{ route('credit-notes') }}" next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="facturation" section="faire-un-avoir" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 
@@ -30,6 +32,9 @@
                     @include('include.alert-result')
                     <form method="POST" action="{{ route('credit.notes.update', ['id' => $CreditNotes->id]) }}" enctype="multipart/form-data">
                         <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" theme-mode="outline" maximizable>
+                          <x-slot name="toolsSlot">
+                            <x-guide-help guide="facturation" section="faire-un-avoir" />
+                          </x-slot>
                             @csrf
                             <div class="row">
                                 <div class="mb-3 col-md-4">

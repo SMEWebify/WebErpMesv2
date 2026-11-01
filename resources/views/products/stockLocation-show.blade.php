@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{ $StockLocation->label }} {{__('general_content.stock_location_trans_key') }}</h1> 
+        <h1>{{ $StockLocation->label }} {{__('general_content.stock_location_trans_key') }}<x-guide-help guide="article" section="organiser-le-stock" /></h1> 
       </div>
       <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end">

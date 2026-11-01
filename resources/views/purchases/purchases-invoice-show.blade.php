@@ -3,7 +3,9 @@
 @section('title', __('general_content.invoice_supplier_trans_key')   . ' - ' . $PurchaseInvoice->code)
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ __('general_content.invoice_supplier_trans_key') }}: {{  $PurchaseInvoice->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.invoice') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.invoice_supplier_trans_key') }}: {{  $PurchaseInvoice->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.invoice') }}" next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="achats" section="enregistrer-la-facture-fournisseur" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 @section('right-sidebar')

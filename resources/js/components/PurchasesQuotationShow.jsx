@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { csrfToken, apiFetchWithStatus as apiFetch } from '../lib/http';
 import { QUALIFIED, SupplierQualificationBadge, showsBadge, supplierOptionLabel } from '../lib/supplierQualification.jsx';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -267,7 +268,7 @@ function OptionsSidebar({ quotation, trans }) {
         <>
             <div className="card card-outline card-secondary mb-3">
                 <div className="card-header">
-                    <h3 className="card-title">{trans.options}</h3>
+                    <h3 className="card-title">{trans.options}<GuideHelp guide="achats" section="consulter-le-fournisseur-la-demande-de-prix" /></h3>
                     <div className="card-tools">
                         <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                             <i className="fas fa-expand" />
@@ -574,6 +575,7 @@ function OrderSupplierCheck({ status, config }) {
             <div className="mb-2">
                 <SupplierQualificationBadge status={status} config={config} className="me-2" />
                 {texts.blocked}
+                <GuideHelp guide="fournisseurs-qualifies" section="la-commande-est-refusee-le-passe-droit" />
             </div>
             {config.can_override ? (
                 <>

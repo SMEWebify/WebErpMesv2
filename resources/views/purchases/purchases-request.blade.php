@@ -5,7 +5,7 @@
 @section('content_header')
   <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>{{ __('general_content.purchase_request_trans_key') }}</h1>
+        <h1>{{ __('general_content.purchase_request_trans_key') }}<x-guide-help guide="achats" section="consulter-le-fournisseur-la-demande-de-prix" /></h1>
     </div>
   </div>
 @stop

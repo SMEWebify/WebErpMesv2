@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{ $StockLocationProduct->code }} {{ __('general_content.stock_location_trans_key') }}</h1>
+        <h1>{{ $StockLocationProduct->code }} {{ __('general_content.stock_location_trans_key') }}<x-guide-help guide="article" section="entrees-sorties-et-transferts" /></h1>
         <div class="text-muted">
           {{ __('general_content.product_trans_key') }}: {{ $Product->code }} - {{ $Product->label }}
         </div>

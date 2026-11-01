@@ -88,6 +88,8 @@ function features(body, lang) {
 
 function convert(body, slug, lang) {
     return callouts(features(body, lang)
+        // Ancres `{#id}` des titres : utiles à l'appli (« ? » des écrans), affichées telles quelles par GitHub.
+        .replace(/^(#{1,6} .*?)\s*\{#[a-z][a-z0-9-]*\}\s*$/gm, '$1')
         .replace(/```steps\n([\s\S]*?)```/g, (_, list) => list.trim().split('\n')
             .map((s, i) => `**${i + 1}.** ${s.trim()}`).join(' → ') + '\n')
         .replace(/\]\(img\//g, `](images/${slug}/`));

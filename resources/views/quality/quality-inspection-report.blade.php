@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="mb-0">{{ __('inspection.report_title') }} <small class="text-secondary">{{ $dossier->code }}</small></h1>
+            <h1 class="mb-0">{{ __('inspection.report_title') }}<x-guide-help guide="qualite" section="plans-de-controle-et-premier-article" /> <small class="text-secondary">{{ $dossier->code }}</small></h1>
             <div class="text-secondary">{{ $dossier->title }}</div>
         </div>
         <a class="btn btn-sm btn-outline-secondary" href="{{ route('quality.plans') }}">

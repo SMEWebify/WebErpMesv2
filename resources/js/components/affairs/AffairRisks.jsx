@@ -4,6 +4,7 @@ import { request, fmt, formatDate, todayIso } from './affairShared.jsx';
 import {
     SCALE, criticalityClass, statusClass, closeNeedsPermission, emptyDraft, draftFrom, riskPayload, isOverdue,
 } from '../../lib/affairRisks.js';
+import GuideHelp from '../GuideHelp';
 
 /**
  * Onglet « Risques » de la fiche opportunité : registre des risques de l'affaire
@@ -215,7 +216,7 @@ export default function AffairRisks({ endpoints = {}, trans = {}, users = [], ca
     return (
         <div className="affair-risks">
             <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                <p className="small text-body-secondary mb-0 me-auto">{fmt(t.intro, { threshold })}</p>
+                <p className="small text-body-secondary mb-0 me-auto">{fmt(t.intro, { threshold })}<GuideHelp guide="vente-complete" section="transformer-le-lead-en-opportunite" /></p>
                 {canEdit && meta && editing === null && (
                     <button type="button" className="btn btn-sm btn-warning" onClick={() => { setNotice(null); setEditing('new'); }}>
                         <i className="fas fa-plus me-1" />{t.new}

@@ -3,7 +3,7 @@
 @section('title', __('inspection.title'))
 
 @section('content_header')
-    <h1>{{ __('inspection.title') }}</h1>
+    <h1>{{ __('inspection.title') }}<x-guide-help guide="qualite" section="plans-de-controle-et-premier-article" /></h1>
 @stop
 
 @section('content')

@@ -3,7 +3,7 @@
 @section('title', __('general_content.times_setting_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.times_setting_trans_key') }}</h1>
+    <h1>{{ __('general_content.times_setting_trans_key') }} <x-guide-help guide="temps" /></h1>
 @stop
 
 @section('right-sidebar')
@@ -26,6 +26,9 @@
       <div class="row">
         <div class="col-md-6">
           <x-adminlte-card title="{{ __('general_content.leave_request_trans_key') }}" theme="primary" maximizable>
+              <x-slot name="toolsSlot">
+                  <x-guide-help guide="temps" section="la-validation-rh" />
+              </x-slot>
             <div class="able-responsive p-0">
               <table class="table table-hover">
                 <thead>
@@ -243,6 +246,9 @@
       <div class="row">
         <div class="col-md-6">
           <x-adminlte-card title="{{ __('general_content.banck_holiday_trans_key') }}" theme="primary" maximizable>
+              <x-slot name="toolsSlot">
+                  <x-guide-help guide="temps" section="les-jours-feries" />
+              </x-slot>
             <div class="table-responsive p-0">
               <table class="table table-hover">
                 <thead>
@@ -487,6 +493,9 @@
       <div class="row">
         <div class="col-md-6">
           <x-adminlte-card title="{{ __('general_content.machine_event_trans_key') }}" theme="primary" maximizable>
+              <x-slot name="toolsSlot">
+                  <x-guide-help guide="temps" section="les-autres-reglages" />
+              </x-slot>
             <div class="table-responsive p-0">
               <table class="table table-hover">
                 <thead>

@@ -3,7 +3,7 @@
 @section('title', __('general_content.location_in_workshop_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.location_in_workshop_trans_key') }}</h1>
+    <h1>{{ __('general_content.location_in_workshop_trans_key') }}<x-guide-help guide="methodes" section="emplacements-les-zones-de-latelier" /></h1>
 @stop
 
 @section('right-sidebar')

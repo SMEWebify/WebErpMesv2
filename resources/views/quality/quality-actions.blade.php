@@ -3,7 +3,7 @@
 @section('title', __('general_content.action_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.action_trans_key') }}</h1>
+    <h1>{{ __('general_content.action_trans_key') }}<x-guide-help guide="qualite" section="lancer-une-action-corrective" /></h1>
 @stop
 
 @section('content')

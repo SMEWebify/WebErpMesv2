@@ -3,7 +3,7 @@
 @section('title', __('general_content.email_logs_trans_key'))
 
 @section('content_header')
-    <h1><i class="fas fa-history me-1"></i> {{ __('general_content.email_logs_trans_key') }}</h1>
+    <h1><i class="fas fa-history me-1"></i> {{ __('general_content.email_logs_trans_key') }} <x-guide-help guide="mise-en-route" section="e-mail" /></h1>
 @stop
 
 @section('content')

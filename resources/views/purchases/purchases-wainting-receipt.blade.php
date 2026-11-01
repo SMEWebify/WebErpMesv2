@@ -5,7 +5,7 @@
 @section('content_header')
   <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>{{ __('general_content.waiting_to_receipt_trans_key') }}</h1>
+        <h1>{{ __('general_content.waiting_to_receipt_trans_key') }}<x-guide-help guide="achats" section="receptionner" /></h1>
     </div>
   </div>
 @stop

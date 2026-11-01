@@ -154,3 +154,20 @@ body.sidebar-hidden .app-sidebar {
 .ql-snow .ql-picker-options {
     z-index: 1000;
 }
+
+/* « ? » vers un guide (<x-guide-help>, GuideHelp.jsx) : discret, à côté d'un titre de carte. */
+.wem-guide-help {
+    color: var(--bs-secondary-color);
+    margin-left: .35rem;
+    font-size: .9em;
+    text-decoration: none;
+}
+.wem-guide-help:hover,
+.wem-guide-help:focus {
+    color: var(--bs-primary);
+}
+/* Titre de page (h1 de 2,5rem) : un « ? » à 0,9em y serait trop présent. */
+.app-content-header h1 .wem-guide-help {
+    font-size: 1.25rem;
+    vertical-align: middle;
+}

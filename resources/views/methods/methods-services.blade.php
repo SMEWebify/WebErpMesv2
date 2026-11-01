@@ -3,7 +3,7 @@
 @section('title', __('general_content.service_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.service_trans_key') }}</h1>
+    <h1>{{ __('general_content.service_trans_key') }}<x-guide-help guide="methodes" section="services-ce-que-latelier-sait-faire" /></h1>
 @stop
 
 @section('right-sidebar')
@@ -142,7 +142,7 @@
                               @if($MethodsService->requires_release) checked @endif>
                             <label class="form-check-label" for="requires_release_{{ $MethodsService->id }}">
                               {{ __('task_release.requires_release') }}
-                            </label>
+                            </label><x-guide-help guide="atelier" section="le-visa-de-liberation-dune-phase" />
                             <div class="form-text">{{ __('task_release.requires_release_help') }}</div>
                           </div>
                         </div>
@@ -271,7 +271,7 @@
               <div class="form-check form-switch">
                 <input type="hidden" name="requires_release" value="0">
                 <input type="checkbox" class="form-check-input" id="requires_release_new" name="requires_release" value="1">
-                <label class="form-check-label" for="requires_release_new">{{ __('task_release.requires_release') }}</label>
+                <label class="form-check-label" for="requires_release_new">{{ __('task_release.requires_release') }}</label><x-guide-help guide="atelier" section="le-visa-de-liberation-dune-phase" />
                 <div class="form-text">{{ __('task_release.requires_release_help') }}</div>
               </div>
             </div>

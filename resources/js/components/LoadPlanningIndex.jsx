@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -228,7 +229,7 @@ function CalcModal({ id, title, status, trans, onCalculate, onRebalance }) {
                 <div className="modal-content">
                     <div className="modal-header text-bg-teal">
                         <h5 className="modal-title text-white">
-                            <i className="fas fa-cogs me-2"></i>{title}
+                            <i className="fas fa-cogs me-2"></i>{title}<GuideHelp guide="atelier" section="le-planning-de-charge" className="text-white" />
                         </h5>
                         <button type="button" data-bs-dismiss="modal" aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>

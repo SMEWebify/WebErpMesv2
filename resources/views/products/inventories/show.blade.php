@@ -6,6 +6,7 @@
   <h1>
     {{ $inventory->code }}
     <small class="text-muted">{{ $inventory->label }}</small>
+    <x-guide-help guide="article" section="les-inventaires" />
   </h1>
 @stop
 

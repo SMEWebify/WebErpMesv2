@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import GuideHelp from './GuideHelp';
 
 function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -119,7 +120,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                 {/* Formulaire de saisie */}
                 <div className="col-md-4">
                     <div className="card card-secondary card-outline mb-3">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus me-1"></i>Saisir un règlement</h3></div>
+                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus me-1"></i>Saisir un règlement<GuideHelp guide="facturation" section="enregistrer-les-reglements" /></h3></div>
                         <div className="card-body">
                             <form onSubmit={handleStore}>
                                 <div className="mb-3">

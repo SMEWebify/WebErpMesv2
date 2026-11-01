@@ -3,7 +3,7 @@
 @section('title', __('general_content.user_trans_key'))  
 
 @section('content_header')
-    <h1>{{ __('general_content.user_trans_key') }} {{ $User->name }}</h1>
+    <h1>{{ __('general_content.user_trans_key') }} {{ $User->name }} <x-guide-help guide="rh" section="la-fiche-salarie" /></h1>
 @stop
 
 @section('content')
@@ -59,6 +59,9 @@
 
         @if($User->id != Auth::id() )
         <x-adminlte-card title="{{ __('general_content.blocked_unti_trans_key') }}" theme="warning" maximizable>
+            <x-slot name="toolsSlot">
+                <x-guide-help guide="rh" section="la-fiche-salarie" />
+            </x-slot>
             <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="input-group mb-2">
@@ -399,6 +402,9 @@
                             <div class="col-md-6">
                                 
                                 <x-adminlte-card title="{{ __('general_content.new_contract_trans_key') }}" theme="secondary" maximizable>
+                                    <x-slot name="toolsSlot">
+                                        <x-guide-help guide="rh" section="les-contrats" />
+                                    </x-slot>
                                     <form method="POST" action="{{ route('human.resources.create.contract', ['id' => $User->id]) }}" enctype="multipart/form-data">
                                         @csrf
                                         <div class="card-body">
@@ -529,6 +535,9 @@
                     </div>
                     <div class="tab-pane" id="leave">
                         <x-adminlte-card title="{{ __('general_content.leave_balances_trans_key') }} — {{ $LeaveSummary['period_label'] }}" theme="primary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="temps" section="les-droits-a-conges" />
+                            </x-slot>
                             @include('include.leave-balance-table', [
                                 'summary' => $LeaveSummary,
                                 'balanceUserId' => $User->id,
@@ -538,6 +547,9 @@
                     </div>
                     <div class="tab-pane" id="documents">
                         <x-adminlte-card title="{{ __('general_content.documents_trans_key') }}" theme="primary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="rh" section="le-dossier-du-salarie" />
+                            </x-slot>
                             <p class="text-muted">
                                 <i class="fas fa-lock"></i> {{ __('general_content.hr_documents_confidential_trans_key') }}
                             </p>

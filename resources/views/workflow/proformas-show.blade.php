@@ -17,7 +17,9 @@
                      list="{{ route('proformas') }}"
                      :steps="$steps" statu="{{ $Proforma->statu }}"
                      endpoint="{{ route('proformas.json.statu', $Proforma->id) }}"
-                     redirect="{{ route('proformas.show', $Proforma->id) }}"/>
+                     redirect="{{ route('proformas.show', $Proforma->id) }}">
+      <x-slot name="help"><x-guide-help guide="facturation" section="questions-frequentes" /></x-slot>
+  </x-document-header>
 @stop
 
 @section('content')

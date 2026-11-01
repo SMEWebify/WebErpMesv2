@@ -13,4 +13,5 @@ return [
     'contents' => 'Contents',
     'print' => 'Print',
     'uncategorized' => 'Miscellaneous',
+    'help' => 'Help: ":title" guide',
 ];

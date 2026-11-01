@@ -3,7 +3,7 @@
 @section('title', $asset->name)
 
 @section('content_header')
-    <h1>{{ $asset->name }}</h1>
+    <h1>{{ $asset->name }} <x-guide-help guide="gmao" section="enregistrer-un-equipement" /></h1>
 @stop
 
 @section('content')

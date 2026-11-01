@@ -3,7 +3,7 @@
 @section('title', __('general_content.orders_lines_list_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.orders_lines_list_trans_key') }}</h1>
+  <h1>{{ __('general_content.orders_lines_list_trans_key') }}<x-guide-help guide="bon-pour-fabrication" section="donner-ou-annuler-le-bpf-ligne-par-ligne" /></h1>
 @stop
 
 @php

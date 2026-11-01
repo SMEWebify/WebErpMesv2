@@ -4,6 +4,9 @@
   {{-- ======================= RÉGIMES ======================= --}}
   <div class="col-md-6">
     <x-adminlte-card title="{{ __('vat.regimes_title') }}" theme="primary" maximizable>
+      <x-slot name="toolsSlot">
+        <x-guide-help guide="comptabilite" section="regimes-natures-et-matrices-de-tva-avance" />
+      </x-slot>
       <div class="table-responsive p-0">
         <table class="table table-hover">
           <thead>

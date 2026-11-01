@@ -3,7 +3,7 @@
 @section('title', 'Factures proforma')
 
 @section('content_header')
-  <h1>Factures proforma</h1>
+  <h1>Factures proforma<x-guide-help guide="facturation" section="questions-frequentes" /></h1>
 @stop
 
 @section('content')

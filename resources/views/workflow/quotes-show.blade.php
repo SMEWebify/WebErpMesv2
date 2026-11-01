@@ -20,14 +20,18 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
     @if($Quote->is_template)
     {{-- Une trame n'a pas de cycle de vie : ni statut, ni navigation entre devis. --}}
     <x-document-header :h1="__('general_content.quote_template_trans_key') . ' : ' . $Quote->label"
-                       list="{{ route('quotes', ['tab' => 'templates']) }}"/>
+                       list="{{ route('quotes', ['tab' => 'templates']) }}">
+        <x-slot name="help"><x-guide-help guide="devis-avance" section="reutiliser-un-devis-dupliquer-ou-enregistrer-comme-trame" /></x-slot>
+    </x-document-header>
     @else
     <x-document-header h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}"
                        previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"
                        :steps="$arrowSteps" statu="{{ $Quote->statu }}"
                        endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
                        redirect="{{ route('quotes.show', $Quote->id) }}"
-                       :loss="$lossDialog"/>
+                       :loss="$lossDialog">
+        <x-slot name="help"><x-guide-help guide="vente-complete" section="etablir-le-devis" /></x-slot>
+    </x-document-header>
     @endif
 @stop
 
@@ -298,6 +302,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               ];
             @endphp
             <x-adminlte-card title="{{ __('quote_revisions.history') }}" theme="secondary" theme-mode="outline" icon="fas fa-code-branch" collapsible>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="devis-avance" section="reviser-un-devis-indice-et-variante" />
+              </x-slot>
               <ul class="list-unstyled mb-0">
                 @foreach($QuoteFamily as $member)
                 <li class="d-flex justify-content-between align-items-start py-1 @if(!$loop->last) border-bottom @endif">
@@ -329,6 +336,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             @endif
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="devis-avance" section="reutiliser-un-devis-dupliquer-ou-enregistrer-comme-trame" />
+              </x-slot>
               <table class="table table-hover">
                 <tr>
                   <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
@@ -427,7 +437,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                 <form method="POST" action="{{ route('quotes.variant', ['id' => $Quote->id]) }}" class="modal-content">
                   @csrf
                   <div class="modal-header">
-                    <h5 class="modal-title" id="quoteVariantModalLabel"><i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}</h5>
+                    <h5 class="modal-title" id="quoteVariantModalLabel"><i class="fas fa-clone me-1"></i>{{ __('quote_revisions.new_variant') }}<x-guide-help guide="devis-avance" section="reviser-un-devis-indice-et-variante" /></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('general_content.close_trans_key') }}"></button>
                   </div>
                   <div class="modal-body">
@@ -447,7 +457,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                 <form method="POST" action="{{ route('quotes.save-template', ['id' => $Quote->id]) }}" class="modal-content">
                   @csrf
                   <div class="modal-header">
-                    <h5 class="modal-title" id="quoteTemplateModalLabel"><i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}</h5>
+                    <h5 class="modal-title" id="quoteTemplateModalLabel"><i class="fas fa-layer-group me-1"></i>{{ __('general_content.save_as_template_trans_key') }}<x-guide-help guide="devis-avance" section="reutiliser-un-devis-dupliquer-ou-enregistrer-comme-trame" /></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('general_content.close_trans_key') }}"></button>
                   </div>
                   <div class="modal-body">
@@ -472,6 +482,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
         <form method="POST" action="{{ route('quotes.review.update', ['id' => $Quote->id]) }}">
           @csrf
           <x-adminlte-card title="{{ __('general_content.review_change_tracking_trans_key') }}" theme="info" theme-mode="outline" icon="fas fa-clipboard-check">
+            <x-slot name="toolsSlot">
+              <x-guide-help guide="devis-avance" section="tracer-la-revue-du-devis" />
+            </x-slot>
                     <div class="row">
                       <div class="mb-3 col-md-6">
                         <label for="reviewed_by">{{ __('general_content.reviewed_by_trans_key') }}</label>
@@ -658,6 +671,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
 
         <form method="POST" action="{{ route('quotes.lines.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
           <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="mise-en-route" section="reprendre-vos-donnees" />
+              </x-slot>
               @csrf
               <div class="card-body">
                   {{-- Placeholder, sm size and prepend icon --}}

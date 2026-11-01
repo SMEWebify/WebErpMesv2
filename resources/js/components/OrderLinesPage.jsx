@@ -10,6 +10,7 @@ import { askCreditOverride } from '../lib/creditLimit';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
 import { dossierState, dossierValidatedText, dossierActionIds } from '../lib/manufacturingDossier.js';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -79,7 +80,10 @@ function DelayHistory({ lineId, endpoint, t }) {
     return (
         <div className="mt-3 pt-2 border-top">
             <div className="d-flex align-items-center justify-content-between mb-2">
-                <span className="small fw-bold"><i className="fas fa-history me-1" />{t.history_title ?? 'Historique des reports'}</span>
+                <span className="small fw-bold">
+                    <i className="fas fa-history me-1" />{t.history_title ?? 'Historique des reports'}
+                    <GuideHelp guide="commande-revue-contrat" section="reporter-une-date-de-livraison" />
+                </span>
                 {data?.promised_delivery_date && (
                     <span className="small text-body-secondary">
                         {t.promised_label ?? 'Promise le'} {formatDate(data.promised_delivery_date)}
@@ -246,6 +250,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                     <strong className="text-dark">
                         <i className="fas fa-list me-2" />
                         Tâches — {lineLabel}
+                        <GuideHelp guide="commande-revue-contrat" section="prix-calcule-tant-que-la-commande-est-en-preparation" />
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-dark" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -566,6 +571,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {editingLine
                             ? <><i className="fas fa-edit me-2 text-warning" />Modifier la ligne</>
                             : <><i className="fas fa-plus-circle me-2 text-success" />Nouvelle ligne</>}
+                        <GuideHelp guide="commande-revue-contrat" section="saisir-les-lignes-et-leurs-reperes-dequipement" />
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -1612,6 +1618,9 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                     {releaseTrans.bulk_action} ({releasableIds(lines, selected).length})
                                 </button>
                             )}
+                            {releaseTrans?.can_release && endpoints.releaseMany && (
+                                <GuideHelp guide="bon-pour-fabrication" section="donner-le-bpf-depuis-la-fiche-commande" />
+                            )}
                             {dossierTrans?.can_validate && endpoints.dossierMany && (
                                 <div className="dropdown">
                                     <button type="button" className="btn btn-info btn-sm dropdown-toggle"
@@ -1633,6 +1642,9 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                         </ul>
                                     )}
                                 </div>
+                            )}
+                            {dossierTrans?.can_validate && endpoints.dossierMany && (
+                                <GuideHelp guide="facturation" section="le-dossier-de-fin-de-fabrication-si-exige" />
                             )}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
                                 <i className="fas fa-folder me-1" />

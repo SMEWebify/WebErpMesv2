@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex align-items-center">
-        <h1 class="mb-0"><i class="fas fa-cart-plus me-2"></i>Réapprovisionnement{{ $scope === 'tools' ? ' — outils' : '' }}</h1>
+        <h1 class="mb-0"><i class="fas fa-cart-plus me-2"></i>Réapprovisionnement{{ $scope === 'tools' ? ' — outils' : '' }}<x-guide-help guide="fournisseurs-qualifies" section="les-ecrans-controles" /></h1>
         @if($from === 'nesting')
             <a href="{{ route('nesting.index') }}" class="btn btn-sm btn-outline-secondary ms-auto">
                 <i class="fas fa-arrow-left me-1"></i>Nesting

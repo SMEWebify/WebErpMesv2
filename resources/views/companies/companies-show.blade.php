@@ -3,7 +3,9 @@
 @section('title',  __('general_content.companie_trans_key')) 
 
 @section('content_header')
-  <x-Content-header-previous-button  :h1="$Companie->label" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  :h1="$Companie->label" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="vente-complete" section="creer-le-prospect" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 @php
@@ -449,6 +451,9 @@
             @endif
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="violet" maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="vente-complete" section="etablir-le-devis" />
+              </x-slot>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('companies.store.quote', ['id' => $Companie->id ]) }}">
                   <i class="fas fa-folder"></i>

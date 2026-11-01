@@ -221,6 +221,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <x-adminlte-card title="{{ __('general_content.leave_balances_trans_key') }} — {{ $LeaveSummary['period_label'] }}" theme="info" maximizable collapsible>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="temps" section="les-soldes" />
+                            </x-slot>
                             @include('include.leave-balance-table', [
                                 'summary' => $LeaveSummary,
                                 'balanceUserId' => $UserProfil->id,
@@ -361,6 +364,9 @@
                     <div class="col-md-6">
                         <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
                             <x-adminlte-card title="{{ __('general_content.new_absence_request_trans_key') }}" theme="secondary" maximizable>
+                                <x-slot name="toolsSlot">
+                                    <x-guide-help guide="temps" section="la-demande-dabsence-salarie" />
+                                </x-slot>
                                 @csrf
                                 <div class="mb-3">
                                     <label for="leave_type_id">{{ __('general_content.leave_type_trans_key') }}</label>
@@ -418,6 +424,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <x-adminlte-card title="{{ __('general_content.expense_report_trans_key') }}" theme="primary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="rh" section="soumettre-la-note" />
+                            </x-slot>
                             <div class="table-responsive p-0">
                                 <table class="table table-hover">
                                     <thead>
@@ -511,6 +520,9 @@
                     <div class="col-md-6">
                         <form  method="POST" action="{{ route('human.resources.create.expense.report') }}" class="form-horizontal" enctype="multipart/form-data">
                             <x-adminlte-card title="{{ __('general_content.new_expense_report_trans_key') }}" theme="secondary" maximizable>
+                                <x-slot name="toolsSlot">
+                                    <x-guide-help guide="rh" section="la-note-de-frais-salarie" />
+                                </x-slot>
                                 @csrf
                                 <div class="mb-3">
                                     <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -534,6 +546,9 @@
             </div>
             <div class="tab-pane" id="MyDocuments">
                 <x-adminlte-card title="{{ __('general_content.documents_trans_key') }}" theme="primary" maximizable>
+                    <x-slot name="toolsSlot">
+                        <x-guide-help guide="rh" section="le-dossier-du-salarie" />
+                    </x-slot>
                     <p class="text-muted">
                         <i class="fas fa-lock"></i> {{ __('general_content.hr_documents_self_hint_trans_key') }}
                     </p>

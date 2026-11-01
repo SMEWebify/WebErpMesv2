@@ -3,7 +3,7 @@
 @section('title', __('general_content.deliverys_notes_request_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.deliverys_notes_request_trans_key') }}</h1>
+  <h1>{{ __('general_content.deliverys_notes_request_trans_key') }}<x-guide-help guide="vente-complete" section="livrer-le-bon-de-livraison" /></h1>
 @stop
 
 @section('content')

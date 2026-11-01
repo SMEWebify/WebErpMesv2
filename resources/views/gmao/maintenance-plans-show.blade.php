@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_maintenance_plan_number_trans_key', ['id' => $plan->id]))
 
 @section('content_header')
-    <h1>{{ __('general_content.gmao_maintenance_plan_number_trans_key', ['id' => $plan->id]) }}</h1>
+    <h1>{{ __('general_content.gmao_maintenance_plan_number_trans_key', ['id' => $plan->id]) }}<x-guide-help guide="gmao" section="planifier-la-maintenance-preventive" /></h1>
 @stop
 
 
@@ -131,7 +131,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-wrench text-muted me-2"></i>
-                        <h5 class="mb-0 fw-bold">{{ __('general_content.gmao_work_orders_card_title_trans_key') }}</h5>
+                        <h5 class="mb-0 fw-bold">{{ __('general_content.gmao_work_orders_card_title_trans_key') }}<x-guide-help guide="gmao" section="lordre-de-travail" /></h5>
                     </div>
                     @if($workOrders->isEmpty())
                         <p class="text-muted mb-0">{{ __('general_content.gmao_plan_no_work_order_trans_key') }}</p>

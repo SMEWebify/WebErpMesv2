@@ -16,7 +16,9 @@ $purchaseSteps = json_encode([
                      previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"
                      :steps="$purchaseSteps" statu="{{ $Purchase->statu }}"
                      endpoint="{{ route('purchases.json.statu', $Purchase->id) }}"
-                     redirect="{{ route('purchases.show', $Purchase->id) }}"/>
+                     redirect="{{ route('purchases.show', $Purchase->id) }}">
+      <x-slot name="help"><x-guide-help guide="achats" section="commander" /></x-slot>
+  </x-document-header>
 @stop
 
 @section('right-sidebar')
@@ -96,6 +98,9 @@ $purchaseSteps = json_encode([
             @endif
 
             <x-adminlte-card title="{{ __('purchase_quality.order_card') }} ({{ $qualityClauses->count() }})" theme="teal" theme-mode="outline" icon="fas fa-shield-alt" :collapsible="$qualityClauses->isEmpty() ? 'collapsed' : 'expanded'">
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="achats" section="commander" />
+              </x-slot>
               @if ($Purchase->quality_clauses_frozen_at)
                 <p class="small text-body-secondary mb-2"><i class="fas fa-lock me-1"></i>{{ __('purchase_quality.order_frozen', ['date' => $Purchase->quality_clauses_frozen_at->format('d/m/Y H:i')]) }}</p>
               @else

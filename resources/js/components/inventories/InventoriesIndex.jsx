@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import GuideHelp from '../GuideHelp';
 
 function csrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -163,7 +164,7 @@ function CreateInventoryModal({ endpoints, trans, stockLocations, categories, on
             <div className="modal-dialog modal-dialog-centered">
                 <form className="modal-content" onSubmit={handleSubmit}>
                     <div className="modal-header">
-                        <h5 className="modal-title">{trans.new_inventory}</h5>
+                        <h5 className="modal-title">{trans.new_inventory}<GuideHelp guide="article" section="les-inventaires" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">

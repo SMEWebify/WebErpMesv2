@@ -3,7 +3,7 @@
 @section('title', __('general_content.skills_matrix_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.skills_matrix_trans_key') }}</h1>
+    <h1>{{ __('general_content.skills_matrix_trans_key') }}<x-guide-help guide="sst" section="lire-la-matrice-de-polyvalence" /></h1>
 @stop
 
 @section('content')
@@ -30,11 +30,12 @@
     <div class="card-header p-2">
         <ul class="nav nav-pills">
             <li class="nav-item"><a class="nav-link active" href="#Matrix" data-bs-toggle="tab">{{ __('general_content.skills_matrix_trans_key') }}</a></li>
-            <li class="nav-item">
+            <li class="nav-item d-flex align-items-center">
                 <a class="nav-link" href="#Alerts" data-bs-toggle="tab">
                     {{ __('general_content.skills_alerts_trans_key') }}
                     @if(count($Alerts) > 0)<span class="badge text-bg-warning">{{ count($Alerts) }}</span>@endif
                 </a>
+                <x-guide-help guide="sst" section="reperer-les-ecarts" />
             </li>
             <li class="nav-item"><a class="nav-link" href="#Types" data-bs-toggle="tab">{{ __('general_content.training_types_trans_key') }}</a></li>
         </ul>
@@ -212,6 +213,9 @@
                     </div>
                     <div class="col-md-5">
                         <x-adminlte-card title="{{ __('general_content.training_new_type_trans_key') }}" theme="secondary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="sst" section="preparer-les-types-dhabilitation" />
+                            </x-slot>
                             <form method="POST" action="{{ route('osh.training.type.store') }}">
                                 @csrf
                                 <div class="mb-3">

@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_edit_maintenance_plan_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.gmao_edit_maintenance_plan_trans_key') }}</h1>
+    <h1>{{ __('general_content.gmao_edit_maintenance_plan_trans_key') }}<x-guide-help guide="gmao" section="planifier-la-maintenance-preventive" /></h1>
 @stop
 
 @section('content')

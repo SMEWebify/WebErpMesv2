@@ -183,6 +183,8 @@
     {{-- User permissions for JS components --}}
     @auth
     <meta name="user-permissions" content="{{ json_encode(auth()->user()->getAllPermissions()->pluck('name')->values()) }}">
+    {{-- Guides lisibles par l'utilisateur, pour les « ? » des écrans React (GuideHelp.jsx) --}}
+    <meta name="guide-links" content="{{ json_encode(app(\App\Services\Guides\GuideLibrary::class)->helpLinks(auth()->user()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}">
     @endauth
 
     {{-- Unité d'affichage des temps opératoires (JS : resources/js/lib/duration.js) --}}

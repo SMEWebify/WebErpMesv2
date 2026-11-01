@@ -3,7 +3,7 @@
 @section('title', __('general_content.your_company_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.your_company_trans_key') }}</h1>
+    <h1>{{ __('general_content.your_company_trans_key') }} <x-guide-help guide="mise-en-route" section="reglage-societe" /></h1>
 @stop
 
 @section('content')
@@ -343,6 +343,9 @@
                     </x-adminlte-card>
 
                     <x-adminlte-card title="{{ __('general_content.administrative_information_trans_key') }}" theme="secondary" collapsible maximizable>
+                        <x-slot name="toolsSlot">
+                            <x-guide-help guide="mise-en-route" section="reglage-societe" />
+                        </x-slot>
                         <div class="row">
                             <div class="col-3">
                                 <input type="text" class="form-control" name="siren" id="siren" value="{{ $Factory->siren }}" placeholder="{{ __('general_content.siren_trans_key') }}">
@@ -368,6 +371,9 @@
                     </x-adminlte-card>
 
                     <x-adminlte-card title="{{ __('general_content.default_value_trans_key') }}" theme="info" collapsible maximizable>
+                        <x-slot name="toolsSlot">
+                            <x-guide-help guide="mise-en-route" section="reglage-societe" />
+                        </x-slot>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="add_day_validity_quote">{{ __('general_content.add_value_day_offer_trans_key') }}</label>
@@ -723,6 +729,9 @@
                     <div class="col-md-6">
                         <!-- Liste des modèles de code de documents -->
                         <x-adminlte-card title="{{ __('general_content.document_code_templates_trans_key') }}" theme="primary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="mise-en-route" section="reglage-societe" />
+                            </x-slot>
                             <div class="table-responsive p-0">
                                 <table class="table table-hover">
                                     <thead>

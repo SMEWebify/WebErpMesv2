@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-12">
-        <h1>{{ __('general_content.load_planning_trans_key') }}</h1>
+        <h1>{{ __('general_content.load_planning_trans_key') }}<x-guide-help guide="atelier" section="le-planning-de-charge" /></h1>
       </div>
     </div>
 @stop

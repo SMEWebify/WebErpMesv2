@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, MobileFilters, useIndexTab } from './table';
 import { apiFetch } from '../lib/http';
 import CreditBadge from './receivables/CreditBadge';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -386,7 +387,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
             <div className="modal-dialog modal-dialog-centered modal-xl">
                 <div className="modal-content">
                     <div className="modal-header bg-success">
-                        <h5 className="modal-title text-white">{trans.new_company}</h5>
+                        <h5 className="modal-title text-white">{trans.new_company}<GuideHelp guide="vente-complete" section="creer-le-prospect" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <form onSubmit={handleSubmit}>

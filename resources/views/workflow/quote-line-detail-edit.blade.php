@@ -11,7 +11,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <h1 class="h4 mb-0">
             <i class="fas fa-info-circle text-teal me-2"></i>
-            {{ __('general_content.update_detail_information_for_trans_key', ['label' => $line->label]) }}
+            {{ __('general_content.update_detail_information_for_trans_key', ['label' => $line->label]) }}<x-guide-help guide="devis-avance" section="choisir-le-modele-dimpression-et-la-langue" />
         </h1>
         <a href="{{ route('quotes.show', ['id' => $idQuote]) }}#Lines" class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Retour au devis

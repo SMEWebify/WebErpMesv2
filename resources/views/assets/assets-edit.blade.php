@@ -3,7 +3,7 @@
 @section('title', __('general_content.edit_trans_key') . ' ' . __('general_content.asset_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.edit_trans_key') }} {{ __('general_content.asset_trans_key') }}</h1>
+    <h1>{{ __('general_content.edit_trans_key') }} {{ __('general_content.asset_trans_key') }} <x-guide-help guide="gmao" section="enregistrer-un-equipement" /></h1>
 @stop
 
 @section('content')

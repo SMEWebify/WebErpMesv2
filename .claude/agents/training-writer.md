@@ -48,6 +48,9 @@ Tu rédiges des fiches de formation pour **Nest2Prod ERP**, à destination des *
      `<!-- /feature -->`, et `<!-- feature: !nom -->` pour le texte valable option désactivée.
      Activer l'option sur l'instance locale **avant** de rejouer le scénario des captures ;
    - pas de titre `#` : le titre vient de l'en-tête ; les sections en `##` forment le sommaire ;
+   - chaque `##` porte une ancre `{#ancre}` (minuscules, tirets), **la même dans `guide.en.md`** ;
+     ne jamais renommer ni supprimer une ancre existante : des « ? » de l'application la visent
+     (`tests/Feature/GuideHelpTest.php`). Une nouvelle section reçoit une nouvelle ancre ;
    - objectif en une phrase, **prérequis** (droits, paramétrage, données) ;
    - schéma du workflow : bloc ```` ```steps ```` avec une étape par ligne (pas de Mermaid) ;
    - une section par étape : ce qu'on fait et pourquoi, étapes numérotées qui reprennent les

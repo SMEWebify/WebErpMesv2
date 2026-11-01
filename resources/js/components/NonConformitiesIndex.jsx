@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 import ActivityHistory from './ActivityHistory';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -249,7 +250,7 @@ function EditModal({ nc, trans, users, services, companies, failures, causes, co
     const locked = !!(nc.order_lines_id || nc.task_id);
 
     return (
-        <Modal show={!!nc} onClose={onClose} title={`${t('update')} — ${nc.label}`} size="lg">
+        <Modal show={!!nc} onClose={onClose} title={<>{`${t('update')} — ${nc.label}`}<GuideHelp guide="qualite" section="cloturer-la-non-conformite" /></>} size="lg">
             <form onSubmit={handleSave}>
                 {error && <div className="alert alert-danger py-1">{error}</div>}
 

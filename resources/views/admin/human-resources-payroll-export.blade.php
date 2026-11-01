@@ -3,7 +3,7 @@
 @section('title', __('general_content.payroll_export_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.payroll_export_trans_key') }} — {{ $PeriodStart->format('m/Y') }}</h1>
+    <h1>{{ __('general_content.payroll_export_trans_key') }} — {{ $PeriodStart->format('m/Y') }} <x-guide-help guide="temps" section="presence-et-export-paie" /></h1>
 @stop
 
 @section('content')

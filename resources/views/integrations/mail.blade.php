@@ -6,6 +6,7 @@
     <h1>
         <i class="fas fa-envelope me-1"></i> {{ __('mail_settings.title') }}
         <small class="text-muted">{{ __('mail_settings.subtitle') }}</small>
+        <x-guide-help guide="mise-en-route" section="e-mail" />
     </h1>
 @stop
 

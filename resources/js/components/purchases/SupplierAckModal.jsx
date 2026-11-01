@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../../lib/http';
 import { uploadFiles } from '../files/api';
 import { ackDraftLines, ackPayload, gapDays, gapBadgeClass, formatGap } from '../../lib/supplierAck';
+import GuideHelp from '../GuideHelp';
 
 function today() {
     const d = new Date();
@@ -92,6 +93,7 @@ export default function SupplierAckModal({ open, lines, onlyLineId, ack, onClose
                         <div className="modal-header">
                             <h5 className="modal-title" id="supplier-ack-title">
                                 <i className="fas fa-handshake me-2" />{t.title}
+                                <GuideHelp guide="achats" section="enregistrer-laccuse-de-reception-du-fournisseur" />
                             </h5>
                             <button type="button" className="btn-close" aria-label={t.cancel} onClick={onClose} />
                         </div>

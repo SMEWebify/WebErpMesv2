@@ -31,6 +31,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.doc-header__title--help { display: flex; align-items: center; min-width: 0; }
+.doc-header__title--help .doc-header__text { overflow: hidden; text-overflow: ellipsis; }
+.doc-header__title--help .wem-guide-help { flex-shrink: 0; }
 .doc-header__steps { min-width: 0; }
 .doc-header__nav { margin-left: auto; white-space: nowrap; }
 .doc-header__nav .btn { padding: .3rem .7rem; }
@@ -69,9 +72,12 @@
 @endonce
 
 <div class="doc-header">
-    <h1 class="doc-header__title">
+    {{-- Slot `help` : « ? » vers un guide (<x-guide-help>), hors de la partie coupée par les points de suspension. --}}
+    <h1 class="doc-header__title @isset($help) doc-header__title--help @endisset">
         @if($badge)<span class="badge text-bg-warning me-2">{{ $badge }}</span>@endif
+        @isset($help)<span class="doc-header__text">{{ $h1 }}</span>{{ $help }}@else
         {{ $h1 }}
+        @endisset
     </h1>
 
     @if($steps)

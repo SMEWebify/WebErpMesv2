@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex align-items-center">
-        <h1 class="mb-0">{{ __('general_content.tools_trans_key') }}</h1>
+        <h1 class="mb-0">{{ __('general_content.tools_trans_key') }}<x-guide-help guide="methodes" section="outils-loutillage-reservable" /></h1>
         <a href="{{ route('purchases.reorder', ['scope' => 'tools']) }}" class="btn btn-sm btn-warning ms-auto me-2">
             <i class="fas fa-cart-plus me-1"></i>Réapprovisionner
         </a>

@@ -4,7 +4,7 @@
 
 @section('content_header')
   <h1>
-    Rapports atelier
+    Rapports atelier<x-guide-help guide="atelier" section="mesurer-la-production" />
     <small class="text-muted">{{ $report['period']['label'] }}</small>
   </h1>
 @stop

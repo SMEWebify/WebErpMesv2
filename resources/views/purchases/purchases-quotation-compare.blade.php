@@ -3,7 +3,7 @@
 @section('title', __('general_content.compare_rfq_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.compare_rfq_trans_key') }} : {{ $rfqGroup->code }}</h1>
+  <h1>{{ __('general_content.compare_rfq_trans_key') }} : {{ $rfqGroup->code }}<x-guide-help guide="achats" section="consulter-le-fournisseur-la-demande-de-prix" /></h1>
 @stop
 
 @section('content')

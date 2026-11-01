@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_work_orders_page_title_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.gmao_work_orders_page_title_trans_key') }}</h1>
+    <h1>{{ __('general_content.gmao_work_orders_page_title_trans_key') }}<x-guide-help guide="gmao" section="suivre-les-interventions" /></h1>
 @stop
 
 @section('content')

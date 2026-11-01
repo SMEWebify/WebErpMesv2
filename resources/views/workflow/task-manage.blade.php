@@ -6,7 +6,7 @@
 
 <div class="row mb-2">
   <div class="col-sm-6">
-    <h1>{{ __('general_content.tasks_trans_key') }} {{ $Document->code }} - #{{  $LineInfo->id }} {{  $LineInfo->label }}</h1>
+    <h1>{{ __('general_content.tasks_trans_key') }} {{ $Document->code }} - #{{  $LineInfo->id }} {{  $LineInfo->label }}<x-guide-help guide="methodes" section="services-ce-que-latelier-sait-faire" /></h1>
   </div>
   <div class="col-sm-6">
       <ol class="breadcrumb float-sm-end">

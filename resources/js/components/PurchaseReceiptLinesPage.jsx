@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import useProductSearch from '../hooks/useProductSearch';
 import { apiRequest as apiFetch } from '../lib/http';
 import DocumentCheckDrawer, { CertificateCell, DecisionBadge, StatusBadge } from './purchases/DocumentCheckDrawer.jsx';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -129,6 +130,7 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
                     <strong>
                         <i className="fas fa-clipboard-check me-2" />
                         Détails d'inspection
+                        <GuideHelp guide="achats" section="receptionner" className="text-white-50" />
                         {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
                         </span>}
@@ -444,6 +446,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                     <strong>
                         <i className="fas fa-warehouse me-2" />
                         Mise en stock
+                        <GuideHelp guide="achats" section="receptionner" className="text-white-50" />
                         {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
                         </span>}

@@ -3,7 +3,7 @@
 @section('title', __('general_content.serial_numbers_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.serial_numbers_list_trans_key') }}</h1>
+  <h1>{{ __('general_content.serial_numbers_list_trans_key') }}<x-guide-help guide="article" section="les-numeros-de-serie" /></h1>
 @stop
 
 @php

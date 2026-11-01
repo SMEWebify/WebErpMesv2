@@ -14,7 +14,9 @@ $deliverySteps = [
                      previous="{{ $previousUrl }}" list="{{ route('deliverys') }}" next="{{ $nextUrl }}"
                      :steps="$deliverySteps" statu="{{ $Delivery->statu }}"
                      endpoint="{{ route('deliverys.json.statu', $Delivery->id) }}"
-                     redirect="{{ route('deliverys.show', $Delivery->id) }}"/>
+                     redirect="{{ route('deliverys.show', $Delivery->id) }}">
+      <x-slot name="help"><x-guide-help guide="vente-complete" section="livrer-le-bon-de-livraison" /></x-slot>
+  </x-document-header>
 @stop
 
 @section('right-sidebar')
@@ -132,6 +134,9 @@ $deliverySteps = [
           </div>
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="facturation" section="livrer-bon-de-livraison-et-liste-de-colisage" />
+              </x-slot>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
@@ -423,6 +428,9 @@ $deliverySteps = [
           <div class="col-md-4">
             <form method="POST" action="{{ route('deliverys.packagings.store', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.new_packaging_trans_key') }}" theme="secondary" maximizable>
+                <x-slot name="toolsSlot">
+                  <x-guide-help guide="facturation" section="livrer-bon-de-livraison-et-liste-de-colisage" />
+                </x-slot>
                 @csrf
                 <div class="mb-3">
                   <label for="code">{{ __('general_content.code_trans_key') }}</label>

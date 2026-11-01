@@ -25,7 +25,9 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
  * - bloc ```steps (une étape par ligne) → frise d'étapes ;
  * - citation commençant par ⚠️ ou 💡 → encadré « attention » / « astuce » ;
  * - `<!-- feature: nom -->` … `<!-- /feature -->` → passage affiché seulement si l'option
- *   est active (`!nom` : seulement si elle ne l'est pas). Blocs non imbriquables.
+ *   est active (`!nom` : seulement si elle ne l'est pas). Blocs non imbriquables ;
+ * - `## Titre {#ancre}` → ancre explicite de la section, la même dans chaque langue : c'est
+ *   elle que visent les « ? » de l'application (`<x-guide-help>`, `GuideHelp.jsx`).
  *
  * Ajouter un guide = déposer un dossier : ni migration, ni route, ni code.
  */
@@ -34,6 +36,16 @@ class GuideLibrary
     private const SLUG = '/^[a-z0-9][a-z0-9-]*$/';
 
     private const IMAGE = '/^[A-Za-z0-9._-]+\.(png|jpe?g|webp|gif)$/i';
+
+    private const ANCHOR = '/\s*\{#([a-z][a-z0-9-]*)\}\s*$/';
+
+    /**
+     * Liens des « ? » par utilisateur et langue. Le service est enregistré en `scoped`
+     * (AppServiceProvider) : ce cache ne vit que le temps d'une requête.
+     *
+     * @var array<string, array<string, array{url: string, label: string}>>
+     */
+    private array $helpLinks = [];
 
     public function root(): string
     {
@@ -64,6 +76,41 @@ class GuideLibrary
     }
 
     /**
+     * Guides lisibles par l'utilisateur → lien et libellé du « ? » qui y renvoie. Calculé une
+     * fois par requête : le gabarit le sert aux écrans React, `<x-guide-help>` le relit.
+     *
+     * @return array<string, array{url: string, label: string}>
+     */
+    public function helpLinks(?User $user, ?string $locale = null): array
+    {
+        $locale = $locale ?? app()->getLocale();
+        $key = ($user?->getKey() ?? 'guest').'|'.$locale;
+
+        return $this->helpLinks[$key] ??= $this->visibleTo($user, $locale)
+            ->mapWithKeys(fn (Guide $guide) => [$guide->slug => [
+                'url' => route('guides.show', $guide->slug),
+                'label' => __('guides.help', ['title' => $guide->title], $locale),
+            ]])
+            ->all();
+    }
+
+    /**
+     * Lien du « ? » vers une section d'un guide, ou null si l'utilisateur ne peut pas le lire.
+     *
+     * @return array{url: string, label: string}|null
+     */
+    public function helpLink(?User $user, string $slug, ?string $section = null): ?array
+    {
+        $link = $this->helpLinks($user)[$slug] ?? null;
+
+        if ($link && $section !== null && $section !== '') {
+            $link['url'] .= '#'.$section;
+        }
+
+        return $link;
+    }
+
+    /**
      * @return array{html: string, toc: array<int, array{id: string, text: string}>}
      */
     public function render(Guide $guide): array
@@ -84,8 +131,13 @@ class GuideLibrary
 
         $toc = [];
         $html = preg_replace_callback('#<h2>(.*?)</h2>#s', function (array $m) use (&$toc) {
+            $anchor = null;
+            if (preg_match(self::ANCHOR, $m[1], $a)) {
+                $anchor = $a[1];
+                $m[1] = preg_replace(self::ANCHOR, '', $m[1]);
+            }
             $text = trim(html_entity_decode(strip_tags($m[1]), ENT_QUOTES | ENT_HTML5));
-            $id = Str::slug($text) ?: 'section';
+            $id = $anchor ?? (Str::slug($text) ?: 'section');
             // « 9. Facturer » : un identifiant CSS ne commence pas par un chiffre (querySelector le refuse).
             if (ctype_digit($id[0])) {
                 $id = "section-{$id}";
@@ -106,7 +158,12 @@ class GuideLibrary
 
             $url = route('guides.media', ['slug' => $guide->slug, 'file' => $m[1]]);
 
-            return '<img loading="lazy" class="guide-img" src="'.e($url).'"';
+            // Dimensions réelles : sans elles une capture en chargement différé vaut 0 px, et
+            // celles qui se chargent au-dessus d'une ancre (#section) repoussent la page.
+            $size = ($path = $this->mediaPath($guide, $m[1])) ? @getimagesize($path) : false;
+            $dims = $size ? ' width="'.$size[0].'" height="'.$size[1].'"' : '';
+
+            return '<img loading="lazy" class="guide-img"'.$dims.' src="'.e($url).'"';
         }, $html);
 
         $html = preg_replace_callback('#<pre><code class="language-steps">(.*?)</code></pre>#s', function (array $m) {

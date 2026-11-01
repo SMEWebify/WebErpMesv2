@@ -3,7 +3,7 @@
 @section('title', __('general_content.expense_report_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.expense_report_trans_key') }}</h1>
+    <h1>{{ __('general_content.expense_report_trans_key') }} <x-guide-help guide="rh" section="la-validation-rh" /></h1>
 @stop
 
 @section('content')
@@ -103,6 +103,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <x-adminlte-card title="{{ __('general_content.expense_categories_trans_key') }}" theme="primary" maximizable>
+                            <x-slot name="toolsSlot">
+                                <x-guide-help guide="rh" section="les-categories-de-depense" />
+                            </x-slot>
                             <div class="table-responsive p-0">
                                 <table class="table table-hover">
                                     <thead>

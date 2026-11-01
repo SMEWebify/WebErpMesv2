@@ -32,7 +32,9 @@ if (!$orderHasInvoicedLines) {
                      previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"
                      :steps="$orderSteps" statu="{{ $Order->statu }}"
                      endpoint="{{ route('orders.json.statu', $Order->id) }}"
-                     redirect="{{ route('orders.show', $Order->id) }}"/>
+                     redirect="{{ route('orders.show', $Order->id) }}">
+      <x-slot name="help"><x-guide-help guide="vente-complete" section="transformer-le-devis-en-commande" /></x-slot>
+  </x-document-header>
 @stop
 
 @push('css')

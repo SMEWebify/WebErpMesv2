@@ -4,7 +4,7 @@
 
 @section('content_header')
   <div class="d-flex justify-content-between align-items-center">
-    <h1 class="mb-0">{{ __('receivables.reminders.title') }}</h1>
+    <h1 class="mb-0">{{ __('receivables.reminders.title') }}<x-guide-help guide="facturation" section="relancer-les-impayes" /></h1>
     @if($canSend)
       <a href="{{ route('invoices.reminders.levels') }}" class="btn btn-outline-secondary btn-sm">
         <i class="fas fa-sliders-h me-1"></i> {{ __('receivables.reminders.levels_link') }}

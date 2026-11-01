@@ -18,7 +18,9 @@ $leadSteps = json_encode([
                        previous="{{ $previousUrl }}" list="{{ route('leads') }}" next="{{ $nextUrl }}"
                        :steps="$leadSteps" statu="{{ $Lead->statu }}"
                        endpoint="{{ route('leads.json.statu', $Lead->id) }}"
-                       redirect="{{ route('leads.show', $Lead->id) }}"/>
+                       redirect="{{ route('leads.show', $Lead->id) }}">
+        <x-slot name="help"><x-guide-help guide="vente-complete" section="enregistrer-le-lead" /></x-slot>
+    </x-document-header>
 @stop
 
 @section('right-sidebar')
@@ -120,6 +122,9 @@ $leadSteps = json_encode([
   </div>
   <div class="col-md-3">
     <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+      <x-slot name="toolsSlot">
+        <x-guide-help guide="vente-complete" section="transformer-le-lead-en-opportunite" />
+      </x-slot>
       @forelse($Lead->Opportunity as $Opportunity)
       <p>{{ __('general_content.opportunity_trans_key') }} : {{ $Opportunity->label }} </p>
       <x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Opportunity->id])}}" />

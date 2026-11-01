@@ -3,7 +3,7 @@
 @section('title', __('losses.plural'))
 
 @section('content_header')
-    <h1>{{ __('losses.plural') }}</h1>
+    <h1>{{ __('losses.plural') }}<x-guide-help guide="mise-en-route" section="methodes-et-categories-daffaire" /></h1>
 @stop
 
 @section('content')

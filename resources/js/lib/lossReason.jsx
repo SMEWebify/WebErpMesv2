@@ -11,6 +11,7 @@
 // askLossReason() résout `null` si l'utilisateur annule.
 
 import React, { useState } from 'react';
+import GuideHelp from '../components/GuideHelp';
 import { createRoot } from 'react-dom/client';
 import { apiRequest } from './http';
 
@@ -47,6 +48,7 @@ export function LossReasonDialog({ config, onClose }) {
                             <h5 className="modal-title">
                                 <i className="fas fa-heart-broken me-2" />
                                 {texts.title}
+                                <GuideHelp guide="devis-avance" section="gagne-ou-perdu" className="text-white" />
                             </h5>
                             <button type="button" className="btn-close btn-close-white" aria-label={texts.cancel} onClick={() => onClose(null)} />
                         </div>

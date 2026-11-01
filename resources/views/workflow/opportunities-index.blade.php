@@ -4,7 +4,7 @@
 
 @section('content_header')
   <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-      <h1>{{ __('general_content.opportunities_trans_key') }}</h1>
+      <h1>{{ __('general_content.opportunities_trans_key') }}<x-guide-help guide="vente-complete" section="transformer-le-lead-en-opportunite" /></h1>
       <a href="{{ route('opportunities.calendar') }}" class="btn btn-sm btn-outline-primary">
         <i class="fas fa-calendar-alt"></i> {{ __('general_content.opportunities_calendar_trans_key') }}
       </a>

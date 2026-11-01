@@ -3,6 +3,7 @@ import { apiFetch, csrfToken } from '../../lib/http';
 import { openPlan, canvasToThumbnail, uploadThumbnail, THUMBNAIL_SIDE } from '../../lib/pdf/pdfRender';
 import { describe, frameCells, formatLimits, parseDimensionText, GDT_SYMBOLS, TYPES, FREQUENCIES } from './characteristics';
 import { ACCENT, Overlay, boxThrough, clamp01, drawBubblesOnCanvas, pointToView, toPage } from './planOverlay';
+import GuideHelp from '../GuideHelp';
 
 const url = (template, id) => template.replace('__ID__', id);
 const SAVE_DELAY = 600;
@@ -560,6 +561,7 @@ export default function Bubbler({ planId, endpoints, trans, canEdit = false, can
                             <a href={url(endpoints.product, plan.product_id)}>{plan.product_code}</a>
                             <span className="text-secondary ms-2">{trans.revision} {plan.revision ?? '—'}</span>
                             <span className={`badge ms-2 ${statusBadge}`}>{trans[`status_${plan.status}`]}</span>
+                            <GuideHelp guide="qualite" section="plans-de-controle-et-premier-article" />
                         </div>
                         <div className="small text-secondary lh-sm">{plan.product_label}</div>
                     </div>

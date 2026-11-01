@@ -2,6 +2,9 @@
       <div class="row">
         <div class="col-md-6">
           <x-adminlte-card title="{{ __('general_content.vat_trans_key') }}" theme="primary" maximizable>
+            <x-slot name="toolsSlot">
+              <x-guide-help guide="comptabilite" section="les-codes-tva" />
+            </x-slot>
             <div class="table-responsive p-0">
               <table class="table table-hover">
                 <thead>

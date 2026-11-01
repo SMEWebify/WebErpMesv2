@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import GuideHelp from './GuideHelp';
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 
@@ -474,7 +475,7 @@ function PlansTab({ endpoints, canAdmin }) {
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">Plans d'audit annuels</h5>
+                <h5 className="mb-0">Plans d'audit annuels<GuideHelp guide="qualite" section="audits-internes-et-retours-clients" /></h5>
                 {canAdmin && (
                     <button className="btn btn-primary btn-sm" onClick={openCreate}>
                         <i className="fas fa-plus me-1" />Nouveau plan

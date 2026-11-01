@@ -3,7 +3,7 @@
 @section('title', __('affairs.category.plural'))
 
 @section('content_header')
-    <h1>{{ __('affairs.category.plural') }}</h1>
+    <h1>{{ __('affairs.category.plural') }}<x-guide-help guide="mise-en-route" section="methodes-et-categories-daffaire" /></h1>
 @stop
 
 @section('content')
@@ -138,6 +138,9 @@
     <div class="col-md-4">
       <form method="POST" action="{{ route('methods.affair-category.create') }}" class="form-horizontal">
         <x-adminlte-card title="{{ __('affairs.category.new') }}" theme="secondary" maximizable>
+          <x-slot name="toolsSlot">
+            <x-guide-help guide="mise-en-route" section="methodes-et-categories-daffaire" />
+          </x-slot>
           @csrf
           <div class="mb-3">
             <label for="ordre">{{ __('affairs.category.order') }}</label>

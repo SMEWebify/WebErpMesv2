@@ -3,6 +3,7 @@ import StatCard from './dashboard/primitives/StatCard.jsx';
 import DonutChart from './dashboard/primitives/DonutChart.jsx';
 import OrdersMonthlyWidget from './dashboard/widgets/OrdersMonthlyWidget.jsx';
 import { creditTheme } from './receivables/CreditBadge.jsx';
+import GuideHelp from './GuideHelp';
 import { formatCurrency } from '../utils';
 
 // ---------------------------------------------------------------------------
@@ -48,6 +49,7 @@ function CreditCard({ credit, overrides = [], trans, currency, locale }) {
                     <h3 className="card-title">
                         <i className="fas fa-hand-holding-usd me-1" />
                         {t.card_title}
+                        <GuideHelp guide="facturation" section="suivre-lencours-client" />
                     </h3>
                 </div>
                 <div className="card-body">

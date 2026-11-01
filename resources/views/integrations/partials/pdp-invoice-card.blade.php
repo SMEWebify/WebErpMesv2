@@ -36,6 +36,9 @@ $canSubmit = $canSubmit && ! $numberAlreadyRegistered;
 @endphp
 
 <x-adminlte-card title="Facturation électronique — {{ $providerName }}" theme="info" theme-mode="outline" collapsible>
+    <x-slot name="toolsSlot">
+        <x-guide-help guide="facturation" section="la-facturation-electronique" />
+    </x-slot>
     <div class="mb-2">
         <span class="text-muted small">Statut :</span>
         <span class="badge text-bg-{{ $statusInfo['badge'] }} ms-1">{{ $statusInfo['label'] }}</span>

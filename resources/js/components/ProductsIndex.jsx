@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DataTable, Pagination, useIndexTab } from './table';
 import { apiFetch } from '../lib/http';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // KPI Cards
@@ -370,7 +371,7 @@ function CreateModal({ endpoints, trans, onClose }) {
             <div className="modal-dialog modal-xl" onClick={e => e.stopPropagation()}>
                 <div className="modal-content">
                     <div className="modal-header bg-success">
-                        <h5 className="modal-title text-white">{trans.new_product}</h5>
+                        <h5 className="modal-title text-white">{trans.new_product}<GuideHelp guide="article" section="creer-un-article" className="text-white" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                     </div>
                     <div className="modal-body" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
@@ -716,6 +717,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                         <h5 className="modal-title">
                             <i className="fas fa-code-branch me-2" />
                             Fusionner les doublons — code <code>{group.code}</code>
+                            <GuideHelp guide="article" section="la-liste-des-articles" />
                         </h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>

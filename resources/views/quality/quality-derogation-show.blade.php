@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex flex-wrap align-items-center gap-2">
-        <h1 class="mb-0">{{ $Derogation->code }} <small class="text-body-secondary">{{ $Derogation->label }}</small></h1>
+        <h1 class="mb-0">{{ $Derogation->code }} <small class="text-body-secondary">{{ $Derogation->label }}</small><x-guide-help guide="qualite" section="obtenir-une-derogation-du-client" /></h1>
         @if($Derogation->isExternal())
             <span class="badge text-bg-danger">{{ __('derogations.external') }}</span>
         @else
@@ -172,7 +172,7 @@
   <div class="col-lg-4">
     {{-- Validation --}}
     <div class="card card-outline {{ $Derogation->isValidated() ? 'card-success' : ($missing ? 'card-warning' : 'card-success') }} mb-3">
-      <div class="card-header"><h3 class="card-title">{{ __('derogations.validation_card') }}</h3></div>
+      <div class="card-header"><h3 class="card-title">{{ __('derogations.validation_card') }}<x-guide-help guide="qualite" section="obtenir-une-derogation-du-client" /></h3></div>
       <div class="card-body">
         @if($Derogation->isValidated())
           <p class="mb-0 text-success">
@@ -198,7 +198,7 @@
     {{-- Signature DocuSign --}}
     @if($Derogation->isExternal())
     <div class="card card-outline card-primary mb-3">
-      <div class="card-header"><h3 class="card-title">{{ __('derogations.sign_card') }}</h3></div>
+      <div class="card-header"><h3 class="card-title">{{ __('derogations.sign_card') }}<x-guide-help guide="qualite" section="obtenir-une-derogation-du-client" /></h3></div>
       <div class="card-body">
         <p class="small text-body-secondary">{{ __('derogations.sign_intro') }}</p>
 

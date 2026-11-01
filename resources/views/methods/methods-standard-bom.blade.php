@@ -3,7 +3,7 @@
 @section('title', __('general_content.standard_bom_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.standard_bom_trans_key') }}</h1>
+    <h1>{{ __('general_content.standard_bom_trans_key') }}<x-guide-help guide="methodes" section="nomenclatures-standard-les-gammes-types" /></h1>
 @stop
 
 @section('right-sidebar')

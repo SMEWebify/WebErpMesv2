@@ -17,7 +17,9 @@ $invoiceSteps = [
                      previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"
                      :steps="$invoiceSteps" statu="{{ $Invoice->statu }}"
                      endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
-                     redirect="{{ route('invoices.show', $Invoice->id) }}"/>
+                     redirect="{{ route('invoices.show', $Invoice->id) }}">
+      <x-slot name="help"><x-guide-help guide="facturation" /></x-slot>
+  </x-document-header>
 @stop
 
 
@@ -58,6 +60,9 @@ $invoiceSteps = [
             @include('include.alert-result')
             <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="danger" theme-mode="outline" maximizable>
+                <x-slot name="toolsSlot">
+                  <x-guide-help guide="facturation" section="verifier-le-brouillon" />
+                </x-slot>
                 @csrf
                 <div class="row">
                   <div class="mb-3 col-md-6">
@@ -138,6 +143,9 @@ $invoiceSteps = [
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="facturation" section="emettre-la-facture" />
+              </x-slot>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
@@ -178,7 +186,7 @@ $invoiceSteps = [
             @if($invoiceReminders->isNotEmpty())
             <div class="card card-outline card-danger mb-3">
               <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bell me-1"></i>{{ __('receivables.reminders.history_title') }}</h3>
+                <h3 class="card-title"><i class="fas fa-bell me-1"></i>{{ __('receivables.reminders.history_title') }}<x-guide-help guide="facturation" section="relancer-les-impayes" /></h3>
               </div>
               <div class="card-body p-0">
                 <table class="table table-sm mb-0">
@@ -259,6 +267,7 @@ $invoiceSteps = [
             @endforeach
             <div class="d-flex align-items-center">
               <label class="me-2 mb-0 text-muted small">Sélectionner les lignes pour avoir :</label>
+              <x-guide-help guide="facturation" section="faire-un-avoir" class="ms-0 me-2" />
               @foreach($Invoice->InvoiceLines as $line)
                 <label class="me-3 mb-0 small">
                   <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="me-1">

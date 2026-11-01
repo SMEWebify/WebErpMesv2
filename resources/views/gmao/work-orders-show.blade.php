@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_work_order_number_trans_key', ['id' => $workOrder->id]))
 
 @section('content_header')
-    <h1>{{ __('general_content.gmao_work_order_number_trans_key', ['id' => $workOrder->id]) }}</h1>
+    <h1>{{ __('general_content.gmao_work_order_number_trans_key', ['id' => $workOrder->id]) }}<x-guide-help guide="gmao" section="lordre-de-travail" /></h1>
 @stop
 
 @section('content')

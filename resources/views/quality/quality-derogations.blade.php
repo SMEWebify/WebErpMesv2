@@ -3,7 +3,7 @@
 @section('title', __('general_content.derogations_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.derogations_trans_key') }}</h1>
+    <h1>{{ __('general_content.derogations_trans_key') }}<x-guide-help guide="qualite" section="obtenir-une-derogation-du-client" /></h1>
 @stop
 
 @section('content')
@@ -185,6 +185,9 @@
 
       <form method="POST" action="{{ route('quality.derogation.create')}}" >  
         <x-adminlte-card title="{{ __('general_content.new_derogation_trans_key') }}" theme="secondary" maximizable>
+          <x-slot name="toolsSlot">
+            <x-guide-help guide="qualite" section="obtenir-une-derogation-du-client" />
+          </x-slot>
           @csrf
           <div class="row gx-2">
             <div class="mb-3 col-md-2">

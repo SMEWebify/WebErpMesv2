@@ -6,6 +6,7 @@ import { formatDate, formatCurrency } from '../utils';
 import { CreateAddressSubModal, CreateContactSubModal } from './company/CompanySubModals';
 import QuoteLossStats from './quotes/QuoteLossStats.jsx';
 import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -636,7 +637,7 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                 <div className="modal-dialog modal-dialog-centered modal-xl">
                     <div className="modal-content">
                         <div className="modal-header bg-success">
-                            <h5 className="modal-title text-white">{trans.new_quote}</h5>
+                            <h5 className="modal-title text-white">{trans.new_quote}<GuideHelp guide="devis-avance" section="creer-le-devis-ou-partir-dune-trame" /></h5>
                             <button type="button" onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <form onSubmit={handleSubmit}>

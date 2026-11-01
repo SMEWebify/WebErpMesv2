@@ -12,6 +12,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { apiRequest } from './http';
+import GuideHelp from '../components/GuideHelp';
 
 export const QUALIFIED      = 'qualified';
 export const REVIEW_OVERDUE = 'review_overdue';
@@ -76,6 +77,7 @@ export function SupplierOverrideDialog({ config, onClose }) {
                             <h5 className="modal-title">
                                 <i className="fas fa-user-slash me-2" />
                                 {texts.title}
+                                <GuideHelp guide="fournisseurs-qualifies" section="la-commande-est-refusee-le-passe-droit" className="text-white" />
                             </h5>
                             <button type="button" className="btn-close btn-close-white" aria-label={texts.cancel} onClick={() => onClose(null)} />
                         </div>

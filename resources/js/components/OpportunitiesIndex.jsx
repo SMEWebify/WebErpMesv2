@@ -4,6 +4,7 @@ import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate, formatCurrencyRounded as formatCurrency } from '../utils';
 import { affairCategoryColumn, AffairCategoryFilter, AffairCategoryField } from './affairs/affairCategory.jsx';
 import { sendWithLossReason } from '../lib/lossReason.jsx';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -480,7 +481,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header bg-success">
-                            <h5 className="modal-title text-white">{trans.new_opportunity ?? 'New opportunity'}</h5>
+                            <h5 className="modal-title text-white">{trans.new_opportunity ?? 'New opportunity'}<GuideHelp guide="vente-complete" section="transformer-le-lead-en-opportunite" /></h5>
                             <button onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <div className="modal-body">

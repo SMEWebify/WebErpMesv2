@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiFetch } from '../../lib/http';
 import { formatCurrencyRounded } from '../../utils';
+import GuideHelp from '../GuideHelp';
 
 /*
  * Indicateur « pertes commerciales » du tableau de bord des devis : devis perdus
@@ -98,7 +99,7 @@ export default function QuoteLossStats({ endpoint, trans = {}, currency = 'EUR',
     return (
         <div className="card card-danger card-outline mb-3">
             <div className="card-header d-flex flex-wrap align-items-center gap-2">
-                <h3 className="card-title me-auto"><i className="fas fa-heart-broken me-1" />{trans.title}</h3>
+                <h3 className="card-title me-auto"><i className="fas fa-heart-broken me-1" />{trans.title}<GuideHelp guide="devis-avance" section="gagne-ou-perdu" /></h3>
                 <select className="form-select form-select-sm" style={{ width: 'auto' }}
                         aria-label={trans.period} value={period} onChange={e => setPeriod(e.target.value)}>
                     {PERIODS.map(p => <option key={p} value={p}>{periods[p] ?? p}</option>)}

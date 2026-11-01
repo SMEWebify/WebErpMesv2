@@ -3,7 +3,7 @@
 @section('title', __('supplier_ack.missing_title'))
 
 @section('content_header')
-    <h1>{{ __('supplier_ack.missing_title') }}</h1>
+    <h1>{{ __('supplier_ack.missing_title') }}<x-guide-help guide="achats" section="enregistrer-laccuse-de-reception-du-fournisseur" /></h1>
 @stop
 
 @section('content')

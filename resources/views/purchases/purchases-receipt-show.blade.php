@@ -3,7 +3,9 @@
 @section('title', __('general_content.po_receipt_trans_key')   . ' - ' . $PurchaseReceipt->code)
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="{{ __('general_content.po_receipt_trans_key') }}: {{  $PurchaseReceipt->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.receipt') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.po_receipt_trans_key') }}: {{  $PurchaseReceipt->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.receipt') }}" next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="achats" section="receptionner" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 @section('right-sidebar')

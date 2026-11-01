@@ -3,7 +3,7 @@
 @section('title', __('general_content.expense_report_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.expense_report_trans_key') }} {{ $UserExpenseReports->label }}</h1>
+    <h1>{{ __('general_content.expense_report_trans_key') }} {{ $UserExpenseReports->label }} <x-guide-help guide="rh" section="la-note-de-frais-salarie" /></h1>
 @stop
 
 @section('content')
@@ -175,6 +175,9 @@
     <div class="col-md-4">
         @include('admin.partials.expense-receipts', ['canEdit' => true])
         <x-adminlte-card title="{{ __('general_content.new_expense_report_trans_key') }}" theme="secondary" maximizable>
+            <x-slot name="toolsSlot">
+                <x-guide-help guide="rh" section="le-justificatif-et-la-depense" />
+            </x-slot>
             <form  method="POST" action="{{ route('human.resources.create.expense.line', ['report_id' => $UserExpenseReports->id])  }}" class="form-horizontal" enctype="multipart/form-data"
                    id="expense-line-form"
                    data-receipts-url="{{ route('human.resources.expense.receipts.json', ['report_id' => $UserExpenseReports->id]) }}"

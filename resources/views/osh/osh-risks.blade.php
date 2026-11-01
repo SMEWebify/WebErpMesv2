@@ -3,7 +3,7 @@
 @section('title', __('general_content.risques_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.risques_trans_key') }}</h1>
+    <h1>{{ __('general_content.risques_trans_key') }}<x-guide-help guide="sst" section="evaluer-le-risque" /></h1>
 @stop
 
 @section('right-sidebar')

@@ -2,6 +2,9 @@
 <div class="row">
   <div class="col-md-8">
     <x-adminlte-card title="{{ __('vat.matrix_sales_title') }}" theme="primary" maximizable>
+      <x-slot name="toolsSlot">
+        <x-guide-help guide="comptabilite" section="regimes-natures-et-matrices-de-tva-avance" />
+      </x-slot>
       <div class="table-responsive p-0">
         <table class="table table-hover">
           <thead>

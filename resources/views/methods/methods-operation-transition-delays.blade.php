@@ -3,7 +3,7 @@
 @section('title', 'Délais inter-opérations')
 
 @section('content_header')
-    <h1>Délais inter-opérations</h1>
+    <h1>Délais inter-opérations<x-guide-help guide="methodes" section="delais-inter-operations-le-temps-entre-deux-operations" /></h1>
 @stop
 
 @section('right-sidebar')

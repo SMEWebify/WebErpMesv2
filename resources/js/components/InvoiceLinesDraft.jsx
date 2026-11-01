@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GuideHelp from './GuideHelp';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -87,7 +88,7 @@ function NewLineForm({ vats, units, currency, onSubmit, saving }) {
         <form className="card card-outline card-primary mt-3 mb-3" onSubmit={handleSubmit}>
             <div className="card-header py-2">
                 <h3 className="card-title">
-                    <i className="fas fa-plus-circle me-2"></i>Ajouter une ligne
+                    <i className="fas fa-plus-circle me-2"></i>Ajouter une ligne<GuideHelp guide="facturation" section="verifier-le-brouillon" />
                 </h3>
                 <span className="text-muted small float-end">
                     Frais de port, frais de dossier, prestation non commandée
@@ -227,7 +228,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                 <div className="alert alert-warning d-flex justify-content-between align-items-center py-2 mb-3">
                     <span>
                         <i className="fas fa-edit me-2"></i>
-                        <strong>Brouillon</strong> — Les lignes, prix, quantités et remises sont modifiables. La facture sera verrouillée après émission.
+                        <strong>Brouillon</strong> — Les lignes, prix, quantités et remises sont modifiables. La facture sera verrouillée après émission.<GuideHelp guide="facturation" section="emettre-la-facture" />
                     </span>
                     <button className="btn btn-success btn-sm ms-3" onClick={handleEmit} disabled={emitting}>
                         {emitting

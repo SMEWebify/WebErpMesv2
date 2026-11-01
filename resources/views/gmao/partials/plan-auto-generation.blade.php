@@ -6,6 +6,7 @@
             <input class="form-check-input" type="checkbox" role="switch" name="auto_generate" id="auto_generate" value="1"
                    @checked(old('auto_generate', $plan?->auto_generate ?? true))>
             <label class="form-check-label fw-bold" for="auto_generate">{{ __('general_content.gmao_auto_generate_trans_key') }}</label>
+            <x-guide-help guide="gmao" section="planifier-la-maintenance-preventive" />
         </div>
         <p class="text-muted small mb-3">{{ __('general_content.gmao_auto_generate_help_trans_key') }}</p>
         <div class="row">

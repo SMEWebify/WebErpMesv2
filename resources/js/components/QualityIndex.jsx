@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -546,7 +547,7 @@ function DeviceCreateForm({ users, services, endpoints, trans, onCreated }) {
     return (
         <div className="card card-secondary mb-3">
             <div className="card-header">
-                <h3 className="card-title">{trans.new_measuring_device ?? 'Nouvel appareil de mesure'}</h3>
+                <h3 className="card-title">{trans.new_measuring_device ?? 'Nouvel appareil de mesure'}<GuideHelp guide="qualite" section="suivre-les-appareils-de-mesure" /></h3>
             </div>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="card-body">
@@ -973,7 +974,7 @@ function SettingsTab({ initialFailures, initialCauses, initialCorrections, endpo
             {SETTINGS_TYPES.map(({ key, themeClass, label, transKey }) => (
                 <div key={key} className={`card card-outline ${themeClass} collapsed-card mb-3`}>
                     <div className="card-header">
-                        <h3 className="card-title">{trans[transKey] ?? label}</h3>
+                        <h3 className="card-title">{trans[transKey] ?? label}<GuideHelp guide="qualite" section="preparer-le-referentiel-des-defauts" /></h3>
                         <div className="card-tools">
                             <button type="button" className="btn btn-tool" data-lte-toggle="card-collapse">
                                 <i className="fas fa-plus" />

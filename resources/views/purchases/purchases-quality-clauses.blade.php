@@ -3,7 +3,7 @@
 @section('title', __('purchase_quality.plural'))
 
 @section('content_header')
-    <h1>{{ __('purchase_quality.plural') }}</h1>
+    <h1>{{ __('purchase_quality.plural') }}<x-guide-help guide="achats" section="commander" /></h1>
 @stop
 
 @section('content')

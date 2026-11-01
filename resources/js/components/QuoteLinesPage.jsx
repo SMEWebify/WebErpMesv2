@@ -10,6 +10,7 @@ import { askRequiredOperationsOverride } from '../lib/requiredOperations.jsx';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { marginLevel, formatMarginRate, readMarginColumnVisible, writeMarginColumnVisible } from '../lib/quoteMargin.js';
 import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1042,7 +1043,7 @@ function ConvertOrderModal({ count, onConfirm, onClose }) {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Créer une commande ({count} ligne{count > 1 ? 's' : ''})</h5>
+                        <h5 className="modal-title">Créer une commande ({count} ligne{count > 1 ? 's' : ''})<GuideHelp guide="vente-complete" section="transformer-le-devis-en-commande" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">
@@ -1139,7 +1140,7 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
             <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title"><i className="fas fa-file-import me-2" />Importer des lignes d'un autre devis</h5>
+                        <h5 className="modal-title"><i className="fas fa-file-import me-2" />Importer des lignes d'un autre devis<GuideHelp guide="devis-avance" section="copier-des-lignes-dun-autre-devis-ou-dune-trame" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">
@@ -1653,6 +1654,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     </button>
                 )}
                 {quoteStatu === 1 && (
+                    <>
                     <div className="btn-group btn-group-sm position-relative">
                         <button type="button" className="btn btn-outline-secondary dropdown-toggle"
                             onClick={() => setAddMenuOpen((v) => !v)}>
@@ -1672,6 +1674,8 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                             </div>
                         )}
                     </div>
+                    <GuideHelp guide="devis-avance" section="presenter-le-devis-sections-sous-totaux-textes-forfaits" />
+                    </>
                 )}
                 <button type="button"
                     className={`btn btn-sm ms-auto ${showMargin ? 'btn-secondary' : 'btn-outline-secondary'}`}

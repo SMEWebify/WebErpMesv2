@@ -3,7 +3,7 @@
 @section('title', __('audit.title'))
 
 @section('content_header')
-    <h1>{{ __('audit.title') }}</h1>
+    <h1>{{ __('audit.title') }} <x-guide-help guide="mise-en-route" section="options-dexploitation" /></h1>
 @stop
 
 @section('content')

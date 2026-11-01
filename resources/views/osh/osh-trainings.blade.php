@@ -3,7 +3,7 @@
 @section('title', __('general_content.formations_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.formations_trans_key') }}</h1>
+    <h1>{{ __('general_content.formations_trans_key') }}<x-guide-help guide="sst" section="enregistrer-les-formations" /></h1>
 @stop
 
 @section('right-sidebar')

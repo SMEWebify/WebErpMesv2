@@ -3,7 +3,7 @@
 @section('title', __('general_content.time_unit_settings_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.time_unit_settings_trans_key') }}</h1>
+    <h1>{{ __('general_content.time_unit_settings_trans_key') }} <x-guide-help guide="temps" section="les-autres-reglages" /></h1>
 @stop
 
 @section('content')

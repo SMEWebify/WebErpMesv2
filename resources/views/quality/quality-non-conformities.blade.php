@@ -3,7 +3,7 @@
 @section('title', __('general_content.non_conformities_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.non_conformities_trans_key') }}</h1>
+    <h1>{{ __('general_content.non_conformities_trans_key') }}<x-guide-help guide="qualite" section="declarer-une-non-conformite" /></h1>
 @stop
 
 @section('content')

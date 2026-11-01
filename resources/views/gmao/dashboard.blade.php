@@ -3,7 +3,7 @@
 @section('title', __('general_content.gmao_dashboard_page_title_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.gmao_dashboard_page_title_trans_key') }}</h1>
+    <h1>{{ __('general_content.gmao_dashboard_page_title_trans_key') }}<x-guide-help guide="gmao" section="le-tableau-de-bord" /></h1>
 @stop
 
 @section('content')

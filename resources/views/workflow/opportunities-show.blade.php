@@ -33,7 +33,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opp
                        :steps="$oppSteps" statu="{{ $Opportunity->statu }}"
                        endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"
                        redirect="{{ route('opportunities.show', $Opportunity->id) }}"
-                       :loss="$lossDialog"/>
+                       :loss="$lossDialog">
+        <x-slot name="help"><x-guide-help guide="vente-complete" section="transformer-le-lead-en-opportunite" /></x-slot>
+    </x-document-header>
 @stop
 
 @section('right-sidebar')
@@ -166,6 +168,9 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opp
           </div>
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible="collapsed" maximizable>
+              <x-slot name="toolsSlot">
+                <x-guide-help guide="vente-complete" section="etablir-le-devis" />
+              </x-slot>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
                   <i class="fas fa-folder"></i>

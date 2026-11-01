@@ -3,7 +3,7 @@
 @section('title', __('general_content.deliverys_notes_list_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.deliverys_notes_list_trans_key') }}</h1>
+    <h1>{{ __('general_content.deliverys_notes_list_trans_key') }}<x-guide-help guide="facturation" section="livrer-bon-de-livraison-et-liste-de-colisage" /></h1>
 @stop
 
 @php

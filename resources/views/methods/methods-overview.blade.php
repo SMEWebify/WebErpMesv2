@@ -3,7 +3,7 @@
 @section('title', __('general_content.methods_overview_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.methods_overview_trans_key') }}</h1>
+    <h1>{{ __('general_content.methods_overview_trans_key') }}<x-guide-help guide="methodes" section="controler-le-parametrage-la-vue-densemble" /></h1>
 @stop
 
 @section('content')

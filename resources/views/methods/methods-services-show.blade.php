@@ -3,7 +3,7 @@
 @section('title', __('general_content.service_trans_key') .' '. $service->label) 
 
 @section('content_header')
-    <h1>{{ __('general_content.service_trans_key') }} {{ $service->label }}</h1>
+    <h1>{{ __('general_content.service_trans_key') }} {{ $service->label }}<x-guide-help guide="methodes" section="services-ce-que-latelier-sait-faire" /></h1>
 @stop
 
 @section('right-sidebar')

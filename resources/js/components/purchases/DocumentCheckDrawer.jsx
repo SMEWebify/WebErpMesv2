@@ -3,6 +3,7 @@ import { apiRequest } from '../../lib/http';
 import {
     RESULTS, certificateGap, commentRequired, decisionBadge, gapMessage, statusBadge,
 } from '../../lib/receiptDocumentCheck';
+import GuideHelp from '../GuideHelp';
 
 // Badges réutilisés par la fiche réception et la liste qualité
 export function StatusBadge({ status, texts }) {
@@ -104,6 +105,7 @@ export default function DocumentCheckDrawer({ line, endpoint, config, onClose, o
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 text-bg-teal">
                     <strong>
                         <i className="fas fa-file-shield me-2" />{texts.drawer_title}
+                        <GuideHelp guide="qualite" section="visa-documentaire-des-receptions" className="text-white-50" />
                         {line && <span className="ms-2 fw-normal small">— {line.purchase_line_label}</span>}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-light" onClick={onClose}>

@@ -4,6 +4,9 @@
   $showDocument  : afficher la commande concernée (fiche société)
 --}}
 <x-adminlte-card title="{{ __('supplier_qualification.label') }}" theme="secondary" theme-mode="outline" icon="fas fa-user-check">
+  <x-slot name="toolsSlot">
+    <x-guide-help guide="fournisseurs-qualifies" section="evaluer-et-qualifier-le-fournisseur" />
+  </x-slot>
   <p class="mb-2">
     @include('include.supplier-qualification-badge', ['status' => $qualification['status']])
     @if ($qualification['detail'])

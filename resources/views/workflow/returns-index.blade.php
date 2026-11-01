@@ -3,7 +3,7 @@
 @section('title', __('returns.fields.list'))
 
 @section('content_header')
-    <h1>{{ __('returns.fields.list') }}</h1>
+    <h1>{{ __('returns.fields.list') }} <x-guide-help guide="qualite" section="audits-internes-et-retours-clients" /></h1>
 @stop
 
 @section('content')

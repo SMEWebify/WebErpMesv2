@@ -9,6 +9,7 @@
             @if($Batch->heat_number)
                 <small class="text-body-secondary">— {{ __('batches.heat_short') }} {{ $Batch->heat_number }}</small>
             @endif
+            <x-guide-help guide="article" section="les-lots-et-les-coulees" />
         </h1>
         <a href="{{ route('products.batches') }}" class="btn btn-outline-secondary btn-sm">
             <i class="fa-solid fa-arrow-left me-1"></i>{{ __('batches.title') }}
@@ -102,7 +103,7 @@
 
     <div class="col-lg-7">
         <div class="card mb-3">
-            <div class="card-header"><h3 class="card-title">{{ __('batches.documents') }}</h3></div>
+            <div class="card-header"><h3 class="card-title">{{ __('batches.documents') }}<x-guide-help guide="article" section="les-lots-et-les-coulees" /></h3></div>
             <div class="card-body">
                 <p class="text-body-secondary small">{{ __('batches.documents_hint') }}</p>
                 @include('include.file-manager-mount', [

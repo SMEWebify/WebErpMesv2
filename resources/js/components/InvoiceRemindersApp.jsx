@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataTable } from './table';
 import { apiFetchOrThrow } from '../lib/http';
 import { formatCurrency, formatDate } from '../utils';
+import GuideHelp from './GuideHelp';
 
 // Écran « Factures à relancer » : factures échues non soldées, groupées par
 // client, niveau proposé selon le retard (InvoiceReminderService). Rien ne
@@ -61,6 +62,7 @@ function SendModal({ group, endpoints, trans, onClose, onDone }) {
                             <h5 className="modal-title">
                                 <i className="fas fa-envelope me-2" />
                                 {(trans.send_title ?? '').replace(':client', group.companyLabel)}
+                                <GuideHelp guide="facturation" section="relancer-les-impayes" />
                                 {draft?.label && <span className="ms-2"><LevelBadge label={draft.label} color={group.color} /></span>}
                             </h5>
                             <button type="button" className="btn-close" aria-label="Close" onClick={onClose} />
@@ -142,7 +144,7 @@ function LogModal({ group, endpoints, trans, onClose, onDone }) {
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title"><i className="fas fa-phone me-2" />{trans.log_manual} — {group.companyLabel}</h5>
+                            <h5 className="modal-title"><i className="fas fa-phone me-2" />{trans.log_manual} — {group.companyLabel}<GuideHelp guide="facturation" section="relancer-les-impayes" /></h5>
                             <button type="button" className="btn-close" aria-label="Close" onClick={onClose} />
                         </div>
                         <div className="modal-body">

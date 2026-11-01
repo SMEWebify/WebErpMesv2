@@ -1,6 +1,7 @@
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1> {{ $h1 }}</h1>
+        {{-- Slot `help` facultatif : « ? » vers un guide (<x-guide-help>). --}}
+        <h1> {{ $h1 }}@isset($help) {{ $help }}@endisset</h1>
     </div>
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-end">

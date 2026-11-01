@@ -3,7 +3,7 @@
 @section('title', __('general_content.import_export_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.import_export_trans_key') }}</h1>
+    <h1>{{ __('general_content.import_export_trans_key') }} <x-guide-help guide="mise-en-route" section="reprendre-vos-donnees" /></h1>
 @stop
 
 @section('content')
@@ -24,6 +24,7 @@
             @include('include.alert-result')
 
             <div class="tab-pane active" id="FECExport">
+                <div class="text-end"><x-guide-help guide="comptabilite" section="transmettre-au-comptable" /></div>
                 @php
                 $fecProps = [
                     'endpoints' => [

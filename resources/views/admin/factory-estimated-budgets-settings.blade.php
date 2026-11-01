@@ -3,7 +3,7 @@
 @section('title', __('general_content.estimated_budget_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.estimated_budget_trans_key') }}</h1>
+    <h1>{{ __('general_content.estimated_budget_trans_key') }} <x-guide-help guide="mise-en-route" section="objectif-de-chiffre" /></h1>
 @stop
 
 @section('content')

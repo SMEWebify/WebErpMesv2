@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -143,6 +144,7 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
                     <i className="fas fa-file-invoice me-2 text-muted" />
                     Document reçu — {incoming.seller_name}
                     {incoming.invoice_number && <span className="ms-2 text-muted">n° {incoming.invoice_number}</span>}
+                    <GuideHelp guide="achats" section="les-factures-electroniques-recues" />
                 </h3>
                 {incoming.issue_date && (
                     <span className="float-end text-muted small">

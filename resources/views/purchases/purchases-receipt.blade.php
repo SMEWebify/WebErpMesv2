@@ -3,7 +3,7 @@
 @section('title', __('general_content.po_receipt_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.po_receipt_trans_key') }}</h1>
+  <h1>{{ __('general_content.po_receipt_trans_key') }}<x-guide-help guide="achats" section="receptionner" /></h1>
 @stop
 
 @section('content')

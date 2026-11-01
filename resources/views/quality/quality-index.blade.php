@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>{{ __('general_content.quality_trans_key') }}</h1>
+        <h1>{{ __('general_content.quality_trans_key') }}<x-guide-help guide="qualite" section="le-tableau-de-bord" /></h1>
     </div>
 @stop
 

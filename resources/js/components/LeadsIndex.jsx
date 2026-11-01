@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useIndexTab, IndexCard, IndexCardGrid, todayIso, daysPast } from './table';
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate } from '../utils';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -489,7 +490,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header bg-success">
-                            <h5 className="modal-title text-white">{trans.new_lead ?? 'New lead'}</h5>
+                            <h5 className="modal-title text-white">{trans.new_lead ?? 'New lead'}<GuideHelp guide="vente-complete" section="enregistrer-le-lead" /></h5>
                             <button onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
                         </div>
                         <div className="modal-body">

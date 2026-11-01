@@ -3,7 +3,7 @@
 @section('title', __('receipt_document_check.title'))
 
 @section('content_header')
-  <h1>{{ __('receipt_document_check.title') }}</h1>
+  <h1>{{ __('receipt_document_check.title') }}<x-guide-help guide="qualite" section="visa-documentaire-des-receptions" /></h1>
 @stop
 
 @section('content')

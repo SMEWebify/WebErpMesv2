@@ -3,7 +3,7 @@
 @section('title', __('general_content.attendance_report_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.attendance_report_trans_key') }}</h1>
+    <h1>{{ __('general_content.attendance_report_trans_key') }} <x-guide-help guide="temps" section="presence-et-export-paie" /></h1>
 @stop
 
 @section('content')

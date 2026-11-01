@@ -8,6 +8,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { apiRequest } from '../../lib/http';
+import GuideHelp from '../GuideHelp';
 import {
     reviewBadge, uncheckedItems, decisionBlocker, draftPayload,
     amendmentBadge, amendmentBlocker, amendmentDelta,
@@ -86,6 +87,7 @@ function ReviewCard({ state, trans, endpoints, onState }) {
                 <h3 className="card-title mb-0 me-auto">
                     <i className="fas fa-clipboard-check me-2" />
                     {trans.title}
+                    <GuideHelp guide="commande-revue-contrat" section="preparer-la-revue" />
                 </h3>
                 <StatusBadge status={state.status} trans={trans} />
             </div>
@@ -212,6 +214,7 @@ function DocumentsCard({ documents, trans }) {
                 <h3 className="card-title mb-0">
                     <i className="far fa-file-alt me-2" />
                     {trans.documents}
+                    <GuideHelp guide="commande-revue-contrat" section="deposer-les-documents-contractuels" />
                 </h3>
             </div>
             <div className="card-body">
@@ -423,6 +426,7 @@ function AmendmentsCard({ state, users, trans, endpoint, onState }) {
                 <h3 className="card-title mb-0 me-auto">
                     <i className="fas fa-file-signature me-2" />
                     {t.title}
+                    <GuideHelp guide="commande-revue-contrat" section="creer-un-avenant" />
                 </h3>
                 {state.pending_amendment && <span className="badge text-bg-warning">{t.status?.pending}</span>}
             </div>

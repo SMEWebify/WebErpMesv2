@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import GuideHelp from './GuideHelp';
 
 function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -91,7 +92,7 @@ export default function AccountingPeriodsApp({ endpoints }) {
             <div className="col-md-4">
                 <div className="card card-secondary mb-3">
                     <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-lock me-2"></i>Verrouiller une période</h3>
+                        <h3 className="card-title"><i className="fas fa-lock me-2"></i>Verrouiller une période<GuideHelp guide="comptabilite" section="verrouiller-les-periodes" /></h3>
                     </div>
                     <div className="card-body">
                         {error && <div className="alert alert-danger alert-dismissible">

@@ -55,3 +55,14 @@
     @viteReactRefresh
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
+
+@section('js')
+    {{-- Lien « ? » vers une section : se recaler sur elle une fois la page chargée (polices, en-tête). --}}
+    <script>
+        window.addEventListener('load', () => {
+            const id = decodeURIComponent(location.hash.slice(1));
+            const target = id && document.getElementById(id);
+            if (target) target.scrollIntoView({ block: 'start' });
+        });
+    </script>
+@stop

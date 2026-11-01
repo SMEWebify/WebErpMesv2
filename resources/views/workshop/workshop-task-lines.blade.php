@@ -3,7 +3,7 @@
 @section('title', __('general_content.workshop_interface_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.workshop_interface_trans_key') }}</h1>
+  <h1>{{ __('general_content.workshop_interface_trans_key') }}<x-guide-help guide="atelier" section="trouver-son-travail" /></h1>
 @stop
 
 @section('content')

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiFetch, DOC_TYPES, DocBadge, Modal } from './company/companyShared';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Contact form (shared by create + edit)
@@ -311,7 +312,7 @@ export default function CompanyContacts({
             <div className="col-md-4">
                 <div className="card card-secondary mb-3">
                     <div className="card-header">
-                        <h3 className="card-title">{trans.new_contact}</h3>
+                        <h3 className="card-title">{trans.new_contact}<GuideHelp guide="vente-complete" section="creer-le-prospect" /></h3>
                     </div>
                     <div className="card-body">
                         <ContactForm

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GuideHelp from './GuideHelp';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -547,7 +548,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             {/* Plafond d'encours : modifiable avec credit-limit-override seulement */}
             <div className="card card-outline card-danger mb-3">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-hand-holding-usd me-1" />{trans.credit_card_title}</h3>
+                    <h3 className="card-title"><i className="fas fa-hand-holding-usd me-1" />{trans.credit_card_title}<GuideHelp guide="facturation" section="suivre-lencours-client" /></h3>
                 </div>
                 <div className="card-body">
                     <div className="row">

@@ -4,7 +4,7 @@
 
 @section('content_header')
   <div class="row mb-2">
-      <h1>{{ __('general_content.requests_for_quotation_list_trans_key') }}</h1>
+      <h1>{{ __('general_content.requests_for_quotation_list_trans_key') }}<x-guide-help guide="achats" section="consulter-le-fournisseur-la-demande-de-prix" /></h1>
   </div>
 @stop
 

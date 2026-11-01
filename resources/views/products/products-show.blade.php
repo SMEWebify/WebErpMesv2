@@ -4,7 +4,9 @@
 @section('plugins.Quill', true)
 
 @section('content_header')
-  <x-Content-header-previous-button  :h1="$Product->label" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  :h1="$Product->label" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}">
+      <x-slot name="help"><x-guide-help guide="article" section="la-fiche-article" /></x-slot>
+  </x-Content-header-previous-button>
 @stop
 
 @section('content')
@@ -428,6 +430,7 @@
             <div>
               <span class="text-body-secondary">{{ __('price_list.base_price') }} :</span>
               <b>{{ number_format($basePrice, 2, ',', ' ') }} {{ $Factory->curency }}</b>
+              <x-guide-help guide="article" section="les-tarifs-par-quantite" />
             </div>
             @if($canEditProduct)
             <button type="button" class="btn btn-success btn-sm" data-price-list-open>
@@ -523,6 +526,7 @@
         </div>
         @endif
         <div class="tab-pane " id="TechnicalInfo">
+          <div class="text-end"><x-guide-help guide="article" section="la-gamme-de-fabrication" /></div>
           @php
           $taskManageEndpoints = [
               'initial_data'          => route('task.manage.json.initial',      ['products_id', $Product->id, $Product->id]),
@@ -584,6 +588,9 @@
             </div>
           @endisset
           <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
+            <x-slot name="toolsSlot">
+              <x-guide-help guide="article" section="entrees-sorties-et-transferts" />
+            </x-slot>
             @include('include.table-stock-locations-products')
           </x-adminlte-card>
         </div>
@@ -816,6 +823,7 @@
         {{-- Single document tab: one drop area for every format (PDF, STL, STEP,
              IGES, DXF, SVG, images...) and one viewer that adapts to the file. --}}
         <div class="tab-pane" id="Documents">
+          <div class="text-end"><x-guide-help guide="article" section="les-documents-de-larticle" /></div>
           @include('include.file-manager-mount', [
             'fileableType' => 'product',
             'fileableId'   => $Product->id,
@@ -823,6 +831,7 @@
           ])
         </div>
         <div class="tab-pane" id="ControlPlans">
+          <div class="text-end"><x-guide-help guide="qualite" section="plans-de-controle-et-premier-article" /></div>
           @php
             // @json découpe son argument aux virgules : les expressions sont calculées ici.
             $controlPlanEndpoints = \App\Http\Controllers\Inspection\InspectionPlanController::endpoints();
@@ -935,6 +944,9 @@
     @endif
 
     <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
+      <x-slot name="toolsSlot">
+        <x-guide-help guide="article" section="la-fiche-article" />
+      </x-slot>
       @if($canEditProduct)
       <p>
         <a href="{{ route('products.duplicate', $Product->id)}}" class="btn btn-sm btn-outline-secondary w-100 mb-2">
@@ -991,6 +1003,7 @@
       <input type="hidden" name="_price_list_id" value="">
       <div class="modal-header">
         <h5 class="modal-title" id="priceListModalTitle">{{ __('price_list.add') }}</h5>
+        <x-guide-help guide="article" section="les-tarifs-par-quantite" />
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

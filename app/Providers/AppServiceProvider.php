@@ -38,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(TelescopeServiceProvider::class);
         }
 
+        // Une instance par requête : les liens des « ? » (helpLinks) n'y sont calculés qu'une fois.
+        $this->app->scoped(\App\Services\Guides\GuideLibrary::class);
+
         $this->app->singleton(SelectDataService::class, function () {
             return new SelectDataService();
         });

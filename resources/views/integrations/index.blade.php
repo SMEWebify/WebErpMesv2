@@ -371,7 +371,7 @@
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }} mb-3">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-file-invoice me-1"></i> Facturation électronique (PDP)
+                        <i class="fas fa-file-invoice me-1"></i> Facturation électronique (PDP)<x-guide-help guide="facturation" section="la-facturation-electronique" />
                     </h3>
                     <div class="card-tools">
                         <span class="badge text-bg-{{ $pdp['enabled'] ? 'success' : 'secondary' }}">

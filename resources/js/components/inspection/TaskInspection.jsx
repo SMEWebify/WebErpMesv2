@@ -3,6 +3,7 @@ import { apiFetch } from '../../lib/http';
 import { openPlan } from '../../lib/pdf/pdfRender';
 import { describe, formatLimits } from './characteristics';
 import { ACCENT, Overlay, pointToView } from './planOverlay';
+import GuideHelp from '../GuideHelp';
 
 // Couleurs des bulles selon la mesure : lisibles sur le blanc du plan.
 const COLOR = { todo: ACCENT, ok: '#198754', nok: '#dc3545', judged: '#0d6efd' };
@@ -329,7 +330,7 @@ export default function TaskInspection({ baseUrl, onSummary }) {
                 <span className={`badge ${dossier.is_fai ? 'text-bg-warning' : 'text-bg-secondary'}`}>
                     {dossier.is_fai ? t.control_fai : t.control_routine}
                 </span>
-                <span className="small text-secondary">{dossier.code}</span>
+                <span className="small text-secondary">{dossier.code}<GuideHelp guide="qualite" section="plans-de-controle-et-premier-article" /></span>
                 <span className="badge text-bg-light">{dossier.done} / {dossier.required} {t.measured}</span>
                 {dossier.nok > 0 && <span className="badge text-bg-danger">{dossier.nok} {t.nok_count}</span>}
                 {closed && <span className="badge text-bg-success"><i className="fas fa-lock me-1" />{t.closed_badge}</span>}

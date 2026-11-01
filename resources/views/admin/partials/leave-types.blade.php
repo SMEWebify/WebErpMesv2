@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col-md-7">
         <x-adminlte-card title="{{ __('general_content.leave_types_trans_key') }}" theme="primary" maximizable>
+            <x-slot name="toolsSlot">
+                <x-guide-help guide="temps" section="les-natures-de-conge" />
+            </x-slot>
             <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <thead>

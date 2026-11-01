@@ -3,7 +3,7 @@
 @section('title', __('general_content.orders_list_trans_key'))
 
 @section('content_header')
-  <h1>{{ __('general_content.orders_list_trans_key') }}</h1>
+  <h1>{{ __('general_content.orders_list_trans_key') }}<x-guide-help guide="commande-revue-contrat" section="reperer-les-commandes-a-revoir" /></h1>
 @stop
 
 @php

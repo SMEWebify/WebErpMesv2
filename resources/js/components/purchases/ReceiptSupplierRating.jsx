@@ -7,6 +7,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../../lib/http';
+import GuideHelp from '../GuideHelp';
 
 export const CRITERIA = ['conformity', 'delay', 'documents'];
 
@@ -121,6 +122,7 @@ export function RatingDialog({ state, texts, endpoint, onClose, onSaved }) {
                             <h5 className="modal-title" id="receipt-rating-title">
                                 <i className="fas fa-star-half-alt me-2 text-warning" />
                                 {texts.title}
+                                <GuideHelp guide="achats" section="receptionner" />
                             </h5>
                             <button type="button" className="btn-close" aria-label={texts.later} onClick={onClose} />
                         </div>

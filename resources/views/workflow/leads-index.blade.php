@@ -4,7 +4,7 @@
 
 @section('content_header')
   <div class="row mb-2">
-      <h1>{{ __('general_content.leads_trans_key') }}</h1>
+      <h1>{{ __('general_content.leads_trans_key') }}<x-guide-help guide="vente-complete" section="enregistrer-le-lead" /></h1>
   </div>
 @stop
 

@@ -360,6 +360,13 @@ captures dans `img/`. Ajouter un guide = déposer un dossier : ni route, ni migr
   `features:` (toutes requises) = guide masqué tant qu'une option est inactive ; blocs
   `<!-- feature: nom -->` … `<!-- /feature -->` (`!nom` = option inactive), retirés **avant**
   la conversion (sommaire compris), non imbriquables. Nom inconnu = inactive.
+- **« ? » d'aide dans l'application** : `<x-guide-help guide="slug" section="ancre" />` (Blade) et
+  `<GuideHelp guide="slug" section="ancre" />` (React, `components/GuideHelp.jsx`, lit
+  `<meta name="guide-links">` du gabarit). Rien n'est affiché si l'utilisateur ne peut pas lire le
+  guide (permission, option). Une section se vise par son **ancre explicite** `## Titre {#ancre}`,
+  identique en FR et EN : **ne jamais renommer ni supprimer une ancre** (un titre se reformule
+  librement). `GuideHelpTest` relit le code (`guide` puis `section`, en littéraux) et échoue si une
+  ancre visée manque dans une langue. L'export wiki retire les `{#…}`.
 - Captures servies par `guides.media` (images du dossier `img/` seulement, `nosniff`).
 - Production des guides : agent `training-writer` + Playwright (`tools/training/`, scénarios
   rejoués sur l'instance **locale**, données préfixées `[FORMATION]`, identifiants

@@ -5,6 +5,7 @@ import { apiRequest as apiFetch } from '../lib/http';
 import { CRITICALITY_FIELDS, applyProductCriticality, criticalityChoices, criticalityBadges } from '../lib/purchaseCriticality';
 import { canAcknowledge, referenceDate, gapBadgeClass, formatGap } from '../lib/supplierAck';
 import SupplierAckModal from './purchases/SupplierAckModal';
+import GuideHelp from './GuideHelp';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -515,6 +516,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                             <>
                                 <div className="small fw-bold text-body-secondary mt-1 mb-1">
                                     <i className="fas fa-shield-alt me-1" />{selectData.criticality.labels.title}
+                                    <GuideHelp guide="achats" section="commander" />
                                 </div>
                                 <div className="row gx-2">
                                     {CRITICALITY_FIELDS.map((field) => (
