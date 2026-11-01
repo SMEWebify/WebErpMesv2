@@ -17,7 +17,7 @@ is fully paid, chase it if needed, and pass the entries on to your accountant.
 **Starting point**: an **order** whose parts are ready to ship (see the "From prospect to
 invoice" guide for creating the quote and the order).
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You need the **Invoices** permission. Sending reminders also needs its own
   permission (Admin role by default), and the accounting export needs access to the **Your company** menu.
@@ -29,7 +29,7 @@ invoice" guide for creating the quote and the order).
 - The **payment terms**, the **Payment Methods** and the **Accounting allocations**
   (Accounting menu) decide the invoice due date and which accounts the entries go to.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 File validated (if required)
@@ -43,7 +43,7 @@ Accounting export
 
 ---
 
-## 1. The end-of-manufacturing file (if required)
+## 1. The end-of-manufacturing file (if required) {#le-dossier-de-fin-de-fabrication-si-exige}
 
 Some parts may only leave with a complete file (inspection records, certificates, reports)
 checked by an authorised person. If your company has set this up, an order line can
@@ -108,7 +108,7 @@ concession** awaiting the customer's decision does not ship until the concession
 
 ---
 
-## 2. Deliver: delivery note and packing list
+## 2. Deliver: delivery note and packing list {#livrer-bon-de-livraison-et-liste-de-colisage}
 
 "Lines" tab of the order: tick the lines to deliver, then **"Nouveau BL" (New delivery
 note)** and confirm. The delivery note page opens.
@@ -150,7 +150,7 @@ the number of packages and the total weights at the top. It contains **no price*
 
 ---
 
-## 3. Create the invoice
+## 3. Create the invoice {#creer-la-facture}
 
 Menu **Invoices › Invoices request**: the delivered lines not yet invoiced.
 
@@ -167,7 +167,7 @@ Menu **Invoices › Invoices request**: the delivered lines not yet invoiced.
 
 ---
 
-## 4. Check the draft
+## 4. Check the draft {#verifier-le-brouillon}
 
 A draft invoice (status **In Progress**) can still be fully changed: quantities, prices
 and discounts are corrected directly in the "Invoice lines" tab.
@@ -200,7 +200,7 @@ without payment terms uses the default terms; without any terms at all, the due 
 
 ---
 
-## 5. Issue the invoice
+## 5. Issue the invoice {#emettre-la-facture}
 
 "Invoice lines" tab: click **"Émettre la facture" (Issue the invoice)** and confirm. The invoice
 moves to the **Send** status: its lines are locked, and the **PDF** and
@@ -226,7 +226,7 @@ invoice contact, with the PDF attached.
 
 ---
 
-## 6. Record payments
+## 6. Record payments {#enregistrer-les-reglements}
 
 "Règlements" (Payments) tab: enter each payment received.
 
@@ -253,7 +253,7 @@ When the amount due drops to zero, the invoice moves to **Paid** and the tab sho
 
 ---
 
-## 7. Chase unpaid invoices
+## 7. Chase unpaid invoices {#relancer-les-impayes}
 
 Menu **Invoices › Invoices to chase**: the invoices that are **issued, overdue and not fully paid**,
 grouped by customer. **Nothing is sent automatically**: each reminder starts from your
@@ -290,7 +290,7 @@ of the invoice.
 
 ---
 
-## 8. Make a credit note
+## 8. Make a credit note {#faire-un-avoir}
 
 A credit note cancels all or part of an **issued** invoice (return, goodwill gesture, mistake).
 "Invoice lines" tab: tick the lines concerned, then **New credit note**.
@@ -313,7 +313,7 @@ The credit note opens with the **Pending** status. Set it to **Approved** once v
 
 ---
 
-## 9. Follow the customer outstanding
+## 9. Follow the customer outstanding {#suivre-lencours-client}
 
 Company page, **Dashboard** tab, **Customer outstanding** card: what the customer owes you
 (invoices not fully paid) and what they have ordered but not yet been invoiced for.
@@ -326,7 +326,7 @@ Company page, **Dashboard** tab, **Customer outstanding** card: what the custome
 
 ---
 
-## 10. Pass on to your accountant
+## 10. Pass on to your accountant {#transmettre-au-comptable}
 
 Menu **Your company › Imports/Exports**, **Export FEC** tab (FEC: French accounting entries file):
 
@@ -345,7 +345,7 @@ Menu **Your company › Imports/Exports**, **Export FEC** tab (FEC: French accou
 
 ---
 
-## Electronic invoicing
+## Electronic invoicing {#la-facturation-electronique}
 
 Menu **Your company › "Intégrations" (Integrations)**, **"Facturation électronique (PDP)" (Electronic invoicing (PDP))** card:
 the e-invoicing platform (PDP) used to send the invoices, and its status.
@@ -359,14 +359,14 @@ When a platform is set up, each invoice shows a **"Facturation
 > is rejected: a rejected invoice is corrected with a new invoice, not with a
 > new filing.
 
-## What next?
+## What next? {#et-ensuite}
 
 - Set up **payment terms**, accounts and journals: "Accounting — setup and link with the
   accountant" guide.
 - Handle a **customer return** or a non-conformity after delivery: "Quality —
   non-conformities and inspection" guide.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The delivery note or the invoice is refused: "End-of-manufacturing file not validated".**
 The line named in the message requires a file that is not validated yet. Have it validated

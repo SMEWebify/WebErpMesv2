@@ -21,7 +21,7 @@ many are left, where, and which heat they come from.
 on shelf A1 of the store with a minimum stock of 10 parts. A customer buying 50 or more pays
 €4.00 instead of €4.50.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The item list and item page require the **products-menu** permission (read); creating,
   editing or duplicating an item, its prices, routing, bill of materials or documents also
@@ -36,7 +36,7 @@ on shelf A1 of the store with a minimum stock of 10 parts. A customer buying 50 
 > not a fault: ask the administrator for this permission (Your company › Roles and
 > permissions) or send the change to the technical department.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Item
@@ -63,7 +63,7 @@ Stock is organised on four levels:
 
 ---
 
-## 1. The item list
+## 1. The item list {#la-liste-des-articles}
 
 Menu **Product › Product list**, **Product list** tab: code, label, service, family, sold /
 purchased with their prices, number of routing operations.
@@ -77,7 +77,7 @@ helps merge two records of the same item.
 
 ---
 
-## 2. Create an item
+## 2. Create an item {#creer-un-article}
 
 ![New product](img/02-creation.png)
 
@@ -97,7 +97,7 @@ Then **Sold** and **Purchased** (an item can be both), **traceability**, the **s
 
 ---
 
-## 3. The item record
+## 3. The item record {#la-fiche-article}
 
 ![Item record](img/03-fiche.png)
 
@@ -137,7 +137,7 @@ receiver which certificate to expect. Leave "None" for an ordinary item.
 
 ---
 
-## 4. Price breaks by quantity
+## 4. Price breaks by quantity {#les-tarifs-par-quantite}
 
 The **Prices** tab appears for a **sold** item. It recalls the **base selling price** and
 lists the specific price breaks.
@@ -169,7 +169,7 @@ pencil edits a break, the bin deletes it.
 
 ---
 
-## 5. The manufacturing routing
+## 5. The manufacturing routing {#la-gamme-de-fabrication}
 
 **Technical breakdown and bill of materials** tab. The **Operation** tab on the right edge of
 the screen opens the **New operation** panel:
@@ -193,7 +193,7 @@ and **Sub-assemblies** cards describe the materials and components consumed.
 
 ---
 
-## 6. Item documents
+## 6. Item documents {#les-documents-de-larticle}
 
 **Documents** tab: drop the PDF drawing, the DXF file, the 3D model (STEP, STL) and photos.
 
@@ -205,7 +205,7 @@ shows it on the right, 3D models included.
 
 ---
 
-## 7. Organise the stock
+## 7. Organise the stock {#organiser-le-stock}
 
 Menu **Product › Stock**, **New stock** card:
 
@@ -239,7 +239,7 @@ Then, on the location record, store the item there:
 
 ---
 
-## 8. Receipts, issues and transfers
+## 8. Receipts, issues and transfers {#entrees-sorties-et-transferts}
 
 A stock line's **View** button opens its movements, with four tiles: weighted average cost
 (WAC), receipts, issues and current stock.
@@ -285,7 +285,7 @@ the minimum:
 
 ---
 
-## 9. Stock status
+## 9. Stock status {#le-statut-du-stock}
 
 Menu **Product › Stock status**: for each item, total stock against **demand** (undelivered
 orders and unfinished tasks), reservations and locations.
@@ -305,7 +305,7 @@ creates an internal manufacturing **order**, after confirmation.
 
 ---
 
-## 10. Serial numbers
+## 10. Serial numbers {#les-numeros-de-serie}
 
 Menu **Product › Serial Numbers**: one number per delivered part, with item, order, status
 and the **Trace** button (its history).
@@ -316,7 +316,7 @@ Serial numbers are created at **delivery**, for items tracked per part.
 
 ---
 
-## 11. Batches and heats
+## 11. Batches and heats {#les-lots-et-les-coulees}
 
 A **batch** groups parts or material of the same origin: its **heat number** (the steel
 mill's melt number, printed on the certificate), the **supplier batch**, the **EN 10204
@@ -388,7 +388,7 @@ record), in the item's **History** tab and in **Consumed batches** on the task s
 
 ---
 
-## 12. Inventories
+## 12. Inventories {#les-inventaires}
 
 Menu **Product › Inventories**, **New inventory**: choose the scope (all stock, locations or
 categories).
@@ -412,7 +412,7 @@ impact**; the **Variances only** box shows only lines with a variance.
 >
 > 💡 Counting happens in the Excel file: counted quantities cannot be typed in the screen.
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Sell the item**: add it to a quote line; its routing and price list follow (guide "From
   prospect to invoice").
@@ -421,7 +421,7 @@ impact**; the **Variances only** box shows only lines with a variance.
 - **Inspect it**: ballooned control plan, first article (guide "Quality — non-conformities
   and inspection").
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **I cannot change anything on the item record.**
 You lack the **products-edit** permission: the "Read only" banner says so. Ask the

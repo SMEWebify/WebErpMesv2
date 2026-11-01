@@ -15,7 +15,7 @@ paiement jusqu'au solde, relancer si besoin, et transmettre les écritures au co
 **Point de départ** : une **commande** dont les pièces sont prêtes à partir (voir le guide
 « Du prospect à la facture » pour la création du devis et de la commande).
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Il faut la permission **Factures**. L'envoi des relances demande en plus la permission
   dédiée (rôle Admin par défaut), et l'export comptable l'accès au menu **Votre entreprise**.
@@ -28,7 +28,7 @@ paiement jusqu'au solde, relancer si besoin, et transmettre les écritures au co
   comptables** (menu Comptabilité) déterminent l'échéance des factures et les comptes des
   écritures.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Dossier validé (si exigé)
@@ -42,7 +42,7 @@ Export comptable
 
 ---
 
-## 1. Le dossier de fin de fabrication (si exigé)
+## 1. Le dossier de fin de fabrication (si exigé) {#le-dossier-de-fin-de-fabrication-si-exige}
 
 Certaines pièces ne doivent partir qu'avec un dossier complet (relevés de contrôle,
 certificats, PV) vérifié par une personne habilitée. Si votre entreprise l'a prévu, une
@@ -106,7 +106,7 @@ en attente de la décision du client ne part pas tant que la dérogation n'est p
 
 ---
 
-## 2. Livrer : bon de livraison et liste de colisage
+## 2. Livrer : bon de livraison et liste de colisage {#livrer-bon-de-livraison-et-liste-de-colisage}
 
 Onglet « Lignes » de la commande : cochez les lignes à livrer, puis **Nouveau BL** et
 confirmez. La fiche du bon de livraison s'ouvre.
@@ -148,7 +148,7 @@ nombre de colis et les poids totaux en tête. Elle ne contient **aucun prix**.
 
 ---
 
-## 3. Créer la facture
+## 3. Créer la facture {#creer-la-facture}
 
 Menu **Factures › Attente de facture** : les lignes livrées qui ne sont pas encore
 facturées.
@@ -166,7 +166,7 @@ facturées.
 
 ---
 
-## 4. Vérifier le brouillon
+## 4. Vérifier le brouillon {#verifier-le-brouillon}
 
 Une facture brouillon (statut **En cours**) reste entièrement modifiable : quantités, prix
 et remises se corrigent directement dans l'onglet « Lignes de facture ».
@@ -200,7 +200,7 @@ condition, l'échéance est à 30 jours.
 
 ---
 
-## 5. Émettre la facture
+## 5. Émettre la facture {#emettre-la-facture}
 
 Onglet « Lignes de facture » : cliquez sur **Émettre la facture** et confirmez. La facture
 passe au statut **Envoyé** : ses lignes sont verrouillées, et les boutons **PDF** et
@@ -226,7 +226,7 @@ contact de la facture, avec le PDF joint.
 
 ---
 
-## 6. Enregistrer les règlements
+## 6. Enregistrer les règlements {#enregistrer-les-reglements}
 
 Onglet « Règlements » : saisissez chaque paiement reçu.
 
@@ -253,7 +253,7 @@ Quand le reste dû tombe à zéro, la facture passe à **Payé** et l'onglet aff
 
 ---
 
-## 7. Relancer les impayés
+## 7. Relancer les impayés {#relancer-les-impayes}
 
 Menu **Factures › Factures à relancer** : les factures **émises, échues et non soldées**,
 regroupées par client. **Rien n'est envoyé automatiquement** : chaque relance part de votre
@@ -290,7 +290,7 @@ de sa fiche.
 
 ---
 
-## 8. Faire un avoir
+## 8. Faire un avoir {#faire-un-avoir}
 
 Un avoir annule tout ou partie d'une facture **émise** (retour, geste commercial, erreur).
 Onglet « Lignes de facture » : cochez les lignes concernées, puis **Nouvel avoir**.
@@ -313,7 +313,7 @@ L'avoir s'ouvre au statut **En attente**. Passez-le à **Approuvée** une fois v
 
 ---
 
-## 9. Suivre l'encours client
+## 9. Suivre l'encours client {#suivre-lencours-client}
 
 Fiche société, onglet **Tableau de bord**, carte **Encours client** : ce que le client vous
 doit (factures non soldées) et ce qu'il a commandé sans être encore facturé.
@@ -326,7 +326,7 @@ doit (factures non soldées) et ce qu'il a commandé sans être encore facturé.
 
 ---
 
-## 10. Transmettre au comptable
+## 10. Transmettre au comptable {#transmettre-au-comptable}
 
 Menu **Votre entreprise › Imports/Exports**, onglet **Export FEC** :
 
@@ -345,7 +345,7 @@ Menu **Votre entreprise › Imports/Exports**, onglet **Export FEC** :
 
 ---
 
-## La facturation électronique
+## La facturation électronique {#la-facturation-electronique}
 
 Menu **Votre entreprise › Intégrations**, carte **Facturation électronique (PDP)** :
 la plateforme utilisée pour transmettre les factures et son état.
@@ -359,14 +359,14 @@ Quand une plateforme est configurée, chaque facture affiche une carte **Factura
 > est rejetée : une facture rejetée se corrige par une nouvelle facture, pas par un
 > nouveau dépôt.
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Régler les **conditions de paiement**, les comptes et les journaux : guide
   « Comptabilité — paramétrage et lien avec l'expert-comptable ».
 - Traiter un **retour client** ou une non-conformité après livraison : guide « Qualité —
   non-conformités et contrôle ».
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Le BL ou la facture est refusé : « Dossier de fin de fabrication non validé ».**
 La ligne citée exige un dossier qui n'est pas encore validé. Faites-le valider par une

@@ -15,7 +15,7 @@ et la livraison.
 **Exemple utilisé** : la Métallerie Durand, rencontrée sur un salon, commande 20 platines
 en acier S235 de 8 mm, découpées au laser puis pliées, à 42,50 € HT pièce.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Vous devez avoir accès aux menus Tiers, Leads, Opportunités, Devis, Commandes,
   Bons de livraison et Factures.
@@ -24,7 +24,7 @@ en acier S235 de 8 mm, découpées au laser puis pliées, à 42,50 € HT pièce
   (laser, pliage…) avec leur taux horaire.
 - Facultatif : les **catégories d'affaire** et les **motifs de perte** (menu Méthodes).
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Prospect
@@ -46,7 +46,7 @@ Devis › Commande…) permet de remonter l'historique de l'affaire.
 
 ---
 
-## 1. Se connecter
+## 1. Se connecter {#se-connecter}
 
 ![Écran de connexion](img/01-connexion.png)
 
@@ -60,7 +60,7 @@ Vous arrivez sur le tableau de bord.
 
 ---
 
-## 2. Créer le prospect
+## 2. Créer le prospect {#creer-le-prospect}
 
 Un prospect est une société qui n'est pas encore cliente. Il faut le créer avec **une
 adresse et un contact** : le lead et le devis en ont besoin.
@@ -113,7 +113,7 @@ Le contact doit apparaître dans le tableau de gauche.
 
 ---
 
-## 3. Enregistrer le lead
+## 3. Enregistrer le lead {#enregistrer-le-lead}
 
 Le lead trace l'origine du contact (salon, site web, recommandation…) et son niveau
 d'intérêt.
@@ -130,7 +130,7 @@ et la **Source**, puis cliquez sur « Soumettre ».
 
 ---
 
-## 4. Transformer le lead en opportunité
+## 4. Transformer le lead en opportunité {#transformer-le-lead-en-opportunite}
 
 Quand le prospect exprime un besoin concret, transformez le lead en opportunité : sur la
 fiche du lead, carte « Options », cliquez sur « Nouvelle Oportunité ». Le lead passe
@@ -175,7 +175,7 @@ ouverts ». Pour le mettre à jour, cliquez sur sa ligne et changez son **Statut
 
 ---
 
-## 5. Établir le devis
+## 5. Établir le devis {#etablir-le-devis}
 
 ### 5.1 Créer le devis
 
@@ -266,7 +266,7 @@ pour chaque étape, puis cliquez sur « Retour ».
 
 ---
 
-## 6. Transformer le devis en commande
+## 6. Transformer le devis en commande {#transformer-le-devis-en-commande}
 
 Quand le client accepte, onglet « Ligne du devis » : cochez les lignes commandées, puis
 cliquez sur « Créer une commande » et confirmez.
@@ -295,7 +295,7 @@ La commande est créée avec ses lignes **et leurs gammes**. Le devis passe à l
 
 ---
 
-## 7. Déclarer la production
+## 7. Déclarer la production {#declarer-la-production}
 
 Chaque opération de la gamme se déclare sur son **écran de suivi** : démarrage, pièces
 bonnes et rebutées, fin.
@@ -359,7 +359,7 @@ passe à la suivante). Sur la commande, la colonne « Tâches » de la ligne pas
 
 ---
 
-## 8. Livrer : le bon de livraison
+## 8. Livrer : le bon de livraison {#livrer-le-bon-de-livraison}
 
 Onglet « Lignes » de la commande : cochez les lignes à livrer, cliquez sur
 « Nouveau BL » et confirmez.
@@ -374,7 +374,7 @@ est disponible dans la carte « Options ».
 
 ---
 
-## 9. Facturer
+## 9. Facturer {#facturer}
 
 Sur le bon de livraison, carte « Options », cliquez sur « Nouvelle facture ».
 
@@ -394,7 +394,7 @@ La facture est créée à l'état **En cours** (brouillon), avec les lignes livr
 
 ---
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Émettre et envoyer la facture**, puis **enregistrer le règlement** (onglet « Règlements »).
 - **Suivre l'affaire** sur la synthèse de l'opportunité : montants devisés, commandés,
@@ -403,7 +403,7 @@ La facture est créée à l'état **En cours** (brouillon), avec les lignes livr
 - **Réviser ou décliner un devis** (indice, variante, trame, marge) : guide « Devis avancé ».
 - **Relancer** les factures échues : menu Factures › Relances.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Ma société n'apparaît pas dans « Nouveau Lead ».**
 Elle est probablement encore « Inactive » : passez son « Etat client » en Prospect

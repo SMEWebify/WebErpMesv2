@@ -17,7 +17,7 @@ qualité n'a pas approuvé, sauf décision motivée et tracée.
 Laquage Armor. Il n'a encore jamais été évalué : la première commande est refusée, passe par
 un passe-droit motivé, puis le fournisseur est évalué et qualifié.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Votre société a rendu obligatoire la qualification des fournisseurs : c'est pour cela que
   ce guide apparaît. Sans cette option, aucun contrôle ni badge.
@@ -44,7 +44,7 @@ Un fournisseur est **qualifié** quand sa **dernière évaluation fournisseur** 
 > réception d'une livraison (fenêtre de notation après un bon de réception) n'entrent **pas**
 > dans la qualification.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Fournisseur neuf : non qualifié
@@ -56,7 +56,7 @@ Commandes libres jusqu'à la revue
 
 ---
 
-## 1. Un fournisseur neuf n'est pas qualifié
+## 1. Un fournisseur neuf n'est pas qualifié {#un-fournisseur-neuf-nest-pas-qualifie}
 
 Ouvrez la fiche du fournisseur, onglet **« Évaluations fournisseurs »** :
 
@@ -76,7 +76,7 @@ Ouvrez la fiche du fournisseur, onglet **« Évaluations fournisseurs »** :
 > 💡 Une **demande de prix** n'est jamais contrôlée : vous pouvez consulter un fournisseur non
 > qualifié librement.
 
-## 2. La commande est refusée : le passe-droit
+## 2. La commande est refusée : le passe-droit {#la-commande-est-refusee-le-passe-droit}
 
 Menu **Acheter → Achats**, onglet « Liste commande d'achat », bouton **« Nouvelle commande
 d'achat »**.
@@ -108,7 +108,7 @@ rappelle la raison (ici « aucune évaluation fournisseur »).
 > (passage « En commande ») tant que le fournisseur ne change pas. La commande suivante sera de
 > nouveau contrôlée.
 
-## 3. La trace sur la commande
+## 3. La trace sur la commande {#la-trace-sur-la-commande}
 
 Sur la fiche de la commande d'achat, la carte **« Qualification »** (1) affiche l'état du
 fournisseur et le passe-droit : date, auteur, étape (« création », « validation » ou
@@ -119,7 +119,7 @@ fournisseur et le passe-droit : date, auteur, étape (« création », « valida
 Les dix derniers passe-droits sont aussi listés sur la fiche du fournisseur, avec un lien vers
 chaque commande : de quoi les relire lors d'un audit.
 
-## 4. Évaluer et qualifier le fournisseur
+## 4. Évaluer et qualifier le fournisseur {#evaluer-et-qualifier-le-fournisseur}
 
 Une fois le premier lot reçu et contrôlé, retournez sur la fiche du fournisseur, onglet
 **« Évaluations fournisseurs »**, carte **« Nouvelle évaluation fournisseur »** :
@@ -142,7 +142,7 @@ La carte « Qualification » passe à **« Qualifié »** (1). Le passe-droit re
 
 ![Fournisseur qualifié](img/07-fiche-qualifie.png)
 
-## 5. Les commandes suivantes passent sans fenêtre
+## 5. Les commandes suivantes passent sans fenêtre {#les-commandes-suivantes-passent-sans-fenetre}
 
 Dans « Nouvelle commande d'achat », le fournisseur n'a plus de mention dans la liste (1) et
 porte le badge vert **« Qualifié »** (2) : la commande se crée normalement.
@@ -153,7 +153,7 @@ porte le badge vert **« Qualifié »** (2) : la commande se crée normalement.
 > passe en **« Revue échue »** et les commandes sont de nouveau refusées. Une nouvelle
 > évaluation approuvée, avec une nouvelle date, le requalifie.
 
-## Les écrans contrôlés
+## Les écrans contrôlés {#les-ecrans-controles}
 
 La même fenêtre de passe-droit s'ouvre partout où une commande d'achat naît ou est validée :
 
@@ -171,7 +171,7 @@ La même fenêtre de passe-droit s'ouvre partout où une commande d'achat naît 
 Ne sont **pas** contrôlées : les demandes de prix, et la commande créée automatiquement par
 une réception manuelle (la marchandise est déjà là).
 
-## Exporter la liste des fournisseurs qualifiés
+## Exporter la liste des fournisseurs qualifiés {#exporter-la-liste-des-fournisseurs-qualifies}
 
 Menu **Acheter → Achats** : le bouton **« Fournisseurs qualifiés (CSV) »** (1), en haut à
 droite, télécharge la liste à jour (code, raison sociale, qualification, statut de la dernière
@@ -180,7 +180,7 @@ Excel ; c'est la liste à présenter lors d'un audit.
 
 ![Bouton Fournisseurs qualifiés (CSV)](img/09-export-csv.png)
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Suivre la commande jusqu'à la facture : guide « De la demande de prix à la facture
   fournisseur ».
@@ -189,7 +189,7 @@ Excel ; c'est la liste à présenter lors d'un audit.
 - Confier le droit « unqualified-supplier-override » aux seules personnes habilitées à décider
   d'un passe-droit (responsable achats, qualité).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Je ne vois pas l'onglet « Évaluations fournisseurs ».**
 Le tiers n'est pas un fournisseur actif : onglet « Détail », « Etat fournisseur » = Actif, puis

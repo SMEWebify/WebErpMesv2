@@ -20,7 +20,7 @@ authorised on which machine.
 The incident is reported, the risk assessed, the machine inspection tracked, and the
 "Press brake operation" authorisation set up.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **OSH** menu appears with the **osh-menu** permission, which is also needed to create
   authorisation types.
@@ -30,7 +30,7 @@ The incident is reported, the risk assessed, the machine inspection tracked, and
 > ⚠️ The module does not replace the mandatory **risk assessment document** and does not
 > handle PPE or accident declarations: it keeps the registers and flags authorisations.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Authorisation types
@@ -50,7 +50,7 @@ the right. To edit a row, click its pencil.
 
 ---
 
-## 1. Set up authorisation types
+## 1. Set up authorisation types {#preparer-les-types-dhabilitation}
 
 Menu **Versatility matrix**, **Authorisation types** tab. An authorisation type is a
 recognised skill (press brake, forklift licence, first aid, welding…), renewable or not.
@@ -71,7 +71,7 @@ recognised skill (press brake, forklift licence, first aid, welding…), renewab
 
 ---
 
-## 2. Report an incident
+## 2. Report an incident {#declarer-un-incident}
 
 Menu **Incidents**.
 
@@ -97,7 +97,7 @@ The incident is created **In progress**. Once the actions are done, click its pe
 
 ---
 
-## 3. Assess the risk
+## 3. Assess the risk {#evaluer-le-risque}
 
 Menu **Risks**: the risk assessment by workshop.
 
@@ -127,7 +127,7 @@ In the example, hand crushing at the press brake scores 3 × 2 = **6**: a priori
 
 ---
 
-## 4. Track regulatory inspections
+## 4. Track regulatory inspections {#suivre-les-verifications-reglementaires}
 
 Menu **Conformities**: periodic inspections, electrical checks, mandatory registers.
 
@@ -150,7 +150,7 @@ Once the report is received, set the conformity to **Approved**:
 
 ---
 
-## 5. Record trainings
+## 5. Record trainings {#enregistrer-les-formations}
 
 Menu **Trainings**: one row per session attended by an employee.
 
@@ -178,7 +178,7 @@ If the employee did not pass, open the training with its pencil:
 
 ---
 
-## 6. Read the versatility matrix
+## 6. Read the versatility matrix {#lire-la-matrice-de-polyvalence}
 
 Menu **Versatility matrix**: one employee per row, one authorisation per column, with the
 related machines under each column.
@@ -198,7 +198,7 @@ related machines under each column.
 
 ---
 
-## 7. Spot gaps
+## 7. Spot gaps {#reperer-les-ecarts}
 
 **Gaps found** tab: operations assigned to an operator who has no valid authorisation for
 the operation's machine.
@@ -213,7 +213,7 @@ trained** on the press brake.
 
 ---
 
-## 8. Monthly routine
+## 8. Monthly routine {#routine-mensuelle}
 
 1. **Matrix**: chase "expiring soon" trainings and schedule refreshers for expired ones.
 2. **Gaps found**: reassign operations or plan trainings.
@@ -221,7 +221,7 @@ trained** on the press brake.
 4. **Incidents**: close those whose actions are done, and carry the resulting preventive
    measures over to **Risks**.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **A training does not appear in the matrix.**
 It has no authorisation type, or the type is inactive. Open the training and choose its

@@ -20,7 +20,7 @@ by a reasoned and recorded decision.
 parts in RAL 7016. It has never been evaluated: the first order is refused, goes through a
 reasoned override, then the supplier is evaluated and qualified.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - Your company has made supplier qualification mandatory: that is why this guide is shown.
   Without this option there is no check and no badge.
@@ -47,7 +47,7 @@ passed (or is empty).
 > delivery is received (rating window after a goods receipt) do **not** count towards
 > qualification.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 New supplier: not qualified
@@ -59,7 +59,7 @@ Free ordering until the review
 
 ---
 
-## 1. A new supplier is not qualified
+## 1. A new supplier is not qualified {#un-fournisseur-neuf-nest-pas-qualifie}
 
 Open the supplier record, **"Supplier evaluations"** tab:
 
@@ -79,7 +79,7 @@ Open the supplier record, **"Supplier evaluations"** tab:
 > 💡 A **request for quotation** is never checked: you can consult an unqualified supplier
 > freely.
 
-## 2. The order is refused: the override
+## 2. The order is refused: the override {#la-commande-est-refusee-le-passe-droit}
 
 Menu **Purchase → Purchases**, "Purchase list" tab, **"New purchase document"** button.
 
@@ -109,7 +109,7 @@ reason (here "no supplier evaluation").
 > 💡 The override applies to **this order only**: it also covers its validation (moving to
 > "Ordered") as long as the supplier does not change. The next order is checked again.
 
-## 3. The record on the order
+## 3. The record on the order {#la-trace-sur-la-commande}
 
 On the purchase order, the **"Qualification"** card (1) shows the supplier status and the
 override: date, author, step ("creation", "validation" or "supplier change") and reason.
@@ -119,7 +119,7 @@ override: date, author, step ("creation", "validation" or "supplier change") and
 The last ten overrides are also listed on the supplier record, with a link to each order:
 everything you need to review them during an audit.
 
-## 4. Evaluate and qualify the supplier
+## 4. Evaluate and qualify the supplier {#evaluer-et-qualifier-le-fournisseur}
 
 Once the first batch has been received and inspected, go back to the supplier record,
 **"Supplier evaluations"** tab, **"New supplier evaluation"** card:
@@ -142,7 +142,7 @@ The "Qualification" card switches to **"Qualified"** (1). The override stays in 
 
 ![Supplier qualified](img/07-fiche-qualifie.png)
 
-## 5. Further orders go through without a window
+## 5. Further orders go through without a window {#les-commandes-suivantes-passent-sans-fenetre}
 
 In "New purchase document", the supplier no longer has a suffix in the list (1) and carries
 the green **"Qualified"** badge (2): the order is created normally.
@@ -153,7 +153,7 @@ the green **"Qualified"** badge (2): the order is created normally.
 > **"Review overdue"** and orders are refused again. A new approved evaluation, with a new date,
 > requalifies it.
 
-## Screens that are checked
+## Screens that are checked {#les-ecrans-controles}
 
 The same override window opens wherever a purchase order is created or validated:
 
@@ -171,7 +171,7 @@ The same override window opens wherever a purchase order is created or validated
 **Not** checked: requests for quotation, and the order created automatically by a manual
 receipt (the goods are already there).
 
-## Export the list of qualified suppliers
+## Export the list of qualified suppliers {#exporter-la-liste-des-fournisseurs-qualifies}
 
 Menu **Purchase → Purchases**: the **"Qualified suppliers (CSV)"** button (1), top right,
 downloads the current list (code, company name, qualification, status of the latest
@@ -180,7 +180,7 @@ list to show during an audit.
 
 ![Qualified suppliers (CSV) button](img/09-export-csv.png)
 
-## What next?
+## What next? {#et-ensuite}
 
 - Follow the order through to the invoice: guide "From request for quotation to supplier
   invoice".
@@ -189,7 +189,7 @@ list to show during an audit.
 - Give the "unqualified-supplier-override" permission only to the people entitled to decide an
   override (purchasing manager, quality).
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **I do not see the "Supplier evaluations" tab.**
 The company is not an active supplier: "Detail" tab, "Status supplier" = Active, then

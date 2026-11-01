@@ -18,7 +18,7 @@ et chaque salarié (sa demande d'absence).
 **Exemple utilisé** : l'atelier passe en 2×8 du lundi au vendredi. Un salarié pose la
 semaine du 11 novembre : 5 jours ouvrés, moins le férié, soit 4 jours décomptés.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **Temps management** (Temps et absences, Horaires de travail) apparaît avec la
   permission **settings-time-menu**.
@@ -27,7 +27,7 @@ semaine du 11 novembre : 5 jours ouvrés, moins le férié, soit 4 jours décomp
   pour un autre salarié et valident les demandes.
 - Chaque salarié dépose ses demandes depuis son **profil**.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Natures de congé
@@ -40,7 +40,7 @@ Soldes et paie
 
 ---
 
-## 1. Les natures de congé
+## 1. Les natures de congé {#les-natures-de-conge}
 
 Menu **Ressources humaines › Note de frais**, onglet **Natures de congé** : congés payés,
 RTT, récupération, maladie, événement familial, formation, sans solde…
@@ -61,7 +61,7 @@ RTT, récupération, maladie, événement familial, formation, sans solde…
 
 ---
 
-## 2. Les horaires de travail
+## 2. Les horaires de travail {#les-horaires-de-travail}
 
 Menu **Temps management › Horaires de travail** : un **régime horaire** décrit les plages
 travaillées de chaque jour (journée, 2×8, 3×8, poste de nuit).
@@ -97,7 +97,7 @@ alors celle du régime : 16 h par jour en 2×8, 0 le dimanche.
 
 ---
 
-## 3. Les jours fériés
+## 3. Les jours fériés {#les-jours-feries}
 
 Menu **Temps management › Temps et absences**, onglet **jour férié**.
 
@@ -123,7 +123,7 @@ des dates des opérations, et retiré du décompte des congés en jours ouvrable
 
 ---
 
-## 4. Les droits à congés
+## 4. Les droits à congés {#les-droits-a-conges}
 
 Fiche du salarié (**Ressources humaines › Utilisateurs liste**), onglet **Soldes de
 congés**, bouton **Modifier** sur la nature :
@@ -140,7 +140,7 @@ chaque nature décomptée.
 
 ---
 
-## 5. La demande d'absence (salarié)
+## 5. La demande d'absence (salarié) {#la-demande-dabsence-salarie}
 
 Le salarié ouvre son **profil** (menu de son nom en haut à droite), onglet **Demande
 d'absence**. Il y voit ses soldes, ses demandes et le formulaire :
@@ -178,7 +178,7 @@ demande n'est jamais prévenu de sa propre action.
 
 ---
 
-## 6. La validation (RH)
+## 6. La validation (RH) {#la-validation-rh}
 
 Menu **Temps management › Temps et absences**, onglet **Absence** : toutes les demandes,
 avec le nombre de jours décomptés. **Modifier** sur une demande :
@@ -205,7 +205,7 @@ Les RH peuvent aussi saisir une absence pour un salarié depuis le formulaire de
 
 ---
 
-## 7. Les soldes
+## 7. Les soldes {#les-soldes}
 
 Menu **Ressources humaines › Soldes de congés** : le tableau de l'atelier, un salarié par
 ligne et, par nature, le total acquis, le pris et le solde restant.
@@ -218,7 +218,7 @@ ligne et, par nature, le total acquis, le pris et le solde restant.
 
 ---
 
-## 8. Présence et export paie
+## 8. Présence et export paie {#presence-et-export-paie}
 
 **Rapport de présence** (Ressources humaines) : le temps passé par salarié sur une période,
 d'après les déclarations de production (onglet Activités) ou la badgeuse (onglet Pointage).
@@ -246,7 +246,7 @@ orphelines.
 
 ---
 
-## 9. Les autres réglages
+## 9. Les autres réglages {#les-autres-reglages}
 
 - **Evènement machine** (Temps et absences) : les types d'arrêt (maintenance, panne,
   réglage) repris par la GMAO. Un ordre de travail avec « Machine arrêtée » retire sa
@@ -261,14 +261,14 @@ orphelines.
 
   ![Unité des temps](img/17-unite-temps.png)
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Affecter le régime horaire aux machines (**Méthodes › Ressources**) pour un planning de
   charge réaliste.
 - Renseigner le matricule paie et le superviseur de chaque salarié : guide « Ressources
   humaines — fiche salarié et notes de frais ».
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Une demande compte 5 jours au lieu de 4.**
 Elle est en « Calendar » (calendaire) ou le jour férié n'existait pas encore au moment de

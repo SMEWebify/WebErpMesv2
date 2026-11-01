@@ -18,7 +18,7 @@ est habilité sur quelle machine.
 changement d'outil. L'incident est déclaré, le risque évalué, la vérification de la
 machine suivie, et l'habilitation « Conduite plieuse » mise en place.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **Risque et santé** apparaît avec la permission **osh-menu**, nécessaire aussi
   pour créer les types d'habilitation.
@@ -28,7 +28,7 @@ machine suivie, et l'habilitation « Conduite plieuse » mise en place.
 > ⚠️ Le module ne remplace pas le **document unique** (DUERP) et ne gère ni les EPI ni les
 > déclarations d'accident : il tient les registres et alerte sur les habilitations.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Types d'habilitation
@@ -49,7 +49,7 @@ formulaire de création à droite. Pour modifier une ligne, cliquez sur son cray
 
 ---
 
-## 1. Préparer les types d'habilitation
+## 1. Préparer les types d'habilitation {#preparer-les-types-dhabilitation}
 
 Menu **Matrice de polyvalence**, onglet **Types d'habilitation**. Un type d'habilitation est
 une compétence reconnue (conduite plieuse, CACES, SST, soudage…), à renouveler ou non.
@@ -70,7 +70,7 @@ une compétence reconnue (conduite plieuse, CACES, SST, soudage…), à renouvel
 
 ---
 
-## 2. Déclarer un incident
+## 2. Déclarer un incident {#declarer-un-incident}
 
 Menu **Incidents**.
 
@@ -95,7 +95,7 @@ L'incident est créé **En cours**. Une fois les actions menées, cliquez sur so
 
 ---
 
-## 3. Évaluer le risque
+## 3. Évaluer le risque {#evaluer-le-risque}
 
 Menu **Risque** : l'évaluation des risques par atelier.
 
@@ -126,7 +126,7 @@ priorité.
 
 ---
 
-## 4. Suivre les vérifications réglementaires
+## 4. Suivre les vérifications réglementaires {#suivre-les-verifications-reglementaires}
 
 Menu **Conformités** : vérifications périodiques (VGP), contrôles électriques, registres
 obligatoires.
@@ -150,7 +150,7 @@ Une fois le rapport reçu, passez la conformité à **Approuvée** :
 
 ---
 
-## 5. Enregistrer les formations
+## 5. Enregistrer les formations {#enregistrer-les-formations}
 
 Menu **Formations** : une ligne par session suivie par un salarié.
 
@@ -178,7 +178,7 @@ Si le salarié n'a pas obtenu la certification, ouvrez la formation avec son cra
 
 ---
 
-## 6. Lire la matrice de polyvalence
+## 6. Lire la matrice de polyvalence {#lire-la-matrice-de-polyvalence}
 
 Menu **Matrice de polyvalence** : un salarié par ligne, une habilitation par colonne, avec
 sous chaque colonne les machines concernées.
@@ -199,7 +199,7 @@ sous chaque colonne les machines concernées.
 
 ---
 
-## 7. Repérer les écarts
+## 7. Repérer les écarts {#reperer-les-ecarts}
 
 Onglet **Écarts constatés** : les opérations affectées à un opérateur qui n'a pas
 d'habilitation valide pour la machine de l'opération.
@@ -214,7 +214,7 @@ Dans l'exemple, l'opération de pliage sur la presse est affectée à un salari�
 
 ---
 
-## 8. Routine mensuelle
+## 8. Routine mensuelle {#routine-mensuelle}
 
 1. **Matrice** : relancer les formations « bientôt échues » et organiser les recyclages
    des « périmées ».
@@ -223,7 +223,7 @@ Dans l'exemple, l'opération de pliage sur la presse est affectée à un salari�
 4. **Incidents** : clore ceux dont les actions sont faites, et reporter dans **Risque** les
    mesures préventives qui en découlent.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Une formation n'apparaît pas dans la matrice.**
 Elle n'a pas de type d'habilitation, ou le type est inactif. Ouvrez la formation et

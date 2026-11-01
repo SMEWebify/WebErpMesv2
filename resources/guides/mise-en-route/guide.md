@@ -14,7 +14,7 @@ que les documents sortent justes dès le premier jour.
 
 **Pour qui** : l'administrateur de la société (permission **Votre entreprise**).
 
-## Dans quel ordre
+## Dans quel ordre {#dans-quel-ordre}
 
 ```steps
 Assistant de configuration
@@ -29,7 +29,7 @@ Imports
 Options d'exploitation
 ```
 
-## 1. L'assistant de configuration
+## 1. L'assistant de configuration {#lassistant-de-configuration}
 
 À la première connexion, un assistant en 8 étapes demande les informations sans
 lesquelles l'application ne peut pas fonctionner : la **société** (nom, adresse, SIREN,
@@ -50,7 +50,7 @@ L'assistant s'affiche dans la langue de l'adresse de la page : `/fr/…` en fran
 
 ---
 
-## 2. Réglage société
+## 2. Réglage société {#reglage-societe}
 
 Menu **Votre entreprise › Réglage société**, onglet « Réglage usine ». Ces informations
 figurent sur tous vos documents (devis, commandes, factures).
@@ -91,7 +91,7 @@ Onglet « Document code templates » : le format du numéro de chaque type de do
 
 ---
 
-## 3. Comptabilité
+## 3. Comptabilité {#comptabilite}
 
 Menu **Comptabilité** : TVA, conditions de paiement, modes de paiement, modes de livraison
 et affectations comptables. Tous les écrans fonctionnent pareil : la liste à gauche, la
@@ -118,7 +118,7 @@ d'encaissement (champ compte).
 
 ---
 
-## 4. Méthodes et catégories d'affaire
+## 4. Méthodes et catégories d'affaire {#methodes-et-categories-daffaire}
 
 Unités, services et taux horaires, familles, sections, ressources… Suivez le guide
 « Les Méthodes, le dictionnaire de l'atelier ».
@@ -164,7 +164,7 @@ suivi). Ils alimentent l'indicateur des pertes commerciales de l'écran Devis.
 
 ---
 
-## 5. Flux des tâches
+## 5. Flux des tâches {#flux-des-taches}
 
 Menu **Votre entreprise › Flux des Tâches** : les statuts que prennent les opérations de
 fabrication. Sans aucun statut, les devis, commandes, achats et la production renvoient
@@ -182,7 +182,7 @@ Créez les statuts dans cet ordre, en choisissant leur titre dans la liste :
 
 ---
 
-## 6. Objectif de chiffre
+## 6. Objectif de chiffre {#objectif-de-chiffre}
 
 Menu **Votre entreprise › Objectif de chiffre** : l'objectif de chiffre d'affaires,
 mois par mois, affiché sur le tableau de bord.
@@ -194,7 +194,7 @@ mois par mois, affiché sur le tableau de bord.
 
 ---
 
-## 7. Rôles et utilisateurs
+## 7. Rôles et utilisateurs {#roles-et-utilisateurs}
 
 ### Rôles et permissions
 
@@ -269,7 +269,7 @@ Pour lui donner ses droits : ouvrez sa fiche, onglet **RH information**, choisis
 
 ---
 
-## 8. E-mail
+## 8. E-mail {#e-mail}
 
 Menu **Votre entreprise › Configuration e-mail** : le serveur d'envoi (SMTP) qui expédie
 les devis, factures, relances et notifications.
@@ -284,7 +284,7 @@ l'adresse et le nom d'expédition, puis « Enregistrer » et **« Envoyer un e-m
 
 ---
 
-## 9. Reprendre vos données
+## 9. Reprendre vos données {#reprendre-vos-donnees}
 
 Menu **Votre entreprise › Imports/Exports** : import des clients, des articles, des devis
 et des commandes depuis un fichier CSV.
@@ -303,7 +303,7 @@ et des commandes depuis un fichier CSV.
 
 ---
 
-## 10. Options d'exploitation
+## 10. Options d'exploitation {#options-dexploitation}
 
 Quelques réglages ne sont pas dans l'application : ils se posent dans le **fichier de
 configuration** du serveur. Demandez-les à votre installateur en citant le nom du réglage.
@@ -373,7 +373,7 @@ existe mais n'enregistre rien, et l'indique par un bandeau.
 
 ---
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 Chaque utilisateur peut choisir l'apparence de l'application : menu utilisateur (en haut à
 droite) › **Profil**, onglet **Apparence** (habillage et couleur principale). Le mode clair
@@ -384,7 +384,7 @@ ou sombre se règle par le bouton de la barre du haut.
 Votre instance est prête : suivez le guide **« Du prospect à la facture »** pour le premier
 devis.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **L'application me renvoie toujours vers l'assistant de configuration.**
 Il manque une société, une TVA, une condition ou un mode de paiement, un mode de livraison

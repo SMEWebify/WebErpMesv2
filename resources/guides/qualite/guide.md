@@ -19,7 +19,7 @@ depuis l'atelier.
 La butée a bougé au changement d'outil. Le client accepte 7 pièces à 91,5°, les 5 autres
 sont reprises.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **Qualité** apparaît avec la permission **quality-menu**. Les audits internes
   demandent **audit-menu**, les retours clients **returns-menu**.
@@ -32,7 +32,7 @@ sont reprises.
 - La signature électronique des dérogations n'est proposée que si l'écran **Intégrations →
   Signature électronique** est configuré.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Réglage
@@ -51,7 +51,7 @@ internes** et **Retours clients**.
 
 ---
 
-## 1. Le tableau de bord
+## 1. Le tableau de bord {#le-tableau-de-bord}
 
 ![Tableau de bord qualité](img/01-tableau-de-bord.png)
 
@@ -67,7 +67,7 @@ internes** et **Retours clients**.
 
 ---
 
-## 2. Préparer le référentiel des défauts
+## 2. Préparer le référentiel des défauts {#preparer-le-referentiel-des-defauts}
 
 Onglet **Réglage** : trois listes, à remplir une fois, que chaque non-conformité reprend.
 
@@ -88,7 +88,7 @@ Dépliez une carte avec le **+**, puis :
 
 ---
 
-## 3. Suivre les appareils de mesure
+## 3. Suivre les appareils de mesure {#suivre-les-appareils-de-mesure}
 
 Onglet **Appareil de mesure** : pieds à coulisse, rapporteurs, micromètres, calibres…
 
@@ -115,7 +115,7 @@ Chaque matin à 7 h 30, le responsable de chaque appareil concerné reçoit auss
 
 ---
 
-## 4. Déclarer une non-conformité
+## 4. Déclarer une non-conformité {#declarer-une-non-conformite}
 
 Menu **Non conformités**, carte **Nouvelle non conformité** en bas de la page (cliquez sur
 son titre pour la déplier).
@@ -151,7 +151,7 @@ détail et l'historique des modifications (section 7), le bouton PDF imprime la 
 
 ---
 
-## 5. Lancer une action corrective
+## 5. Lancer une action corrective {#lancer-une-action-corrective}
 
 Menu **Actions** : une action corrige la cause pour que le défaut ne revienne pas.
 
@@ -186,7 +186,7 @@ qui a changé quoi, et quand, avec l'ancienne valeur barrée et la nouvelle.
 
 ---
 
-## 6. Obtenir une dérogation du client
+## 6. Obtenir une dérogation du client {#obtenir-une-derogation-du-client}
 
 Une **dérogation** trace l'acceptation de pièces hors tolérance. Une dérogation **externe**
 engage le client : elle ne peut être validée que si son accord écrit est prouvé. Une
@@ -293,7 +293,7 @@ de données client » dont le contact a une adresse e-mail.
 
 ---
 
-## 7. Clôturer la non-conformité
+## 7. Clôturer la non-conformité {#cloturer-la-non-conformite}
 
 Une fois le traitement terminé, ouvrez la non-conformité avec son crayon.
 
@@ -322,7 +322,7 @@ Un clic sur la ligne ouvre le détail de la fiche, avec son historique.
 
 ---
 
-## 8. Visa documentaire des réceptions
+## 8. Visa documentaire des réceptions {#visa-documentaire-des-receptions}
 
 Menu **Visa documentaire réception** : les lignes de réception dont la commande d'achat
 exige un certificat matière (EN 10204 : 2.1, 2.2, 3.1, 3.2), ou pour lesquelles un
@@ -344,7 +344,7 @@ commentaire, et la création d'une non-conformité fournisseur si besoin.
 
 ---
 
-## 9. Plans de contrôle et premier article
+## 9. Plans de contrôle et premier article {#plans-de-controle-et-premier-article}
 
 Menu **Inspection** : l'écran **Plans qualité** regroupe les plans de contrôle des articles.
 
@@ -383,7 +383,7 @@ est rangé dans les documents de la commande (à défaut, de l'article).
 
 ---
 
-## 10. Audits internes et retours clients
+## 10. Audits internes et retours clients {#audits-internes-et-retours-clients}
 
 **Audits internes** : planificateur ISO 9001 avec plans annuels, calendrier, processus et
 checklists (§4 à §10 de la norme, pré-remplies). Un audit se lance depuis le calendrier ;
@@ -398,7 +398,7 @@ tâches de reprise.
 
 ![Retours clients](img/24-retours.png)
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Livrer** les pièces acceptées : une fois la dérogation validée, le bon de livraison de
   la ligne n'est plus bloqué (guide de la vente).
@@ -407,7 +407,7 @@ tâches de reprise.
 - **Viser les certificats** des réceptions matière (guide Achats).
 - **Planifier un audit interne** pour vérifier que l'action corrective tient dans le temps.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Les listes Défaillance, Cause et Correctif ne proposent que « N/A ».**
 Le référentiel est vide : remplissez l'onglet Réglage du tableau de bord (section 2).

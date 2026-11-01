@@ -20,7 +20,7 @@ payroll) and every employee (their leave request).
 **Example used**: the workshop moves to two shifts, Monday to Friday. An employee takes the
 week of 11 November: 5 working days, minus the public holiday, so 4 days are charged.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **Settings time** menu (Times and absences, Work shifts) appears with the
   **settings-time-menu** permission.
@@ -29,7 +29,7 @@ week of 11 November: 5 working days, minus the public holiday, so 4 days are cha
   employee and approve requests.
 - Each employee files requests from their **profile**.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Leave types
@@ -42,7 +42,7 @@ Balances and payroll
 
 ---
 
-## 1. Leave types
+## 1. Leave types {#les-natures-de-conge}
 
 Menu **Human resources › Expenses**, **Leave types** tab: paid leave, RTT, time off
 in lieu, sick leave, family event, training, unpaid…
@@ -63,7 +63,7 @@ in lieu, sick leave, family event, training, unpaid…
 
 ---
 
-## 2. Work shifts
+## 2. Work shifts {#les-horaires-de-travail}
 
 Menu **Settings time › Work shifts**: a **shift pattern** describes the worked slots of
 each day (day shift, two shifts, three shifts, night shift).
@@ -99,7 +99,7 @@ For a machine to follow this pattern, choose it on its record (**Methods › Res
 
 ---
 
-## 3. Public holidays
+## 3. Public holidays {#les-jours-feries}
 
 Menu **Settings time › Times and absences**, **public holiday** tab.
 
@@ -125,7 +125,7 @@ operation date calculation, and removed from leave counted in working days.
 
 ---
 
-## 4. Leave entitlements
+## 4. Leave entitlements {#les-droits-a-conges}
 
 Employee record (**Human resources › Users list**), **Leave balances** tab, **Edit** on the
 leave type:
@@ -142,7 +142,7 @@ every counted type.
 
 ---
 
-## 5. The leave request (employee)
+## 5. The leave request (employee) {#la-demande-dabsence-salarie}
 
 The employee opens their **profile** (menu with their name, top right), **Leave request**
 tab. It shows their balances, their requests and the form:
@@ -180,7 +180,7 @@ request is never notified of their own action.
 
 ---
 
-## 6. Approval (HR)
+## 6. Approval (HR) {#la-validation-rh}
 
 Menu **Settings time › Times and absences**, **Absence** tab: all requests, with the
 number of days charged. **Edit** on a request:
@@ -207,7 +207,7 @@ HR can also enter an absence for an employee from the form on the right (choose 
 
 ---
 
-## 7. Balances
+## 7. Balances {#les-soldes}
 
 Menu **Human resources › Leave balances**: the workshop table, one employee per row and,
 for each type, total entitlement, days taken and remaining balance.
@@ -220,7 +220,7 @@ for each type, total entitlement, days taken and remaining balance.
 
 ---
 
-## 8. Attendance and payroll export
+## 8. Attendance and payroll export {#presence-et-export-paie}
 
 **Attendance report** (Human resources): the time spent per employee over a period, from
 production declarations (Activities tab) or the time clock (Clocking tab). **Anomalies**
@@ -246,7 +246,7 @@ count clock-ins never closed, double entries and orphan exits.
 
 ---
 
-## 9. Other settings
+## 9. Other settings {#les-autres-reglages}
 
 - **Machine event** (Times and absences): the stop types (maintenance, breakdown, setup)
   used by the CMMS. A work order with "Machine stopped" removes its period from the
@@ -260,14 +260,14 @@ count clock-ins never closed, double entries and orphan exits.
 
   ![Time unit](img/17-unite-temps.png)
 
-## What next?
+## What next? {#et-ensuite}
 
 - Assign the working pattern to the machines (**Methods › Resources**) for a realistic load
   planning.
 - Fill in each employee's payroll number and supervisor: guide "Human resources — employee
   record and expense reports".
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **A request counts 5 days instead of 4.**
 It uses "Calendar", or the public holiday did not exist yet when the request was made.

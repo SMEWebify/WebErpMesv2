@@ -19,7 +19,7 @@ Methods describe **how your workshop works**: what you can do (services), with w
 only fill them in once, but **everything else depends on them**: quote costing, routings,
 the load planning, the operator screen and subcontracting purchases.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You need the **Methods** permission, usually reserved for the methods manager or the
   administrator.
@@ -27,7 +27,7 @@ the load planning, the operator screen and subcontracting purchases.
   rate** and their **capacity** in hours per week.
 - The **users** must already exist: each section has a person in charge.
 
-## In which order to set up
+## In which order to set up {#dans-quel-ordre-parametrer}
 
 Each category relies on the previous one: follow this order.
 
@@ -66,7 +66,7 @@ Standard bills of materials
 
 ---
 
-## 1. Units: how you count
+## 1. Units: how you count {#unites-comment-on-compte}
 
 The unit tells how a quantity is counted: piece, kilogram, metre, square metre…
 
@@ -83,7 +83,7 @@ The unit tells how a quantity is counted: piece, kilogram, metre, square metre�
 
 ---
 
-## 2. Services: what the workshop can do
+## 2. Services: what the workshop can do {#services-ce-que-latelier-sait-faire}
 
 This is the most important category. A service is a **skill** (laser cutting, bending,
 welding, subcontracted painting…) or a **purchase type** (sheet metal, screws and bolts…).
@@ -122,7 +122,7 @@ label, then calculates:
 
 ---
 
-## 3. Families: classifying items
+## 3. Families: classifying items {#familles-classer-les-articles}
 
 A family groups similar items (sheet metal, tube, screws and bolts…). It is required on
 every item.
@@ -137,7 +137,7 @@ every item.
 
 ---
 
-## 4. Sections: grouping workstations
+## 4. Sections: grouping workstations {#sections-regrouper-les-postes}
 
 A section is a group of workstations: a workshop, a cell, a department ("Cutting
 workshop", "Welding workshop"…).
@@ -150,7 +150,7 @@ Human resources and OSH modules.
 
 ---
 
-## 5. Resources: machines and workstations
+## 5. Resources: machines and workstations {#ressources-les-machines-et-les-postes}
 
 A resource is **what does the work**: a machine (laser, press brake) or a manual
 workstation (assembly team). It carries the **capacity** for the planning.
@@ -177,7 +177,7 @@ Other useful settings:
 
 ---
 
-## 6. Locations: the workshop areas
+## 6. Locations: the workshop areas {#emplacements-les-zones-de-latelier}
 
 A location ("Locations" entry of the menu) is a workshop area attached to a resource.
 It is used to find workstations in the **Methods overview**.
@@ -188,7 +188,7 @@ It is used to find workstations in the **Methods overview**.
 
 ---
 
-## 7. Tools: bookable tooling
+## 7. Tools: bookable tooling {#outils-loutillage-reservable}
 
 Tools (punches, dies, tool holders…) can be attached to a routing operation. The software
 then refuses to book the same tool twice for the same time slot.
@@ -204,7 +204,7 @@ then refuses to book the same tool twice for the same time slot.
 
 ---
 
-## 8. Inter-operation delays: the time between two operations
+## 8. Inter-operation delays: the time between two operations {#delais-inter-operations-le-temps-entre-deux-operations}
 
 Some operations do not follow each other immediately: drying after painting, cooling after
 welding… A delay is declared **per pair of operations**, in workshop hours.
@@ -220,7 +220,7 @@ not listed has no delay.
 
 ---
 
-## 9. Standard bills of materials: standard routings
+## 9. Standard bills of materials: standard routings {#nomenclatures-standard-les-gammes-types}
 
 A standard bill of materials is a **routing template** (operations and materials) that you
 reuse: "Laser + bending", "Welded and painted assembly"…
@@ -240,7 +240,7 @@ card offers one button per template: one click adds all its operations to the ro
 
 ---
 
-## Checking the setup: the overview
+## Checking the setup: the overview {#controler-le-parametrage-la-vue-densemble}
 
 **Scheduling › Methods overview** menu: one card per service, with its number of
 resources and its tasks in progress.
@@ -250,7 +250,7 @@ resources and its tasks in progress.
 > 💡 A productive service that shows **Resource : 0** will never be scheduled:
 > attach a resource to it (step 5).
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **"Aucune TVA ou unité par défaut configurée" (No VAT or default unit configured) when creating a quote line.**
 No unit is "By default": set one (step 1).

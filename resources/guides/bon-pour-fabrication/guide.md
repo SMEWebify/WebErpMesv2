@@ -18,7 +18,7 @@ le **bon pour fabrication** (BPF).
 Le plan du support est validé, celui du capot attend encore une réponse du client : seul le
 support part en fabrication.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Votre société a activé l'obligation de bon pour fabrication : c'est pour cela que ce guide
   apparaît. Sans cette option, rien n'est bloqué et aucun badge BPF n'est affiché.
@@ -37,7 +37,7 @@ support part en fabrication.
 
 Les approvisionnements peuvent donc partir avant le BPF : seul le travail en atelier attend.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Commande et gamme
@@ -49,7 +49,7 @@ Suivi et annulation
 
 ---
 
-## 1. Repérer les lignes sans BPF
+## 1. Repérer les lignes sans BPF {#reperer-les-lignes-sans-bpf}
 
 Ouvrez la commande, onglet **« Lignes »**. Dans la colonne « Tâches », chaque ligne porte
 un badge :
@@ -61,7 +61,7 @@ un badge :
 
 Une ligne neuve, ou une ligne **dupliquée**, n'a jamais de BPF : il faut toujours le donner.
 
-## 2. Ce que voit l'opérateur
+## 2. Ce que voit l'opérateur {#ce-que-voit-loperateur}
 
 Sur l'écran de suivi d'une opération productive dont la ligne n'a pas de BPF :
 
@@ -73,7 +73,7 @@ Sur l'écran de suivi d'une opération productive dont la ligne n'a pas de BPF :
 > 💡 L'opérateur n'a rien à faire d'autre que prévenir le bureau d'études : dès que le BPF est
 > donné, il lui suffit de recharger l'écran.
 
-## 3. Donner le BPF depuis la fiche commande
+## 3. Donner le BPF depuis la fiche commande {#donner-le-bpf-depuis-la-fiche-commande}
 
 C'est la méthode la plus rapide quand plusieurs lignes sont prêtes.
 
@@ -94,13 +94,13 @@ Un message confirme le nombre de lignes libérées. Ensuite :
 > raison ligne par ligne ; les autres sont quand même libérées. Les refus possibles sont
 > décrits plus bas (« Quand le BPF est refusé »).
 
-## 4. L'atelier démarre
+## 4. L'atelier démarre {#latelier-demarre}
 
 Rechargez l'écran de suivi : le bandeau a disparu et **« Play »** est disponible (1).
 
 ![Écran de suivi débloqué, Play disponible](img/05-tache-debloquee.png)
 
-## 5. Donner ou annuler le BPF ligne par ligne
+## 5. Donner ou annuler le BPF ligne par ligne {#donner-ou-annuler-le-bpf-ligne-par-ligne}
 
 Menu **Commandes → Ligne de commandes** : la liste de toutes les lignes, toutes commandes
 confondues, a une colonne **« BPF »**. Pratique pour le bureau d'études, qui y voit d'un coup
@@ -116,7 +116,7 @@ d'œil tout ce qui attend son feu vert.
 > fois, même mise en pause). Le message est : « Une tâche de cette ligne a déjà démarré : le bon
 > pour fabrication ne peut plus être annulé. » Vérifiez donc le plan **avant** de donner le BPF.
 
-## 6. Où voir les lignes sans BPF
+## 6. Où voir les lignes sans BPF {#ou-voir-les-lignes-sans-bpf}
 
 - **Liste des tâches** (Planification → Liste des tâches) : un **cadenas** orange (1) devant le
   libellé des opérations productives dont la ligne n'a pas de BPF.
@@ -130,7 +130,7 @@ d'œil tout ce qui attend son feu vert.
 - **Commande passée « En cours »** : les opérations productives sans BPF restent à leur statut,
   les autres avancent normalement.
 
-## Quand le BPF est refusé
+## Quand le BPF est refusé {#quand-le-bpf-est-refuse}
 
 Le BPF n'est pas donné, avec un message, dans ces cas :
 
@@ -146,7 +146,7 @@ Le BPF n'est pas donné, avec un message, dans ces cas :
 > (nouveau plan, indice B au lieu de A), son BPF est retiré automatiquement : le nouveau plan
 > doit être revalidé. Le retrait est tracé dans l'historique des modifications.
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Déclarer la production** sur l'écran de suivi : voir le guide « Atelier et production ».
 - **Revue de contrat et avenants** : voir le guide « Revue de contrat, avenants et prix de la
@@ -154,7 +154,7 @@ Le BPF n'est pas donné, avec un message, dans ces cas :
 - Confier le droit « production-release » aux personnes du bureau d'études (Votre société →
   Rôles et permissions).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Le bouton « Bon pour fabrication » n'apparaît pas.**
 Il vous manque le droit « production-release ». Vous voyez les badges, mais seul un porteur

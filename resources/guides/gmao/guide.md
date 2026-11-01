@@ -17,14 +17,14 @@ qu'elle soit préventive ou consécutive à une panne, est tracée sur l'équipe
 **Exemple utilisé** : la presse plieuse de l'atelier. Sa vidange hydraulique est planifiée
 tous les mois, et une fuite sur un vérin doit être déclarée.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **GMAO** n'apparaît qu'avec la permission **asset_manager**. La liste des
   équipements demande en plus **asset-menu**.
 - La machine doit exister comme **ressource** dans les Méthodes (voir le guide
   « Les Méthodes ») : l'équipement GMAO s'y rattache.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Équipement
@@ -40,7 +40,7 @@ depuis la fiche d'un équipement.
 
 ---
 
-## 1. Le tableau de bord
+## 1. Le tableau de bord {#le-tableau-de-bord}
 
 ![Tableau de bord GMAO](img/01-tableau-de-bord.png)
 
@@ -54,7 +54,7 @@ depuis la fiche d'un équipement.
 
 ---
 
-## 2. Enregistrer un équipement
+## 2. Enregistrer un équipement {#enregistrer-un-equipement}
 
 Menu **GMAO › Immobilisations**, puis **Nouveau Actif**.
 
@@ -78,7 +78,7 @@ La **fiche équipement** regroupe ses ordres de travail et ses plans de maintena
 
 ---
 
-## 3. Planifier la maintenance préventive
+## 3. Planifier la maintenance préventive {#planifier-la-maintenance-preventive}
 
 Depuis la fiche de l'équipement, **Nouveau plan de maintenance** : l'équipement est déjà
 choisi. Les plans existants se retrouvent aussi dans le menu **GMAO › Plans de
@@ -143,7 +143,7 @@ ordres de travail, à la date de l'échéance.
 
 ---
 
-## 4. L'ordre de travail
+## 4. L'ordre de travail {#lordre-de-travail}
 
 L'ordre généré est **Planifié**, de type **Préventif**, à la date d'échéance du plan ; sa
 fiche rappelle le **plan de maintenance** d'où il vient.
@@ -170,7 +170,7 @@ Les statuts se suivent dans cet ordre :
 
 ---
 
-## 5. Réaliser l'intervention
+## 5. Réaliser l'intervention {#realiser-lintervention}
 
 **Modifier l'ordre de travail**, puis renseignez l'intervention :
 
@@ -194,7 +194,7 @@ Enregistrez.
 
 ---
 
-## 6. Clôturer
+## 6. Clôturer {#cloturer}
 
 Une fois l'intervention vérifiée, rouvrez l'ordre : statut **Clôturé**, puis **Clôturé le**.
 
@@ -211,7 +211,7 @@ estimée en regard de la durée réelle.
 
 ---
 
-## 7. Déclarer une panne
+## 7. Déclarer une panne {#declarer-une-panne}
 
 Depuis la fiche de l'équipement, **Nouvel ordre de travail**.
 
@@ -236,7 +236,7 @@ Puis suivez l'intervention comme aux sections 5 et 6.
 
 ---
 
-## 8. Suivre les interventions
+## 8. Suivre les interventions {#suivre-les-interventions}
 
 Menu **GMAO › Ordres de travail** : tous les ordres de travail, avec leur équipement, leur type,
 leur priorité, leur statut et leur technicien.
@@ -247,14 +247,14 @@ La **fiche équipement** garde l'historique de ses interventions :
 
 ![Historique de l'équipement](img/16-equipement-historique.png)
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Renseigner la **durée réelle** et le **début de la panne** sur chaque ordre : ils
   serviront aux indicateurs MTBF et MTTR du tableau de bord.
 - Affecter un **régime horaire** à la machine (guide « Temps, horaires et congés ») : un
   arrêt machine se retire alors de sa vraie capacité dans le planning de charge.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Mon plan de maintenance n'a créé aucun ordre de travail à l'échéance.**
 Les ordres sont créés chaque matin à 6 h, le nombre de jours d'avance choisi avant

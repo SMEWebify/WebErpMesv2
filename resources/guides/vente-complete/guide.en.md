@@ -17,7 +17,7 @@ and delivery.
 **Example used**: Métallerie Durand, met at a trade show, orders 20 plates
 in 8 mm S235 steel, laser cut then bent, at €42.50 excl. VAT each.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You must have access to the Third party, Leads, Opportunities, Quotes, Orders,
   Delivery notes and Invoices menus.
@@ -26,7 +26,7 @@ in 8 mm S235 steel, laser cut then bent, at €42.50 excl. VAT each.
   (laser, bending…) with their hourly rate.
 - Optional: **business categories** and **loss reasons** (Methods menu).
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Prospect
@@ -48,7 +48,7 @@ Quote › Order…) lets you trace the history of the deal.
 
 ---
 
-## 1. Log in
+## 1. Log in {#se-connecter}
 
 ![Login screen](img/01-connexion.png)
 
@@ -62,7 +62,7 @@ You arrive on the dashboard.
 
 ---
 
-## 2. Create the prospect
+## 2. Create the prospect {#creer-le-prospect}
 
 A prospect is a company that is not a customer yet. You must create it with **an
 address and a contact**: the lead and the quote need them.
@@ -115,7 +115,7 @@ The contact must appear in the table on the left.
 
 ---
 
-## 3. Record the lead
+## 3. Record the lead {#enregistrer-le-lead}
 
 The lead records where the contact came from (trade show, website, referral…) and how
 interested they are.
@@ -132,7 +132,7 @@ and the **Source**, then click "Submit".
 
 ---
 
-## 4. Turn the lead into an opportunity
+## 4. Turn the lead into an opportunity {#transformer-le-lead-en-opportunite}
 
 When the prospect has a real need, turn the lead into an opportunity: on the
 lead record, "Options" card, click "New opportunity". The lead changes
@@ -178,7 +178,7 @@ To update it, click its row and change its **Status**: "Mitigated", "Closed" or
 
 ---
 
-## 5. Prepare the quote
+## 5. Prepare the quote {#etablir-le-devis}
 
 ### 5.1 Create the quote
 
@@ -269,7 +269,7 @@ each step, then click "Back".
 
 ---
 
-## 6. Turn the quote into an order
+## 6. Turn the quote into an order {#transformer-le-devis-en-commande}
 
 When the customer accepts, "Quote lines" tab: tick the ordered lines, then
 click « Créer une commande » (Create an order) and confirm.
@@ -298,7 +298,7 @@ The order is created with its lines **and their routings**. The quote changes to
 
 ---
 
-## 7. Report production
+## 7. Report production {#declarer-la-production}
 
 Each operation in the routing is reported on its **tracking screen**: start, good
 and rejected parts, end.
@@ -362,7 +362,7 @@ moves to the next one). On the order, the « Tâches » (Tasks) column of the li
 
 ---
 
-## 8. Deliver: the delivery note
+## 8. Deliver: the delivery note {#livrer-le-bon-de-livraison}
 
 "Lines" tab of the order: tick the lines to deliver, click
 « Nouveau BL » (New delivery note) and confirm.
@@ -377,7 +377,7 @@ is available in the "Options" card.
 
 ---
 
-## 9. Invoice
+## 9. Invoice {#facturer}
 
 On the delivery note, "Options" card, click "New invoice".
 
@@ -397,7 +397,7 @@ The invoice is created with the **In progress** status (draft), with the deliver
 
 ---
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Issue and send the invoice**, then **record the payment** (« Règlements » (Payments) tab).
 - **Follow the deal** on the opportunity summary: amounts quoted, ordered,
@@ -406,7 +406,7 @@ The invoice is created with the **In progress** status (draft), with the deliver
 - **Revise or vary a quote** (revision, variant, template, margin): "Advanced quotes" guide.
 - **Chase** overdue invoices: Invoices › "Invoices to chase" menu.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **My company does not appear in "New Lead".**
 It is probably still "Inactive": set its "Status client" to Prospect

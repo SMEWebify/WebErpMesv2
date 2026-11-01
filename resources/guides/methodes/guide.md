@@ -18,7 +18,7 @@ classez vos articles (familles). Vous ne les remplissez qu'une fois, mais **tout
 dépend** : le chiffrage des devis, les gammes de fabrication, le planning de charge,
 l'écran opérateur et les achats de sous-traitance.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Il faut la permission **Méthodes**, généralement réservée au responsable méthodes ou à
   l'administrateur.
@@ -26,7 +26,7 @@ l'écran opérateur et les achats de sous-traitance.
   horaire** et leur **capacité** en heures par semaine.
 - Les **utilisateurs** doivent déjà exister : chaque section a un responsable.
 
-## Dans quel ordre paramétrer
+## Dans quel ordre paramétrer {#dans-quel-ordre-parametrer}
 
 Chaque catégorie s'appuie sur la précédente : suivez cet ordre.
 
@@ -65,7 +65,7 @@ Nomenclatures standard
 
 ---
 
-## 1. Unités : comment on compte
+## 1. Unités : comment on compte {#unites-comment-on-compte}
 
 L'unité indique comment se compte une quantité : pièce, kilogramme, mètre, mètre carré…
 
@@ -82,7 +82,7 @@ L'unité indique comment se compte une quantité : pièce, kilogramme, mètre, m
 
 ---
 
-## 2. Services : ce que l'atelier sait faire
+## 2. Services : ce que l'atelier sait faire {#services-ce-que-latelier-sait-faire}
 
 C'est la catégorie la plus importante. Un service est un **savoir-faire** (découpe laser,
 pliage, soudure, peinture sous-traitée…) ou une **nature d'achat** (tôle, visserie…).
@@ -121,7 +121,7 @@ le libellé, puis calcule :
 
 ---
 
-## 3. Familles : classer les articles
+## 3. Familles : classer les articles {#familles-classer-les-articles}
 
 Une famille regroupe des articles semblables (tôle, tube, visserie…). Elle est obligatoire
 sur chaque article.
@@ -135,7 +135,7 @@ sur chaque article.
 
 ---
 
-## 4. Sections : regrouper les postes
+## 4. Sections : regrouper les postes {#sections-regrouper-les-postes}
 
 Une section est un regroupement de postes : un atelier, un îlot, un service (« Atelier
 découpe », « Atelier soudure »…).
@@ -148,7 +148,7 @@ dans les modules Ressources humaines et Sécurité.
 
 ---
 
-## 5. Ressources : les machines et les postes
+## 5. Ressources : les machines et les postes {#ressources-les-machines-et-les-postes}
 
 Une ressource est **ce qui réalise le travail** : une machine (laser, plieuse) ou un poste
 manuel (équipe de montage). C'est elle qui porte la **capacité** du planning.
@@ -175,7 +175,7 @@ Autres réglages utiles :
 
 ---
 
-## 6. Emplacements : les zones de l'atelier
+## 6. Emplacements : les zones de l'atelier {#emplacements-les-zones-de-latelier}
 
 Un emplacement (entrée « Locations » du menu) est une zone de l'atelier rattachée à une
 ressource. Il sert à repérer les postes dans la **vue d'ensemble méthodes**.
@@ -186,7 +186,7 @@ ressource. Il sert à repérer les postes dans la **vue d'ensemble méthodes**.
 
 ---
 
-## 7. Outils : l'outillage réservable
+## 7. Outils : l'outillage réservable {#outils-loutillage-reservable}
 
 Les outils (poinçons, matrices, porte-outils…) peuvent être attachés à une opération de
 gamme. Le logiciel refuse alors de réserver le même outil deux fois sur le même créneau.
@@ -202,7 +202,7 @@ gamme. Le logiciel refuse alors de réserver le même outil deux fois sur le mê
 
 ---
 
-## 8. Délais inter-opérations : le temps entre deux opérations
+## 8. Délais inter-opérations : le temps entre deux opérations {#delais-inter-operations-le-temps-entre-deux-operations}
 
 Certaines opérations ne s'enchaînent pas immédiatement : séchage après peinture,
 refroidissement après soudure… Un délai se déclare **par paire d'opérations**, en heures
@@ -219,7 +219,7 @@ listée n'a pas de délai.
 
 ---
 
-## 9. Nomenclatures standard : les gammes types
+## 9. Nomenclatures standard : les gammes types {#nomenclatures-standard-les-gammes-types}
 
 Une nomenclature standard est un **modèle de gamme** (opérations et matières) que l'on
 réutilise : « Laser + pliage », « Mécano-soudé peint »…
@@ -239,7 +239,7 @@ un bouton par modèle : un clic ajoute toutes ses opérations à la gamme.
 
 ---
 
-## Contrôler le paramétrage : la vue d'ensemble
+## Contrôler le paramétrage : la vue d'ensemble {#controler-le-parametrage-la-vue-densemble}
 
 Menu **Planification › Vue d'ensemble méthodes** : une carte par service, avec son nombre
 de ressources et ses tâches en cours.
@@ -249,7 +249,7 @@ de ressources et ses tâches en cours.
 > 💡 Un service productif qui affiche **Ressource : 0** ne sera jamais planifié :
 > rattachez-lui une ressource (étape 5).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **« Aucune TVA ou unité par défaut configurée » à la création d'une ligne de devis.**
 Aucune unité n'est « Par défaut » : réglez-en une (étape 1).

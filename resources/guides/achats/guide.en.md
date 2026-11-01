@@ -18,7 +18,7 @@ step, and only pay for what was ordered **and** received.
 6 sheets of 3 mm, negotiates the price of the 8 mm sheet, requires a material certificate, places
 the order, records the supplier's acknowledgement, receives the goods, then records the supplier's invoice.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You need the **Purchase** permission ("Purchase" menu).
 - A **unit** and a **default VAT rate** must exist (see the Methods guide).
@@ -32,7 +32,7 @@ the order, records the supplier's acknowledgement, receives the goods, then reco
   you need the override permission (step 3.1).
 <!-- /feature -->
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Supplier
@@ -53,7 +53,7 @@ ack." the orders still waiting for the supplier's acknowledgement.
 
 ---
 
-## 1. Set up the supplier
+## 1. Set up the supplier {#preparer-le-fournisseur}
 
 A supplier is a third party like any other (**Third party** menu, "New third party"). Three
 settings make it usable in purchasing.
@@ -90,7 +90,7 @@ send them documents) and **tick "By default"**.
 
 ---
 
-## 2. Ask the supplier for a quote: the request for quotation
+## 2. Ask the supplier for a quote: the request for quotation {#consulter-le-fournisseur-la-demande-de-prix}
 
 ### 2.1 Start from the "Purchase request" screen
 
@@ -149,7 +149,7 @@ to fill in) and **Unit Price** (the expected price, or 0), then "Submit". The
 
 ---
 
-## 3. Order
+## 3. Order {#commander}
 
 ### 3.1 Turn the request for quotation into an order
 
@@ -236,7 +236,7 @@ set it to **"Ordered"**.
 
 ---
 
-## 4. Record the supplier's acknowledgement
+## 4. Record the supplier's acknowledgement {#enregistrer-laccuse-de-reception-du-fournisseur}
 
 The supplier confirms your order and announces its delivery date (its "acknowledgement").
 Record it: its **confirmed** date is then used to measure their delays.
@@ -271,7 +271,7 @@ lines has no acknowledgement, with the number of days waited. Chase these suppli
 
 ---
 
-## 5. Receive
+## 5. Receive {#receptionner}
 
 ### 5.1 Create the receipt note
 
@@ -343,7 +343,7 @@ traced later.
 
 ---
 
-## 6. Record the supplier invoice
+## 6. Record the supplier invoice {#enregistrer-la-facture-fournisseur}
 
 **Purchase › Waiting to invoice** menu: receipts not yet invoiced.
 
@@ -368,7 +368,7 @@ to "Closed".
 
 ---
 
-## Received electronic invoices
+## Received electronic invoices {#les-factures-electroniques-recues}
 
 With electronic invoicing, supplier invoices arrive in **Factur-X** format.
 **Purchase › Received invoices** menu: those sent by your platform arrive there
@@ -385,7 +385,7 @@ On each received invoice:
 
 ---
 
-## Following up your suppliers
+## Following up your suppliers {#suivre-ses-fournisseurs}
 
 Receipt ratings and acknowledgement dates feed two indicators, calculated over the
 **last 12 months**.
@@ -411,7 +411,7 @@ punctual ones.
 > is counted separately. Fill in the requested date (step 3.2) or record the
 > acknowledgement (step 4).
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Evaluate the supplier**: "Supplier evaluations" tab of its record, for the periodic
   review (status, next review, action plan).
@@ -422,7 +422,7 @@ punctual ones.
 - **Link to the deal**: purchases made for a customer order appear on the summary of its
   opportunity (amount purchased, late purchases based on the confirmed date).
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **My supplier does not appear in the lists.**
 Its "Status supplier" is still "Inactive" (step 1.1).

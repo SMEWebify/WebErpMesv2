@@ -20,7 +20,7 @@ reports.
 **Example used**: a press brake operator hired on a permanent contract on 1 September. They
 come back from a trade show in Lyon with a restaurant receipt to be refunded.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **Human resources** menu appears with the **human-resources-menu** permission, which
   is also needed to change an employee record and its contracts, and to approve expense
@@ -30,7 +30,7 @@ come back from a trade show in Lyon with a restaurant receipt to be refunded.
 - Leave, the attendance report and the payroll export are covered by the guide "Time,
   shifts and leave"; the authorisation matrix by "Occupational health and safety".
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Employee record
@@ -46,7 +46,7 @@ types), **Users list**, **Attendance report**, **Leave balances** and **Payroll 
 
 ---
 
-## 1. The employee list
+## 1. The employee list {#la-liste-des-salaries}
 
 Menu **Human resources › Users list**: one employee per row, with their connection status,
 job, roles and, if blocked, the end date of the block. The arrow at the end of the row
@@ -60,7 +60,7 @@ opens their record.
 
 ---
 
-## 2. The employee record
+## 2. The employee record {#la-fiche-salarie}
 
 **HR information** tab:
 
@@ -95,7 +95,7 @@ status. At the bottom of the form:
 
 ---
 
-## 3. Contracts
+## 3. Contracts {#les-contrats}
 
 **Contract** tab, **New contract** card:
 
@@ -116,7 +116,7 @@ days.
 
 ---
 
-## 4. The employee file
+## 4. The employee file {#le-dossier-du-salarie}
 
 **Documents** tab: signed contract, payslips, sick notes, diplomas, ID documents.
 
@@ -131,7 +131,7 @@ note, diploma, ID…).
 
 ---
 
-## 5. The expense report (employee)
+## 5. The expense report (employee) {#la-note-de-frais-salarie}
 
 The employee opens their **profile** (menu with their name, top right), **Expense report**
 tab, and creates one report per trip or per month:
@@ -147,7 +147,7 @@ right.
 
 ---
 
-## 6. The receipt and the expense
+## 6. The receipt and the expense {#le-justificatif-et-la-depense}
 
 First drop the photo of the receipt (or the PDF invoice) in the **Receipts** card:
 
@@ -181,7 +181,7 @@ is whoever advanced the money.
 
 ---
 
-## 7. Submit the report
+## 7. Submit the report {#soumettre-la-note}
 
 Once all expenses are entered, the employee goes back to their profile, **Expense report**
 tab, and opens the report with **Edit**:
@@ -196,7 +196,7 @@ decides.
 
 ---
 
-## 8. Approval (HR)
+## 8. Approval (HR) {#la-validation-rh}
 
 Menu **Human resources › Expenses**, **Expense validation** tab: submitted reports (and
 those already approved) with their amount. **View** opens the report and its receipts.
@@ -225,21 +225,21 @@ A returned report can be changed again by the employee, who corrects and resubmi
 
 ---
 
-## 9. Expense categories
+## 9. Expense categories {#les-categories-de-depense}
 
 **Expense category** tab: the list offered to employees (fuel, hotel, lunch, dinner…).
 **New expense category** adds one.
 
 ![Expense categories](img/15-categories.png)
 
-## What next?
+## What next? {#et-ensuite}
 
 - Create the leave types and enter each employee's entitlements: guide "Time, shifts and
   leave".
 - Follow the employee's authorisations (forklift licence, electrical clearance): guide
   "Occupational health and safety".
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The employee cannot see their receipt in the "Receipt" list.**
 It is already linked to another expense, or it was uploaded to another report.

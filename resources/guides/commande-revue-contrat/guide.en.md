@@ -17,7 +17,7 @@ afterwards (amendment, price, delivery date).
 for a tagged item of equipment (1RCP-SUP-001 to 004). The customer will then move to
 6 supports through an amendment.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You need access to the **Orders** menu.
 - **Signing off** a review (approving or rejecting it) and **cancelling** an amendment are
@@ -28,7 +28,7 @@ for a tagged item of equipment (1RCP-SUP-001 to 004). The customer will then mov
   "order-price-recalculate" permission.
 - The order must be a **customer order**. An internal order has neither review nor amendment.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Order created (review to do)
@@ -50,7 +50,7 @@ sign-off**, prevents giving the **production release** to the order lines.
 
 ---
 
-## 1. Enter the lines and their equipment tags
+## 1. Enter the lines and their equipment tags {#saisir-les-lignes-et-leurs-reperes-dequipement}
 
 The order has just been created (from a quote or with "New order"). "Lignes" tab, green
 "+ AJOUTER" (Add) tab on the right edge of the screen, or "Modifier" (Edit) in the menu of
@@ -71,7 +71,7 @@ converted into an order.
 
 ---
 
-## 2. Spot the orders to review
+## 2. Spot the orders to review {#reperer-les-commandes-a-revoir}
 
 As long as the review has not been signed off, the order page says so.
 
@@ -93,7 +93,7 @@ information for all your orders.
 
 ---
 
-## 3. Prepare the review
+## 3. Prepare the review {#preparer-la-revue}
 
 Open the "Contract review" tab. The left card holds the checklist, the right one the
 contract documents and the amendments.
@@ -116,7 +116,7 @@ Tick each item checked and write down the deviations from your offer.
 
 ---
 
-## 4. Upload the contract documents
+## 4. Upload the contract documents {#deposer-les-documents-contractuels}
 
 The customer's purchase order, specification, purchasing terms… are filed in the order's
 document manager with the "Contract document" type. Click "Open documents" in the
@@ -139,7 +139,7 @@ Back on the "Contract review" tab, the document appears in the card.
 
 ---
 
-## 5. Calculated price: while the order is in preparation
+## 5. Calculated price: while the order is in preparation {#prix-calcule-tant-que-la-commande-est-en-preparation}
 
 A line can follow a **calculated price**, read again from its routing (the operations) each
 time it is displayed, instead of a frozen price. The setting is in the line's task window:
@@ -155,7 +155,7 @@ selling price of the line, which then stays put.
 
 ---
 
-## 6. Sign off the review
+## 6. Sign off the review {#viser-la-revue}
 
 When the preparation is complete, an authorised person signs off the review.
 
@@ -178,7 +178,7 @@ button of the "Options" card (Information tab) picks it up.
 
 ---
 
-## 7. After the sign-off: the price is frozen
+## 7. After the sign-off: the price is frozen {#apres-le-visa-le-prix-est-fige}
 
 Once the review is approved (or the order has moved beyond the "Open" status), the price
 accepted by the customer must no longer change on its own.
@@ -195,7 +195,7 @@ accepted by the customer must no longer change on its own.
 
 ---
 
-## 8. Postpone a delivery date
+## 8. Postpone a delivery date {#reporter-une-date-de-livraison}
 
 Edit the line (line menu › "Modifier") and change the delivery date ("Date livraison").
 
@@ -222,7 +222,7 @@ When you reopen the line, the panel shows every change.
 
 ---
 
-## 9. Create an amendment
+## 9. Create an amendment {#creer-un-avenant}
 
 The customer changes the order after the review (quantity, revision, lead time, price…)?
 Create an **amendment**: the review is reopened, and its new sign-off will be the
@@ -248,7 +248,7 @@ The original quote is never changed.
 
 ---
 
-## 10. Cancel or sign off the amendment
+## 10. Cancel or sign off the amendment {#annuler-ou-viser-lavenant}
 
 **Cancel**: the amendment does not go ahead (the customer withdraws, input error).
 
@@ -273,7 +273,7 @@ sign off the reopened review as in step 6.
 
 ---
 
-## What next?
+## What next? {#et-ensuite}
 
 <!-- feature: production-release -->
 - Give the **production release** to the lines ("Lignes" tab): it is refused while the review
@@ -283,7 +283,7 @@ sign off the reopened review as in step 6.
 - Continue the sales process: production, delivery note and invoice ("From prospect to
   invoice" guide).
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **I cannot see the "Sign off" buttons.**
 The sign-off is restricted to authorised people: a message is shown instead. Prepare the

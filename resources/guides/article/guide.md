@@ -19,7 +19,7 @@ savoir à tout moment combien il en reste, où, et de quelle coulée il vient.
 puis pliée, rangée sur l'étagère A1 du magasin avec un stock minimum de 10 pièces. Un client
 qui en prend 50 ou plus la paie 4,00 € au lieu de 4,50 €.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - La liste et la fiche des articles demandent la permission **products-menu** (lecture) ;
   créer, modifier, dupliquer un article, ses tarifs, sa gamme, sa nomenclature ou ses
@@ -35,7 +35,7 @@ qui en prend 50 ou plus la paie 4,00 € au lieu de 4,50 €.
 > l'administrateur de vous donner ce droit (Votre société › Rôles et permissions) ou
 > adressez la modification au service technique.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Article
@@ -62,7 +62,7 @@ Le stock s'organise sur quatre niveaux :
 
 ---
 
-## 1. La liste des articles
+## 1. La liste des articles {#la-liste-des-articles}
 
 Menu **Article › Liste de articles**, onglet **Liste des produits** : code, libellé,
 service, famille, vendu / acheté et leurs prix, nombre d'opérations de la gamme.
@@ -76,7 +76,7 @@ L'onglet **Tableau de bord** résume le catalogue par service et par famille ; l
 
 ---
 
-## 2. Créer un article
+## 2. Créer un article {#creer-un-article}
 
 ![Nouveau produit](img/02-creation.png)
 
@@ -95,7 +95,7 @@ dimensions. **Soumettre** ouvre la fiche de l'article.
 
 ---
 
-## 3. La fiche article
+## 3. La fiche article {#la-fiche-article}
 
 ![Fiche article](img/03-fiche.png)
 
@@ -134,7 +134,7 @@ le certificat attendu à la réception. Laissez « Aucun » pour un article cour
 
 ---
 
-## 4. Les tarifs par quantité
+## 4. Les tarifs par quantité {#les-tarifs-par-quantite}
 
 L'onglet **Tarifs** apparaît pour un article **vendu**. Il rappelle le **prix de vente de
 base** et liste les paliers particuliers.
@@ -167,7 +167,7 @@ Le crayon modifie un palier, la corbeille le supprime.
 
 ---
 
-## 5. La gamme de fabrication
+## 5. La gamme de fabrication {#la-gamme-de-fabrication}
 
 Onglet **Découpage technique et nomenclature**. La languette **Opération**, au bord droit de
 l'écran, ouvre le panneau **Nouvelle opération** :
@@ -193,7 +193,7 @@ composants consommés.
 
 ---
 
-## 6. Les documents de l'article
+## 6. Les documents de l'article {#les-documents-de-larticle}
 
 Onglet **Documents** : déposez le plan PDF, le fichier DXF, le modèle 3D (STEP, STL) et les
 photos.
@@ -206,7 +206,7 @@ contrôle. Un clic sur un fichier l'affiche à droite, y compris les modèles 3D
 
 ---
 
-## 7. Organiser le stock
+## 7. Organiser le stock {#organiser-le-stock}
 
 Menu **Article › Stock**, carte **Nouveau stock** :
 
@@ -240,7 +240,7 @@ Puis, sur la fiche de l'emplacement, rangez-y l'article :
 
 ---
 
-## 8. Entrées, sorties et transferts
+## 8. Entrées, sorties et transferts {#entrees-sorties-et-transferts}
 
 Le bouton **Voir** d'une ligne de stock ouvre ses mouvements, avec quatre tuiles : prix
 moyen pondéré (CUMP), entrées, sorties et stock courant.
@@ -288,7 +288,7 @@ quand elle passe sous le minimum :
 
 ---
 
-## 9. Le statut du stock
+## 9. Le statut du stock {#le-statut-du-stock}
 
 Menu **Article › Statut du stock** : pour chaque article, le stock total face au **besoin**
 (commandes non livrées et tâches non terminées), les réservations et les emplacements.
@@ -309,7 +309,7 @@ l'icône de dossier crée une **commande interne** de fabrication, après confir
 
 ---
 
-## 10. Les numéros de série
+## 10. Les numéros de série {#les-numeros-de-serie}
 
 Menu **Article › Numéros de série** : un numéro par pièce livrée, avec l'article, la
 commande, le statut et le bouton **Trace** (son parcours).
@@ -320,7 +320,7 @@ Les numéros de série sont créés à la **livraison**, pour les articles suivi
 
 ---
 
-## 11. Les lots et les coulées
+## 11. Les lots et les coulées {#les-lots-et-les-coulees}
 
 Un **lot** regroupe les pièces ou la matière d'une même origine : sa **coulée** (le numéro
 de fusion de l'aciérie, inscrit sur le certificat), le **lot fournisseur**, le **certificat
@@ -389,7 +389,7 @@ l'écran de la tâche :
 
 ---
 
-## 12. Les inventaires
+## 12. Les inventaires {#les-inventaires}
 
 Menu **Article › Inventaires**, **Nouvel inventaire** : choisissez le périmètre (tout le
 stock, des emplacements ou des catégories).
@@ -415,7 +415,7 @@ valorisé** ; la case **Écarts uniquement** n'affiche que les lignes en écart.
 > 💡 Le comptage se fait dans le fichier Excel : il n'y a pas de saisie des quantités
 > comptées dans l'écran.
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Vendre l'article** : ajoutez-le à une ligne de devis ; sa gamme et sa grille tarifaire
   suivent (guide « Du prospect à la facture »).
@@ -423,7 +423,7 @@ valorisé** ; la case **Écarts uniquement** n'affiche que les lignes en écart.
   (guide « De la demande de prix à la facture fournisseur »).
 - **Le contrôler** : plan de contrôle bullé, premier article (guide « Qualité — non-conformités et contrôle »).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Je ne peux rien modifier sur la fiche article.**
 Il vous manque la permission **products-edit** : le bandeau « Consultation seule » le

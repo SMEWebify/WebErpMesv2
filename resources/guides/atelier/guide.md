@@ -13,7 +13,7 @@ piloter la charge et mesurer la production.
 
 **Pour qui** : les **opérateurs** (sections 1 à 6) et le **chef d'atelier** (sections 7 à 11).
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Les **opérations** viennent de la gamme des lignes de commande (voir le guide
   « Du prospect à la facture »). Une opération de devis ne se déclare pas.
@@ -28,7 +28,7 @@ piloter la charge et mesurer la production.
   « Bon pour fabrication »).
 <!-- /feature -->
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Trouver l'opération
@@ -42,7 +42,7 @@ Piloter et mesurer
 
 ---
 
-## 1. Le mode atelier
+## 1. Le mode atelier {#le-mode-atelier}
 
 L'écran **atelier** est fait pour un poste partagé ou une tablette : grandes tuiles, sans
 menu latéral. Ouvrez l'adresse de votre instance suivie de **/workshop** et mettez-la en
@@ -62,7 +62,7 @@ Les deux autres tuiles ouvrent le scan d'étiquette de stock et les rapports ate
 
 ---
 
-## 2. Trouver son travail
+## 2. Trouver son travail {#trouver-son-travail}
 
 La **liste atelier** montre les opérations des commandes, avec leur service, leur
 ressource, leur avancement et leur échéance.
@@ -83,7 +83,7 @@ mois : opérations en cours, heures produites, TRS.
 
 ---
 
-## 3. Déclarer sur l'écran de suivi
+## 3. Déclarer sur l'écran de suivi {#declarer-sur-lecran-de-suivi}
 
 <!-- feature: production-release -->
 **Avant tout : le bon pour fabrication.** Tant que la ligne de commande n'a pas son BPF,
@@ -165,7 +165,7 @@ l'onglet **Contrôle** : le plan bullé et la grille des cotes à mesurer, pièc
 
 ---
 
-## 4. Sortir la matière du stock
+## 4. Sortir la matière du stock {#sortir-la-matiere-du-stock}
 
 Une ligne de gamme de **matière** (tôle, barre, composant) porte l'article à consommer.
 Ouvrez-la depuis l'écran de suivi avec le bouton de l'opération précédente (par exemple
@@ -187,7 +187,7 @@ mouvements).
 
 ---
 
-## 5. Le visa de libération d'une phase
+## 5. Le visa de libération d'une phase {#le-visa-de-liberation-dune-phase}
 
 Certains postes de charge peuvent exiger un **visa** : une opération terminée sur ce poste
 attend qu'un responsable la vise avant de passer à la suivante (contrôle final, soudure
@@ -226,7 +226,7 @@ En cliquant sur Play, l'opérateur doit confirmer « Démarrer quand même ? ».
 
 ---
 
-## 6. Signaler un problème
+## 6. Signaler un problème {#signaler-un-probleme}
 
 Carte **Qualité** de l'écran de suivi :
 
@@ -241,7 +241,7 @@ Le chef d'atelier traite les alertes sur l'écran Andon (section 10).
 
 ---
 
-## 7. La liste des tâches
+## 7. La liste des tâches {#la-liste-des-taches}
 
 Menu **Planification › Liste des tâches** : toutes les opérations des commandes, avec des
 filtres par service, ressource et statut. Un clic sur une ligne ouvre l'écran de suivi.
@@ -255,7 +255,7 @@ filtres par service, ressource et statut. Un clic sur une ligne ouvre l'écran d
 
 ---
 
-## 8. Le Kanban
+## 8. Le Kanban {#le-kanban}
 
 Menu **Planification › Flux de travail** : une colonne par statut, une carte par
 opération. Filtrez sur un **service** (« Select Service », puis « Filter ») : sans filtre,
@@ -280,7 +280,7 @@ suivante.
 
 ---
 
-## 9. Le planning de charge
+## 9. Le planning de charge {#le-planning-de-charge}
 
 Menu **Planification › Planning de charge** : la charge de chaque **service** (ou de chaque
 **ressource**) jour par jour, comparée à sa capacité. Les couleurs vont de « Libre » à
@@ -308,7 +308,7 @@ Menu **Planification › Planning de charge** : la charge de chaque **service** 
 
 ---
 
-## 10. Mesurer la production
+## 10. Mesurer la production {#mesurer-la-production}
 
 Tuile **Reports** de l'accueil atelier : le réalisé sur la période (aujourd'hui, 7 ou
 30 jours), rafraîchi toutes les minutes.
@@ -329,7 +329,7 @@ quand quelqu'un s'en occupe, puis « Résolue ».
 
 ---
 
-## 11. La fiche suiveuse
+## 11. La fiche suiveuse {#la-fiche-suiveuse}
 
 La **fiche suiveuse** accompagne les pièces dans l'atelier : une page de garde pour la
 commande, puis une fiche par ligne avec la matière, la gamme à pointer et les contrôles.
@@ -345,7 +345,7 @@ l'opération qui a sorti la matière. Si rien n'est encore sorti, la colonne res
 
 > 💡 Réimprimez la fiche après la sortie de matière pour qu'elle porte les coulées.
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Les pièces terminées partent en **livraison** puis en **facturation** (guide
   « Facturer et encaisser »).
@@ -353,7 +353,7 @@ l'opération qui a sorti la matière. Si rien n'est encore sorti, la colonne res
   la facture restent bloqués tant que ce dossier n'est pas validé (voir le même guide).
 - Les non-conformités déclarées à l'atelier se traitent dans le module Qualité.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Le bouton Play est grisé.**
 L'opération est déjà démarrée ou terminée.

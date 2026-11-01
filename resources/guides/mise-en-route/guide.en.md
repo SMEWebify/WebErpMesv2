@@ -16,7 +16,7 @@ your documents are correct from day one.
 
 **For whom**: the company administrator (permission **Your company**).
 
-## In what order
+## In what order {#dans-quel-ordre}
 
 ```steps
 Setup wizard
@@ -31,7 +31,7 @@ Imports
 Operating options
 ```
 
-## 1. The setup wizard
+## 1. The setup wizard {#lassistant-de-configuration}
 
 When you first log in, an 8-step wizard asks for the information the application cannot
 work without: the **company** (name, address, SIREN (French company number), VAT number,
@@ -53,7 +53,7 @@ French.
 
 ---
 
-## 2. Factory settings
+## 2. Factory settings {#reglage-societe}
 
 Menu **Your company › Factory settings**, "Factory settings" tab. This information
 appears on all your documents (quotes, orders, invoices).
@@ -94,7 +94,7 @@ added after quotes and orders), the logo and the optional modules. Finish with "
 
 ---
 
-## 3. Accounting
+## 3. Accounting {#comptabilite}
 
 Menu **Accounting**: VAT, payment conditions, payment methods, delivery methods
 and accounting allocations. All these screens work the same way: the list on the left,
@@ -121,7 +121,7 @@ The **payment method** also holds the cash account used for payment receipt entr
 
 ---
 
-## 4. Methods and business categories
+## 4. Methods and business categories {#methodes-et-categories-daffaire}
 
 Units, services and hourly rates, families, sections, resources… Follow the guide
 "Methods, the workshop dictionary".
@@ -168,7 +168,7 @@ They feed the lost business indicator of the Quotes screen.
 
 ---
 
-## 5. Task workflow
+## 5. Task workflow {#flux-des-taches}
 
 Menu **Your company › Task Workflow**: the statuses that manufacturing operations go
 through. Without any status, quotes, orders, purchases and production send you
@@ -186,7 +186,7 @@ Create the statuses in this order, choosing their title from the list:
 
 ---
 
-## 6. Revenue target
+## 6. Revenue target {#objectif-de-chiffre}
 
 Menu **Your company › Estimated budget**: the revenue target,
 month by month, shown on the dashboard.
@@ -198,7 +198,7 @@ month by month, shown on the dashboard.
 
 ---
 
-## 7. Roles and users
+## 7. Roles and users {#roles-et-utilisateurs}
 
 ### Roles and permissions
 
@@ -272,7 +272,7 @@ To give them their rights: open their record, **HR information** tab, choose the
 
 ---
 
-## 8. Email
+## 8. Email {#e-mail}
 
 Menu **Your company › Email settings**: the sending server (SMTP) that sends
 quotes, invoices, reminders and notifications.
@@ -287,7 +287,7 @@ the sender address and name, then "Save" and **"Send a test email"**.
 
 ---
 
-## 9. Bringing in your data
+## 9. Bringing in your data {#reprendre-vos-donnees}
 
 Menu **Your company › Imports/Exports**: import customers, products, quotes
 and orders from a CSV file.
@@ -306,7 +306,7 @@ and orders from a CSV file.
 
 ---
 
-## 10. Operating options
+## 10. Operating options {#options-dexploitation}
 
 A few settings are not in the application: they are set in the server's **configuration
 file**. Ask your installer for them, quoting the setting's name. Guides that depend on an
@@ -373,7 +373,7 @@ nothing, and says so in a banner.
 
 ---
 
-## What next?
+## What next? {#et-ensuite}
 
 Each user can choose the look of the application: user menu (top
 right) › **Profile**, **Appearance** tab (skin and main colour). Light
@@ -384,7 +384,7 @@ or dark mode is set with the button in the top bar.
 Your instance is ready: follow the guide **"From prospect to invoice"** for the first
 quote.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The application keeps sending me back to the setup wizard.**
 A company, a VAT rate, a payment condition or method, a delivery method

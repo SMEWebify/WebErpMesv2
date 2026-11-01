@@ -18,7 +18,7 @@ Ce guide complète « Du prospect à la facture », qui montre la création d'un
 **Exemple utilisé** : la Métallerie Durand demande un devis de garde-corps pour son
 atelier : 4 garde-corps acier, 4 mains courantes inox et des platines de fixation.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Vous devez avoir accès au menu **Devis**.
 - Le client existe déjà avec **une adresse et un contact** (voir « Du prospect à la facture »).
@@ -29,7 +29,7 @@ atelier : 4 garde-corps acier, 4 mains courantes inox et des platines de fixatio
 - Presque tout ce qui suit ne se fait que sur un devis à l'état **Ouvert**. Un devis
   envoyé, gagné ou perdu est figé.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Créer le devis
@@ -46,7 +46,7 @@ Gagné ou perdu
 
 ---
 
-## 1. Créer le devis, ou partir d'une trame
+## 1. Créer le devis, ou partir d'une trame {#creer-le-devis-ou-partir-dune-trame}
 
 Menu **Devis**, onglet « Liste des devis », bouton « Nouveau devis ».
 
@@ -61,7 +61,7 @@ Menu **Devis**, onglet « Liste des devis », bouton « Nouveau devis ».
 
 ---
 
-## 2. Ajouter des lignes avec leurs repères d'équipement
+## 2. Ajouter des lignes avec leurs repères d'équipement {#ajouter-des-lignes-avec-leurs-reperes-dequipement}
 
 Onglet « Ligne du devis », puis bouton vertical « Ajouter » à droite de l'écran.
 
@@ -89,7 +89,7 @@ Les repères s'affichent ensuite en étiquettes sous la description de la ligne.
 
 ---
 
-## 3. Copier des lignes d'un autre devis ou d'une trame
+## 3. Copier des lignes d'un autre devis ou d'une trame {#copier-des-lignes-dun-autre-devis-ou-dune-trame}
 
 Vous avez déjà chiffré une pièce identique ? Ne la ressaisissez pas : bouton
 « Importer d'un autre devis » au-dessus des lignes.
@@ -109,7 +109,7 @@ leur nomenclature et leurs fichiers : le coût de revient vient avec elles.
 
 ---
 
-## 4. Présenter le devis : sections, sous-totaux, textes, forfaits
+## 4. Présenter le devis : sections, sous-totaux, textes, forfaits {#presenter-le-devis-sections-sous-totaux-textes-forfaits}
 
 Un devis long se lit mieux par lots. Quatre outils, qui ne changent **jamais le total** :
 
@@ -170,7 +170,7 @@ Le bouton « Mise en page » ajoute une section, un sous-total ou un texte **à 
 
 ---
 
-## 5. Vérifier la marge (information interne)
+## 5. Vérifier la marge (information interne) {#verifier-la-marge-information-interne}
 
 La marge **n'est jamais imprimée** ni montrée au client. Elle compare le prix de vente
 au coût de revient : opérations de la gamme (sous-traitance comprise), nomenclature et
@@ -217,7 +217,7 @@ des coûts :
 
 ---
 
-## 6. Tracer la revue du devis
+## 6. Tracer la revue du devis {#tracer-la-revue-du-devis}
 
 L'onglet « Revue » (à côté de l'icône « i ») garde la trace de la relecture du devis
 avant envoi, et des demandes de changement.
@@ -238,7 +238,7 @@ de la revue », en dessous, liste toutes les modifications.
 
 ---
 
-## 7. Choisir le modèle d'impression et la langue
+## 7. Choisir le modèle d'impression et la langue {#choisir-le-modele-dimpression-et-la-langue}
 
 Onglet Informations, carte « Options », ligne « Devis » :
 
@@ -261,7 +261,7 @@ Onglet Informations, carte « Options », ligne « Devis » :
 
 ---
 
-## 8. Réutiliser un devis : dupliquer ou enregistrer comme trame
+## 8. Réutiliser un devis : dupliquer ou enregistrer comme trame {#reutiliser-un-devis-dupliquer-ou-enregistrer-comme-trame}
 
 Toutes les copies passent par le bouton « Copier… » de la carte « Options » :
 
@@ -317,7 +317,7 @@ Menu Devis, onglet « Trames de devis » :
 
 ---
 
-## 9. Réviser un devis : indice et variante
+## 9. Réviser un devis : indice et variante {#reviser-un-devis-indice-et-variante}
 
 Le client demande une modification après envoi ? Ne modifiez pas le devis envoyé :
 créez un **indice**. Il veut comparer deux solutions ? Créez une **variante**. Tous
@@ -360,7 +360,7 @@ sous le numéro.
 
 ---
 
-## 10. Gagné ou perdu
+## 10. Gagné ou perdu {#gagne-ou-perdu}
 
 ### 10.1 Devis gagné : clore les autres versions
 
@@ -415,7 +415,7 @@ Menu Devis, onglet « Tableau de bord », carte « Pertes commerciales » :
 
 ---
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Convertir le devis en commande** : guide « Du prospect à la facture », étape 5.
   Les repères d'équipement et, si vous le souhaitez, la présentation suivent.
@@ -423,7 +423,7 @@ Menu Devis, onglet « Tableau de bord », carte « Pertes commerciales » :
   est configurée).
 - **Suivre l'affaire** sur la synthèse de l'opportunité.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Les boutons « Mise en page », « Importer d'un autre devis » ou le menu des lignes
 ont disparu.**

@@ -21,7 +21,7 @@ This guide follows on from "From prospect to invoice", which shows how to create
 > 💡 Some buttons of the quote lines screen are only available in French, even when the
 > application is in English. Their exact French label is given, followed by its meaning.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - You need access to the **Quotes** menu.
 - The customer already exists with **an address and a contact** (see "From prospect to invoice").
@@ -32,7 +32,7 @@ This guide follows on from "From prospect to invoice", which shows how to create
 - Almost everything below can only be done on a quote whose status is **Open**. A sent,
   won or lost quote is frozen.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Create the quote
@@ -49,7 +49,7 @@ Won or lost
 
 ---
 
-## 1. Create the quote, or start from a template
+## 1. Create the quote, or start from a template {#creer-le-devis-ou-partir-dune-trame}
 
 **Quotes** menu, "Quotes list" tab, "New Quote" button.
 
@@ -64,7 +64,7 @@ Won or lost
 
 ---
 
-## 2. Add lines with their equipment tags
+## 2. Add lines with their equipment tags {#ajouter-des-lignes-avec-leurs-reperes-dequipement}
 
 "Quote lines" tab, then the vertical « Ajouter » (Add) button on the right of the screen.
 
@@ -91,7 +91,7 @@ The tags then appear as labels under the line description.
 
 ---
 
-## 3. Copy lines from another quote or a template
+## 3. Copy lines from another quote or a template {#copier-des-lignes-dun-autre-devis-ou-dune-trame}
 
 Already quoted an identical part? Do not type it again: use the « Importer d'un autre
 devis » (Import from another quote) button above the lines.
@@ -111,7 +111,7 @@ of materials and files: their cost price comes with them.
 
 ---
 
-## 4. Lay out the quote: sections, subtotals, texts, lump sums
+## 4. Lay out the quote: sections, subtotals, texts, lump sums {#presenter-le-devis-sections-sous-totaux-textes-forfaits}
 
 A long quote is easier to read by work package. Four tools, which **never change the total**:
 
@@ -173,7 +173,7 @@ The « Mise en page » (Layout) button adds a section, a subtotal or a text **at
 
 ---
 
-## 5. Check the margin (internal information)
+## 5. Check the margin (internal information) {#verifier-la-marge-information-interne}
 
 The margin is **never printed** or shown to the customer. It compares the selling price
 with the cost price: routing operations (subcontracting included), bill of materials and
@@ -219,7 +219,7 @@ margin on cost and the margin on selling price. To set all prices at once from t
 
 ---
 
-## 6. Record the quote review
+## 6. Record the quote review {#tracer-la-revue-du-devis}
 
 The "Review" tab (next to the "i" icon) keeps track of the quote check before sending,
 and of change requests.
@@ -239,7 +239,7 @@ once accepted, **Change approved at**. The "Review timeline" card below lists ev
 
 ---
 
-## 7. Choose the print layout and language
+## 7. Choose the print layout and language {#choisir-le-modele-dimpression-et-la-langue}
 
 Information tab, "Options" card, "Quote" row:
 
@@ -262,7 +262,7 @@ Information tab, "Options" card, "Quote" row:
 
 ---
 
-## 8. Reuse a quote: duplicate it or save it as a template
+## 8. Reuse a quote: duplicate it or save it as a template {#reutiliser-un-devis-dupliquer-ou-enregistrer-comme-trame}
 
 All copies go through the "Copy…" button of the "Options" card:
 
@@ -317,7 +317,7 @@ Quotes menu, "Quote templates" tab:
 
 ---
 
-## 9. Revise a quote: revision and variant
+## 9. Revise a quote: revision and variant {#reviser-un-devis-indice-et-variante}
 
 The customer asks for a change after the quote was sent? Do not edit the sent quote:
 create a **revision**. They want to compare two solutions? Create a **variant**. All
@@ -359,7 +359,7 @@ The PDF of a revision or variant shows "Revision B" or "Variant: …" under the 
 
 ---
 
-## 10. Won or lost
+## 10. Won or lost {#gagne-ou-perdu}
 
 ### 10.1 Won quote: close the other versions
 
@@ -414,7 +414,7 @@ Quotes menu, "Dashboard" tab, "Lost business" card:
 
 ---
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Convert the quote into an order**: guide "From prospect to invoice", step 5.
   Equipment tags and, if you wish, the layout follow.
@@ -422,7 +422,7 @@ Quotes menu, "Dashboard" tab, "Lost business" card:
   configured).
 - **Follow the deal** on the opportunity summary.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The « Mise en page », « Importer d'un autre devis » buttons or the line menu have
 disappeared.**

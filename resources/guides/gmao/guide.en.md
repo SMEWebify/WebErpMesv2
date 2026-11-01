@@ -19,14 +19,14 @@ preventive or after a breakdown, is recorded on the equipment concerned.
 **Example used**: the workshop press brake. Its hydraulic oil change is planned every
 month, and a leak on a cylinder has to be reported.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **GMAO** menu only appears with the **asset_manager** permission. The equipment list
   also requires **asset-menu**.
 - The machine must exist as a **resource** in Methods (see the guide "Methods"): the CMMS
   equipment is linked to it.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Equipment
@@ -42,7 +42,7 @@ record.
 
 ---
 
-## 1. The dashboard
+## 1. The dashboard {#le-tableau-de-bord}
 
 ![CMMS dashboard](img/01-tableau-de-bord.png)
 
@@ -56,7 +56,7 @@ record.
 
 ---
 
-## 2. Register a piece of equipment
+## 2. Register a piece of equipment {#enregistrer-un-equipement}
 
 Menu **GMAO › Assets**, then **New Asset**.
 
@@ -80,7 +80,7 @@ The **equipment record** gathers its work orders and maintenance plans.
 
 ---
 
-## 3. Plan preventive maintenance
+## 3. Plan preventive maintenance {#planifier-la-maintenance-preventive}
 
 From the equipment record, **New Maintenance Plan**: the equipment is already selected.
 Existing plans are also listed in the **GMAO › Maintenance plans** menu.
@@ -143,7 +143,7 @@ date.
 
 ---
 
-## 4. The work order
+## 4. The work order {#lordre-de-travail}
 
 The generated order is **Planned**, of type **Preventive**, on the plan's due date; its
 record shows the **maintenance plan** it comes from.
@@ -170,7 +170,7 @@ Statuses follow this order:
 
 ---
 
-## 5. Carry out the intervention
+## 5. Carry out the intervention {#realiser-lintervention}
 
 **Edit Work Order**, then record the intervention:
 
@@ -193,7 +193,7 @@ Save.
 
 ---
 
-## 6. Close
+## 6. Close {#cloturer}
 
 Once the intervention is checked, reopen the order: status **Closed**, then
 **Completed at**.
@@ -211,7 +211,7 @@ estimated duration next to the actual one.
 
 ---
 
-## 7. Report a breakdown
+## 7. Report a breakdown {#declarer-une-panne}
 
 From the equipment record, **New Work Order**.
 
@@ -236,7 +236,7 @@ Then follow the intervention as in sections 5 and 6.
 
 ---
 
-## 8. Follow the interventions
+## 8. Follow the interventions {#suivre-les-interventions}
 
 Menu **GMAO › Work orders**: all work orders, with their equipment, type, priority,
 status and technician.
@@ -247,14 +247,14 @@ The **equipment record** keeps the history of its interventions:
 
 ![Equipment history](img/16-equipement-historique.png)
 
-## What next?
+## What next? {#et-ensuite}
 
 - Record the **actual duration** and the **failure start** on each order: they will feed the
   MTBF and MTTR indicators of the dashboard.
 - Assign a **working schedule** to the machine (guide "Time, shifts and leave"): a
   machine stop is then removed from its real capacity in the load planning.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **My maintenance plan created no work order when it was due.**
 Orders are created every morning at 6 am, the chosen number of days before the due date.

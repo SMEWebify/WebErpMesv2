@@ -15,7 +15,7 @@ load and measure production.
 
 **Who is it for**: **operators** (sections 1 to 6) and the **workshop manager** (sections 7 to 11).
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - **Operations** come from the routing of the order lines (see the guide
   "From prospect to invoice"). A quote operation cannot be recorded.
@@ -29,7 +29,7 @@ load and measure production.
   **released for production** by engineering (see the guide "Release for production").
 <!-- /feature -->
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Find the operation
@@ -43,7 +43,7 @@ Manage and measure
 
 ---
 
-## 1. Workshop mode
+## 1. Workshop mode {#le-mode-atelier}
 
 The **workshop** screen is made for a shared workstation or a tablet: large tiles, no
 side menu. Open your instance address followed by **/workshop** and bookmark it on the
@@ -63,7 +63,7 @@ The two other tiles open the stock label scan and the workshop reports
 
 ---
 
-## 2. Find your work
+## 2. Find your work {#trouver-son-travail}
 
 The **workshop list** shows the order operations, with their service, their
 resource, their progress and their due date.
@@ -84,7 +84,7 @@ month: operations in progress, hours produced, OEE (TRS).
 
 ---
 
-## 3. Record on the tracking screen
+## 3. Record on the tracking screen {#declarer-sur-lecran-de-suivi}
 
 <!-- feature: production-release -->
 **First of all: the release for production.** As long as the order line is not released,
@@ -165,7 +165,7 @@ non-conformity.
 
 ---
 
-## 4. Take the material from stock
+## 4. Take the material from stock {#sortir-la-matiere-du-stock}
 
 A **material** routing line (sheet, bar, component) carries the item to consume. Open it
 from the tracking screen with the previous-operation button (for example
@@ -187,7 +187,7 @@ certificate, movements).
 
 ---
 
-## 5. Phase release sign-off
+## 5. Phase release sign-off {#le-visa-de-liberation-dune-phase}
 
 Some work centres can require a **sign-off**: an operation finished on that work centre
 waits for a supervisor to sign it off before moving on to the next one (final inspection,
@@ -226,7 +226,7 @@ When clicking Play, the operator must confirm "Start anyway?".
 
 ---
 
-## 6. Report a problem
+## 6. Report a problem {#signaler-un-probleme}
 
 **Quality** card of the tracking screen:
 
@@ -241,7 +241,7 @@ The workshop manager handles the alerts on the Andon screen (section 10).
 
 ---
 
-## 7. The tasks list
+## 7. The tasks list {#la-liste-des-taches}
 
 Menu **Scheduling › Tasks list**: all the order operations, with
 filters by service, resource and status. Clicking a line opens the tracking screen.
@@ -255,7 +255,7 @@ filters by service, resource and status. Clicking a line opens the tracking scre
 
 ---
 
-## 8. The Kanban
+## 8. The Kanban {#le-kanban}
 
 Menu **Scheduling › Workflow**: one column per status, one card per
 operation. Filter on a **service** ("Select Service", then "Filter"): without a filter,
@@ -280,7 +280,7 @@ operation.
 
 ---
 
-## 9. The load planning
+## 9. The load planning {#le-planning-de-charge}
 
 Menu **Scheduling › Load planning**: the load of each **service** (or of each
 **resource**) day by day, compared with its capacity. The colours go from "Free" to
@@ -308,7 +308,7 @@ Menu **Scheduling › Load planning**: the load of each **service** (or of each
 
 ---
 
-## 10. Measure production
+## 10. Measure production {#mesurer-la-production}
 
 **Reports** tile on the workshop home: what was done over the period (today, 7 or
 30 days), refreshed every minute.
@@ -329,7 +329,7 @@ when someone is dealing with them, then "Solved".
 
 ---
 
-## 11. The job card
+## 11. The job card {#la-fiche-suiveuse}
 
 The **job card** travels with the parts through the workshop: a cover page for the
 order, then one sheet per line with the material, the routing to clock and the
@@ -345,7 +345,7 @@ to be filled in by hand at the workstation.
 
 > 💡 Print the card again after taking the material so that it carries the heats.
 
-## What next?
+## What next? {#et-ensuite}
 
 - Finished parts go to **delivery** and then to **invoicing** (guide
   "Invoice and get paid").
@@ -353,7 +353,7 @@ to be filled in by hand at the workstation.
   invoice stay blocked until that record is validated (see the same guide).
 - Non-conformities reported in the workshop are handled in the Quality module.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The Play button is greyed out.**
 The operation is already started or finished.

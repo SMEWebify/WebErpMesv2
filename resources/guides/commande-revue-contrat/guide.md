@@ -17,7 +17,7 @@ tout ce qui change ensuite (avenant, prix, date de livraison).
 chacun destiné à un équipement repéré (1RCP-SUP-001 à 004). Le client passera ensuite à
 6 supports par un avenant.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Vous devez avoir accès au menu **Commandes**.
 - **Viser** une revue (la valider ou la rejeter) et **annuler** un avenant sont réservés aux
@@ -28,7 +28,7 @@ chacun destiné à un équipement repéré (1RCP-SUP-001 à 004). Le client pass
   « order-price-recalculate ».
 - La commande doit être une **commande client**. Une commande interne n'a ni revue ni avenant.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Commande créée (revue à faire)
@@ -50,7 +50,7 @@ visa**, empêchent de donner le **bon pour fabrication** aux lignes de la comman
 
 ---
 
-## 1. Saisir les lignes et leurs repères d'équipement
+## 1. Saisir les lignes et leurs repères d'équipement {#saisir-les-lignes-et-leurs-reperes-dequipement}
 
 La commande vient d'être créée (depuis un devis ou par « Nouvelle commande »). Onglet
 « Lignes », onglet vert « + AJOUTER » au bord droit de l'écran, ou « Modifier » dans le menu d'une ligne existante.
@@ -72,7 +72,7 @@ devis lors de sa conversion en commande.
 
 ---
 
-## 2. Repérer les commandes à revoir
+## 2. Repérer les commandes à revoir {#reperer-les-commandes-a-revoir}
 
 Tant que la revue n'est pas visée, la fiche commande l'annonce.
 
@@ -94,7 +94,7 @@ Dans la liste des commandes (menu **Commandes**, onglet « Commandes »), la col
 
 ---
 
-## 3. Préparer la revue
+## 3. Préparer la revue {#preparer-la-revue}
 
 Ouvrez l'onglet « Revue de contrat ». La carte de gauche porte la check-list, celle de
 droite les documents contractuels et les avenants.
@@ -117,7 +117,7 @@ Cochez chaque point vérifié et notez les écarts avec votre offre.
 
 ---
 
-## 4. Déposer les documents contractuels
+## 4. Déposer les documents contractuels {#deposer-les-documents-contractuels}
 
 Bon de commande du client, cahier des charges, conditions d'achat… se rangent dans la GED
 de la commande avec le type « Document contractuel ». Cliquez sur « Ouvrir les documents »
@@ -140,7 +140,7 @@ De retour sur l'onglet « Revue de contrat », le document apparaît dans la car
 
 ---
 
-## 5. Prix calculé : tant que la commande est en préparation
+## 5. Prix calculé : tant que la commande est en préparation {#prix-calcule-tant-que-la-commande-est-en-preparation}
 
 Une ligne peut suivre un **prix calculé**, relu sur sa gamme (les opérations) à chaque
 affichage, au lieu d'un prix figé. Le réglage se trouve dans la fenêtre des tâches de la
@@ -156,7 +156,7 @@ de vente de la ligne, qui ne bouge plus.
 
 ---
 
-## 6. Viser la revue
+## 6. Viser la revue {#viser-la-revue}
 
 Quand la préparation est complète, une personne autorisée vise la revue.
 
@@ -179,7 +179,7 @@ bouton « Émettre l'ARC » de la carte « Options » (onglet Informations) le r
 
 ---
 
-## 7. Après le visa : le prix est figé
+## 7. Après le visa : le prix est figé {#apres-le-visa-le-prix-est-fige}
 
 Une fois la revue validée (ou la commande passée au-delà du statut « Ouvert »), le prix
 accepté par le client ne doit plus bouger tout seul.
@@ -195,7 +195,7 @@ accepté par le client ne doit plus bouger tout seul.
 
 ---
 
-## 8. Reporter une date de livraison
+## 8. Reporter une date de livraison {#reporter-une-date-de-livraison}
 
 Modifiez la ligne (menu de la ligne › « Modifier ») et changez la **Date livraison**.
 
@@ -222,7 +222,7 @@ En rouvrant la ligne, le panneau montre tous les reports.
 
 ---
 
-## 9. Créer un avenant
+## 9. Créer un avenant {#creer-un-avenant}
 
 Le client modifie sa commande après la revue (quantité, indice, délai, prix…) ? Créez un
 **avenant** : la revue est rouverte, et son nouveau visa vaudra visa de l'avenant. Carte
@@ -248,7 +248,7 @@ repères de plus). Le devis d'origine n'est jamais modifié.
 
 ---
 
-## 10. Annuler ou viser l'avenant
+## 10. Annuler ou viser l'avenant {#annuler-ou-viser-lavenant}
 
 **Annuler** : l'avenant n'a pas lieu (le client se rétracte, erreur de saisie).
 
@@ -271,7 +271,7 @@ revue rouverte comme à l'étape 6.
 
 ---
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 <!-- feature: production-release -->
 - Donner le **bon pour fabrication** aux lignes (onglet « Lignes ») : il est refusé tant que
@@ -281,7 +281,7 @@ revue rouverte comme à l'étape 6.
 - Poursuivre le parcours de vente : production, bon de livraison et facture (guide « Du
   prospect à la facture »).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Je ne vois pas les boutons « Viser ».**
 Le visa est réservé aux personnes autorisées : à leur place, un message l'indique. Préparez la

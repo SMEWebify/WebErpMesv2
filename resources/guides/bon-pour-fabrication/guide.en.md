@@ -21,7 +21,7 @@ drawing, the material and the routing. This go-ahead is the **release for produc
 bracket drawing is approved, the cover drawing is still waiting for the customer's answer:
 only the bracket goes into production.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - Your company has made the release for production mandatory: that is why this guide is
   shown. Without this option nothing is blocked and no RFP badge is displayed.
@@ -40,7 +40,7 @@ only the bracket goes into production.
 
 Procurement can therefore start before the release: only shop-floor work waits.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Order and routing
@@ -52,7 +52,7 @@ Follow-up and revoking
 
 ---
 
-## 1. Spot the lines without release
+## 1. Spot the lines without release {#reperer-les-lignes-sans-bpf}
 
 Open the order, **"Lines"** tab. In the "Tasks" column each line carries a badge:
 
@@ -63,7 +63,7 @@ Open the order, **"Lines"** tab. In the "Tasks" column each line carries a badge
 
 A new line, or a **duplicated** line, never has a release: it must always be given.
 
-## 2. What the operator sees
+## 2. What the operator sees {#ce-que-voit-loperateur}
 
 On the tracking screen of a productive operation whose line is not released:
 
@@ -75,7 +75,7 @@ On the tracking screen of a productive operation whose line is not released:
 > 💡 The operator only has to tell engineering: as soon as the line is released, reloading the
 > screen is enough.
 
-## 3. Release from the order
+## 3. Release from the order {#donner-le-bpf-depuis-la-fiche-commande}
 
 The quickest way when several lines are ready.
 
@@ -97,13 +97,13 @@ A message confirms how many lines were released. Then:
 > by line; the others are released anyway. Possible refusals are described below ("When the
 > release is refused").
 
-## 4. The shop floor starts
+## 4. The shop floor starts {#latelier-demarre}
 
 Reload the tracking screen: the banner is gone and **"Play"** is available (1).
 
 ![Tracking screen unblocked, Play available](img/05-tache-debloquee.png)
 
-## 5. Release or revoke line by line
+## 5. Release or revoke line by line {#donner-ou-annuler-le-bpf-ligne-par-ligne}
 
 Menu **Orders → Order lines**: the list of all lines, across all orders, has an **"RFP"**
 column. Handy for engineering, who see at a glance everything waiting for their go-ahead.
@@ -117,7 +117,7 @@ column. Handy for engineering, who see at a glance everything waiting for their 
 > paused). The message is: "A task of this line has already started: the release can no longer
 > be revoked." So check the drawing **before** releasing.
 
-## 6. Where to see lines without release
+## 6. Where to see lines without release {#ou-voir-les-lignes-sans-bpf}
 
 - **Task list** (Planning → Task list): an orange **padlock** (1) in front of the label of
   productive operations whose line is not released.
@@ -131,7 +131,7 @@ column. Handy for engineering, who see at a glance everything waiting for their 
 - **Order set to "In progress"**: productive operations without release keep their status, the
   others move on as usual.
 
-## When the release is refused
+## When the release is refused {#quand-le-bpf-est-refuse}
 
 The line is not released, with a message, in these cases:
 
@@ -147,7 +147,7 @@ The line is not released, with a message, in these cases:
 > (new drawing, revision B instead of A), its release is removed automatically: the new drawing
 > must be approved again. The removal is recorded in the change history.
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Report production** on the tracking screen: see the guide "Workshop and production".
 - **Contract review and amendments**: see the guide "Contract review, amendments and order
@@ -155,7 +155,7 @@ The line is not released, with a message, in these cases:
 - Give the "production-release" permission to the engineering staff (Your company → Roles and
   permissions).
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The "Release for production" button does not appear.**
 You lack the "production-release" permission. You see the badges, but only a holder of the

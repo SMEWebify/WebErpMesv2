@@ -17,7 +17,7 @@ faire circuler les notes de frais sans papier.
 **Exemple utilisé** : un opérateur presse plieuse embauché en CDI au 1er septembre. Il
 rentre d'un salon professionnel à Lyon avec un ticket de restaurant à se faire rembourser.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **Ressources humaines** apparaît avec la permission **human-resources-menu**,
   nécessaire aussi pour modifier une fiche salarié, ses contrats, et valider les notes de
@@ -28,7 +28,7 @@ rentre d'un salon professionnel à Lyon avec un ticket de restaurant à se faire
   horaires et congés » ; la matrice des habilitations, du guide « Risques et santé au
   travail ».
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Fiche salarié
@@ -45,7 +45,7 @@ congés** et **Export paie**.
 
 ---
 
-## 1. La liste des salariés
+## 1. La liste des salariés {#la-liste-des-salaries}
 
 Menu **Ressources humaines › Utilisateurs liste** : un salarié par ligne, avec son statut de
 connexion, son poste, ses rôles et, s'il est bloqué, la date de fin du blocage. La flèche en
@@ -59,7 +59,7 @@ bout de ligne ouvre sa fiche.
 
 ---
 
-## 2. La fiche salarié
+## 2. La fiche salarié {#la-fiche-salarie}
 
 Onglet **RH information** :
 
@@ -95,7 +95,7 @@ de résiliation, et statut de l'employé. En bas du formulaire :
 
 ---
 
-## 3. Les contrats
+## 3. Les contrats {#les-contrats}
 
 Onglet **Contra** (contrats), carte **Nouveau contrat** :
 
@@ -116,7 +116,7 @@ saisies en heures.
 
 ---
 
-## 4. Le dossier du salarié
+## 4. Le dossier du salarié {#le-dossier-du-salarie}
 
 Onglet **Documents** : contrat signé, bulletins, arrêts de travail, diplômes, pièces
 d'identité.
@@ -132,7 +132,7 @@ bulletin de paie, arrêt de travail, diplôme, pièce d'identité…).
 
 ---
 
-## 5. La note de frais (salarié)
+## 5. La note de frais (salarié) {#la-note-de-frais-salarie}
 
 Le salarié ouvre son **profil** (menu de son nom en haut à droite), onglet **Note de frais**,
 et crée une note par déplacement ou par mois :
@@ -148,7 +148,7 @@ Le bouton **Voir** de la note ouvre sa page : la liste des dépenses à gauche, 
 
 ---
 
-## 6. Le justificatif et la dépense
+## 6. Le justificatif et la dépense {#le-justificatif-et-la-depense}
 
 Déposez d'abord la photo du ticket (ou la facture en PDF) dans la carte **Justificatifs** :
 
@@ -183,7 +183,7 @@ La dépense peut aussi être rattachée à une **commande** client (frais refact
 
 ---
 
-## 7. Soumettre la note
+## 7. Soumettre la note {#soumettre-la-note}
 
 Une fois toutes les dépenses saisies, le salarié revient dans son profil, onglet **Note de
 frais**, et ouvre la note avec **Modifier** :
@@ -198,7 +198,7 @@ la décision des RH.
 
 ---
 
-## 8. La validation (RH)
+## 8. La validation (RH) {#la-validation-rh}
 
 Menu **Ressources humaines › Note de frais**, onglet **Validation des note de frais** : les
 notes soumises (et celles déjà approuvées), avec leur montant. **Voir** ouvre la note et ses justificatifs.
@@ -228,21 +228,21 @@ nouveau.
 
 ---
 
-## 9. Les catégories de dépense
+## 9. Les catégories de dépense {#les-categories-de-depense}
 
 Onglet **Catégorie de dépense** : la liste proposée au salarié (carburant, hôtel, repas
 midi, repas soir…). **Nouvelle catégorie de dépense** en ajoute une.
 
 ![Catégories de dépense](img/15-categories.png)
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - Créer les natures de congé et saisir les droits de chaque salarié : guide « Temps,
   horaires et congés ».
 - Suivre les habilitations du salarié (CACES, habilitation électrique) : guide « Risques et
   santé au travail ».
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Le salarié ne voit pas son ticket dans la liste « Justificatif ».**
 Il est déjà rattaché à une autre dépense, ou il a été déposé dans une autre note.

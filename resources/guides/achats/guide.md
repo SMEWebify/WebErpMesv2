@@ -16,7 +16,7 @@ updated: 2026-10-31
 6 tôles de 3 mm, négocie le prix de la tôle de 8 mm, exige un certificat matière, commande,
 enregistre l'accusé de réception du fournisseur, réceptionne puis enregistre sa facture.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Il faut la permission **Achats** (menu « Acheter »).
 - Une **unité** et un **taux de TVA par défaut** doivent exister (voir le guide Méthodes).
@@ -30,7 +30,7 @@ enregistre l'accusé de réception du fournisseur, réceptionne puis enregistre 
   même à un fournisseur non qualifié, il faut le droit de passe-droit (étape 3.1).
 <!-- /feature -->
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Fournisseur
@@ -52,7 +52,7 @@ du fournisseur.
 
 ---
 
-## 1. Préparer le fournisseur
+## 1. Préparer le fournisseur {#preparer-le-fournisseur}
 
 Un fournisseur est un tiers comme un autre (menu **Tiers**, « Ajouter un tiers »). Trois
 réglages le rendent utilisable dans les achats.
@@ -89,7 +89,7 @@ lui envoyer les documents) et **cochez « Par défaut »**.
 
 ---
 
-## 2. Consulter le fournisseur : la demande de prix
+## 2. Consulter le fournisseur : la demande de prix {#consulter-le-fournisseur-la-demande-de-prix}
 
 ### 2.1 Partir de l'écran « Demande d'achat »
 
@@ -148,7 +148,7 @@ Onglet « Info Devis d'achat », carte **Options** : « PDF » pour l'imprimer o
 
 ---
 
-## 3. Commander
+## 3. Commander {#commander}
 
 ### 3.1 Transformer la demande de prix en commande
 
@@ -235,7 +235,7 @@ passez-la à **« En commande »**.
 
 ---
 
-## 4. Enregistrer l'accusé de réception du fournisseur
+## 4. Enregistrer l'accusé de réception du fournisseur {#enregistrer-laccuse-de-reception-du-fournisseur}
 
 Le fournisseur confirme votre commande et annonce sa date de livraison (son « AR »).
 Enregistrez-le : c'est sa date **confirmée** qui sert ensuite à mesurer ses retards.
@@ -270,7 +270,7 @@ de leurs lignes n'a pas d'AR, avec le nombre de jours d'attente. Relancez ces fo
 
 ---
 
-## 5. Réceptionner
+## 5. Réceptionner {#receptionner}
 
 ### 5.1 Créer le bon de réception
 
@@ -339,7 +339,7 @@ pièce.
 
 ---
 
-## 6. Enregistrer la facture fournisseur
+## 6. Enregistrer la facture fournisseur {#enregistrer-la-facture-fournisseur}
 
 Menu **Acheter › En attente de facturation** : les réceptions pas encore facturées.
 
@@ -364,7 +364,7 @@ garantit de payer le juste montant. Une fois la facture contrôlée, passez son 
 
 ---
 
-## Les factures électroniques reçues
+## Les factures électroniques reçues {#les-factures-electroniques-recues}
 
 Avec la facturation électronique, les factures fournisseurs arrivent au format **Factur-X**.
 Menu **Acheter › Factures reçues** : celles transmises par votre plateforme y arrivent
@@ -381,7 +381,7 @@ Sur chaque facture reçue :
 
 ---
 
-## Suivre ses fournisseurs
+## Suivre ses fournisseurs {#suivre-ses-fournisseurs}
 
 Les notes de réception et les dates des AR alimentent deux indicateurs, calculés sur les
 **12 derniers mois**.
@@ -406,7 +406,7 @@ ponctuels.
 > 💡 Une ligne sans date demandée ni confirmée n'entre pas dans le taux : elle est
 > comptée à part. Renseignez la date demandée (étape 3.2) ou enregistrez l'AR (étape 4).
 
-## Et ensuite ?
+## Et ensuite ? {#et-ensuite}
 
 - **Évaluer le fournisseur** : onglet « Évaluations fournisseurs » de sa fiche, pour la
   revue périodique (statut, prochaine revue, plan d'action).
@@ -417,7 +417,7 @@ ponctuels.
 - **Relier à l'affaire** : les achats faits pour une commande client apparaissent sur la
   synthèse de son opportunité (montant acheté, achats en retard d'après la date confirmée).
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Mon fournisseur n'apparaît pas dans les listes.**
 Son « Etat fournisseur » est resté « Inactif » (étape 1.1).

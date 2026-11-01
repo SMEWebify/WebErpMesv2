@@ -22,7 +22,7 @@ workshop.
 90°. The back gauge moved during a tool change. The customer accepts 7 parts at 91.5°, the
 other 5 are reworked.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **Quality** menu appears with the **quality-menu** permission. Internal audits
   require **audit-menu**, customer returns **returns-menu**.
@@ -35,7 +35,7 @@ other 5 are reworked.
 - Electronic signature of derogations is only offered once the **Integrations → Electronic
   signature** screen is configured.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 Settings
@@ -54,7 +54,7 @@ The **Quality** menu gathers: **Dashboard** (with measuring devices and settings
 
 ---
 
-## 1. The dashboard
+## 1. The dashboard {#le-tableau-de-bord}
 
 ![Quality dashboard](img/01-tableau-de-bord.png)
 
@@ -69,7 +69,7 @@ The **Quality** menu gathers: **Dashboard** (with measuring devices and settings
 
 ---
 
-## 2. Set up the defect reference lists
+## 2. Set up the defect reference lists {#preparer-le-referentiel-des-defauts}
 
 **Settings** tab: three lists, filled in once, reused by every non-conformity.
 
@@ -90,7 +90,7 @@ Expand a card with **+**, then:
 
 ---
 
-## 3. Track measuring devices
+## 3. Track measuring devices {#suivre-les-appareils-de-mesure}
 
 **Measuring device** tab: calipers, protractors, micrometers, gauges…
 
@@ -116,7 +116,7 @@ Every morning at 7:30, the person responsible for each device concerned also get
 
 ---
 
-## 4. Report a non-conformity
+## 4. Report a non-conformity {#declarer-une-non-conformite}
 
 Menu **Non conformities**, **New non-conformity** card at the bottom of the page (click its
 title to expand it).
@@ -152,7 +152,7 @@ history (section 7); the PDF button prints the record.
 
 ---
 
-## 5. Start a corrective action
+## 5. Start a corrective action {#lancer-une-action-corrective}
 
 Menu **Actions**: an action fixes the cause so the defect does not come back.
 
@@ -186,7 +186,7 @@ what and when, with the old value struck through and the new one.
 
 ---
 
-## 6. Get a derogation from the customer
+## 6. Get a derogation from the customer {#obtenir-une-derogation-du-client}
 
 A **derogation** records the acceptance of out-of-tolerance parts. An **external**
 derogation commits the customer: it can only be validated once their written approval is
@@ -293,7 +293,7 @@ Data" and whose contact has an e-mail address.
 
 ---
 
-## 7. Close the non-conformity
+## 7. Close the non-conformity {#cloturer-la-non-conformite}
 
 Once handled, open the non-conformity with its pencil.
 
@@ -321,7 +321,7 @@ Clicking the row opens the record details, with its history.
 
 ---
 
-## 8. Receipt document review
+## 8. Receipt document review {#visa-documentaire-des-receptions}
 
 Menu **Receipt document review**: goods receipt lines whose purchase order requires a
 material certificate (EN 10204: 2.1, 2.2, 3.1, 3.2), or for which a certificate was
@@ -342,7 +342,7 @@ comment, and a supplier non-conformity if needed.
 
 ---
 
-## 9. Control plans and first article
+## 9. Control plans and first article {#plans-de-controle-et-premier-article}
 
 Menu **Inspection**: the **Quality plans** screen gathers the items' control plans.
 
@@ -380,7 +380,7 @@ the order's documents (or the item's, if there is no order).
 
 ---
 
-## 10. Internal audits and customer returns
+## 10. Internal audits and customer returns {#audits-internes-et-retours-clients}
 
 **Internal audits**: ISO 9001 planner with annual plans, calendar, processes and checklists
 (clauses 4 to 10, pre-filled). An audit is started from the calendar; its findings (major or
@@ -393,7 +393,7 @@ and, if needed, to a non-conformity. Enter the diagnosis, then generate the rewo
 
 ![Customer returns](img/24-retours.png)
 
-## What next?
+## What next? {#et-ensuite}
 
 - **Deliver** the accepted parts: once the derogation is validated, the line's delivery note
   is no longer blocked (sales guide).
@@ -402,7 +402,7 @@ and, if needed, to a non-conformity. Enter the diagnosis, then generate the rewo
 - **Review the certificates** of material receipts (Purchasing guide).
 - **Schedule an internal audit** to check that the corrective action holds over time.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **The Failure, Cause and Correction lists only offer "N/A".**
 The reference lists are empty: fill in the Settings tab of the dashboard (section 2).

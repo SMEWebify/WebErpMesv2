@@ -18,7 +18,7 @@ standard audit file).
 **Who is it for**: the manager or the person who prepares documents for the accounting
 firm.
 
-## Before you start
+## Before you start {#avant-de-commencer}
 
 - The **Accounting** menu appears with the **accounting-menu** permission.
 - The **Regimes / Natures**, **VAT matrices** and **Periods** screens also require
@@ -28,7 +28,7 @@ firm.
 - Ask your accountant for: the chart of accounts (sales, purchases, output and input VAT),
   the bank and cash accounts, and the expected FEC format.
 
-## Overview
+## Overview {#vue-densemble}
 
 ```steps
 VAT codes
@@ -61,7 +61,7 @@ accountant is therefore never changed.
 
 ---
 
-## 1. VAT codes
+## 1. VAT codes {#les-codes-tva}
 
 **VAT** tab: one code per rate, and one code per exemption case.
 
@@ -90,7 +90,7 @@ The reason and category are sent in the electronic invoice (Factur-X).
 
 ---
 
-## 2. Accounting allocations
+## 2. Accounting allocations {#les-affectations-comptables}
 
 **Accounting allocation** tab: this is where each line finds its accounts. An allocation
 links a **type** and a **VAT code** to a revenue (or expense) account and a VAT account.
@@ -115,7 +115,7 @@ The Deposit, Tax and Other types are not used.
 
 ---
 
-## 3. Payments and delivery
+## 3. Payments and delivery {#paiements-et-livraison}
 
 **Payment method**: the **Account code** is the cash account debited by the receipt
 (512000 for the bank, 530000 for cash). Left empty, 512000 is used.
@@ -139,7 +139,7 @@ the end of the month if the box is ticked. "30 days end of month" on 10 January 
 
 ---
 
-## 4. VAT regimes, natures and matrices (advanced)
+## 4. VAT regimes, natures and matrices (advanced) {#regimes-natures-et-matrices-de-tva-avance}
 
 When the same item is sold to customers under different regimes (France, EU, export,
 franchise), the matrices pick the accounts from the pair **customer regime × item
@@ -175,7 +175,7 @@ marker for reverse charge.
 
 ---
 
-## 5. Lock periods
+## 5. Lock periods {#verrouiller-les-periodes}
 
 **More › Periods** tab: after each handover to the accountant, lock the month.
 
@@ -193,7 +193,7 @@ Choose the year and month, then **Lock**. A row's padlock unlocks the period.
 
 ---
 
-## 6. Hand over to the accountant
+## 6. Hand over to the accountant {#transmettre-au-comptable}
 
 Menu **Your company › Imports/Exports**, **FEC export** tab (see also the guide "Invoice
 and get paid"):
@@ -212,7 +212,7 @@ Then tick the entries, and **CSV**, **XLS** or **PDF**.
 >
 > 💡 Have your accountant validate the file format on the first handover.
 
-## Frequently asked questions
+## Frequently asked questions {#questions-frequentes}
 
 **An invoice is missing from the FEC export.**
 There is no Sale allocation for the VAT code of its lines (section 2). Create it: lines

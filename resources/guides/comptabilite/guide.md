@@ -16,7 +16,7 @@ dans le fichier FEC.
 **Pour qui** : le dirigeant ou la personne qui prépare les éléments pour le cabinet
 comptable.
 
-## Avant de commencer
+## Avant de commencer {#avant-de-commencer}
 
 - Le menu **Comptabilité** apparaît avec la permission **accounting-menu**.
 - Les écrans **Régimes / Natures**, **Matrices de TVA** et **Périodes** demandent en plus
@@ -26,7 +26,7 @@ comptable.
 - Demandez à votre expert-comptable : le plan de comptes utilisé (ventes, achats, TVA
   collectée et déductible), les comptes de banque et de caisse, et le format FEC attendu.
 
-## Vue d'ensemble
+## Vue d'ensemble {#vue-densemble}
 
 ```steps
 Codes TVA
@@ -59,7 +59,7 @@ l'export, une écriture d'annulation (contre-passation) est passée à la date d
 
 ---
 
-## 1. Les codes TVA
+## 1. Les codes TVA {#les-codes-tva}
 
 Onglet **TVA** : un code par taux, et un code par cas d'exonération.
 
@@ -88,7 +88,7 @@ Le motif et la catégorie partent dans la facture électronique (Factur-X).
 
 ---
 
-## 2. Les affectations comptables
+## 2. Les affectations comptables {#les-affectations-comptables}
 
 Onglet **Allocation comptable** : c'est ici que chaque ligne trouve ses comptes. Une
 affectation associe un **type** et un **code TVA** à un compte de produit (ou de charge) et
@@ -115,7 +115,7 @@ Les types Acompte, Taxe et Autre ne sont pas utilisés.
 
 ---
 
-## 3. Paiements et livraison
+## 3. Paiements et livraison {#paiements-et-livraison}
 
 **Méthode de paiement** : le **Code compte** est le compte de trésorerie débité par
 l'encaissement (512000 pour la banque, 530000 pour la caisse). Laissé vide, c'est 512000.
@@ -139,7 +139,7 @@ de mois » au 10 janvier donne le 28 février.
 
 ---
 
-## 4. Régimes, natures et matrices de TVA (avancé)
+## 4. Régimes, natures et matrices de TVA (avancé) {#regimes-natures-et-matrices-de-tva-avance}
 
 Quand un même article se vend à des clients de régimes différents (France, Union
 européenne, export, franchise), les matrices choisissent les comptes selon le couple
@@ -175,7 +175,7 @@ déductible, et repère pour l'autoliquidation.
 
 ---
 
-## 5. Verrouiller les périodes
+## 5. Verrouiller les périodes {#verrouiller-les-periodes}
 
 Onglet **Plus › Périodes** : après chaque transmission au comptable, verrouillez le mois.
 
@@ -194,7 +194,7 @@ période.
 
 ---
 
-## 6. Transmettre au comptable
+## 6. Transmettre au comptable {#transmettre-au-comptable}
 
 Menu **Votre entreprise › Imports/Exports**, onglet **Export FEC** (voir aussi le guide
 « Facturer et encaisser ») :
@@ -215,7 +215,7 @@ Cochez ensuite les écritures, puis **CSV**, **XLS** ou **PDF**.
 >
 > 💡 Faites valider le format du fichier par votre expert-comptable lors du premier envoi.
 
-## Questions fréquentes
+## Questions fréquentes {#questions-frequentes}
 
 **Une facture n'apparaît pas dans l'export FEC.**
 Il manque une affectation comptable de type Vente pour le code TVA de ses lignes
