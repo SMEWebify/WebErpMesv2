@@ -1539,6 +1539,18 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   ou tout article ayant des lots)
 - **Retirer StockCurrentApp** (composant + mount app.js + endpoint `stockCurrentJson`) une fois l'écran Statut du stock validé en usage réel
 
+#### Dépendances — montées majeures repoussées
+- **spatie/laravel-activitylog 4 → 5** (PR Dependabot #1220 fermée, version 5 ignorée, nov. 2026) :
+  à faire à la main dans une branche, jamais par Dependabot. La v5 change le **schéma** (colonne
+  `attribute_changes`, `batch_uuid` supprimée) et le contenu de `properties` (seulement les données
+  propres, plus `old` / `attributes`) : sans reprise de l'historique existant, `ActivityHistory`,
+  le journal qualité, la revue de contrat et l'écran Logs ne liraient plus les entrées passées.
+  Aussi : namespaces déplacés (`Models\Concerns\LogsActivity`, `Support\LogOptions`),
+  `dontSubmitEmptyLogs()` → `dontLogEmptyChanges()` (15 modèles), clés de config renommées
+  (`delete_records_older_than_days` → `clean_after_days`, `ACTIVITY_LOGGER_ENABLED` →
+  `ACTIVITYLOG_ENABLED`). Le journal des consultations (`log_name = access`) écrit ses
+  propres `properties` (`route`, `ip`) : à garder dans `properties`.
+
 ### ⚠️ À vérifier
 - `order_lines` : la migration de passage en décimal (`2026_04_21_000004`) a fait tomber le
   `default(0)` des quantités (`->change()` ne reprend pas les modificateurs). Invisible en
