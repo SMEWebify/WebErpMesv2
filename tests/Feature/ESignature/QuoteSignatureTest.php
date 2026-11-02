@@ -13,6 +13,7 @@ use App\Services\Files\FileRole;
 use App\Services\Integrations\Signature\Drivers\DocuSignGateway;
 use App\Services\Invoicing\FacturXBuilder;
 use App\Services\PdfThemeResolver;
+use App\Services\Documents\PackingList;
 use App\Services\Documents\PdfLayoutRegistry;
 use App\Services\Documents\SalesLayoutRows;
 use App\Services\Documents\SalesPrintLayout;
@@ -68,6 +69,7 @@ class QuoteSignatureTest extends TestCase
             $app->make(SalesPrintLayout::class),
             $app->make(PdfLayoutRegistry::class),
             $app->make(SalesLayoutRows::class),
+            $app->make(PackingList::class),
         ) extends DocumentPdfService {
             public function render($document, ?string $layout = null, ?string $locale = null): string
             {

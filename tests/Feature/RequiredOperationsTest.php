@@ -98,7 +98,8 @@ class RequiredOperationsTest extends TestCase
             ->assertJsonCount(1, 'required_operations.missing.0.services')
             ->assertJsonPath('required_operations.can_override', false);
 
-        $this->assertSame(0, Orders::count());
+        // TaskFactory peut créer une commande au hasard : seules comptent celles du devis.
+        $this->assertSame(0, Orders::where('quotes_id', $quote->id)->count());
         $this->assertSame(1, (int) $quote->fresh()->statu);
     }
 
@@ -164,7 +165,8 @@ class RequiredOperationsTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors('required_operations_override_reason');
 
-        $this->assertSame(0, Orders::count());
+        // TaskFactory peut créer une commande au hasard : seules comptent celles du devis.
+        $this->assertSame(0, Orders::where('quotes_id', $quote->id)->count());
         $this->assertSame(0, RequiredOperationsOverride::count());
     }
 

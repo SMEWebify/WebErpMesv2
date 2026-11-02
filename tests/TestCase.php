@@ -57,6 +57,16 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    protected function tearDown(): void
+    {
+        // Le dépôt de pré-commandes et la lecture IA des plans posent
+        // set_time_limit() pour une requête web ; dans le processus unique de
+        // PHPUnit, cette limite courrait sinon jusqu'à la fin de la suite.
+        @set_time_limit(0);
+
+        parent::tearDown();
+    }
+
     protected function authenticateApiUser(): User
     {
         $user = User::factory()->create();
