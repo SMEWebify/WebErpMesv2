@@ -2219,16 +2219,16 @@
         },
         {
             "name": "horstoeko/zugferd",
-            "version": "v1.0.133",
+            "version": "v1.0.134",
             "source": {
                 "type": "git",
                 "url": "https://github.com/horstoeko/zugferd.git",
-                "reference": "7ae81641e2ca1992b5b0afbce00309ed4d989e4c"
+                "reference": "3ced2116cecb5cfb950c4441066338cd71044337"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/horstoeko/zugferd/zipball/7ae81641e2ca1992b5b0afbce00309ed4d989e4c",
-                "reference": "7ae81641e2ca1992b5b0afbce00309ed4d989e4c",
+                "url": "https://api.github.com/repos/horstoeko/zugferd/zipball/3ced2116cecb5cfb950c4441066338cd71044337",
+                "reference": "3ced2116cecb5cfb950c4441066338cd71044337",
                 "shasum": ""
             },
             "require": {
@@ -2291,7 +2291,7 @@
             ],
             "support": {
                 "issues": "https://github.com/horstoeko/zugferd/issues",
-                "source": "https://github.com/horstoeko/zugferd/tree/v1.0.133"
+                "source": "https://github.com/horstoeko/zugferd/tree/v1.0.134"
             },
             "funding": [
                 {
@@ -2299,7 +2299,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-10-20T12:44:04+00:00"
+            "time": "2026-10-29T09:21:40+00:00"
         },
         {
             "name": "intervention/gif",
@@ -4651,16 +4651,16 @@
         },
         {
             "name": "milon/barcode",
-            "version": "v13.5.1",
+            "version": "v13.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/milon/barcode.git",
-                "reference": "e980a926d43ef8609c12a319c1b4c37c673f833a"
+                "reference": "aff97c2d830c826313a2c435d3485479249b8747"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/milon/barcode/zipball/e980a926d43ef8609c12a319c1b4c37c673f833a",
-                "reference": "e980a926d43ef8609c12a319c1b4c37c673f833a",
+                "url": "https://api.github.com/repos/milon/barcode/zipball/aff97c2d830c826313a2c435d3485479249b8747",
+                "reference": "aff97c2d830c826313a2c435d3485479249b8747",
                 "shasum": ""
             },
             "require": {
@@ -4713,7 +4713,7 @@
             ],
             "support": {
                 "issues": "https://github.com/milon/barcode/issues",
-                "source": "https://github.com/milon/barcode/tree/v13.5.1"
+                "source": "https://github.com/milon/barcode/tree/v13.6.0"
             },
             "funding": [
                 {
@@ -4725,7 +4725,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-25T17:21:25+00:00"
+            "time": "2026-10-29T22:06:46+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -10110,16 +10110,16 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v8.1.9",
+            "version": "v8.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "020b0f92a34367a36ffad5956501f971545a3b9b"
+                "reference": "bf9171dc59f33fe84da8a5ca0e75f354194be325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/020b0f92a34367a36ffad5956501f971545a3b9b",
-                "reference": "020b0f92a34367a36ffad5956501f971545a3b9b",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/bf9171dc59f33fe84da8a5ca0e75f354194be325",
+                "reference": "bf9171dc59f33fe84da8a5ca0e75f354194be325",
                 "shasum": ""
             },
             "require": {
@@ -10183,7 +10183,7 @@
             "description": "Provides tools to validate values",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/validator/tree/v8.1.9"
+                "source": "https://github.com/symfony/validator/tree/v8.1.10"
             },
             "funding": [
                 {
@@ -10203,7 +10203,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-13T16:18:12+00:00"
+            "time": "2026-10-27T13:53:09+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -10294,16 +10294,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v8.1.9",
+            "version": "v8.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "6107ee26a25215c3df3af0a3315e56bb4fd0b7db"
+                "reference": "9de4ff9874dd18b738b9f248398c3e36ef15a1d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/6107ee26a25215c3df3af0a3315e56bb4fd0b7db",
-                "reference": "6107ee26a25215c3df3af0a3315e56bb4fd0b7db",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/9de4ff9874dd18b738b9f248398c3e36ef15a1d2",
+                "reference": "9de4ff9874dd18b738b9f248398c3e36ef15a1d2",
                 "shasum": ""
             },
             "require": {
@@ -10346,7 +10346,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v8.1.9"
+                "source": "https://github.com/symfony/yaml/tree/v8.1.10"
             },
             "funding": [
                 {
@@ -10366,7 +10366,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-12T12:37:13+00:00"
+            "time": "2026-10-18T14:56:39+00:00"
         },
         {
             "name": "thecodingmachine/safe",
