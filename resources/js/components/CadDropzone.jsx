@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { canRenderThumbnail, fileThumbnail } from '../lib/files/fileThumbnail';
 
 // ---------------------------------------------------------------------------
 // CadDropzone — drag and drop of CAD files to create quote or order lines
@@ -12,6 +13,24 @@ import React, { useRef, useState } from 'react';
 const ACCEPTED = ['sym', 'drg', 'geo', 'dxf', 'step', 'stp', 'svg', 'pdf'];
 
 const ACCEPT_ATTRIBUTE = ACCEPTED.map((extension) => `.${extension}`).join(',');
+
+/**
+ * Lance la miniature des plans déposés depuis les fichiers encore en mémoire,
+ * avant que les lignes s'affichent : la vignette de la ligne reprend ce rendu
+ * au lieu de retélécharger le fichier (un STEP lourd n'est dessiné qu'ici).
+ * Le contour SVG tiré d'un .geo n'a pas de fichier local et suit la voie normale.
+ */
+function prerenderThumbnails(lines, uploads) {
+    lines.forEach((line) => {
+        const plan = line.plan_file;
+        if (!plan || plan.thumbnail_url) return;
+
+        const local = uploads.find((upload) => upload.name === plan.name);
+        if (local && canRenderThumbnail(plan, true)) {
+            fileThumbnail(plan, local).catch(() => {});
+        }
+    });
+}
 
 export default function CadDropzone({ endpoint, disabled = false, onImported }) {
     const [dragging, setDragging] = useState(false);
@@ -64,6 +83,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
             setResults([...imported, ...failed]);
 
             if (imported.length > 0) {
+                prerenderThumbnails(data.lines, accepted);
                 onImported(data.lines);
             }
         } catch {

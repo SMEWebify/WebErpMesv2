@@ -11,6 +11,7 @@ use App\Events\OrderLineUpdated;
 use App\Events\DeliveryLineUpdated;
 use Illuminate\Support\Facades\DB;
 use App\Services\Cad\CadImportService;
+use App\Services\Files\LineThumbnailFile;
 use App\Services\ImportCsvService;
 use App\Services\DeliveryService;
 use App\Services\Receivables\CreditLimitGuard;
@@ -403,6 +404,9 @@ class OrderLinesController extends Controller
                 'InvoiceLines.invoice:id,code',
                 'releasedBy:id,name',
                 'dossierValidatedBy:id,name',
+                // Vignette de repli quand le détail n'a pas d'image.
+                'files'         => fn ($q) => $q->select(LineThumbnailFile::COLUMNS),
+                'Product.files' => fn ($q) => $q->select(LineThumbnailFile::COLUMNS),
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('orders_id', $orderId)
@@ -862,7 +866,8 @@ class OrderLinesController extends Controller
             'sub_assembly_count'   => $l->sub_assembly_count,
             'detail_id'            => $l->OrderLineDetails?->id,
             'picture'              => $l->OrderLineDetails?->picture,
-            'task_url'             => route('task.manage', ['id_type' => 'order_lines_id', 'id_page' => $l->orders_id, 'id_line' => $l->id]),
+            'plan_file'            => $l->OrderLineDetails?->picture ? null : LineThumbnailFile::forLine($l),
+            'task_url'           => route('task.manage', ['id_type' => 'order_lines_id', 'id_page' => $l->orders_id, 'id_line' => $l->id]),
             'release'              => $this->releasePayload($l),
             'dossier'              => $this->dossierPayload($l),
             'detail_url'           => route('orders.lines.detail.edit', ['idOrder' => $l->orders_id, 'id' => $l->id]),

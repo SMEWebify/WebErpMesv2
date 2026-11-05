@@ -1,6 +1,7 @@
 import React from 'react';
 import Viewer3D from './Viewer3D.jsx';
-import { THREE, partMaterial } from './scene.js';
+import { THREE } from './scene.js';
+import { loadOcct, readerFor, toMesh } from '../../../lib/brep/occt.js';
 
 /**
  * Viewer for CAD kernel formats: STEP, IGES and BREP.
@@ -12,62 +13,6 @@ import { THREE, partMaterial } from './scene.js';
  *
  * The 7 MB WASM payload is fetched only when a B-Rep file is actually opened.
  */
-async function loadOcct() {
-    const [{ default: occtimportjs }, { default: wasmUrl }] = await Promise.all([
-        import('occt-import-js'),
-        import('occt-import-js/dist/occt-import-js.wasm?url'),
-    ]);
-
-    return occtimportjs({ locateFile: () => wasmUrl });
-}
-
-function readerFor(occt, extension) {
-    switch (extension) {
-        case 'step':
-        case 'stp':
-            return (bytes) => occt.ReadStepFile(bytes, null);
-        case 'iges':
-        case 'igs':
-            return (bytes) => occt.ReadIgesFile(bytes, null);
-        case 'brep':
-            return (bytes) => occt.ReadBrepFile(bytes, null);
-        default:
-            throw new Error(`Unsupported B-Rep format: ${extension}`);
-    }
-}
-
-/**
- * Turn one OCCT mesh descriptor into a three.js mesh.
- */
-function toMesh(descriptor) {
-    const geometry = new THREE.BufferGeometry();
-
-    geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(descriptor.attributes.position.array, 3),
-    );
-
-    if (descriptor.attributes.normal) {
-        geometry.setAttribute(
-            'normal',
-            new THREE.Float32BufferAttribute(descriptor.attributes.normal.array, 3),
-        );
-    }
-
-    if (descriptor.index) {
-        geometry.setIndex(new THREE.Uint32BufferAttribute(descriptor.index.array, 1));
-    }
-
-    if (!descriptor.attributes.normal) {
-        geometry.computeVertexNormals();
-    }
-
-    const mesh = new THREE.Mesh(geometry, partMaterial());
-    mesh.name = descriptor.name ?? '';
-
-    return mesh;
-}
-
 export default function BrepViewer({ file, t }) {
     const load = async (stage, url, signal) => {
         const occt = await loadOcct();

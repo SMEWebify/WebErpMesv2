@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Events\OrderCreated;
 use App\Services\Cad\CadImportService;
+use App\Services\Files\LineThumbnailFile;
 use App\Services\ImportCsvService;
 use App\Services\CustomFieldService;
 use App\Services\OrderService;
@@ -249,6 +250,9 @@ class QuoteLinesController extends Controller
                 'QuoteLineDetails:id,quote_lines_id,picture',
                 'orderLine:id,quote_lines_id,orders_id',
                 'orderLine.order:id,code',
+                // Vignette de repli quand le détail n'a pas d'image.
+                'files'         => fn ($q) => $q->select(LineThumbnailFile::COLUMNS),
+                'Product.files' => fn ($q) => $q->select(LineThumbnailFile::COLUMNS),
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('quotes_id', $quoteId)
@@ -690,7 +694,8 @@ class QuoteLinesController extends Controller
             'sub_assembly_count'   => $l->sub_assembly_count,
             'detail_id'            => $l->QuoteLineDetails?->id,
             'picture'              => $l->QuoteLineDetails?->picture,
-            'task_url'             => route('task.manage', ['id_type' => 'quote_lines_id', 'id_page' => $l->quotes_id, 'id_line' => $l->id]),
+            'plan_file'            => $l->QuoteLineDetails?->picture ? null : LineThumbnailFile::forLine($l),
+            'task_url'           => route('task.manage', ['id_type' => 'quote_lines_id', 'id_page' => $l->quotes_id, 'id_line' => $l->id]),
             'detail_url'           => route('quotes.lines.detail.edit', ['idQuote' => $l->quotes_id, 'id' => $l->id]),
             'order_code'           => $l->orderLine?->order?->code,
             'order_url'            => $l->orderLine?->order ? route('orders.show', ['id' => $l->orderLine->orders_id]) : null,

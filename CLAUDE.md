@@ -311,6 +311,13 @@ fin de `routes/web.php` hors du groupe de locale. Un SVG est renvoyé avec `nosn
   (OpenCascade en WASM, 7,4 Mo chargés à la demande, aucun convertisseur serveur requis) —
   **DXF** : `dxf-parser` (parsing seul, pas de dépendance three) + rendu maison dans
   `resources/js/lib/dxf/toThree.js`, caméra orthographique
+- **Vignette des lignes de devis / commande** : `picture` du détail (RadQuote, Nest4Quote, `.sym`)
+  d'abord ; sinon `plan_file` du JSON (`App\Services\Files\LineThumbnailFile` : rôles plan /
+  vectoriel / modèle 3D / photo de la ligne puis de l'article, miniature déjà rendue d'abord,
+  chargé en une requête pour la page). Dessinée par le navigateur (`lib/files/fileThumbnail.js` :
+  PDF, image, SVG à trait épaissi, DXF, STEP en vue iso) puis déposée dans `files.thumbnail_path`.
+  Un STEP de plus de 15 Mo n'est dessiné qu'au dépôt dans `CadDropzone` (octets locaux).
+  Tests : `tests/Feature/LineThumbnailFileTest.php`, `resources/js/tests/lib/fileThumbnail.test.js`.
 
 ### Compatibilité
 `products.drawing_file / stl_file / svg_file / picture` ne sont plus la source de vérité

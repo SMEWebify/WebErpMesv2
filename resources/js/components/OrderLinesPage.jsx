@@ -3,6 +3,7 @@ import { formatQty, formatDate } from '../utils';
 import { formatDuration } from '../lib/duration.js';
 import useProductSearch from '../hooks/useProductSearch';
 import CadDropzone from './CadDropzone.jsx';
+import FileThumbnail from './files/FileThumbnail.jsx';
 import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineLayout';
 import { apiRequest as apiFetch } from '../lib/http';
 import { calculatedPriceToggle, isValidReason } from '../lib/calculatedPrice';
@@ -923,13 +924,17 @@ function LineRow({
         >
             {/* Drag handle + thumbnail ou ordre */}
             <td style={{ width: 52, cursor: !isReadOnly ? 'grab' : 'default', userSelect: 'none', padding: '2px 4px', verticalAlign: 'middle' }}>
-                {line.picture ? (
+                {line.picture || line.plan_file ? (
                     <div style={{ position: 'relative', display: 'inline-block' }}>
-                        <img
-                            src={`/images/quote-lines/${line.picture}`}
-                            alt=""
-                            style={{ width: 42, height: 42, objectFit: 'contain', background: 'var(--bs-tertiary-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 3, display: 'block' }}
-                        />
+                        {line.picture ? (
+                            <img
+                                src={`/images/quote-lines/${line.picture}`}
+                                alt=""
+                                style={{ width: 42, height: 42, objectFit: 'contain', background: 'var(--bs-tertiary-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 3, display: 'block' }}
+                            />
+                        ) : (
+                            <FileThumbnail file={line.plan_file} />
+                        )}
                         <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.6rem', padding: '0 3px', borderRadius: '3px 0 3px 0', lineHeight: '1.5' }}>
                             {line.ordre}
                         </span>
