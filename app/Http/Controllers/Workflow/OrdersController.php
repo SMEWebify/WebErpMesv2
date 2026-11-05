@@ -294,7 +294,7 @@ class OrdersController extends Controller
         }
 
         // Redirect with success message
-        return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Successfully updated Order');
+        return redirect()->route('orders.show', ['id' => $order->id])->with('success', __('general_content.order_updated_success_trans_key'));
     }
 
     public function calculateTaskDates(Orders $order)
@@ -304,7 +304,7 @@ class OrdersController extends Controller
 
         return redirect()
             ->route('orders.show', ['id' => $order->id])
-            ->with('success', 'Task date calculation queued for this order.');
+            ->with('success', __('general_content.order_task_dates_queued_trans_key'));
     }
 
     // -------------------------------------------------------------------------
