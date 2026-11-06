@@ -38,6 +38,46 @@
           <x-adminlte-info-box title=" {{__('general_content.current_stock_trans_key') }}" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
         </div>
       </div>
+        @if($handlesRemnants)
+        <x-adminlte-card title="{{ __('stock_remnants.pieces_title') }}" theme="primary" theme-mode="outline" icon="fas fa-layer-group">
+          <p class="small text-body-secondary mb-2">{{ __('stock_remnants.pieces_hint') }}</p>
+          <div class="table-responsive p-0">
+            <table class="table table-sm table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ __('stock_remnants.kind') }}</th>
+                  <th>{{ __('stock_remnants.format') }}</th>
+                  <th>{{ __('general_content.tracability_trans_key') }}</th>
+                  <th class="text-end">{{ __('general_content.qty_trans_key') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($Pieces as $piece)
+                <tr>
+                  <td>
+                    @if($piece['is_remnant'])
+                      <span class="badge text-bg-warning">{{ __('stock_remnants.remnant') }}</span>
+                    @else
+                      <span class="badge text-bg-success">{{ __('stock_remnants.full_piece') }}</span>
+                    @endif
+                  </td>
+                  <td>{{ $piece['format'] ?? __('stock_remnants.format_standard') }}</td>
+                  <td>
+                    {{ $piece['batch_code'] ?? $piece['tracability'] }}
+                    @if($piece['heat_number'])
+                      <span class="small text-body-secondary">{{ __('batches.heat_short') }} {{ $piece['heat_number'] }}</span>
+                    @endif
+                  </td>
+                  <td class="text-end">{{ $piece['qty'] + 0 }}</td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-body-secondary">{{ __('stock_remnants.no_pieces') }}</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </x-adminlte-card>
+        @endif
         <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="teal" theme-mode="outline" maximizable>
           <div class="table-responsive p-0">
             <table class="table table-hover">
@@ -101,7 +141,9 @@
                     @if(2 == $StockMove->typ_move ){{__('general_content.task_allocation_trans_key') }} @endif
                     @if(3 == $StockMove->typ_move ){{__('general_content.purchase_order_reception_trans_key') }} @endif
                     @if(4 == $StockMove->typ_move ){{__('general_content.inter_stock_mvts_trans_key') }} @endif
-                    @if(5 == $StockMove->typ_move ){{__('general_content.manual_stock_recep_trans_key') }} @endif
+                    @if(5 == $StockMove->typ_move && $StockMove->remnant_source_move_id){{ __('stock_remnants.remnant_entry') }}
+                      <br><span class="small text-body-secondary">{{ $StockMove->x_size + 0 }} × {{ $StockMove->y_size + 0 }} — {{ __('stock_remnants.remnant_of', ['id' => $StockMove->remnant_source_move_id]) }}</span>
+                    @elseif(5 == $StockMove->typ_move ){{__('general_content.manual_stock_recep_trans_key') }} @endif
                     @if(6 == $StockMove->typ_move ){{__('general_content.manual_stock_dispatching_trans_key') }} @endif
                     @if(7 == $StockMove->typ_move ){{__('general_content.reservation_trans_key') }} @endif
                     @if(8 == $StockMove->typ_move ){{__('general_content.reservation_cancellation_trans_key') }} @endif
@@ -239,6 +281,36 @@
               <input type="text" class="form-control" name="batch_id" id="batch_id" placeholder="{{ __('Batch ID') }}">
             </div>
           </div>
+          @if($handlesRemnants)
+          <div class="mb-3">
+            <label for="sorting_piece">{{ __('stock_remnants.piece') }}</label>
+            <select class="form-select" name="piece" id="sorting_piece">
+              <option value="">{{ __('stock_remnants.piece_auto') }}</option>
+              @foreach ($Pieces as $piece)
+              <option value="{{ $piece['key'] }}" @selected(old('piece') === $piece['key'])>
+                {{ $piece['is_remnant'] ? __('stock_remnants.remnant') : __('stock_remnants.full_piece') }}
+                {{ $piece['format'] ?? __('stock_remnants.format_standard') }}
+                @if($piece['batch_code'] ?? $piece['tracability']) — {{ $piece['batch_code'] ?? $piece['tracability'] }} @endif
+                ({{ $piece['qty'] + 0 }})
+              </option>
+              @endforeach
+            </select>
+            <div class="form-text">{{ __('stock_remnants.piece_hint') }}</div>
+          </div>
+          <div class="mb-3">
+            <label>{{ __('stock_remnants.remnants_title') }}</label>
+            <div class="form-text mt-0 mb-1">{{ __('stock_remnants.remnants_hint') }}</div>
+            @for ($i = 0; $i < 2; $i++)
+            <div class="input-group input-group-sm mb-1">
+              <span class="input-group-text">{{ __('stock_remnants.remnant_n', ['n' => $i + 1]) }}</span>
+              <input type="number" class="form-control" name="remnants[{{ $i }}][x_size]" placeholder="X" min="0" step=".001" aria-label="X">
+              <span class="input-group-text">×</span>
+              <input type="number" class="form-control" name="remnants[{{ $i }}][y_size]" placeholder="Y" min="0" step=".001" aria-label="Y">
+              <input type="number" class="form-control" style="max-width: 4.5rem" name="remnants[{{ $i }}][qty]" placeholder="1" min="1" step="1" aria-label="{{ __('stock_remnants.remnant_qty') }}">
+            </div>
+            @endfor
+          </div>
+          @endif
           <div class="mb-3">
               <x-adminlte-select-bs name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
                 igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">

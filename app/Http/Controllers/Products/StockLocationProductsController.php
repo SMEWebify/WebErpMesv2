@@ -16,6 +16,7 @@ use App\Models\Products\StockLocation;
 use Illuminate\Support\Facades\Log;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Services\StockCalculationService;
+use App\Services\Stock\SheetRemnants;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockMoveRequest;
 use App\Http\Requests\Products\StoreStockLocationProductsRequest;
@@ -64,6 +65,11 @@ class StockLocationProductsController extends Controller
                                             ->orderBy('label')
                                             ->get();
 
+        $Pieces = app(SheetRemnants::class)->pieces($StockLocationProduct);
+        // Tôle (ou toute pièce à deux dimensions) : la sortie propose de remettre la chute en stock.
+        $handlesRemnants = ($Product->x_size > 0 && $Product->y_size > 0)
+            || collect($Pieces)->contains(fn ($p) => $p['format'] !== null);
+
         return view('products/StockLocationProduct-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
@@ -74,6 +80,8 @@ class StockLocationProductsController extends Controller
             'OrderLineList' => $OrderLineList,
             'averageCost' => $averageCost,
             'AllStockLocations' => $AllStockLocations,
+            'Pieces' => $Pieces,
+            'handlesRemnants' => $handlesRemnants,
         ]);
     }
 
@@ -295,6 +303,12 @@ class StockLocationProductsController extends Controller
     {
         $stockLocationProduct = StockLocationProducts::find($request->stock_location_products_id);
 
+        // Pièce choisie (tôle entière, chute) : sortie de cette pièce et remise en
+        // stock de ses chutes. Sans pièce choisie, la sortie d'avant ci-dessous.
+        if ($request->filled('piece') || $request->filled('remnants')) {
+            return $this->sortPiece($request, $stockLocationProduct);
+        }
+
         // Vérifie si la quantité demandée est disponible avec la traçabilité
         if ($this->stockCalculationService->canDispatch($request->tracability, $request->qty, $stockLocationProduct->id)) {
             $data = [
@@ -314,6 +328,46 @@ class StockLocationProductsController extends Controller
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');
         }
+    }
+
+    private function sortPiece(StoreStockMoveRequest $request, StockLocationProducts $stockLocationProduct)
+    {
+        $back = redirect()->route('products.stockline.show', ['id' => $stockLocationProduct->id]);
+        $remnants = app(SheetRemnants::class);
+
+        try {
+            $rows = $remnants->normalize($request->input('remnants'));
+            // Une chute sans pièce choisie ne saurait d'où elle vient.
+            if (! $request->filled('piece')) {
+                if ($rows !== []) {
+                    throw new \DomainException(__('stock_remnants.piece_required'));
+                }
+
+                // Lignes de chute laissées vides : sortie d'avant.
+                $request->request->remove('remnants');
+
+                return $this->sorting($request);
+            }
+
+            // Le formulaire envoie « null » en texte quand rien n'est choisi.
+            $nullable = fn ($v) => is_numeric($v) ? (int) $v : null;
+
+            $result = $remnants->dispatchPiece($stockLocationProduct, (string) $request->piece, (float) $request->qty, $rows, [
+                'user_id'       => $request->user_id,
+                'typ_move'      => $request->typ_move,
+                'order_line_id' => $nullable($request->order_line_id),
+                'task_id'       => $nullable($request->task_id),
+            ]);
+        } catch (\DomainException $e) {
+            return $back->with('error', $e->getMessage());
+        }
+
+        $message = __('general_content.stock_move_created_success_trans_key');
+        if ($result['remnants'] !== []) {
+            $message .= ' ' . __('stock_remnants.remnants_created', ['count' => count($result['remnants'])]);
+        }
+
+        return $back->with('success', $message);
     }
 
     /**

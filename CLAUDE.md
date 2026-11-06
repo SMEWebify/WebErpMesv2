@@ -1126,6 +1126,30 @@ descente complète reste un chantier séparé.
 - Tests : `tests/Feature/Products/BatchHeatTraceabilityTest.php`,
   `resources/js/tests/components/batchHeat.test.jsx`.
 
+## Chutes de tôle
+
+Le stock reste une somme de mouvements ; une **pièce** = mouvements de même lot et même géométrie
+(`batch_id`, `x_size`, `y_size`, `z_size`, `nb_part`, `surface_perc`), la clé de l'inventaire.
+`App\Services\Stock\SheetRemnants`, aucune table en plus.
+- **Chute** = pièce dont une entrée porte `stock_moves.remnant_source_move_id` (sortie d'origine,
+  hors `$fillable`), **ou** dont le format diffère de celui de l'article (chute retrouvée à l'inventaire).
+- **Sorties sans géométrie** (écrites avant, ou écran tâche) : leur solde négatif est imputé aux
+  pièces au format de l'article d'abord, puis aux chutes ; la somme des pièces = stock de la ligne.
+- **Ligne de stock** : carte « Pièces en stock » et, dans la sortie, choix de la pièce + 2 chutes
+  (X × Y, nombre). Sans pièce choisie, sortie d'avant inchangée ; chute sans pièce refusée.
+  La sortie recopie la géométrie et le lot de la pièce, sous verrou de la ligne.
+- **Entrée de chute** : `typ_move` 5 (aucune liste de types touchée), même ligne, lot, traçabilité
+  et tâche que la sortie, épaisseur de la pièce. Valeur = CUMP × surface chute / surface pièce
+  (passe par `StockService::createStockMove`) ; dimensions ou coût inconnus → sans valeur, CUMP intact.
+- **Refus** (`DomainException`, flash `error` ou 422) : chute qui ne tient pas dans la pièce (rotation
+  admise), chutes ≥ surface sortie, quantité > pièce, dimensions invalides, plus de 4 lignes.
+- **Écran tâche** : `good-qty-stock` accepte `remnants` (composant au format tôle,
+  `component.x_size / y_size` du JSON) ; chute posée sur la ligne et le lot de la dernière sortie.
+  Le FIFO de la tâche reste aveugle au format (une chute peut partir comme une tôle).
+- **Nesting** : `sheet-stock` renvoie `stock_qty` sans les chutes et `remnant_qty` à part.
+  NestEngine ne reçoit pas encore les chutes comme formats disponibles.
+- Tests : `tests/Feature/Products/SheetRemnantTest.php`.
+
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul

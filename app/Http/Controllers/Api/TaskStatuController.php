@@ -20,6 +20,7 @@ use App\Services\Inspection\TaskInspection;
 use App\Services\Production\ProductionRelease;
 use App\Services\Production\TaskRelease;
 use App\Services\Production\TaskReleaseException;
+use App\Services\Stock\SheetRemnants;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -187,6 +188,9 @@ class TaskStatuController extends Controller
                 'code'         => $task->Component->code,
                 'label'        => $task->Component->label,
                 'drawing_file' => $task->Component->drawing_file,
+                // format de tôle : l'écran propose de remettre la chute en stock
+                'x_size'       => $task->Component->x_size !== null ? (float) $task->Component->x_size : null,
+                'y_size'       => $task->Component->y_size !== null ? (float) $task->Component->y_size : null,
             ] : null,
             // navigation
             'previous_task'       => $previousTask,
@@ -472,17 +476,45 @@ class TaskStatuController extends Controller
         $request->validate([
             'qty'          => 'required|numeric|min:0',
             'component_id' => 'required|integer',
+            'remnants'     => 'nullable|array',
         ]);
 
         $qty         = (float) $request->qty;
         $componentId = (int) $request->component_id;
         $userId      = Auth::id();
 
+        try {
+            $remnants = app(SheetRemnants::class)->normalize($request->input('remnants'));
+        } catch (\DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
         // Sérialise les consommations concurrentes sur ce composant :
         // verrou pessimiste sur les StockLocationProducts + calcul du
         // disponible en un unique SUM agrégé sous ce verrou.
-        $negativeStock = DB::transaction(function () use ($id, $qty, $componentId, $userId) {
+        try {
+            $negativeStock = $this->withdrawForTask($id, $qty, $componentId, $userId, $remnants);
+        } catch (\DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        $this->taskService->recordTaskActivity($id, TaskActivities::TYPE_DECLARE_GOOD, $qty, 0);
+
+        return response()->json(['success' => true, 'negative_stock' => $negativeStock]);
+    }
+
+    /**
+     * Sortie FIFO du composant de la tâche, puis remise en stock des chutes sur la
+     * ligne et le lot de la dernière sortie (pièce au format de l'article).
+     *
+     * @param  array<int, array{x_size: float, y_size: float, qty: int}>  $remnants
+     * @return bool vrai si le stock n'a pas suffi
+     */
+    private function withdrawForTask(int $id, float $qty, int $componentId, ?int $userId, array $remnants): bool
+    {
+        return DB::transaction(function () use ($id, $qty, $componentId, $userId, $remnants) {
             $remaining = $qty;
+            $lastMove = null;
 
             $stocks = StockLocationProducts::where('products_id', $componentId)
                 ->orderBy('id')
@@ -508,7 +540,7 @@ class TaskStatuController extends Controller
                 // Une sortie par lot présent sur l'emplacement (le plus ancien d'abord) :
                 // la tâche garde ainsi la coulée consommée. Sans lot, une seule sortie.
                 foreach ($this->splitByBatch($stock->id, $toWithdraw) as [$batchId, $tracability, $part]) {
-                    StockMove::create([
+                    $lastMove = StockMove::create([
                         'user_id'                    => $userId,
                         'qty'                        => $part,
                         'stock_location_products_id' => $stock->id,
@@ -523,12 +555,16 @@ class TaskStatuController extends Controller
                 if ($remaining <= 0) break;
             }
 
+            if ($remnants !== []) {
+                if (! $lastMove) {
+                    // Rien n'est sorti : pas de pièce d'où viendrait la chute.
+                    throw new \DomainException(__('stock_remnants.piece_not_found'));
+                }
+                app(SheetRemnants::class)->putBack($lastMove, $remnants, (float) $lastMove->qty, null, null, null);
+            }
+
             return $remaining > 0;
         });
-
-        $this->taskService->recordTaskActivity($id, TaskActivities::TYPE_DECLARE_GOOD, $qty, 0);
-
-        return response()->json(['success' => true, 'negative_stock' => $negativeStock]);
     }
 
     /**

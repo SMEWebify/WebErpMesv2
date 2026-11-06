@@ -13,6 +13,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Services\Files\FileKindResolver;
 use App\Services\Integrations\NestEngine\NestEngineClient;
+use App\Services\Stock\SheetRemnants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -90,7 +91,10 @@ class NestingController extends Controller
             ->orderBy('products.thickness')
             ->get();
 
-        return response()->json($this->augmentWithStock($products, fn ($p) => [
+        // Les chutes en stock ne sont pas des tôles entières : comptées à part.
+        $remnants = app(SheetRemnants::class)->remnantQtyByProduct($products->pluck('id')->all());
+
+        return response()->json(collect($this->augmentWithStock($products, fn ($p) => [
             'id'        => $p->id,
             'code'      => $p->code,
             'label'     => $p->label,
@@ -98,7 +102,10 @@ class NestingController extends Controller
             'thickness' => (float) $p->thickness,
             'x_size'    => (float) $p->x_size,
             'y_size'    => (float) $p->y_size,
-        ]));
+        ]))->map(fn ($row) => array_merge($row, [
+            'stock_qty'   => max(0, $row['stock_qty'] - ($remnants[$row['id']] ?? 0)),
+            'remnant_qty' => (float) ($remnants[$row['id']] ?? 0),
+        ]))->values());
     }
 
     /**

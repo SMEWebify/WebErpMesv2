@@ -73,6 +73,20 @@ class StockMove extends Model
         return $this->belongsTo(Batch::class, 'batch_id');
     }
 
+    /**
+     * Sortie de la pièce dont cette chute provient. Colonne hors $fillable,
+     * écrite seulement par App\Services\Stock\SheetRemnants.
+     */
+    public function remnantSource()
+    {
+        return $this->belongsTo(StockMove::class, 'remnant_source_move_id');
+    }
+
+    public function isRemnantEntry(): bool
+    {
+        return $this->remnant_source_move_id !== null;
+    }
+
     // Relationship with the files associated with the delevery
     public function files()
     {

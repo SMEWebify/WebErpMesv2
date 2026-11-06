@@ -28,6 +28,9 @@ class StoreStockMoveRequest extends FormRequest
             'qty'      => 'required|numeric|min:0.001',
             'typ_move' => 'required|integer|between:1,14',
             'batch_id' => 'nullable|numeric|exists:batches,id',
+            // Sortie d'une pièce précise et chutes remises en stock (SheetRemnants).
+            'piece'    => 'nullable|string|max:255',
+            'remnants' => 'nullable|array',
         ];
     }
 }

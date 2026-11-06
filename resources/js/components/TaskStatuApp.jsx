@@ -786,19 +786,28 @@ function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
     const t = (key) => trans?.[key] ?? key;
     const [qty, setQty] = useState(0);
     const [busy, setBusy] = useState(false);
+    const [remnant, setRemnant] = useState({ x_size: '', y_size: '' });
+    const [error, setError] = useState(null);
     const r = task.reservation;
+    // Composant au format tôle : la chute peut être remise en stock.
+    const isSheet = task.component?.x_size > 0 && task.component?.y_size > 0;
 
     async function handleSubmit(e) {
         e.preventDefault();
         if (qty <= 0) return;
         setBusy(true);
+        setError(null);
         try {
-            await apiFetch(`${apiBase}/${task.id}/good-qty-stock`, 'POST', {
-                qty,
-                component_id: task.component_id,
-            });
+            const body = { qty, component_id: task.component_id };
+            if (isSheet && (remnant.x_size !== '' || remnant.y_size !== '')) {
+                body.remnants = [remnant];
+            }
+            await apiFetch(`${apiBase}/${task.id}/good-qty-stock`, 'POST', body);
             setQty(0);
+            setRemnant({ x_size: '', y_size: '' });
             onReload();
+        } catch (err) {
+            setError(err?.message ?? 'Error');
         } finally {
             setBusy(false);
         }
@@ -826,6 +835,37 @@ function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
                         Set
                     </button>
                 </div>
+                {isSheet && (
+                    <div className="mt-2">
+                        <div className="small text-body-secondary mb-1">{t('task_remnant_trans_key')}</div>
+                        <div className="ts-field">
+                            <input
+                                type="number"
+                                className="ts-input"
+                                min="0"
+                                step="any"
+                                placeholder="X"
+                                aria-label="X"
+                                title={t('task_remnant_hint_trans_key')}
+                                value={remnant.x_size}
+                                onChange={(e) => setRemnant({ ...remnant, x_size: e.target.value })}
+                            />
+                            <span className="align-self-center">×</span>
+                            <input
+                                type="number"
+                                className="ts-input"
+                                min="0"
+                                step="any"
+                                placeholder="Y"
+                                aria-label="Y"
+                                title={t('task_remnant_hint_trans_key')}
+                                value={remnant.y_size}
+                                onChange={(e) => setRemnant({ ...remnant, y_size: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                )}
+                {error && <div className="text-danger small mt-1" role="alert">{error}</div>}
             </form>
             <ConsumedBatches batches={task.consumed_batches} trans={trans} />
         </Card>
