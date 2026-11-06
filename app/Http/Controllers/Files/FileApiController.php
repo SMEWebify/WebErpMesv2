@@ -7,6 +7,7 @@ use App\Http\Requests\Files\StoreFilesRequest;
 use App\Http\Requests\Files\UpdateFileRequest;
 use App\Http\Resources\FileResource;
 use App\Models\File;
+use App\Services\Cad\Bvc\BvcNestPreviews;
 use App\Services\Files\FileableRegistry;
 use App\Services\Files\FileConfidentiality;
 use App\Services\Files\FileRole;
@@ -51,7 +52,7 @@ class FileApiController extends Controller
     /**
      * Store one or more uploads and attach them to the entity.
      */
-    public function store(StoreFilesRequest $request): JsonResponse
+    public function store(StoreFilesRequest $request, BvcNestPreviews $nests): JsonResponse
     {
         $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
 
@@ -59,7 +60,7 @@ class FileApiController extends Controller
         $role = $request->input('role');
         $isPrimary = $request->boolean('is_primary');
 
-        $created = DB::transaction(function () use ($request, $entity, $hashtags, $role, $isPrimary) {
+        $created = DB::transaction(function () use ($request, $entity, $hashtags, $role, $isPrimary, $nests) {
             $files = [];
 
             foreach ($request->file('files') as $upload) {
@@ -73,6 +74,16 @@ class FileApiController extends Controller
                 $this->storage->attach($file, $entity, $role, $isPrimary && $files === []);
 
                 $files[] = $file;
+
+                // A BySoft job is download only: its nests are drawn next to it.
+                // A job that cannot be read is still kept, just without them.
+                if ($nests->supports($file, $entity)) {
+                    try {
+                        array_push($files, ...$nests->attach($upload->getRealPath(), $file, $entity));
+                    } catch (\Throwable $e) {
+                        report($e);
+                    }
+                }
             }
 
             return $files;
