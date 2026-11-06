@@ -10,7 +10,7 @@ import { canRenderThumbnail, fileThumbnail } from '../lib/files/fileThumbnail';
 
 // Kept in sync with App\Services\Cad\CadParserFactory, which is the authority:
 // anything else is rejected server side with an explicit message.
-const ACCEPTED = ['sym', 'drg', 'geo', 'dxf', 'step', 'stp', 'svg', 'pdf'];
+const ACCEPTED = ['sym', 'drg', 'bvc', 'geo', 'dxf', 'step', 'stp', 'svg', 'pdf'];
 
 const ACCEPT_ATTRIBUTE = ACCEPTED.map((extension) => `.${extension}`).join(',');
 
@@ -143,9 +143,10 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                             &nbsp;—&nbsp;ou cliquer pour sélectionner
                         </div>
                         <div className="text-muted mt-1" style={{ fontSize: '0.75rem' }}>
-                            Le plan déposé est rattaché à la ligne dans la GED (hors .sym et .drg, entièrement lus à l'import).
+                            Le plan déposé est rattaché à la ligne dans la GED (hors .sym, .drg et .bvc, entièrement lus à l'import).
                             Un .geo produit en plus un SVG exploitable par l'imbrication.
                             Une imbrication RADAN (.drg) crée une ligne par pièce, quantité = pièces par tôle × nombre de tôles.
+                            Un job BySoft (.bvc) crée une ligne par pièce avec son contour en SVG, quantité = quantité du job.
                             Un plan .pdf est lu par l'IA (Intégrations → IA) : cartouche à vérifier sur la ligne créée.
                         </div>
                     </>

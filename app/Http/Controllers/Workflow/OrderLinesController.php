@@ -1287,7 +1287,7 @@ class OrderLinesController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // CAD import — .sym, .drg, .geo, .dxf, .step, .svg and .pdf dropped on the lines table
+    // CAD import — .sym, .drg, .bvc, .geo, .dxf, .step, .svg and .pdf dropped on the lines table
     // -------------------------------------------------------------------------
 
     public function importCadJson(Request $request, int $orderId, CadImportService $cad)
@@ -1324,7 +1324,7 @@ class OrderLinesController extends Controller
 
         foreach ($request->file('files') as $file) {
             try {
-                // A nest (.drg) gives one line per part, all or none.
+                // A nest (.drg, .bvc) gives one line per part, all or none.
                 $parts = $cad->parse($file);
 
                 $internalDelay = $order->validity_date
