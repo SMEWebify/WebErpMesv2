@@ -50,6 +50,20 @@ class FileTranslations
             'view_bottom'        => __('general_content.file_view_bottom_trans_key'),
             'view_left'          => __('general_content.file_view_left_trans_key'),
             'view_right'         => __('general_content.file_view_right_trans_key'),
+            'version_replace'    => __('general_content.file_version_replace_trans_key'),
+            'version_history'    => __('general_content.file_version_history_trans_key'),
+            'version'            => __('general_content.file_version_trans_key'),
+            'version_label'      => __('general_content.file_version_label_trans_key'),
+            'revision_label'     => __('general_content.file_revision_label_trans_key'),
+            'version_new_file'   => __('general_content.file_version_new_file_trans_key'),
+            'version_submit'     => __('general_content.file_version_submit_trans_key'),
+            'version_cancel'     => __('general_content.file_version_cancel_trans_key'),
+            'version_current'    => __('general_content.file_version_current_trans_key'),
+            'version_superseded' => __('general_content.file_version_superseded_trans_key'),
+            'version_author'     => __('general_content.file_version_author_trans_key'),
+            'version_date'       => __('general_content.file_version_date_trans_key'),
+            'version_close'      => __('general_content.file_version_close_trans_key'),
+            'version_hint'       => __('general_content.file_version_replace_hint_trans_key'),
         ];
     }
 }

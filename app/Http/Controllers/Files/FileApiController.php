@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Files;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Files\ReplaceFileRequest;
 use App\Http\Requests\Files\StoreFilesRequest;
 use App\Http\Requests\Files\UpdateFileRequest;
 use App\Http\Resources\FileResource;
@@ -12,6 +13,7 @@ use App\Services\Files\FileableRegistry;
 use App\Services\Files\FileConfidentiality;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
+use App\Services\Files\FileVersioning;
 use App\Services\Files\ThumbnailStore;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -38,8 +40,10 @@ class FileApiController extends Controller
     {
         $entity = $this->resolveEntity($request->query('fileable_type'), $request->query('fileable_id'), $request);
 
+        // Replaced versions stay attached but only show up in their history.
         $files = $entity->files()
             ->with('UserManagement:id,name')
+            ->whereNull('files.superseded_at')
             ->orderByPivot('is_primary', 'desc')
             ->orderBy('files.created_at', 'desc')
             ->get();
@@ -67,6 +71,7 @@ class FileApiController extends Controller
                 $file = $this->storage->store($upload, [
                     'comment' => $request->input('comment'),
                     'hashtags' => $hashtags,
+                    'revision_label' => $request->input('revision_label'),
                 ]);
 
                 // Only the first upload of a batch can claim the primary slot,
@@ -156,7 +161,7 @@ class FileApiController extends Controller
     /**
      * Detach a file from an entity, deleting it once no entity references it.
      */
-    public function destroy(Request $request, File $file): JsonResponse
+    public function destroy(Request $request, File $file, FileVersioning $versioning): JsonResponse
     {
         $this->authorize('delete', $file);
 
@@ -164,9 +169,67 @@ class FileApiController extends Controller
 
         abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
 
+        // The versions of a drawing are its design history: a wrong upload is
+        // corrected by a further version, never by deleting one.
+        abort_if($versioning->hasHistory($file), 409, __('general_content.file_version_cannot_delete_trans_key'));
+
         $this->storage->detach($file, $entity);
 
         return response()->json(['deleted' => true]);
+    }
+
+    /**
+     * Replace the latest version of a file by a new upload, on every entity it
+     * is attached to.
+     */
+    public function replace(ReplaceFileRequest $request, File $file, FileVersioning $versioning): JsonResponse
+    {
+        $this->authorize('replace', $file);
+
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
+
+        abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
+
+        $created = $versioning->replace($file, $request->file('file'), [
+            'revision_label' => $request->input('revision_label'),
+            'comment' => $request->input('comment'),
+        ], $request->user());
+
+        $fresh = $entity->files()
+            ->with('UserManagement:id,name')
+            ->whereKey($created->id)
+            ->firstOrFail();
+
+        return response()->json(['file' => (new FileResource($fresh))->resolve()], 201);
+    }
+
+    /**
+     * Every version of the lineage a file attached to the entity belongs to.
+     */
+    public function versions(Request $request, File $file, FileVersioning $versioning): JsonResponse
+    {
+        $this->authorize('view', $file);
+
+        $entity = $this->resolveEntity($request->query('fileable_type'), $request->query('fileable_id'), $request);
+
+        abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
+
+        $versions = $versioning->history($file)->map(fn (File $version) => [
+            'id' => $version->id,
+            'name' => $version->original_file_name ?: $version->name,
+            'version' => $version->versionNumber(),
+            'revision_label' => $version->revision_label,
+            'comment' => $version->comment,
+            'uploaded_by' => $version->UserManagement?->name,
+            'created_at' => $version->created_at?->toIso8601String(),
+            'superseded_at' => $version->superseded_at?->toIso8601String(),
+            'is_current' => ! $version->isSuperseded(),
+            'formatted_size' => $version->formatted_size,
+            'view_url' => $version->view_url,
+            'download_url' => $version->download_url,
+        ])->values();
+
+        return response()->json(['versions' => $versions]);
     }
 
     /**

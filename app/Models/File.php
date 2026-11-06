@@ -39,7 +39,11 @@ class File extends Model
         'hashtags',
         'as_photo',
         'thumbnail_path',
+        'revision_label',
     ];
+
+    // version_group_id, version, superseded_at and superseded_by are written by
+    // FileVersioning only: a lineage is never rewired by a metadata update.
 
     /**
      * The attributes that should be cast.
@@ -50,7 +54,43 @@ class File extends Model
         'hashtags' => 'array',
         'as_photo' => 'boolean',
         'size' => 'integer',
+        'version' => 'integer',
+        'version_group_id' => 'integer',
+        'superseded_by' => 'integer',
+        'superseded_at' => 'datetime',
     ];
+
+    /**
+     * Whether a newer version replaced this file. It stays downloadable.
+     */
+    public function isSuperseded(): bool
+    {
+        return $this->superseded_at !== null;
+    }
+
+    /**
+     * Id shared by every version of the lineage (the first file's own id).
+     */
+    public function lineageId(): int
+    {
+        return (int) ($this->version_group_id ?? $this->id);
+    }
+
+    /**
+     * Version number, a file outside any lineage being its version 1.
+     */
+    public function versionNumber(): int
+    {
+        return (int) ($this->version ?? 1);
+    }
+
+    /**
+     * Only the latest version of each lineage (and every unversioned file).
+     */
+    public function scopeCurrentVersion($query)
+    {
+        return $query->whereNull('files.superseded_at');
+    }
 
     /**
      * Get the file size in kilobytes, rounded to 2 decimal places.
@@ -245,6 +285,14 @@ class File extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * The version that replaced this one.
+     */
+    public function supersededBy()
+    {
+        return $this->belongsTo(self::class, 'superseded_by');
     }
 
     /**

@@ -49,6 +49,16 @@ class FilePolicy
             && $this->mayWriteAttachments($user, $file);
     }
 
+    /**
+     * Uploading a new version does not alter nor remove the old one, which stays
+     * downloadable: anyone allowed to write on the entity may revise a drawing,
+     * not only its uploader.
+     */
+    public function replace(User $user, File $file): bool
+    {
+        return FileConfidentiality::allowsFile($user, $file) && $this->mayWriteAttachments($user, $file);
+    }
+
     public function delete(User $user, File $file): bool
     {
         return FileConfidentiality::allowsFile($user, $file) && $this->isOwner($user, $file)

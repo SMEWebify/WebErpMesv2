@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { proposedRevision } from '../../lib/files/fileVersions.js';
 
 /**
  * Single drop area accepting every supported format at once.
@@ -7,13 +8,14 @@ import React, { useRef, useState } from 'react';
  * STL, SVG): the role is chosen once for the batch and the server derives the
  * kind from the extension.
  */
-export default function FileDropzone({ t, roles, accept, onUpload, uploading, progress }) {
+export default function FileDropzone({ t, roles, accept, onUpload, uploading, progress, defaultRevision = '' }) {
     const inputRef = useRef(null);
     const [over, setOver] = useState(false);
     const [role, setRole] = useState('');
     const [isPrimary, setIsPrimary] = useState(true);
     const [comment, setComment] = useState('');
     const [hashtags, setHashtags] = useState('');
+    const [revisionLabel, setRevisionLabel] = useState(() => proposedRevision(defaultRevision));
 
     const submit = (files) => {
         const list = Array.from(files ?? []);
@@ -24,6 +26,7 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
             isPrimary,
             comment: comment.trim() || undefined,
             hashtags: hashtags.trim() || undefined,
+            revisionLabel: revisionLabel.trim() || undefined,
         });
 
         setComment('');
@@ -88,6 +91,17 @@ export default function FileDropzone({ t, roles, accept, onUpload, uploading, pr
                             <option key={value} value={value}>{label}</option>
                         ))}
                     </select>
+                </div>
+
+                <div className="mb-3 mb-2">
+                    <label className="small text-muted mb-1 d-block">{t('revision_label')}</label>
+                    <input
+                        type="text"
+                        maxLength={20}
+                        className="form-control form-control-sm"
+                        value={revisionLabel}
+                        onChange={(event) => setRevisionLabel(event.target.value)}
+                    />
                 </div>
 
                 <div className="mb-3 mb-2">

@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FileDropzone from './FileDropzone.jsx';
 import FileViewer from './FileViewer.jsx';
-import { deleteFile, listFiles, updateFile, uploadFiles } from './api.js';
+import FileReplaceForm from './FileReplaceForm.jsx';
+import FileVersionHistory from './FileVersionHistory.jsx';
+import { deleteFile, listFiles, replaceFile, updateFile, uploadFiles } from './api.js';
+import { canDeleteFile, canReplaceFile, versionCaption } from '../../lib/files/fileVersions.js';
 
 /**
  * Unified document tab: one drop area for every format, one list grouped by
@@ -10,7 +13,7 @@ import { deleteFile, listFiles, updateFile, uploadFiles } from './api.js';
  * Mounted from Blade through include/file-manager-mount.blade.php, so the same
  * component serves products, quotes, orders, non-conformities and so on.
  */
-export default function FileManager({ endpoints, target, roles, accept, trans, canEdit = true }) {
+export default function FileManager({ endpoints, target, roles, accept, trans, canEdit = true, defaultRevision = '' }) {
     const [files, setFiles] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,6 +21,11 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState(null);
     const [roleFilter, setRoleFilter] = useState('');
+    const [replacingId, setReplacingId] = useState(null);
+    const [historyFile, setHistoryFile] = useState(null);
+
+    // Older mounts may not expose the versioning endpoints.
+    const versioning = !!(endpoints?.replace && endpoints?.versions);
 
     const t = useCallback((key) => trans?.[key] ?? key, [trans]);
 
@@ -49,6 +57,24 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
             const { files: created } = await uploadFiles(endpoints, target, list, meta, setProgress);
             await refresh();
             if (created?.length) setSelectedId(created[0].id);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setUploading(false);
+            setProgress(0);
+        }
+    };
+
+    const handleReplace = async (file, upload, meta) => {
+        setUploading(true);
+        setProgress(0);
+        setError(null);
+
+        try {
+            const { file: created } = await replaceFile(endpoints, target, file.id, upload, meta, setProgress);
+            setReplacingId(null);
+            await refresh();
+            if (created?.id) setSelectedId(created.id);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -123,6 +149,7 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                             roles={roles}
                             accept={accept}
                             onUpload={handleUpload}
+                            defaultRevision={defaultRevision}
                             uploading={uploading}
                             progress={progress}
                         />
@@ -166,6 +193,9 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                             <div className="flex-grow-1 min-width-0">
                                                 <div className="text-truncate" title={file.name}>
                                                     {file.name}
+                                                    {versionCaption(file, t('version_label')) && (
+                                                        <span className="badge text-bg-secondary ms-1">{versionCaption(file, t('version_label'))}</span>
+                                                    )}
                                                     {file.is_primary && (
                                                         <span className="badge text-bg-success ms-1">{t('primary')}</span>
                                                     )}
@@ -186,6 +216,19 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                 )}
                                             </div>
                                         </div>
+
+                                        {!canEdit && versioning && file.has_history && (
+                                            <div className="d-flex align-items-center mt-2">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-outline-secondary btn-sm"
+                                                    title={t('version_history')}
+                                                    onClick={(event) => { event.stopPropagation(); setHistoryFile(file); }}
+                                                >
+                                                    <i className="fas fa-clock-rotate-left" />
+                                                </button>
+                                            </div>
+                                        )}
 
                                         {canEdit && (
                                             <div className="d-flex align-items-center mt-2">
@@ -220,15 +263,55 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                     <i className="fas fa-download" />
                                                 </a>
 
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-outline-danger btn-sm"
-                                                    title={t('delete')}
-                                                    onClick={(event) => { event.stopPropagation(); handleDelete(file); }}
-                                                >
-                                                    <i className="fas fa-trash" />
-                                                </button>
+                                                {versioning && canReplaceFile(file) && (
+                                                    <button
+                                                        type="button"
+                                                        className={`btn btn-sm me-1 ${replacingId === file.id ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                                        title={t('version_replace')}
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            setReplacingId((current) => (current === file.id ? null : file.id));
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-code-branch" />
+                                                    </button>
+                                                )}
+
+                                                {versioning && file.has_history && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-secondary btn-sm me-1"
+                                                        title={t('version_history')}
+                                                        onClick={(event) => { event.stopPropagation(); setHistoryFile(file); }}
+                                                    >
+                                                        <i className="fas fa-clock-rotate-left" />
+                                                    </button>
+                                                )}
+
+                                                {canDeleteFile(file) && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger btn-sm"
+                                                        title={t('delete')}
+                                                        onClick={(event) => { event.stopPropagation(); handleDelete(file); }}
+                                                    >
+                                                        <i className="fas fa-trash" />
+                                                    </button>
+                                                )}
                                             </div>
+                                        )}
+
+                                        {canEdit && replacingId === file.id && (
+                                            <FileReplaceForm
+                                                file={file}
+                                                accept={accept}
+                                                defaultRevision={defaultRevision}
+                                                t={t}
+                                                busy={uploading}
+                                                progress={progress}
+                                                onSubmit={handleReplace}
+                                                onCancel={() => setReplacingId(null)}
+                                            />
                                         )}
                                     </li>
                                 ))}
@@ -241,6 +324,16 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                     <FileViewer file={selected} t={t} />
                 </div>
             </div>
+
+            {historyFile && (
+                <FileVersionHistory
+                    endpoints={endpoints}
+                    target={target}
+                    file={historyFile}
+                    t={t}
+                    onClose={() => setHistoryFile(null)}
+                />
+            )}
         </div>
     );
 }

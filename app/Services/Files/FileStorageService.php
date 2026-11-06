@@ -25,7 +25,7 @@ class FileStorageService
     /**
      * Store an upload and create the matching File record.
      *
-     * @param  array{comment?: string|null, hashtags?: array<int, string>, as_photo?: bool, name?: string|null}  $meta
+     * @param  array{comment?: string|null, hashtags?: array<int, string>, as_photo?: bool, name?: string|null, revision_label?: string|null}  $meta
      */
     public function store(UploadedFile $upload, array $meta = []): File
     {
@@ -51,6 +51,7 @@ class FileStorageService
             'comment' => $this->normalizeComment($meta['comment'] ?? null),
             'hashtags' => $meta['hashtags'] ?? [],
             'as_photo' => (bool) ($meta['as_photo'] ?? false),
+            'revision_label' => FileVersioning::normalizeLabel($meta['revision_label'] ?? null),
         ]);
     }
 
@@ -133,6 +134,12 @@ class FileStorageService
     {
         $entity->files()->detach($file->id);
         $this->refreshLegacyColumns($entity);
+
+        // A version of a lineage is part of the design history: it is never
+        // deleted, even once nothing references it any more.
+        if ($file->version_group_id !== null) {
+            return;
+        }
 
         if ($this->attachmentCount($file) === 0) {
             $this->delete($file);
@@ -260,7 +267,8 @@ class FileStorageService
      *
      * They are no longer the source of truth but a read cache: quote lines,
      * order lines, the API resource and TaskStatu still read them, so dropping
-     * them would be a much wider change than this refactor.
+     * them would be a much wider change than this refactor. A replaced version
+     * loses its primary flag (FileVersioning), so they follow the latest one.
      */
     public function refreshLegacyColumns(Model $entity): void
     {
@@ -277,6 +285,7 @@ class FileStorageService
 
         $primaries = $entity->files()
             ->wherePivot('is_primary', true)
+            ->whereNull('files.superseded_at')
             ->get()
             ->keyBy(fn (File $file) => $file->pivot->role);
 

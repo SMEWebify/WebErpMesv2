@@ -39,6 +39,11 @@ class FileResource extends JsonResource
             'created_at' => $this->created_at?->toIso8601String(),
             'role' => $this->whenPivotLoaded('fileables', fn () => $this->pivot->role),
             'is_primary' => $this->whenPivotLoaded('fileables', fn () => (bool) $this->pivot->is_primary),
+            'version' => $this->versionNumber(),
+            'revision_label' => $this->revision_label,
+            'is_superseded' => $this->isSuperseded(),
+            'superseded_at' => $this->superseded_at?->toIso8601String(),
+            'has_history' => $this->isSuperseded() || $this->versionNumber() > 1,
         ];
     }
 }

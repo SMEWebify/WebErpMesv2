@@ -47,6 +47,7 @@ export function uploadFiles(endpoints, target, files, meta = {}, onProgress) {
         if (meta.isPrimary) body.append('is_primary', '1');
         if (meta.comment) body.append('comment', meta.comment);
         if (meta.hashtags) body.append('hashtags', meta.hashtags);
+        if (meta.revisionLabel) body.append('revision_label', meta.revisionLabel);
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', endpoints.store);
@@ -109,5 +110,60 @@ export async function deleteFile(endpoints, target, fileId) {
             'X-CSRF-TOKEN': csrfToken(),
         },
         body: JSON.stringify({ fileable_type: target.type, fileable_id: target.id }),
+    }));
+}
+
+/**
+ * Upload a new version of a file: the server keeps the old one, marked replaced.
+ */
+export function replaceFile(endpoints, target, fileId, upload, meta = {}, onProgress) {
+    return new Promise((resolve, reject) => {
+        const body = new FormData();
+        body.append('fileable_type', target.type);
+        body.append('fileable_id', target.id);
+        body.append('file', upload);
+
+        if (meta.revisionLabel) body.append('revision_label', meta.revisionLabel);
+        if (meta.comment) body.append('comment', meta.comment);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', endpoints.replace.replace('__ID__', fileId));
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
+
+        xhr.upload.addEventListener('progress', (event) => {
+            if (event.lengthComputable && onProgress) {
+                onProgress(Math.round((event.loaded / event.total) * 100));
+            }
+        });
+
+        xhr.addEventListener('load', () => {
+            let payload = {};
+            try { payload = JSON.parse(xhr.responseText); } catch { /* empty body */ }
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(payload);
+                return;
+            }
+
+            reject(new Error(
+                payload?.message
+                || Object.values(payload?.errors ?? {}).flat().join(' ')
+                || xhr.statusText
+            ));
+        });
+
+        xhr.addEventListener('error', () => reject(new Error('Network error')));
+        xhr.send(body);
+    });
+}
+
+export async function listVersions(endpoints, target, fileId) {
+    const url = new URL(endpoints.versions.replace('__ID__', fileId), window.location.origin);
+    url.searchParams.set('fileable_type', target.type);
+    url.searchParams.set('fileable_id', target.id);
+
+    return parse(await fetch(url, {
+        headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken() },
     }));
 }

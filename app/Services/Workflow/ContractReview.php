@@ -217,6 +217,7 @@ class ContractReview
             'can_approve' => $this->canApprove($viewer),
             'documents' => $order->files()
                 ->wherePivot('role', FileRole::CONTRACTUAL)
+                ->whereNull('files.superseded_at')
                 ->get(['files.id', 'files.name', 'files.original_file_name'])
                 ->map(fn ($file) => [
                     'id' => $file->id,

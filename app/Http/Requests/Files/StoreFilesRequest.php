@@ -52,6 +52,7 @@ class StoreFilesRequest extends FormRequest
             'is_primary' => ['nullable', 'boolean'],
             'comment' => ['nullable', 'string', 'max:65535'],
             'hashtags' => ['nullable', 'string', 'max:1024'],
+            'revision_label' => ['nullable', 'string', 'max:20'],
         ];
     }
 

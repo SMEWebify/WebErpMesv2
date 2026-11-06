@@ -325,6 +325,20 @@ mais un **cache de lecture**, resynchronisé par `FileStorageService::refreshLeg
 à chaque attache/détache. Les lignes de devis, lignes de commande, `ProductResource` et
 `TaskStatuApp` continuent de les lire sans modification.
 
+### Versions (dossier d'étude avec révisions)
+`files.version_group_id` (id du premier fichier de la lignée), `version`, `revision_label`
+(indice libre, proposé = `products.ind` au dépôt), `superseded_at` / `superseded_by`, nuls pour
+l'existant. Écriture seulement par `App\Services\Files\FileVersioning::replace()`
+(`files.json.replace`, historique `files.json.versions`, activitylog `file_version_replaced`).
+- La nouvelle version reprend **tous** les rattachements de l'ancienne (entité, rôle, principal) ;
+  l'ancienne reste rattachée, perd « principal », reste servie par `files.raw` / `download` et
+  n'est **jamais supprimée** (suppression d'un fichier versionné → 409, `detach()` le garde).
+- La liste de la GED n'affiche que `superseded_at` nul ; `refreshLegacyColumns()` suit donc la
+  dernière version. Une seule version remplaçable (la dernière, sinon 409).
+- Remplacer exige l'écriture sur l'entité (`FilePolicy::replace`, pas d'être l'auteur).
+- **Ce qui cite un fichier par son id garde cette version** (`inspection_plans.file_id`, FAI) :
+  voulu, ne pas les « mettre à jour ». Tests : `tests/Feature/Files/FileVersioningTest.php`.
+
 ## Description des droits
 
 Écran Votre société → Rôles et permissions : chaque droit affiche une description sous son
