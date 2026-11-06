@@ -634,10 +634,15 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
         const fd = new FormData();
         fd.append('csv_file', file);
         const res  = await apiFetch(endpoint, { method: 'POST', body: fd });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         setLoading(false);
+        if (!res.ok) {
+            const fileError = data.errors?.csv_file?.[0];
+            setResult({ success_count: 0, errors: [fileError ?? data.message ?? 'Import impossible.'] });
+            return;
+        }
         setResult(data);
-        if (res.ok) onImported(data.bom ?? []);
+        onImported(data);
     };
 
     if (!open) return null;
@@ -647,15 +652,17 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Importer BOM depuis CSV</h5>
+                        <h5 className="modal-title">Importer la gamme / nomenclature (CSV ou Excel)</h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="modal-body">
                             <p style={{ fontSize: 12, color: 'var(--bs-secondary-color)' }}>
-                                Colonnes attendues : <code>ordre, service_code, label, component_code, unit_code, qty, unit_cost, unit_price</code>
+                                Première ligne = en-tête avec les colonnes : <code>ordre, service_code, label, component_code, unit_code, qty, unit_cost, unit_price</code>
+                                (facultatives : <code>seting_time, unit_time</code>). Une opération sans composant laisse <code>component_code</code> vide ;
+                                <code>qty</code> vide = 1, coûts et prix vides = 0. Séparateur <code>;</code> <code>,</code> ou tabulation.
                             </p>
-                            <input type="file" accept=".csv,.txt" className="form-control"
+                            <input type="file" accept=".csv,.txt,.xlsx,.xls" className="form-control"
                                    onChange={e => setFile(e.target.files[0])} />
                             {result && (
                                 <div className="mt-3">
@@ -1262,9 +1269,11 @@ export default function TaskManagePage({ context, endpoints }) {
 
     // ── CSV import callback ─────────────────────────────────────────────────
 
-    const handleCsvImported = useCallback((newBom) => {
-        setBomTasks(newBom);
-        setCsvModalOpen(false);
+    const handleCsvImported = useCallback((data) => {
+        setBomTasks(data.bom ?? []);
+        if (data.technical_cut) setTechCutTasks(data.technical_cut);
+        // Des lignes rejetées : la fenêtre reste ouverte pour qu'on les lise.
+        if (!data.errors?.length) setCsvModalOpen(false);
     }, []);
 
     // ── Drawer title ────────────────────────────────────────────────────────
@@ -1368,7 +1377,7 @@ export default function TaskManagePage({ context, endpoints }) {
                 colorClass="text-success"
                 extra={canEdit && (
                     <button className="btn btn-sm btn-outline-success" onClick={() => setCsvModalOpen(true)}>
-                        <i className="fas fa-file-csv me-1" />CSV
+                        <i className="fas fa-file-import me-1" />CSV / Excel
                     </button>
                 )}
             >

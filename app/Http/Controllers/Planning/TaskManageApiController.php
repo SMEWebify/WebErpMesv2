@@ -23,6 +23,7 @@ use App\Services\Planning\BillOfMaterialsCopier;
 use App\Services\Planning\DependencyEdge;
 use App\Services\Planning\DependencyGraph;
 use App\Services\Products\ProductCatalogAccess;
+use App\Services\Imports\SpreadsheetReader;
 use App\Support\Planning\DependencyNotation;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
@@ -891,46 +892,98 @@ class TaskManageApiController extends Controller
         abort_unless(auth()->check(), 403);
         $this->abortUnlessCanEditContext($idType, $idLine);
 
-        $request->validate(['csv_file' => 'required|file|mimes:csv,txt']);
+        $request->validate(['csv_file' => 'required|file|mimes:csv,txt,xlsx,xls']);
 
-        $path   = $request->file('csv_file')->getRealPath();
-        $rows   = array_map('str_getcsv', file($path));
-        $header = array_shift($rows);
+        $file = $request->file('csv_file');
+        try {
+            $rows = app(SpreadsheetReader::class)->read($file->getRealPath(), $file->getClientOriginalExtension());
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json(['message' => __('imports.unreadable', ['message' => $e->getMessage()])], 422);
+        }
+
+        // En-tête : première ligne non vide, noms de colonne sans casse ni espaces.
+        $headerIndex = null;
+        foreach ($rows as $i => $candidate) {
+            if ($candidate !== []) {
+                $headerIndex = $i;
+                break;
+            }
+        }
+        $header = $headerIndex === null ? [] : array_map(fn ($name) => strtolower(trim((string) $name)), $rows[$headerIndex]);
 
         $successCount  = 0;
         $errorMessages = [];
+        $statusId      = Status::orderBy('order')->value('id');
+        // Colonnes du fichier reprises telles quelles sur la tâche (les codes sont résolus à part).
+        $taskColumns   = array_flip(array_diff((new Task())->getFillable(), [
+            'quote_lines_id', 'order_lines_id', 'products_id', 'sub_assembly_id', 'methods_nomenclature_standard_id',
+        ]));
 
-        foreach ($rows as $row) {
-            if (count($row) !== count($header)) {
+        foreach ($rows as $index => $row) {
+            if ($headerIndex === null || $index <= $headerIndex || $row === []) {
                 continue;
             }
-            $rowData = array_combine($header, $row);
+            $lineNumber = $index + 1;
+            // Cellules vides au-delà de l'en-tête (Excel) : sans effet sur le nombre de colonnes.
+            while (count($row) > count($header) && trim((string) end($row)) === '') {
+                array_pop($row);
+            }
+            if (count($row) !== count($header)) {
+                $errorMessages[] = __('imports.reject.line', ['line' => $lineNumber, 'reason' => __('imports.reject.columns', ['found' => count($row), 'expected' => count($header)])]);
+                continue;
+            }
+            $cells   = array_map(fn ($v) => $v === null || trim((string) $v) === '' ? null : trim((string) $v), array_combine($header, $row));
+            $rowData = array_intersect_key($cells, $taskColumns);
 
-            $service = MethodsServices::where('code', $rowData['service_code'] ?? '')->first();
-            $product = Products::where('code', $rowData['component_code'] ?? '')->first();
-            $unit    = MethodsUnits::where('code', $rowData['unit_code'] ?? '')->first();
+            $reason = null;
+            $service = MethodsServices::where('code', $cells['service_code'] ?? '')->first();
+            $product = null;
+            $unit    = null;
+            if (!$service) {
+                $reason = __('imports.reject.service_unknown', ['code' => $cells['service_code'] ?? '']);
+            } elseif (($cells['component_code'] ?? null) !== null && !($product = Products::where('code', $cells['component_code'])->first())) {
+                $reason = __('imports.reject.product_unknown', ['code' => $cells['component_code']]);
+            } elseif (($cells['unit_code'] ?? null) !== null && !($unit = MethodsUnits::where('code', $cells['unit_code'])->first())) {
+                $reason = __('imports.reject.unit_unknown', ['code' => $cells['unit_code']]);
+            }
+            if ($reason !== null) {
+                $errorMessages[] = __('imports.reject.line', ['line' => $lineNumber, 'reason' => $reason]);
+                continue;
+            }
 
-            $rowData['methods_services_id'] = $service?->id;
-            $rowData['type']                = $service?->type;
+            foreach (['qty', 'unit_cost', 'unit_price', 'seting_time', 'unit_time'] as $numeric) {
+                if (isset($rowData[$numeric])) {
+                    $rowData[$numeric] = str_replace(',', '.', $rowData[$numeric]);
+                }
+            }
+
+            $rowData['methods_services_id'] = $service->id;
+            $rowData['type']                = $service->type;
+            $rowData['code']                = $service->code;
             $rowData['component_id']        = $product?->id;
             $rowData['methods_units_id']    = $unit?->id;
+            $rowData['qty']                 = $rowData['qty'] ?? 1;
+            $rowData['unit_cost']           = $rowData['unit_cost'] ?? 0;
+            $rowData['unit_price']          = $rowData['unit_price'] ?? 0;
+            $rowData['status_id']           = $rowData['status_id'] ?? $statusId;
             $rowData[$idType]               = $idLine;
-
-            unset($rowData['service_code'], $rowData['component_code'], $rowData['unit_code']);
 
             $v = Validator::make($rowData, [
                 'ordre'               => 'required|integer',
                 'methods_services_id' => 'required|exists:methods_services,id',
                 'label'               => 'required|string|max:255',
-                'component_id'        => 'required|exists:products,id',
-                'methods_units_id'    => 'required|exists:methods_units,id',
+                'component_id'        => 'nullable|exists:products,id',
+                'methods_units_id'    => 'nullable|exists:methods_units,id',
                 'qty'                 => 'required|numeric|min:1',
                 'unit_cost'           => 'required|numeric',
                 'unit_price'          => 'required|numeric',
+                'seting_time'         => 'nullable|numeric|min:0',
+                'unit_time'           => 'nullable|numeric|min:0',
             ]);
 
             if ($v->fails()) {
-                $errorMessages[] = 'Ligne : ' . implode(', ', $row) . ' — ' . $v->errors()->first();
+                $errorMessages[] = __('imports.reject.line', ['line' => $lineNumber, 'reason' => $v->errors()->first()]);
                 continue;
             }
 
@@ -953,10 +1006,19 @@ class TaskManageApiController extends Controller
             ->map(fn($t) => $this->formatTask($t, $currency))
             ->values();
 
+        $techCut = Task::with(['service', 'Component', 'MethodsTools', 'status'])
+            ->where($fk, $idLine)
+            ->whereIn('type', [1, 7])
+            ->orderBy('ordre')
+            ->get()
+            ->map(fn($t) => $this->formatTask($t, $currency))
+            ->values();
+
         return response()->json([
             'success_count' => $successCount,
             'errors'        => $errorMessages,
             'bom'           => $bomTasks,
+            'technical_cut' => $techCut,
         ]);
     }
 

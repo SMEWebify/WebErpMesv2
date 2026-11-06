@@ -6,7 +6,7 @@ order: 5
 duration: 30
 icon: fas fa-rocket
 can: your-company-menu
-updated: 2026-10-31
+updated: 2026-11-06
 ---
 
 **Objectif** : préparer une instance neuve avant les premiers devis, dans le bon ordre, pour
@@ -286,18 +286,39 @@ l'adresse et le nom d'expédition, puis « Enregistrer » et **« Envoyer un e-m
 
 ## 9. Reprendre vos données {#reprendre-vos-donnees}
 
-Menu **Votre entreprise › Imports/Exports** : import des clients, des articles, des devis
-et des commandes depuis un fichier CSV.
+Menu **Votre entreprise › Imports/Exports**, onglet **« Importer des données »** : import des
+clients, des articles, des devis et des commandes depuis un fichier **Excel (.xlsx, .xls) ou
+CSV**, par exemple l'export de votre ancien logiciel. Les lignes d'un devis ou d'une commande
+s'importent depuis l'onglet « Importation de lignes » de sa fiche, et la gamme d'une ligne
+depuis le bouton « CSV / Excel » de l'écran de gamme.
 
-![Import des clients](img/18-import-clients.png)
+```steps
+Type et fichier
+Correspondance et aperçu
+Import
+```
 
-1. Choisissez le fichier CSV, et indiquez s'il a une **ligne d'en-tête**.
-2. Pour chaque champ, saisissez le **numéro de la colonne** qui le contient.
-3. Importez.
+![Assistant d'import : correspondance et aperçu](img/18-import-assistant.png)
 
-> ⚠️ Le fichier doit être un **CSV séparé par des points-virgules** (pas un fichier Excel),
-> et les colonnes sont **numérotées à partir de 0**. Importez les clients avant les devis
-> et commandes, et faites un essai sur quelques lignes.
+1. Choisissez ce que vous importez, puis déposez le fichier (ou cliquez pour le choisir).
+   Le lien **« Télécharger un modèle Excel »** donne un classeur vide avec les bonnes colonnes.
+2. Pour chaque champ de l'ERP, l'assistant propose la **colonne du fichier** d'après son nom
+   (« Raison sociale », « Désignation », « Épaisseur (mm) »…) : vérifiez-la, changez-la dans la
+   liste ou choisissez « Ne pas importer ». L'**aperçu** montre les premières lignes telles
+   qu'elles seront importées, chacune marquée **À créer**, **À mettre à jour** (article déjà
+   existant) ou **Rejetée** avec la raison (champ obligatoire vide, client introuvable, code
+   déjà existant, nombre ou date illisible…). Rien n'est encore enregistré.
+3. Cliquez **« Importer »** : le résultat indique combien de lignes sont créées et rejetées.
+   La correspondance choisie est retenue pour le prochain fichier aux mêmes colonnes.
+
+> ⚠️ Seule la **première feuille** d'un classeur Excel est lue. Importez les **clients avant
+> les devis et commandes** : ils y sont rattachés par le code client, et le client doit avoir
+> une adresse et un contact par défaut. Un client, un devis ou une commande dont le code
+> existe déjà est rejeté (pas de doublon si vous importez deux fois le même fichier).
+>
+> 💡 Un CSV peut être séparé par des points-virgules, des virgules ou des tabulations, et
+> enregistré en UTF-8 comme en « CSV (séparateur : point-virgule) » d'Excel : les accents
+> sont conservés. Les dates au format 25/06/2026 et les décimales à virgule sont acceptées.
 
 ---
 

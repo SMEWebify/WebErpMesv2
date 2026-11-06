@@ -1603,6 +1603,14 @@ async function mountGtdBoard() {
     );
 }
 
+async function mountImportWizard() {
+    const el = document.getElementById('import-wizard-app');
+    if (!el) return;
+    const { default: ImportWizard } = await import('./components/imports/ImportWizard.jsx');
+    const props = JSON.parse(el.dataset.props ?? '{}');
+    createRoot(el).render(React.createElement(ImportWizard, props));
+}
+
 async function mountFecExportLines() {
     const el = document.getElementById('fec-export-lines-app');
     if (!el) return;
@@ -1871,6 +1879,7 @@ mountApiTokensPage();
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
+mountImportWizard();
 mountGtdBoard();
 mountReturnShow();
 mountTaskLines();

@@ -380,8 +380,7 @@ class OrderLinesController extends Controller
      */
     public function import($idOrder, Request $request, ImportCsvService $importCsvService)
     {
-        $importCsvService->importOrderLines($idOrder, $request);
-        return redirect()->back();
+        return $importCsvService->importOrderLines($idOrder, $request);
     }
 
     // -------------------------------------------------------------------------

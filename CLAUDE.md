@@ -512,6 +512,45 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
   bandeau dans l'onglet ; **jamais bloquant** (test).
 - Tests : `tests/Feature/Affairs/AffairRiskRegisterTest.php`, `resources/js/tests/lib/affairRisks.test.js`.
 
+## Imports CSV / Excel (sociétés, articles, devis, commandes, lignes, gamme)
+
+- **Assistant** (Votre société → Imports/Exports, onglet « Importer des données », React
+  `components/imports/ImportWizard.jsx`, `App\Http\Controllers\Admin\DataImportController`,
+  routes `admin.imports.{preview,check,run,template}`, type dans la liste blanche
+  `ImportCsvService::WIZARD_TYPES`) : type + dépôt → correspondance champ → colonne proposée
+  d'après les en-têtes (`suggestMapping` : nom exact puis début d'en-tête, noms reconnus dans
+  `config/imports.php`) et **aperçu simulé** (`process(..., dryRun: true)`, rien n'est écrit) →
+  import. Fichier gardé dans le stockage privé `imports/{user_id}/{jeton}` (jamais un autre
+  utilisateur), supprimé après l'import ou au bout de `imports.temporary_hours`. Correspondance
+  mémorisée par type dans le navigateur (`lib/importWizard.js`, nom d'en-tête par champ).
+  Articles : `products-edit` exigé (403). Modèle Excel = libellés des champs, reconnus tels quels.
+- **Anciens formulaires « numéro de colonne »** : routes `companies.import`, `quotes.import`,
+  `orders.import`, `products.import` conservées (plus affichées) ; onglet « Importation de
+  lignes » des fiches devis / commande (`quote-lines`, `order-lines`) inchangé. Tous passent
+  par le même moteur `ImportCsvService::process()`.
+- **Gamme** : bouton « CSV / Excel » de l'écran de gamme (`TaskManageApiController::importCsvJson`,
+  colonnes nommées par l'en-tête).
+- **Lecteur commun** `App\Services\Imports\SpreadsheetReader` : `.xlsx` / `.xls` (première
+  feuille, valeurs calculées, dates en Y-m-d), `.csv` / `.txt` (séparateur détecté sur la
+  1re ligne : `;` d'abord pour les fichiers d'avant, puis tabulation, puis `,` ; lignes sans
+  limite ; BOM retiré ; UTF-16 converti). Chaque cellule ressort en UTF-8 (UTF-8 gardé, sinon
+  lue en Windows-1252). Plus aucun `utf8_encode`, plus rien écrit dans `public/imports`
+  (dont les fichiers suivis par git servent d'exemples et de tests).
+- **Règles par ligne** : en-tête = première ligne non vide, ni erreur ni ligne importée ;
+  lignes vides ignorées. Champs obligatoires, nombres (virgule décimale admise) et dates
+  (`jj/mm/aaaa` ou ISO) contrôlés avant l'enregistrement. **Code déjà existant** (en base ou
+  plus haut dans le fichier) : client / devis / commande **rejeté** (pas de doublon), article
+  **mis à jour**. Une exception à l'enregistrement rejette la ligne (journalisée).
+- Devis / commande : contact et adresse **par défaut** du client (code client en colonne).
+  Lignes : unité et TVA par défaut, remise vide = 0, numérotées à la suite (`ordre` max + 1).
+- Gamme : `component_code` et `unit_code` facultatifs (opération sans composant) mais
+  refusés s'ils sont inconnus ; `qty` vide = 1, coûts / prix vides = 0, `seting_time` /
+  `unit_time` acceptés ; premier statut du flux posé. Réponse JSON avec `technical_cut` et `bom`.
+- **Messages** : « N créée(s)[, U mise(s) à jour], M rejetée(s) » + rejets « Ligne n : raison »
+  (n° de ligne du fichier). Textes `resources/lang/{fr,en}/imports.php` (`wizard.*` pour l'écran).
+- Fichiers d'exemple : `docs/imports-exemples/` (rejoués par un test, doivent passer sans rejet).
+- Tests : `tests/Feature/Imports/`, `resources/js/tests/lib/importWizard.test.js`.
+
 ## Trames de devis, duplication, copie de lignes
 
 Une trame est un devis `quotes.is_template = true`, éditée avec l'écran devis habituel
@@ -1543,10 +1582,8 @@ Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
 - **Contrainte** : sections non imbriquables (pas de parent/niveau sur `quote_lines`) →
   aplatir l'arborescence en sections numérotées + sous-total par lot ; ne pas introduire
   d'imbrication (impact PDF / Factur-X).
-- **Bugs de l'import de lignes existant à corriger au passage** (`ImportCsvService`) :
-  un `.xlsx` est accepté mais lu par `fgetcsv` (l. 95) ; `array_key_exists($request->x,
-  $importData)` teste le n° de colonne contre la liste des lignes au lieu de la ligne
-  courante (lignes de devis l. 658-664, commandes l. 734, sociétés l. 378-386).
+- Lecture du classeur : réutiliser `App\Services\Imports\SpreadsheetReader` (section
+  « Imports CSV / Excel »), qui ne lit que la première feuille.
 
 #### Facturation bâtiment (marchés de travaux)
 Besoin identifié sur un prospect (oct. 2026 : cuisines, bâtiment léger, serrurerie / pliage

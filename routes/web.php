@@ -1161,6 +1161,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/kanban-settings/json/{id}',        'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonDestroy')->middleware(['auth'])->name('admin.kanban.settings.json.destroy');
 
         Route::get('/imports-exports', 'App\Http\Controllers\Admin\ImportsExportsController@index')->middleware(['auth'])->name('admin.imports.exports');
+        // Assistant d'import (correspondance des colonnes, aperçu, import)
+        Route::get('/imports/{type}/template', 'App\Http\Controllers\Admin\DataImportController@template')->middleware(['auth'])->name('admin.imports.template');
+        Route::post('/imports/{type}/preview', 'App\Http\Controllers\Admin\DataImportController@preview')->middleware(['auth'])->name('admin.imports.preview');
+        Route::post('/imports/{type}/check',   'App\Http\Controllers\Admin\DataImportController@check')->middleware(['auth'])->name('admin.imports.check');
+        Route::post('/imports/{type}/run',     'App\Http\Controllers\Admin\DataImportController@run')->middleware(['auth', 'throttle:20,1'])->name('admin.imports.run');
         Route::get('/invoice-export/json/list',        'App\Http\Controllers\Admin\ImportsExportsController@invoiceExportJsonList')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.invoice.export.json.list');
         Route::post('/invoice-export/export/{ext}',    'App\Http\Controllers\Admin\ImportsExportsController@invoiceExport')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.invoice.export');
         Route::get('/fec-export/json/list',            'App\Http\Controllers\Admin\ImportsExportsController@fecExportJsonList')->withoutMiddleware('permission:your-company-menu')->middleware(['auth', 'permission:your-company-menu|accounting-menu'])->name('admin.fec.export.json.list');

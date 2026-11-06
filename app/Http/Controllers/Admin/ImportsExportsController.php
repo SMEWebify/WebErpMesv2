@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\ImportCsvService;
 use App\Services\SelectDataService;
+use App\Services\Products\ProductCatalogAccess;
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Accounting\AccountingEntry;
@@ -41,9 +42,48 @@ class ImportsExportsController extends Controller
             'FamiliesSelect' => $FamiliesSelect,
             'UnitsSelect'    => $UnitsSelect,
             'ServicesSelect' => $ServicesSelect,
+            'importWizard'   => $this->importWizardProps($ServicesSelect, $FamiliesSelect, $UnitsSelect),
             'fecStartDate'   => $fiscal ? $fiscal['start']->format('Y-m-d') : now()->startOfYear()->format('Y-m-d'),
             'fecEndDate'     => $fiscal ? $fiscal['end']->format('Y-m-d')   : now()->endOfYear()->format('Y-m-d'),
         ]);
+    }
+
+    /**
+     * Props of the React import wizard (components/imports/ImportWizard.jsx).
+     */
+    private function importWizardProps($services, $families, $units): array
+    {
+        $trans = __('imports.wizard');
+        $canEditProducts = ProductCatalogAccess::canEdit(auth()->user());
+        $endpoint = fn (string $name) => route("admin.imports.$name", ['type' => '__TYPE__']);
+        $pick = fn ($items) => $items->map(fn ($item) => ['id' => (string) $item->id, 'label' => $item->label])->values();
+
+        return [
+            'endpoints' => [
+                'preview'  => $endpoint('preview'),
+                'check'    => $endpoint('check'),
+                'run'      => $endpoint('run'),
+                'template' => $endpoint('template'),
+            ],
+            'types' => array_map(fn (string $type) => [
+                'key'     => $type,
+                'label'   => $trans['types'][$type]['label'],
+                'hint'    => $trans['types'][$type]['hint'],
+                'enabled' => $type !== 'products' || $canEditProducts,
+            ], ImportCsvService::WIZARD_TYPES),
+            'options' => [
+                'services' => $pick($services),
+                'families' => $pick($families),
+                'units'    => $pick($units),
+            ],
+            'lists' => [
+                'companies' => route('companies'),
+                'products'  => route('products'),
+                'quotes'    => route('quotes'),
+                'orders'    => route('orders'),
+            ],
+            'trans' => collect($trans)->except('types')->all(),
+        ];
     }
 
     /**
@@ -55,8 +95,7 @@ class ImportsExportsController extends Controller
      */
     public function importCompanies(Request $request, ImportCsvService $importCsvService)
     {   
-        $importCsvService->importCompanies($request);
-        return redirect()->back();
+        return $importCsvService->importCompanies($request);
     }
 
     /**
@@ -68,8 +107,7 @@ class ImportsExportsController extends Controller
      */
     public function importQuotes (Request $request, ImportCsvService $importCsvService)
     {   
-        $importCsvService->importQuotes($request);
-        return redirect()->back();
+        return $importCsvService->importQuotes($request);
     }
 
     /**
@@ -81,8 +119,7 @@ class ImportsExportsController extends Controller
      */
     public function importOrders (Request $request, ImportCsvService $importCsvService)
     {   
-        $importCsvService->importOrders($request);
-        return redirect()->back();
+        return $importCsvService->importOrders($request);
     }
     
     /**
@@ -94,8 +131,7 @@ class ImportsExportsController extends Controller
      */
     public function importProducts (Request $request, ImportCsvService $importCsvService)
     {
-        $importCsvService->importProducts($request);
-        return redirect()->back();
+        return $importCsvService->importProducts($request);
     }
 
     public function invoiceExportJsonList()

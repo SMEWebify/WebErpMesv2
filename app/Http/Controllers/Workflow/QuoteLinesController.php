@@ -230,8 +230,7 @@ class QuoteLinesController extends Controller
      */
     public function import($idQuote, Request $request, ImportCsvService $importCsvService)
     {
-        $importCsvService->importQuoteLines($idQuote, $request);
-        return redirect()->back();
+        return $importCsvService->importQuoteLines($idQuote, $request);
     }
 
     // -------------------------------------------------------------------------

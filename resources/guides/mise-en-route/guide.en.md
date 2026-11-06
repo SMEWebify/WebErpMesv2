@@ -6,7 +6,7 @@ order: 5
 duration: 30
 icon: fas fa-rocket
 can: your-company-menu
-updated: 2026-10-31
+updated: 2026-11-06
 ---
 
 **Goal**: prepare a new instance before the first quotes, in the right order, so that
@@ -289,18 +289,38 @@ the sender address and name, then "Save" and **"Send a test email"**.
 
 ## 9. Bringing in your data {#reprendre-vos-donnees}
 
-Menu **Your company › Imports/Exports**: import customers, products, quotes
-and orders from a CSV file.
+Menu **Your company › Imports/Exports**, **"Import data"** tab: import customers, products,
+quotes and orders from an **Excel (.xlsx, .xls) or CSV file**, for instance the export of your
+former software. The lines of a quote or an order are imported from the "Lines Import" tab of
+its page, and the routing of a line from the "CSV / Excel" button of the routing screen.
 
-![Customer import](img/18-import-clients.png)
+```steps
+Type and file
+Mapping and preview
+Import
+```
 
-1. Choose the CSV file, and indicate whether it has a **header line**.
-2. For each field, enter the **number of the column** that contains it.
-3. Import.
+![Import wizard: mapping and preview](img/18-import-assistant.png)
 
-> ⚠️ The file must be a **semicolon-separated CSV** (not an Excel file),
-> and the columns are **numbered from 0**. Import customers before quotes
-> and orders, and do a trial on a few lines.
+1. Choose what you import, then drop the file (or click to choose it). The **"Download an
+   Excel template"** link gives an empty workbook with the right columns.
+2. For each ERP field, the wizard suggests the **file column** from its name ("Company name",
+   "Description", "Thickness (mm)"…): check it, change it in the list or choose "Do not
+   import". The **preview** shows the first lines as they will be imported, each marked
+   **New**, **Update** (existing product) or **Rejected** with the reason (empty required
+   field, customer not found, code already existing, unreadable number or date…). Nothing is
+   saved yet.
+3. Click **"Import"**: the result tells how many lines were created and rejected. The chosen
+   mapping is remembered for the next file with the same columns.
+
+> ⚠️ Only the **first sheet** of an Excel workbook is read. Import **customers before quotes
+> and orders**: these are linked by the customer code, and the customer needs a default
+> address and contact. A customer, quote or order whose code already exists is rejected (no
+> duplicate if you import the same file twice).
+>
+> 💡 A CSV file may be separated by semicolons, commas or tabs, and saved in UTF-8 or as
+> Excel's "CSV (semicolon delimited)": accents are kept. Dates such as 25/06/2026 and
+> decimal commas are accepted.
 
 ---
 
