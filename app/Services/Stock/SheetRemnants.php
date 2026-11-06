@@ -117,7 +117,7 @@ class SheetRemnants
                 throw new \DomainException(__('stock_remnants.not_enough', ['qty' => $this->number($piece['qty'])]));
             }
 
-            $exit = $this->stockService->createStockMove([
+            $data = [
                 'user_id'                    => $context['user_id'],
                 'qty'                        => $qty,
                 'stock_location_products_id' => $slp->id,
@@ -125,7 +125,17 @@ class SheetRemnants
                 'order_line_id'              => $context['order_line_id'] ?? null,
                 'task_id'                    => $context['task_id'] ?? null,
                 'tracability'                => $piece['tracability'],
-            ] + array_intersect_key($piece, array_flip(self::PIECE_COLUMNS)));
+            ] + array_intersect_key($piece, array_flip(self::PIECE_COLUMNS));
+            // Valeur de la sortie : seulement quand l'appelant la veut (imbrication) ;
+            // colonne non nullable, 0 par défaut comme les autres sorties.
+            if (! empty($context['component_price'])) {
+                $data['component_price'] = $context['component_price'];
+            }
+            $exit = $this->stockService->createStockMove($data);
+
+            if (! empty($context['nest_id'])) {
+                $exit->forceFill(['nest_id' => $context['nest_id']])->save();
+            }
 
             return [
                 'exit'     => $exit,
@@ -203,7 +213,7 @@ class SheetRemnants
                 $move = StockMove::create($data);
             }
 
-            $move->forceFill(['remnant_source_move_id' => $exit->id])->save();
+            $move->forceFill(['remnant_source_move_id' => $exit->id, 'nest_id' => $exit->nest_id])->save();
             $moves[] = $move;
         }
 

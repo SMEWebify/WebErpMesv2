@@ -8,6 +8,7 @@ use App\Models\Products\StockMove;
 use App\Models\User;
 use App\Services\Integrations\IntegrationEventHandler;
 use App\Services\StockService;
+use App\Services\Stock\NestRecorder;
 use App\Services\N2P\SheetLotPayloadBuilder;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -54,7 +55,7 @@ class HandleStockEvent implements IntegrationEventHandler
 
         // Lock la SLP puis vérifie que la conso ne rendra pas le stock négatif.
         // Aligne le comportement sur TaskStatuController@goodQtyStock (FIFO id).
-        DB::transaction(function () use ($slpId, $qty, $originalMove, $tracability, $userId) {
+        DB::transaction(function () use ($slpId, $qty, $originalMove, $tracability, $userId, $consumedBy) {
             $slp = StockLocationProducts::query()
                 ->whereKey($slpId)
                 ->lockForUpdate()
@@ -71,7 +72,7 @@ class HandleStockEvent implements IntegrationEventHandler
                 );
             }
 
-            $this->stockService->createStockMove([
+            $move = $this->stockService->createStockMove([
                 'user_id'                    => $userId,
                 'stock_location_products_id' => $slpId,
                 'typ_move'                   => self::TYP_MOVE_CONSUMPTION,
@@ -79,6 +80,12 @@ class HandleStockEvent implements IntegrationEventHandler
                 'batch_id'                   => $originalMove->batch_id,
                 'tracability'                => $tracability,
             ]);
+
+            // Sortie rattachée à l'imbrication Nest2Prod : lien vers les lignes de
+            // commande de ses pièces (message nest.updated) et coût matière.
+            if (is_array($consumedBy)) {
+                app(NestRecorder::class)->attachN2PConsumption($move, $consumedBy);
+            }
         });
     }
 

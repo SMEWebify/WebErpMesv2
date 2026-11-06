@@ -44,6 +44,7 @@ return [
     'serial_numbers_trans_key'                 => 'Numéros de série',
     'product_list_trans_key'                   => 'Liste de articles',
     'batches_trans_key'                        => 'Lots',
+    'nests_trans_key'                          => 'Imbrications réalisées',
     'stock_trans_key'                          => 'Stock',
     'stock_shortages_trans_key'                => 'Statut du stock',
     'inventory_trans_key'                      => 'Inventaire',

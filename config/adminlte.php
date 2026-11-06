@@ -1071,6 +1071,12 @@ return [
                     'can'  => ['stock-lot-serial-management'],
                 ],
                 [
+                    'text' => 'nests_trans_key',
+                    'url'  => 'products/nests',
+                    'icon_color' => 'warning',
+                    'can'  => ['stock-lot-serial-management'],
+                ],
+                [
                     'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
                     'icon_color' => 'primary',

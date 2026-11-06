@@ -28,6 +28,9 @@ return [
         'stock.consumed'          => \App\Services\Integrations\Handlers\HandleStockEvent::class,
         // 'stock.produced' (V2 différé — mapping vers typ_move=12 sur produit fini)
 
+        // Imbrication réalisée : pièces par OF, chutes (docs/n2p-integration.md)
+        'nest.updated'            => \App\Services\Integrations\Handlers\HandleNestEvent::class,
+
         // Phase 3 — job status
         'job.status_changed'      => \App\Services\Integrations\Handlers\HandleJobStatusEvent::class,
     ],
@@ -56,6 +59,9 @@ return [
         ],
         'Stock (consommation matière)' => [
             'stock.consumed' => 'Composant consommé sur un lot',
+        ],
+        'Imbrications (découpe réalisée)' => [
+            'nest.updated' => 'Imbrication mise à jour (pièces par OF, chutes)',
         ],
         'Jobs (statuts de commande)' => [
             'job.status_changed' => "Changement de statut d'un OF",

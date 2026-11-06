@@ -909,6 +909,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/{batch}', 'App\Http\Controllers\Products\BatchesController@show')->whereNumber('batch')->middleware('audit.access:batch,batch')->name('products.batches.show');
         });
 
+        // Imbrications réalisées (découpe réelle : FAO, Nest2Prod MES, saisie)
+        Route::group(['prefix' => 'nests', 'middleware' => ['permission:stock-lot-serial-management']], function () {
+            Route::get('/', 'App\Http\Controllers\Products\NestsController@index')->name('products.nests');
+            Route::get('/create', 'App\Http\Controllers\Products\NestsController@create')->name('products.nests.create');
+            Route::post('/', 'App\Http\Controllers\Products\NestsController@store')->name('products.nests.store');
+            Route::get('/{nest}', 'App\Http\Controllers\Products\NestsController@show')->whereNumber('nest')->name('products.nests.show');
+        });
+
         // Stock routes
         Route::group(['prefix' => 'Stock', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');

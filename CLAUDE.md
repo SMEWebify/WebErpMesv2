@@ -1150,6 +1150,30 @@ Le stock reste une somme de mouvements ; une **pièce** = mouvements de même lo
   NestEngine ne reçoit pas encore les chutes comme formats disponibles.
 - Tests : `tests/Feature/Products/SheetRemnantTest.php`.
 
+## Imbrications réalisées (tôle → plusieurs lignes de commande)
+
+`nests` (source `manual` | `n2p` | `import`, `external_id`, programme, article tôle, format,
+tôles, utilisation, statut, `payload` du dernier message) + `nest_parts` (ligne de commande,
+tâche, quantité, surface et poids d'une pièce) + `stock_moves.nest_id` (hors `$fillable`).
+`App\Services\Stock\NestRecorder`, écran `/products/nests` (menu Stock,
+`stock-lot-serial-management`). **NestEngine n'en est jamais la source** : il estime le besoin,
+la vérité est l'imbrication réellement découpée (FAO ou Nest2Prod MES).
+- **Saisie** (bouton « Déclarer une imbrication » de la carte Pièces en stock) : pièce sortie,
+  nombre de tôles, quantité par tâche candidate (`component_id` = la tôle, ligne de commande,
+  non terminée), chutes. Sortie `typ_move` 2 valorisée au CUMP (`component_price`), tâche
+  rattachée si une seule. Refus : aucune pièce, tâche d'une autre tôle.
+- **Nest2Prod MES** (`docs/n2p-integration.md`) : `stock.consumed` avec `consumed_by.nest_id`
+  rattache la sortie (imbrication créée en attente au besoin) ; `nest.updated` (`HandleNestEvent`)
+  remplace les pièces (OF `OF<id de ligne>` → ligne, tâche dont le composant est la tôle) et
+  écrit les chutes **une fois**, imbrication terminée et sortie reçue, ordre d'arrivée
+  indifférent. Chute impossible ignorée et journalisée (le message reste accepté).
+  N2P n'émet pas encore `nest.updated` : à ajouter côté MES.
+- **Coût par ligne** (`allocation()`, à la lecture) : sorties (valeur, sinon CUMP actuel) −
+  chutes rendues, au prorata de la surface des pièces, sinon du poids, sinon du nombre.
+- Non fait : réservation de lot / pièce sur la tâche (soldée par l'imbrication), import CSV
+  d'une FAO tierce, coût repris sur la marge de la commande, avancement des tâches.
+- Tests : `tests/Feature/Products/NestRecorderTest.php`.
+
 ## Nesting (imbrication tôle)
 
 L'imbrication tôle repose **entièrement** sur NestEngine : il n'y a plus de calcul

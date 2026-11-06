@@ -43,6 +43,7 @@ return [
     'serial_numbers_trans_key'                 => '序列号',
     'product_list_trans_key'                   => '产品列表',
     'batches_trans_key'                        => '批次',
+    'nests_trans_key'                          => '套料记录',
     'stock_trans_key'                          => '库存',
     'inventory_trans_key'                      => '盘点',
     'purchase_trans_key'                       => '采购',

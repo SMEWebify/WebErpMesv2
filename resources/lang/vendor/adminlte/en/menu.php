@@ -44,6 +44,7 @@ return [
     'serial_numbers_trans_key'                 => 'Serial Numbers',
     'product_list_trans_key'                   => 'Product list',
     'batches_trans_key'                        => 'Batches',
+    'nests_trans_key'                          => 'Cut nests',
     'stock_trans_key'                          => 'Stock',
     'stock_shortages_trans_key'                => 'Stock status',
     'inventory_trans_key'                      => 'Inventory',

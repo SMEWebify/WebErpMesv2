@@ -40,6 +40,79 @@ appliquée par `N2PPayloadBuilder::resolvePartType()` :
 5. `SymbolPart` — `thickness > 0` ou présence d’un `cad_file_path` / `cam_file_path` (indicateurs tôle).
 6. `StandardPart` — fallback (aucun signal exploitable).
 
+## Retour des imbrications réalisées (N2P → ERP)
+
+Point d'entrée existant : `POST /api/integrations/n2p/inbound`, enveloppe habituelle
+(`event_id` UUID, `event_type`, `occurred_at`, `source`, `data`), signature HMAC
+`X-N2P-Timestamp` / `X-N2P-Signature-256`, dédoublonnage par `event_id`.
+
+Deux événements se complètent :
+
+| Événement | Porte | Émis quand |
+|---|---|---|
+| `stock.consumed` (existant) | la **sortie de tôle** : lot `MV-<id>`, quantité, `consumed_by.nest_id` / `nest_name` | à chaque tôle consommée (delta de `sheet_qty_done`) |
+| `nest.updated` (nouveau) | l'**état complet de l'imbrication** : pièces par OF, chutes, format, utilisation | à chaque changement de statut, et au moins une fois au statut 6 (terminé) |
+
+Côté ERP (`App\Services\Stock\NestRecorder`) :
+- l'imbrication est identifiée par (`n2p`, `nest_id`) ; l'ordre d'arrivée des deux événements est indifférent ;
+- `nest.updated` est **rejouable** : la liste des pièces est remplacée à chaque message ;
+- les chutes ne sont écrites **qu'une fois**, quand l'imbrication est terminée (statut 6) **et**
+  qu'au moins une sortie `stock.consumed` est arrivée, sur la ligne et le lot de cette sortie ;
+- une chute impossible (plus grande que la tôle…) est ignorée et journalisée, le message est
+  accepté (pas de nouvel essai en boucle) ;
+- une pièce dont l'OF est inconnu est gardée « non rattachée ».
+
+### `nest.updated` — `data`
+```json
+{
+  "nest_id": 77,
+  "nest_name": "NEST-2026-042",
+  "status": 6,
+  "finished_at": "2026-11-06T10:00:00+01:00",
+  "machine_name": "Laser 1",
+  "material": "S235",
+  "thickness": 3,
+  "sheet_x": 3000,
+  "sheet_y": 1500,
+  "sheet_qty": 2,
+  "sheet_qty_done": 2,
+  "sheet_usage": "72.5",
+  "stock_lots": [
+    { "external_ref": "MV-12", "qty_consumed": 2 }
+  ],
+  "parts": [
+    {
+      "of_code": "OF42",
+      "line_ref": "42",
+      "part_name": "SUPPORT-A",
+      "external_part_number": "P-0012",
+      "planned_qty": 10,
+      "good_qty": 10,
+      "bad_qty": 0,
+      "area_mm2": 125000.5,
+      "weight_kg": 2.95
+    }
+  ],
+  "remnants": [
+    { "width": 1500, "height": 1000, "quantity": 1, "name": "CH-77-1", "is_available": true }
+  ]
+}
+```
+
+### Correspondance avec le modèle Nest2Prod MES
+| Champ | Source N2P |
+|---|---|
+| `nest_id`, `nest_name`, `status`, `finished_at`, `machine_name` | `nests.id`, `nest_name`, `statu` (1-7), `finished_at`, `machine_name` |
+| `material`, `thickness`, `sheet_x`, `sheet_y` | `nests.*` |
+| `sheet_qty`, `sheet_qty_done`, `sheet_usage` | `nests.*` (`sheet_usage` peut contenir « % ») |
+| `stock_lots[]` | `nest_stock_lots` → `stock_lots.external_ref`, `qty_consumed` |
+| `parts[]` | `nest_parts` : `OF` → `of_code`, `part_name`, `external_part_number`, `planned_part_qty` → `planned_qty`, `good_qty`, `bad_qty`, surface et poids **d'une** pièce |
+| `remnants[]` | `nest_scraps` : `width`, `height`, `quantity`, `scrap_name` → `name`, `is_available` |
+
+Statuts : 1, 2, 4, 5 → prévue ; 3 → en cours ; 6 → découpée ; 7 → annulée.
+Répartition du coût matière entre lignes : surface des pièces si toutes l'ont, sinon poids,
+sinon nombre de pièces.
+
 ## Exemple de payload envoyé
 ```json
 {

@@ -82,6 +82,12 @@ class StockMove extends Model
         return $this->belongsTo(StockMove::class, 'remnant_source_move_id');
     }
 
+    /** Imbrication réalisée dont ce mouvement fait partie (hors $fillable, NestRecorder). */
+    public function nest()
+    {
+        return $this->belongsTo(Nest::class, 'nest_id');
+    }
+
     public function isRemnantEntry(): bool
     {
         return $this->remnant_source_move_id !== null;

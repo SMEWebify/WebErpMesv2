@@ -40,7 +40,14 @@
       </div>
         @if($handlesRemnants)
         <x-adminlte-card title="{{ __('stock_remnants.pieces_title') }}" theme="primary" theme-mode="outline" icon="fas fa-layer-group">
-          <p class="small text-body-secondary mb-2">{{ __('stock_remnants.pieces_hint') }}</p>
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+            <p class="small text-body-secondary mb-0">{{ __('stock_remnants.pieces_hint') }}</p>
+            @if(count($Pieces) > 0)
+            <a href="{{ route('products.nests.create', ['stock_line' => $StockLocationProduct->id]) }}" class="btn btn-sm btn-outline-primary" title="{{ __('nests.declare_hint') }}">
+              <i class="fa-solid fa-table-cells me-1"></i>{{ __('nests.declare') }}
+            </a>
+            @endif
+          </div>
           <div class="table-responsive p-0">
             <table class="table table-sm table-hover mb-0">
               <thead>
@@ -97,10 +104,17 @@
               </thead>
               <tbody>
                 @forelse ($StockMoves as $StockMove)
+                @php
+                  // Sens du mouvement, mêmes listes que le calcul du stock (StockLocationProducts).
+                  $moveIn  = in_array((int) $StockMove->typ_move, [1, 3, 5, 12, 14], true);
+                  $moveOut = in_array((int) $StockMove->typ_move, [2, 4, 6, 9, 15], true);
+                @endphp
                 <tr>
-                  <td>{{ $StockMove->UserManagement['name'] }}</td>
+                  <td @if($moveIn || $moveOut) style="box-shadow: inset 3px 0 0 var(--bs-{{ $moveIn ? 'success' : 'danger' }})" @endif>{{ $StockMove->UserManagement['name'] }}</td>
                   <td>{{ $StockMove->GetPrettyCreatedAttribute() }}</td>
-                  <td>{{ $StockMove->qty }}</td>
+                  <td class="text-nowrap fw-semibold {{ $moveIn ? 'text-success' : ($moveOut ? 'text-danger' : 'text-body-secondary') }}">
+                    @if($moveIn)<i class="fas fa-arrow-up me-1" aria-hidden="true"></i>+@elseif($moveOut)<i class="fas fa-arrow-down me-1" aria-hidden="true"></i>−@endif{{ $StockMove->qty + 0 }}
+                  </td>
                   <td>{{ $StockMove->tracability }}
                     @if($StockMove->batch?->heat_number)
                       <br><a href="{{ route('products.batches.show', ['batch' => $StockMove->batch_id]) }}" class="small">{{ __('batches.heat_short') }} {{ $StockMove->batch->heat_number }}</a>
@@ -154,6 +168,9 @@
                     @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                     @if(14 == $StockMove->typ_move ){{__('general_content.transfer_stock_entry_trans_key') }} @endif
                     @if(15 == $StockMove->typ_move ){{__('general_content.inventory_shortage_trans_key') }} @endif
+                    @if($StockMove->nest_id)
+                      <br><a href="{{ route('products.nests.show', ['nest' => $StockMove->nest_id]) }}" class="small"><i class="fa-solid fa-table-cells me-1"></i>{{ __('nests.nest') }} #{{ $StockMove->nest_id }}</a>
+                    @endif
                   </td>
                   <td>{{ $StockMove->formatted_component_price }}</td>
                   <td>
