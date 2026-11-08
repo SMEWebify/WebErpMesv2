@@ -7,6 +7,7 @@ use App\Models\EmailLog;
 use App\Models\Planning\Task;
 use App\Models\Planning\TaskActivities;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Quality\QualityNonConformity;
 use App\Models\Workflow\AffairRisk;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\InvoicePayment;
@@ -18,6 +19,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
 use App\Services\Purchases\SupplierAcknowledgement;
+use App\Services\Quality\NonConformityImpact;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
@@ -29,7 +31,7 @@ use Illuminate\Support\Collection;
  * Les blocages sont des règles explicites et testées, pas une appréciation de
  * l'IA : le dirigeant doit pouvoir comprendre pourquoi une alerte s'affiche.
  *
- * Nombre de requêtes constant (10), quelle que soit la taille de l'affaire :
+ * Nombre de requêtes constant (11), quelle que soit la taille de l'affaire :
  * chaque niveau est chargé en une fois par whereIn sur le niveau précédent,
  * et les montants sont agrégés en SQL ou à partir des lignes déjà chargées.
  * Les lectures passent par toBase() : les accesseurs Eloquent (prix calculé,
@@ -61,6 +63,7 @@ class AffairSummaryService
         'visit_unvalidated' => 'finish_visit',
         'risk_critical'     => 'treat_risk',
         'risk_overdue'      => 'treat_risk',
+        'rework_in_progress' => 'follow_rework',
     ];
 
     // quotes.statu
@@ -117,11 +120,14 @@ class AffairSummaryService
             ->whereIn('status', AffairRiskRegister::ACTIVE)
             ->orderBy('id')
             ->toBase()->get(['id', 'label', 'category', 'probability', 'severity', 'due_date', 'status']);
+        $nonConformities = $this->loadNonConformities($lines, $tasks);
 
         $linesByOrder = $lines->groupBy('orders_id');
         $tasksByOrder = $tasks->groupBy('orders_id');
 
-        $orders = $orders->map(function ($order) use ($linesByOrder, $tasksByOrder) {
+        $ncsByOrder   = $nonConformities->groupBy('orders_id');
+
+        $orders = $orders->map(function ($order) use ($linesByOrder, $tasksByOrder, $ncsByOrder) {
             $orderLines = $linesByOrder->get($order->id, collect());
             $orderTasks = $tasksByOrder->get($order->id, collect());
             $count      = $orderLines->count();
@@ -133,6 +139,8 @@ class AffairSummaryService
             $order->hours_planned = round((float) $orderTasks->sum('planned_hours'), 2);
             $order->hours_actual  = round((float) $orderTasks->sum('actual_hours'), 2);
             $order->awaiting_release = $orderTasks->where('awaiting_release', true)->count();
+            $order->nc_cost       = round((float) $ncsByOrder->get($order->id, collect())->sum('total'), 2);
+            $order->rework_open   = $orderTasks->where('rework_open', true)->count();
             $order->next_delivery_date = $orderLines
                 ->filter(fn ($l) => (int) $l->delivery_status < 3 && $l->due_date)
                 ->min('due_date');
@@ -142,6 +150,7 @@ class AffairSummaryService
 
         $blockers = $this->detectBlockers($quotes, $orders, $lines, $tasks, $purchaseLines, $invoices, $visits, $now, $today);
         $blockers = array_merge($blockers, $this->riskBlockers($opportunity, $risks, $today));
+        $blockers = array_merge($blockers, $this->reworkBlockers($tasks, $nonConformities));
         $stage    = $this->resolveStage($opportunity, $quotes, $orders, $lines, $tasks, $invoices, $visits, $onsiteEvent);
 
         $blockers = array_values(array_filter($blockers, fn ($b) => isset($visible[$b['section']])));
@@ -170,12 +179,16 @@ class AffairSummaryService
             'invoiced_ttc'  => round((float) $billed->sum('amount_ttc') - (float) $credits->sum('amount_ttc'), 2),
             'collected'     => round((float) $billed->sum('paid'), 2),
             'outstanding'   => round((float) $billed->sum('remaining'), 2),
+            // Coût des NC des lignes de l'affaire (NonConformityImpact::total), hors NC annulées.
+            'nc_cost'       => round((float) $nonConformities->sum('total'), 2),
+            'nc_count'      => $nonConformities->count(),
         ];
 
         $totalSections = [
             'quoted' => 'quotes', 'ordered' => 'orders', 'hours_planned' => 'orders', 'hours_actual' => 'orders',
             'purchased' => 'purchases', 'invoiced' => 'invoices', 'invoiced_ttc' => 'invoices',
             'collected' => 'invoices', 'outstanding' => 'invoices',
+            'nc_cost' => 'orders', 'nc_count' => 'orders',
         ];
         foreach ($totalSections as $key => $section) {
             if (!isset($visible[$section])) {
@@ -206,6 +219,8 @@ class AffairSummaryService
                 'hours_planned'      => $o->hours_planned,
                 'hours_actual'       => $o->hours_actual,
                 'awaiting_release'   => $o->awaiting_release,
+                'nc_cost'            => $o->nc_cost,
+                'rework_open'        => $o->rework_open,
                 'url'                => route('orders.show', $o->id),
             ])->values()->all(),
             'purchases' => $purchaseLines->groupBy('purchases_id')->map(function ($group) {
@@ -350,7 +365,8 @@ class AffairSummaryService
             ->whereIn('tasks.order_lines_id', $lineById->keys()->all())
             ->toBase()
             ->get(['tasks.id', 'tasks.label', 'tasks.order_lines_id', 'tasks.seting_time', 'tasks.unit_time', 'tasks.qty', 'statuses.title as status_title',
-                'tasks.released_at', 'methods_services.requires_release']);
+                'tasks.released_at', 'methods_services.requires_release',
+                'tasks.quality_non_conformity_id', 'methods_services.hourly_rate']);
 
         $activities = $tasks->isEmpty() ? collect() : TaskActivities::query()
             ->whereIn('task_id', $tasks->pluck('id')->all())
@@ -369,15 +385,52 @@ class AffairSummaryService
             $task->orders_id     = $line->orders_id ?? null;
             $task->order_code    = $line->order_code ?? null;
             $task->planned_hours = round((float) $task->seting_time + (float) $task->unit_time * $qty, 2);
-            $task->actual_hours  = round(Task::workedSecondsFrom($taskActivities) / 3600, 2);
+            $seconds             = Task::workedSecondsFrom($taskActivities);
+            $task->actual_hours  = round($seconds / 3600, 2);
             $task->started       = $taskActivities->isNotEmpty();
             // Phase terminée sur un poste à visa, pas encore libérée (TaskRelease).
             $task->awaiting_release = (bool) $task->requires_release
                 && $task->released_at === null
                 && strcasecmp((string) $task->status_title, 'Finished') === 0;
+            // Retouche d'une NC (ordre de retouche) : coût réel = temps pointé × taux du poste.
+            $task->rework_cost = $task->quality_non_conformity_id !== null
+                ? round($seconds / 3600 * (float) $task->hourly_rate, 2) : 0.0;
+            $task->rework_open = $task->quality_non_conformity_id !== null
+                && strcasecmp((string) $task->status_title, 'Finished') !== 0;
 
             return $task;
         });
+    }
+
+    /**
+     * NC des lignes de l'affaire (hors annulées), avec leur coût total : coût interne
+     * saisi, à défaut le réel des retouches, déjà chargées avec les tâches.
+     */
+    private function loadNonConformities(Collection $lines, Collection $tasks): Collection
+    {
+        if ($lines->isEmpty()) {
+            return collect();
+        }
+
+        $lineById   = $lines->keyBy('id');
+        $actualByNc = $tasks->whereNotNull('quality_non_conformity_id')->groupBy('quality_non_conformity_id')
+            ->map(fn ($group) => (float) $group->sum('rework_cost'));
+
+        return QualityNonConformity::query()
+            ->whereIn('order_lines_id', $lineById->keys()->all())
+            ->where('statu', '!=', NonConformityImpact::STATU_CANCELED)
+            ->orderBy('id')
+            ->toBase()
+            ->get(['id', 'code', 'order_lines_id', 'cost_internal', 'cost_external', 'cost_scrap'])
+            ->each(function ($nc) use ($lineById, $actualByNc) {
+                $nc->orders_id = $lineById->get($nc->order_lines_id)->orders_id ?? null;
+                $nc->total = NonConformityImpact::total(
+                    $nc->cost_internal !== null ? (float) $nc->cost_internal : null,
+                    $nc->cost_external !== null ? (float) $nc->cost_external : null,
+                    $nc->cost_scrap !== null ? (float) $nc->cost_scrap : null,
+                    (float) $actualByNc->get($nc->id, 0),
+                );
+            });
     }
 
     /** @param int[] $taskIds */
@@ -628,6 +681,26 @@ class AffairSummaryService
                     'overdue'     => AffairRiskRegister::isOverdue($r->status, $r->due_date, $today),
                 ])->values()->all(),
         ];
+    }
+
+    /**
+     * Retouche en cours : une tâche de retouche de NC non terminée. Un blocage par commande.
+     */
+    private function reworkBlockers(Collection $tasks, Collection $nonConformities): array
+    {
+        $blockers = [];
+        $codes = $nonConformities->pluck('code', 'id');
+
+        foreach ($tasks->where('rework_open', true)->groupBy('orders_id') as $orderId => $group) {
+            $blockers[] = $this->blocker('rework_in_progress', 'warning', 'orders', $group->first()->order_code,
+                null, $orderId ? route('orders.show', $orderId) : null, [
+                    'count' => $group->count(),
+                    'label' => $group->pluck('quality_non_conformity_id')->unique()
+                        ->map(fn ($id) => $codes->get($id))->filter()->implode(', '),
+                ]);
+        }
+
+        return $blockers;
     }
 
     private function blocker(string $code, string $severity, string $section, ?string $ref, $date, ?string $url, array $params = []): array

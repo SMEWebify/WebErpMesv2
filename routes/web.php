@@ -1324,6 +1324,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/api/{id}/close', 'App\Http\Controllers\Quality\QualityNonConformityController@apiClose')->name('quality.nonConformitie.api.close');
             Route::post('/api/{id}/reopen', 'App\Http\Controllers\Quality\QualityNonConformityController@apiReopen')->name('quality.nonConformitie.api.reopen');
             Route::get('/api/{id}/history', 'App\Http\Controllers\Quality\QualityNonConformityController@apiHistory')->whereNumber('id')->name('quality.nonConformitie.api.history');
+            // Impact de la NC (coûts, délai, ordre de retouche) : App\Services\Quality\NonConformityImpact
+            Route::get('/api/cost-stats', 'App\Http\Controllers\Quality\NonConformityImpactController@stats')->name('quality.nonConformitie.api.cost-stats');
+            Route::get('/api/{id}/impact', 'App\Http\Controllers\Quality\NonConformityImpactController@show')->whereNumber('id')->name('quality.nonConformitie.api.impact');
+            Route::post('/api/{id}/impact', 'App\Http\Controllers\Quality\NonConformityImpactController@update')->whereNumber('id')->name('quality.nonConformitie.api.impact.update');
+            Route::post('/api/{id}/rework', 'App\Http\Controllers\Quality\NonConformityImpactController@rework')->whereNumber('id')
+                ->middleware('permission:quality-rework-order')->name('quality.nonConformitie.api.rework');
+            Route::post('/api/{id}/delay', 'App\Http\Controllers\Quality\NonConformityImpactController@delay')->whereNumber('id')
+                ->middleware('permission:quality-rework-order')->name('quality.nonConformitie.api.delay');
         });
     
         // Routes for Derogation

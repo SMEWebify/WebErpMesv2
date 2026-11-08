@@ -19,6 +19,7 @@
         data-failures="{{ json_encode($FailuresSelect) }}"
         data-causes="{{ json_encode($CausesSelect) }}"
         data-corrections="{{ json_encode($CorrectionsSelect) }}"
+        data-currency="{{ app('Factory')->curency ?? 'EUR' }}"
         data-trans="{{ json_encode([
             'search'                => __('general_content.search_trans_key'),
             'results'               => 'résultats',
@@ -68,6 +69,7 @@
             'history_empty'         => __('activity_history.empty'),
             'history_loading'       => __('activity_history.loading'),
             'history_error'         => __('activity_history.error'),
+            'nc_impact'             => __('nc_impact'),
         ]) }}"
     ></div>
 @stop

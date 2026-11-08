@@ -55,5 +55,6 @@ return [
         'contract-review-approve' => 'Viser (valider ou rejeter) la revue de contrat d\'une commande et ses avenants ; annuler un avenant.',
         'order-price-recalculate' => 'Activer le prix calculé d\'une ligne de commande sortie de préparation (motif obligatoire).',
         'affair-risk-close' => 'Clôturer un risque critique du registre des risques d\'une affaire.',
+        'quality-rework-order' => 'Lancer un ordre de retouche depuis une non-conformité (tâches sur la ligne de commande) et reporter la date de livraison de la ligne.',
     ],
 ];

@@ -89,6 +89,7 @@ return [
         'visit_unvalidated' => 'Visite du :date non validée',
         'risk_critical' => 'Risque critique ouvert (criticité :criticality) — :label',
         'risk_overdue' => 'Risque : action de maîtrise échue le :date (:days j) — :label',
+        'rework_in_progress' => 'Commande :ref : :count tâche(s) de retouche en cours — :label',
     ],
 
     'next_action_title' => 'Prochaine action',
@@ -116,6 +117,7 @@ return [
         'collect_payment' => 'Encaisser la facture :ref',
         'chase_payment' => 'Relancer le paiement de :ref',
         'treat_risk' => 'Traiter les risques de l\'affaire',
+        'follow_rework' => 'Suivre la retouche de :ref',
     ],
 
     'risks' => [
@@ -182,6 +184,8 @@ return [
         'invoiced' => 'Facturé HT',
         'collected' => 'Encaissé TTC',
         'outstanding' => 'Reste à encaisser',
+        'nc_cost' => 'Coût des NC',
+        'nc_count' => ':count NC',
     ],
 
     'sections' => [
@@ -199,6 +203,8 @@ return [
         'invoiced' => 'Facturé',
         'hours' => 'Heures',
         'awaiting_release' => 'Phases à viser',
+        'nc_cost' => 'Coût NC',
+        'rework_open' => 'Retouches en cours',
         'received' => 'Reçu',
         'due' => 'Échéance',
         'paid' => 'Réglé',

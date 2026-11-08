@@ -271,8 +271,52 @@ class AffairSummaryServiceTest extends TestCase
         $large = $count();
 
         $this->assertSame($small, $large);
-        // 9 requêtes historiques + 1 pour le registre des risques
-        $this->assertSame(10, $large);
+        // 9 requêtes historiques + 1 pour le registre des risques + 1 pour les NC (coût, retouches)
+        $this->assertSame(11, $large);
+    }
+
+    // ------------------------------------------------------------------
+    // Non-conformités : coût et retouche
+    // ------------------------------------------------------------------
+
+    public function test_rework_in_progress_and_nc_cost_are_summarized(): void
+    {
+        $line = $this->order($this->quote(['statu' => 3]));
+        $service = \App\Models\Methods\MethodsServices::factory()->create(['type' => 1, 'hourly_rate' => 60]);
+        $nc = \App\Models\Quality\QualityNonConformity::create([
+            'code' => 'NC-0042', 'label' => 'Bavure', 'statu' => 1, 'type' => 1, 'user_id' => $this->user->id,
+            'order_lines_id' => $line->id, 'cost_external' => 25, 'cost_scrap' => 15,
+        ]);
+        // Une NC annulée ne coûte rien à l'affaire.
+        \App\Models\Quality\QualityNonConformity::create([
+            'code' => 'NC-0043', 'label' => 'Erreur de saisie', 'statu' => 4, 'type' => 1, 'user_id' => $this->user->id,
+            'order_lines_id' => $line->id, 'cost_external' => 999,
+        ]);
+
+        $rework = $this->task($line, 'In progress', ['methods_services_id' => $service->id, 'label' => 'Reprise']);
+        $rework->forceFill(['quality_non_conformity_id' => $nc->id])->save();
+        TaskActivities::create(['task_id' => $rework->id, 'type' => TaskActivities::TYPE_START, 'timestamp' => '2026-10-06 08:00:00', 'user_id' => $this->user->id]);
+        TaskActivities::create(['task_id' => $rework->id, 'type' => TaskActivities::TYPE_END, 'timestamp' => '2026-10-06 09:30:00', 'user_id' => $this->user->id]);
+
+        $summary = $this->summary();
+
+        $this->assertContains('rework_in_progress', $this->blockerCodes($summary));
+        $blocker = collect($summary['blockers'])->firstWhere('code', 'rework_in_progress');
+        $this->assertSame('NC-0042', $blocker['params']['label']);
+        // 1,5 h × 60 € (réel, aucun coût interne saisi) + 25 + 15
+        $this->assertSame(130.0, $summary['totals']['nc_cost']);
+        $this->assertSame(1, $summary['totals']['nc_count']);
+        $this->assertSame(1, $summary['sections']['orders'][0]['rework_open']);
+
+        // Retouche terminée : plus de blocage, le coût reste.
+        $rework->update(['status_id' => $this->statuses['Finished']]);
+        $summary = $this->summary();
+        $this->assertNotContains('rework_in_progress', $this->blockerCodes($summary));
+        $this->assertSame(130.0, $summary['totals']['nc_cost']);
+
+        // Section commandes masquée : ni coût ni blocage.
+        $hidden = $this->summary(['quotes']);
+        $this->assertNull($hidden['totals']['nc_cost']);
     }
 
     // ------------------------------------------------------------------

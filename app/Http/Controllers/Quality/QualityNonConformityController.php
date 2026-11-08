@@ -62,6 +62,7 @@ class QualityNonConformityController extends Controller
             'deliveryBase' => preg_replace('/\/[^\/]+$/', '', route('deliverys.show', ['id' => 1])),
             'companieBase' => preg_replace('/\/[^\/]+$/', '', route('companies.show', ['id' => 1])),
             'orderBase'    => preg_replace('/\/[^\/]+$/', '', route('orders.show', ['id' => 1])),
+            'costStats'    => route('quality.nonConformitie.api.cost-stats'),
         ];
 
         return view('quality/quality-non-conformities', [

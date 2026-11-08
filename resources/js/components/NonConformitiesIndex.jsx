@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters } from './table';
 import ActivityHistory from './ActivityHistory';
 import GuideHelp from './GuideHelp';
+import NonConformityImpact from './quality/NonConformityImpact';
+import NonQualityCostCard from './quality/NonQualityCostCard';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -102,7 +104,7 @@ function SelectField({ label, name, value, onChange, options, nullable, disabled
 // ViewModal — read-only details
 // ---------------------------------------------------------------------------
 
-function ViewModal({ nc, trans, endpoints, onClose }) {
+function ViewModal({ nc, trans, endpoints, currency, locale, onClose }) {
     if (!nc) return null;
     const t = k => trans[k] ?? k;
 
@@ -127,6 +129,12 @@ function ViewModal({ nc, trans, endpoints, onClose }) {
             <p><strong>{t('service')} :</strong> {nc.service_label ?? 'N/A'}</p>
             <p><strong>{t('qty')} :</strong> {nc.qty ?? '—'}</p>
             <p><strong>{t('resolution_date')} :</strong> {nc.resolution_date ?? '—'}</p>
+            <hr />
+            <h5 className="mb-2"><i className="fas fa-coins me-1" />{trans.nc_impact?.title ?? 'Impact'}</h5>
+            <div className="mb-3">
+                <NonConformityImpact ncId={nc.id} ncCode={nc.code} apiBase={endpoints.apiBase}
+                    trans={trans.nc_impact ?? {}} currency={currency} locale={locale} />
+            </div>
             <hr />
             <div className="mb-3">
                 <ActivityHistory url={`${endpoints.apiBase}/${nc.id}/history`} trans={trans} />
@@ -585,8 +593,9 @@ function ncColumns(trans, endpoints) {
 }
 
 export default function NonConformitiesIndex({
-    endpoints, users, services, companies, failures, causes, corrections, nextCode, trans,
+    endpoints, users, services, companies, failures, causes, corrections, nextCode, trans, currency = 'EUR',
 }) {
+    const locale = document.documentElement.lang || 'fr';
     const t = k => trans[k] ?? k;
 
     const [items,    setItems]    = useState([]);
@@ -643,6 +652,9 @@ export default function NonConformitiesIndex({
 
     return (
         <div>
+            {/* Coût de non-qualité (12 mois, par mois et par fournisseur) */}
+            <NonQualityCostCard url={endpoints.costStats} trans={trans.nc_impact?.stats ?? {}} currency={currency} locale={locale} />
+
             {/* Filters */}
             <div className="card card-outline card-primary mb-3">
                 <div className="card-body">
@@ -730,7 +742,7 @@ export default function NonConformitiesIndex({
             />
 
             {/* Modals */}
-            <ViewModal nc={viewNc} trans={trans} endpoints={endpoints} onClose={() => setViewNc(null)} />
+            <ViewModal nc={viewNc} trans={trans} endpoints={endpoints} currency={currency} locale={locale} onClose={() => setViewNc(null)} />
             <EditModal
                 nc={editNc}
                 trans={trans}

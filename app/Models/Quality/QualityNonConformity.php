@@ -46,7 +46,20 @@ class QualityNonConformity extends Model
                         'delivery_line_id', 
                         'task_id',
                         'qty',
-                        'resolution_date'];
+                        'resolution_date',
+                        // Impact (App\Services\Quality\NonConformityImpact)
+                        'cost_internal',
+                        'cost_external',
+                        'cost_scrap',
+                        'delay_days',
+                        'impact_comment'];
+
+    protected $casts = [
+        'cost_internal' => 'float',
+        'cost_external' => 'float',
+        'cost_scrap'    => 'float',
+        'delay_days'    => 'integer',
+    ];
 
     /**
      * Journal des modifications (ISO 19443) : seulement les champs modifiés,
@@ -58,9 +71,16 @@ class QualityNonConformity extends Model
             ->logOnly(['ind', 'code', 'label', 'statu', 'type', 'user_id', 'service_id',
                 'failure_id', 'failure_comment', 'causes_id', 'causes_comment', 'correction_id',
                 'correction_comment', 'companie_id', 'order_lines_id', 'deliverys_id', 'delivery_line_id',
-                'task_id', 'qty', 'resolution_date'])
+                'task_id', 'qty', 'resolution_date',
+                'cost_internal', 'cost_external', 'cost_scrap', 'delay_days', 'impact_comment'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    /** Tâches de retouche lancées depuis la NC (ordre de retouche). */
+    public function reworkTasks()
+    {
+        return $this->hasMany(Task::class, 'quality_non_conformity_id')->orderBy('ordre');
     }
 
     public function service()

@@ -264,6 +264,12 @@ function TotalsTiles({ totals, trans, locale, currency }) {
                     )}
                 </Tile>
             )}
+            {Number(totals.nc_count ?? 0) > 0 && (
+                <Tile label={t.nc_cost ?? 'Coût des NC'}>
+                    <span className={Number(totals.nc_cost ?? 0) > 0 ? 'text-danger' : ''}>{money(totals.nc_cost ?? 0)}</span>
+                    <div className="small fw-normal text-body-secondary">{fmt(t.nc_count ?? ':count NC', { count: totals.nc_count })}</div>
+                </Tile>
+            )}
         </div>
     );
 }
@@ -353,6 +359,15 @@ function SectionRows({ type, rows, trans, locale, currency }) {
                             row.awaiting_release > 0 && [
                                 c.awaiting_release ?? 'Phases à viser',
                                 <span className="badge text-bg-warning"><i className="fas fa-stamp me-1" />{row.awaiting_release}</span>,
+                            ],
+                            // Impact des non-conformités : absent tant qu'aucune NC ne coûte ni ne se retouche.
+                            row.rework_open > 0 && [
+                                c.rework_open ?? 'Retouches en cours',
+                                <span className="badge text-bg-warning"><i className="fas fa-tools me-1" />{row.rework_open}</span>,
+                            ],
+                            Number(row.nc_cost ?? 0) > 0 && [
+                                c.nc_cost ?? 'Coût NC',
+                                <span className="text-danger">{money(row.nc_cost)}</span>,
                             ],
                         ]} />
                         <div className="row g-2 mt-1">

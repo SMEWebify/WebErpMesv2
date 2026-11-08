@@ -1106,6 +1106,7 @@ async function mountNonConformitiesIndex() {
             causes:      parse('causes')      ?? [],
             corrections: parse('corrections') ?? [],
             trans:       parse('trans')       ?? {},
+            currency:    element.dataset.currency || 'EUR',
         })
     );
 }

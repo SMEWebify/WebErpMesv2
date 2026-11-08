@@ -12,6 +12,7 @@ return [
         'api' => 'API',
         'pre_order' => 'Pré-commande',
         'system' => 'Système',
+        'non_conformity' => 'Non-conformité',
     ],
 
     'reason_label' => 'Motif du report',

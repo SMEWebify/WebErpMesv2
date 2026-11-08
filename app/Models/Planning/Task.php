@@ -83,6 +83,8 @@ class Task extends Model
 
     // released_at / released_by / release_comment (visa de libération de la
     // phase) restent hors $fillable : seul App\Services\Production\TaskRelease les écrit.
+    // quality_non_conformity_id (retouche d'une NC) aussi : seul
+    // App\Services\Quality\NonConformityImpact l'écrit.
     protected $casts = [
         'due_date' => 'date',
         'priority' => 'integer',
@@ -91,11 +93,13 @@ class Task extends Model
 
     protected static function booted(): void
     {
-        // Une opération recopiée (duplication, gamme, retour) n'a jamais été visée.
+        // Une opération recopiée (duplication, gamme, retour) n'a jamais été visée,
+        // et n'est pas une retouche de NC (seul l'ordre de retouche en crée).
         static::replicating(function (Task $task) {
             $task->released_at = null;
             $task->released_by = null;
             $task->release_comment = null;
+            $task->quality_non_conformity_id = null;
         });
     }
 
@@ -289,6 +293,12 @@ class Task extends Model
     public function QualityNonConformity()
     {
         return $this->hasMany(QualityNonConformity::class);
+    }
+
+    /** NC dont cette tâche est la retouche (ordre de retouche). */
+    public function reworkOfNonConformity()
+    {
+        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformity_id');
     }
 
     /**

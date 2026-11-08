@@ -89,6 +89,7 @@ return [
         'visit_unvalidated' => 'Visit of :date not validated',
         'risk_critical' => 'Open critical risk (criticality :criticality) — :label',
         'risk_overdue' => 'Risk: mitigation action due on :date (:days days) — :label',
+        'rework_in_progress' => 'Order :ref: :count rework task(s) in progress — :label',
     ],
 
     'next_action_title' => 'Next action',
@@ -116,6 +117,7 @@ return [
         'collect_payment' => 'Collect payment of invoice :ref',
         'chase_payment' => 'Chase payment of :ref',
         'treat_risk' => 'Address the affair risks',
+        'follow_rework' => 'Follow up the rework of :ref',
     ],
 
     'risks' => [
@@ -182,6 +184,8 @@ return [
         'invoiced' => 'Invoiced (excl. tax)',
         'collected' => 'Collected (incl. tax)',
         'outstanding' => 'Outstanding',
+        'nc_cost' => 'NC cost',
+        'nc_count' => ':count NC(s)',
     ],
 
     'sections' => [
@@ -199,6 +203,8 @@ return [
         'invoiced' => 'Invoiced',
         'hours' => 'Hours',
         'awaiting_release' => 'Phases to sign off',
+        'nc_cost' => 'NC cost',
+        'rework_open' => 'Rework in progress',
         'received' => 'Received',
         'due' => 'Due',
         'paid' => 'Paid',

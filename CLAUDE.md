@@ -485,7 +485,7 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
 - **`AffairSummaryService`** : étape déduite des documents (`App\Enums\AffairStage`),
   blocages par règles explicites (devis expiré / envoyé sans réponse, achat en retard,
   réception partielle, tâche suspendue, commande en retard, facture échue, visite non
-  validée), prochaine action, montants. **10 requêtes quelle que soit la taille** (risques compris), lectures
+  validée), prochaine action, montants. **11 requêtes quelle que soit la taille** (risques et NC compris), lectures
   en `toBase()` (les accesseurs de prix feraient une requête par ligne) — couvert par un
   test de comptage. Seuils dans `config/affairs.php`.
 - **Permissions** : les sections d'un module dont l'utilisateur n'a pas le menu
@@ -958,6 +958,34 @@ pas le graphe JSON) et dérogations.
   requêtes en nombre constant pour la page).
 - Une écriture de masse (`Model::where()->update()`) n'est pas journalisée : passer par le modèle.
 - Tests : `tests/Feature/Quality/QualityActivityLogTest.php`, `resources/js/tests/components/activityHistory.test.jsx`.
+
+## Impact des NC : coût, délai, ordre de retouche
+
+Service unique `App\Services\Quality\NonConformityImpact`, appelé par la fiche NC et par le
+futur connecteur Siteflow (flux 4 : `source` = `siteflow`, sans utilisateur).
+- **Colonnes nullable** de `quality_non_conformities` : `cost_internal`, `cost_external`
+  (sous-traitance, transport), `cost_scrap`, `delay_days`, `impact_comment` (activitylog).
+- **Coût interne réel** = temps pointé sur les tâches de retouche × `hourly_rate` du poste
+  (`Task::workedSecondsFrom`), affiché à côté du coût saisi. **Total** = coût interne saisi,
+  à défaut le réel, + externe + rebut (`NonConformityImpact::total()`, `lib/ncImpact.js`).
+- **Ordre de retouche** (`quality.nonConformitie.api.rework`, permission `quality-rework-order`,
+  Admin par migration) : une tâche par opération sur la ligne de commande de la NC,
+  `tasks.quality_non_conformity_id` (hors `$fillable`, remis à null par `Task::replicating`),
+  `origin = '9'`, temps prévu en `seting_time`, `planned_qty` = qté de la NC, **prix et coût
+  unitaires à 0** : prix calculé, quantités et montants de la ligne inchangés. Postes de type 1
+  ou 7 seulement. Refus : NC annulée, sans ligne de commande, ligne de présentation. Tâches
+  ordinaires : **BPF et visa de phase s'appliquent** sans exception.
+- **Délai** : report proposé (date de la ligne + `delay_days`), **jamais appliqué d'office** ;
+  appliqué (`.api.delay`, même permission) par `OrderLineDelayContext`, origine
+  `non_conformity`, motif « NC {code} ». La date promise ne bouge pas.
+- **Synthèse d'affaire** : 11ᵉ requête (NC des lignes, hors annulées) ; coût dans `totals.nc_cost`,
+  blocage `rework_in_progress` (tâche de retouche non terminée, une par commande), section `orders`.
+- **Indicateur** coût de non-qualité (`.api.cost-stats`, carte de l'index des NC) : 12 mois, par
+  mois et par fournisseur (société `statu_supplier = 2`), NC annulées exclues, 3 requêtes.
+- Front : `components/quality/NonConformityImpact.jsx` (fenêtre « Info » de la NC),
+  `NonQualityCostCard.jsx`. Traductions `resources/lang/*/nc_impact.php`.
+- Tests : `tests/Feature/Quality/NonConformityImpactTest.php`, `AffairSummaryServiceTest`,
+  `resources/js/tests/lib/ncImpact.test.js`.
 
 ## Motifs de perte (devis, opportunités)
 

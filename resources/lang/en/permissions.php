@@ -55,5 +55,6 @@ return [
         'contract-review-approve' => 'Sign off (approve or reject) an order\'s contract review and its amendments; cancel an amendment.',
         'order-price-recalculate' => 'Enable the calculated price of an order line past preparation (reason required).',
         'affair-risk-close' => 'Close a critical risk of an affair risk register.',
+        'quality-rework-order' => 'Launch a rework order from a non-conformity (tasks on the order line) and postpone the line delivery date.',
     ],
 ];

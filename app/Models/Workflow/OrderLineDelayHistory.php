@@ -28,6 +28,8 @@ class OrderLineDelayHistory extends Model
     public const ORIGIN_PRE_ORDER = 'pre_order';
     /** Commande artisan, job, tâche planifiée. */
     public const ORIGIN_SYSTEM = 'system';
+    /** Report d'une non-conformité (App\Services\Quality\NonConformityImpact). */
+    public const ORIGIN_NON_CONFORMITY = 'non_conformity';
 
     protected $table = 'order_line_delay_histories';
 

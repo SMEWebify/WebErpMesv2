@@ -12,6 +12,7 @@ return [
         'api' => 'API',
         'pre_order' => 'Pre-order',
         'system' => 'System',
+        'non_conformity' => 'Non-conformity',
     ],
 
     'reason_label' => 'Reason for the change',
