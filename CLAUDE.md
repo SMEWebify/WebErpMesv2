@@ -152,7 +152,8 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan ldap:import-users` | Importe les utilisateurs depuis l'Active Directory LDAP |
 | `php artisan rgpd:erase-contact` | Anonymise les données personnelles d'un contact |
 | `php artisan rgpd:export-contact` | Exporte les données personnelles d'un contact (droit d'accès RGPD) |
-| `php artisan rgpd:purge` | Purge tokens expirés, email_logs > 1 an, soft-deleted > 90j |
+| `php artisan rgpd:purge` | Purge tokens expirés, email_logs > 1 an, soft-deleted > 90j — sauf personnes et tiers cités par un visa / document / activité (anonymisés et conservés, `RecordRetention`) |
+| `php artisan wem:activitylog:clean [--dry-run]` | Purge `activity_log` selon la durée de chaque `log_name` (`config('activitylog.retention')`) : `access` 365 j, le reste jamais par défaut |
 | `php artisan hr:recompute-absence-days [--dry-run]` | Recalcule le coût en jours de toutes les demandes d'absence (à lancer une fois après migration des soldes de congés, et après tout changement du calendrier des jours fériés) |
 | `php artisan wem:files:import [--dry-run] [--skip-move]` | **À lancer une fois après déploiement.** Déplace `public/{file,photo,drawing,stl,svg,images/products}` vers `storage/app/private/legacy`, renseigne `disk/path/kind` des lignes `files` existantes, et convertit les colonnes CAO produit en fichiers attachés |
 
@@ -167,7 +168,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis et de dérogations en attente |
 | Quotidien à 06h00 | `gmao:generate-work-orders` | GMAO : ordres de travail préventifs des plans arrivés à échéance |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
-| Mensuel | `activitylog:clean` | Nettoie les logs d'activité (durée `config/activitylog.php`) |
+| Mensuel | `wem:activitylog:clean` | Nettoie les logs d'activité, durée par `log_name` (`config/activitylog.php`, `retention`). ❌ Ne pas replanifier `activitylog:clean` du paquet (purge tout) |
 
 > Pour que le scheduler fonctionne, ajouter au crontab du serveur :
 > ```
@@ -907,7 +908,39 @@ sont dans `activity_log` avec `log_name = access` (causer, sujet, `properties.ro
 - Dédoublonnage : `Cache::add` par (utilisateur, sujet), fenêtre `audit.dedup_minutes` (10).
 - Écran `admin/access-log` + export CSV, permission `audit-access-log` (rôle Admin, migration).
   L'historique partagé (`LogsViewerController`, ouvert à tous) **exclut** `access`.
-- Purge : `activitylog:clean` (rétention de `config/activitylog.php`), rien de spécifique.
+- Purge : `wem:activitylog:clean` (mensuel), durée propre au journal `access` :
+  `ACTIVITYLOG_ACCESS_RETENTION_DAYS` (365). Voir « Conservation des enregistrements » ci-dessous.
+
+## Conservation des enregistrements (ISO 19443)
+
+Un client nucléaire doit pouvoir relire les preuves pendant la vie de l'installation : ni la
+purge du journal ni la purge RGPD ne détruisent un visa ou son auteur. Aucune migration.
+- **Journal d'activité par `log_name`** : `config('activitylog.retention')` — `log_names.access`
+  (`ACTIVITYLOG_ACCESS_RETENTION_DAYS`, 365) et `default` pour tous les autres, `log_name` nul
+  compris (`ACTIVITYLOG_RETENTION_DAYS`, **vide = jamais purgé** : journal des modifications,
+  visas, entrées RGPD). Appliqué par `wem:activitylog:clean [--dry-run]` (mensuel). Le
+  `activitylog:clean` du paquet n'est plus planifié ; sa durée (`delete_records_older_than_days`)
+  est portée à 36500 pour qu'un lancement à la main ne détruise rien.
+- **`rgpd:purge`** (`App\Services\Rgpd\RecordRetention`) : un soft-deleted de plus de 90 jours
+  n'est supprimé définitivement que si rien ne le cite.
+  - Utilisateur : colonne de visa (`USER_VISA_COLUMNS`, **liste unique : un nouveau visa doit y
+    être ajouté**), auteur d'un enregistrement (`USER_RECORD_COLUMNS` : devis, commandes,
+    factures, NC… dont beaucoup sont en `onDelete('cascade')` : la suppression effaçait le
+    document) ou causer d'une activité, tous journaux. Sinon : anonymisé par
+    `RgpdAnonymizationService::anonymizeUser()` (pseudonyme stable « Utilisateur #12 », e-mail
+    `deleted-{id}@supprime.invalid`) et laissé soft-deleted ; anonymisé une seule fois.
+  - Société / contact / adresse : cités par un document, une NC, une dérogation
+    (`COMPANY_COLUMNS`, `CONTACT_COLUMNS`, `ADDRESS_COLUMNS`). Une société est aussi gardée
+    quand un de ses contacts ou adresses l'est (la cascade passerait par eux). Contact gardé =
+    anonymisé ; société et adresse gardées telles quelles.
+  - L'anonymisation n'écrit plus d'entrée « modifié » (elle recopierait l'ancien nom dans un
+    journal conservé sans limite) ; seule l'entrée `rgpd = anonymisation` reste. Les
+    anciennes entrées qui citent le nom ne sont pas réécrites.
+  - Tables ou colonnes absentes de la base ignorées ; `test_every_listed_column_exists` vérifie
+    la liste.
+- Non protégés (données personnelles, suppression voulue) : pointages, notes de frais, soldes de
+  congés, formations `osh_formations`, humeurs.
+- Doc d'exploitation : `docs/conservation-enregistrements.md`. Tests : `tests/Feature/Rgpd/RecordRetentionTest.php`.
 - Tests : `tests/Feature/Audit/AccessLogTest.php`.
 
 ## Journal des modifications qualité (ISO 19443)
@@ -1664,7 +1697,7 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   `invoiced_qty` échoue sur une base stricte (SQLite des tests). Rétablir les défauts par une
   migration additive.
 - password exclu des logs d'activité User
-- rgpd:purge passe par RgpdAnonymizationService avant force-delete
+- ✅ rgpd:purge passe par RgpdAnonymizationService avant force-delete (personnes et tiers cités par un enregistrement : section « Conservation des enregistrements »)
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage
 
 ### RGPD — Reste à faire (hors code) — ⚠️ exigible dès maintenant (client en prod)
@@ -1729,5 +1762,5 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
 - LogsActivity sur Users et Companies
 - RgpdAnonymizationService
 - Commandes : rgpd:erase-contact, rgpd:export-contact, rgpd:purge
-- Rétention activity_log : 365 jours
+- Rétention activity_log : par journal (`access` 365 jours, modifications et visas sans limite)
 - Purge hebdomadaire automatique

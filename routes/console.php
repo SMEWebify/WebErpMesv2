@@ -28,8 +28,10 @@ Artisan::command('inspire', function () {
 // Purge hebdomadaire : tokens expirés, email_logs > 1 an, force-delete > 90j
 Schedule::command('rgpd:purge')->weekly();
 
-// Nettoyage mensuel de l'activity_log (durée configurée dans config/activitylog.php)
-Schedule::command('activitylog:clean')->monthly();
+// Nettoyage mensuel de l'activity_log, durée par journal (config/activitylog.php,
+// `retention`) : consultations `access` 365 j, modifications et visas jamais purgés.
+// Ne pas replanifier `activitylog:clean` du paquet, qui purge tout sans distinction.
+Schedule::command('wem:activitylog:clean')->monthly();
 
 /*
 |--------------------------------------------------------------------------

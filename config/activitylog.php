@@ -8,10 +8,26 @@ return [
     'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
 
     /*
-     * When the clean-command is executed, all recording activities older than
-     * the number of days specified here will be deleted.
+     * Durée de la commande du paquet `activitylog:clean`, qui purge TOUS les journaux
+     * sans distinction : elle n'est plus planifiée (remplacée par wem:activitylog:clean,
+     * durées de `retention` ci-dessous). Valeur très haute pour qu'un lancement à la
+     * main ne détruise pas le journal des modifications et des visas.
      */
-    'delete_records_older_than_days' => 365,
+    'delete_records_older_than_days' => 36500,
+
+    /*
+     * Conservation par log_name (ISO 19443), appliquée par wem:activitylog:clean.
+     * Durées en jours ; null (ou variable vide) = jamais purgé.
+     * - `log_names` : durée propre à un journal (consultations `access`).
+     * - `default` : tous les autres (journal des modifications, visas, RGPD…),
+     *   conservés pendant la vie de l'installation par défaut.
+     */
+    'retention' => [
+        'default'   => env('ACTIVITYLOG_RETENTION_DAYS'),
+        'log_names' => [
+            'access' => env('ACTIVITYLOG_ACCESS_RETENTION_DAYS', 365),
+        ],
+    ],
 
     /*
      * If no log name is passed to the activity() helper

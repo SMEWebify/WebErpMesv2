@@ -293,7 +293,8 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan ldap:import-users` | Importe les utilisateurs LDAP dans la base Laravel. | `php artisan ldap:import-users` |
 | `php artisan rgpd:export-contact {id}` | Exporte au format JSON toutes les données détenues sur un contact (art. 20 RGPD). | `php artisan rgpd:export-contact 42` |
 | `php artisan rgpd:erase-contact {id}` | Traite une demande d'effacement RGPD pour un contact B2B. | `php artisan rgpd:erase-contact 42` |
-| `php artisan rgpd:purge` | Purge les données personnelles au-delà de leur durée de conservation. | `php artisan rgpd:purge` |
+| `php artisan rgpd:purge` | Purge les données personnelles au-delà de leur durée de conservation. Une personne ou un tiers cité par un visa, un document ou le journal est anonymisé et conservé. | `php artisan rgpd:purge` |
+| `php artisan wem:activitylog:clean` | Purge le journal d'activité selon la durée de chaque journal (consultations 365 j, modifications et visas sans limite par défaut). `--dry-run`. | `php artisan wem:activitylog:clean --dry-run` |
 | `php artisan wem:nesting:seed-svg` | Attache des vecteurs d'imbrication de démonstration aux lignes de commande. `--count=`, `--force`. | `php artisan wem:nesting:seed-svg` |
 | `php artisan loadtest:seed` | Génère un jeu de données réaliste pour les tests de charge. `--scale=`. | `php artisan loadtest:seed --scale=0.5` |
 
@@ -302,7 +303,7 @@ These commands are defined in this repository and complement the default Laravel
 Le planificateur (`routes/console.php`) déclenche les sauvegardes quotidiennes (`backup:run`,
 `backup:clean`, `backup:monitor`), la synchronisation de facturation électronique toutes les
 15 minutes (`wem:pdp:sync`), la purge RGPD hebdomadaire (`rgpd:purge`) et le nettoyage mensuel
-du journal d'activité. À déclarer une fois sur le serveur :
+du journal d'activité (`wem:activitylog:clean`, voir `docs/conservation-enregistrements.md`). À déclarer une fois sur le serveur :
 
 ```
 * * * * * php /chemin/vers/artisan schedule:run >> /dev/null 2>&1

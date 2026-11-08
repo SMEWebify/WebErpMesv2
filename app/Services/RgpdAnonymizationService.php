@@ -19,6 +19,9 @@ class RgpdAnonymizationService
     public function anonymizeContact(CompaniesContacts $contact): void
     {
         DB::transaction(function () use ($contact) {
+            // Sans entrée « modifié » : elle recopierait les anciennes valeurs (nom,
+            // e-mail) dans un journal désormais conservé sans limite.
+            $contact->disableLogging();
             $contact->update([
                 'civility'   => null,
                 'first_name' => 'Contact',
@@ -29,6 +32,7 @@ class RgpdAnonymizationService
                 'mail'       => 'anonyme-' . $contact->id . '@supprime.invalid',
                 'password'   => null,
             ]);
+            $contact->enableLogging();
 
             activity()
                 ->performedOn($contact)
@@ -41,13 +45,18 @@ class RgpdAnonymizationService
      * Anonymise un utilisateur interne dont le compte est clôturé.
      *
      * Préserve les liens vers les devis/commandes/tâches créés par cet utilisateur.
-     * L'email devient non fonctionnel pour bloquer toute reconnexion.
+     * L'email devient non fonctionnel pour bloquer toute reconnexion. Le nom devient
+     * un pseudonyme stable (« Utilisateur #12 ») : les visas et le journal d'activité
+     * restent attribuables à une même personne sans la nommer.
      */
     public function anonymizeUser(User $user): void
     {
         DB::transaction(function () use ($user) {
+            // Sans entrée « modifié » : elle recopierait l'ancien nom et l'ancien e-mail
+            // dans un journal désormais conservé sans limite.
+            $user->disableLogging();
             $user->update([
-                'name'                   => 'Utilisateur supprimé',
+                'name'                   => self::userPseudonym($user->id),
                 'email'                  => 'deleted-' . $user->id . '@supprime.invalid',
                 'personnal_phone_number' => null,
                 'born_date'              => null,
@@ -69,6 +78,7 @@ class RgpdAnonymizationService
                 'gender'                 => null,
                 'marital_status'         => null,
             ]);
+            $user->enableLogging();
 
             // Révoquer tous les tokens d'API et invalider les sessions
             $user->tokens()->delete();
@@ -78,6 +88,23 @@ class RgpdAnonymizationService
                 ->withProperties(['rgpd' => 'anonymisation', 'date' => now()->toIso8601String()])
                 ->log("Utilisateur anonymisé suite à demande RGPD droit à l'effacement");
         });
+    }
+
+    public static function userPseudonym(int $id): string
+    {
+        return 'Utilisateur #' . $id;
+    }
+
+    /** Déjà anonymisé par anonymizeUser() (rgpd:purge repasse chaque semaine). */
+    public function isAnonymizedUser(User $user): bool
+    {
+        return $user->email === 'deleted-' . $user->id . '@supprime.invalid';
+    }
+
+    /** Déjà anonymisé par anonymizeContact(). */
+    public function isAnonymizedContact(CompaniesContacts $contact): bool
+    {
+        return $contact->mail === 'anonyme-' . $contact->id . '@supprime.invalid';
     }
 
     /**

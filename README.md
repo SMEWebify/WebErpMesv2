@@ -297,7 +297,8 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan ldap:import-users` | Import LDAP users into the Laravel database. | `php artisan ldap:import-users` |
 | `php artisan rgpd:export-contact {id}` | Export every piece of data held about a contact as JSON (GDPR art. 20). | `php artisan rgpd:export-contact 42` |
 | `php artisan rgpd:erase-contact {id}` | Handle a GDPR erasure request for a B2B contact. | `php artisan rgpd:erase-contact 42` |
-| `php artisan rgpd:purge` | Purge personal data past its retention period (expired tokens, old email logs, soft-deleted records). | `php artisan rgpd:purge` |
+| `php artisan rgpd:purge` | Purge personal data past its retention period (expired tokens, old email logs, soft-deleted records). A person or third party cited by an approval, a document or the activity log is anonymised and kept. | `php artisan rgpd:purge` |
+| `php artisan wem:activitylog:clean` | Purge the activity log according to each log's retention (access log 365 days, changes and approvals kept forever by default). `--dry-run`. | `php artisan wem:activitylog:clean --dry-run` |
 | `php artisan wem:nesting:seed-svg` | Attach demo nesting vectors to order lines. `--count=`, `--force`. | `php artisan wem:nesting:seed-svg` |
 | `php artisan loadtest:seed` | Generate a realistic dataset for load testing. `--scale=`. | `php artisan loadtest:seed --scale=0.5` |
 
@@ -305,7 +306,7 @@ These commands are defined in this repository and complement the default Laravel
 
 The scheduler (`routes/console.php`) drives the daily backups (`backup:run`, `backup:clean`,
 `backup:monitor`), the e-invoicing sync every 15 minutes (`wem:pdp:sync`), the weekly GDPR
-purge (`rgpd:purge`) and the monthly activity-log cleanup. Register it once on the server:
+purge (`rgpd:purge`) and the monthly activity-log cleanup (`wem:activitylog:clean`). Register it once on the server:
 
 ```
 * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1

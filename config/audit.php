@@ -18,8 +18,8 @@ return [
     'dedup_minutes' => (int) env('AUDIT_LOG_READS_DEDUP_MINUTES', 10),
 
     /*
-     * log_name des entrées dans activity_log. Purgées avec le reste par
-     * activitylog:clean (rétention de config/activitylog.php).
+     * log_name des entrées dans activity_log. Purgées par wem:activitylog:clean selon
+     * activitylog.retention.log_names.access (ACTIVITYLOG_ACCESS_RETENTION_DAYS, 365).
      */
     'log_name' => 'access',
 ];
