@@ -1579,13 +1579,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::patch('/{file}', [FileApiController::class, 'update'])->name('files.json.update');
             Route::delete('/{file}', [FileApiController::class, 'destroy'])->name('files.json.destroy');
             Route::post('/{file}/thumbnail', [FileApiController::class, 'storeThumbnail'])->name('files.json.thumbnail');
+            Route::post('/{file}/replace', [FileApiController::class, 'replace'])->name('files.json.replace');
+            Route::get('/{file}/versions', [FileApiController::class, 'versions'])->name('files.json.versions');
         });
 
         Route::get('/files/{file}/thumbnail', [FileApiController::class, 'thumbnail'])->name('files.thumbnail');
 
         Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->middleware('audit.access:file,file')->name('files.raw');
-            Route::post('/{file}/replace', [FileApiController::class, 'replace'])->name('files.json.replace');
-            Route::get('/{file}/versions', [FileApiController::class, 'versions'])->name('files.json.versions');
         Route::get('/files/{file}/download', [FileApiController::class, 'download'])->middleware('audit.access:file,file')->name('files.download');
     });
 

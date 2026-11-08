@@ -1681,6 +1681,7 @@ async function mountFileManagers() {
                 trans:     parse('trans')     ?? {},
                 accept:    el.dataset.accept  ?? '',
                 canEdit:   el.dataset.canEdit !== '0',
+                defaultRevision: el.dataset.defaultRevision ?? '',
             })
         );
     });
@@ -1689,7 +1690,6 @@ async function mountFileManagers() {
 // Phone-first on-site visit screen (opportunity-visit.blade.php).
 async function mountOpportunityVisit() {
     const el = document.querySelector('[data-react="opportunity-visit"]');
-                defaultRevision: el.dataset.defaultRevision ?? '',
     if (!el) return;
     const { default: OpportunityVisitApp } = await import('./components/visits/OpportunityVisitApp.jsx');
     let props = {};
