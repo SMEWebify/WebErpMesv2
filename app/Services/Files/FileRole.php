@@ -179,6 +179,7 @@ class FileRole
             FileKindResolver::KIND_MESH, FileKindResolver::KIND_BREP => self::MODEL_3D,
             FileKindResolver::KIND_VECTOR, FileKindResolver::KIND_CAD2D => self::VECTOR,
             FileKindResolver::KIND_IMAGE => self::PHOTO,
+            FileKindResolver::KIND_NC => self::CAM,
             default => self::OTHER,
         };
     }

@@ -130,6 +130,63 @@
     padding: 1rem;
 }
 
+// Programme ISO (GcodeViewer) : texte du programme à côté du parcours.
+.wem-gcode-list {
+    overflow: auto;
+    font-family: var(--bs-font-monospace);
+    font-size: .78rem;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: .25rem;
+}
+
+.wem-gcode-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    white-space: pre;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    &.is-selected {
+        background-color: var(--bs-primary-bg-subtle);
+        color: var(--bs-primary-text-emphasis);
+    }
+
+    &.is-ahead {
+        opacity: .45;
+    }
+}
+
+.wem-gcode-num {
+    flex: 0 0 3.5rem;
+    padding-right: .5rem;
+    text-align: right;
+    color: var(--bs-secondary-color);
+    user-select: none;
+}
+
+.wem-gcode-code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wem-gcode-swatch {
+    display: inline-block;
+    width: 1.25rem;
+    height: 3px;
+    margin-right: .35rem;
+    vertical-align: middle;
+
+    &.is-feed { background-color: #1f5fd6; }
+    &.is-rapid { background-color: #f28c28; }
+}
+
 // Aperçu d'un tableur (SheetViewer) : en-têtes de lignes et de colonnes figés.
 .wem-sheet-pane {
     overflow: auto;

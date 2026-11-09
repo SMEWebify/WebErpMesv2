@@ -339,6 +339,13 @@ fin de `routes/web.php` hors du groupe de locale. Un SVG est renvoyé avec `nosn
   (OpenCascade en WASM, 7,4 Mo chargés à la demande, aucun convertisseur serveur requis) —
   **DXF** : `dxf-parser` (parsing seul, pas de dépendance three) + rendu maison dans
   `resources/js/lib/dxf/toThree.js`, caméra orthographique
+- **Programmes ISO** (kind `nc` : nc, tap, gcode, ngc, cnc ; rôle `cam` par défaut) : parcours
+  d'outil lu **dans le navigateur** (`lib/gcode/parse.js`, sans paquet ; `toThree.js`), viewer
+  `GcodeViewer` (rapides orange, usinage bleu, liste des lignes virtualisée, clic ligne ↔ parcours,
+  curseur de simulation). G0-G3 (IJK / R), G17-G19, G90/G91, cycles G73/G81-G89 (G98/G99) ;
+  G4 / G28 / G53 / G92 ne dessinent rien ; G41/G42, G68, macros signalés, non interprétés.
+  Temps d'avance estimé (G94 seulement, hors rapides). Fichiers existants reclassés par la
+  migration `2026_11_09_000010`. Tests : `resources/js/tests/lib/gcode.test.js`, `tests/Unit/Files/NcProgramKindTest.php`.
 - **Vignette des lignes de devis / commande** : `picture` du détail (RadQuote, Nest4Quote, `.sym`)
   d'abord ; sinon `plan_file` du JSON (`App\Services\Files\LineThumbnailFile` : rôles plan /
   vectoriel / modèle 3D / photo de la ligne puis de l'article, miniature déjà rendue d'abord,

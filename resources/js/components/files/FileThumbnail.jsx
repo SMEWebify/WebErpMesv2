@@ -10,6 +10,7 @@ const KIND_ICONS = {
     image: 'fa-file-image',
     sheet: 'fa-file-excel',
     mail: 'fa-envelope',
+    nc: 'fa-route',
 };
 
 /**

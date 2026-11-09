@@ -83,6 +83,21 @@ class FileTranslations
             'office_edit_excel'  => __('general_content.file_office_edit_excel_trans_key'),
             'office_edit_word'   => __('general_content.file_office_edit_word_trans_key'),
             'office_edit_hint'   => __('general_content.file_office_edit_hint_trans_key'),
+            'gcode_no_move'      => __('general_content.file_gcode_no_move_trans_key'),
+            'gcode_lines'        => __('general_content.file_gcode_lines_trans_key'),
+            'gcode_feed'         => __('general_content.file_gcode_feed_trans_key'),
+            'gcode_rapid'        => __('general_content.file_gcode_rapid_trans_key'),
+            'gcode_feed_length'  => __('general_content.file_gcode_feed_length_trans_key'),
+            'gcode_rapid_length' => __('general_content.file_gcode_rapid_length_trans_key'),
+            'gcode_size'         => __('general_content.file_gcode_size_trans_key'),
+            'gcode_feed_time'    => __('general_content.file_gcode_feed_time_trans_key'),
+            'gcode_tools'        => __('general_content.file_gcode_tools_trans_key'),
+            'gcode_ignored'      => __('general_content.file_gcode_ignored_trans_key'),
+            'gcode_macro'        => __('general_content.file_gcode_macro_trans_key'),
+            'gcode_play'         => __('general_content.file_gcode_play_trans_key'),
+            'gcode_pause'        => __('general_content.file_gcode_pause_trans_key'),
+            'gcode_simulation'   => __('general_content.file_gcode_simulation_trans_key'),
+            'gcode_show_all'     => __('general_content.file_gcode_show_all_trans_key'),
         ];
     }
 }

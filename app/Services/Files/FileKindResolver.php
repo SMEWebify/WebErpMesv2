@@ -35,6 +35,9 @@ class FileKindResolver
     /** E-mails saved from a mail client (.eml, Outlook .msg), previewed by the server. */
     public const KIND_MAIL = 'mail';
 
+    /** ISO machining programs (G-code), drawn as a toolpath by the browser. */
+    public const KIND_NC = 'nc';
+
     /** Archives and everything without a viewer. */
     public const KIND_ARCHIVE = 'archive';
     public const KIND_OTHER = 'other';
@@ -54,11 +57,12 @@ class FileKindResolver
         self::KIND_IMAGE => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
         self::KIND_SHEET => ['csv', 'xls', 'xlsx', 'ods'],
         self::KIND_MAIL => ['eml', 'msg'],
+        self::KIND_NC => ['nc', 'tap', 'gcode', 'ngc', 'cnc'],
         self::KIND_ARCHIVE => ['zip', '7z', 'rar', 'gz'],
         // sym and geo are RADAN sources, bvc a BySoft cutting job: the import
         // reads them but no viewer renders them, so they stay download only.
         // A bvc dropped in the GED gets its nests drawn as SVG next to it.
-        self::KIND_OTHER => ['doc', 'docx', 'odt', 'rtf', 'txt', 'nc', 'tap', 'gcode', 'json', 'xml', 'sym', 'geo', 'bvc'],
+        self::KIND_OTHER => ['doc', 'docx', 'odt', 'rtf', 'txt', 'json', 'xml', 'sym', 'geo', 'bvc'],
     ];
 
     /**
@@ -75,6 +79,7 @@ class FileKindResolver
         self::KIND_IMAGE,
         self::KIND_SHEET,
         self::KIND_MAIL,
+        self::KIND_NC,
     ];
 
     /**
@@ -202,6 +207,7 @@ class FileKindResolver
             self::KIND_IMAGE => 'far fa-file-image',
             self::KIND_SHEET => 'far fa-file-excel',
             self::KIND_MAIL => 'far fa-envelope',
+            self::KIND_NC => 'fas fa-route',
             self::KIND_ARCHIVE => 'far fa-file-archive',
             default => 'far fa-file',
         };

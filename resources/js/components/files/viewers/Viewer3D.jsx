@@ -18,11 +18,12 @@ function backgroundOf(container) {
  *
  * The format specific part is injected through `load`, which receives the stage
  * and must return the object to display (plus an optional info string shown in
- * the status bar).
+ * the status bar). `ready`, when returned, is called once the object is framed
+ * (G-code : vue iso en Z vers le haut). `aside` is shown next to the canvas.
  *
- * @param {(stage: object, url: string, signal: AbortSignal) => Promise<{object: object, info?: string}>} load
+ * @param {(stage: object, url: string, signal: AbortSignal) => Promise<{object: object, info?: string, ready?: (stage: object) => void}>} load
  */
-export default function Viewer3D({ file, t, load, orthographic = false, height = 620 }) {
+export default function Viewer3D({ file, t, load, orthographic = false, height = 620, aside = null, toolbar = null }) {
     const containerRef = useRef(null);
     const stageRef = useRef(null);
     const [status, setStatus] = useState('loading');
@@ -42,10 +43,11 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
         setInfo(null);
 
         load(stage, file.view_url, controller.signal)
-            .then(({ object, info: loadedInfo }) => {
+            .then(({ object, info: loadedInfo, ready }) => {
                 if (controller.signal.aborted) return;
                 stage.scene.add(object);
                 stage.frame(object);
+                ready?.(stage);
                 setInfo(loadedInfo ?? null);
                 setStatus('ready');
             })
@@ -77,6 +79,7 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
                         </button>
                     ))}
                 </div>
+                {toolbar}
                 <div className="btn-group btn-group-sm">
                     <a className="btn btn-outline-secondary" href={file.download_url}>
                         <i className="fas fa-download me-1" />
@@ -85,22 +88,27 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
                 </div>
             </div>
 
-            <div className="position-relative" style={{ height }}>
-                <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+            <div className={aside ? 'row g-2' : undefined}>
+                <div className={aside ? 'col-lg-8' : undefined}>
+                    <div className="position-relative" style={{ height }}>
+                        <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 
-                {status === 'loading' && (
-                    <div className="wem-viewer-overlay">
-                        <i className="fas fa-spinner fa-spin fa-2x mb-2" />
-                        <div>{t('loading')}</div>
-                    </div>
-                )}
+                        {status === 'loading' && (
+                            <div className="wem-viewer-overlay">
+                                <i className="fas fa-spinner fa-spin fa-2x mb-2" />
+                                <div>{t('loading')}</div>
+                            </div>
+                        )}
 
-                {status === 'error' && (
-                    <div className="wem-viewer-overlay">
-                        <i className="fas fa-exclamation-triangle fa-2x mb-2" />
-                        <div>{error}</div>
+                        {status === 'error' && (
+                            <div className="wem-viewer-overlay">
+                                <i className="fas fa-exclamation-triangle fa-2x mb-2" />
+                                <div>{error}</div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
+                {aside && <div className="col-lg-4">{aside}</div>}
             </div>
 
             {info && <div className="small text-muted mt-1">{info}</div>}

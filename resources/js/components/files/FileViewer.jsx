@@ -14,6 +14,8 @@ const PdfViewer = lazy(() => import('./viewers/PdfViewer.jsx'));
 // Tableurs et e-mails : contenu lu par le serveur (files.preview).
 const SheetViewer = lazy(() => import('./viewers/SheetViewer.jsx'));
 const MailViewer = lazy(() => import('./viewers/MailViewer.jsx'));
+// Programmes ISO : parcours d'outil lu dans le navigateur.
+const GcodeViewer = lazy(() => import('./viewers/GcodeViewer.jsx'));
 
 const VIEWERS = {
     mesh: MeshViewer,
@@ -24,6 +26,7 @@ const VIEWERS = {
     doc: PdfViewer,
     sheet: SheetViewer,
     mail: MailViewer,
+    nc: GcodeViewer,
 };
 
 function Fallback({ t }) {
