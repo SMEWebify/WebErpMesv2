@@ -14,7 +14,7 @@ use RuntimeException;
  */
 class CompoundFile
 {
-    private const SIGNATURE = "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1";
+    public const SIGNATURE = "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1";
 
     /** Au-delà de cette valeur, un numéro de secteur est un marqueur (fin de chaîne, libre…). */
     private const MAX_REGULAR_SECTOR = 0xFFFFFFFA;

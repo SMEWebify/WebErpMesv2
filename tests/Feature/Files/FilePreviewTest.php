@@ -300,6 +300,47 @@ class FilePreviewTest extends TestCase
         $this->assertSame('%PDF-1.4 court', $this->get($url)->assertOk()->getContent());
     }
 
+    public function test_an_outlook_message_saved_as_eml_is_recognised_by_its_content(): void
+    {
+        $file = $this->attach($this->msg('%PDF'), 'Demande de renseignements.eml');
+
+        $this->getJson(route('files.preview', ['file' => $file->id]))
+            ->assertOk()
+            ->assertJsonPath('subject', 'Plan modifié – indice B');
+    }
+
+    public function test_a_utf16_eml_is_read(): void
+    {
+        $file = $this->attach("\xFF\xFE" . mb_convert_encoding($this->eml(), 'UTF-16LE', 'UTF-8'), 'unicode.eml');
+
+        $this->getJson(route('files.preview', ['file' => $file->id]))
+            ->assertOk()
+            ->assertJsonPath('subject', 'Commande signée')
+            ->assertJsonPath('from', 'Jérôme Martin <jerome@client.fr>');
+    }
+
+    public function test_a_thunderbird_eml_with_bom_and_mbox_line_is_read(): void
+    {
+        $raw = "\xEF\xBB\xBF\r\nFrom - Tue Nov 03 14:05:00 2026\r\nX-Mozilla-Status: 0001\r\n"
+            . "Subject: Demande de renseignements\r\nFrom: prospect@exemple.fr\r\n \r\nBonjour,\r\nquel délai ?\r\n";
+        $file = $this->attach($raw, 'thunderbird.eml');
+
+        $this->getJson(route('files.preview', ['file' => $file->id]))
+            ->assertOk()
+            ->assertJsonPath('subject', 'Demande de renseignements')
+            ->assertJsonPath('from', 'prospect@exemple.fr')
+            ->assertJsonPath('text', "Bonjour,\nquel délai ?\n");
+    }
+
+    public function test_an_eml_without_anything_recognisable_is_unreadable_not_empty(): void
+    {
+        $file = $this->attach(str_repeat("\x01\x02\x8F\x00binaire", 40), 'bruit.eml');
+
+        $this->getJson(route('files.preview', ['file' => $file->id]))
+            ->assertStatus(422)
+            ->assertJsonPath('reason', 'unreadable');
+    }
+
     public function test_an_unreadable_file_answers_a_reason_instead_of_failing(): void
     {
         $file = $this->attach('pas un fichier Outlook', 'abime.msg');

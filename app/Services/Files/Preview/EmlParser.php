@@ -23,8 +23,7 @@ class EmlParser
      */
     public function parse(string $raw): array
     {
-        $raw = str_replace("\r\n", "\n", $raw);
-        [$headers, $body] = $this->split($raw);
+        [$headers, $body] = $this->split(self::normalize($raw));
 
         $message = [
             'subject' => $this->header($headers, 'subject'),
@@ -40,6 +39,35 @@ class EmlParser
         $this->part($headers, $body, $message, 0);
 
         return $message;
+    }
+
+    /**
+     * Texte d'un .eml tel qu'il sort des messageries Windows : UTF-16 (avec ou
+     * sans BOM) converti, BOM UTF-8 retiré, fins de ligne CRLF / CR ramenées à
+     * LF, lignes vides de tête et ligne « From … » des boîtes mbox (Thunderbird)
+     * retirées.
+     */
+    public static function normalize(string $raw): string
+    {
+        if (str_starts_with($raw, "\xFF\xFE")) {
+            $raw = mb_convert_encoding(substr($raw, 2), 'UTF-8', 'UTF-16LE');
+        } elseif (str_starts_with($raw, "\xFE\xFF")) {
+            $raw = mb_convert_encoding(substr($raw, 2), 'UTF-8', 'UTF-16BE');
+        } elseif (strlen($raw) >= 4 && $raw[1] === "\0" && $raw[3] === "\0" && $raw[0] !== "\0") {
+            $raw = mb_convert_encoding($raw, 'UTF-8', 'UTF-16LE');
+        } elseif (str_starts_with($raw, "\xEF\xBB\xBF")) {
+            $raw = substr($raw, 3);
+        }
+
+        $raw = str_replace(["\r\n", "\r"], "\n", $raw);
+        $raw = ltrim($raw, "\n\t ");
+
+        if (str_starts_with($raw, 'From ')) {
+            $newline = strpos($raw, "\n");
+            $raw = $newline === false ? '' : substr($raw, $newline + 1);
+        }
+
+        return $raw;
     }
 
     /**
@@ -166,9 +194,18 @@ class EmlParser
      */
     private function split(string $raw): array
     {
-        $end = strpos($raw, "\n\n");
-        $head = $end === false ? $raw : substr($raw, 0, $end);
-        $body = $end === false ? '' : substr($raw, $end + 2);
+        // Ligne vide de séparation, parfois faite d'espaces ; une partie sans
+        // en-tête commence directement par elle.
+        if (str_starts_with($raw, "\n")) {
+            $head = '';
+            $body = substr($raw, 1);
+        } elseif (preg_match('/\n[ \t]*\n/', $raw, $m, PREG_OFFSET_CAPTURE)) {
+            $head = substr($raw, 0, $m[0][1]);
+            $body = substr($raw, $m[0][1] + strlen($m[0][0]));
+        } else {
+            $head = $raw;
+            $body = '';
+        }
 
         $headers = [];
         $current = null;

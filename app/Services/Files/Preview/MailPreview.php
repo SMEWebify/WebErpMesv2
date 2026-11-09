@@ -23,9 +23,22 @@ class MailPreview
      */
     public function parse(string $raw, string $extension): array
     {
-        return strtolower($extension) === 'msg'
+        // Le format est reconnu au contenu : un .msg d'Outlook renommé en .eml
+        // (ou l'inverse) reste lisible.
+        $message = str_starts_with($raw, CompoundFile::SIGNATURE)
             ? (new MsgParser())->parse($raw)
             : (new EmlParser())->parse($raw);
+
+        $empty = $message['subject'] === null && $message['from'] === null && $message['to'] === []
+            && trim((string) $message['html']) === '' && trim((string) $message['text']) === ''
+            && $message['attachments'] === [];
+
+        // Rien de reconnu : mieux vaut « illisible » et le téléchargement qu'un aperçu vide.
+        if ($empty) {
+            throw new PreviewUnavailable('unreadable');
+        }
+
+        return $message;
     }
 
     /**
