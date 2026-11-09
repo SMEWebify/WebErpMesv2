@@ -23,6 +23,12 @@ class MailPreview
      */
     public function parse(string $raw, string $extension): array
     {
+        // Une page web enregistrée sous le nom du mail (souvent l'écran d'Outlook
+        // en ligne, quand le navigateur sauve la page au lieu du message).
+        if (preg_match('/^\s*(?:\xEF\xBB\xBF)?\s*<(?:!doctype\s+html|html[\s>])/i', $raw)) {
+            throw new PreviewUnavailable('not_a_mail');
+        }
+
         // Le format est reconnu au contenu : un .msg d'Outlook renommé en .eml
         // (ou l'inverse) reste lisible.
         $message = str_starts_with($raw, CompoundFile::SIGNATURE)

@@ -48,6 +48,7 @@ describe('filePreview', () => {
     it('maps a refusal to its message', () => {
         expect(previewErrorKey('too_large')).toBe('preview_too_large');
         expect(previewErrorKey('missing')).toBe('preview_missing');
+        expect(previewErrorKey('not_a_mail')).toBe('preview_not_a_mail');
         expect(previewErrorKey('anything')).toBe('preview_unreadable');
     });
 });

@@ -1616,6 +1616,7 @@ return [
     'file_preview_unreadable_trans_key'        => 'Le fichier n\'a pas pu être lu pour l\'aperçu.',
     'file_preview_too_large_trans_key'         => 'Fichier trop volumineux pour l\'aperçu.',
     'file_preview_missing_trans_key'           => 'Fichier introuvable sur le serveur.',
+    'file_preview_not_a_mail_trans_key'        => 'Ce fichier n\'est pas un e-mail mais une page web, souvent l\'écran d\'Outlook en ligne enregistré à la place du message. Dans Outlook, ouvrez le message puis « … » → Télécharger (ou glissez-le sur le bureau depuis Outlook) et déposez ce fichier-là.',
     'file_sheet_truncated_trans_key'           => 'Aperçu limité à :rows lignes et :columns colonnes (le fichier en compte :total_rows × :total_columns). Téléchargez-le pour le voir en entier.',
     'file_sheet_hidden_trans_key'              => 'Feuille masquée',
     'file_sheet_empty_trans_key'               => 'Feuille vide.',

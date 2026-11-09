@@ -332,6 +332,16 @@ class FilePreviewTest extends TestCase
             ->assertJsonPath('text', "Bonjour,\nquel délai ?\n");
     }
 
+    public function test_a_web_page_saved_as_eml_is_reported_as_such(): void
+    {
+        // Ce que donne « Enregistrer sous » sur Outlook en ligne quand le navigateur sauve la page.
+        $file = $this->attach('<!doctype html><html dir=ltr><head><title>Outlook</title></head><body>JavaScript must be enabled.</body></html>', 'Demande de renseignements.eml');
+
+        $this->getJson(route('files.preview', ['file' => $file->id]))
+            ->assertStatus(422)
+            ->assertJsonPath('reason', 'not_a_mail');
+    }
+
     public function test_an_eml_without_anything_recognisable_is_unreadable_not_empty(): void
     {
         $file = $this->attach(str_repeat("\x01\x02\x8F\x00binaire", 40), 'bruit.eml');

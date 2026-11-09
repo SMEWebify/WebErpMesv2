@@ -1616,6 +1616,7 @@ return [
     'file_preview_unreadable_trans_key'        => 'The file could not be read for the preview.',
     'file_preview_too_large_trans_key'         => 'File too large for the preview.',
     'file_preview_missing_trans_key'           => 'File not found on the server.',
+    'file_preview_not_a_mail_trans_key'        => 'This file is not an e-mail but a web page, often the Outlook on the web screen saved instead of the message. In Outlook, open the message then "…" → Download (or drag it to the desktop from Outlook) and upload that file.',
     'file_sheet_truncated_trans_key'           => 'Preview limited to :rows rows and :columns columns (the file has :total_rows × :total_columns). Download it to see it all.',
     'file_sheet_hidden_trans_key'              => 'Hidden sheet',
     'file_sheet_empty_trans_key'               => 'Empty sheet.',

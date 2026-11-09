@@ -6,7 +6,7 @@ use RuntimeException;
 
 /**
  * L'aperçu ne peut pas être produit ; le fichier reste téléchargeable.
- * reason : unsupported | missing | too_large | unreadable.
+ * reason : unsupported | missing | too_large | unreadable | not_a_mail.
  */
 class PreviewUnavailable extends RuntimeException
 {

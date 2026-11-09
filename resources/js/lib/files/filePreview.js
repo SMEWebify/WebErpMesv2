@@ -76,5 +76,6 @@ export function previewErrorKey(reason) {
     return {
         too_large: 'preview_too_large',
         missing: 'preview_missing',
+        not_a_mail: 'preview_not_a_mail',
     }[reason] ?? 'preview_unreadable';
 }

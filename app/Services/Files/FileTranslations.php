@@ -67,6 +67,7 @@ class FileTranslations
             'preview_unreadable' => __('general_content.file_preview_unreadable_trans_key'),
             'preview_too_large'  => __('general_content.file_preview_too_large_trans_key'),
             'preview_missing'    => __('general_content.file_preview_missing_trans_key'),
+            'preview_not_a_mail' => __('general_content.file_preview_not_a_mail_trans_key'),
             'sheet_truncated'    => __('general_content.file_sheet_truncated_trans_key'),
             'sheet_hidden'       => __('general_content.file_sheet_hidden_trans_key'),
             'sheet_empty'        => __('general_content.file_sheet_empty_trans_key'),
