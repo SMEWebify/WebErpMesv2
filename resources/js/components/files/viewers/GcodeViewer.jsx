@@ -21,10 +21,20 @@ function fmt(value) {
 function CodeList({ lines, selected, progress, onSelect }) {
     const ref = useRef(null);
     const [scrollTop, setScrollTop] = useState(0);
+    const [viewport, setViewport] = useState(LIST_HEIGHT);
+
+    // Hauteur réelle : l'écran tâche étire la liste à la hauteur de la scène.
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return undefined;
+        const observer = new ResizeObserver(() => setViewport(el.clientHeight || LIST_HEIGHT));
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     // Liste virtuelle : un programme peut compter des centaines de milliers de lignes.
     const first = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - 10);
-    const last = Math.min(lines.length, Math.ceil((scrollTop + LIST_HEIGHT) / ROW_HEIGHT) + 10);
+    const last = Math.min(lines.length, Math.ceil((scrollTop + viewport) / ROW_HEIGHT) + 10);
 
     useEffect(() => {
         const el = ref.current;

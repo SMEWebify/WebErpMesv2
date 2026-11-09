@@ -590,8 +590,14 @@
         border-radius: 8px;
     }
 
-    .wem-viewer > .position-relative {
+    .wem-viewer .wem-viewer-stage {
         height: var(--ts-stage-h) !important;
+    }
+
+    // Programme ISO : la liste des lignes occupe la hauteur de la scène, moins
+    // la barre de simulation et la légende.
+    .wem-gcode-list {
+        height: calc(var(--ts-stage-h) - 80px) !important;
     }
 
     .wem-viewer object {

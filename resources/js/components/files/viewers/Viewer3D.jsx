@@ -90,7 +90,7 @@ export default function Viewer3D({ file, t, load, orthographic = false, height =
 
             <div className={aside ? 'row g-2' : undefined}>
                 <div className={aside ? 'col-lg-8' : undefined}>
-                    <div className="position-relative" style={{ height }}>
+                    <div className="position-relative wem-viewer-stage" style={{ height }}>
                         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 
                         {status === 'loading' && (
