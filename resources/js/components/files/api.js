@@ -167,3 +167,19 @@ export async function listVersions(endpoints, target, fileId) {
         headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrfToken() },
     }));
 }
+
+/**
+ * Ask for an Office editing session: the answer is the ms-excel: / ms-word:
+ * link that hands the file to the Office installed on the workstation.
+ */
+export async function openInOffice(endpoints, target, fileId) {
+    return parse(await fetch(endpoints.office_edit.replace('__ID__', fileId), {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken(),
+        },
+        body: JSON.stringify({ fileable_type: target.type, fileable_id: target.id }),
+    }));
+}

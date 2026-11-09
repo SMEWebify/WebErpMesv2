@@ -14,11 +14,17 @@ use App\Services\Files\FileConfidentiality;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
 use App\Services\Files\FileVersioning;
+use App\Services\Files\OfficeEdit;
+use App\Services\Files\Preview\FilePreview;
+use App\Services\Files\Preview\PreviewUnavailable;
 use App\Services\Files\ThumbnailStore;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -204,6 +210,23 @@ class FileApiController extends Controller
     }
 
     /**
+     * Open the latest version of a file in the desktop Office (Excel, Word):
+     * returns the ms-excel: / ms-word: link the browser hands to Office. Each
+     * save in Office then uploads a new version, like replace().
+     */
+    public function officeEdit(Request $request, File $file, OfficeEdit $edits): JsonResponse
+    {
+        $this->authorize('replace', $file);
+
+        $entity = $this->resolveEntity($request->input('fileable_type'), $request->input('fileable_id'), $request, write: true);
+
+        abort_unless($entity->files()->whereKey($file->id)->exists(), 404);
+        abort_if($file->isSuperseded(), 409, __('general_content.file_version_already_replaced_trans_key'));
+
+        return response()->json(['url' => $edits->open($file, $request->user())]);
+    }
+
+    /**
      * Every version of the lineage a file attached to the entity belongs to.
      */
     public function versions(Request $request, File $file, FileVersioning $versioning): JsonResponse
@@ -240,6 +263,59 @@ class FileApiController extends Controller
         $this->authorize('view', $file);
 
         return $this->storage->response($file);
+    }
+
+    /**
+     * Content of a spreadsheet or an e-mail, read by the server for the viewers
+     * the browser cannot provide. 422 with a reason when it cannot be read: the
+     * viewer then offers the download.
+     */
+    public function preview(File $file, FilePreview $preview): JsonResponse
+    {
+        $this->authorize('view', $file);
+
+        try {
+            $content = $preview->read($file);
+        } catch (PreviewUnavailable $e) {
+            return response()->json(['reason' => $e->reason], $e->reason === 'unsupported' ? 404 : 422);
+        }
+
+        if (($content['type'] ?? null) === 'mail') {
+            foreach ($content['attachments'] as &$attachment) {
+                $attachment['download_url'] = $attachment['downloadable']
+                    ? route('files.preview.attachment', ['file' => $file->id, 'index' => $attachment['index']])
+                    : null;
+            }
+            unset($attachment);
+        }
+
+        return response()->json($content);
+    }
+
+    /**
+     * An attachment of an e-mail kept in the GED, always as an opaque download:
+     * its content comes from outside and is never rendered by our origin.
+     */
+    public function previewAttachment(File $file, int $index, FilePreview $preview): Response
+    {
+        $this->authorize('view', $file);
+
+        try {
+            $attachment = $preview->attachment($file, $index);
+        } catch (PreviewUnavailable) {
+            abort(404);
+        }
+
+        // The name comes from the e-mail: no path separator nor control character
+        // in the header, and an ASCII fallback for the browsers that need one.
+        $name = trim((string) preg_replace('~[\x00-\x1F\x7F/\\\\]~u', '_', $attachment['name'])) ?: 'piece-jointe';
+        $fallback = trim((string) preg_replace('/[^\x20-\x7E]|[%"]/', '_', Str::ascii($name))) ?: 'piece-jointe';
+
+        return response($attachment['data'], 200, [
+            'Content-Type' => 'application/octet-stream',
+            'X-Content-Type-Options' => 'nosniff',
+            'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $name, $fallback),
+        ]);
     }
 
     /**

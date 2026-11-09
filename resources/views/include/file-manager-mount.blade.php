@@ -17,6 +17,7 @@
         'destroy'  => route('files.json.destroy', ['file' => '__ID__']),
         'replace'  => route('files.json.replace', ['file' => '__ID__']),
         'versions' => route('files.json.versions', ['file' => '__ID__']),
+        'office_edit' => route('files.json.office-edit', ['file' => '__ID__']),
     ];
 
     $fileDefaultRevision ??= $fileableType === 'product'

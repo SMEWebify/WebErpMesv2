@@ -279,6 +279,7 @@ class TaskStatuController extends Controller
                 'icon'         => $file->icon,
                 'is_viewable'  => $file->is_viewable,
                 'view_url'     => $file->view_url,
+                'preview_url'  => $file->preview_url,
                 'download_url' => $file->download_url,
                 'source'       => $source,
                 'rank'         => $this->documentRank($kind, $extension),

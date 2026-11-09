@@ -1581,12 +1581,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/{file}/thumbnail', [FileApiController::class, 'storeThumbnail'])->name('files.json.thumbnail');
             Route::post('/{file}/replace', [FileApiController::class, 'replace'])->name('files.json.replace');
             Route::get('/{file}/versions', [FileApiController::class, 'versions'])->name('files.json.versions');
+            Route::post('/{file}/office-edit', [FileApiController::class, 'officeEdit'])->name('files.json.office-edit');
         });
 
         Route::get('/files/{file}/thumbnail', [FileApiController::class, 'thumbnail'])->name('files.thumbnail');
 
         Route::get('/files/{file}/raw', [FileApiController::class, 'raw'])->middleware('audit.access:file,file')->name('files.raw');
         Route::get('/files/{file}/download', [FileApiController::class, 'download'])->middleware('audit.access:file,file')->name('files.download');
+        Route::get('/files/{file}/preview', [FileApiController::class, 'preview'])->middleware('audit.access:file,file')->name('files.preview');
+        Route::get('/files/{file}/attachments/{index}', [FileApiController::class, 'previewAttachment'])->whereNumber('index')->middleware('audit.access:file,file')->name('files.preview.attachment');
     });
 
     // Route::view() plutot qu'une closure : une closure n'est pas serialisable,

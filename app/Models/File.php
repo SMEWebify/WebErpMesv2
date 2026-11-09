@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Quality\QualityNonConformity;
 use App\Services\Files\FileKindResolver;
+use App\Services\Files\Preview\FilePreview;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class File extends Model
@@ -125,6 +126,17 @@ class File extends Model
     public function getDownloadUrlAttribute(): string
     {
         return route('files.download', ['file' => $this->id]);
+    }
+
+    /**
+     * Content read by the server (spreadsheet, e-mail), null for the kinds the
+     * browser displays from the raw file.
+     */
+    public function getPreviewUrlAttribute(): ?string
+    {
+        return FilePreview::supports($this->kind)
+            ? route('files.preview', ['file' => $this->id])
+            : null;
     }
 
     /**

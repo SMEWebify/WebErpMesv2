@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canDeleteFile, canReplaceFile, proposedRevision, versionCaption } from '../../lib/files/fileVersions.js';
+import { canDeleteFile, canReplaceFile, officeEditApp, proposedRevision, versionCaption } from '../../lib/files/fileVersions.js';
 
 describe('versionCaption', () => {
     it('shows nothing for a plain file', () => {
@@ -34,5 +34,18 @@ describe('proposedRevision', () => {
         expect(proposedRevision(' B ')).toBe('B');
         expect(proposedRevision(null)).toBe('');
         expect(proposedRevision('x'.repeat(30))).toHaveLength(20);
+    });
+});
+
+describe('officeEditApp', () => {
+    it('names the Office application the server allows', () => {
+        expect(officeEditApp({ office_edit: 'ms-excel' })).toBe('excel');
+        expect(officeEditApp({ office_edit: 'ms-word' })).toBe('word');
+        expect(officeEditApp({ office_edit: null })).toBeNull();
+    });
+
+    it('never edits a replaced version', () => {
+        expect(officeEditApp({ office_edit: 'ms-excel', is_superseded: true })).toBeNull();
+        expect(officeEditApp(null)).toBeNull();
     });
 });

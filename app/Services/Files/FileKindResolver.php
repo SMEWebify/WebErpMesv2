@@ -29,8 +29,11 @@ class FileKindResolver
     /** Raster images. */
     public const KIND_IMAGE = 'image';
 
-    /** Spreadsheets and delimited data. */
+    /** Spreadsheets and delimited data, previewed as a table by the server. */
     public const KIND_SHEET = 'sheet';
+
+    /** E-mails saved from a mail client (.eml, Outlook .msg), previewed by the server. */
+    public const KIND_MAIL = 'mail';
 
     /** Archives and everything without a viewer. */
     public const KIND_ARCHIVE = 'archive';
@@ -50,6 +53,7 @@ class FileKindResolver
         self::KIND_DOC => ['pdf'],
         self::KIND_IMAGE => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
         self::KIND_SHEET => ['csv', 'xls', 'xlsx', 'ods'],
+        self::KIND_MAIL => ['eml', 'msg'],
         self::KIND_ARCHIVE => ['zip', '7z', 'rar', 'gz'],
         // sym and geo are RADAN sources, bvc a BySoft cutting job: the import
         // reads them but no viewer renders them, so they stay download only.
@@ -69,6 +73,8 @@ class FileKindResolver
         self::KIND_VECTOR,
         self::KIND_DOC,
         self::KIND_IMAGE,
+        self::KIND_SHEET,
+        self::KIND_MAIL,
     ];
 
     /**
@@ -195,6 +201,7 @@ class FileKindResolver
             self::KIND_DOC => 'far fa-file-pdf',
             self::KIND_IMAGE => 'far fa-file-image',
             self::KIND_SHEET => 'far fa-file-excel',
+            self::KIND_MAIL => 'far fa-envelope',
             self::KIND_ARCHIVE => 'far fa-file-archive',
             default => 'far fa-file',
         };

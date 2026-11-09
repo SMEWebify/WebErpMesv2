@@ -3,8 +3,8 @@ import FileDropzone from './FileDropzone.jsx';
 import FileViewer from './FileViewer.jsx';
 import FileReplaceForm from './FileReplaceForm.jsx';
 import FileVersionHistory from './FileVersionHistory.jsx';
-import { deleteFile, listFiles, replaceFile, updateFile, uploadFiles } from './api.js';
-import { canDeleteFile, canReplaceFile, versionCaption } from '../../lib/files/fileVersions.js';
+import { deleteFile, listFiles, openInOffice, replaceFile, updateFile, uploadFiles } from './api.js';
+import { canDeleteFile, canReplaceFile, officeEditApp, versionCaption } from '../../lib/files/fileVersions.js';
 
 /**
  * Unified document tab: one drop area for every format, one list grouped by
@@ -23,6 +23,8 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
     const [roleFilter, setRoleFilter] = useState('');
     const [replacingId, setReplacingId] = useState(null);
     const [historyFile, setHistoryFile] = useState(null);
+    // Fichier ouvert dans Excel / Word : ses enregistrements arrivent en nouvelles versions.
+    const [officeEditing, setOfficeEditing] = useState(null);
 
     // Older mounts may not expose the versioning endpoints.
     const versioning = !!(endpoints?.replace && endpoints?.versions);
@@ -47,6 +49,27 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
     }, [endpoints, target]);
 
     useEffect(() => { refresh(); }, [refresh]);
+
+    // Retour sur la page après un passage dans Excel / Word : la liste montre
+    // les versions enregistrées entre-temps.
+    useEffect(() => {
+        if (!officeEditing) return undefined;
+        const onFocus = () => { refresh(); };
+        window.addEventListener('focus', onFocus);
+        return () => window.removeEventListener('focus', onFocus);
+    }, [officeEditing, refresh]);
+
+    const handleOfficeEdit = async (file) => {
+        setError(null);
+
+        try {
+            const { url } = await openInOffice(endpoints, target, file.id);
+            setOfficeEditing({ name: file.name, app: officeEditApp(file) });
+            window.location.href = url;
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     const handleUpload = async (list, meta) => {
         setUploading(true);
@@ -138,6 +161,15 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                 <div className="alert alert-danger alert-dismissible">
                     <button type="button" onClick={() => setError(null)} aria-label="Close" className="btn-close float-end"></button>
                     {error}
+                </div>
+            )}
+
+            {officeEditing && (
+                <div className="alert alert-info alert-dismissible small">
+                    <button type="button" onClick={() => setOfficeEditing(null)} aria-label="Close" className="btn-close float-end"></button>
+                    <i className="fas fa-file-pen me-1" />
+                    <strong>{officeEditing.name}</strong>{' — '}
+                    {t('office_edit_hint').replace(':app', officeEditing.app === 'word' ? 'Word' : 'Excel')}
                 </div>
             )}
 
@@ -262,6 +294,17 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
                                                 >
                                                     <i className="fas fa-download" />
                                                 </a>
+
+                                                {endpoints?.office_edit && officeEditApp(file) && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-success btn-sm me-1"
+                                                        title={t(`office_edit_${officeEditApp(file)}`)}
+                                                        onClick={(event) => { event.stopPropagation(); handleOfficeEdit(file); }}
+                                                    >
+                                                        <i className={`fas ${officeEditApp(file) === 'word' ? 'fa-file-word' : 'fa-file-excel'}`} />
+                                                    </button>
+                                                )}
 
                                                 {versioning && canReplaceFile(file) && (
                                                     <button

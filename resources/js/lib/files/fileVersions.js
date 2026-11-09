@@ -43,3 +43,13 @@ export function canReplaceFile(file) {
 export function proposedRevision(defaultRevision) {
     return String(defaultRevision ?? '').trim().slice(0, 20);
 }
+
+/**
+ * Office editing of a file (« Modifier dans Excel / Word ») : the server sends
+ * the scheme (ms-excel, ms-word) when the option is on and the format allows
+ * it; only the latest version is edited, like a replacement.
+ */
+export function officeEditApp(file) {
+    if (!canReplaceFile(file)) return null;
+    return { 'ms-excel': 'excel', 'ms-word': 'word' }[file.office_edit] ?? null;
+}

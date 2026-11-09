@@ -11,6 +11,9 @@ const BrepViewer = lazy(() => import('./viewers/BrepViewer.jsx'));
 const DxfViewer = lazy(() => import('./viewers/DxfViewer.jsx'));
 const ImageViewer = lazy(() => import('./viewers/ImageViewer.jsx'));
 const PdfViewer = lazy(() => import('./viewers/PdfViewer.jsx'));
+// Tableurs et e-mails : contenu lu par le serveur (files.preview).
+const SheetViewer = lazy(() => import('./viewers/SheetViewer.jsx'));
+const MailViewer = lazy(() => import('./viewers/MailViewer.jsx'));
 
 const VIEWERS = {
     mesh: MeshViewer,
@@ -19,6 +22,8 @@ const VIEWERS = {
     vector: ImageViewer,
     image: ImageViewer,
     doc: PdfViewer,
+    sheet: SheetViewer,
+    mail: MailViewer,
 };
 
 function Fallback({ t }) {

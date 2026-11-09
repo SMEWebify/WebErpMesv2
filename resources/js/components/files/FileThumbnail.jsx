@@ -8,6 +8,8 @@ const KIND_ICONS = {
     vector: 'fa-bezier-curve',
     doc: 'fa-file-pdf',
     image: 'fa-file-image',
+    sheet: 'fa-file-excel',
+    mail: 'fa-envelope',
 };
 
 /**

@@ -278,7 +278,7 @@ Toutes les entités qui portent des fichiers (produits, devis, commandes, BL, fa
 achats, NC, mouvements de stock, sociétés, opportunités) passent par un seul dispositif.
 
 ### Modèle
-- `files` : `kind` (mesh / brep / cad2d / vector / doc / image / sheet / archive / other,
+- `files` : `kind` (mesh / brep / cad2d / vector / doc / image / sheet / mail / archive / other,
   déduit de l'extension par `App\Services\Files\FileKindResolver`), `extension`, `disk`, `path`
 - `fileables` (pivot polymorphe) : `role` (plan, modele_3d, vectoriel, photo, cam,
   certificat, controle, autre — `App\Services\Files\FileRole`) et `is_primary`
@@ -308,6 +308,33 @@ fin de `routes/web.php` hors du groupe de locale. Un SVG est renvoyé avec `nosn
 - `resources/js/components/files/` : `FileManager` (dépose + liste + viewer),
   `FileDropzone`, `FileViewer` (dispatch par `kind`), `viewers/` (Mesh, Brep, Dxf, Image, Pdf)
 - Chaque moteur est en `React.lazy()` : ouvrir un PDF ne télécharge pas three.js
+- **Tableurs et e-mails** (kinds `sheet` : xlsx/xls/ods/csv, `mail` : eml/msg) : aperçu **calculé
+  par le serveur**, route `files.preview` (JSON, `preview_url` du fichier, même `FilePolicy::view`
+  et journal des consultations que `files.raw`). `App\Services\Files\Preview` : `SpreadsheetPreview`
+  (PhpSpreadsheet, toutes les feuilles, valeurs affichées comme dans Excel, tronqué à
+  `files.preview.max_rows` × `max_columns`), `EmlParser` (MIME) et `MsgParser` + `CompoundFile`
+  (Outlook, OLE lu en PHP pur : **aucun paquet Composer**, `hfig/mapi` dépend de `pear/ole`
+  abandonné). Fichier > `files.preview.max_bytes` (15 Mo) ou illisible → 422 `reason`, le lecteur
+  propose le téléchargement. HTML du mail nettoyé par HTMLPurifier (ni script ni ressource
+  distante : pas de pixel de suivi), images `cid:` reprises en data URI, rendu dans une iframe
+  `sandbox` sans `allow-scripts` + CSP. Pièces jointes : `files.preview.attachment`, toujours en
+  `application/octet-stream` (jamais rendues par notre origine). Aperçu en **lecture seule**. `.msg` de test fabriqués
+  par `tests/Support/CompoundFileWriter`. Tests : `tests/Feature/Files/FilePreviewTest.php`,
+  `resources/js/tests/lib/filePreview.test.js`.
+- **Modifier dans Excel / Word** (option `FILES_OFFICE_EDIT`, **false** par défaut : sans Office
+  sur le poste le bouton ne ferait rien) : `files.json.office-edit` (même contrôle que
+  « Remplacer ») renvoie un lien `ms-excel:ofe|u|…/dav/{jeton}/{nom}` qu'ouvre l'Office du poste.
+  `App\Services\Files\OfficeEdit` : jeton aléatoire de 48 caractères **dans le chemin**, session
+  (fichier, utilisateur, langue du clic) et verrou WebDAV **dans le cache** (aucune table ; vidage
+  du cache = rouvrir), expiration glissante `files.office_edit.ttl_minutes` (480). `OfficeDavController`
+  (`routes/dav.php`, enregistré **avant** web, **hors groupe web** : ni session ni CSRF) sert
+  OPTIONS / PROPFIND / GET / LOCK / UNLOCK / PUT ; droits relus à chaque requête (`view` pour lire,
+  `replace` pour verrouiller / enregistrer). **Chaque enregistrement (Ctrl+S) = une nouvelle version**
+  (`FileVersioning::replace`, commentaire « Modifié dans Office », indice gardé), la session suit
+  la dernière ; version déposée entre-temps par un autre → 409 (Office propose « Enregistrer
+  sous »). Formats : `files.office_edit.schemes` (xlsx, xls, csv → Excel ; docx, doc → Word).
+  À valider sur le poste client : Office peut refuser une adresse HTTP (prévoir HTTPS), et
+  Apache doit laisser passer PROPFIND / LOCK jusqu'à PHP. Tests : `tests/Feature/Files/OfficeEditTest.php`.
 - **STL/OBJ/PLY/3MF/glTF** : loaders three.js — **STEP/IGES/BREP** : `occt-import-js`
   (OpenCascade en WASM, 7,4 Mo chargés à la demande, aucun convertisseur serveur requis) —
   **DXF** : `dxf-parser` (parsing seul, pas de dépendance three) + rendu maison dans

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Services\Files\FileKindResolver;
+use App\Services\Files\OfficeEdit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -32,6 +33,8 @@ class FileResource extends JsonResource
             'icon' => $this->icon,
             'is_viewable' => $this->is_viewable,
             'view_url' => $this->view_url,
+            'preview_url' => $this->preview_url,
+            'office_edit' => OfficeEdit::schemeFor($this->resource),
             'download_url' => $this->download_url,
             'thumbnail_url' => $this->thumbnail_url,
             'thumbnail_store_url' => route('files.json.thumbnail', ['file' => $this->id]),

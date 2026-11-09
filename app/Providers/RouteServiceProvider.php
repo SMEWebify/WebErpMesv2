@@ -47,6 +47,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 
+            // WebDAV d'Excel / Word : ni session ni CSRF, avant les routes web
+            // pour qu'aucune route générique de celles-ci ne l'intercepte.
+            Route::namespace($this->namespace)
+                ->group(base_path('routes/dav.php'));
+
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));

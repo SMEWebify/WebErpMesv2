@@ -53,6 +53,7 @@ class DocumentController extends Controller
                 'icon' => $file->icon,
                 'download_url' => $file->download_url,
                 'view_url' => $file->view_url,
+                'preview_url' => $file->preview_url,
                 'is_viewable' => $file->is_viewable,
                 'size' => $file->size,
                 'formatted_size' => $file->formatted_size,
