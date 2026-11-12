@@ -13,6 +13,8 @@ return [
         'simulation_text'  => 'Check the bent part and its collisions with the tool.',
         'catalog_title' => 'Manufacturer catalog',
         'catalog_text'  => 'Browse and filter punches, dies and adapters.',
+        'screenshot_alt'     => 'Bending simulation in NEST2BEND: part, tooling, sequence and collision detection',
+        'screenshot_caption' => 'Bend 2 simulated in NEST2BEND: the collision with the punch is detected before reaching the press brake.',
     ],
     'nesting' => [
         'title' => 'Sheet nesting',

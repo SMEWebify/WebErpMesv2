@@ -82,4 +82,18 @@
     [data-bs-theme="dark"] .commercial-feature { background: #343a40; }
     [data-bs-theme="dark"] .commercial-feature__point { border-color: #4b545c; }
     [data-bs-theme="dark"] .commercial-feature__point p { color: #adb5bd; }
+    .commercial-feature__screenshot {
+        margin: 0 0 1.5rem;
+        text-align: center;
+    }
+    .commercial-feature__screenshot img {
+        border: 1px solid var(--bs-border-color);
+        border-radius: .5rem;
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .08);
+    }
+    .commercial-feature__screenshot figcaption {
+        margin-top: .5rem;
+        font-size: .85rem;
+        color: var(--bs-secondary-color);
+    }
 </style>

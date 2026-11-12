@@ -382,6 +382,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::patch('/{quoteId}/lines/json/{id}/calculated-price', 'App\Http\Controllers\Workflow\QuoteLinesController@toggleCalculatedPriceJson')->name('quotes.lines.json.calculated-price');
         Route::patch('/{quoteId}/lines/json/{id}/presentation', 'App\Http\Controllers\Workflow\QuoteLinesController@presentationJson')->name('quotes.lines.json.presentation');
         Route::get('/{idQuote}/lines/{id}/detail-edit', 'App\Http\Controllers\Workflow\QuoteLinesController@detailEdit')->name('quotes.lines.detail.edit');
+        // NEST2BEND : session d'iframe (STEP de la GED envoyé côté serveur) puis relecture du résultat.
+        Route::post('/{quoteId}/lines/{id}/nest2bend/session', [\App\Http\Controllers\Workflow\BendingSimulationController::class, 'store'])->whereNumber(['quoteId', 'id'])->middleware('throttle:20,1')->name('quotes.lines.nest2bend.session');
+        Route::post('/{quoteId}/lines/{id}/nest2bend/result', [\App\Http\Controllers\Workflow\BendingSimulationController::class, 'complete'])->whereNumber(['quoteId', 'id'])->middleware('throttle:30,1')->name('quotes.lines.nest2bend.result');
         Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->name('quotes.delivery.simulation');
         //Project estimate
         Route::post('project-estimate/save/{id}', 'App\Http\Controllers\Workflow\QuotesController@saveProjectEstimate')->name('quotes.project.estimates');
@@ -1125,6 +1128,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/',      [\App\Http\Controllers\Admin\ESignatureSettingsController::class, 'index'])->name('index');
             Route::put('/',      [\App\Http\Controllers\Admin\ESignatureSettingsController::class, 'update'])->name('update');
             Route::post('/test', [\App\Http\Controllers\Admin\ESignatureSettingsController::class, 'test'])->name('test');
+        });
+
+        // NEST2BEND (simulation de pliage en iframe) : URL + clé API chiffrée, état de l'abonnement.
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/nest2bend')->name('admin.integrations.nest2bend.')->group(function () {
+            Route::get('/',      [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'index'])->name('index');
+            Route::put('/',      [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'update'])->name('update');
+            Route::post('/test', [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'test'])->name('test');
         });
 
         Route::middleware(['auth', 'verified', 'has.role'])->prefix('email-logs')->name('admin.email-logs.')->group(function () {

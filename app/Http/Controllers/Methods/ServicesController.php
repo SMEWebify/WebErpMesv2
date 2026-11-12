@@ -48,6 +48,7 @@ class ServicesController extends Controller
             ->values();
         $serviceData = $request->only('code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color');
         $serviceData['is_nesting'] = $request->boolean('is_nesting');
+        $serviceData['is_bending'] = $request->boolean('is_bending');
         $serviceData['requires_release'] = $request->boolean('requires_release');
         $serviceData['companies_id'] = $supplierIds->first();
         $Service = MethodsServices::create($serviceData);
@@ -101,6 +102,10 @@ class ServicesController extends Controller
             ->values();
         $serviceData = $request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color']);
         $serviceData['is_nesting'] = $request->boolean('is_nesting');
+        // Absent de la requête = inchangé (ancien formulaire).
+        if ($request->has('is_bending')) {
+            $serviceData['is_bending'] = $request->boolean('is_bending');
+        }
         // Absent de la requête = inchangé : un ancien formulaire ne décoche pas le visa.
         if ($request->has('requires_release')) {
             $serviceData['requires_release'] = $request->boolean('requires_release');

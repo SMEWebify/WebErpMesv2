@@ -140,6 +140,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
 | `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné » ; range l'accord signé d'une dérogation dans sa GED. Filet de la notification DocuSign (instance non publiée en HTTPS) |
+| `php artisan wem:nest2bend:refresh` | Relit l'état de l'abonnement NEST2BEND (`GET /api/v1/compte`) et le garde en base : carte Intégrations, boutons « Simuler ». Ne fait rien sans clé saisie |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
 | `php artisan wem:orders:backfill-promised-dates [--dry-run] [-v]` | **À lancer une fois après déploiement.** Renseigne `order_lines.promised_delivery_date` des lignes existantes : ancienne valeur du premier report historisé, sinon `delivery_date` actuelle. Ne touche jamais une ligne déjà renseignée |
@@ -166,6 +167,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Quotidien à 09h00 | `backup:monitor` | Alerte mail si dernier backup > 2 jours |
 | Toutes les 15 min | `wem:pdp:sync` | Facturation électronique : statuts des factures émises + factures fournisseurs reçues |
 | Toutes les 15 min | `wem:esign:sync` | Signature électronique : relecture des enveloppes de devis et de dérogations en attente |
+| Quotidien à 05h40 | `wem:nest2bend:refresh` | NEST2BEND : état de l'abonnement (aussi relu à l'enregistrement / au test de la carte et sur un 403) |
 | Quotidien à 06h00 | `gmao:generate-work-orders` | GMAO : ordres de travail préventifs des plans arrivés à échéance |
 | Hebdomadaire | `rgpd:purge` | Purge RGPD (voir tableau ci-dessus) |
 | Mensuel | `wem:activitylog:clean` | Nettoie les logs d'activité, durée par `log_name` (`config/activitylog.php`, `retention`). ❌ Ne pas replanifier `activitylog:clean` du paquet (purge tout) |
@@ -735,6 +737,60 @@ contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
 - Devis modifié après l'envoi (total TTC différent) ou mode changé → l'enveloppe en
   attente est annulée (`voided`) et une nouvelle part au clic suivant.
 - Tests : `tests/Feature/ESignature/` (API DocuSign simulée, clé RSA jetable en fixture).
+
+## Simulation de pliage NEST2BEND (iframe)
+
+NEST2BEND (SaaS externe) s'affiche dans l'ERP en iframe. L'utilisateur ne s'y connecte jamais :
+la liaison est une **clé API `n2b_…` par société**, et c'est NEST2BEND qui juge l'abonnement.
+`App\Services\Integrations\Nest2Bend`.
+- **Configuration en base** : écran Intégrations → NEST2BEND (`nest2bend_settings`, singleton) :
+  URL + clé chiffrée (`encrypted`, `$hidden`), affichée masquée (`n2b_••••` + 4 derniers
+  caractères), champ vide = conserver. L'écran affiche l'**origine de l'ERP à déclarer dans
+  NEST2BEND** (sinon 422 et iframe refusée).
+- **État** (`Nest2BendAccess`) = dernier `GET /api/v1/compte`, gardé en base, relu à
+  l'enregistrement, au test, chaque jour (`wem:nest2bend:refresh`) et sur un 403 d'embed-sessions.
+  **Aucun écran n'appelle NEST2BEND pour s'afficher** (test). Statuts : `none` / `unknown` (clé
+  jamais vérifiée) / `invalid` (401) → écran commercial, pas de bouton ; `expired`
+  (`peut_ecrire = false`) → boutons grisés + lien ; `active` → boutons actifs, avertissement +
+  échéance si `etat` = essai / grâce. Une panne réseau / 5xx **garde** le dernier état (`last_error`).
+- **Écran commercial** : `methods.tool.punch-designer` / `methods.tool.catalog` (configurateur et
+  catalogue retirés en oct. 2026) montrent l'offre si `show_commercial`, sinon l'état de la liaison.
+- **Bouton « Simuler le pliage »** : fiche détail de la ligne de devis (carte Documents,
+  `include/nest2bend-simulate`), **seulement si la GED de la ligne, sinon de son article, contient
+  un STEP** (`QuoteLineStepSource`, seule conversion « pièce ERP → NEST2BEND », à faire évoluer
+  ici). Le bouton suit les dépôts de la GED sans recharger (événement `wem:files-changed` émis par
+  `FileManager`).
+- **Session** (`quotes.lines.nest2bend.session`) : le serveur envoie le STEP **brut en base64**
+  (aucune conversion d'encodage, 20 Mo max), `politique = calcule`, `quantite` = qté de la ligne,
+  `reference_externe` = `{code devis}/L{ordre}`. L'URL d'iframe (code 60 s, usage unique) part au
+  navigateur et **n'est jamais stockée** ; une URL d'une autre origine que celle configurée est
+  refusée. Erreurs : 403 (expiré ; ses `droits` mettent la carte à jour sans rappeler `/compte`,
+  sinon `/compte` est relu), 422 (message de NEST2BEND tel quel, traduit selon `langue`), 429
+  (quota de **120 requêtes / min par clé, tous utilisateurs confondus**), 503 (lecture STEP > 15 s
+  ou panne) ; un 401 de NEST2BEND devient 409 (pas une déconnexion ERP). Un F5 dans l'iframe la
+  casse (404 voulu) : bouton « Relancer » de la fenêtre = nouvelle session. L'iframe n'utilise
+  aucun cookie. Rotation de clé : plusieurs clés actives possibles côté NEST2BEND.
+- **Retour** : `postMessage` filtré par `lib/nest2bendMessage.js` (origine **et** fenêtre de
+  l'iframe, seul `resultId` lu) → `quotes.lines.nest2bend.result` relit `GET /results/{id}`. **Le
+  resultId n'est cru que s'il ferme une session ouverte ici** (`bending_simulations` : même
+  `session_id`, ligne, utilisateur, `reference_externe`) ; rejoué = sans effet. Le temps retenu
+  est **ajouté** à `quote_line_details.internal_comment` (`[NEST2BEND jj/mm/aaaa] Préparation … ·
+  …/pièce (lot n) · compteurs`), jamais dans la gamme pour l'instant ; le champ de la page est mis
+  à jour pour qu'un enregistrement du formulaire ne l'écrase pas. `retenu`, ses temps et
+  `compteurs` peuvent être null (politique « masque », « erp » sans temps imposé) : « pas de
+  temps retenu », jamais une erreur. `resultId` = UUID v7, lisible dès réception du message.
+- Session abandonnée (iframe fermée) : rien à signaler à NEST2BEND (code 60 s, jeton 8 h, purge
+  30 j) ; la ligne `bending_simulations` reste `pending`. L'origine de l'iframe = `APP_URL` de
+  NEST2BEND, qui doit être **exactement** l'URL saisie dans l'ERP (sinon refus, message explicite).
+- **Contrat** : référence = `BRIEF.md` §5 du dépôt NEST2BEND. Tant que NEST2BEND n'a pas de
+  premier client, `/api/v1` peut encore changer **de façon incompatible** (changements annoncés
+  avant déploiement) ; ensuite seulement des ajouts, l'incompatible passant par `/api/v2`. Le
+  code ERP lit défensivement (champs absents ou null tolérés) : en cas d'annonce, relire
+  `Data\*` et `Drivers\HttpNest2BendGateway`.
+- `methods_services.is_bending` (case « Poste de pliage » des postes de charge) : prêt pour
+  écrire le temps dans la gamme, **non utilisé** aujourd'hui.
+- Tests : `tests/Feature/Nest2Bend/` (NEST2BEND simulé par `Http::fake`),
+  `resources/js/tests/lib/nest2bendMessage.test.js`.
 
 ## Dérogations — accord du client (ISO 19443)
 

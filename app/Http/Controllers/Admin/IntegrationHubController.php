@@ -14,6 +14,7 @@ use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
 use App\Models\Workflow\QuoteSignature;
 use App\Services\AI\AISettingsResolver;
+use App\Services\Integrations\Nest2Bend\Nest2BendAccess;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Mail\MailSettingsService;
 use Illuminate\Http\Request;
@@ -53,6 +54,8 @@ class IntegrationHubController extends Controller
             'ai'        => $this->aiCard(),
             'mail'      => $this->mailCard(),
             'esign'     => $this->esignatureCard(),
+            // Dernier état lu sur NEST2BEND : aucun appel externe à l'affichage.
+            'nest2bend' => app(Nest2BendAccess::class)->state(),
         ]);
     }
 

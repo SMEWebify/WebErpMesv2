@@ -108,7 +108,10 @@ class ToolsController extends Controller
      */
     public function punchDesigner()
     {
-        return view('methods/methods-punch-designer');
+        // NEST2BEND relié (actif ou expiré) : l'offre commerciale laisse place à l'état de la liaison.
+        return view('methods/methods-punch-designer', [
+            'nest2bend' => app(\App\Services\Integrations\Nest2Bend\Nest2BendAccess::class)->state(),
+        ]);
     }
 
     /**

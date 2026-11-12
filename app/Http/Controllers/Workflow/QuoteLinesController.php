@@ -652,7 +652,10 @@ class QuoteLinesController extends Controller
             $line->id
         );
 
-        return view('workflow.quote-line-detail-edit', compact('line', 'idQuote', 'factory', 'productCustomFields'));
+        // Bouton NEST2BEND : dernier état connu de l'abonnement + STEP présent en GED (aucun appel externe).
+        $bending = app(\App\Services\Integrations\Nest2Bend\BendingSimulationService::class)->buttonState($line);
+
+        return view('workflow.quote-line-detail-edit', compact('line', 'idQuote', 'factory', 'productCustomFields', 'bending'));
     }
 
     private function formatLineJson(QuoteLines $l, string $currency, string $locale, ?array $margin = null): array

@@ -87,3 +87,15 @@ Schedule::command('wem:esign:sync')
     ->everyFifteenMinutes()
     ->withoutOverlapping()
     ->runInBackground();
+
+/*
+|--------------------------------------------------------------------------
+| NEST2BEND (simulation de pliage)
+|--------------------------------------------------------------------------
+*/
+
+// État de l'abonnement (carte Intégrations, boutons « Simuler »). Aussi relu à
+// l'enregistrement et au test de la carte. Ne fait rien sans clé saisie.
+Schedule::command('wem:nest2bend:refresh')
+    ->dailyAt('05:40')
+    ->withoutOverlapping();
