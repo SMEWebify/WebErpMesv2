@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\PurchaseOrderService;
 use App\Models\Companies\CompaniesContacts;
 use App\Services\PurchaseCalculatorService;
+use App\Models\Planning\Task;
+use App\Services\Purchases\PurchaseAffairLink;
 use App\Services\Purchases\PurchaseQualityClauses;
 use App\Services\Purchases\SupplierQualification;
 use App\Models\Companies\SupplierQualificationOverride;
@@ -267,6 +269,11 @@ class PurchasesController extends Controller
             'CustomFields' => $CustomFields,
             'qualityClauses' => app(PurchaseQualityClauses::class)->forOrder($id),
             'supplierQualification' => $this->supplierQualificationCard($id),
+            'affairLink' => [
+                'value'   => app(PurchaseAffairLink::class)->value($id),
+                'current' => app(PurchaseAffairLink::class)->describe($id),
+                'options' => app(PurchaseAffairLink::class)->options($id),
+            ],
         ]);
     }
 
@@ -366,6 +373,12 @@ class PurchasesController extends Controller
             return redirect()->back()->withErrors(['msg' => 'no lines selected']);
         }
 
+        // Opération d'un devis pas encore commandé : prix seulement, pas de commande ferme
+        $quoteTaskIds = $quotationLines->pluck('tasks_id')->filter()->all();
+        if ($quoteTaskIds !== [] && Task::whereIn('id', $quoteTaskIds)->whereNull('order_lines_id')->exists()) {
+            return redirect()->back()->with('error', __('purchase_affair.quote_not_orderable'));
+        }
+
         // La demande de prix reste libre ; c'est la commande qui en sort qui est contrôlée.
         $qualification = app(SupplierQualification::class);
         $supplierCheck = $qualification->check((int) $PurchasesQuotationData->companies_id);
@@ -386,6 +399,7 @@ class PurchasesController extends Controller
         }
 
         $qualification->recordOverride($supplierCheck, $purchaseOrder);
+        $purchaseOrder->fill($PurchasesQuotationData->only(array_values(PurchaseAffairLink::COLUMNS)))->save();
 
         $this->purchaseOrderService->processPurchaseQuotationLines(
             $quotationLines,
@@ -588,6 +602,10 @@ class PurchasesController extends Controller
         $Purchases->companies_contacts_id=$request->companies_contacts_id;
         $Purchases->companies_addresses_id=$request->companies_addresses_id;
         $Purchases->comment=$request->comment;
+        // Absent du formulaire (ancienne page en cache) = inchangé ; vide = plus rattaché
+        if ($request->has('affair_link')) {
+            $Purchases->fill(app(PurchaseAffairLink::class)->attributes($request->input('affair_link')));
+        }
         $Purchases->save();
         $qualification->recordOverride($supplierCheck, $Purchases);
 

@@ -35,6 +35,10 @@ class Purchases extends Model
                             'user_id',
                             'comment',
                             'csv_file_name',
+                            // Rattachement à l'affaire hors tâche (PurchaseAffairLink)
+                            'opportunities_id',
+                            'quotes_id',
+                            'orders_id',
                         ];
 
     protected $casts = [

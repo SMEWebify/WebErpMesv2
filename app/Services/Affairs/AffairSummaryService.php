@@ -105,7 +105,7 @@ class AffairSummaryService
         $orders        = $this->loadOrders($quotes->pluck('id')->all());
         $lines         = $this->loadOrderLines($orders->pluck('id')->all());
         $tasks         = $this->loadTasks($lines);
-        $purchaseLines = $this->loadPurchaseLines($tasks->pluck('id')->all());
+        $purchaseLines = $this->loadPurchaseLines($opportunity->id, $quotes->pluck('id')->all(), $orders->pluck('id')->all(), $tasks->pluck('id')->all());
         $invoices      = $this->loadInvoices($orders->pluck('id')->all(), $lines->pluck('id')->all());
         $visits        = OpportunityVisits::query()
             ->where('opportunities_id', $opportunity->id)
@@ -434,16 +434,12 @@ class AffairSummaryService
     }
 
     /** @param int[] $taskIds */
-    private function loadPurchaseLines(array $taskIds): Collection
+    private function loadPurchaseLines(int $opportunityId, array $quoteIds, array $orderIds, array $taskIds): Collection
     {
-        if ($taskIds === []) {
-            return collect();
-        }
-
-        return PurchaseLines::query()
+        // Sur une tâche de l'affaire, ou commande d'achat rattachée par son en-tête
+        return AffairScope::purchaseLinesQuery($opportunityId, $quoteIds, $orderIds, $taskIds)
             ->join('purchases', 'purchases.id', '=', 'purchase_lines.purchases_id')
             ->whereNull('purchases.deleted_at')
-            ->whereIn('purchase_lines.tasks_id', $taskIds)
             ->orderBy('purchase_lines.purchases_id')
             ->orderBy('purchase_lines.ordre')
             ->toBase()

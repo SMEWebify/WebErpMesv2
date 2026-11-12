@@ -611,6 +611,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::patch('/quotation/api/{quotation}/statu', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateStatu')->name('purchases.quotation.api.statu');
         Route::post('/quotation/api/{quotation}/lines',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationStoreLine')->name('purchases.quotation.api.lines.store');
         Route::patch('/quotation/api/{quotation}/lines/{line}', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateLine')->name('purchases.quotation.api.lines.update');
+        Route::post('/quotation/api/{quotation}/lines/{line}/retain', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationRetainLine')->name('purchases.quotation.api.lines.retain');
 
         // JSON endpoints for React PurchasesIndex
         Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');

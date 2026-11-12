@@ -79,6 +79,11 @@ $purchaseSteps = json_encode([
                   </div>
                 </div>
                 <div class="row">
+                  <div class="mb-3 col-md-12">
+                    @include('purchases.partials.affair-link-select', ['affairLink' => $affairLink])
+                  </div>
+                </div>
+                <div class="row">
                   <x-FormTextareaComment  comment="{{ $Purchase->comment }}" />
                 </div>
                 <x-slot name="footerSlot">

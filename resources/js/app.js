@@ -324,6 +324,7 @@ async function mountPurchasesQuotationShow() {
             supplierQualification: parse('supplierQualification'),
             initialAddresses:  parse('addresses')  ?? [],
             initialContacts:   parse('contacts')   ?? [],
+            affairOptions:     parse('affairOptions') ?? [],
             currency:          element.dataset.currency ?? 'EUR',
             endpoints:         parse('endpoints')  ?? {},
             trans:             parse('trans')       ?? {},

@@ -3,6 +3,7 @@
 namespace App\Services\Quotes;
 
 use App\Enums\SalesLineType;
+use App\Models\Purchases\PurchaseQuotationLines;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
@@ -12,7 +13,9 @@ use Illuminate\Support\Collection;
 
 /**
  * Transforme une ligne de devis en ligne de commande avec tout son contenu
- * technique : détail, gamme et nomenclature complètes, fichiers GED.
+ * technique : détail, gamme et nomenclature complètes, fichiers GED. Les
+ * lignes de demande de prix posées sur les opérations du devis passent sur
+ * leurs copies, pour rester dans l'affaire.
  *
  * Partagé par la conversion directe du devis et par la proforma, pour que
  * la commande produite soit la même quel que soit le chemin.
@@ -156,6 +159,11 @@ class QuoteLineToOrderLineConverter
         }
 
         $this->bom->copy('quote_lines_id', $quoteLine->id, 'order_lines_id', $orderLine->id, '6');
+
+        // Les demandes de prix lancées sur le devis suivent les opérations de la commande.
+        foreach ($this->bom->taskMap() as $quoteTaskId => $orderTaskId) {
+            PurchaseQuotationLines::where('tasks_id', $quoteTaskId)->update(['tasks_id' => $orderTaskId]);
+        }
 
         if ($quoteLine->Task->isNotEmpty()) {
             $orderLine->tasks_status = 2;

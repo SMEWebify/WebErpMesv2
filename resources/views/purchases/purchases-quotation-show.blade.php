@@ -23,6 +23,7 @@
     data-supplier-qualification="{{ json_encode($reactProps['supplierQualification']) }}"
     data-addresses="{{ json_encode($reactProps['addresses']) }}"
     data-contacts="{{ json_encode($reactProps['contacts']) }}"
+    data-affair-options="{{ json_encode($reactProps['affairOptions']) }}"
     data-currency="{{ $reactProps['currency'] }}"
     data-endpoints="{{ json_encode($reactEndpoints) }}"
     data-trans="{{ json_encode($reactTrans) }}"

@@ -31,6 +31,11 @@ class PurchaseQuotationLines extends Model
         'canceled_qty',
     ];
 
+    // retained_at : hors $fillable, écrit seulement par PurchaseQuotationRetention
+    protected $casts = [
+        'retained_at' => 'datetime',
+    ];
+
     public function tasks()
     {
         return $this->belongsTo(Task::class, 'tasks_id');

@@ -1158,6 +1158,36 @@ de réception (`getAverageReceptionDelayBySupplier`, inchangé).
 - Tests : `tests/Feature/Purchases/SupplierAcknowledgementTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/supplierAck.test.js`.
 
+## Achats liés aux devis et aux affaires
+
+Un achat se rattachait à une vente seulement par `tasks_id` de ses lignes, et l'écran
+« Demande d'achat » ne listait que des opérations de commande ferme.
+- **Demande de prix depuis un devis** : source « Devis en cours » de l'écran (`?source=quotes` sur
+  `purchases.request.tasks`) = opérations (premier statut, types 2-7, `quote_lines_id` direct) des
+  lignes article de devis ouverts / envoyés / gagnés **pas encore commandées**. **Demande de prix
+  seulement** : `purchases.request.store` en PU refuse toute tâche sans `order_lines_id` (422), et la
+  conversion demande de prix → commande (`purchases.orders.store`) refuse une ligne posée sur une
+  opération de devis.
+- **Prix retenu** (`App\Services\Purchases\PurchaseQuotationRetention`, route
+  `purchases.quotation.api.lines.retain`, bouton sur la fiche demande de prix et le comparatif) :
+  le prix de la ligne devient `tasks.unit_cost` de l'opération du devis, donc la marge
+  (`QuoteMargin`) ; `purchase_quotation_lines.retained_at` (hors `$fillable`), une seule ligne
+  retenue par tâche. Refusé si le devis n'est plus ouvert / envoyé ou déjà converti. Aucune
+  permission dédiée (même droit que les lignes de demande de prix).
+- **Conversion du devis** : `QuoteLineToOrderLineConverter` rebranche les lignes de demande de prix
+  des opérations du devis sur leurs copies (`BillOfMaterialsCopier::taskMap()`). La commande
+  d'achat devient alors possible depuis la demande de prix.
+- **Rattachement d'en-tête** (`App\Services\Purchases\PurchaseAffairLink`) : `opportunities_id`,
+  `quotes_id`, `orders_id` nullable (un seul renseigné, valeur de formulaire « type:id ») sur
+  `purchases` et `purchases_quotations`, pour les achats sans opération (frais, outillage dédié).
+  Champ « Affaire rattachée » des deux fiches ; absent de la requête = inchangé. Déduit des tâches
+  à la création depuis l'écran Demande d'achat (une seule commande ou un seul devis), recopié à la
+  duplication et à la conversion en commande d'achat. `AffairScope::purchaseLinesQuery()` : lignes
+  sur une tâche de l'affaire **ou** d'une commande d'achat rattachée (synthèse et chronologie,
+  même nombre de requêtes). Les demandes de prix n'apparaissent pas dans la synthèse.
+- Non fait : rattacher à une tâche une ligne ajoutée à la main sur un document existant.
+- Tests : `tests/Feature/Purchases/PurchaseFromQuoteTest.php`.
+
 ## Fournisseur qualifié obligatoire (commandes d'achat)
 
 `App\Services\Purchases\SupplierQualification`. Option `purchases.require_qualified_supplier`

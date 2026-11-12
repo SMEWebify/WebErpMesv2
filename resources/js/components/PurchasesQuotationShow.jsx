@@ -69,8 +69,10 @@ function ArrowSteps({ statu, onChangeStatu, disabled }) {
 // Info Tab (left col)
 // ---------------------------------------------------------------------------
 
-function InfoForm({ quotation, suppliers, supplierQualification, addresses, contacts, endpoints, trans, onUpdated, onSupplierChange }) {
+function InfoForm({ quotation, suppliers, supplierQualification, addresses, contacts, affairOptions = [], endpoints, trans, onUpdated, onSupplierChange }) {
     const [label,      setLabel]      = useState(quotation.label ?? '');
+    // Affaire rattachée hors tâche : « type:id » (order:12, quote:7, opportunity:3), vide = aucune
+    const [affairLink, setAffairLink] = useState(quotation.affair_link ?? '');
     const [companiesId,setCompaniesId]= useState(quotation.companies_id ?? '');
     const [addressId,  setAddressId]  = useState(quotation.companies_addresses_id ?? '');
     const [contactId,  setContactId]  = useState(quotation.companies_contacts_id ?? '');
@@ -111,10 +113,11 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                     companies_contacts_id:  contactId   || null,
                     delay:   delay   || null,
                     comment: comment || null,
+                    affair_link: affairLink || null,
                 }),
             });
             setFlash({ type: 'success', msg: trans.update_success });
-            if (onUpdated) onUpdated({ label, companies_id: companiesId, companies_addresses_id: addressId, companies_contacts_id: contactId });
+            if (onUpdated) onUpdated({ label, companies_id: companiesId, companies_addresses_id: addressId, companies_contacts_id: contactId, affair_link: affairLink });
         } catch (err) {
             if (err.status === 422 && err.data?.errors) {
                 setErrors(err.data.errors);
@@ -211,6 +214,30 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                                     ))}
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="mb-3 col-md-12">
+                            <label>{trans.affair_link}</label>
+                            <div className="input-group">
+                                <span className="input-group-text"><i className="fas fa-link" /></span>
+                                <select className="form-select" value={affairLink} onChange={e => setAffairLink(e.target.value)}>
+                                    <option value="">{trans.affair_none}</option>
+                                    {affairOptions.map(group => (
+                                        <optgroup key={group.group} label={group.group}>
+                                            {group.options.map(o => (
+                                                <option key={o.value} value={o.value}>{o.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
+                                </select>
+                            </div>
+                            <small className="form-text text-muted">
+                                {trans.affair_help}
+                                {quotation.affair && <> — <a href={quotation.affair.url}>{quotation.affair.label}</a></>}
+                            </small>
+                            {errors.affair_link && <div className="text-danger small">{errors.affair_link[0]}</div>}
                         </div>
                     </div>
 
@@ -618,6 +645,24 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
         setEditingLine(null);
     }
 
+    // Prix du fournisseur retenu comme coût de l'opération du devis
+    const [retaining, setRetaining] = useState(null);
+    const [retainFlash, setRetainFlash] = useState(null);
+
+    async function handleRetain(line) {
+        setRetaining(line.id);
+        setRetainFlash(null);
+        try {
+            const data = await apiFetch(endpoints.retainLine.replace('__ID__', line.id), { method: 'POST' });
+            setLines(data.lines);
+            setRetainFlash({ type: 'success', msg: data.message });
+        } catch (err) {
+            setRetainFlash({ type: 'danger', msg: err.data?.message ?? trans.error_generic });
+        } finally {
+            setRetaining(null);
+        }
+    }
+
     const canEdit = quotation.statu === 1;
     const canOrder = quotation.statu !== 6;
 
@@ -627,6 +672,12 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                 <div className="col-12">
                     <div className="card mb-3">
                         <div className="card-body">
+                            {retainFlash && (
+                                <div className={`alert alert-${retainFlash.type} alert-dismissible`}>
+                                    <button type="button" onClick={() => setRetainFlash(null)} aria-label="Close" className="btn-close float-end"></button>
+                                    {retainFlash.msg}
+                                </div>
+                            )}
                             {canEdit ? (
                                 <LineForm
                                     quotation={{ ...quotation, lines }}
@@ -682,6 +733,10 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                                                 <a href={line.order_url} className="btn btn-outline-secondary btn-sm">
                                                     {line.order_code}
                                                 </a>
+                                            ) : line.quote_url ? (
+                                                <a href={line.quote_url} className="btn btn-outline-info btn-sm" title={trans.quote}>
+                                                    <i className="fas fa-file-signature me-1" />{line.quote_code}
+                                                </a>
                                             ) : <span>{trans.generic}</span>}
                                         </td>
                                         <td>
@@ -726,7 +781,31 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
                                                     <i className="fas fa-edit" /> {trans.edit}
                                                 </button>
                                             )}
-                                            {line.qty_to_order > line.qty_accepted && (
+                                            {line.quote_task && (
+                                                <div className="mb-1">
+                                                    {line.retained && (
+                                                        <span className="badge text-bg-success me-1">
+                                                            <i className="fas fa-check me-1" />{trans.retained}
+                                                        </span>
+                                                    )}
+                                                    {!line.retain_blocked ? (
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-outline-success btn-sm"
+                                                            title={trans.retain_help}
+                                                            disabled={retaining === line.id}
+                                                            onClick={() => handleRetain(line)}
+                                                        >
+                                                            <i className={`fas ${retaining === line.id ? 'fa-spinner fa-spin' : 'fa-hand-holding-usd'} me-1`} />
+                                                            {trans.retain}
+                                                        </button>
+                                                    ) : (
+                                                        <small className="text-muted d-block">{trans.retain_refused?.[line.retain_blocked]}</small>
+                                                    )}
+                                                    <small className="text-muted d-block">{trans.quote_not_orderable}</small>
+                                                </div>
+                                            )}
+                                            {!line.quote_task && line.qty_to_order > line.qty_accepted && (
                                                 <div className="mb-3 mb-0">
                                                     <div className="form-check ">
                                                         <input
@@ -794,6 +873,7 @@ export default function PurchasesQuotationShow({
     supplierQualification = null,
     initialAddresses,
     initialContacts,
+    affairOptions = [],
     currency,
     endpoints,
     trans,
@@ -870,6 +950,7 @@ export default function PurchasesQuotationShow({
                                     supplierQualification={supplierQualification}
                                     addresses={initialAddresses}
                                     contacts={initialContacts}
+                                    affairOptions={affairOptions}
                                     endpoints={endpoints}
                                     trans={trans}
                                     onUpdated={handleInfoUpdated}

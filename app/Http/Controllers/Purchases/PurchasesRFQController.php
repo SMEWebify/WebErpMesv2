@@ -15,6 +15,10 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\QuoteLines;
+use App\Models\Workflow\Quotes;
+use App\Services\Purchases\PurchaseAffairLink;
+use App\Services\Purchases\PurchaseQuotationRetention;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Purchases\Purchases;
@@ -112,6 +116,11 @@ class PurchasesRFQController extends Controller
             'export_csv'         => __('general_content.export_csv_trans_key'),
             'sheet_metal_need'   => __('general_content.sheet_metal_global_need_csv_trans_key'),
             'sheet_metal_hint'   => __('general_content.sheet_metal_global_need_csv_hint_trans_key'),
+            'source'             => __('purchase_affair.source'),
+            'source_orders'      => __('purchase_affair.source_orders'),
+            'source_quotes'      => __('purchase_affair.source_quotes'),
+            'source_quotes_help' => __('purchase_affair.source_quotes_help'),
+            'quote'              => __('purchase_affair.quote'),
         ];
 
         return view('purchases/purchases-request', [
@@ -130,38 +139,44 @@ class PurchasesRFQController extends Controller
         $companyId = $request->get('company_id') ? (int) $request->get('company_id') : null;
         $sortField = in_array($request->get('sort'), ['label', 'id']) ? $request->get('sort') : 'id';
         $sortAsc   = $request->get('dir', 'asc') === 'asc';
+        // « quotes » : opérations des devis en cours, pour une demande de prix seulement
+        $fromQuotes = $request->get('source') === 'quotes';
 
         $firstStatus = Status::select('id')->orderBy('order')->first();
 
         $tasks = Task::orderBy('tasks.' . $sortField, $sortAsc ? 'asc' : 'desc')
             ->where('status_id', $firstStatus->id)
-            ->whereNotNull('order_lines_id')
+            ->when(! $fromQuotes, fn ($query) => $query->whereNotNull('order_lines_id'))
+            ->when($fromQuotes, fn ($query) => $query->whereIn('quote_lines_id', $this->openQuoteLines()))
             ->whereIn('type', [2, 3, 4, 5, 6, 7])
             ->when($companyId, function ($query) use ($companyId) {
                 $query->whereHas('Component.preferredSuppliers', fn($q) => $q->where('companies_id', $companyId));
             })
             ->with([
                 'OrderLines.order:id,code,companies_id',
+                'QuoteLines.quote:id,code',
                 'service:id,label,color,picture',
                 'Component:id,label',
             ])
             ->get();
 
         return response()->json([
-            'tasks' => $tasks->map(function ($task) {
-                $orderLine = $task->OrderLines;
-                $order     = $orderLine?->order;
+            'tasks' => $tasks->map(function ($task) use ($fromQuotes) {
+                // Même forme de ligne pour les deux sources : le document est le devis ou la commande.
+                $orderLine = $fromQuotes ? $task->QuoteLines : $task->OrderLines;
+                $order     = $fromQuotes ? $orderLine?->quote : $orderLine?->order;
+                $showRoute = $fromQuotes ? 'quotes.show' : 'orders.show';
 
                 return [
                     'id'              => $task->id,
                     'label'           => $task->label,
                     'qty_required'    => $task->getQualityRequiredAttribute(),
-                    'order_line_id'   => $task->order_lines_id,
+                    'order_line_id'   => $orderLine?->id,
                     'order_qty'       => $orderLine?->qty,
                     'order_label'     => $orderLine?->label,
                     'order_id'        => $order?->id,
                     'order_code'      => $order?->code,
-                    'order_url'       => $order ? route('orders.show', ['id' => $order->id]) : null,
+                    'order_url'       => $order ? route($showRoute, ['id' => $order->id]) : null,
                     'component_id'    => $task->component_id,
                     'component_label' => $task->Component?->label,
                     'component_url'   => $task->component_id ? route('products.show', ['id' => $task->component_id]) : null,
@@ -172,6 +187,21 @@ class PurchasesRFQController extends Controller
                 ];
             })->values(),
         ]);
+    }
+
+    /**
+     * Lignes article des devis en cours (ouverts, envoyés, gagnés), pas encore
+     * commandées : leurs opérations peuvent faire l'objet d'une demande de prix.
+     */
+    private function openQuoteLines()
+    {
+        return QuoteLines::query()
+            ->select('quote_lines.id')
+            ->whereIn('quotes_id', Quotes::query()->select('id')->whereIn('statu', [1, 2, 3]))
+            ->articles()
+            ->whereNotExists(fn ($q) => $q->select(DB::raw(1))
+                ->from('order_lines')
+                ->whereColumn('order_lines.quote_lines_id', 'quote_lines.id'));
     }
 
     /**
@@ -205,6 +235,12 @@ class PurchasesRFQController extends Controller
                 }
             }
 
+            // Pas de commande ferme au fournisseur pour un devis : demande de prix seulement
+            $taskIds = array_values(array_unique($validated['task_ids'] ?? []));
+            if ($taskIds !== [] && Task::whereIn('id', $taskIds)->whereNull('order_lines_id')->exists()) {
+                return response()->json(['message' => __('purchase_affair.order_needs_firm_order')], 422);
+            }
+
             $statusUpdate = $this->purchaseOrderService->getStatusUpdate();
             if (!$statusUpdate) {
                 return response()->json(['message' => 'No status "Supplied" or "In progress" in kanban'], 422);
@@ -230,6 +266,7 @@ class PurchasesRFQController extends Controller
             }
 
             $qualification->recordOverride($supplierCheck, $purchase);
+            $purchase->fill(app(PurchaseAffairLink::class)->fromTasks($taskIds))->save();
 
             if (!empty($validated['task_ids'])) {
                 $data = collect($validated['task_ids'])->mapWithKeys(fn($id) => [$id => ['task_id' => $id]])->toArray();
@@ -255,7 +292,18 @@ class PurchasesRFQController extends Controller
                 return response()->json(['message' => 'No status "RFQ in progress" or "Started" in kanban'], 422);
             }
 
-            $rfqGroup = $this->purchaseQuotationService->createRfqGroup($validated['code'], $validated['label']);
+            // Opérations d'une commande ferme ou d'un devis en cours, rien d'autre
+            $taskIds = array_values(array_unique($validated['task_ids'] ?? []));
+            $allowed = $taskIds === [] ? 0 : Task::whereIn('id', $taskIds)
+                ->where(fn ($q) => $q->whereNotNull('order_lines_id')
+                    ->orWhereIn('quote_lines_id', $this->openQuoteLines()))
+                ->count();
+            if ($allowed !== count($taskIds)) {
+                return response()->json(['message' => __('purchase_affair.quotation_tasks_invalid')], 422);
+            }
+            $affairLink = app(PurchaseAffairLink::class)->fromTasks($taskIds);
+
+            $rfqGroup =$this->purchaseQuotationService->createRfqGroup($validated['code'], $validated['label']);
 
             foreach ($validated['selected_companies'] as $companyId) {
                 $company = Companies::find($companyId);
@@ -290,6 +338,7 @@ class PurchasesRFQController extends Controller
                 if (!$quotation) {
                     return response()->json(['message' => 'Failed to create purchase quotation'], 422);
                 }
+                $quotation->fill($affairLink)->save();
 
                 if (!empty($validated['task_ids'])) {
                     $data = collect($validated['task_ids'])->mapWithKeys(fn($id) => [$id => ['task_id' => $id]])->toArray();
@@ -434,6 +483,7 @@ class PurchasesRFQController extends Controller
             'rfqGroup',
             'emailLogs',
             'PurchaseQuotationLines.tasks.OrderLines.order',
+            'PurchaseQuotationLines.tasks.QuoteLines.quote',
             'PurchaseQuotationLines.tasks.Component',
             'PurchaseQuotationLines.product',
         ]);
@@ -469,6 +519,7 @@ class PurchasesRFQController extends Controller
             'addresses'  => $addresses,
             'contacts'   => $contacts,
             'currency'   => $currency,
+            'affairOptions' => app(PurchaseAffairLink::class)->options($id),
             // Passe-droit saisi dans le formulaire « nouvelle commande » si le fournisseur n'est pas qualifié
             'supplierQualification' => $qualification->badgeConfig() + [
                 'can_override' => (bool) auth()->user()?->can(SupplierQualification::OVERRIDE_PERMISSION),
@@ -490,6 +541,7 @@ class PurchasesRFQController extends Controller
             'products'    => route('purchases.quotation.api.products'),
             'companyData' => route('purchases.quotation.api.company-data'),
             'storeOrder'  => route('purchases.orders.store', ['id' => $id->id]),
+            'retainLine'  => route('purchases.quotation.api.lines.retain', ['quotation' => $id->id, 'line' => '__ID__']),
         ];
 
         $reactTrans = [
@@ -540,6 +592,15 @@ class PurchasesRFQController extends Controller
             'no_data'                  => __('general_content.no_data_trans_key'),
             'info_statu'               => __('general_content.info_statu_trans_key'),
             'proposed_purchase_price'  => __('general_content.proposed_purchase_price_trans_key'),
+            'affair_link'              => __('purchase_affair.link'),
+            'affair_none'              => __('purchase_affair.none'),
+            'affair_help'              => __('purchase_affair.help'),
+            'quote'                    => __('purchase_affair.quote'),
+            'retain'                   => __('purchase_affair.retain'),
+            'retained'                 => __('purchase_affair.retained_badge'),
+            'retain_help'              => __('purchase_affair.retain_help'),
+            'quote_not_orderable'      => __('purchase_affair.quote_not_orderable'),
+            'retain_refused'           => __('purchase_affair.retain_refused'),
         ];
 
         return view('purchases/purchases-quotation-show', [
@@ -560,13 +621,15 @@ class PurchasesRFQController extends Controller
      */
     public function compareQuotationGroup(PurchaseRfqGroup $group)
     {
-        $group->load(['purchaseQuotations.companie', 'purchaseQuotations.PurchaseQuotationLines']);
+        $group->load(['purchaseQuotations.companie', 'purchaseQuotations.PurchaseQuotationLines.tasks.QuoteLines.quote']);
         $quotations = $group->purchaseQuotations;
 
         $lineGroups = collect();
         foreach ($quotations as $quotation) {
             foreach ($quotation->PurchaseQuotationLines as $line) {
-                $key = $line->product_id ? 'product-' . $line->product_id : 'line-' . $line->id;
+                // Une même opération chez plusieurs fournisseurs sur une ligne, même sans article
+                $key = $line->tasks_id ? 'task-' . $line->tasks_id
+                    : ($line->product_id ? 'product-' . $line->product_id : 'line-' . $line->id);
                 if (!$lineGroups->has($key)) {
                     $lineGroups->put($key, [
                         'label' => $line->label ?? $line->code ?? __('general_content.line_trans_key'),
@@ -585,7 +648,14 @@ class PurchasesRFQController extends Controller
             return [$quotation->id => $quotation->PurchaseQuotationLines->sum('total_price')];
         });
 
+        // Réponses qu'on peut retenir pour le coût d'une opération de devis
+        $retention = app(PurchaseQuotationRetention::class);
+        $retainable = $quotations->flatMap->PurchaseQuotationLines
+            ->filter(fn ($line) => $line->tasks_id && $retention->blockingReason($line) === null)
+            ->pluck('id')->flip();
+
         return view('purchases/purchases-quotation-compare', [
+            'retainable' => $retainable,
             'rfqGroup' => $group,
             'quotations' => $quotations,
             'lineGroups' => $lineGroups->values(),
@@ -617,11 +687,13 @@ class PurchasesRFQController extends Controller
             $newQuotation->delay = $id->delay;
             $newQuotation->statu = $id->statu;
             $newQuotation->comment = $id->comment;
+            $newQuotation->fill($id->only(array_values(PurchaseAffairLink::COLUMNS)));
             $newQuotation->save();
 
             foreach ($id->PurchaseQuotationLines as $line) {
                 $newLine = $line->replicate();
                 $newLine->purchases_quotation_id = $newQuotation->id;
+                $newLine->retained_at = null;
                 $newLine->save();
             }
 
@@ -729,6 +801,7 @@ class PurchasesRFQController extends Controller
             'rfqGroup',
             'emailLogs',
             'PurchaseQuotationLines.tasks.OrderLines.order',
+            'PurchaseQuotationLines.tasks.QuoteLines.quote',
             'PurchaseQuotationLines.tasks.Component',
             'PurchaseQuotationLines.product',
         ]);
@@ -755,7 +828,14 @@ class PurchasesRFQController extends Controller
             'companies_addresses_id'   => 'nullable|integer',
             'delay'                    => 'nullable|date',
             'comment'                  => 'nullable|string',
+            'affair_link'              => 'nullable|string',
         ]);
+
+        unset($validated['affair_link']);
+        // Absent de la requête = inchangé ; vide = plus rattaché
+        if ($request->has('affair_link')) {
+            $validated += app(PurchaseAffairLink::class)->attributes($request->input('affair_link'));
+        }
 
         $quotation->fill($validated)->save();
 
@@ -807,7 +887,7 @@ class PurchasesRFQController extends Controller
             'total_price'            => $validated['unit_price'] * $validated['qty_to_order'],
         ]);
 
-        $line->load(['product', 'tasks.OrderLines.order', 'tasks.Component']);
+        $line->load(['product', 'tasks.OrderLines.order', 'tasks.QuoteLines.quote', 'tasks.Component']);
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
@@ -842,12 +922,48 @@ class PurchasesRFQController extends Controller
             'product_id'   => $validated['product_id'] ?? null,
         ])->save();
 
-        $line->load(['product', 'tasks.OrderLines.order', 'tasks.Component']);
+        $line->load(['product', 'tasks.OrderLines.order', 'tasks.QuoteLines.quote', 'tasks.Component']);
 
         $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
 
         return response()->json(['line' => $this->serializeLine($line, $currency)]);
+    }
+
+    /**
+     * Retient la réponse du fournisseur : son prix devient le coût de
+     * l'opération du devis (PurchaseQuotationRetention). JSON pour la fiche,
+     * redirection pour le comparatif.
+     */
+    public function apiQuotationRetainLine(Request $request, PurchasesQuotation $quotation, PurchaseQuotationLines $line)
+    {
+        abort_if($line->purchases_quotation_id !== $quotation->id, 404);
+
+        try {
+            app(PurchaseQuotationRetention::class)->retain($line);
+        } catch (\DomainException $e) {
+            return $request->expectsJson()
+                ? response()->json(['message' => $e->getMessage()], 422)
+                : redirect()->back()->with('error', $e->getMessage());
+        }
+
+        $message = __('purchase_affair.retained', ['price' => $line->unit_price]);
+        if (! $request->expectsJson()) {
+            return redirect()->back()->with('success', $message);
+        }
+
+        $quotation->load([
+            'PurchaseQuotationLines.product',
+            'PurchaseQuotationLines.tasks.OrderLines.order',
+            'PurchaseQuotationLines.tasks.QuoteLines.quote',
+            'PurchaseQuotationLines.tasks.Component',
+        ]);
+        $currency = app('Factory')->curency ?? 'EUR';
+
+        return response()->json([
+            'message' => $message,
+            'lines'   => $quotation->PurchaseQuotationLines->map(fn ($l) => $this->serializeLine($l, $currency))->values(),
+        ]);
     }
 
     /**
@@ -943,6 +1059,8 @@ class PurchasesRFQController extends Controller
             'email_url'                 => (config('mail.default') && config('mail.from.address'))
                 ? route('email.create', ['type' => 'purchase-quotation', 'id' => $q->id]) : null,
             'store_order_url'           => route('purchases.orders.store', ['id' => $q->id]),
+            'affair_link'               => app(PurchaseAffairLink::class)->value($q),
+            'affair'                    => app(PurchaseAffairLink::class)->describe($q),
             'email_logs'                => $q->emailLogs->map(fn($e) => [
                 'id'         => $e->id,
                 'subject'    => $e->subject ?? '',
@@ -957,6 +1075,8 @@ class PurchasesRFQController extends Controller
         $task      = $l->tasks;
         $orderLine = $task?->OrderLines;
         $order     = $orderLine?->order;
+        $quoteTask = (bool) ($task && $task->quote_lines_id && ! $task->order_lines_id);
+        $quote     = $quoteTask ? $task->QuoteLines?->quote : null;
 
         $formattedUnit  = Number::currency((float) $l->unit_price,  $currency, config('app.locale'));
         $formattedTotal = Number::currency((float) $l->total_price, $currency, config('app.locale'));
@@ -989,6 +1109,13 @@ class PurchasesRFQController extends Controller
             'order_line_qty'      => $orderLine?->qty,
             'task_qty'            => $task?->qty,
             'order_line_label'    => $orderLine?->label ?? '',
+            // Opération d'un devis pas encore commandé : prix à retenir, pas de commande d'achat
+            'quote_task'          => $quoteTask,
+            'quote_id'            => $quote?->id,
+            'quote_code'          => $quote?->code ?? '',
+            'quote_url'           => $quote ? route('quotes.show', ['id' => $quote->id]) : null,
+            'retained'            => $l->retained_at !== null,
+            'retain_blocked'      => $quoteTask ? app(PurchaseQuotationRetention::class)->blockingReason($l) : null,
         ];
     }
 }

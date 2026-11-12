@@ -15,6 +15,8 @@ export default function PurchasesRequest({
     endpoints,
     trans,
 }) {
+    // Opérations de commandes fermes, ou de devis en cours (demande de prix seulement)
+    const [source,             setSource]             = useState('orders');
     const [documentType,       setDocumentType]       = useState('PU');
     const [filterCompanyId,    setFilterCompanyId]    = useState('');
     const [selectedCompanies,  setSelectedCompanies]  = useState([]);
@@ -44,10 +46,15 @@ export default function PurchasesRequest({
         setErrors({});
     }, [documentType]);
 
-    // Fetch tasks whenever filter supplier or sort changes
+    // Un devis n'est pas une commande ferme : demande de prix seulement
+    useEffect(() => {
+        if (source === 'quotes') setDocumentType('PQ');
+    }, [source]);
+
+    // Fetch tasks whenever source, filter supplier or sort changes
     useEffect(() => {
         setLoading(true);
-        const params = new URLSearchParams({ sort: sortField, dir: sortAsc ? 'asc' : 'desc' });
+        const params = new URLSearchParams({ sort: sortField, dir: sortAsc ? 'asc' : 'desc', source });
         if (filterCompanyId) params.set('company_id', filterCompanyId);
 
         apiFetch(`${endpoints.tasks}?${params}`)
@@ -57,7 +64,7 @@ export default function PurchasesRequest({
             })
             .catch(() => {})
             .finally(() => setLoading(false));
-    }, [filterCompanyId, sortField, sortAsc]);
+    }, [source, filterCompanyId, sortField, sortAsc]);
 
     // Sync multi-select native element → state
     useEffect(() => {
@@ -152,6 +159,7 @@ export default function PurchasesRequest({
     }
 
     const selectedSupplier = suppliers.find(c => String(c.id) === String(companyId));
+    const documentColumn = source === 'quotes' ? trans.quote : trans.order;
 
     function fieldError(key) {
         const e = errors[key];
@@ -173,6 +181,25 @@ export default function PurchasesRequest({
                 <div className="card-body">
                     <div className="row gx-2">
 
+                        {/* Source des opérations */}
+                        <div className="mb-3 col-md-3">
+                            <label>{trans.source}</label>
+                            <div className="input-group">
+                                <span className="input-group-text"><i className="fas fa-folder-open" /></span>
+                                <select
+                                    className="form-select"
+                                    value={source}
+                                    onChange={e => setSource(e.target.value)}
+                                >
+                                    <option value="orders">{trans.source_orders}</option>
+                                    <option value="quotes">{trans.source_quotes}</option>
+                                </select>
+                            </div>
+                            {source === 'quotes' && (
+                                <small className="form-text text-muted">{trans.source_quotes_help}</small>
+                            )}
+                        </div>
+
                         {/* Document type */}
                         <div className="mb-3 col-md-3">
                             <label>{trans.document_type}</label>
@@ -184,7 +211,7 @@ export default function PurchasesRequest({
                                     onChange={e => setDocumentType(e.target.value)}
                                 >
                                     <option value="">{trans.select_document}</option>
-                                    <option value="PU">{trans.purchase_order}</option>
+                                    <option value="PU" disabled={source === 'quotes'}>{trans.purchase_order}</option>
                                     <option value="PQ">{trans.purchase_quotation}</option>
                                 </select>
                             </div>
@@ -325,9 +352,9 @@ export default function PurchasesRequest({
                     <table className="table table-hover">
                         <thead>
                             <tr>
-                                <th>{trans.order}</th>
+                                <th>{documentColumn}</th>
                                 <th>{trans.qty}</th>
-                                <th>{trans.order_label}</th>
+                                <th>{documentColumn} {trans.label}</th>
                                 <th>
                                     <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleSort('label')}>
                                         {trans.task_label} <SortIcon field="label" sortField={sortField} sortAsc={sortAsc} />
@@ -392,9 +419,9 @@ export default function PurchasesRequest({
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>{trans.order}</th>
+                                <th>{documentColumn}</th>
                                 <th>{trans.qty}</th>
-                                <th>{trans.order_label}</th>
+                                <th>{documentColumn} {trans.label}</th>
                                 <th>{trans.task_label}</th>
                                 <th>{trans.product}</th>
                                 <th>{trans.qty}</th>

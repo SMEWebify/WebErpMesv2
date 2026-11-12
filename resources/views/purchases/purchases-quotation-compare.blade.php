@@ -12,6 +12,7 @@
     <h3 class="card-title">{{ $rfqGroup->label }}</h3>
   </div>
   <div class="card-body">
+    @include('include.alert-result')
     <div class="table-responsive p-0">
       <table class="table table-hover table-bordered">
         <thead>
@@ -61,6 +62,17 @@
                     @endif
                     @if($line->supplier_comment)
                       <div class="text-muted">{{ $line->supplier_comment }}</div>
+                    @endif
+                    @if($line->retained_at)
+                      <span class="badge text-bg-success"><i class="fas fa-check me-1"></i>{{ __('purchase_affair.retained_badge') }}</span>
+                    @endif
+                    @if(isset($retainable[$line->id]))
+                      <form method="POST" action="{{ route('purchases.quotation.api.lines.retain', ['quotation' => $quotation->id, 'line' => $line->id]) }}" class="mt-1">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-success btn-sm" title="{{ __('purchase_affair.retain_help') }}">
+                          <i class="fas fa-hand-holding-usd me-1"></i>{{ __('purchase_affair.retain') }}
+                        </button>
+                      </form>
                     @endif
                   @else
                     <span class="text-muted">-</span>

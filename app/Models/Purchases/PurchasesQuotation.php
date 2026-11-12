@@ -27,6 +27,10 @@ class PurchasesQuotation extends Model
                             'companies_contacts_id',   
                             'companies_addresses_id',  
                             'rfq_group_id',
+                            // Rattachement à l'affaire hors tâche (PurchaseAffairLink)
+                            'opportunities_id',
+                            'quotes_id',
+                            'orders_id',
                             'statu',  
                             'user_id',
                             'comment',

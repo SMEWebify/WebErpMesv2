@@ -76,6 +76,17 @@ class BillOfMaterialsCopier
     }
 
     /**
+     * Correspondance id d'origine → id de la copie des opérations de la
+     * dernière copie (rattachement des demandes de prix à la conversion).
+     *
+     * @return array<int, int>
+     */
+    public function taskMap(): array
+    {
+        return $this->taskMap ?? [];
+    }
+
+    /**
      * Rebranche sur la ligne cible un élément rattaché à la ligne source ;
      * ne touche pas à un élément qui ne l'est pas (simple enfant d'un
      * sous-ensemble).

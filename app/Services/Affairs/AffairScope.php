@@ -4,6 +4,7 @@ namespace App\Services\Affairs;
 
 use App\Models\Planning\Task;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Purchases\Purchases;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Opportunities;
@@ -18,7 +19,9 @@ use Illuminate\Database\Eloquent\Builder;
  *   opportunité → devis (quotes.opportunities_id)
  *               → commandes (orders.quotes_id)
  *               → lignes de commande → tâches (tasks.order_lines_id)
- *               → lignes d'achat (purchase_lines.tasks_id)
+ *               → lignes d'achat (purchase_lines.tasks_id, ou commande d'achat
+ *                 rattachée par son en-tête à l'opportunité, à un devis ou à une
+ *                 commande de l'affaire : achats sans tâche)
  *               → factures (invoices.order_id, ou une ligne de facture sur une
  *                 ligne de commande de l'affaire : une facture peut regrouper
  *                 plusieurs commandes et n'a alors pas d'order_id)
@@ -79,9 +82,37 @@ class AffairScope
     /** @return int[] */
     public function purchaseLineIds(): array
     {
-        return $this->purchaseLineIds ??= $this->taskIds() === [] ? [] : PurchaseLines::query()
-            ->whereIn('tasks_id', $this->taskIds())
-            ->pluck('id')->map(fn ($id) => (int) $id)->all();
+        return $this->purchaseLineIds ??= self::purchaseLinesQuery(
+            $this->opportunity->id, $this->quoteIds(), $this->orderIds(), $this->taskIds()
+        )->pluck('purchase_lines.id')->map(fn ($id) => (int) $id)->all();
+    }
+
+    /**
+     * Lignes d'achat de l'affaire : sur une de ses tâches, ou d'une commande
+     * d'achat rattachée par son en-tête (PurchaseAffairLink).
+     *
+     * @param int[] $quoteIds
+     * @param int[] $orderIds
+     * @param int[] $taskIds
+     */
+    public static function purchaseLinesQuery(int $opportunityId, array $quoteIds, array $orderIds, array $taskIds): Builder
+    {
+        $linkedPurchases = Purchases::query()->select('id')->where(function ($q) use ($opportunityId, $quoteIds, $orderIds) {
+            $q->where('opportunities_id', $opportunityId);
+            if ($quoteIds !== []) {
+                $q->orWhereIn('quotes_id', $quoteIds);
+            }
+            if ($orderIds !== []) {
+                $q->orWhereIn('orders_id', $orderIds);
+            }
+        });
+
+        return PurchaseLines::query()->where(function ($q) use ($taskIds, $linkedPurchases) {
+            $q->whereIn('purchase_lines.purchases_id', $linkedPurchases);
+            if ($taskIds !== []) {
+                $q->orWhereIn('purchase_lines.tasks_id', $taskIds);
+            }
+        });
     }
 
     /** @return int[] */
