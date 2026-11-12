@@ -60,6 +60,14 @@
         </div>
 
         <div class="commercial-feature__body">
+            {{-- Capture de NEST2BEND : affichée tant qu'aucune liaison n'est en place (écran commercial). --}}
+            <figure class="commercial-feature__screenshot">
+                <img src="{{ asset('images/commercial/nest2bend-simulation.png') }}"
+                     alt="{{ __('commercial.press_brake.screenshot_alt') }}"
+                     width="1541" height="840" loading="lazy" class="img-fluid">
+                <figcaption>{{ __('commercial.press_brake.screenshot_caption') }}</figcaption>
+            </figure>
+
             <div class="row">
                 @foreach ([
                     ['icon' => 'fa-ruler-combined', 'key' => 'designer'],

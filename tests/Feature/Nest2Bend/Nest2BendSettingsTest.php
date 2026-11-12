@@ -96,7 +96,10 @@ class Nest2BendSettingsTest extends TestCase
         Http::fake();
 
         $this->assertTrue(app(Nest2BendAccess::class)->state()['show_commercial']);
-        $this->punchDesigner()->assertSee('commercial-feature', false)->assertDontSee(__('nest2bend.panel.title'));
+        $this->punchDesigner()
+            ->assertSee('commercial-feature', false)
+            ->assertSee('images/commercial/nest2bend-simulation.png', false)
+            ->assertDontSee(__('nest2bend.panel.title'));
         $this->get(route('admin.integrations.index'))->assertOk()->assertSee(__('nest2bend.badge.none'));
 
         Http::assertNothingSent();
@@ -155,7 +158,10 @@ class Nest2BendSettingsTest extends TestCase
         $state = app(Nest2BendAccess::class)->state();
         $this->assertTrue($state['can_simulate']);
         $this->assertFalse($state['warning']);
-        $this->punchDesigner()->assertDontSee('commercial-feature', false)->assertSee(__('nest2bend.panel.title'));
+        $this->punchDesigner()
+            ->assertDontSee('commercial-feature', false)
+            ->assertDontSee('nest2bend-simulation.png', false)
+            ->assertSee(__('nest2bend.panel.title'));
     }
 
     /**

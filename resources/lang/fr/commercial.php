@@ -13,6 +13,8 @@ return [
         'simulation_text'  => 'Vérification de la pièce pliée et des collisions avec l\'outil.',
         'catalog_title' => 'Catalogue constructeurs',
         'catalog_text'  => 'Poinçons, matrices et adaptateurs consultables et filtrables.',
+        'screenshot_alt'     => 'Simulation du pliage dans NEST2BEND : pièce, outillage, séquence et détection de collision',
+        'screenshot_caption' => 'Simulation du pli 2 dans NEST2BEND : la collision avec le poinçon est détectée avant d\'aller à la presse.',
     ],
     'nesting' => [
         'title' => 'Imbrication des pièces sur tôle',
