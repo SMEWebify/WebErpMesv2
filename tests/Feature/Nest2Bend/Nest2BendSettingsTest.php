@@ -97,7 +97,7 @@ class Nest2BendSettingsTest extends TestCase
 
         $this->assertTrue(app(Nest2BendAccess::class)->state()['show_commercial']);
         $this->punchDesigner()
-            ->assertSee('commercial-feature', false)
+            ->assertSee('class="commercial-feature"', false)
             ->assertSee('images/commercial/nest2bend-simulation.png', false)
             ->assertDontSee(__('nest2bend.panel.title'));
         $this->get(route('admin.integrations.index'))->assertOk()->assertSee(__('nest2bend.badge.none'));
@@ -120,7 +120,7 @@ class Nest2BendSettingsTest extends TestCase
         $this->assertFalse($state['can_simulate']);
 
         $this->get(route('admin.integrations.index'))->assertOk()->assertSee(__('nest2bend.state.invalid'));
-        $this->punchDesigner()->assertSee('commercial-feature', false);
+        $this->punchDesigner()->assertSee('class="commercial-feature"', false);
     }
 
     public function test_a_subscription_that_cannot_write_is_shown_as_expired_with_a_link(): void
@@ -139,7 +139,7 @@ class Nest2BendSettingsTest extends TestCase
         $this->get(route('admin.integrations.index'))->assertOk()
             ->assertSee(__('nest2bend.state.expired'))
             ->assertSee(self::N2B, false);
-        $this->punchDesigner()->assertDontSee('commercial-feature', false)->assertSee(__('nest2bend.panel.expired'));
+        $this->punchDesigner()->assertDontSee('class="commercial-feature"', false)->assertSee(__('nest2bend.panel.expired'));
     }
 
     public function test_an_active_subscription_removes_the_commercial_screen(): void
@@ -159,7 +159,7 @@ class Nest2BendSettingsTest extends TestCase
         $this->assertTrue($state['can_simulate']);
         $this->assertFalse($state['warning']);
         $this->punchDesigner()
-            ->assertDontSee('commercial-feature', false)
+            ->assertDontSee('class="commercial-feature"', false)
             ->assertDontSee('nest2bend-simulation.png', false)
             ->assertSee(__('nest2bend.panel.title'));
     }
