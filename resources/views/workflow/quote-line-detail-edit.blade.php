@@ -330,6 +330,7 @@
             </h6>
         </div>
         <div class="card-body">
+            @include('include.nest2bend-simulate', ['line' => $line, 'idQuote' => $idQuote, 'bending' => $bending])
             @include('include.file-manager-mount', [
                 'fileableType' => 'quote-line',
                 'fileableId'   => $line->id,

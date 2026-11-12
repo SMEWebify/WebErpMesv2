@@ -62,7 +62,11 @@
                 <td>
                   @if($MethodsService->is_nesting)
                     <span class="badge text-bg-primary"><i class="fas fa-th"></i></span>
-                  @else
+                  @endif
+                  @if($MethodsService->is_bending)
+                    <span class="badge text-bg-info" title="{{ __('nest2bend.is_bending') }}"><i class="fas fa-bezier-curve"></i></span>
+                  @endif
+                  @if(! $MethodsService->is_nesting && ! $MethodsService->is_bending)
                     <span class="text-muted">-</span>
                   @endif
                 </td>
@@ -131,6 +135,17 @@
                               @if($MethodsService->is_nesting) checked @endif>
                             <label class="form-check-label" for="is_nesting_{{ $MethodsService->id }}">
                               Moyen de débit (nesting)
+                            </label>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <div class="form-check form-switch">
+                            <input type="hidden" name="is_bending" value="0">
+                            <input type="checkbox" class="form-check-input"
+                              id="is_bending_{{ $MethodsService->id }}" name="is_bending" value="1"
+                              @if($MethodsService->is_bending) checked @endif>
+                            <label class="form-check-label" for="is_bending_{{ $MethodsService->id }}">
+                              {{ __('nest2bend.is_bending') }}
                             </label>
                           </div>
                         </div>
@@ -265,6 +280,13 @@
                 <input type="hidden" name="is_nesting" value="0">
                 <input type="checkbox" class="form-check-input" id="is_nesting_new" name="is_nesting" value="1">
                 <label class="form-check-label" for="is_nesting_new">Moyen de débit (nesting)</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input type="hidden" name="is_bending" value="0">
+                <input type="checkbox" class="form-check-input" id="is_bending_new" name="is_bending" value="1">
+                <label class="form-check-label" for="is_bending_new">{{ __('nest2bend.is_bending') }}</label>
               </div>
             </div>
             <div class="mb-3">

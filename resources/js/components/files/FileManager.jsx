@@ -36,6 +36,8 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
         try {
             const { files: fetched } = await listFiles(endpoints, target);
             setFiles(fetched);
+            // Autres composants de la page qui dépendent des fichiers (bouton NEST2BEND : STEP présent ?).
+            window.dispatchEvent(new CustomEvent('wem:files-changed', { detail: { target, files: fetched } }));
             setSelectedId((current) => {
                 if (current && fetched.some((file) => file.id === current)) return current;
                 return fetched.find((file) => file.is_viewable)?.id ?? fetched[0]?.id ?? null;

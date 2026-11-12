@@ -31,13 +31,13 @@ class MethodsServices extends Model
     public const TYPE_COMPOSED        = 8;
 
     // Fillable attributes for mass assignment
-    protected $fillable = ['code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'picture', 'companies_id', 'is_nesting', 'requires_release'];
+    protected $fillable = ['code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'picture', 'companies_id', 'is_nesting', 'is_bending', 'requires_release'];
 
     /**
      * `requires_release` : une phase terminée sur ce poste attend le visa d'un
      * porteur de `task-release` (App\Services\Production\TaskRelease).
      */
-    protected $casts = ['is_nesting' => 'boolean', 'requires_release' => 'boolean'];
+    protected $casts = ['is_nesting' => 'boolean', 'is_bending' => 'boolean', 'requires_release' => 'boolean'];
 
     public function Families()
     {

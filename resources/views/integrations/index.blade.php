@@ -366,6 +366,72 @@
             </div>
         </div>
 
+        {{-- ──────────────────── NEST2BEND (simulation de pliage) ──────────────────── --}}
+        @php
+            $n2bTheme = [
+                'none' => 'secondary', 'unknown' => 'warning', 'invalid' => 'danger',
+                'expired' => 'danger', 'active' => $nest2bend['warning'] ? 'warning' : 'success',
+            ][$nest2bend['status']] ?? 'secondary';
+        @endphp
+        <div class="col-md-6">
+            <div class="card card-outline card-{{ $n2bTheme }} mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-bezier-curve me-1"></i> {{ __('nest2bend.title') }}
+                    </h3>
+                    <div class="card-tools">
+                        <span class="badge text-bg-{{ $n2bTheme }}">{{ __('nest2bend.badge.' . $nest2bend['status']) }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">{{ __('nest2bend.card_lead') }}</p>
+
+                    @if($nest2bend['status'] === 'invalid')
+                        <p class="text-danger mb-2"><i class="fas fa-times-circle me-1"></i>{{ __('nest2bend.state.invalid') }}</p>
+                    @elseif($nest2bend['expired'])
+                        <p class="text-danger mb-2">
+                            <i class="fas fa-exclamation-triangle me-1"></i>{{ __('nest2bend.state.expired') }}
+                            @if($nest2bend['app_url'])
+                                <a href="{{ $nest2bend['app_url'] }}" target="_blank" rel="noopener">{{ __('nest2bend.button.renew') }}</a>
+                            @endif
+                        </p>
+                    @elseif($nest2bend['warning'])
+                        <p class="text-warning-emphasis mb-2">
+                            <i class="fas fa-hourglass-half me-1"></i>{{ __('nest2bend.state.warning', ['etat' => __('nest2bend.etats.' . $nest2bend['etat']), 'echeance' => $nest2bend['echeance']?->format('d/m/Y') ?? '—']) }}
+                        </p>
+                    @elseif($nest2bend['status'] === 'unknown')
+                        <p class="text-warning-emphasis mb-2"><i class="fas fa-question-circle me-1"></i>{{ __('nest2bend.state.unknown') }}</p>
+                    @endif
+
+                    @if($nest2bend['configured'])
+                        <dl class="row mb-0">
+                            @if($nest2bend['societe'])
+                                <dt class="col-6">{{ __('nest2bend.societe') }}</dt>
+                                <dd class="col-6">{{ $nest2bend['societe'] }}</dd>
+                            @endif
+                            @if($nest2bend['echeance'])
+                                <dt class="col-6">{{ __('nest2bend.echeance') }}</dt>
+                                <dd class="col-6">{{ $nest2bend['echeance']->format('d/m/Y') }}</dd>
+                            @endif
+                            <dt class="col-6">{{ __('nest2bend.checked_at') }}</dt>
+                            <dd class="col-6">
+                                @if($nest2bend['checked_at'])
+                                    <span title="{{ $nest2bend['checked_at'] }}">{{ $nest2bend['checked_at']->diffForHumans() }}</span>
+                                @else
+                                    <span class="text-muted">{{ __('nest2bend.never_checked') }}</span>
+                                @endif
+                            </dd>
+                        </dl>
+                    @endif
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{{ route('admin.integrations.nest2bend.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> {{ __('nest2bend.configure') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }} mb-3">

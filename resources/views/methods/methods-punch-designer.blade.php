@@ -12,6 +12,45 @@
 @stop
 
 @section('content')
+    @if(isset($nest2bend) && ! $nest2bend['show_commercial'])
+        <div class="card card-outline card-{{ $nest2bend['expired'] ? 'danger' : 'success' }} mb-3">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-bezier-curve me-1"></i> {{ __('nest2bend.panel.title') }}</h3>
+                <div class="card-tools">
+                    <span class="badge text-bg-{{ $nest2bend['expired'] ? 'danger' : 'success' }}">{{ __('nest2bend.badge.' . $nest2bend['status']) }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                @if($nest2bend['expired'])
+                    <div class="alert alert-danger">{{ __('nest2bend.panel.expired') }}</div>
+                @elseif($nest2bend['warning'])
+                    <div class="alert alert-warning">
+                        {{ __('nest2bend.state.warning', ['etat' => __('nest2bend.etats.' . $nest2bend['etat']), 'echeance' => $nest2bend['echeance']?->format('d/m/Y') ?? '—']) }}
+                    </div>
+                @endif
+                <p>{{ __('nest2bend.panel.lead') }}</p>
+                <dl class="row mb-3">
+                    @if($nest2bend['societe'])
+                        <dt class="col-sm-3">{{ __('nest2bend.societe') }}</dt>
+                        <dd class="col-sm-9">{{ $nest2bend['societe'] }}</dd>
+                    @endif
+                    @if($nest2bend['echeance'])
+                        <dt class="col-sm-3">{{ __('nest2bend.echeance') }}</dt>
+                        <dd class="col-sm-9">{{ $nest2bend['echeance']->format('d/m/Y') }}</dd>
+                    @endif
+                    @if($nest2bend['presses_max'])
+                        <dt class="col-sm-3">{{ __('nest2bend.presses_max') }}</dt>
+                        <dd class="col-sm-9">{{ $nest2bend['presses_max'] }}</dd>
+                    @endif
+                </dl>
+                @if($nest2bend['app_url'])
+                    <a href="{{ $nest2bend['app_url'] }}" target="_blank" rel="noopener" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt me-1"></i>{{ $nest2bend['expired'] ? __('nest2bend.button.renew') : __('nest2bend.open_app') }}
+                    </a>
+                @endif
+            </div>
+        </div>
+    @else
     <div class="commercial-feature">
         <div class="commercial-feature__hero">
             <span class="commercial-feature__badge"><i class="fas fa-star me-1"></i>{{ __('commercial.badge') }}</span>
@@ -47,6 +86,7 @@
             </div>
         </div>
     </div>
+    @endif
 @stop
 
 @section('css')

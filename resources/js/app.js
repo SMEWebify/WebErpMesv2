@@ -1687,6 +1687,30 @@ async function mountFileManagers() {
     });
 }
 
+// Bouton « Simuler le pliage » (NEST2BEND en iframe) d'une ligne de devis.
+async function mountBendingSimulations() {
+    const els = document.querySelectorAll('[data-react="bending-simulation"]');
+    if (!els.length) return;
+    const { default: BendingSimulationButton } = await import('./components/bending/BendingSimulationButton.jsx');
+    els.forEach(el => {
+        const parse = (key) => { try { return JSON.parse(el.dataset[key] ?? 'null'); } catch { return null; } };
+        createRoot(el).render(
+            React.createElement(BendingSimulationButton, {
+                sessionUrl: el.dataset.sessionUrl,
+                resultUrl:  el.dataset.resultUrl,
+                active:     el.dataset.active === '1',
+                expired:    el.dataset.expired === '1',
+                hasStep:    el.dataset.hasStep === '1',
+                stepName:   el.dataset.stepName || null,
+                warning:    el.dataset.warning || null,
+                appUrl:     el.dataset.appUrl || null,
+                target:     { type: el.dataset.fileableType, id: Number(el.dataset.fileableId) },
+                trans:      parse('trans') ?? {},
+            })
+        );
+    });
+}
+
 // Phone-first on-site visit screen (opportunity-visit.blade.php).
 async function mountOpportunityVisit() {
     const el = document.querySelector('[data-react="opportunity-visit"]');
@@ -1887,6 +1911,7 @@ mountTaskLines();
 mountLogsViewer();
 mountAccessLogApp();
 mountFileManagers();
+mountBendingSimulations();
 mountOpportunityVisit();
 mountAffairSummary();
 mountAffairRisks();
