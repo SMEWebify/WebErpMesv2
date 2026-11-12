@@ -33,10 +33,14 @@ async function post(url, body, timeoutMs = 30000) {
  *    l'origine et de la fenêtre émettrice.
  * 3. Le serveur relit le résultat et l'ajoute au commentaire interne de la ligne ; le champ
  *    du formulaire de la page est mis à jour pour qu'un enregistrement ne l'écrase pas.
+ * 4. Le serveur range la fiche de réglage PDF dans la GED de la ligne. En cas d'échec,
+ *    « Récupérer la fiche » retente (toujours côté serveur, avec la clé).
  */
 export default function BendingSimulationButton({
     sessionUrl,
     resultUrl,
+    sheetUrl,
+    last: initialLast,
     active,
     expired: initiallyExpired,
     hasStep: initiallyHasStep,
@@ -55,6 +59,8 @@ export default function BendingSimulationButton({
     const [error, setError] = useState(null);
     const [notice, setNotice] = useState(null);
     const [remarks, setRemarks] = useState([]);
+    const [last, setLast] = useState(initialLast ?? null);
+    const [retrying, setRetrying] = useState(false);
     const iframeRef = useRef(null);
 
     // Un STEP déposé ou retiré dans la GED de la ligne met le bouton à jour sans recharger.
@@ -67,6 +73,25 @@ export default function BendingSimulationButton({
         window.addEventListener('wem:files-changed', onFiles);
         return () => window.removeEventListener('wem:files-changed', onFiles);
     }, [target]);
+
+    // Fiche rangée : la GED de la page se recharge pour la montrer.
+    const showLast = useCallback((value) => {
+        setLast(value);
+        if (value?.sheet === 'stored') {
+            window.dispatchEvent(new CustomEvent('wem:files-refresh', { detail: { target } }));
+        }
+    }, [target]);
+
+    const retrySheet = async () => {
+        setError(null);
+        setNotice(null);
+        setRetrying(true);
+        const res = await post(sheetUrl, {}, 90000);
+        setRetrying(false);
+        if (res.data?.last) showLast(res.data.last);
+        if (res.ok) setNotice(res.data.message);
+        else setError(res.data?.message || (res.status === 0 ? t('unavailable') : t('unexpected')));
+    };
 
     const close = useCallback(() => {
         setFrame(null);
@@ -89,7 +114,8 @@ export default function BendingSimulationButton({
             field.value = res.data.internal_comment;
         }
         setNotice(res.data.message);
-    }, [resultUrl, t]);
+        showLast(res.data.last ?? null);
+    }, [resultUrl, t, showLast]);
 
     // Écoute de l'iframe, seulement tant qu'elle est ouverte.
     useEffect(() => {
@@ -153,6 +179,39 @@ export default function BendingSimulationButton({
                     </small>
                 )}
             </div>
+
+            {last && (
+                <div className="small border rounded px-2 py-1 mt-2">
+                    <div className="fw-semibold mb-1"><i className="fas fa-history me-1" />{t('last_title')}{last.date ? ` — ${last.date}` : ''}</div>
+                    {last.presse && <div><span className="text-muted">{t('last_press')} : </span>{last.presse}</div>}
+                    {last.outils?.length > 0 && <div><span className="text-muted">{t('last_tools')} : </span>{last.outils.join(' · ')}</div>}
+                    {last.sequence && <div><span className="text-muted">{t('last_sequence')} : </span>{last.sequence}</div>}
+                    {last.sheet && (
+                        <div className="d-flex flex-wrap align-items-center gap-2 mt-1">
+                            <span className="text-muted">{t('last_sheet')} :</span>
+                            {last.sheet === 'stored' && last.sheet_url && (
+                                <a href={last.sheet_url} target="_blank" rel="noopener noreferrer">
+                                    <i className="fas fa-file-pdf me-1" />{last.sheet_name || t('sheet_open')}
+                                </a>
+                            )}
+                            {/* pending resté tel quel : téléchargement interrompu, on peut retenter. */}
+                            {(last.sheet === 'failed' || last.sheet === 'pending') && (
+                                <>
+                                    <span className={last.sheet === 'failed' ? 'text-warning-emphasis' : ''}>
+                                        {last.sheet === 'failed' ? last.sheet_error : t('sheet_pending')}
+                                    </span>
+                                    <button type="button" className="btn btn-xs btn-sm btn-outline-secondary py-0"
+                                            onClick={retrySheet} disabled={retrying || phase !== 'idle'}>
+                                        {retrying
+                                            ? <><i className="fas fa-spinner fa-spin me-1" />{t('sheet_retrying')}</>
+                                            : <><i className="fas fa-redo me-1" />{t('sheet_retry')}</>}
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {warning && !expired && <div className="small text-warning-emphasis mt-1"><i className="fas fa-hourglass-half me-1" />{warning}</div>}
             {error && <div className="alert alert-danger py-2 mt-2 mb-0" role="alert">{error}</div>}

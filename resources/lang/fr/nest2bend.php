@@ -77,6 +77,33 @@ return [
 
     'result_saved' => 'Temps de pliage ajouté au commentaire interne : :summary',
 
+    // Fiche de réglage PDF (champ `fiche` du résultat), rangée dans la GED de la ligne
+    'sheet' => [
+        'comment'           => 'Fiche de réglage NEST2BEND (presse plieuse)',
+        'stored'            => 'Fiche de réglage rangée dans les documents de la ligne : :name',
+        'pending'           => 'Fiche de réglage en cours de récupération…',
+        'retry'             => 'Récupérer la fiche',
+        'retrying'          => 'Récupération de la fiche…',
+        'open'              => 'Ouvrir la fiche',
+        'none'              => 'Aucune fiche de réglage à récupérer pour cette ligne.',
+        'error_404'         => 'Fiche de réglage indisponible : pièce non simulée, aucun poinçon choisi, ou un outil ou la presse a quitté l\'atelier NEST2BEND depuis la simulation.',
+        'error_key'         => 'Fiche de réglage non récupérée : clé API NEST2BEND refusée ou abonnement expiré.',
+        'error_unavailable' => 'Fiche de réglage non récupérée : NEST2BEND indisponible. Réessayez plus tard (le résultat reste lisible 30 jours).',
+        'error_other'       => 'Fiche de réglage non récupérée (statut :status).',
+    ],
+
+    // Dernière simulation de la ligne (resultat.simulation)
+    'last' => [
+        'title'    => 'Dernière simulation',
+        'press'    => 'Presse',
+        'tools'    => 'Outils',
+        'sequence' => 'Ordre de pliage',
+        'sheet'    => 'Fiche de réglage',
+        'punch'    => 'Poinçon :tool',
+        'die'      => 'matrice :tool',
+        'flipped'  => '(retourné)',
+    ],
+
     'comment' => [
         'entry'       => '[NEST2BEND :date] :summary',
         'preparation' => 'Préparation :time',

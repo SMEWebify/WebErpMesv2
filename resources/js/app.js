@@ -1699,6 +1699,8 @@ async function mountBendingSimulations() {
             React.createElement(BendingSimulationButton, {
                 sessionUrl: el.dataset.sessionUrl,
                 resultUrl:  el.dataset.resultUrl,
+                sheetUrl:   el.dataset.sheetUrl,
+                last:       parse('last'),
                 active:     el.dataset.active === '1',
                 expired:    el.dataset.expired === '1',
                 hasStep:    el.dataset.hasStep === '1',

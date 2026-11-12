@@ -385,6 +385,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // NEST2BEND : session d'iframe (STEP de la GED envoyé côté serveur) puis relecture du résultat.
         Route::post('/{quoteId}/lines/{id}/nest2bend/session', [\App\Http\Controllers\Workflow\BendingSimulationController::class, 'store'])->whereNumber(['quoteId', 'id'])->middleware('throttle:20,1')->name('quotes.lines.nest2bend.session');
         Route::post('/{quoteId}/lines/{id}/nest2bend/result', [\App\Http\Controllers\Workflow\BendingSimulationController::class, 'complete'])->whereNumber(['quoteId', 'id'])->middleware('throttle:30,1')->name('quotes.lines.nest2bend.result');
+        // « Récupérer la fiche » : nouvel essai du PDF de réglage (mis en page à chaque appel chez NEST2BEND).
+        Route::post('/{quoteId}/lines/{id}/nest2bend/sheet', [\App\Http\Controllers\Workflow\BendingSimulationController::class, 'sheet'])->whereNumber(['quoteId', 'id'])->middleware('throttle:10,1')->name('quotes.lines.nest2bend.sheet');
         Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->name('quotes.delivery.simulation');
         //Project estimate
         Route::post('project-estimate/save/{id}', 'App\Http\Controllers\Workflow\QuotesController@saveProjectEstimate')->name('quotes.project.estimates');

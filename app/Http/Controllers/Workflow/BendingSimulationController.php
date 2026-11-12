@@ -47,7 +47,27 @@ class BendingSimulationController extends Controller
             'message'          => __('nest2bend.result_saved', ['summary' => $result['summary']]),
             'summary'          => $result['summary'],
             'internal_comment' => $result['internal_comment'],
+            'last'             => $result['last'],
         ]);
+    }
+
+    /** « Récupérer la fiche » : nouvel essai de téléchargement de la fiche de réglage PDF. */
+    public function sheet(Request $request, int $quoteId, int $id): JsonResponse
+    {
+        $line = $this->line($quoteId, $id);
+
+        try {
+            $last = $this->service->retrySheet($line, $request->user());
+        } catch (Nest2BendException $e) {
+            return $this->error($e);
+        }
+
+        return response()->json([
+            'message' => $last['sheet'] === \App\Models\Workflow\BendingSimulation::SHEET_STORED
+                ? __('nest2bend.sheet.stored', ['name' => $last['sheet_name']])
+                : $last['sheet_error'],
+            'last'    => $last,
+        ], $last['sheet'] === \App\Models\Workflow\BendingSimulation::SHEET_STORED ? 200 : 502);
     }
 
     private function line(int $quoteId, int $id): QuoteLines

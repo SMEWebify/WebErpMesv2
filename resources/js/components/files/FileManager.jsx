@@ -52,6 +52,17 @@ export default function FileManager({ endpoints, target, roles, accept, trans, c
 
     useEffect(() => { refresh(); }, [refresh]);
 
+    // Fichier rangé par un autre composant de la page (fiche de réglage NEST2BEND…).
+    useEffect(() => {
+        const onRefresh = (event) => {
+            const wanted = event.detail?.target;
+            if (wanted?.type !== target?.type || Number(wanted?.id) !== Number(target?.id)) return;
+            refresh();
+        };
+        window.addEventListener('wem:files-refresh', onRefresh);
+        return () => window.removeEventListener('wem:files-refresh', onRefresh);
+    }, [refresh, target]);
+
     // Retour sur la page après un passage dans Excel / Word : la liste montre
     // les versions enregistrées entre-temps.
     useEffect(() => {

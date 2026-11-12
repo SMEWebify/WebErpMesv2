@@ -5,6 +5,7 @@ namespace App\Services\Integrations\Nest2Bend\Contracts;
 use App\Services\Integrations\Nest2Bend\Data\AccountState;
 use App\Services\Integrations\Nest2Bend\Data\BendingResult;
 use App\Services\Integrations\Nest2Bend\Data\EmbedSession;
+use App\Services\Integrations\Nest2Bend\Data\SetupSheet;
 use App\Services\Integrations\Nest2Bend\Exceptions\Nest2BendException;
 
 /**
@@ -35,4 +36,13 @@ interface Nest2BendGateway
      * @throws Nest2BendException
      */
     public function result(string $resultId): BendingResult;
+
+    /**
+     * GET {fiche} : fiche de réglage PDF (URL absolue lue dans le résultat). Le PDF est mis
+     * en page à chaque appel. 404 : pas de fiche, ou outil / presse retiré de l'atelier ;
+     * 503 : moteur indisponible.
+     *
+     * @throws Nest2BendException
+     */
+    public function setupSheet(string $url): SetupSheet;
 }
