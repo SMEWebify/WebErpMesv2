@@ -24,4 +24,15 @@ return [
         'stock_title' => '材料需求',
         'stock_text'  => '板材和棒材数量与库存及在途采购比对。',
     ],
+    'digital_twin' => [
+        'title' => '车间数字孪生',
+        'lead'  => '车间模型和生产流程仿真仅在由 Nest2Prod 发行的 ERP 商业版中提供。',
+        'video' => '数字孪生介绍视频',
+        'flow_title' => '实时流程',
+        'flow_text'  => '生产订单按实际进度在各工作中心之间流转。',
+        'simulation_title' => '场景仿真',
+        'simulation_text'  => '在应用到排程之前，先测试紧急订单、设备故障或换班。',
+        'bottleneck_title' => '瓶颈',
+        'bottleneck_text'  => '按工作中心显示排队和负荷率，找出流程受阻之处。',
+    ],
 ];

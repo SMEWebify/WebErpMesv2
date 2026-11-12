@@ -989,6 +989,11 @@ return [
                         'label'       => 'Beta',
                         'label_color' => 'danger',
                     ],
+                    [
+                        'text' => 'digital_twin_trans_key',
+                        'url'  => 'production/digital-twin',
+                        'icon_color' => 'sky',
+                    ],
                 ],
                 env('NESTING_ENABLED', false) ? [
                     [

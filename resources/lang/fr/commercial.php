@@ -24,4 +24,15 @@ return [
         'stock_title' => 'Besoin matière',
         'stock_text'  => 'Nombre de tôles et de barres croisé avec le stock et les achats en attente.',
     ],
+    'digital_twin' => [
+        'title' => 'Jumeau numérique de l\'atelier',
+        'lead'  => 'La représentation de l\'atelier et la simulation des flux de production sont disponibles dans la version commerciale de l\'ERP, éditée par Nest2Prod.',
+        'video' => 'Vidéo de présentation du jumeau numérique',
+        'flow_title' => 'Flux en direct',
+        'flow_text'  => 'Les ordres de fabrication circulent entre les postes de charge, au rythme de l\'avancement réel.',
+        'simulation_title' => 'Simulation de scénarios',
+        'simulation_text'  => 'Tester une commande urgente, une panne ou un changement d\'équipe avant de l\'appliquer au planning.',
+        'bottleneck_title' => 'Goulets d\'étranglement',
+        'bottleneck_text'  => 'Files d\'attente et taux de charge par poste pour repérer où le flux se bloque.',
+    ],
 ];

@@ -29,6 +29,7 @@ return [
     'workflow_trans_key'                       => 'Workflow',
     'gantt_trans_key'                          => 'Gantt',
     'nesting_trans_key'                        => 'Nesting',
+    'digital_twin_trans_key'                   => 'Digital twin',
     'delivery_notes_trans_key'                 => 'Delivery notes',
     'deliverys_notes_request_trans_key'        => 'Request lines',
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',

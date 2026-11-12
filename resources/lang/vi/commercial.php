@@ -24,4 +24,15 @@ return [
         'stock_title' => 'Nhu cầu vật liệu',
         'stock_text'  => 'Số tấm và số thanh đối chiếu với tồn kho và đơn mua đang chờ.',
     ],
+    'digital_twin' => [
+        'title' => 'Bản sao số của xưởng',
+        'lead'  => 'Mô hình xưởng và mô phỏng dòng sản xuất có trong phiên bản thương mại của ERP, do Nest2Prod phát hành.',
+        'video' => 'Video giới thiệu bản sao số',
+        'flow_title' => 'Dòng chảy trực tiếp',
+        'flow_text'  => 'Lệnh sản xuất di chuyển giữa các trạm theo tiến độ thực tế.',
+        'simulation_title' => 'Mô phỏng kịch bản',
+        'simulation_text'  => 'Thử một đơn hàng gấp, một sự cố máy hoặc thay đổi ca trước khi áp dụng vào kế hoạch.',
+        'bottleneck_title' => 'Điểm nghẽn',
+        'bottleneck_text'  => 'Hàng chờ và tỷ lệ tải theo từng trạm để tìm nơi dòng chảy bị tắc.',
+    ],
 ];

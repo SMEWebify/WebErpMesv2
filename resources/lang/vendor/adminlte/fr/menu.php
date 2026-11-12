@@ -29,6 +29,7 @@ return [
     'workflow_trans_key'                       => 'Flux de travail',
     'gantt_trans_key'                          => 'Gantt',
     'nesting_trans_key'                        => 'Nesting',
+    'digital_twin_trans_key'                   => 'Jumeau numérique',
     'delivery_notes_trans_key'                 => 'Bons de livraison',
     'deliverys_notes_request_trans_key'        => 'Lignes en attente(s)',
     'deliverys_notes_list_trans_key'           => 'Bons de livraison',

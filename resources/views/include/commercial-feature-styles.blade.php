@@ -1,4 +1,4 @@
-{{-- Styles de l'écran « disponible dans la version commerciale » (presse plieuse, nesting). --}}
+{{-- Styles de l'écran « disponible dans la version commerciale » (presse plieuse, nesting, jumeau numérique). --}}
 <style>
     .commercial-feature {
         max-width: 920px;
@@ -67,6 +67,12 @@
     .commercial-feature__point p {
         margin-bottom: 0;
         color: #6c757d;
+    }
+    .commercial-feature__video {
+        display: block;
+        width: 100%;
+        border-radius: .5rem;
+        background: #000;
     }
     .commercial-feature__cta {
         padding-left: 2rem;
