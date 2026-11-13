@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Methods\MethodsTools;
 use App\Models\Planning\SubAssembly;
+use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
@@ -50,6 +51,7 @@ class N2PPayloadBuilderTest extends TestCase
         $task = Mockery::mock('App\Models\Planning\Task')->makePartial();
         $task->shouldReceive('TotalTime')->andReturn(1.5);
         $task->code = 'CUT';
+        $task->ordre = 20;
         $task->label = 'Laser cut';
         $task->start_date = Carbon::parse('2026-02-21 08:00:00');
         $task->end_date = Carbon::parse('2026-02-21 10:00:00');
@@ -85,6 +87,7 @@ class N2PPayloadBuilderTest extends TestCase
         $this->assertSame('SymbolPart', $job['part_type']);
         $this->assertCount(1, $job['tasks']);
         $this->assertSame('CUT', $job['tasks'][0]['operation_code']);
+        $this->assertSame(20, $job['tasks'][0]['seq']);
         $this->assertSame('CNC01', $job['tasks'][0]['workcenter_code']);
         $this->assertSame('2026-02-21 08:00:00', $job['tasks'][0]['planned_start_at']);
         $this->assertSame(90, $job['tasks'][0]['planned_time_min']);
@@ -161,5 +164,51 @@ class N2PPayloadBuilderTest extends TestCase
         $payload = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false]);
 
         $this->assertSame('StandardPart', $payload['jobs'][0]['part_type']);
+    }
+
+    public function test_production_released_follows_the_option(): void
+    {
+        $build = function (?string $releasedAt): array {
+            $order = new Orders(['id' => 1, 'priority' => 3]);
+            $line = (new OrderLines())->forceFill(['id' => 1, 'qty' => 1, 'released_for_production_at' => $releasedAt]);
+            $line->setRelation('OrderLineDetails', null);
+            $line->setRelation('Task', new Collection());
+            $line->setRelation('SubAssembly', new Collection());
+            $line->setRelation('Product', null);
+            $order->setRelation('OrderLines', new Collection([$line]));
+            $order->setRelation('companie', null);
+
+            return (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => false])['jobs'][0];
+        };
+
+        config(['production.require_release' => false]);
+        $this->assertArrayNotHasKey('production_released', $build('2026-11-01 08:00:00'));
+
+        // Option active : envoyé à chaque envoi, false compris.
+        config(['production.require_release' => true]);
+        $this->assertTrue($build('2026-11-01 08:00:00')['production_released']);
+        $this->assertFalse($build(null)['production_released']);
+    }
+
+    public function test_seq_is_omitted_below_one(): void
+    {
+        $order = new Orders(['id' => 1, 'priority' => 3]);
+        $line = new OrderLines(['id' => 1, 'qty' => 1]);
+        $line->setRelation('OrderLineDetails', null);
+        $line->setRelation('SubAssembly', new Collection());
+        $line->setRelation('Product', null);
+
+        $task = (new Task())->forceFill(['id' => 9, 'code' => 'PLI', 'ordre' => 0]);
+        $task->setRelation('service', null);
+        $task->setRelation('MethodsTools', null);
+        $line->setRelation('Task', new Collection([$task]));
+
+        $order->setRelation('OrderLines', new Collection([$line]));
+        $order->setRelation('companie', null);
+
+        $tasks = (new N2PPayloadBuilder())->build($order, ['n2p_send_tasks' => true])['jobs'][0]['tasks'];
+
+        // Le MES refuse un seq à 0 (422) ; absent, il prend la position.
+        $this->assertArrayNotHasKey('seq', $tasks[0]);
     }
 }

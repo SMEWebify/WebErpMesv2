@@ -920,8 +920,12 @@ class Task extends Model
      *  - $operationCode: task.code si défini, sinon methods_services.code
      *                    (LASER, PLI...), sinon "op-<task.id>" (voir
      *                    N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX)
+     *  - $seq          : rang de l'opération dans la gamme (tasks.ordre, `seq` du
+     *                    payload). Distingue deux opérations de même code sur une
+     *                    ligne ; renseigné, la tâche de ce rang doit porter le code
+     *                    reçu, sinon rien n'est trouvé.
      */
-    public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode): ?self
+    public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode, ?int $seq = null): ?self
     {
         $orderLineId = null;
         if (str_starts_with($ofCode, 'OF')) {
@@ -935,6 +939,18 @@ class Task extends Model
         }
 
         $query = static::query()->where('order_lines_id', $orderLineId);
+
+        if ($seq !== null) {
+            return $query->where('ordre', $seq)
+                ->with('service:id,code')
+                ->orderBy('id')
+                ->get()
+                ->first(fn (self $task) => in_array($operationCode, [
+                    (string) $task->code,
+                    (string) $task->service?->code,
+                    \App\Services\N2P\N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey(),
+                ], true));
+        }
 
         $fallbackPrefix = \App\Services\N2P\N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX;
         if (str_starts_with($operationCode, $fallbackPrefix)) {

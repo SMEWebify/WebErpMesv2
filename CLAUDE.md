@@ -135,7 +135,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Commande | Description |
 |---|---|
 | `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (PHP, extensions, APP_KEY, Redis, DB, Pusher) |
-| `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat) |
+| `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat). `--open [--dry-run] [--force]` : renvoie toutes les commandes déjà envoyées et non livrées (alignement des rangs `seq`, `docs/pointage-scan.md`) |
 | `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |

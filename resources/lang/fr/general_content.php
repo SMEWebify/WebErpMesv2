@@ -1950,4 +1950,5 @@ return [
     'absence_notification_requested_trans_key' => 'Demande d\'absence à valider : :name, du :start au :end',
     'absence_notification_approved_trans_key' => 'Votre absence du :start au :end est validée',
     'absence_notification_refused_trans_key' => 'Votre absence du :start au :end est refusée',
+    'task_canceled_by_integration_trans_key' => 'Tâche annulée dans le MES',
 ];

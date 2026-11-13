@@ -25,7 +25,8 @@ class StoreServicesRequest extends FormRequest
     {
         return [
             //
-            'code' =>'required|unique:methods_services',
+            // « * » et « | » séparent les champs des codes de scan N2P:{of}*{ligne}*{op}*{seq}.
+            'code' =>['required', 'unique:methods_services', 'not_regex:/[*|]/'],
             'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
             'hourly_rate'=>'required',

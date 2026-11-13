@@ -86,6 +86,12 @@ class N2PPayloadBuilder
             'planned_end_at' => $this->nullableDateTime($plannedEndAt),
         ];
 
+        // Bon pour fabrication : envoyé à chaque envoi tant que l'option est active
+        // (le MES remet « pas de contrôle » si le champ manque), absent sinon.
+        if (\App\Services\Production\ProductionRelease::enabled()) {
+            $job['production_released'] = $orderLine->released_for_production_at !== null;
+        }
+
         if (!$job['due_date']) {
             unset($job['due_date']);
         }
@@ -126,6 +132,11 @@ class N2PPayloadBuilder
 
             return array_filter([
                 'operation_code' => $operationCode,
+                // Rang de l'opération dans la gamme : avec operation_code, désigne
+                // la tâche sans ambiguïté (deux PLI sur une ligne). Lu par le MES
+                // et repris dans les codes de scan N2P:{of}*{ligne}*{op}*{seq}.
+                // Entier >= 1 exigé par le MES (422 sinon) ; absent, il prend la position.
+                'seq' => (int) $task->ordre >= 1 ? (int) $task->ordre : null,
                 'workcenter_code' => $workcenterCode,
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),

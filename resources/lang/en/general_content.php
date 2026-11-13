@@ -1950,4 +1950,5 @@ return [
     'absence_notification_requested_trans_key' => 'Absence request to approve: :name, from :start to :end',
     'absence_notification_approved_trans_key' => 'Your absence from :start to :end is approved',
     'absence_notification_refused_trans_key' => 'Your absence from :start to :end is refused',
+    'task_canceled_by_integration_trans_key' => 'Task canceled in the MES',
 ];

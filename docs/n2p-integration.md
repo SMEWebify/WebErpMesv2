@@ -131,6 +131,7 @@ sinon nombre de pièces.
       "tasks": [
         {
           "operation_code": "CUT",
+          "seq": 10,
           "workcenter_code": "CNC01",
           "required_qty": 10,
           "planned_start_at": "2026-02-21 08:00:00",
@@ -142,3 +143,5 @@ sinon nombre de pièces.
   ]
 }
 ```
+
+Retour d'exécution des tâches (`task.*`, pointage par scan) : voir `docs/pointage-scan.md`.

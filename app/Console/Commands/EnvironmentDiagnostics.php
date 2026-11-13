@@ -84,6 +84,16 @@ class EnvironmentDiagnostics extends Command
             );
         }
 
+        $scanUnsafeCodes = $this->scanUnsafeOperationCodes();
+        if ($scanUnsafeCodes !== null) {
+            $warnings += $this->check(
+                $scanUnsafeCodes === [],
+                'No operation code contains "*" or "|" (scan codes).',
+                'Operation codes containing "*" or "|" cannot be printed as scan codes N2P:{of}*{line}*{op}*{seq}: ' . implode(', ', $scanUnsafeCodes) . '.',
+                'warn'
+            );
+        }
+
         if ($failures === 0 && $warnings === 0) {
             $this->info('Diagnostics completed without issues.');
             return self::SUCCESS;
@@ -159,6 +169,25 @@ class EnvironmentDiagnostics extends Command
                 ->where(fn ($q) => $q->where('orders.statu', '!=', \App\Services\Workflow\OrderLineCalculatedPrice::PREPARATION_STATUS)
                     ->orWhere('orders.review_decision', \App\Services\Workflow\ContractReview::APPROVED))
                 ->count();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Codes de poste et de tâche contenant un séparateur des codes de scan
+     * (« * », « | »). Liste limitée à 20 codes distincts.
+     *
+     * @return array<int, string>|null
+     */
+    private function scanUnsafeOperationCodes(): ?array
+    {
+        try {
+            $unsafe = fn ($q) => $q->where('code', 'like', '%*%')->orWhere('code', 'like', '%|%');
+
+            return \App\Models\Methods\MethodsServices::query()->where($unsafe)->pluck('code')
+                ->merge(\App\Models\Planning\Task::query()->where($unsafe)->distinct()->limit(20)->pluck('code'))
+                ->unique()->take(20)->values()->all();
         } catch (\Throwable) {
             return null;
         }

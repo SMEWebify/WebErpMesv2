@@ -23,6 +23,7 @@ return [
         'task.declared_good'   => \App\Services\Integrations\Handlers\HandleTaskEvent::class,
         'task.declared_bad'    => \App\Services\Integrations\Handlers\HandleTaskEvent::class,
         'task.commented'       => \App\Services\Integrations\Handlers\HandleTaskEvent::class,
+        'task.canceled'        => \App\Services\Integrations\Handlers\HandleTaskEvent::class,
 
         // Phase 2 — stock
         'stock.consumed'          => \App\Services\Integrations\Handlers\HandleStockEvent::class,
@@ -56,6 +57,7 @@ return [
             'task.declared_good' => 'Déclaration qté bonne',
             'task.declared_bad'  => 'Déclaration qté rebut',
             'task.commented'     => 'Commentaire tâche',
+            'task.canceled'      => 'Tâche annulée',
         ],
         'Stock (consommation matière)' => [
             'stock.consumed' => 'Composant consommé sur un lot',
@@ -91,4 +93,18 @@ return [
     */
 
     'payload_max_bytes' => 65_000,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Opérateur de repli des pointages reçus
+    |--------------------------------------------------------------------------
+    |
+    | E-mail d'un utilisateur technique (ex. « Nest2Prod ») au nom duquel sont
+    | enregistrés les événements task.* dont le user_email est inconnu de
+    | l'ERP. Vide ou introuvable : repli historique (responsable de la tâche).
+    | Chaque repli est journalisé dans le canal n2p.
+    |
+    */
+
+    'fallback_user_email' => env('INTEGRATIONS_FALLBACK_USER_EMAIL'),
 ];
