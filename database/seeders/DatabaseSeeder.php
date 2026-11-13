@@ -100,7 +100,8 @@ class DatabaseSeeder extends Seeder
         //Quotes
         $this->call(QuotesTableSeeder::class);
         $this->call(QuoteLinesTableSeeder::class);
-        //Orders 
+        $this->call(QuoteTemplatesSeeder::class);
+        //Orders
         $this->call(OrderTableSeeder::class);
         $this->call(OrderLinesTableSeeder::class);
         //Task
