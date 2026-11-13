@@ -76,6 +76,33 @@ return [
 
     'result_saved' => 'Bending time appended to the internal comment: :summary',
 
+    // Setup sheet PDF (`fiche` field of the result), filed in the line documents
+    'sheet' => [
+        'comment'           => 'NEST2BEND setup sheet (press brake)',
+        'stored'            => 'Setup sheet filed in the line documents: :name',
+        'pending'           => 'Fetching the setup sheet…',
+        'retry'             => 'Fetch the sheet',
+        'retrying'          => 'Fetching the sheet…',
+        'open'              => 'Open the sheet',
+        'none'              => 'No setup sheet to fetch for this line.',
+        'error_404'         => 'Setup sheet unavailable: part not simulated, no punch chosen, or a tool or the press left the NEST2BEND shop since the simulation.',
+        'error_key'         => 'Setup sheet not fetched: NEST2BEND API key refused or subscription expired.',
+        'error_unavailable' => 'Setup sheet not fetched: NEST2BEND unavailable. Try again later (the result stays readable for 30 days).',
+        'error_other'       => 'Setup sheet not fetched (status :status).',
+    ],
+
+    // Latest simulation of the line (resultat.simulation)
+    'last' => [
+        'title'    => 'Latest simulation',
+        'press'    => 'Press brake',
+        'tools'    => 'Tools',
+        'sequence' => 'Bending order',
+        'sheet'    => 'Setup sheet',
+        'punch'    => 'Punch :tool',
+        'die'      => 'die :tool',
+        'flipped'  => '(flipped)',
+    ],
+
     'comment' => [
         'entry'       => '[NEST2BEND :date] :summary',
         'preparation' => 'Setup :time',

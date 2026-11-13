@@ -36,7 +36,35 @@ class FileVersioning
      */
     public function replace(File $previous, UploadedFile $upload, array $meta = [], ?User $user = null): File
     {
-        return DB::transaction(function () use ($previous, $upload, $meta, $user) {
+        return $this->version($previous, fn (File $previous) => $this->storage->store($upload, [
+            'comment' => $meta['comment'] ?? null,
+            'hashtags' => $previous->hashtags ?? [],
+            'as_photo' => $previous->as_photo,
+        ]), $meta, $user);
+    }
+
+    /**
+     * Replace the latest version of a lineage by generated content (a PDF fetched from a
+     * provider…), with the same lineage rules as an upload.
+     *
+     * @param  array{revision_label?: string|null, comment?: string|null}  $meta
+     *
+     * @throws ConflictHttpException when the file was already replaced
+     */
+    public function replaceWithContents(File $previous, string $contents, string $originalName, string $mimeType, array $meta = [], ?User $user = null): File
+    {
+        return $this->version($previous, fn (File $previous) => $this->storage->storeContents($contents, $originalName, $mimeType, [
+            'comment' => $meta['comment'] ?? null,
+            'hashtags' => $previous->hashtags ?? [],
+        ]), $meta, $user);
+    }
+
+    /**
+     * @param  callable(File): File  $store  writes the new file (receives the locked previous version)
+     */
+    private function version(File $previous, callable $store, array $meta, ?User $user): File
+    {
+        return DB::transaction(function () use ($previous, $store, $meta, $user) {
             // Two users replacing the same plan at once would fork the lineage.
             $previous = File::whereKey($previous->id)->lockForUpdate()->firstOrFail();
 
@@ -53,11 +81,7 @@ class FileVersioning
 
             $number = (int) File::where('version_group_id', $lineage)->max('version') + 1;
 
-            $file = $this->storage->store($upload, [
-                'comment' => $meta['comment'] ?? null,
-                'hashtags' => $previous->hashtags ?? [],
-                'as_photo' => $previous->as_photo,
-            ]);
+            $file = $store($previous);
 
             $file->forceFill([
                 'version_group_id' => $lineage,

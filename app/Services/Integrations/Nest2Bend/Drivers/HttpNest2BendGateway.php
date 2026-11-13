@@ -2,10 +2,12 @@
 
 namespace App\Services\Integrations\Nest2Bend\Drivers;
 
+use App\Models\Integrations\Nest2BendSetting;
 use App\Services\Integrations\Nest2Bend\Contracts\Nest2BendGateway;
 use App\Services\Integrations\Nest2Bend\Data\AccountState;
 use App\Services\Integrations\Nest2Bend\Data\BendingResult;
 use App\Services\Integrations\Nest2Bend\Data\EmbedSession;
+use App\Services\Integrations\Nest2Bend\Data\SetupSheet;
 use App\Services\Integrations\Nest2Bend\Exceptions\Nest2BendException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
@@ -26,6 +28,12 @@ class HttpNest2BendGateway implements Nest2BendGateway
 
     /** Création de session : NEST2BEND lit le STEP avant de répondre (≥ 60 s demandé). */
     private const TIMEOUT_EMBED = 90;
+
+    /** Fiche de réglage : le PDF est mis en page à chaque appel (60 s conseillé). */
+    private const TIMEOUT_SHEET = 60;
+
+    /** Une fiche de réglage tient en quelques pages : au-delà, la réponse n'est pas rangée. */
+    private const MAX_SHEET_BYTES = 25 * 1024 * 1024;
 
     public function __construct(
         private readonly string $baseUrl,
@@ -70,6 +78,29 @@ class HttpNest2BendGateway implements Nest2BendGateway
         }
 
         return $result;
+    }
+
+    public function setupSheet(string $url): SetupSheet
+    {
+        // La clé ne part que vers l'origine configurée : une URL `fiche` pointant ailleurs
+        // est refusée sans être appelée.
+        $origin = Nest2BendSetting::originOf($this->baseUrl);
+        if ($origin === null || Nest2BendSetting::originOf($url) !== $origin) {
+            throw $this->unexpected(null);
+        }
+
+        $response = $this->send(fn () => Http::withToken($this->apiKey)
+            ->accept('application/pdf')
+            ->connectTimeout(10)
+            ->timeout(self::TIMEOUT_SHEET)
+            ->get($url));
+
+        $contents = $response->body();
+        if (! str_starts_with($contents, '%PDF-') || strlen($contents) > self::MAX_SHEET_BYTES) {
+            throw $this->unexpected($response->status());
+        }
+
+        return new SetupSheet($contents, SetupSheet::fileNameFrom($response->header('Content-Disposition'), 'fiche-reglage-nest2bend.pdf'));
     }
 
     private function request(int $timeout): PendingRequest

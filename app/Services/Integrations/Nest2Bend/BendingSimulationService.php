@@ -20,7 +20,10 @@ use Illuminate\Support\Facades\DB;
  *   complete() reçoit le resultId signalé par l'iframe (postMessage), relit
  *              GET /api/v1/results/{id} et n'accepte le résultat que s'il correspond à une
  *              session ouverte ici, pour cette ligne et cet utilisateur. Le temps retenu est
- *              ajouté au commentaire interne de la ligne (rien n'est écrasé).
+ *              ajouté au commentaire interne de la ligne (rien n'est écrasé), puis la fiche
+ *              de réglage PDF est rangée dans la GED de la ligne (BendingSetupSheet) ; son
+ *              échec ne défait pas l'enregistrement du temps.
+ *   retrySheet() « Récupérer la fiche » après un échec.
  */
 class BendingSimulationService
 {
@@ -30,6 +33,7 @@ class BendingSimulationService
         private readonly Nest2BendAccess $access,
         private readonly Nest2BendGatewayFactory $factory,
         private readonly QuoteLineStepSource $steps,
+        private readonly BendingSetupSheet $sheets,
     ) {}
 
     /**
@@ -62,6 +66,7 @@ class BendingSimulationService
                 ])
                 : null,
             'app_url' => $state['app_url'],
+            'last'    => $state['show_commercial'] ? null : $this->last($line),
         ];
     }
 
@@ -132,7 +137,7 @@ class BendingSimulationService
     }
 
     /**
-     * @return array{internal_comment: string, summary: string, already: bool}
+     * @return array{internal_comment: string, summary: string, already: bool, last: ?array}
      *
      * @throws Nest2BendException
      */
@@ -154,6 +159,7 @@ class BendingSimulationService
                 'internal_comment' => (string) $line->QuoteLineDetails?->internal_comment,
                 'summary'          => $this->summary($done->preparation_s, $done->unitaire_s, (int) $done->quantite, $done->compteurs ?? [], $done->section),
                 'already'          => true,
+                'last'             => $this->describe($done),
             ];
         }
 
@@ -170,7 +176,7 @@ class BendingSimulationService
             throw new Nest2BendException(Nest2BendException::NOT_FOUND, __('nest2bend.errors.not_found'), 404);
         }
 
-        return DB::transaction(function () use ($line, $simulation, $result) {
+        $saved = DB::transaction(function () use ($line, $simulation, $result) {
             $details = QuoteLineDetails::where('quote_lines_id', $line->id)->lockForUpdate()->first()
                 ?? QuoteLineDetails::create(['quote_lines_id' => $line->id]);
 
@@ -189,11 +195,104 @@ class BendingSimulationService
                 'unitaire_s'    => $result->unitaire,
                 'compteurs'     => $result->compteurs,
                 'section'       => $result->section,
+                'simulation'    => $result->simulation,
+                'fiche_url'     => $result->fiche,
+                'fiche_status'  => $result->fiche !== null ? BendingSimulation::SHEET_PENDING : null,
                 'completed_at'  => now(),
             ])->save();
 
             return ['internal_comment' => $details->internal_comment, 'summary' => $summary, 'already' => false];
         });
+
+        // Hors transaction : le temps est enregistré quoi qu'il arrive à la fiche.
+        $this->sheets->fetch($simulation, $line, $user);
+
+        return $saved + ['last' => $this->describe($simulation->refresh())];
+    }
+
+    /**
+     * « Récupérer la fiche » : retente le téléchargement de la dernière simulation de la ligne.
+     *
+     * @throws Nest2BendException
+     */
+    public function retrySheet(QuoteLines $line, User $user): array
+    {
+        $simulation = BendingSimulation::where('quote_lines_id', $line->id)
+            ->where('status', BendingSimulation::STATUS_DONE)
+            ->orderByDesc('completed_at')
+            ->orderByDesc('id')
+            ->first();
+
+        if ($simulation === null || $simulation->fiche_url === null) {
+            throw new Nest2BendException(Nest2BendException::NOT_FOUND, __('nest2bend.sheet.none'), 404);
+        }
+
+        return $this->describe($this->sheets->fetch($simulation, $line, $user));
+    }
+
+    /** Dernière simulation terminée de la ligne, prête à afficher. */
+    public function last(QuoteLines $line): ?array
+    {
+        $simulation = BendingSimulation::with('sheetFile')
+            ->where('quote_lines_id', $line->id)
+            ->where('status', BendingSimulation::STATUS_DONE)
+            ->orderByDesc('completed_at')
+            ->orderByDesc('id')
+            ->first();
+
+        return $simulation ? $this->describe($simulation) : null;
+    }
+
+    /**
+     * Presse, outils (référence et constructeur), ordre de pliage et état de la fiche.
+     *
+     * @return array{date: ?string, presse: ?string, outils: list<string>, sequence: ?string,
+     *               sheet: ?string, sheet_name: ?string, sheet_url: ?string, sheet_error: ?string}
+     */
+    public function describe(BendingSimulation $simulation): array
+    {
+        $data = is_array($simulation->simulation) ? $simulation->simulation : [];
+
+        $outils = collect($data['montages'] ?? [])
+            ->map(function ($montage) {
+                $parts = array_filter([
+                    ($montage['poincon'] ?? null) ? __('nest2bend.last.punch', ['tool' => $montage['poincon']]) . (! empty($montage['retourne']) ? ' ' . __('nest2bend.last.flipped') : '') : null,
+                    ($montage['matrice'] ?? null) ? __('nest2bend.last.die', ['tool' => $montage['matrice']]) : null,
+                ]);
+
+                return implode(' / ', $parts);
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $sequence = collect($data['sequence'] ?? [])->map(fn ($index) => (int) $index + 1)->implode(' → ');
+
+        $file = $simulation->fiche_file_id ? $simulation->sheetFile()->first() : null;
+
+        return [
+            'date'        => $simulation->completed_at?->format('d/m/Y H:i'),
+            'presse'      => $data['presse'] ?? null,
+            'outils'      => $outils,
+            'sequence'    => $sequence !== '' ? $sequence : null,
+            'sheet'       => $simulation->fiche_status,
+            'sheet_name'  => $file?->original_file_name,
+            'sheet_url'   => $file?->view_url,
+            'sheet_error' => $simulation->fiche_status === BendingSimulation::SHEET_FAILED
+                ? $this->sheetError((int) $simulation->fiche_error)
+                : null,
+        ];
+    }
+
+    private function sheetError(int $status): string
+    {
+        return match (true) {
+            $status === 404 => __('nest2bend.sheet.error_404'),
+            $status === 401 || $status === 403 => __('nest2bend.sheet.error_key'),
+            $status === 0 || $status >= 500 => __('nest2bend.sheet.error_unavailable'),
+            default => __('nest2bend.sheet.error_other', ['status' => $status]),
+        };
     }
 
     /** reference_externe : lisible dans NEST2BEND, ex. « DV-2026-0142/L3 ». */
