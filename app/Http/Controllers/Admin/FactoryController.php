@@ -106,6 +106,9 @@ class FactoryController extends Controller
         if ($request->has('production_sheet_scan_codes')) {
             $Factory->production_sheet_scan_codes = $request->boolean('production_sheet_scan_codes');
         }
+        if (in_array($request->input('scan_mode'), \App\Services\Production\ScanStation::MODES, true)) {
+            $Factory->scan_mode = $request->input('scan_mode');
+        }
         $Factory->public_link_cgv =  $request->public_link_cgv;
         $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
         $Factory->enable_construction_site = $request->boolean('enable_construction_site');

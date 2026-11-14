@@ -542,6 +542,15 @@
                             <label for="production_sheet_scan_codes" class="mb-0">{{ __('general_content.production_sheet_scan_codes_trans_key') }}</label>
                             <small class="form-text text-muted d-block">{{ __('general_content.production_sheet_scan_codes_help_trans_key') }}</small>
                         </div>
+                        <div class="col-8 mt-3">
+                            <label for="scan_mode">{{ __('scan_station.settings.mode') }}</label>
+                            <select class="form-select" name="scan_mode" id="scan_mode">
+                                @foreach (\App\Services\Production\ScanStation::MODES as $mode)
+                                    <option value="{{ $mode }}" @selected(($Factory->scan_mode ?? 'open') === $mode)>{{ __('scan_station.modes.' . $mode) }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted d-block">{{ __('scan_station.settings.mode_help') }}</small>
+                        </div>
                     </x-adminlte-card>
                     
                     <x-adminlte-card title="{{ __('general_content.modules_trans_key') }}" theme="dark" collapsible maximizable>

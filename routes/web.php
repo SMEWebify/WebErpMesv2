@@ -194,6 +194,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Lines/json/list', 'App\Http\Controllers\Workshop\WorkshopController@taskLinesJson')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines.json');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
+        // Écran de scan (docs/pointage-scan.md) : douchette ou caméra, mode de factory.scan_mode.
+        Route::get('/Scan', 'App\Http\Controllers\Workshop\ScanStationController@index')->name('workshop.scan');
+        Route::post('/Scan', 'App\Http\Controllers\Workshop\ScanStationController@scan')->middleware('throttle:120,1')->name('workshop.scan.store');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
         Route::get('/Stock/Detail', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail');
         Route::get('/Stock/Scan', 'App\Http\Controllers\Workshop\WorkshopController@stockScan')->name('workshop.stock.scan');

@@ -1087,6 +1087,23 @@ async function mountTaskStatuApp() {
     );
 }
 
+async function mountScanStation() {
+    const element = document.getElementById('scan-station-app');
+    if (!element) return;
+
+    const { default: ScanStation } = await import('./components/workshop/ScanStation.jsx');
+    let trans = {};
+    try { trans = JSON.parse(element.dataset.trans ?? '{}'); } catch { trans = {}; }
+
+    createRoot(element).render(
+        React.createElement(ScanStation, {
+            scanUrl:   element.dataset.scanUrl ?? '',
+            modeLabel: element.dataset.modeLabel ?? '',
+            trans,
+        })
+    );
+}
+
 async function mountNonConformitiesIndex() {
     const element = document.getElementById('non-conformities-index-app');
     if (!element) return;
@@ -1476,6 +1493,7 @@ mountSerialNumbersIndex();
 mountSerialNumbersEmbedded();
 mountMethodsOverview();
 mountTaskStatuApp();
+mountScanStation();
 mountGanttChart();
 mountNonConformitiesIndex();
 mountGmaoDashboard();

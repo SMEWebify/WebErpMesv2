@@ -49,6 +49,7 @@ class Factory extends Model
                             'cgv_file',
                             'enable_construction_site',
                             'production_sheet_scan_codes',
+                            'scan_mode',
                             'fiscal_year_start_month',
                             'iban',
                             'bic'];

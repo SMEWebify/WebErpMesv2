@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'settings' => [
+        'mode' => 'Scan screen mode',
+        'mode_help' => 'What scanning an operation does on the Workshop → Scan screen.',
+    ],
+    'modes' => [
+        'open' => 'Open the task',
+        'toggle' => 'Start / finish',
+        'toggle_qty' => 'Start / finish with quantities',
+    ],
+    'results' => [
+        'opened' => 'Opening the task…',
+        'started' => 'Started',
+        'resumed' => 'Resumed',
+        'finished' => 'Finished',
+        'needs_qty' => 'Quantities to declare',
+        'already_finished' => 'Already finished: nothing recorded',
+        'refused' => 'Refused',
+        'not_found' => 'No task matches this code',
+        'ignored' => 'Duplicate scan ignored',
+    ],
+    'screen' => [
+        'title' => 'Scan',
+        'mode' => 'Mode',
+        'placeholder' => 'Scan an operation code',
+        'waiting' => 'Waiting for a scan…',
+        'history' => 'Last scans',
+        'camera' => 'Camera',
+        'camera_stop' => 'Close the camera',
+        'camera_unavailable' => 'Camera not available in this browser',
+        'order' => 'Order',
+        'worked' => 'Time spent',
+        'good' => 'Good',
+        'bad' => 'Scrap',
+        'remaining' => 'Remaining',
+        'qty_title' => 'End of the operation',
+        'qty_good' => 'Good quantity',
+        'qty_bad' => 'Scrap quantity',
+        'qty_confirm' => 'Finish',
+        'qty_cancel' => 'Cancel',
+        'error' => 'Could not reach the server',
+    ],
+];

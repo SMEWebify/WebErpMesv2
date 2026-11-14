@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'settings' => [
+        'mode' => 'Mode de l\'écran de scan',
+        'mode_help' => 'Ce que fait le scan d\'une opération sur l\'écran Atelier → Scanner.',
+    ],
+    'modes' => [
+        'open' => 'Ouvrir la tâche',
+        'toggle' => 'Début / fin',
+        'toggle_qty' => 'Début / fin avec quantités',
+    ],
+    'results' => [
+        'opened' => 'Ouverture de la tâche…',
+        'started' => 'Démarrée',
+        'resumed' => 'Reprise',
+        'finished' => 'Terminée',
+        'needs_qty' => 'Quantités à déclarer',
+        'already_finished' => 'Déjà terminée : rien n\'est enregistré',
+        'refused' => 'Refusé',
+        'not_found' => 'Aucune tâche ne correspond à ce code',
+        'ignored' => 'Scan en double ignoré',
+    ],
+    'screen' => [
+        'title' => 'Scanner',
+        'mode' => 'Mode',
+        'placeholder' => 'Scannez le code d\'une opération',
+        'waiting' => 'En attente d\'un scan…',
+        'history' => 'Derniers scans',
+        'camera' => 'Caméra',
+        'camera_stop' => 'Fermer la caméra',
+        'camera_unavailable' => 'Caméra indisponible sur ce navigateur',
+        'order' => 'Commande',
+        'worked' => 'Temps passé',
+        'good' => 'Bonnes',
+        'bad' => 'Rebut',
+        'remaining' => 'Reste à faire',
+        'qty_title' => 'Fin de l\'opération',
+        'qty_good' => 'Quantité bonne',
+        'qty_bad' => 'Quantité rebut',
+        'qty_confirm' => 'Terminer',
+        'qty_cancel' => 'Annuler',
+        'error' => 'Erreur de communication avec le serveur',
+    ],
+];

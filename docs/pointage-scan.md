@@ -54,6 +54,16 @@ est l'utilisateur connecté.
 
 ## Écrans et fiche suiveuse
 
+**ERP** : Atelier → tuile « Scanner » (`/workshop/Scan`, `components/workshop/ScanStation.jsx`),
+mode réglé dans Votre société (`factory.scan_mode`, `open` par défaut). Le serveur décide
+(`App\Services\Production\ScanStation`, `POST workshop.scan.store`) : en cours = dernière
+activité début / fin de la tâche est un début ; écritures par `TaskExecution` (mêmes activités
+et statuts que l'écran tâche) ; double scan = `Cache::add` par (opérateur, tâche) 5 s ; la
+validation de la fenêtre de quantités n'est pas un double scan. Caméra : `BarcodeDetector` du
+navigateur (Chrome Android), bouton masqué ailleurs. Le champ de recherche de l'écran tâche
+accepte aussi les codes `N2P:` (mode `open`). Tests : `tests/Feature/Production/ScanStationTest.php`,
+`resources/js/tests/lib/scanStation.test.js`.
+
 - Poste fixe : page plein écran, champ toujours actif ; opérateur actif en haut, retour du
   dernier scan au centre (vert démarrée, bleu terminée, orange reprise, rouge refus), 5 derniers
   scans en bas ; fenêtre de quantités en `toggle_qty` (bonne = reste à faire, rebut 0, Entrée).
@@ -145,7 +155,7 @@ partiellement livrées ; une commande encore ouverte n'a jamais été envoyée e
 | Étape | ERP | MES |
 |---|---|---|
 | 1 | `seq` dans le payload et la recherche, réception (`task.canceled`, `line_ref` vide, statut sans recul, opérateur de repli, contrôle du temps), interdiction `*` / `|` + diagnostic | Lecture des codes, 3 modes, écran poste, codes sur la fiche |
-| 2 | Codes sur la fiche suiveuse (2a, fait), écran de scan et 3 modes (2b), badges `users.badge_code` (2c) | Pause / reprise, segments de temps, badges |
+| 2 | Codes sur la fiche suiveuse (2a, fait), écran de scan et 3 modes (2b, fait), badges `users.badge_code` (2c) | Pause / reprise, segments de temps, badges |
 | 3 | Émission des `task.*`, `production_released` + renvoi de l'OF | Réception des `task.*` de l'ERP |
 
 Code : `App\Services\Integrations\Handlers\HandleTaskEvent`, `Task::resolveByExternalRef()`,
