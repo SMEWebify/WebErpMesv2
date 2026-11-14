@@ -927,12 +927,19 @@ class Task extends Model
      */
     public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode, ?int $seq = null): ?self
     {
-        $orderLineId = null;
-        if (str_starts_with($ofCode, 'OF')) {
-            $orderLineId = (int) substr($ofCode, 2);
-        } elseif (ctype_digit($lineRef)) {
-            $orderLineId = (int) $lineRef;
+        $fromOf = str_starts_with($ofCode, 'OF') && ctype_digit(substr($ofCode, 2))
+            ? (int) substr($ofCode, 2)
+            : null;
+        $fromLine = $lineRef !== '' && ctype_digit($lineRef) ? (int) $lineRef : null;
+
+        // Les deux désignent la même ligne de commande : s'ils divergent (code
+        // de scan altéré, saisie à la main), rien n'est trouvé plutôt que de
+        // pointer sur la ligne de l'un des deux.
+        if ($fromOf !== null && $fromLine !== null && $fromOf !== $fromLine) {
+            return null;
         }
+
+        $orderLineId = $fromLine ?? $fromOf;
 
         if ($orderLineId === null || $orderLineId <= 0 || $operationCode === '') {
             return null;

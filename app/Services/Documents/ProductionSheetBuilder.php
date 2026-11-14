@@ -10,6 +10,7 @@ use App\Models\Products\Products;
 use App\Services\Cad\DxfToSvg;
 use App\Services\Files\FileRole;
 use App\Services\Files\FileStorageService;
+use App\Services\Production\ScanCode;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,11 @@ class ProductionSheetBuilder
             $lines->flatMap(fn (OrderLines $line) => $line->TechnicalCut->concat($line->BOM))->pluck('id')
         );
 
-        $sheets = $lines->map(fn (OrderLines $line) => $this->sheet($line, $batches))->values();
+        // Codes de scan N2P:… (option de la fiche société) : ils remplacent le
+        // code-barres « n° de tâche ». Désactivée, la fiche est celle d'avant.
+        $scanCodes = (bool) optional(app('Factory'))->production_sheet_scan_codes;
+
+        $sheets = $lines->map(fn (OrderLines $line) => $this->sheet($line, $batches, $scanCodes))->values();
 
         return [
             'orderCode' => $order->code,
@@ -104,7 +109,7 @@ class ProductionSheetBuilder
             ])->values()->all());
     }
 
-    private function sheet(OrderLines $line, Collection $batches): array
+    private function sheet(OrderLines $line, Collection $batches, bool $scanCodes = false): array
     {
         $details = $line->OrderLineDetails;
         $operations = $line->TechnicalCut;
@@ -142,9 +147,9 @@ class ProductionSheetBuilder
                 'workcenter' => $task->machineResource->first()?->label ?: $task->service?->label,
                 // Stockage en heures (TimeDisplay) : la fiche affiche en h/min.
                 'planned_time_min' => (float) $task->TotalTime() * 60,
-                'barcode_src' => $this->taskBarcode($task),
+                'barcode_src' => $scanCodes ? null : $this->taskBarcode($task),
                 'batches' => $batches->get($task->id, []),
-            ])->values()->all(),
+            ] + ($scanCodes ? $this->scanCode($task) : []))->values()->all(),
             'components' => $line->BOM->map(fn (Task $task) => [
                 'ordre' => $task->ordre,
                 'label' => $task->label,
@@ -169,6 +174,35 @@ class ProductionSheetBuilder
         }
 
         return $png ? 'data:image/png;base64,' . $png : null;
+    }
+
+    /**
+     * Code de scan de l'opération (docs/pointage-scan.md) : QR dans la ligne, Code128
+     * pleine largeur dessous. Code128 imposé quel que soit task_barre_code (l'EAN ne
+     * code ni « : » ni « * »). Sans code possible (séparateur dans le code opération),
+     * scan_unavailable signale l'opération sur la fiche.
+     *
+     * @return array{scan_code: ?string, scan_qr_src: ?string, scan_barcode_src: ?string, scan_unavailable: bool}
+     */
+    private function scanCode(Task $task): array
+    {
+        $code = ScanCode::forTask($task);
+        if ($code === null) {
+            return ['scan_code' => null, 'scan_qr_src' => null, 'scan_barcode_src' => null, 'scan_unavailable' => true];
+        }
+
+        try {
+            $png = \DNS1D::getBarcodePNG($code, 'C128', 2, 40);
+        } catch (\Throwable) {
+            $png = null;
+        }
+
+        return [
+            'scan_code' => $code,
+            'scan_qr_src' => $this->qrCode($code),
+            'scan_barcode_src' => $png ? 'data:image/png;base64,' . $png : null,
+            'scan_unavailable' => false,
+        ];
     }
 
     private function qrCode(string $payload): ?string

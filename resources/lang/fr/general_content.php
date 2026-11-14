@@ -1951,4 +1951,7 @@ return [
     'absence_notification_approved_trans_key' => 'Votre absence du :start au :end est validée',
     'absence_notification_refused_trans_key' => 'Votre absence du :start au :end est refusée',
     'task_canceled_by_integration_trans_key' => 'Tâche annulée dans le MES',
+    'production_sheet_scan_codes_trans_key' => 'Codes de scan sur la fiche suiveuse',
+    'production_sheet_scan_codes_help_trans_key' => 'Imprime pour chaque opération un QR et un Code128 « N2P:… » lisibles par l\'écran de scan de l\'ERP et par le MES Nest2Prod. Ils remplacent le code-barres « n° de tâche ».',
+    'scan_code_not_found_trans_key' => 'Aucune tâche ne correspond au code « :code ».',
 ];

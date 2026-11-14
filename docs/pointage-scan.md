@@ -60,7 +60,10 @@ est l'utilisateur connecté.
 - Téléphone : même page, lecture des QR par la caméra.
 - Fiche suiveuse : QR (≈ 15 mm) dans la ligne de l'opération, Code128 pleine largeur sous la
   ligne ; QR commande inchangé ; **par option** (désactivée = fiche actuelle, références
-  `ProductionSheetLegacyRenderingTest` intactes).
+  `ProductionSheetLegacyRenderingTest` intactes). ERP : case « Codes de scan sur la fiche
+  suiveuse » de Votre société (`factory.production_sheet_scan_codes`) ; les codes remplacent le
+  code-barres « n° de tâche ». Code construit par `App\Services\Production\ScanCode::forTask()`,
+  même clé que le payload des OF (`N2PPayloadBuilder::operationCode()`).
 
 ## Bon pour fabrication
 
@@ -142,7 +145,7 @@ partiellement livrées ; une commande encore ouverte n'a jamais été envoyée e
 | Étape | ERP | MES |
 |---|---|---|
 | 1 | `seq` dans le payload et la recherche, réception (`task.canceled`, `line_ref` vide, statut sans recul, opérateur de repli, contrôle du temps), interdiction `*` / `|` + diagnostic | Lecture des codes, 3 modes, écran poste, codes sur la fiche |
-| 2 | Écran de scan, 3 modes, badges (`users.badge_code`), codes sur la fiche suiveuse | Pause / reprise, segments de temps, badges |
+| 2 | Codes sur la fiche suiveuse (2a, fait), écran de scan et 3 modes (2b), badges `users.badge_code` (2c) | Pause / reprise, segments de temps, badges |
 | 3 | Émission des `task.*`, `production_released` + renvoi de l'OF | Réception des `task.*` de l'ERP |
 
 Code : `App\Services\Integrations\Handlers\HandleTaskEvent`, `Task::resolveByExternalRef()`,

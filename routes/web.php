@@ -1041,7 +1041,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/load-planning/calculate-resources', 'App\Http\Controllers\Planning\PlanningController@calculateResources')->name('production.load.planning.calculate.resources');
 
         // JSON API — TaskStatuApp (React)
-        Route::get('/Task/Statu/Api/{id}',               'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
+        // Avant /{id} : « resolve » ne doit pas être pris pour un id.
+        Route::get('/Task/Statu/Api/resolve',            'App\Http\Controllers\Api\TaskStatuController@resolve')->name('production.task.statu.api.resolve');
+        Route::get('/Task/Statu/Api/{id}',              'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
         Route::post('/Task/Statu/Api/{id}/start',        'App\Http\Controllers\Api\TaskStatuController@start')->name('production.task.statu.api.start');
         Route::post('/Task/Statu/Api/{id}/pause',        'App\Http\Controllers\Api\TaskStatuController@pause')->name('production.task.statu.api.pause');
         Route::post('/Task/Statu/Api/{id}/finish',       'App\Http\Controllers\Api\TaskStatuController@finish')->name('production.task.statu.api.finish');

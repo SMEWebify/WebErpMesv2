@@ -48,6 +48,7 @@ class Factory extends Model
                             'add_cgv_to_pdf',
                             'cgv_file',
                             'enable_construction_site',
+                            'production_sheet_scan_codes',
                             'fiscal_year_start_month',
                             'iban',
                             'bic'];

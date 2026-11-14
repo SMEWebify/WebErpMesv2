@@ -1951,4 +1951,7 @@ return [
     'absence_notification_approved_trans_key' => 'Your absence from :start to :end is approved',
     'absence_notification_refused_trans_key' => 'Your absence from :start to :end is refused',
     'task_canceled_by_integration_trans_key' => 'Task canceled in the MES',
+    'production_sheet_scan_codes_trans_key' => 'Scan codes on the production sheet',
+    'production_sheet_scan_codes_help_trans_key' => 'Prints a QR and a Code128 "N2P:…" for each operation, read by the ERP scan screen and the Nest2Prod MES. They replace the "task number" barcode.',
+    'scan_code_not_found_trans_key' => 'No task matches the code ":code".',
 ];

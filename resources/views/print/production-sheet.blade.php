@@ -225,7 +225,7 @@
             ->filter(fn ($v) => (float) $v > 0)
             ->map(fn ($v) => $formatNumber($v, 1));
         $totalPlanned = $operations->sum(fn ($op) => (float) ($op['planned_time_min'] ?? 0));
-        $hasBarcode = $operations->contains(fn ($op) => ! empty($op['barcode_src']));
+        $hasBarcode = $operations->contains(fn ($op) => ! empty($op['barcode_src']) || ! empty($op['scan_qr_src']) || ! empty($op['scan_unavailable']));
         $unit = filled($sheet['unit']) ? ' ' . $sheet['unit'] : '';
     @endphp
     <div class="sheet">
@@ -406,10 +406,23 @@
                             <td class="barcode-cell">
                                 @if ($operation['barcode_src'])
                                     <img src="{{ $operation['barcode_src'] }}" alt="" class="task-barcode">
+                                @elseif (! empty($operation['scan_qr_src']))
+                                    <img src="{{ $operation['scan_qr_src'] }}" alt="" style="width: 56px; height: 56px;">
+                                @elseif (! empty($operation['scan_unavailable']))
+                                    <span class="muted" style="font-size: 7px;">{{ $t('ops.scan_unavailable') }}</span>
                                 @endif
                             </td>
                         @endif
                     </tr>
+@if (! empty($operation['scan_barcode_src']))
+                    <tr class="op-scan">
+                        <td class="seq"></td>
+                        <td colspan="{{ $hasBarcode ? 10 : 9 }}" style="text-align: center; padding: 3px 6px;">
+                            <img src="{{ $operation['scan_barcode_src'] }}" alt="" style="height: 32px; max-width: 100%;">
+                            <div style="font-family: monospace; font-size: 8px;">{{ $operation['scan_code'] }}</div>
+                        </td>
+                    </tr>
+@endif
 @if (! empty($operation['batches']))
                     <tr class="op-batches">
                         <td class="seq"></td>

@@ -102,6 +102,10 @@ class FactoryController extends Controller
         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
         $Factory->task_barre_code =  $request->task_barre_code;
+        // Absent de la requête (ancien formulaire) = inchangé.
+        if ($request->has('production_sheet_scan_codes')) {
+            $Factory->production_sheet_scan_codes = $request->boolean('production_sheet_scan_codes');
+        }
         $Factory->public_link_cgv =  $request->public_link_cgv;
         $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
         $Factory->enable_construction_site = $request->boolean('enable_construction_site');

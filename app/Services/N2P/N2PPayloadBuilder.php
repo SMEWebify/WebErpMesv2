@@ -117,9 +117,7 @@ class N2PPayloadBuilder
     private function mapTasks(OrderLines $orderLine, $tasks): array
     {
         return $tasks->map(function (Task $task) use ($orderLine) {
-            $operationCode = $task->code
-                ?: ($task->service?->code
-                    ?: self::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey());
+            $operationCode = self::operationCode($task);
 
             $plannedTimeMinutes = null;
             if ($task->seting_time !== null || $task->unit_time !== null) {
@@ -145,6 +143,18 @@ class N2PPayloadBuilder
                 'required_qty' => $requiredQty,
             ], fn ($value) => !is_null($value) && $value !== '');
         })->values()->all();
+    }
+
+    /**
+     * operation_code de la clé métier : code de la tâche, sinon du poste, sinon
+     * « op-{id} ». Partagé avec les codes de scan (ScanCode) et relu par
+     * Task::resolveByExternalRef().
+     */
+    public static function operationCode(Task $task): string
+    {
+        return (string) ($task->code
+            ?: ($task->service?->code
+                ?: self::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey()));
     }
 
     private function clampPriority(?int $priority): int
