@@ -15,6 +15,7 @@ use App\Services\N2P\N2PPayloadBuilder;
 class ScanCode
 {
     public const OPERATION_PREFIX = 'N2P:';
+    public const BADGE_PREFIX = 'N2P-B:';
     public const SEPARATOR = '*';
 
     /** Caractères interdits dans un champ : séparateurs « * » (écrit) et « | » (lu). */
@@ -75,6 +76,34 @@ class ScanCode
             'operation_code' => $operationCode,
             'seq' => $seq !== '' ? (int) $seq : null,
         ];
+    }
+
+    /** Code imprimé sur le badge d'un opérateur. */
+    public static function forBadge(string $badgeCode): string
+    {
+        return self::BADGE_PREFIX . self::normalizeBadge($badgeCode);
+    }
+
+    /**
+     * Code badge lu (N2P-B:{code}), normalisé, ou null si ce n'est pas un badge.
+     * Testé avant les opérations : « N2P-B: » commence aussi par « N2P ».
+     */
+    public static function parseBadge(string $raw): ?string
+    {
+        $value = trim($raw);
+        if (stripos($value, self::BADGE_PREFIX) !== 0) {
+            return null;
+        }
+
+        $badge = self::normalizeBadge(substr($value, strlen(self::BADGE_PREFIX)));
+
+        return self::isEncodable($badge) ? $badge : null;
+    }
+
+    /** Majuscules : une douchette en majuscules bloquées lit le même badge. */
+    public static function normalizeBadge(string $badgeCode): string
+    {
+        return strtoupper(trim($badgeCode));
     }
 
     /**

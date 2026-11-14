@@ -20,6 +20,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\HumanResources\LeaveType;
 use App\Services\HumanResources\AttendanceAggregator;
@@ -115,6 +116,21 @@ class HumanResourcesController extends Controller
     public function UpdateUser(Request $request, int $id)
     {
         $UserUpdate = User::findOrFail($id);
+
+        // Badge de l'écran de scan (N2P-B:{code}) : absent de la requête = inchangé
+        // (ancien formulaire), vide = plus de badge. « * » et « | » séparent les
+        // champs des codes de scan, majuscules pour qu'une douchette en majuscules
+        // bloquées lise le même badge.
+        if ($request->has('badge_code')) {
+            $request->merge(['badge_code' => filled($request->badge_code)
+                ? \App\Services\Production\ScanCode::normalizeBadge($request->badge_code)
+                : null]);
+            $request->validate([
+                'badge_code' => ['nullable', 'string', 'max:64', 'not_regex:/[*|\s]/', Rule::unique('users', 'badge_code')->ignore($UserUpdate->id)],
+            ]);
+            $UserUpdate->badge_code = $request->badge_code;
+        }
+
         $UserUpdate->job_title = $request->job_title;
         $UserUpdate->payroll_number = $request->payroll_number;
         $UserUpdate->pay_grade = $request->pay_grade;
@@ -141,6 +157,24 @@ class HumanResourcesController extends Controller
         }
 
         return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', __('general_content.user_info_updated_success_trans_key'));
+    }
+
+    /**
+     * Badge opérateur imprimable (écran de scan) : QR et Code128 « N2P-B:{code} ».
+     */
+    public function printUserBadge(int $id)
+    {
+        $user = User::findOrFail($id);
+        abort_if(blank($user->badge_code), 404);
+
+        $code = \App\Services\Production\ScanCode::forBadge($user->badge_code);
+
+        return view('print/user-badge', [
+            'user' => $user,
+            'code' => $code,
+            'qrSvg' => \DNS2D::getBarcodeSVG($code, 'QRCODE', 6, 6),
+            'barcodeSvg' => \DNS1D::getBarcodeSVG($code, 'C128', 2, 60, 'black', false),
+        ]);
     }
 
     /**

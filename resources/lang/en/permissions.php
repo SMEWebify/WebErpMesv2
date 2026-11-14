@@ -56,5 +56,6 @@ return [
         'order-price-recalculate' => 'Enable the calculated price of an order line past preparation (reason required).',
         'affair-risk-close' => 'Close a critical risk of an affair risk register.',
         'quality-rework-order' => 'Launch a rework order from a non-conformity (tasks on the order line) and postpone the line delivery date.',
+        'workshop-kiosk' => 'Shared workshop station account: only opens the scan screen, and every scan needs an operator badge. Give it only to a dedicated "Workshop station" role.',
     ],
 ];

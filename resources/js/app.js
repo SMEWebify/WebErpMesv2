@@ -1099,6 +1099,8 @@ async function mountScanStation() {
         React.createElement(ScanStation, {
             scanUrl:   element.dataset.scanUrl ?? '',
             modeLabel: element.dataset.modeLabel ?? '',
+            badgeRequired:    element.dataset.badgeRequired === '1',
+            badgeIdleMinutes: parseInt(element.dataset.badgeIdleMinutes ?? '15', 10) || 15,
             trans,
         })
     );

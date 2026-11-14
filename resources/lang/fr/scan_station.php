@@ -20,6 +20,9 @@ return [
         'refused' => 'Refusé',
         'not_found' => 'Aucune tâche ne correspond à ce code',
         'ignored' => 'Scan en double ignoré',
+        'badge' => 'Opérateur : :name',
+        'badge_unknown' => 'Badge inconnu',
+        'badge_required' => 'Scannez d\'abord votre badge',
     ],
     'screen' => [
         'title' => 'Scanner',
@@ -41,5 +44,16 @@ return [
         'qty_confirm' => 'Terminer',
         'qty_cancel' => 'Annuler',
         'error' => 'Erreur de communication avec le serveur',
+        'operator' => 'Opérateur',
+        'no_operator' => 'Aucun badge : pointage au nom du compte connecté',
+        'no_operator_required' => 'Scannez votre badge pour commencer',
+        'change_operator' => 'Changer d\'opérateur',
+    ],
+    'badge' => [
+        'field' => 'Code badge (écran de scan)',
+        'help' => 'Lettres et chiffres, sans « * » ni « | ». Vide = pas de badge.',
+        'generate' => 'Générer',
+        'print' => 'Imprimer le badge',
+        'title' => 'Badge opérateur',
     ],
 ];

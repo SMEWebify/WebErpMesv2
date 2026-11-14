@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { formatWorked, parseQty, pushHistory, resultStyle } from '../../lib/scanStation.js';
+import { formatWorked, operatorExpired, parseQty, pushHistory, resultStyle } from '../../lib/scanStation.js';
 
 /**
  * Écran de scan atelier (docs/pointage-scan.md) : champ toujours actif pour la
@@ -21,7 +21,7 @@ async function postScan(url, body) {
     return data;
 }
 
-export default function ScanStation({ scanUrl, modeLabel, trans }) {
+export default function ScanStation({ scanUrl, modeLabel, trans, badgeRequired = false, badgeIdleMinutes = 15 }) {
     const t = (key) => trans?.[key] ?? key;
     const inputRef = useRef(null);
     const [code, setCode] = useState('');
@@ -30,6 +30,17 @@ export default function ScanStation({ scanUrl, modeLabel, trans }) {
     const [history, setHistory] = useState([]);
     const [qtyPrompt, setQtyPrompt] = useState(null);
     const [camera, setCamera] = useState(false);
+    // Opérateur du poste (badge scanné) : { name, badge, lastAt }. Le serveur relit
+    // le badge à chaque scan ; l'écran l'oublie après badgeIdleMinutes sans scan.
+    const [operator, setOperator] = useState(null);
+
+    useEffect(() => {
+        if (!operator) return undefined;
+        const timer = window.setInterval(() => {
+            if (operatorExpired(operator, Date.now(), badgeIdleMinutes)) setOperator(null);
+        }, 30000);
+        return () => window.clearInterval(timer);
+    }, [operator, badgeIdleMinutes]);
 
     // La douchette écrit là où est le curseur : on le ramène dans le champ dès
     // qu'il en sort, sauf pendant la saisie des quantités.
@@ -47,8 +58,20 @@ export default function ScanStation({ scanUrl, modeLabel, trans }) {
         const value = scanned.trim();
         if (!value || busy) return;
         setBusy(true);
+        const active = operator && !operatorExpired(operator, Date.now(), badgeIdleMinutes) ? operator : null;
         try {
-            const data = await postScan(scanUrl, quantities ? { code: value, ...quantities } : { code: value });
+            const body = { code: value, ...(quantities ?? {}), ...(active ? { badge: active.badge } : {}) };
+            const data = await postScan(scanUrl, body);
+            if (data.result === 'badge' && data.operator) {
+                setOperator({ ...data.operator, lastAt: Date.now() });
+            } else if (data.result === 'badge_unknown' && active && !value.toUpperCase().startsWith('N2P-B:')) {
+                // Le badge du poste n'existe plus (retiré entre-temps) : on l'oublie.
+                setOperator(null);
+            } else if (active) {
+                setOperator({ ...active, lastAt: Date.now() });
+            } else if (operator) {
+                setOperator(null);
+            }
             if (data.result === 'needs_qty') {
                 setQtyPrompt({ code: value, task: data.task, good: String(data.task?.remaining_qty ?? 0), bad: '0' });
             } else {
@@ -85,6 +108,20 @@ export default function ScanStation({ scanUrl, modeLabel, trans }) {
                 {'BarcodeDetector' in window ? (
                     <button type="button" className="btn btn-outline-secondary" onClick={() => setCamera((c) => !c)}>
                         <i className="fas fa-camera me-1" />{camera ? t('camera_stop') : t('camera')}
+                    </button>
+                ) : null}
+            </div>
+
+            <div className={`alert d-flex align-items-center gap-2 py-2 ${operator ? 'alert-info' : (badgeRequired ? 'alert-warning' : 'alert-secondary')}`}>
+                <i className="fas fa-id-badge fs-4" />
+                <span className="me-auto fs-5">
+                    {operator
+                        ? <>{t('operator')} : <strong>{operator.name}</strong></>
+                        : (badgeRequired ? t('no_operator_required') : t('no_operator'))}
+                </span>
+                {operator ? (
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setOperator(null)}>
+                        {t('change_operator')}
                     </button>
                 ) : null}
             </div>

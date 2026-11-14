@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Services\Production\ScanCode;
+use App\Services\Production\ScanStation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -158,6 +159,97 @@ class ScanStationTest extends TestCase
 
         $this->postJson(route('workshop.scan.store'), ['code' => 'N2P:OF999999*999999*PLI*10'])
             ->assertNotFound()->assertJson(['result' => 'not_found']);
+    }
+
+    // ------------------------------------------------------------------
+    // Badges (étape 2c)
+    // ------------------------------------------------------------------
+
+    public function test_a_scanned_badge_names_the_operator_of_the_next_scans(): void
+    {
+        $this->mode('toggle');
+        $operator = User::factory()->create(['name' => 'Arnaud']);
+        $operator->forceFill(['badge_code' => 'AB12CD34'])->save();
+        $task = $this->task();
+
+        // Douchette en majuscules bloquées ou non : même badge.
+        $this->postJson(route('workshop.scan.store'), ['code' => 'n2p-b:ab12cd34'])->assertOk()
+            ->assertJson(['result' => 'badge', 'operator' => ['name' => 'Arnaud', 'badge' => 'AB12CD34']]);
+        $this->assertSame([], $this->types($task), 'un badge n\'enregistre rien');
+
+        $this->scan($task, ['badge' => 'AB12CD34'])->assertOk()->assertJson(['result' => 'started']);
+        $this->assertSame($operator->id, (int) TaskActivities::where('task_id', $task->id)->value('user_id'));
+    }
+
+    public function test_an_unknown_badge_is_refused(): void
+    {
+        $this->mode('toggle');
+        $task = $this->task();
+
+        $this->postJson(route('workshop.scan.store'), ['code' => 'N2P-B:INCONNU'])->assertNotFound()
+            ->assertJson(['result' => 'badge_unknown']);
+        $this->scan($task, ['badge' => 'INCONNU'])->assertNotFound()->assertJson(['result' => 'badge_unknown']);
+        $this->assertSame([], $this->types($task));
+    }
+
+    public function test_a_kiosk_account_needs_a_badge_and_only_opens_the_scan_screen(): void
+    {
+        $this->mode('toggle');
+        \Spatie\Permission\Models\Permission::findOrCreate(ScanStation::KIOSK_PERMISSION, 'web');
+        $this->user->givePermissionTo(ScanStation::KIOSK_PERMISSION);
+        $task = $this->task();
+
+        $this->scan($task)->assertOk()->assertJson(['result' => 'badge_required']);
+        $this->assertSame([], $this->types($task));
+
+        $this->get(route('workshop.scan'))->assertOk();
+        $this->get(route('workshop'))->assertRedirect(route('workshop.scan'));
+        $this->getJson(route('production.task.statu.api.show', $task->id))->assertForbidden();
+    }
+
+    public function test_human_resources_set_the_badge_and_print_it(): void
+    {
+        \Spatie\Permission\Models\Permission::findOrCreate('human-resources-menu', 'web');
+        $this->user->givePermissionTo('human-resources-menu');
+        $employee = User::factory()->create();
+        $other = User::factory()->create();
+        $other->forceFill(['badge_code' => 'PRIS'])->save();
+
+        // Le formulaire envoie toujours ces champs (colonnes non nulles).
+        $update = fn (array $data) => $this->post(route('human.resources.update.user', ['id' => $employee->id]), $data + [
+            'employment_status' => $employee->employment_status ?? 1, 'statu' => $employee->statu ?? 1,
+        ]);
+
+        $this->get(route('human.resources.user.badge', ['id' => $employee->id]))->assertNotFound();
+
+        $update(['badge_code' => ' ab12cd34 '])->assertSessionHasNoErrors();
+        $this->assertSame('AB12CD34', $employee->fresh()->badge_code);
+
+        $update(['badge_code' => 'pris'])->assertSessionHasErrors('badge_code');
+        $update(['badge_code' => 'A*B'])->assertSessionHasErrors('badge_code');
+        $this->assertSame('AB12CD34', $employee->fresh()->badge_code);
+
+        // Ancien formulaire sans le champ : badge inchangé.
+        $update(['job_title' => 'Plieur'])->assertSessionHasNoErrors();
+        $this->assertSame('AB12CD34', $employee->fresh()->badge_code);
+
+        $this->get(route('human.resources.user.badge', ['id' => $employee->id]))->assertOk()
+            ->assertSee('N2P-B:AB12CD34');
+
+        $this->assertArrayNotHasKey('badge_code', $employee->fresh()->toArray(), 'jamais sérialisé');
+
+        $update(['badge_code' => ''])->assertSessionHasNoErrors();
+        $this->assertNull($employee->fresh()->badge_code);
+    }
+
+    public function test_the_anonymisation_clears_the_badge(): void
+    {
+        $employee = User::factory()->create();
+        $employee->forceFill(['badge_code' => 'AB12CD34'])->save();
+
+        app(\App\Services\RgpdAnonymizationService::class)->anonymizeUser($employee);
+
+        $this->assertNull($employee->fresh()->badge_code);
     }
 
     public function test_the_scan_screen_and_the_mode_setting_are_shown(): void

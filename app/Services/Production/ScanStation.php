@@ -31,6 +31,20 @@ class ScanStation
     public const REFUSED = 'refused';
     public const NOT_FOUND = 'not_found';
     public const IGNORED = 'ignored';
+    public const BADGE = 'badge';
+    public const BADGE_UNKNOWN = 'badge_unknown';
+    public const BADGE_REQUIRED = 'badge_required';
+
+    /** Permission du compte de poste partagé : écran de scan seul, badge exigé. */
+    public const KIOSK_PERMISSION = 'workshop-kiosk';
+
+    /** Un badge reste l'opérateur du poste 15 min sans scan (contrat ERP / MES). */
+    public const BADGE_IDLE_MINUTES = 15;
+
+    public static function isKiosk(?\App\Models\User $user): bool
+    {
+        return $user !== null && $user->checkPermissionTo(self::KIOSK_PERMISSION);
+    }
 
     public function __construct(
         private TaskExecution $execution,

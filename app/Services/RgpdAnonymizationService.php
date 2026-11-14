@@ -78,6 +78,8 @@ class RgpdAnonymizationService
                 'gender'                 => null,
                 'marital_status'         => null,
             ]);
+            // Hors $fillable : le badge ne s'écrit que depuis la fiche salarié.
+            $user->forceFill(['badge_code' => null])->saveQuietly();
             $user->enableLogging();
 
             // Révoquer tous les tokens d'API et invalider les sessions

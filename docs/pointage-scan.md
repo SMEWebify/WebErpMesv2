@@ -64,6 +64,17 @@ navigateur (Chrome Android), bouton masqué ailleurs. Le champ de recherche de l
 accepte aussi les codes `N2P:` (mode `open`). Tests : `tests/Feature/Production/ScanStationTest.php`,
 `resources/js/tests/lib/scanStation.test.js`.
 
+**Badges (ERP)** : `users.badge_code` (unique, majuscules, ni espace ni `*` / `|`, hors `$fillable`
+et masqué des sérialisations), saisi par les RH dans la fiche salarié (bouton « Générer »),
+badge imprimable `human.resources.user.badge` (format carte, QR + Code128 `N2P-B:{code}`).
+Le scan d'un badge n'écrit rien : l'écran le garde comme opérateur et le renvoie avec chaque
+scan (relu par le serveur, inconnu = refus), jusqu'à 15 min sans scan ou « Changer
+d'opérateur ». Effacé par l'anonymisation RGPD.
+**Compte de poste** : permission `workshop-kiosk` (donnée à personne, à mettre sur un rôle
+« Poste atelier ») — middleware `RestrictWorkshopKiosk` du groupe web : seules l'écran de scan
+et la déconnexion s'ouvrent (autre page → redirection, AJAX → 403), et tout scan sans badge
+est refusé (`badge_required`) pour que le temps n'aille pas au compte du poste.
+
 - Poste fixe : page plein écran, champ toujours actif ; opérateur actif en haut, retour du
   dernier scan au centre (vert démarrée, bleu terminée, orange reprise, rouge refus), 5 derniers
   scans en bas ; fenêtre de quantités en `toggle_qty` (bonne = reste à faire, rebut 0, Entrée).
@@ -155,7 +166,7 @@ partiellement livrées ; une commande encore ouverte n'a jamais été envoyée e
 | Étape | ERP | MES |
 |---|---|---|
 | 1 | `seq` dans le payload et la recherche, réception (`task.canceled`, `line_ref` vide, statut sans recul, opérateur de repli, contrôle du temps), interdiction `*` / `|` + diagnostic | Lecture des codes, 3 modes, écran poste, codes sur la fiche |
-| 2 | Codes sur la fiche suiveuse (2a, fait), écran de scan et 3 modes (2b, fait), badges `users.badge_code` (2c) | Pause / reprise, segments de temps, badges |
+| 2 | Codes sur la fiche suiveuse (2a), écran de scan et 3 modes (2b), badges `users.badge_code` et compte de poste (2c) — faits | Pause / reprise, segments de temps, badges |
 | 3 | Émission des `task.*`, `production_released` + renvoi de l'OF | Réception des `task.*` de l'ERP |
 
 Code : `App\Services\Integrations\Handlers\HandleTaskEvent`, `Task::resolveByExternalRef()`,

@@ -109,6 +109,28 @@
                                     </div>
                                 </div>
                                 <!-- /.mb-3 -->
+                                {{-- Le badge permet de pointer au nom du salarié : RH seulement. --}}
+                                @can('human-resources-menu')
+                                <div class="mb-3">
+                                    <label for="badge_code">{{ __('scan_station.badge.field') }} :</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-qrcode"></i></span>
+                                        <input type="text" class="form-control text-uppercase" name="badge_code" id="badge_code" maxlength="64" autocomplete="off" value="{{ old('badge_code', $User->badge_code) }}">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            onclick="document.getElementById('badge_code').value = Array.from(crypto.getRandomValues(new Uint8Array(8)), b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('')">
+                                            {{ __('scan_station.badge.generate') }}
+                                        </button>
+                                        @if($User->badge_code)
+                                            <a class="btn btn-outline-primary" target="_blank" href="{{ route('human.resources.user.badge', ['id' => $User->id]) }}">
+                                                <i class="fas fa-print me-1"></i>{{ __('scan_station.badge.print') }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                    <small class="form-text text-muted">{{ __('scan_station.badge.help') }}</small>
+                                    @error('badge_code')<div class="text-danger small">{{ $message }}</div>@enderror
+                                </div>
+                                @endcan
+                                <!-- /.mb-3 -->
                                 @can('your-company-menu')
                                 @if(auth()->id() !== $User->id)
                                 <div class="mb-3">

@@ -961,6 +961,20 @@ d'affiché : fonctionnement d'avant.
 - Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/taskRelease.test.js`.
 
+## Pointage par scan (ERP / MES Nest2Prod)
+
+Contrat commun dans `docs/pointage-scan.md` (codes `N2P:{of}*{ligne}*{op}*{seq}` et `N2P-B:{badge}`,
+événements `task.*`, règles de réception). Un client pointe avec l'ERP **ou** le MES.
+- **Réception MES → ERP** : `HandleTaskEvent` (recherche par (`seq`, `operation_code`), OF et ligne
+  concordants, `task.canceled`, statut sans recul, opérateur de repli `INTEGRATIONS_FALLBACK_USER_EMAIL`).
+  Payload des OF : `tasks[].seq`, `production_released` si l'option BPF est active.
+- **Fiche suiveuse** : option `factory.production_sheet_scan_codes` (fiche inchangée sans elle).
+- **Écran de scan** `/workshop/Scan` : mode `factory.scan_mode` (`open` | `toggle` | `toggle_qty`),
+  `App\Services\Production\ScanStation` + `TaskExecution` (mêmes activités que l'écran tâche).
+- **Badges** `users.badge_code` (RH, masqué, effacé par l'anonymisation) ; compte de poste
+  `workshop-kiosk` enfermé sur l'écran de scan (`RestrictWorkshopKiosk`), badge obligatoire.
+- Tests : `tests/Feature/IntegrationInboundTest.php`, `tests/Feature/Production/{ScanStation,ProductionSheetScanCode}Test.php`.
+
 ## Dossier de fin de fabrication (BL et facture bloqués)
 
 `order_lines.dossier_required` (faux par défaut), `dossier_validated_at` / `_by`, `dossier_source`

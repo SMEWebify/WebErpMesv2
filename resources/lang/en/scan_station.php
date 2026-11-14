@@ -20,6 +20,9 @@ return [
         'refused' => 'Refused',
         'not_found' => 'No task matches this code',
         'ignored' => 'Duplicate scan ignored',
+        'badge' => 'Operator: :name',
+        'badge_unknown' => 'Unknown badge',
+        'badge_required' => 'Scan your badge first',
     ],
     'screen' => [
         'title' => 'Scan',
@@ -41,5 +44,16 @@ return [
         'qty_confirm' => 'Finish',
         'qty_cancel' => 'Cancel',
         'error' => 'Could not reach the server',
+        'operator' => 'Operator',
+        'no_operator' => 'No badge: scans are recorded under the signed-in account',
+        'no_operator_required' => 'Scan your badge to start',
+        'change_operator' => 'Change operator',
+    ],
+    'badge' => [
+        'field' => 'Badge code (scan screen)',
+        'help' => 'Letters and digits, no "*" or "|". Empty = no badge.',
+        'generate' => 'Generate',
+        'print' => 'Print the badge',
+        'title' => 'Operator badge',
     ],
 ];

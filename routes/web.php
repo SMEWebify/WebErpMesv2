@@ -1235,6 +1235,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Update User
         Route::match(['post', 'put'], '/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware('permission:human-resources-menu')->name('human.resources.update.user');
 
+        // Badge opérateur de l'écran de scan (impression)
+        Route::get('/user/{id}/badge', 'App\Http\Controllers\Admin\HumanResourcesController@printUserBadge')->middleware('permission:human-resources-menu')->name('human.resources.user.badge');
+
         //lock User
         Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->middleware('permission:human-resources-menu')->name('human.resources.lock.user');
 

@@ -11,6 +11,9 @@ const RESULT_STYLES = {
     ignored:          { tone: 'secondary', icon: 'fa-clone' },
     refused:          { tone: 'danger',    icon: 'fa-ban' },
     not_found:        { tone: 'danger',    icon: 'fa-circle-question' },
+    badge:            { tone: 'info',      icon: 'fa-id-badge' },
+    badge_unknown:    { tone: 'danger',    icon: 'fa-id-badge' },
+    badge_required:   { tone: 'warning',   icon: 'fa-id-badge' },
     error:            { tone: 'danger',    icon: 'fa-triangle-exclamation' },
 };
 
@@ -30,6 +33,12 @@ export function parseQty(value) {
     const text = String(value ?? '').trim();
     if (text === '') return 0;
     return /^\d+$/.test(text) ? parseInt(text, 10) : null;
+}
+
+// Badge du poste périmé : aucun scan depuis `minutes` (15 dans le contrat ERP / MES).
+export function operatorExpired(operator, now, minutes) {
+    if (!operator) return false;
+    return now - operator.lastAt > minutes * 60 * 1000;
 }
 
 // Garde les derniers scans, le plus récent en tête.

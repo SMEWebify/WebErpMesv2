@@ -56,5 +56,6 @@ return [
         'order-price-recalculate' => 'Activer le prix calculé d\'une ligne de commande sortie de préparation (motif obligatoire).',
         'affair-risk-close' => 'Clôturer un risque critique du registre des risques d\'une affaire.',
         'quality-rework-order' => 'Lancer un ordre de retouche depuis une non-conformité (tâches sur la ligne de commande) et reporter la date de livraison de la ligne.',
+        'workshop-kiosk' => 'Compte de poste atelier partagé : n\'ouvre que l\'écran de scan, et chaque pointage exige le badge d\'un opérateur. À ne donner qu\'à un rôle dédié « Poste atelier ».',
     ],
 ];

@@ -8,6 +8,8 @@
        data-scan-url='{{ route("workshop.scan.store") }}'
        data-mode='{{ $mode }}'
        data-mode-label='{{ $modeLabel }}'
+       data-badge-required='{{ $badgeRequired ? 1 : 0 }}'
+       data-badge-idle-minutes='{{ $badgeIdleMinutes }}'
        data-trans='@json($trans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
   </div>
 @stop
