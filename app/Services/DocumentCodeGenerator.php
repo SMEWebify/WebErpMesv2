@@ -23,6 +23,16 @@ class DocumentCodeGenerator
         'order'          => 'orders',
         'internal-order' => 'orders',
         'delivery'       => 'deliverys',
+        // Proposés à l'affichage depuis nov. 2026 (auparavant consommés à chaque affichage).
+        'quote'              => 'quotes',
+        'company'            => 'companies',
+        'purchase'           => 'purchases',
+        'purchase-receipt'   => 'purchase_receipts',
+        'purchase-quotation' => 'purchases_quotations',
+        'non-conformities'   => 'quality_non_conformities',
+        'action'             => 'quality_actions',
+        'derogation'         => 'quality_derogations',
+        'return'             => 'returns',
     ];
 
     /** Garde-fou : un modèle sans {id} donne toujours le même code. */

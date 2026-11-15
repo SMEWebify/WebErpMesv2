@@ -254,6 +254,7 @@ class CompaniesController extends Controller
         unset($validated['address']);
 
         $company = DB::transaction(function () use ($validated, $address) {
+            $this->documentCodeGenerator->consumeIfProposed('company', $validated['code']);
             $company = Companies::create(array_merge($validated, ['uuid' => Str::uuid()]));
 
             if ($address) {
@@ -306,8 +307,8 @@ class CompaniesController extends Controller
 
     public function selectDataJson()
     {
-        $lastCompany = Companies::orderBy('id', 'desc')->first();
-        $nextCode    = $this->documentCodeGenerator->generateDocumentCode('company', $lastCompany?->id ?? 0);
+        // Seulement proposé : consommé à l'enregistrement (storeJson), pas à l'ouverture.
+        $nextCode    = $this->documentCodeGenerator->peekNextCode('company');
 
         return response()->json([
             'next_code' => $nextCode,

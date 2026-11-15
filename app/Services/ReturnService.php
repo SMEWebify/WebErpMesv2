@@ -23,6 +23,8 @@ class ReturnService
     {
         return DB::transaction(function () use ($data, $lines) {
             $lastReturn = Returns::latest('id')->first();
+            // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+            $this->documentCodeGenerator->consumeIfProposed('return', $data['code'] ?? null);
             $code = $data['code'] ?? $this->documentCodeGenerator->generateDocumentCode('return', $lastReturn?->id);
             $label = $data['label'] ?? $code;
 

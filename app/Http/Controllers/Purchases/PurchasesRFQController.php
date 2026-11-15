@@ -10,6 +10,7 @@ use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseQuotationService;
 use App\Services\PurchaseOrderService;
+use App\Services\DocumentCodeGenerator;
 use App\Services\Purchases\SupplierQualification;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
@@ -74,8 +75,9 @@ class PurchasesRFQController extends Controller
         $statuses = $qualification->statusMap($suppliers->pluck('id'));
 
         $reactProps = [
-            'lastPurchaseCode'    => $this->purchaseOrderService->generatePurchaseCode(),
-            'lastQuotationCode'   => $this->purchaseQuotationService->generatePurchasesQuotationCode(),
+            // Seulement proposés : consommés à l'enregistrement (storePurchaseApi), pas à l'affichage.
+            'lastPurchaseCode'    => app(DocumentCodeGenerator::class)->peekNextCode('purchase'),
+            'lastQuotationCode'   => app(DocumentCodeGenerator::class)->peekNextCode('purchase-quotation'),
             'suppliers'           => $suppliers->map(fn($c) => [
                 'id'            => $c->id,
                 'code'          => $c->code,
@@ -254,6 +256,7 @@ class PurchasesRFQController extends Controller
                 return $refusal;
             }
 
+            app(DocumentCodeGenerator::class)->consumeIfProposed('purchase', $validated['code']);
             $purchase = $this->purchaseOrderService->createPurchaseOrder(
                 $validated['companies_id'],
                 $validated['code'],
@@ -304,6 +307,7 @@ class PurchasesRFQController extends Controller
             }
             $affairLink = app(PurchaseAffairLink::class)->fromTasks($taskIds);
 
+            app(DocumentCodeGenerator::class)->consumeIfProposed('purchase-quotation', $validated['code']);
             $rfqGroup =$this->purchaseQuotationService->createRfqGroup($validated['code'], $validated['label']);
 
             foreach ($validated['selected_companies'] as $companyId) {

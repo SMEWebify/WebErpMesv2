@@ -26,6 +26,7 @@ use App\Events\OrderLineUpdated;
 use App\Events\DeliveryStatusChanged;
 use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -314,11 +315,27 @@ class DeliverysController extends Controller
 
         if (!$orderLine->product_id || $orderLine->Task()->exists()) return;
 
+        // Emplacements verrouillés (même ordre que la sortie depuis une tâche) et disponible
+        // relu en lecture verrouillante, donc à jour : deux BL simultanés ne sortent pas
+        // le même stock.
         $quantityRemaining    = $qty;
-        $stockLocationProducts = StockLocationProducts::where('products_id', $orderLine->product_id)->get();
+        $stockLocationProducts = StockLocationProducts::where('products_id', $orderLine->product_id)
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get();
 
         foreach ($stockLocationProducts as $stock) {
-            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+            $available = (float) StockMove::where('stock_location_products_id', $stock->id)
+                ->selectRaw("
+                    COALESCE(SUM(CASE
+                        WHEN typ_move IN (1,3,5,12,14) THEN qty
+                        WHEN typ_move IN (2,4,6,9,15)  THEN -qty
+                        ELSE 0
+                    END), 0) AS available
+                ")
+                ->sharedLock()
+                ->value('available');
+            $quantityToWithdraw = min($available, $quantityRemaining);
 
             if ($quantityToWithdraw != 0) {
                 $this->stockService->createStockMove([

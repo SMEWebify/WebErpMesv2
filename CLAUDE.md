@@ -1919,11 +1919,14 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   propres `properties` (`route`, `ip`) : à garder dans `properties`.
 
 ### ⚠️ À vérifier
-- `order_lines` : la migration de passage en décimal (`2026_04_21_000004`) a fait tomber le
-  `default(0)` des quantités (`->change()` ne reprend pas les modificateurs). Invisible en
-  production (MySQL `strict => false` met 0), mais toute insertion qui omet `delivered_qty` /
-  `invoiced_qty` échoue sur une base stricte (SQLite des tests). Rétablir les défauts par une
-  migration additive.
+- ✅ `default(0)` des quantités d'`order_lines` et de `stock_moves.qty`, perdu par
+  `2026_04_21_000004` (`->change()` ne reprend pas les modificateurs), rétabli par
+  `2026_11_15_000050`. Tout `->change()` doit répéter `default` / `nullable`.
+- **Quantités restées en entier** (`delivery_lines.qty`, `purchase_lines.qty / receipt_qty /
+  invoiced_qty`, `tasks.qty`, `task_activities.good_qt / bad_qt`, `purchase_receipt_lines.accepted_qty /
+  rejected_qty`…) alors que `order_lines.qty` est décimal : MySQL arrondit 2,5 à 3 sans erreur.
+  **Laissé en l'état (nov. 2026) : aucun client ne livre en décimal.** Un passage en décimal
+  change l'affichage brut des vues Blade et PDF (« 4.000 ») : prévoir le formatage avec.
 - password exclu des logs d'activité User
 - ✅ rgpd:purge passe par RgpdAnonymizationService avant force-delete (personnes et tiers cités par un enregistrement : section « Conservation des enregistrements »)
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage

@@ -65,8 +65,8 @@ class PurchasesReceiptController extends Controller
      */
     public function waintingReceipt()
     {
-        $lastReceipt = PurchaseReceipt::latest()->first();
-        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-receipt', $lastReceipt?->id ?? 0);
+        // Seulement proposé : consommé à l'enregistrement de la réception, pas à l'affichage.
+        $initialCode = $this->documentCodeGenerator->peekNextCode('purchase-receipt');
 
         $reactEndpoints = [
             'init'        => route('purchases.waiting.receipt.json.init'),
@@ -119,8 +119,8 @@ class PurchasesReceiptController extends Controller
         $companies  = $this->SelectDataService->getSupplier($companyIds);
         $users      = $this->SelectDataService->getUsers();
 
-        $lastReceipt = PurchaseReceipt::latest()->first();
-        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-receipt', $lastReceipt?->id ?? 0);
+        // Seulement proposé : consommé à l'enregistrement de la réception, pas à l'affichage.
+        $initialCode = $this->documentCodeGenerator->peekNextCode('purchase-receipt');
 
         $lines = $this->purchaseReceiptService->getPurchasesWaintingReceiptLines($companiesId);
 
@@ -198,6 +198,7 @@ class PurchasesReceiptController extends Controller
         ];
 
         try {
+            $this->documentCodeGenerator->consumeIfProposed('purchase-receipt', $validated['code']);
             $receipt = $this->purchaseReceiptService->createPurchaseReceipt($data, $receiptData);
             // rate=1 : la fiche propose la notation rapide du fournisseur
             return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id, 'rate' => 1])]);
@@ -220,6 +221,7 @@ class PurchasesReceiptController extends Controller
         ]);
 
         try {
+            $this->documentCodeGenerator->consumeIfProposed('purchase-receipt', $validated['code']);
             $receipt = $this->purchaseReceiptService->createEmptyPurchaseReceipt($validated);
             return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id])]);
         } catch (\Exception $e) {

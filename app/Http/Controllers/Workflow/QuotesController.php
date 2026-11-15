@@ -622,6 +622,7 @@ class QuotesController extends Controller
         unset($validated['template_id']);
 
         $quote = DB::transaction(function () use ($validated, $template) {
+            $this->documentCodeGenerator->consumeIfProposed('quote', $validated['code']);
             $quote = Quotes::create(array_merge($validated, [
                 'uuid'  => Str::uuid(),
                 'statu' => 1,
@@ -773,8 +774,8 @@ class QuotesController extends Controller
 
     public function selectDataJson()
     {
-        $lastQuote = Quotes::orderBy('id', 'desc')->first();
-        $nextCode  = $this->documentCodeGenerator->generateDocumentCode('quote', $lastQuote?->id ?? 0);
+        // Seulement proposé : consommé à l'enregistrement (storeJson), pas à l'ouverture.
+        $nextCode  = $this->documentCodeGenerator->peekNextCode('quote');
 
         return response()->json([
             'next_code'           => $nextCode,

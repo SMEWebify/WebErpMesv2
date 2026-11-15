@@ -10,6 +10,7 @@ use App\Events\PurchaseCreated;
 use App\Traits\NextPreviousTrait;
 use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
+use App\Services\DocumentCodeGenerator;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
@@ -506,6 +507,7 @@ class PurchasesController extends Controller
             return $refusal;
         }
 
+        app(DocumentCodeGenerator::class)->consumeIfProposed('purchase', $validated['code']);
         $purchase = Purchases::create($validated);
         $qualification->recordOverride($supplierCheck, $purchase);
 
@@ -516,7 +518,8 @@ class PurchasesController extends Controller
 
     public function selectDataJson()
     {
-        $nextCode = $this->purchaseOrderService->generatePurchaseCode();
+        // Seulement proposé : consommé à l'enregistrement (storeJson), pas à l'ouverture.
+        $nextCode = app(DocumentCodeGenerator::class)->peekNextCode('purchase');
         $suppliers = $this->SelectDataService->getSupplier();
         $qualification = app(SupplierQualification::class);
         $statuses = $qualification->statusMap($suppliers->pluck('id'));

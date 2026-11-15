@@ -43,9 +43,8 @@ class QualityDerogationController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
         $QualityDerogations = QualityDerogation::with(['UserManagement', 'QualityNonConformity', 'companie'])->orderBy('id')->paginate(10);
-        $LastDerogation = QualityDerogation::orderBy('id', 'desc')->first();
-        $codeDerogation = $LastDerogation ? $LastDerogation->id : 0;
-        $codeDerogation = $this->documentCodeGenerator->generateDocumentCode('derogation', $codeDerogation);
+        // Numéro seulement proposé : consommé à l'enregistrement, pas à chaque affichage.
+        $codeDerogation = $this->documentCodeGenerator->peekNextCode('derogation');
 
         return view('quality/quality-derogations', [
             'codeDerogation' =>  $codeDerogation,
@@ -106,6 +105,7 @@ class QualityDerogationController extends Controller
      */
     public function store(StoreQualityDerogationRequest $request)
     {
+        $this->documentCodeGenerator->consumeIfProposed('derogation', $request->input('code'));
         $Derogation = new QualityDerogation();
         $Derogation->code = $request->input('code');
         $this->fill($Derogation, $request);
