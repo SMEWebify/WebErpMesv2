@@ -356,7 +356,11 @@ function CreateModal({ show, onClose, endpoints, trans }) {
         if (show && !selectData) {
             apiFetch(endpoints.selectData).then(data => {
                 setSelectData(data);
-                setForm(prev => ({ ...prev, code: data.next_code ?? '' }));
+                setForm(prev => ({
+                    ...prev,
+                    code:    data.next_code ?? '',
+                    user_id: prev.user_id || (data.current_user_id ? String(data.current_user_id) : ''),
+                }));
             });
         }
         if (show) { setErrors({}); setRegistryPick(null); }

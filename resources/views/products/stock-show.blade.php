@@ -126,7 +126,7 @@
               <span class="input-group-text"><i class="fas fa-user"></i></span>
               <select class="form-select" name="user_id" id="user_id">
                 @foreach ($userSelect as $item)
-                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                <option value="{{ $item->id }}" @selected($item->id == auth()->id())>{{ $item->name }}</option>
                 @endforeach
               </select>
             </div>

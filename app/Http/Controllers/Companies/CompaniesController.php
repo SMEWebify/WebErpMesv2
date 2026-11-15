@@ -312,6 +312,7 @@ class CompaniesController extends Controller
         return response()->json([
             'next_code' => $nextCode,
             'users'     => User::select('id', 'name')->get(),
+            'current_user_id' => auth()->id(),
         ]);
     }
 

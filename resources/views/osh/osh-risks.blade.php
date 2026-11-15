@@ -146,7 +146,7 @@
                     <textarea class="form-control" name="preventive_measures" rows="3" placeholder="{{ __('general_content.preventive_measures_class_trans_key') }}"></textarea>
                 </div>
                 <div class="mb-3">
-                    @include('include.form.form-select-user',['userId' =>  null ])
+                    @include('include.form.form-select-user', ['userId' => auth()->id()])
                 </div>
                 <div class="card-footer">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
