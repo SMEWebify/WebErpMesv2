@@ -323,6 +323,7 @@ async function mountPurchasesQuotationShow() {
     createRoot(element).render(
         React.createElement(PurchasesQuotationShow, {
             initialQuotation:  parse('quotation')  ?? {},
+            offers:            parse('offers')     ?? [],
             suppliers:         parse('suppliers')  ?? [],
             supplierQualification: parse('supplierQualification'),
             initialAddresses:  parse('addresses')  ?? [],
@@ -628,8 +629,8 @@ async function mountCompanyForm() {
             vatRegimes:   parse('vatRegimes') ?? [],
             endpoint:     element.dataset.endpoint ?? '',
             pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
-            trans:        parse('trans')   ?? {},
             registryUrl:  element.dataset.registryUrl ?? '',
+            trans:        parse('trans')   ?? {},
         })
     );
 }

@@ -1301,6 +1301,29 @@ Un achat se rattachait à une vente seulement par `tasks_id` de ses lignes, et l
 - Non fait : rattacher à une tâche une ligne ajoutée à la main sur un document existant.
 - Tests : `tests/Feature/Purchases/PurchaseFromQuoteTest.php`.
 
+## Offres fournisseurs indicées (demandes de prix)
+
+`purchases_quotations` porte `supplier_offer_reference`, `supplier_offer_revision` (indice donné par
+le fournisseur, texte libre), `supplier_offer_date`, `supplier_offer_validity`, et
+`parent_purchase_quotation_id` / `superseded_at` (hors `$fillable`, écrits seulement par
+`App\Services\Purchases\PurchaseOfferRevisions`). Tout nullable : l'existant n'a ni offre ni indice.
+- **Nouvelle offre** (`purchases.quotation.api.revision`, aucune permission dédiée) : copie de la
+  demande et de ses lignes (sans quantités commandées ni prix retenu), famille **à plat** vers le
+  référent, code `{référent}-2`, `-3`… ; indice proposé = précédent + 1 (`str_increment`), date et
+  validité vidées, statut 1. La précédente est **remplacée** (`superseded_at`) — pas un statut : le
+  `statu` 1-6 est réécrit par `UpdatePurchasesQuotationStatus` et par les flèches.
+- Refus (409) : demande déjà remplacée, ou commande déjà sortie (statut 5 / 6, on commanderait deux fois).
+- **Indice remplacé** : conversion en commande refusée (`purchases.orders.store`, flash `error`),
+  écriture de l'en-tête et des lignes refusée (409), prix non retenu (`retain_refused.superseded`),
+  absent du comparatif RFQ. Fiche en lecture + bandeau vers le dernier indice.
+- **GED** : alias `purchase-quotation`, rôle `offre_fournisseur` (`FileRole::forPurchaseQuotations()`).
+- Carte « Historique des offres » (indices, dates, total, une requête), affichée dès 2 indices.
+- **Commande d'achat** : `purchases.supplier_offer_reference / _revision` recopiés à la conversion ;
+  PDF `print/pdf-purchases` par `Purchases::printSupplierOfferCaption()` (**écho** en fin de ligne du
+  `<pre>`, jamais un `@if` : HTML identique sans offre, `PurchasePdfLegacyRenderingTest`). Une vue
+  `print/custom/pdf-purchases` ne l'affiche pas tant qu'elle n'en reprend pas l'appel.
+- Tests : `tests/Feature/Purchases/PurchaseOfferRevisionTest.php`, `resources/js/tests/lib/purchaseOffers.test.js`.
+
 ## Fournisseur qualifié obligatoire (commandes d'achat)
 
 `App\Services\Purchases\SupplierQualification`. Option `purchases.require_qualified_supplier`

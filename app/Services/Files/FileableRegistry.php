@@ -10,6 +10,7 @@ use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\Purchases;
+use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\User;
@@ -47,6 +48,8 @@ class FileableRegistry
         'credit-note' => CreditNotes::class,
         'product' => Products::class,
         'purchase' => Purchases::class,
+        // Demande de prix : offre PDF du fournisseur (rôle offre_fournisseur).
+        'purchase-quotation' => PurchasesQuotation::class,
         'purchase-receipt' => PurchaseReceipt::class,
         'stock-move' => StockMove::class,
         // Lot / coulée : certificat matière.

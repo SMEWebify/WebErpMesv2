@@ -18,6 +18,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\Quotes;
 use App\Services\Purchases\PurchaseAffairLink;
+use App\Services\Purchases\PurchaseOfferRevisions;
 use App\Services\Purchases\PurchaseQuotationRetention;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
@@ -459,6 +460,8 @@ class PurchasesRFQController extends Controller
             'loading'          => __('general_content.loading_trans_key'),
             'compare_rfq'      => __('general_content.compare_rfq_trans_key'),
             'total'            => __('general_content.total_price_trans_key'),
+            'offer_superseded'     => __('purchase_offers.screen.superseded'),
+            'offer_revision_short' => __('purchase_offers.screen.revision_short'),
         ];
 
         return view('purchases/purchases-quotation', [
@@ -515,6 +518,7 @@ class PurchasesRFQController extends Controller
 
         $reactProps = [
             'quotation'  => $this->serializeQuotationFull($id, $currency),
+            'offers'     => $this->serializeOffers($id, $currency),
             'suppliers'  => $suppliers,
             'addresses'  => $addresses,
             'contacts'   => $contacts,
@@ -542,6 +546,7 @@ class PurchasesRFQController extends Controller
             'companyData' => route('purchases.quotation.api.company-data'),
             'storeOrder'  => route('purchases.orders.store', ['id' => $id->id]),
             'retainLine'  => route('purchases.quotation.api.lines.retain', ['quotation' => $id->id, 'line' => '__ID__']),
+            'newRevision' => route('purchases.quotation.api.revision', ['quotation' => $id->id]),
         ];
 
         $reactTrans = [
@@ -551,11 +556,9 @@ class PurchasesRFQController extends Controller
             'options'                  => __('general_content.options_trans_key'),
             'external_id'              => __('general_content.external_id_trans_key'),
             'name_quote'               => __('general_content.name_quote_request_trans_key'),
-            'supplier_info'            => __('general_content.supplier_info_trans_key'),
             'supplier'                 => __('general_content.supplier_trans_key'),
             'address'                  => __('general_content.adress_name_trans_key'),
             'contact'                  => __('general_content.contact_trans_key'),
-            'date_pay_info'            => __('general_content.date_pay_info_trans_key'),
             'validity_date'            => __('general_content.validity_date_trans_key'),
             'comment'                  => __('general_content.comment_trans_key'),
             'update'                   => __('general_content.update_trans_key'),
@@ -601,6 +604,8 @@ class PurchasesRFQController extends Controller
             'retain_help'              => __('purchase_affair.retain_help'),
             'quote_not_orderable'      => __('purchase_affair.quote_not_orderable'),
             'retain_refused'           => __('purchase_affair.retain_refused'),
+            // Offres indicées (PurchaseOfferRevisions)
+            'offers'                   => __('purchase_offers.screen'),
         ];
 
         return view('purchases/purchases-quotation-show', [
@@ -621,7 +626,12 @@ class PurchasesRFQController extends Controller
      */
     public function compareQuotationGroup(PurchaseRfqGroup $group)
     {
-        $group->load(['purchaseQuotations.companie', 'purchaseQuotations.PurchaseQuotationLines.tasks.QuoteLines.quote']);
+        // Une offre remplacée par un indice suivant ne se compare plus : seul le dernier indice compte
+        $group->load([
+            'purchaseQuotations' => fn ($query) => $query->whereNull('superseded_at'),
+            'purchaseQuotations.companie',
+            'purchaseQuotations.PurchaseQuotationLines.tasks.QuoteLines.quote',
+        ]);
         $quotations = $group->purchaseQuotations;
 
         $lineGroups = collect();
@@ -821,6 +831,10 @@ class PurchasesRFQController extends Controller
     {
         abort_unless(auth()->check(), 403);
 
+        if ($refusal = $this->supersededRefusal($quotation)) {
+            return $refusal;
+        }
+
         $validated = $request->validate([
             'label'                    => 'required|string',
             'companies_id'             => 'nullable|integer',
@@ -829,6 +843,11 @@ class PurchasesRFQController extends Controller
             'delay'                    => 'nullable|date',
             'comment'                  => 'nullable|string',
             'affair_link'              => 'nullable|string',
+            // Offre reçue : absente de la requête = inchangée
+            'supplier_offer_reference' => 'sometimes|nullable|string|max:255',
+            'supplier_offer_revision'  => 'sometimes|nullable|string|max:20',
+            'supplier_offer_date'      => 'sometimes|nullable|date',
+            'supplier_offer_validity'  => 'sometimes|nullable|date',
         ]);
 
         unset($validated['affair_link']);
@@ -865,6 +884,9 @@ class PurchasesRFQController extends Controller
     public function apiQuotationStoreLine(Request $request, PurchasesQuotation $quotation)
     {
         abort_unless(auth()->check(), 403);
+        if ($refusal = $this->supersededRefusal($quotation)) {
+            return $refusal;
+        }
 
         $validated = $request->validate([
             'ordre'        => 'required|numeric|gt:0',
@@ -902,6 +924,9 @@ class PurchasesRFQController extends Controller
     {
         abort_unless(auth()->check(), 403);
         abort_if($line->purchases_quotation_id !== $quotation->id, 404);
+        if ($refusal = $this->supersededRefusal($quotation)) {
+            return $refusal;
+        }
 
         $validated = $request->validate([
             'ordre'        => 'required|numeric|gt:0',
@@ -967,6 +992,45 @@ class PurchasesRFQController extends Controller
     }
 
     /**
+     * Nouvelle offre du fournisseur (indice suivant) : copie de la demande et de
+     * ses lignes, la demande d'origine passe « remplacée » (PurchaseOfferRevisions).
+     */
+    public function apiQuotationNewRevision(Request $request, PurchasesQuotation $quotation)
+    {
+        $validated = $request->validate([
+            'supplier_offer_revision' => 'nullable|string|max:20',
+        ]);
+
+        try {
+            $revision = app(PurchaseOfferRevisions::class)->newRevision($quotation, $validated['supplier_offer_revision'] ?? null);
+        } catch (\DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        }
+
+        session()->flash('success', __('purchase_offers.created', ['code' => $revision->code]));
+
+        return response()->json([
+            'redirect' => route('purchases.quotations.show', ['id' => $revision->id]),
+        ], 201);
+    }
+
+    /**
+     * Indice remplacé : rien ne s'écrit plus sur la demande ni sur ses lignes.
+     */
+    private function supersededRefusal(PurchasesQuotation $quotation): ?\Illuminate\Http\JsonResponse
+    {
+        if (! $quotation->isSuperseded()) {
+            return null;
+        }
+
+        $latest = app(PurchaseOfferRevisions::class)->latest($quotation);
+
+        return response()->json([
+            'message' => __('purchase_offers.refused.superseded', ['code' => $latest->code]),
+        ], 409);
+    }
+
+    /**
      * API: products list (for line form autocomplete).
      */
     public function apiProducts()
@@ -1029,6 +1093,8 @@ class PurchasesRFQController extends Controller
             'rfq_group_id'              => $q->rfq_group_id,
             'rfq_group_code'            => $q->rfqGroup?->code,
             'rfq_group_label'           => $q->rfqGroup?->label,
+            'supplier_offer_revision'   => $q->supplier_offer_revision,
+            'superseded'                => $q->isSuperseded(),
             'show_url'                  => route('purchases.quotations.show', ['id' => $q->id]),
             'pdf_url'                   => ($q->companies_contacts_id && $q->companies_addresses_id)
                 ? route('pdf.purchase.quotation', ['Document' => $q->id]) : null,
@@ -1050,6 +1116,18 @@ class PurchasesRFQController extends Controller
             'delay'                     => $q->delay,
             'comment'                   => $q->comment,
             'rfq_group_id'              => $q->rfq_group_id,
+            'supplier_offer_reference'  => $q->supplier_offer_reference,
+            'supplier_offer_revision'   => $q->supplier_offer_revision,
+            'supplier_offer_date'       => $q->supplier_offer_date?->format('Y-m-d'),
+            'supplier_offer_validity'   => $q->supplier_offer_validity?->format('Y-m-d'),
+            'superseded'                => $q->isSuperseded(),
+            'latest'                    => $q->isSuperseded() ? (function () use ($q) {
+                $latest = app(PurchaseOfferRevisions::class)->latest($q);
+
+                return ['code' => $latest->code, 'url' => route('purchases.quotations.show', ['id' => $latest->id])];
+            })() : null,
+            // Raison du refus d'une nouvelle offre (purchase_offers.refused.*), null si possible
+            'revision_blocked'          => app(PurchaseOfferRevisions::class)->revisionRefusal($q),
             'companie_label'            => $q->companie?->label ?? '',
             'pdf_url'                   => ($q->companies_contacts_id && $q->companies_addresses_id)
                 ? route('pdf.purchase.quotation', ['Document' => $q->id]) : null,
@@ -1068,6 +1146,31 @@ class PurchasesRFQController extends Controller
             ])->values()->toArray(),
             'lines' => $q->PurchaseQuotationLines->map(fn($l) => $this->serializeLine($l, $currency))->values()->toArray(),
         ];
+    }
+
+    /**
+     * Carte « Historique des offres » : référent puis indices, une requête.
+     * Vide pour une demande de prix sans indice (la carte n'est pas affichée).
+     */
+    private function serializeOffers(PurchasesQuotation $q, string $currency): array
+    {
+        $family = app(PurchaseOfferRevisions::class)->family($q);
+        if ($family->count() < 2) {
+            return [];
+        }
+
+        return $family->map(fn (PurchasesQuotation $offer) => [
+            'id'         => $offer->id,
+            'code'       => $offer->code,
+            'reference'  => $offer->supplier_offer_reference,
+            'revision'   => $offer->supplier_offer_revision,
+            'date'       => $offer->supplier_offer_date?->format('d/m/Y'),
+            'validity'   => $offer->supplier_offer_validity?->format('d/m/Y'),
+            'total'      => Number::currency((float) $offer->lines_total, $currency, config('app.locale')),
+            'superseded' => $offer->isSuperseded(),
+            'current'    => $offer->id === $q->id,
+            'url'        => route('purchases.quotations.show', ['id' => $offer->id]),
+        ])->values()->all();
     }
 
     private function serializeLine(PurchaseQuotationLines $l, string $currency): array

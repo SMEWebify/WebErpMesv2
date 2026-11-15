@@ -29,5 +29,6 @@ return [
         'not_quote_task' => 'Cette ligne ne porte pas sur une opération de devis.',
         'converted'      => 'Le devis a déjà été converti en commande.',
         'quote_closed'   => 'Le devis n\'est plus ouvert ni envoyé.',
+        'superseded'     => 'Cette offre a été remplacée par un indice suivant.',
     ],
 ];

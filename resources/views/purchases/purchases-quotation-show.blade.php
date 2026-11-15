@@ -19,6 +19,7 @@
 <div
     id="purchases-quotation-show-app"
     data-quotation="{{ json_encode($reactProps['quotation']) }}"
+    data-offers="{{ json_encode($reactProps['offers']) }}"
     data-suppliers="{{ json_encode($reactProps['suppliers']) }}"
     data-supplier-qualification="{{ json_encode($reactProps['supplierQualification']) }}"
     data-addresses="{{ json_encode($reactProps['addresses']) }}"
@@ -28,6 +29,19 @@
     data-endpoints="{{ json_encode($reactEndpoints) }}"
     data-trans="{{ json_encode($reactTrans) }}"
 ></div>
+{{-- Offre PDF du fournisseur et autres pièces de la demande de prix --}}
+<div class="card card-outline card-secondary mb-3">
+  <div class="card-header">
+    <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>
+  </div>
+  <div class="card-body">
+    @include('include.file-manager-mount', [
+      'fileableType' => 'purchase-quotation',
+      'fileableId'   => $PurchaseQuotation->id,
+      'fileRoles'    => \App\Services\Files\FileRole::forPurchaseQuotations(),
+    ])
+  </div>
+</div>
 @stop
 
 @section('css')

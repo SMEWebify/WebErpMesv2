@@ -26,6 +26,8 @@ class FileRole
     public const CONTRACTUAL = 'contractuel';
     // Accusé de réception d'une commande d'achat envoyé par le fournisseur
     public const SUPPLIER_ACK = 'ar_fournisseur';
+    // Offre (PDF) reçue du fournisseur en réponse à une demande de prix
+    public const SUPPLIER_OFFER = 'offre_fournisseur';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -53,6 +55,7 @@ class FileRole
             self::CUSTOMER_APPROVAL,
             self::CONTRACTUAL,
             self::SUPPLIER_ACK,
+            self::SUPPLIER_OFFER,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,
@@ -88,6 +91,21 @@ class FileRole
             self::SIGNED,
             self::PHOTO,
             self::CONTROL,
+            self::OTHER,
+        ];
+    }
+
+    /**
+     * Roles offered on a purchase quotation, in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forPurchaseQuotations(): array
+    {
+        return [
+            self::SUPPLIER_OFFER,
+            self::PLAN,
+            self::CERTIFICATE,
             self::OTHER,
         ];
     }

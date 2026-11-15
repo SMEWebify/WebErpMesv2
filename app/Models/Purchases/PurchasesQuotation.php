@@ -3,6 +3,7 @@
 namespace App\Models\Purchases;
 
 use Carbon\Carbon;
+use App\Models\File;
 use App\Models\User;
 use App\Models\EmailLog;
 use Spatie\Activitylog\LogOptions;
@@ -31,10 +32,22 @@ class PurchasesQuotation extends Model
                             'opportunities_id',
                             'quotes_id',
                             'orders_id',
-                            'statu',  
+                            'statu',
                             'user_id',
                             'comment',
+                            // Offre reçue du fournisseur (PurchaseOfferRevisions)
+                            'supplier_offer_reference',
+                            'supplier_offer_revision',
+                            'supplier_offer_date',
+                            'supplier_offer_validity',
                         ];
+
+    // parent_purchase_quotation_id et superseded_at : écrits par PurchaseOfferRevisions seulement
+    protected $casts = [
+        'supplier_offer_date'     => 'date',
+        'supplier_offer_validity' => 'date',
+        'superseded_at'           => 'datetime',
+    ];
 
     // Only log changes
     protected static $logOnlyDirty = true;
@@ -81,6 +94,18 @@ class PurchasesQuotation extends Model
         return $this->belongsTo(PurchaseRfqGroup::class, 'rfq_group_id');
     }
 
+    // Offre PDF du fournisseur et autres pièces (GED, alias purchase-quotation)
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
+    }
+
+    /** Remplacée par un indice suivant de l'offre : ni commande ni modification. */
+    public function isSuperseded(): bool
+    {
+        return $this->superseded_at !== null;
+    }
+
     /**
      * Get all of the email logs for the model.
      *
@@ -114,7 +139,9 @@ class PurchasesQuotation extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu']);
+        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu',
+                                                'supplier_offer_reference', 'supplier_offer_revision',
+                                                'supplier_offer_date', 'supplier_offer_validity', 'superseded_at']);
         // Chain fluent methods for configuration options
     }
 }

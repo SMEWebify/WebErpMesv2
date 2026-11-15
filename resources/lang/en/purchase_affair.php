@@ -29,5 +29,6 @@ return [
         'not_quote_task' => 'This line is not on a quote operation.',
         'converted'      => 'The quote has already been converted into an order.',
         'quote_closed'   => 'The quote is no longer open or sent.',
+        'superseded'     => 'This offer has been replaced by a later revision.',
     ],
 ];

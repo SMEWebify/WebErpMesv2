@@ -19,6 +19,7 @@ use App\Models\Companies\CompaniesContacts;
 use App\Services\PurchaseCalculatorService;
 use App\Models\Planning\Task;
 use App\Services\Purchases\PurchaseAffairLink;
+use App\Services\Purchases\PurchaseOfferRevisions;
 use App\Services\Purchases\PurchaseQualityClauses;
 use App\Services\Purchases\SupplierQualification;
 use App\Models\Companies\SupplierQualificationOverride;
@@ -362,6 +363,13 @@ class PurchasesController extends Controller
     { 
         $PurchasesQuotationData = PurchasesQuotation::findOrFail($id);
 
+        // Offre remplacée par un indice suivant : seul le dernier indice se commande
+        if ($PurchasesQuotationData->isSuperseded()) {
+            $latest = app(PurchaseOfferRevisions::class)->latest($PurchasesQuotationData);
+
+            return redirect()->back()->with('error', __('purchase_offers.refused.superseded', ['code' => $latest->code]));
+        }
+
         // Only lines of this quotation, in their display order.
         $quotationLines = PurchaseQuotationLines::where('purchases_quotation_id', $PurchasesQuotationData->id)
             ->whereIn('id', (array) $request->input('PurchaseQuotationLine', []))
@@ -399,7 +407,10 @@ class PurchasesController extends Controller
         }
 
         $qualification->recordOverride($supplierCheck, $purchaseOrder);
-        $purchaseOrder->fill($PurchasesQuotationData->only(array_values(PurchaseAffairLink::COLUMNS)))->save();
+        $purchaseOrder->fill($PurchasesQuotationData->only(array_values(PurchaseAffairLink::COLUMNS)))
+            // Référence et indice de l'offre, imprimés sur la commande s'ils sont renseignés
+            ->fill($PurchasesQuotationData->only(['supplier_offer_reference', 'supplier_offer_revision']))
+            ->save();
 
         $this->purchaseOrderService->processPurchaseQuotationLines(
             $quotationLines,

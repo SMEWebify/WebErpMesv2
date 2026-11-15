@@ -78,7 +78,7 @@
 {{ __('general_content.phone_trans_key') }} : {{ optional($Document->contact)['number'] }}
 {{ __('general_content.email_trans_key') }} : {{ optional($Document->contact)['mail'] }}
 <br />
-{{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}
+{{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}{{ $Document->printSupplierOfferCaption() }}
                             </pre>
                         @else
 <h1>{{ __('general_content.internal_order_trans_key') }}</h1>

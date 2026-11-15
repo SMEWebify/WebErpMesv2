@@ -31,6 +31,11 @@ class PurchaseQuotationRetention
             return 'not_quote_task';
         }
 
+        // Offre remplacée par un indice suivant : c'est le prix du dernier qui compte
+        if ($line->purchaseQuotation?->isSuperseded()) {
+            return 'superseded';
+        }
+
         $quoteLine = $task->QuoteLines;
         if (! $quoteLine || $quoteLine->orderLine()->exists()) {
             return 'converted';
