@@ -703,6 +703,29 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
   une ligne non article absente du payload.
 
+## Import DPGF (appels d'offres bâtiment)
+
+Option `dpgf.enabled` (`QUOTES_DPGF_IMPORT`, **false** par défaut) : inactive = ni bouton, routes
+en 404. Bouton « Importer un DPGF » de l'écran des lignes de devis (statut 1) :
+`components/quotes/DpgfImportModal.jsx`, `App\Services\Quotes\DpgfImporter`, `config/dpgf.php`.
+- **Parcours** : dépôt (`quotes.lines.json.dpgf.preview`, fichier gardé par
+  `App\Services\Imports\TemporaryImportFile` sous `imports/{user}`, comme l'assistant d'import) →
+  aperçu recalculé à chaque choix d'onglet, de ligne d'en-tête ou de colonne (`.dpgf.analyse`,
+  **rien d'écrit**) → correction ligne par ligne → `.dpgf.store` (lignes en fin de devis,
+  transaction). Le classeur d'origine est alors rangé dans la GED du devis (hashtag `dpgf`).
+- **Détection** : en-tête = première ligne qui nomme la désignation + 2 autres colonnes (N°, unité,
+  qté, PU, montant ; en-tête sur deux lignes accolé), noms dans `dpgf.columns` (exact, sinon le plus
+  long début : « Prix total HT » = montant). Non trouvé → l'utilisateur choisit sur le début de la feuille.
+- **Classement** : poste chiffrable → article (`code` = n° de poste) ; ligne numérotée sans
+  quantité, « Lot … » ou titre en capitales → section (n° gardé dans le libellé : sections **à plat**) ;
+  « Total / Sous-total / Montant » → sous-total ; PM / inclus / sans objet → texte « … — PM » ;
+  total général, TVA, TTC → ignorés. L'utilisateur peut changer chaque type.
+- Unités par groupes d'alias (`dpgf.units` : m² = M2, ens, ft…), sinon montrée et unité par
+  défaut. Ens / ft sans quantité = 1 ; autre poste sans quantité = 0, signalé. Prix = PU, sinon
+  montant ÷ qté, sinon 0. Désignation > 255 caractères → texte complet dans `external_comment`.
+- `SpreadsheetReader::read(..., $sheet)` et `sheetNames()` : autre onglet que le premier.
+- Tests : `tests/Feature/Quotes/DpgfImportTest.php`, `resources/js/tests/lib/dpgfImport.test.js`.
+
 ## Marge du devis (interne)
 
 `App\Services\Quotes\QuoteMargin`, **jamais imprimée** (aucune vue `print/` ne la lit).
@@ -1857,16 +1880,8 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - Try/catch sans logging
 - Tests métier manquants
 
-#### Devis — import DPGF (appels d'offres bâtiment)
-Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
-- **Import Excel → devis** : lecture PhpSpreadsheet sur le patron `InventoryXlsxImporter`
-  (parse → aperçu sans écriture → application en transaction). Détection de la ligne
-  d'en-tête et des colonnes N° / Désignation / Unité / Qté / PU HT / Montant, corrigeables
-  dans l'aperçu. Classement des lignes : titre de lot → `section`, poste → `article`,
-  « Total lot » → `subtotal`, « PM / Inclus / Sans objet » → `text`. N° de poste dans
-  `code`. Correspondance d'unités (m², ml, u, ens, ft…) : le seeder ne crée que KG/MM/UNIT.
-  DPGF d'origine rangé dans la GED du devis. Classeur multi-onglets : un onglet par lot ou
-  onglet choisi.
+#### Devis — suite de l'import DPGF
+L'import est fait (section « Import DPGF »). Reste :
 - **Renvoi du DPGF chiffré au format du maître d'œuvre** (la vraie valeur : l'AO exige son
   fichier, pas notre PDF) : colonne additive nullable `quote_lines.source_ref` (cellule
   d'origine), puis réécriture des PU (et quantités corrigées) dans le classeur d'origine
@@ -1877,8 +1892,8 @@ Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
 - **Contrainte** : sections non imbriquables (pas de parent/niveau sur `quote_lines`) →
   aplatir l'arborescence en sections numérotées + sous-total par lot ; ne pas introduire
   d'imbrication (impact PDF / Factur-X).
-- Lecture du classeur : réutiliser `App\Services\Imports\SpreadsheetReader` (section
-  « Imports CSV / Excel »), qui ne lit que la première feuille.
+- Pour le renvoi : le n° de ligne du fichier (`row` de l'aperçu) et l'onglet sont connus à
+  l'import mais **pas gardés** (pas de `source_ref`) ; le classeur est dans la GED du devis.
 
 #### Facturation bâtiment (marchés de travaux)
 Besoin identifié sur un prospect (oct. 2026 : cuisines, bâtiment léger, serrurerie / pliage

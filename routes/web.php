@@ -376,6 +376,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{quoteId}/lines/json/dictation/transcribe', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'transcribe'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.transcribe');
         Route::post('/{quoteId}/lines/json/dictation/propose', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'propose'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.propose');
         Route::post('/{quoteId}/lines/json/dictation/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeDictatedJson')->whereNumber('quoteId')->name('quotes.lines.json.dictation.store');
+        // Import DPGF : dépôt du classeur → aperçu recalculé (rien d'écrit), puis création des lignes relues
+        Route::post('/{quoteId}/lines/json/dpgf/preview', [\App\Http\Controllers\Workflow\QuoteDpgfController::class, 'preview'])->whereNumber('quoteId')->middleware('throttle:30,1')->name('quotes.lines.json.dpgf.preview');
+        Route::post('/{quoteId}/lines/json/dpgf/analyse', [\App\Http\Controllers\Workflow\QuoteDpgfController::class, 'analyse'])->whereNumber('quoteId')->middleware('throttle:60,1')->name('quotes.lines.json.dpgf.analyse');
+        Route::post('/{quoteId}/lines/json/dpgf/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeDpgfJson')->whereNumber('quoteId')->name('quotes.lines.json.dpgf.store');
         Route::get('/{quoteId}/lines/json/price-list/{productId}', 'App\Http\Controllers\Workflow\QuoteLinesController@priceListForProductJson')->name('quotes.lines.json.price-list');
         Route::post('/{quoteId}/lines/json/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeLineJson')->name('quotes.lines.json.store');
         Route::post('/{quoteId}/lines/json/price-increase', 'App\Http\Controllers\Workflow\QuoteLinesController@priceIncreaseJson')->name('quotes.lines.json.price-increase');

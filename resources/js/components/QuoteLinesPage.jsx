@@ -14,6 +14,7 @@ import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
 import GuideHelp from './GuideHelp';
 import RewriteButton from './ai/RewriteButton.jsx';
 import QuoteDictationModal from './quotes/QuoteDictationModal.jsx';
+import DpgfImportModal from './quotes/DpgfImportModal.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1236,6 +1237,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const dictationTrans = trans.quote_dictation ?? {};
     const aiTrans = trans.ai_text ?? {};
     const marginTrans = trans.quote_margin ?? {};
+    const dpgfTrans = trans.dpgf ?? {};
     const [showMargin, setShowMargin]           = useState(() => readMarginColumnVisible());
     const [marginThreshold, setMarginThreshold] = useState(0);
     const [lines, setLines]             = useState([]);
@@ -1251,6 +1253,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const [taskModalLine, setTaskModalLine] = useState(null);
     const [importOpen, setImportOpen]       = useState(false);
     const [dictationOpen, setDictationOpen] = useState(false);
+    const [dpgfOpen, setDpgfOpen]           = useState(false);
     const [addMenuOpen, setAddMenuOpen]     = useState(false);
     const [autoEditId, setAutoEditId]       = useState(null);   // ligne de présentation tout juste créée
     const [convertOpen, setConvertOpen]     = useState(false);
@@ -1558,6 +1561,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         showFlash('success', (dictationTrans.created ?? ':count').replace(':count', newLines.length));
     };
 
+    const handleDpgfLines = (newLines) => {
+        setDpgfOpen(false);
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', (dpgfTrans.created ?? ':count').replace(':count', newLines.length));
+    };
+
     const handleCadImported = (newLines) => {
         setLines((prev) => {
             const updated = [...prev, ...newLines];
@@ -1685,6 +1698,11 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 {quoteStatu === 1 && endpoints.dictationPropose && (
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setDictationOpen(true)}>
                         <i className="fas fa-microphone me-1" />{dictationTrans.button ?? 'Dicter'}
+                    </button>
+                )}
+                {quoteStatu === 1 && endpoints.dpgfPreview && (
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => setDpgfOpen(true)}>
+                        <i className="fas fa-file-excel me-1" />{dpgfTrans.button ?? 'Importer un DPGF'}
                     </button>
                 )}
                 {quoteStatu === 1 && (
@@ -1886,6 +1904,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     trans={dictationTrans}
                     onCreated={handleDictatedLines}
                     onClose={() => setDictationOpen(false)}
+                />
+            )}
+
+            {dpgfOpen && (
+                <DpgfImportModal
+                    endpoints={endpoints}
+                    units={selectData.units ?? []}
+                    trans={dpgfTrans}
+                    onCreated={handleDpgfLines}
+                    onClose={() => setDpgfOpen(false)}
                 />
             )}
 

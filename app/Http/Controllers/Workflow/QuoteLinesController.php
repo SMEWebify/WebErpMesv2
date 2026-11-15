@@ -17,6 +17,7 @@ use App\Services\CustomFieldService;
 use App\Services\OrderService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Receivables\ReceivablesService;
+use App\Services\Quotes\DpgfImporter;
 use App\Services\Quotes\QuoteDictation;
 use App\Services\Quotes\QuoteLineCopier;
 use App\Services\Quotes\QuoteMargin;
@@ -615,6 +616,70 @@ class QuoteLinesController extends Controller
             $created = $dictation->create($quote, $validated['lines']);
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        $lines = $created->map(function (QuoteLines $line) use ($currency) {
+            $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+            $line->loadCount(['Task', 'SubAssembly']);
+
+            return $this->formatLineJson($line, $currency, config('app.locale'));
+        });
+
+        return response()->json(['lines' => $lines->values()], 201);
+    }
+
+    /**
+     * Import DPGF : création des lignes relues dans l'aperçu (QuoteDpgfController),
+     * en fin de devis. Le classeur d'origine est rangé dans la GED du devis.
+     */
+    public function storeDpgfJson($quoteId, Request $request, DpgfImporter $importer,
+        \App\Services\Imports\TemporaryImportFile $temporary, \App\Services\Files\FileStorageService $storage)
+    {
+        abort_unless(auth()->check(), 403);
+        abort_unless(config('dpgf.enabled'), 404);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
+
+        $types =[SalesLineType::Article->value, SalesLineType::Section->value, SalesLineType::Subtotal->value, SalesLineType::Text->value];
+        $validated = $request->validate([
+            'token'                    => 'nullable|uuid',
+            'filename'                 => 'nullable|string|max:255',
+            'lines'                    => 'required|array|min:1|max:' . (int) config('dpgf.max_rows'),
+            'lines.*.type'             => ['required', Rule::in($types)],
+            'lines.*.code'             => 'nullable|string|max:255',
+            'lines.*.label'            => 'required_unless:lines.*.type,subtotal|nullable|string|max:' . DpgfImporter::LABEL_MAX,
+            'lines.*.description'      => 'nullable|string|max:' . DpgfImporter::DESCRIPTION_MAX,
+            'lines.*.qty'              => 'nullable|numeric|min:0',
+            'lines.*.methods_units_id' => 'nullable|exists:methods_units,id',
+            'lines.*.selling_price'    => 'nullable|numeric|min:0',
+        ]);
+
+        try {
+            $created = $importer->create($quote, $validated['lines']);
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        // Le DPGF d'origine rejoint la GED du devis (il servira au renvoi chiffré).
+        $path = isset($validated['token']) ? $temporary->find($validated['token'], $request->user()->id) : null;
+        if ($path !== null) {
+            try {
+                $name = $validated['filename'] ?? ('dpgf.' . pathinfo($path, PATHINFO_EXTENSION));
+                $file = $storage->storeContents(
+                    file_get_contents($temporary->absolutePath($path)),
+                    $name,
+                    'application/octet-stream',
+                    ['comment' => __('dpgf.ged_comment'), 'hashtags' => ['dpgf']],
+                );
+                $storage->attach($file, $quote);
+                $temporary->delete($path);
+            } catch (\Throwable $e) {
+                // Les lignes sont créées : un échec de rangement ne doit pas les faire recréer.
+                report($e);
+            }
         }
 
         $factory  = app('Factory');

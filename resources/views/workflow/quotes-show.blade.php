@@ -582,6 +582,11 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             'importSources'   => route('quotes.lines.json.import-sources',  ['quoteId' => $Quote->id]),
             'importFrom'      => route('quotes.lines.json.import-from',     ['quoteId' => $Quote->id]),
           ];
+          if (config('dpgf.enabled')) {
+            $quoteLineEndpoints['dpgfPreview'] = route('quotes.lines.json.dpgf.preview', ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['dpgfAnalyse'] = route('quotes.lines.json.dpgf.analyse', ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['dpgfStore']   = route('quotes.lines.json.dpgf.store',   ['quoteId' => $Quote->id]);
+          }
           if ($Quote->is_template) {
             // Une trame ne se convertit pas en commande.
             unset($quoteLineEndpoints['storeOrder']);
@@ -616,6 +621,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                 'quote_margin'    => __('quote_margin'),
                 'quote_dictation' => __('quote_dictation') + ['provider' => $quoteDictation->provider(), 'locale' => app()->getLocale()],
                 'ai_text'         => __('ai_text'),
+                'dpgf'            => __('dpgf') + ['max_rows' => config('dpgf.max_rows')],
               ]) }}"
             >
               <div class="text-center py-4 text-muted">
