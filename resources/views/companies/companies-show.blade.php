@@ -187,6 +187,7 @@
     ->values();
 
   $companyFormTrans = [
+    'registry'               => __('company_registry.ui'),
     'general_information'    => __('general_content.general_information_trans_key'),
     'external_id'            => __('general_content.external_id_trans_key'),
     'active'                 => __('general_content.active_trans_key'),
@@ -439,6 +440,7 @@
               data-vat-regimes='@json($companyVatRegimes, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-endpoint='{{ route('companies.json.update', $Companie->id) }}'
               data-pdp-lookup-url='{{ route('companies.pdp.lookup', $Companie->id) }}'
+              data-registry-url='{{ app(\App\Services\Companies\CompanyRegistryLookup::class)->isEnabled() ? route('companies.json.registry-search') : '' }}'
               data-trans='@json($companyFormTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
             </div>
           </div>

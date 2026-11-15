@@ -549,6 +549,23 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
   bandeau dans l'onglet ; **jamais bloquant** (test).
 - Tests : `tests/Feature/Affairs/AffairRiskRegisterTest.php`, `resources/js/tests/lib/affairRisks.test.js`.
 
+## Préremplissage des sociétés (répertoire Sirene)
+
+Fenêtre « Nouvelle société » et carte « Informations administratives » de la fiche : recherche
+par SIRET, SIREN ou nom dans l'API Recherche d'entreprises de l'État (gratuite, sans clé),
+`App\Services\Companies\CompanyRegistryLookup`, route `companies.json.registry-search`
+(throttle 30/min, cache 12 h). **N'écrit rien** : l'utilisateur relit puis enregistre.
+- Repris : raison sociale, SIREN, NAF (`25.62B`), adresse (SIRET = l'établissement visé, sinon le
+  siège). TVA **calculée** depuis le SIREN (clé officielle), signalée comme telle : Sirene ne dit
+  pas si l'entreprise est assujettie (la fiche la valide par VIES à l'enregistrement).
+- Création : `storeJson` accepte `siren`, `naf_code`, `intra_community_vat` et `address`, créée
+  comme adresse par défaut (libellé « Siège ») dans la même transaction. Sans ces champs,
+  création identique à avant. Sur la fiche, l'adresse n'est jamais touchée (onglet Adresses).
+- Entreprise ou établissement fermé : badge et avertissement, jamais bloquant.
+- `COMPANY_REGISTRY_ENABLED` (vrai par défaut) : faux = ni bouton ni appel. API injoignable → 503,
+  saisie manuelle possible. Seul le texte cherché part vers l'API.
+- Tests : `tests/Feature/Companies/CompanyRegistryLookupTest.php`, `resources/js/tests/lib/companyRegistry.test.js`.
+
 ## Imports CSV / Excel (sociétés, articles, devis, commandes, lignes, gamme)
 
 - **Assistant** (Votre société → Imports/Exports, onglet « Importer des données », React

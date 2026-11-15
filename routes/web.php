@@ -225,6 +225,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/list', 'App\Http\Controllers\Companies\CompaniesController@listJson')->name('companies.json.list');
         Route::post('/json/store', 'App\Http\Controllers\Companies\CompaniesController@storeJson')->name('companies.json.store');
         Route::get('/json/select-data', 'App\Http\Controllers\Companies\CompaniesController@selectDataJson')->name('companies.json.select-data');
+        // Répertoire Sirene : préremplissage par SIRET / SIREN / nom
+        Route::get('/json/registry-search', 'App\Http\Controllers\Companies\CompaniesController@registrySearch')
+            ->middleware('throttle:30,1')->name('companies.json.registry-search');
 
         // addresses routes
         Route::group(['prefix' => 'addresses'], function () {

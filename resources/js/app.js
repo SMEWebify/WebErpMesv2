@@ -629,6 +629,7 @@ async function mountCompanyForm() {
             endpoint:     element.dataset.endpoint ?? '',
             pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
             trans:        parse('trans')   ?? {},
+            registryUrl:  element.dataset.registryUrl ?? '',
         })
     );
 }
