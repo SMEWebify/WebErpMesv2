@@ -18,6 +18,9 @@ class CompaniesContacts extends Model
     // Fillable attributes for mass assignment
     protected $fillable= ['companies_id', 'ordre', 'civility', 'first_name','name','function','number','mobile','mail',  'default'];
 
+    // Accès au portail client (même table que Customer\Customer, qui les cache aussi).
+    protected $hidden = ['password', 'remember_token'];
+
     public $timestamps = false;
 
     public function getActivitylogOptions(): LogOptions

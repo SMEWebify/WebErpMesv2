@@ -117,6 +117,22 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         // Badge de l'écran de scan : permet de pointer au nom du salarié.
         'badge_code',
+        // Données personnelles chiffrées : leurs accesseurs les déchiffrent, un toArray()
+        // d'un utilisateur complet les exposerait en clair. Lues champ par champ ailleurs.
+        'personnal_phone_number',
+        'born_date',
+        'ssn_num',
+        'nic_num',
+        'driving_license',
+        'address1',
+        'address2',
+        'city',
+        'country',
+        'province',
+        'postal_code',
+        'home_phone',
+        'mobile_phone',
+        'private_email',
     ];
 
     /**
