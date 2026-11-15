@@ -669,6 +669,32 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   devis a une commande (même rouvert), et hors statut 1. Les commandes ne sont jamais touchées.
 - Tests : `tests/Feature/QuoteMarginTest.php`, `resources/js/tests/lib/quoteMargin.test.js`.
 
+## Dictée de devis et « Réécrire sans fautes »
+
+Bouton « Dicter » de l'écran des lignes de devis (statut 1), affiché seulement si un fournisseur
+d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteDictationModal.jsx`.
+- **Parcours** : texte (micro ou clavier) → `quotes.lines.json.dictation.propose` (brouillon,
+  **rien d'écrit**) → correction → `quotes.lines.json.dictation.store` (lignes en fin de devis,
+  transaction). Micro : `hooks/useVoiceRecorder.js` (MediaRecorder envoyé à
+  `dictation.transcribe` = `VisitTranscriptionService`, Whisper OVH, audio jamais écrit ; sans
+  clé OVH, dictée du navigateur). Le mémo de visite garde sa propre copie du code micro.
+- **`App\Services\Quotes\QuoteDictation`** : seuls la consigne, la liste des unités et le texte
+  partent chez le provider (ni client ni prix). Unité reconnue par code ou libellé, sinon montrée
+  à l'utilisateur (`unit_text`). **Prix repris seulement s'il est dicté**, sinon 0. Aucun calcul
+  de quantité par l'IA. Matière → `quote_line_details.material`, précisions → `internal_comment`.
+- **Marque** `quote_lines.ai_proposed_at` (hors `$fillable`, `ai_proposed` dans le JSON des
+  lignes, pastille « IA », jamais imprimée) ; remise à null par `QuoteLineCopier` (copie,
+  import, duplication de devis).
+- **Appel IA commun** `App\Services\AI\DirectTextCompletion` (Claude ou API compatible OpenAI,
+  sans outils, aucune consommation enregistrée). Indisponible / en échec → 502 avec message.
+- **« Réécrire sans fautes »** (`App\Services\AI\TextRewriter`, route `ai.rewrite`, throttle 30/min) :
+  proposition avant / après, l'utilisateur choisit de la reprendre. Désignation du tiroir de ligne
+  (`components/ai/RewriteButton.jsx`) et `<x-FormTextareaComment :rewrite="true" :max-length="…">`
+  (commentaire du devis, commentaire externe de ligne), branché par `lib/aiRewrite.js` dans `app.js`.
+  Proposition plus longue que le champ : signalée, non reprise.
+- Tests : `tests/Feature/Quotes/QuoteDictationTest.php`, `tests/Feature/AI/TextRewriteTest.php`,
+  `resources/js/tests/lib/quoteDictation.test.js`.
+
 ## Modèles d'impression (devis, commande, AR)
 
 Menu PDF des fiches devis et AR (`<x-pdf-print-menu>`) : modèle + langue (`?layout=&lang=` sur

@@ -17,6 +17,7 @@ use App\Services\CustomFieldService;
 use App\Services\OrderService;
 use App\Services\Receivables\CreditLimitGuard;
 use App\Services\Receivables\ReceivablesService;
+use App\Services\Quotes\QuoteDictation;
 use App\Services\Quotes\QuoteLineCopier;
 use App\Services\Quotes\QuoteMargin;
 use App\Services\Planning\BillOfMaterialsCopier;
@@ -589,6 +590,46 @@ class QuoteLinesController extends Controller
         return response()->json(['lines' => $lines->values()], 201);
     }
 
+    /**
+     * Dictée : création des lignes proposées par l'IA, relues et validées par
+     * l'utilisateur (QuoteDictation). Ajoutées en fin de devis, marquées
+     * ai_proposed_at.
+     */
+    public function storeDictatedJson($quoteId, Request $request, QuoteDictation $dictation)
+    {
+        abort_unless(auth()->check(), 403);
+        $quote = Quotes::withTemplates()->findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
+
+        $validated = $request->validate([
+            'lines'                    => 'required|array|min:1|max:' . QuoteDictation::MAX_LINES,
+            'lines.*.label'            => 'required|string|max:255',
+            'lines.*.qty'              => 'required|numeric|min:0',
+            'lines.*.methods_units_id' => 'nullable|exists:methods_units,id',
+            'lines.*.selling_price'    => 'nullable|numeric|min:0',
+            'lines.*.material'         => 'nullable|string|max:255',
+            'lines.*.internal_comment' => 'nullable|string|max:2000',
+        ]);
+
+        try {
+            $created = $dictation->create($quote, $validated['lines']);
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        $lines = $created->map(function (QuoteLines $line) use ($currency) {
+            $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+            $line->loadCount(['Task', 'SubAssembly']);
+
+            return $this->formatLineJson($line, $currency, config('app.locale'));
+        });
+
+        return response()->json(['lines' => $lines->values()], 201);
+    }
+
     public function moveLineJson($quoteId, $id, Request $request)
     {
         abort_unless(auth()->check(), 403);
@@ -705,6 +746,7 @@ class QuoteLinesController extends Controller
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
             'margin'               => $margin,
+            'ai_proposed'          => $l->ai_proposed_at !== null,
         ];
     }
 

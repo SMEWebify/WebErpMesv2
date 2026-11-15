@@ -114,6 +114,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     // Assistant IA ERP
     Route::middleware(['auth', 'verified', 'has.role'])->prefix('ai')->name('ai.')->group(function () {
         Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->middleware('throttle:20,1')->name('chat');
+        // « Réécrire sans fautes » des textes destinés au client (proposition, rien n'est enregistré)
+        Route::post('/rewrite', [\App\Http\Controllers\AI\TextRewriteController::class, 'rewrite'])->middleware('throttle:30,1')->name('rewrite');
     });
 
     // Chat direct (commentaires sur devis, commandes, etc.)
@@ -367,6 +369,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{quoteId}/lines/json/select-data', 'App\Http\Controllers\Workflow\QuoteLinesController@selectDataForQuoteJson')->name('quotes.lines.json.select-data');
         Route::get('/{quoteId}/lines/json/import-sources', 'App\Http\Controllers\Workflow\QuoteLinesController@importSourcesJson')->name('quotes.lines.json.import-sources');
         Route::post('/{quoteId}/lines/json/import-from', 'App\Http\Controllers\Workflow\QuoteLinesController@importFromJson')->name('quotes.lines.json.import-from');
+        // Dictée : audio → texte → lignes en brouillon (rien d'écrit), puis création des lignes validées
+        Route::post('/{quoteId}/lines/json/dictation/transcribe', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'transcribe'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.transcribe');
+        Route::post('/{quoteId}/lines/json/dictation/propose', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'propose'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.propose');
+        Route::post('/{quoteId}/lines/json/dictation/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeDictatedJson')->whereNumber('quoteId')->name('quotes.lines.json.dictation.store');
         Route::get('/{quoteId}/lines/json/price-list/{productId}', 'App\Http\Controllers\Workflow\QuoteLinesController@priceListForProductJson')->name('quotes.lines.json.price-list');
         Route::post('/{quoteId}/lines/json/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeLineJson')->name('quotes.lines.json.store');
         Route::post('/{quoteId}/lines/json/price-increase', 'App\Http\Controllers\Workflow\QuoteLinesController@priceIncreaseJson')->name('quotes.lines.json.price-increase');

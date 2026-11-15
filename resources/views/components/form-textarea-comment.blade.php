@@ -1,4 +1,4 @@
-<div class="col-12">
+<div class="col-12" @if($rewriteUrl) data-ai-rewrite-field @endif>
     <label for="comment"  class="text-primary" >
         @if($label)
             {{ $label}}
@@ -12,4 +12,12 @@
             </div>
         <textarea class="form-control" rows="5" name="{{  $name }}"  placeholder="..." >{{  $comment }}</textarea>
     </div>
+    @if($rewriteUrl)
+    <div class="mt-1" data-ai-rewrite data-url="{{ $rewriteUrl }}" data-max="{{ $maxLength }}" data-trans="{{ json_encode(__('ai_text')) }}">
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-ai-rewrite-button>
+            <i class="fas fa-spell-check me-1"></i>{{ __('ai_text.rewrite') }}
+        </button>
+        <div data-ai-rewrite-result></div>
+    </div>
+    @endif
 </div>
