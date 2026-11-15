@@ -432,6 +432,45 @@
             </div>
         </div>
 
+        {{-- ──────────────────── SharePoint (copie de la GED) ──────────────────── --}}
+        @php
+            $spTheme = ['none' => 'secondary', 'ok' => $sharepoint['is_active'] ? 'success' : 'secondary', 'error' => 'danger'][$sharepoint['status']] ?? 'secondary';
+        @endphp
+        <div class="col-md-6">
+            <div class="card card-outline card-{{ $spTheme }} mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fab fa-microsoft me-1"></i> {{ __('sharepoint.title') }}
+                    </h3>
+                    <div class="card-tools">
+                        <span class="badge text-bg-{{ $spTheme }}">
+                            {{ $sharepoint['status'] === 'ok' && ! $sharepoint['is_active'] ? __('sharepoint.badge.inactive') : __('sharepoint.badge.' . $sharepoint['status']) }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">{{ __('sharepoint.card_lead') }}</p>
+                    @if($sharepoint['status'] !== 'none')
+                        <dl class="row mb-0">
+                            <dt class="col-6">{{ __('sharepoint.stats.synced') }}</dt>
+                            <dd class="col-6">{{ $sharepoint['stats']['synced'] }}</dd>
+                            <dt class="col-6">{{ __('sharepoint.stats.pending') }}</dt>
+                            <dd class="col-6">{{ $sharepoint['stats']['pending'] }}</dd>
+                            @if($sharepoint['stats']['failed'] > 0)
+                                <dt class="col-6">{{ __('sharepoint.stats.failed') }}</dt>
+                                <dd class="col-6 text-danger">{{ $sharepoint['stats']['failed'] }}</dd>
+                            @endif
+                        </dl>
+                    @endif
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{{ route('admin.integrations.sharepoint.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> {{ __('sharepoint.configure') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }} mb-3">

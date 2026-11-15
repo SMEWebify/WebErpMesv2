@@ -140,6 +140,7 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
 | `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné » ; range l'accord signé d'une dérogation dans sa GED. Filet de la notification DocuSign (instance non publiée en HTTPS) |
+| `php artisan wem:sharepoint:sync [--failed] [--dry-run]` | Met en file la copie SharePoint des fichiers existants de la GED pas encore recopiés (`--failed` : relance les échecs). Ne fait rien sans liaison active |
 | `php artisan wem:nest2bend:refresh` | Relit l'état de l'abonnement NEST2BEND (`GET /api/v1/compte`) et le garde en base : carte Intégrations, boutons « Simuler ». Ne fait rien sans clé saisie |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
@@ -375,6 +376,39 @@ l'existant. Écriture seulement par `App\Services\Files\FileVersioning::replace(
 - Remplacer exige l'écriture sur l'entité (`FilePolicy::replace`, pas d'être l'auteur).
 - **Ce qui cite un fichier par son id garde cette version** (`inspection_plans.file_id`, FAI) :
   voulu, ne pas les « mettre à jour ». Tests : `tests/Feature/Files/FileVersioningTest.php`.
+
+### Copie vers SharePoint (Microsoft 365)
+Recopie **à sens unique** : la GED reste la source de vérité, SharePoint n'est jamais lu en
+retour et **rien n'y est jamais supprimé** (un fichier détaché dans l'ERP y reste).
+`App\Services\Integrations\SharePoint` : `GraphClient` (Microsoft Graph, jeton
+`client_credentials` en cache, pas de SDK), `SharePointMirror`, job `MirrorFileToSharePoint`.
+- **Configuration en base** : Intégrations → SharePoint (`sharepoint_settings`, singleton) :
+  tenant, application Entra ID, secret chiffré (`encrypted`, `$hidden`, champ vide = conserver),
+  URL du site, bibliothèque (vide = par défaut), dossier racine (`ERP`), case « actif ».
+  L'enregistrement teste la connexion et garde `site_id` / `drive_id`. Droit Graph conseillé :
+  `Sites.Selected` + écriture sur le seul site. Aucune permission ERP dédiée (`your-company-menu`).
+- **Déclenchement** : `FileStorageService::attach()` et `FileVersioning::version()` (qui copie
+  les rattachements en SQL brut) appellent `SharePointMirror::queue()` — une requête si la
+  liaison est inactive, **ne lève jamais** (la GED ne dépend pas de SharePoint). Un nouveau
+  chemin qui écrit dans `fileables` sans passer par eux doit l'appeler aussi.
+- **Arborescence** : `{racine}/{config('sharepoint.folders')[alias]}/{code} - {libellé}/` ; lignes
+  de devis / commande dans un sous-dossier de leur document (`line_parents`). Un dossier
+  d'entité est nommé **une fois** (id gardé dans `sharepoint_mirror_items`) : renommer l'entité
+  ne crée pas de doublon. Noms nettoyés par `SharePointNames` (caractères interdits, noms réservés).
+- **Jamais recopiés** : alias absents de `config('sharepoint.folders')`, alias confidentiels
+  (`FileableRegistry::CONFIDENTIAL`, même si ajoutés à la config), tout fichier **aussi** rattaché
+  à une entité confidentielle, trames de devis et leurs lignes.
+- **Versions** : une ligne `sharepoint_mirror_items` par (lignée, entité) ; une nouvelle version
+  remplace le contenu du **même élément** SharePoint (historique des versions de SharePoint).
+  > 4 Mo : session d'envoi par morceaux (URL de session sans jeton).
+- **Erreurs** : réseau / 429 / 5xx → réessai (Retry-After respecté) ; 401-403, site ou fichier
+  illisible → `failed` aussitôt, bouton « Relancer les échecs ». Dossier / élément supprimé dans
+  SharePoint (404) → recréé une fois. Le worker de queue doit tourner.
+- **Existant** : bouton « Recopier les fichiers existants » ou `wem:sharepoint:sync` (dernières versions).
+- Non fait : bouton « Ouvrir dans SharePoint » dans la GED (`folder_web_url` / `web_url` sont
+  gardés pour ça), création des dossiers à la création d'une affaire, regroupement par client.
+  À valider sur un vrai tenant (tests en `Http::fake`).
+- Tests : `tests/Feature/SharePoint/`.
 
 ## Description des droits
 

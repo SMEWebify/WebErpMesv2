@@ -1154,6 +1154,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/test', [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'test'])->name('test');
         });
 
+        // SharePoint (recopie de la GED, sens unique) : application Entra ID, secret chiffré, site cible.
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/sharepoint')->name('admin.integrations.sharepoint.')->group(function () {
+            Route::get('/',          [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'index'])->name('index');
+            Route::put('/',          [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'update'])->name('update');
+            Route::post('/test',     [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'test'])->middleware('throttle:10,1')->name('test');
+            Route::post('/backfill', [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'backfill'])->middleware('throttle:5,1')->name('backfill');
+            Route::post('/retry',    [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'retry'])->middleware('throttle:10,1')->name('retry');
+        });
+
         Route::middleware(['auth', 'verified', 'has.role'])->prefix('email-logs')->name('admin.email-logs.')->group(function () {
             Route::get('/',        [\App\Http\Controllers\Admin\EmailLogsController::class, 'index'])->name('index');
             Route::get('/{log}',   [\App\Http\Controllers\Admin\EmailLogsController::class, 'show'])->name('show');
