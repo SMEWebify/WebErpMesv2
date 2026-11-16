@@ -43,5 +43,6 @@ return [
         'not_a_deduction' => 'This line is not a down payment deduction.',
         'deduction_max'   => 'Cannot deduct more than the paid and not yet deducted part of the down payment (:max € excl. VAT).',
         'credit_note_on_deduction' => 'A down payment deduction cannot be credited: select the sold lines.',
+        'credit_note_on_deducted'  => 'Down payment :code is already deducted from an invoice: credit the final invoice instead.',
     ],
 ];

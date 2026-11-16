@@ -239,11 +239,61 @@ class DownPaymentTest extends TestCase
         $this->post(route('credit-notes.store.from.invoice'), ['selected_invoice_lines' => [$deduction->id]])
             ->assertSessionHas('error', __('down_payments.refused.credit_note_on_deduction'));
 
-        $acompteLine = $acompte->invoiceLines->first();
+        // Second acompte, émis mais pas encore déduit : l'avoir passe, au compte d'avances.
+        $second = $this->createDownPayment(10);
+        $this->issueAndPay($second, 0);
+        $acompteLine = $second->invoiceLines->first();
         $this->post(route('credit-notes.store.from.invoice'), ['selected_invoice_lines' => [$acompteLine->id]])
             ->assertRedirect();
         $creditLineIds = \App\Models\Workflow\CreditNoteLines::where('invoice_line_id', $acompteLine->id)->pluck('id');
-        $this->assertEquals(500.0, (float) AccountingEntry::whereIn('credit_note_line_id', $creditLineIds)->where('account_number', '4191')->sum('debit_amount'));
+        $this->assertEquals(100.0, (float) AccountingEntry::whereIn('credit_note_line_id', $creditLineIds)->where('account_number', '4191')->sum('debit_amount'));
+    }
+
+    public function test_a_down_payment_already_deducted_cannot_be_credited(): void
+    {
+        $acompte = $this->createDownPayment(50);
+        $this->issueAndPay($acompte, 600);
+        $this->invoiceDelivery(5);
+
+        $this->post(route('credit-notes.store.from.invoice'), ['selected_invoice_lines' => [$acompte->invoiceLines->first()->id]])
+            ->assertSessionHas('error', __('down_payments.refused.credit_note_on_deducted', ['code' => $acompte->code]));
+        $this->assertSame(0, \App\Models\Workflow\CreditNotes::count());
+    }
+
+    public function test_a_converted_proforma_deducts_the_paid_down_payment(): void
+    {
+        $acompte = $this->createDownPayment(30);
+        $this->issueAndPay($acompte, 360);
+        $proforma = $this->proformaForTheWholeOrder();
+
+        $this->postJson(route('proformas.convert', $proforma->id))->assertOk();
+
+        $this->assertSame(1, (int) $proforma->fresh()->invoice_type);
+        $this->assertDeduction($proforma->fresh(), 300.0);
+        $this->assertEquals(10, (float) $this->line->fresh()->invoiced_qty);
+    }
+
+    public function test_a_proforma_is_not_converted_when_its_lines_were_invoiced_since(): void
+    {
+        $proforma = $this->proformaForTheWholeOrder();
+        $this->invoiceDelivery(5);
+
+        $this->postJson(route('proformas.convert', $proforma->id))->assertStatus(422);
+
+        $this->assertSame(3, (int) $proforma->fresh()->invoice_type);
+        $this->assertEquals(5, (float) $this->line->fresh()->invoiced_qty);
+    }
+
+    private function proformaForTheWholeOrder(): Invoices
+    {
+        $this->postJson(route('proformas.request.store'), [
+            'code' => 'PRO-DP-1', 'label' => 'Proforma', 'companies_id' => $this->order->companies_id,
+            'companies_addresses_id' => $this->order->companies_addresses_id,
+            'companies_contacts_id' => $this->order->companies_contacts_id,
+            'user_id' => $this->user->id, 'lines' => [$this->line->id],
+        ])->assertOk();
+
+        return Invoices::where('code', 'PRO-DP-1')->firstOrFail();
     }
 
     public function test_facturx_types_the_down_payment_and_references_it_on_the_final_invoice(): void

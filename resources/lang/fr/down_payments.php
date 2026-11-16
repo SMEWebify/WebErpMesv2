@@ -43,5 +43,6 @@ return [
         'not_a_deduction' => 'Cette ligne n\'est pas une déduction d\'acompte.',
         'deduction_max'   => 'Déduction impossible au-delà de la part payée et non déduite de l\'acompte (:max € HT).',
         'credit_note_on_deduction' => 'Une déduction d\'acompte ne se reprend pas par avoir : sélectionnez les lignes vendues.',
+        'credit_note_on_deducted'  => 'L\'acompte :code est déjà déduit d\'une facture : faites l\'avoir sur la facture finale.',
     ],
 ];

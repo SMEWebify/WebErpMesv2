@@ -358,6 +358,7 @@ return [
     'invoice_draft_no_pdf_trans_key'           => 'Une facture en brouillon ne peut pas être éditée en PDF.',
     'invoice_draft_no_facturx_trans_key'       => 'Une facture en brouillon ne peut pas produire de Factur-X : elle n\'est pas encore émise.',
     'invoice_proforma_no_facturx_trans_key'    => 'Une proforma n\'est pas une facture : elle ne peut pas produire de Factur-X.',
+    'proforma_lines_already_invoiced_trans_key' => 'Conversion impossible : ces lignes ont été facturées depuis la création de la proforma (:lines). Refaites une proforma sur le reste à facturer.',
 
     'purchase_quotation_trans_key'             => 'Demande d\'achat',
     'purchase_quotation_info_trans_key'        => 'Info Devis d\'achat',

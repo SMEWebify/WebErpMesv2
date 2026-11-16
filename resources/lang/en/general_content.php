@@ -358,6 +358,7 @@ return [
     'invoice_draft_no_pdf_trans_key'           => 'A draft invoice cannot be exported as a PDF.',
     'invoice_draft_no_facturx_trans_key'       => 'A draft invoice cannot produce a Factur-X document: it has not been issued yet.',
     'invoice_proforma_no_facturx_trans_key'    => 'A proforma is not an invoice: it cannot produce a Factur-X document.',
+    'proforma_lines_already_invoiced_trans_key' => 'Cannot convert: these lines were invoiced after the proforma was created (:lines). Create a new proforma for the remaining quantities.',
 
     'purchase_quotation_trans_key'             => 'Purchase quotation',
     'purchase_quotation_info_trans_key'        => 'Purchase quotation info',

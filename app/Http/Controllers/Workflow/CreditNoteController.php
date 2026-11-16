@@ -70,6 +70,15 @@ class CreditNoteController extends Controller
             return redirect()->back()->with('error', __('down_payments.refused.credit_note_on_deduction'));
         }
 
+        // Un acompte déjà déduit d'une facture ne se rembourse plus par avoir : le client
+        // serait crédité deux fois (déduction + avoir). L'avoir se fait sur la facture finale.
+        $downPayments = app(\App\Services\Invoicing\DownPayments::class);
+        $deducted = $invoiceLines->first(fn (InvoiceLines $line) => (int) $line->invoice?->invoice_type === \App\Services\Invoicing\DownPayments::TYPE
+            && $downPayments->deducted($line) > 0.004);
+        if ($deducted) {
+            return redirect()->back()->with('error', __('down_payments.refused.credit_note_on_deducted', ['code' => $deducted->invoice->code]));
+        }
+
         $creditNote = DB::transaction(function () use ($invoiceLines) {
             $lastCreditNote = CreditNotes::orderBy('id', 'desc')->first();
             $codeCreditNote = $this->documentCodeGenerator->generateDocumentCode('credit-note', $lastCreditNote?->id ?? 0);

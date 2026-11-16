@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Workflow\Orders;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class OrderTableSeeder extends Seeder
@@ -22,21 +23,41 @@ class OrderTableSeeder extends Seeder
     {
         // Closure de state() rattachée à la factory : le tirage passe par une variable.
         $pickStatus = fn (): int => $this->pickStatus();
+        $deliveryDate = fn (int $statu): Carbon => $this->deliveryDate($statu);
 
         Orders::factory()
             ->count(500)
-            ->state(function () use ($pickStatus) {
+            ->state(function () use ($pickStatus, $deliveryDate) {
                 $statu = $pickStatus();
 
                 return [
                     'statu' => $statu,
-                    // Une commande livrée a sa date derrière elle (alimente l'OTD).
-                    'validity_date' => $statu === 3
-                        ? fake()->dateTimeInInterval('-30 weeks', '+29 weeks')
-                        : fake()->dateTimeInInterval('+1 week', '+40 weeks'),
+                    'validity_date' => $deliveryDate($statu),
                 ];
             })
             ->create();
+    }
+
+    /**
+     * Date de livraison, en jours ouvrés : une commande livrée l'a derrière elle
+     * (alimente l'OTD) ; une commande en cours ou ouverte tombe le plus souvent
+     * dans les 4 semaines, pour charger le planning des 3 prochaines semaines.
+     */
+    private function deliveryDate(int $statu): Carbon
+    {
+        $soonShare = match ($statu) {
+            3 => null,
+            2, 4 => 80,
+            default => 55,
+        };
+
+        if ($soonShare === null) {
+            return Carbon::today()->subWeekdays(random_int(5, 150))->setTime(17, 0);
+        }
+
+        $days = random_int(1, 100) <= $soonShare ? random_int(2, 20) : random_int(21, 60);
+
+        return Carbon::today()->addWeekdays($days)->setTime(17, 0);
     }
 
     private function pickStatus(): int

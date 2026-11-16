@@ -446,6 +446,18 @@ class ProformaController extends Controller
             return $refusal;
         }
 
+        // La proforma porte les quantités du jour de sa création : si une partie a été
+        // facturée depuis (BL, facturation directe), la convertir facturerait deux fois.
+        $alreadyInvoiced = $proforma->invoiceLines()->with('orderLine')->get()
+            ->filter(fn ($line) => $line->orderLine && (float) $line->qty > (float) $line->orderLine->invoiced_remaining_qty + 0.0001)
+            ->map(fn ($line) => $line->orderLine->code ?: $line->orderLine->label)
+            ->values();
+        if ($alreadyInvoiced->isNotEmpty()) {
+            return response()->json([
+                'message' => __('general_content.proforma_lines_already_invoiced_trans_key', ['lines' => $alreadyInvoiced->implode(', ')]),
+            ], 422);
+        }
+
         DB::transaction(function () use ($proforma) {
             $newCode = $this->documentCodeGenerator->generateDocumentCode('invoice');
 

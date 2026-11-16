@@ -1290,7 +1290,12 @@ d'acompte **en brouillon**, même numérotation que les factures, `order_id` = l
   qté / remise → 422), bouton « Recalculer » (`invoices.down-payments.recompute`).
 - **Comptabilité** : HT de l'acompte et de sa déduction au compte `invoicing.down_payment.account`
   (`INVOICING_DOWN_PAYMENT_ACCOUNT`, **4191**) au lieu du produit ; déduction = écriture inversée
-  (crédit 411, débit 4191 et TVA). Avoir sur un acompte : même compte. Avoir sur une déduction : refusé.
+  (crédit 411, débit 4191 et TVA). Avoir sur un acompte **pas encore déduit** : même compte ; sur un
+  acompte déjà déduit (client crédité deux fois) ou sur une ligne de déduction : refusé, l'avoir se
+  fait sur la facture finale.
+- **Proforma** : sa conversion déduit les acomptes payés comme les autres chemins ; elle est refusée
+  (422) si une de ses lignes a été facturée depuis sa création (quantité > reste à facturer), sinon
+  la commande était facturée deux fois.
 - **Factur-X** : acompte en 386 ; facture qui déduit = cadre `B4/S4/M4` (lettre de
   `invoicing.business_process`) + `InvoiceReferencedDocument` (BT-25) de chaque acompte. PDP : types 1 et 4.
   **À valider dans le bac à sable SUPER PDP** (quantité négative, cadre 4).
