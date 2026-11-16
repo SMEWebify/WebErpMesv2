@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Invoicing\DownPayments;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
@@ -469,6 +470,9 @@ class ProformaController extends Controller
                     $this->accountingEntryService->createSaleEntry($invoiceLine->setRelation('invoice', $proforma));
                 }
             }
+
+            // Acomptes payés de la commande : déduits au prorata.
+            app(DownPayments::class)->applyToInvoice($proforma);
         });
 
         return response()->json([

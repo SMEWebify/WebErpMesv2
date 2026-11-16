@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Invoicing\DownPayments;
 use Carbon\Carbon;
 use Illuminate\Support\Number;
 use App\Services\InvoiceService;
@@ -155,7 +156,7 @@ class InvoicesController extends Controller
         $query = Invoices::withCount('invoiceLines')
             ->selectRaw("invoices.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
-            ->where('invoice_type', 1)
+            ->whereIn('invoice_type', [1, DownPayments::TYPE])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
             ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
@@ -188,6 +189,7 @@ class InvoicesController extends Controller
                 'code'                => $inv->code,
                 'label'               => $inv->label,
                 'statu'               => $inv->statu,
+                'invoice_type'        => (int) $inv->invoice_type,
                 'due_date'            => $inv->due_date,
                 'created_at'          => $inv->created_at?->format('d/m/Y'),
                 'companie'            => $inv->companie ? ['id' => $inv->companie->id, 'label' => $inv->companie->label] : null,
@@ -392,6 +394,9 @@ class InvoicesController extends Controller
                 $ordre += 10;
             }
 
+            // Acomptes payés des commandes facturées : déduits au prorata.
+            app(DownPayments::class)->applyToInvoice($invoice);
+
             return $invoice;
         });
 
@@ -468,6 +473,8 @@ class InvoicesController extends Controller
                         $this->invoiceDeliveryLine($invoice, $deliveryLine, $ordre);
                         $ordre += 10;
                     }
+
+                    app(DownPayments::class)->applyToInvoice($invoice);
 
                     return true;
                 });
@@ -621,6 +628,8 @@ class InvoicesController extends Controller
                 $this->invoiceDeliveryLine($InvoiceCreated, $line, $line->ordre);
             }
 
+            app(DownPayments::class)->applyToInvoice($InvoiceCreated);
+
             return $InvoiceCreated;
         });
 
@@ -748,8 +757,24 @@ class InvoicesController extends Controller
         ]);
 
         $line = InvoiceLines::where('id', $lineId)->where('invoices_id', $id)->firstOrFail();
+
+        // Déduction d'acompte : seul le montant se règle, borné par la part payée de l'acompte.
+        if ($line->is_down_payment_deduction) {
+            if (array_diff(array_keys($data), ['unit_price'])) {
+                return response()->json(['message' => __('down_payments.refused.deduction_max', [
+                    'max' => number_format(app(DownPayments::class)->available($line->downPaymentLine, $line->id), 2, ',', ' '),
+                ])], 422);
+            }
+            try {
+                app(DownPayments::class)->setDeduction($line, (float) ($data['unit_price'] ?? $line->unit_price));
+            } catch (\DomainException $e) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+            $data = [];
+        }
+
         $line->update($data);
-        if ($line->wasChanged(['qty', 'unit_price', 'discount'])) {
+        if (! $line->is_down_payment_deduction && $line->wasChanged(['qty', 'unit_price', 'discount'])) {
             app(AccountingEntryService::class)->refreshSaleEntry($line);
         }
 
@@ -894,7 +919,7 @@ class InvoicesController extends Controller
     {
         $invoice = Invoices::findOrFail($id);
 
-        abort_if($invoice->invoice_type !== 1, 422, 'Seules les factures peuvent être déposées sur la plateforme.');
+        abort_unless(in_array((int) $invoice->invoice_type, [1, DownPayments::TYPE], true), 422, 'Seules les factures peuvent être déposées sur la plateforme.');
         abort_if($invoice->statu === 1, 422, "Cette facture est encore en brouillon : émettez-la avant de la déposer.");
 
         try {

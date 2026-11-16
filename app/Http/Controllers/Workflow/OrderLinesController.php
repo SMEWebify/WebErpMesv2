@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Invoicing\DownPayments;
 use App\Casts\EquipmentTags;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -1148,6 +1149,9 @@ class OrderLinesController extends Controller
 
                 $ordre += 10;
             }
+
+            // Acomptes payés de la commande : déduits au prorata.
+            app(DownPayments::class)->applyToInvoice($invoice);
 
             return $invoice;
         });

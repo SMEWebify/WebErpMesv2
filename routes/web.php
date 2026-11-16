@@ -545,6 +545,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/lines', 'App\Http\Controllers\Workflow\InvoicesController@storeLine')->name('invoices.lines.store');
         Route::delete('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@destroyLine')->name('invoices.lines.destroy');
         Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
+        Route::post('/down-payments/order/{orderId}', 'App\Http\Controllers\Workflow\DownPaymentController@store')->name('invoices.down-payments.store');
+        Route::post('/{id}/down-payments/recompute', 'App\Http\Controllers\Workflow\DownPaymentController@recompute')->name('invoices.down-payments.recompute');
 
         // Facturation électronique. Routes web et non API : la carte est rendue
         // dans une page Blade authentifiée par session, sans jeton porteur.

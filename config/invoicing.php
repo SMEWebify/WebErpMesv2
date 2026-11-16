@@ -45,4 +45,21 @@ return [
         'AAB' => "Aucun escompte n'est accordé pour paiement anticipé.",
     ],
 
+    /*
+     * Factures d'acompte (invoice_type 4) et leur déduction sur les factures
+     * suivantes (App\Services\Invoicing\DownPayments).
+     *
+     * account : compte crédité par l'acompte (HT) et débité par sa déduction,
+     * à la place du compte de produit. 4191 = « Clients – avances et acomptes
+     * reçus sur commandes » du PCG. La TVA suit le compte de TVA habituel.
+     * À valider avec l'expert-comptable de chaque société déployée.
+     *
+     * Seule la part payée d'un acompte est déduite : un acompte impayé reste dû
+     * sur sa propre facture, il n'est pas reporté sur la facture suivante.
+     */
+    'down_payment' => [
+        'account'       => env('INVOICING_DOWN_PAYMENT_ACCOUNT', '4191'),
+        'account_label' => 'Clients - avances et acomptes reçus',
+    ],
+
 ];

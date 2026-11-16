@@ -33,6 +33,9 @@ class ReceivablesService
     /** Factures (au sens créance) : les proformas (3) n'en sont pas. */
     public const INVOICE_TYPE = 1;
 
+    /** Une facture d'acompte (4) est aussi une créance. */
+    public const RECEIVABLE_TYPES = [self::INVOICE_TYPE, 4];
+
     /**
      * Une ligne par facture : companies_id, échéance, amount_ttc, paid,
      * credited et balance (reste dû, éventuellement négatif).
@@ -45,7 +48,7 @@ class ReceivablesService
     {
         $invoices = DB::table('invoices')
             ->whereNull('invoices.deleted_at')
-            ->where('invoices.invoice_type', self::INVOICE_TYPE)
+            ->whereIn('invoices.invoice_type', self::RECEIVABLE_TYPES)
             ->when(! $includeDrafts, fn ($q) => $q->where('invoices.statu', '!=', 1))
             ->select([
                 'invoices.id', 'invoices.code', 'invoices.label', 'invoices.statu',
@@ -121,6 +124,7 @@ class ReceivablesService
 
         if (config('receivables.include_open_orders', true)) {
             $query->selectSub($this->openOrdersQuery(), 'open_orders');
+            $query->selectSub($this->undeductedDownPaymentsQuery(), 'undeducted_down_payments');
         }
 
         $exposures = [];
@@ -128,7 +132,8 @@ class ReceivablesService
             $exposures[(int) $row->id] = new CreditExposure(
                 companyId:   (int) $row->id,
                 invoicesDue: round((float) $row->invoices_due, 2),
-                openOrders:  round((float) ($row->open_orders ?? 0), 2),
+                // Un acompte pas encore déduit couvre déjà une part du commandé non facturé.
+                openOrders:  round(max(0, (float) ($row->open_orders ?? 0) - (float) ($row->undeducted_down_payments ?? 0)), 2),
                 limit:       $row->credit_limit !== null ? (float) $row->credit_limit : null,
                 level:       CreditBlockLevel::fromColumn($row->credit_block_level),
             );
@@ -188,6 +193,23 @@ class ReceivablesService
             ->whereNull('cnl.deleted_at')
             ->whereIn('cn.statu', config('receivables.deducted_credit_note_statuses', [1, 2]))
             ->selectRaw("COALESCE(SUM(($lineHt) * (1 + COALESCE(cnl.vat_rate, cav.rate, 0) / 100.0)), 0)");
+    }
+
+    /**
+     * TTC des acomptes facturés et pas encore déduits d'une société, corrélé sur
+     * companies.id : lignes des factures d'acompte, moins les déductions (négatives).
+     */
+    private function undeductedDownPaymentsQuery(): Builder
+    {
+        return DB::table('invoice_lines as dl')
+            ->join('invoices as di', 'di.id', '=', 'dl.invoices_id')
+            ->whereColumn('di.companies_id', 'companies.id')
+            ->whereNull('di.deleted_at')
+            ->whereNull('dl.deleted_at')
+            ->whereIn('di.invoice_type', self::RECEIVABLE_TYPES)
+            ->where(fn ($q) => $q->where('di.invoice_type', 4)->orWhereNotNull('dl.down_payment_line_id'))
+            ->selectRaw('COALESCE(SUM(dl.qty * COALESCE(dl.unit_price, 0)'
+                . ' * (1 - COALESCE(dl.discount, 0) / 100.0) * (1 + COALESCE(dl.vat_rate, 0) / 100.0)), 0)');
     }
 
     /**

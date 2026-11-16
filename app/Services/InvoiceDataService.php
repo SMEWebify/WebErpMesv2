@@ -69,6 +69,7 @@ class InvoiceDataService
     {
         $order    = $line->orderLine?->order;
         $delivery = $line->delivery_line_id ? $line->deliveryLine?->delivery : null;
+        $deducted = $line->down_payment_line_id ? $line->downPaymentLine?->invoice : null;
 
         return [
             'id'               => $line->id,
@@ -86,6 +87,10 @@ class InvoiceDataService
             'order_url'        => $order ? route('orders.show', $order->id) : null,
             'delivery_code'    => $delivery?->code,
             'delivery_url'     => $delivery ? route('deliverys.show', ['id' => $delivery->id]) : null,
+            // Déduction d'acompte : seul le montant se règle (quantité −1).
+            'is_down_payment_deduction' => $line->down_payment_line_id !== null,
+            'down_payment_code'         => $deducted?->code,
+            'down_payment_url'          => $deducted ? route('invoices.show', ['id' => $deducted->id]) : null,
         ];
     }
 }

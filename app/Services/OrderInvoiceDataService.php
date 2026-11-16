@@ -2,59 +2,90 @@
 
 namespace App\Services;
 
+use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\Invoices;
+use App\Models\Workflow\Orders;
+use App\Services\Invoicing\DownPayments;
+use App\Services\Receivables\ReceivablesService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
+/**
+ * Facturé et encaissé d'une commande, pour le bilan d'affaire de la fiche commande.
+ *
+ * Montants **TTC**, comme le total de la commande auquel ils sont comparés. Comptent
+ * les factures (1) et les factures d'acompte (4) — jamais les proformas. Une facture
+ * qui déduit un acompte compte pour son net : acompte + factures nettes = facturé.
+ */
 class OrderInvoiceDataService
 {
-    /**
-     * Calculate the total invoiced amount for a given order.
-     *
-     * This function iterates through the order lines and sums up the total amount
-     * invoiced by multiplying the quantity of each invoice line by the selling price
-     * of the corresponding order line.
-     *
-     * @param \App\Models\Workflow\Orders $order The order object containing order lines and their invoice lines.
-     * @return float The total invoiced amount for the given order.
-     */
-    public function getInvoicingAmount($order)
+    public function __construct(private ReceivablesService $receivables) {}
+
+    /** TTC facturé sur la commande (brouillons compris), acomptes compris. */
+    public function getInvoicingAmount(Orders $order): float
     {
-        // Amount invoiced (total invoices sent)
-        $invoicedAmount = $order->orderLines->sum(function ($line) {
-            // Check that the 'invoiceLines' relation is well defined
-            return $line->invoiceLines->sum(function ($invoiceLine) use ($line) {
-                return $invoiceLine->qty * $line->selling_price;
-            });
-        });
-        
-        return $invoicedAmount;
+        return round(array_sum($this->orderShareByInvoice($order)), 2);
     }
 
     /**
-     * Calculate the total received payment for invoicing based on the given order.
-     *
-     * This function iterates through the order lines and their corresponding invoice lines
-     * to sum up the payments received for invoiced items. Only invoice lines with a status
-     * of 5 (indicating that the invoice is paid) are considered in the calculation.
-     *
-     * @param \App\Models\Workflow\Orders $order The order object containing order lines and invoice lines.
-     * @return float The total received payment for the invoiced items.
+     * TTC encaissé sur la commande : règlements des factures qui la portent. Une
+     * facture qui porte aussi d'autres commandes compte au prorata de sa part.
      */
-    public function getInvoicingReceivedPayment($order)
+    public function getInvoicingReceivedPayment(Orders $order): string
     {
-        
-        $factory = app('Factory'); 
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        
-        $receivedPayment = $order->orderLines->sum(function ($line) {
-            return $line->invoiceLines->sum(function ($invoiceLine) use ($line) {
-                // Check that the invoice line is paid (invoice status = 5)
-                if ($invoiceLine->invoice_status == 5) {
-                    return $invoiceLine->qty * $line->selling_price;
+
+        $shares   = $this->orderShareByInvoice($order);
+        $received = 0.0;
+
+        if ($shares !== []) {
+            $balances = DB::query()
+                ->fromSub($this->receivables->invoiceBalances(true), 'b')
+                ->whereIn('b.id', array_keys($shares))
+                ->get(['b.id', 'b.amount_ttc', 'b.paid']);
+
+            foreach ($balances as $balance) {
+                $total = (float) $balance->amount_ttc;
+                if ($total > 0) {
+                    $received += (float) $balance->paid * min(1.0, $shares[$balance->id] / $total);
                 }
-                return 0;
-            });
-        });
-        
-        return Number::currency($receivedPayment, $currency, config('app.locale'));;
+            }
+        }
+
+        return Number::currency($received, $currency, config('app.locale'));
+    }
+
+    /**
+     * TTC de la commande porté par chaque facture : lignes de ses lignes de commande,
+     * factures d'acompte de la commande et leurs déductions.
+     *
+     * @return array<int, float> id de facture => TTC
+     */
+    private function orderShareByInvoice(Orders $order): array
+    {
+        $orderLineIds   = $order->orderLines->pluck('id');
+        $acompteIds     = Invoices::where('invoice_type', DownPayments::TYPE)->where('order_id', $order->id)->pluck('id');
+        $acompteLineIds = InvoiceLines::whereIn('invoices_id', $acompteIds)->pluck('id');
+
+        $ttc = 'il.qty * COALESCE(il.unit_price, ol.selling_price, 0)'
+            . ' * (1 - COALESCE(il.discount, ol.discount, 0) / 100.0)'
+            . ' * (1 + COALESCE(il.vat_rate, av.rate, 0) / 100.0)';
+
+        return DB::table('invoice_lines as il')
+            ->join('invoices as i', 'i.id', '=', 'il.invoices_id')
+            ->leftJoin('order_lines as ol', 'ol.id', '=', 'il.order_line_id')
+            ->leftJoin('accounting_vats as av', 'av.id', '=', 'ol.accounting_vats_id')
+            ->whereNull('il.deleted_at')
+            ->whereNull('i.deleted_at')
+            ->whereIn('i.invoice_type', ReceivablesService::RECEIVABLE_TYPES)
+            ->where(fn ($q) => $q->whereIn('il.order_line_id', $orderLineIds)
+                ->orWhereIn('il.down_payment_line_id', $acompteLineIds)
+                ->orWhereIn('il.invoices_id', $acompteIds))
+            ->groupBy('il.invoices_id')
+            ->selectRaw("il.invoices_id, SUM($ttc) AS ttc")
+            ->pluck('ttc', 'invoices_id')
+            ->map(fn ($v) => (float) $v)
+            ->all();
     }
 }

@@ -31,6 +31,7 @@
     'oct' => 'October',  'nov' => 'November',  'dec' => 'December',
     'search'     => __('general_content.search_trans_key'),
     'code'       => 'Code',
+    'down_payment' => __('down_payments.type_label'),
     'client'     => __('general_content.customer_trans_key'),
     'label'      => __('general_content.label_trans_key'),
     'contact'    => __('general_content.contact_trans_key'),

@@ -216,8 +216,11 @@ class RelationalBreadcrumb extends Component
             $this->descendants[] = $this->deliveryNode($delivery);
         }
 
+        // Une facture d'acompte n'a pas de ligne de commande : rattachée par order_id.
         $invoiceIds = InvoiceLines::whereIn('order_line_id', $orderLineIds)
-            ->pluck('invoices_id')->unique()->filter();
+            ->pluck('invoices_id')
+            ->merge(Invoices::where('order_id', $order->id)->pluck('id'))
+            ->unique()->filter();
         foreach (Invoices::whereIn('id', $invoiceIds)->get() as $invoice) {
             $this->descendants[] = $this->invoiceNode($invoice);
         }
@@ -286,6 +289,17 @@ class RelationalBreadcrumb extends Component
         }
     }
 
+    /**
+     * Commande d'une facture : celle de sa première ligne de commande (order_id n'est
+     * pas renseigné sur les factures issues de BL), sinon order_id — seul lien d'une
+     * facture d'acompte, dont les lignes n'ont pas de ligne de commande.
+     */
+    private function orderOfInvoice($invoice)
+    {
+        return $invoice->invoiceLines->first(fn ($line) => $line->order_line_id)?->orderLine?->order
+            ?? $invoice->order;
+    }
+
     private function buildForInvoice($invoice): void
     {
         $this->current = [
@@ -294,8 +308,7 @@ class RelationalBreadcrumb extends Component
             'icon'  => 'fas fa-receipt',
         ];
 
-        // order_id non renseigné → on remonte via InvoiceLines → orderLine → order
-        $order = $invoice->invoiceLines->first()?->orderLine?->order;
+        $order = $this->orderOfInvoice($invoice);
         if ($order) {
             $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
             if ($preOrder) {
@@ -326,7 +339,7 @@ class RelationalBreadcrumb extends Component
 
         if ($creditNote->invoices_id && $creditNote->invoice) {
             $invoice = $creditNote->invoice;
-            $order = $invoice->invoiceLines->first()?->orderLine?->order;
+            $order = $this->orderOfInvoice($invoice);
             if ($order) {
                 $preOrder = PreOrder::where('converted_order_id', $order->id)->first();
                 if ($preOrder) {

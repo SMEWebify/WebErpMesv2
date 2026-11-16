@@ -64,6 +64,12 @@ class CreditNoteController extends Controller
 
         $invoiceLines = InvoiceLines::with(['invoice', 'orderLine'])->whereIn('id', $selectedInvoiceLineIds)->get();
 
+        // Une déduction d'acompte (ligne négative) ne se reprend pas par avoir : l'avoir
+        // porte sur les lignes vendues, la déduction reste acquise sur l'acompte.
+        if ($invoiceLines->contains(fn (InvoiceLines $line) => $line->down_payment_line_id !== null)) {
+            return redirect()->back()->with('error', __('down_payments.refused.credit_note_on_deduction'));
+        }
+
         $creditNote = DB::transaction(function () use ($invoiceLines) {
             $lastCreditNote = CreditNotes::orderBy('id', 'desc')->first();
             $codeCreditNote = $this->documentCodeGenerator->generateDocumentCode('credit-note', $lastCreditNote?->id ?? 0);

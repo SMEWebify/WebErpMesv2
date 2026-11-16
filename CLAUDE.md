@@ -1255,8 +1255,8 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - **Niveau proposé** = le plus bas de (niveau atteint par le retard, niveau suivant la
   dernière relance) : jamais de saut de niveau, et une facture déjà relancée au niveau que
   justifie son retard n'est plus proposée.
-- Seules les factures `invoice_type = 1`, hors brouillons, échues et non soldées. Proformas
-  (pas une créance), avoirs (déjà déduits) et acomptes (aucun code n'en crée) sont exclus.
+- Seules les factures `invoice_type = 1` et les factures d'acompte (`4`), hors brouillons,
+  échues et non soldées. Proformas (pas une créance) et avoirs (déjà déduits) sont exclus.
 - **Aucun envoi automatique.** Un e-mail par client (`InvoiceReminderMail`, PDF de chaque
   facture joint, envoi synchrone comme `EmailController`), une ligne `email_logs` **et** une
   ligne `invoice_reminders` par facture. Un e-mail en échec est tracé mais ne fait pas monter
@@ -1265,6 +1265,39 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - Une tâche planifiée viendra plus tard : sous Windows en production → Planificateur de
   tâches, pas de cron.
 - Tests : `tests/Feature/Receivables/`.
+
+## Factures d'acompte
+
+`invoice_type = 4`, `App\Services\Invoicing\DownPayments`. Carte « Acomptes » de la fiche commande
+(`workflow/partials/order-down-payments`, % ou montant HT, `invoices.down-payments.store`) → facture
+d'acompte **en brouillon**, même numérotation que les factures, `order_id` = la commande.
+- **Aucune quantité touchée** : une ligne par taux de TVA de la commande, sans `order_line_id`
+  (« Acompte 50 % sur commande … », qté 1, HT au prorata de la base de chaque taux). BL, reste à
+  facturer, tâches : inchangés. Somme des acomptes ≤ HT de la commande (lignes article). Refusé sur
+  commande interne ou annulée.
+- **Déduction** : ligne négative (**qté −1, prix positif** : BR-27 interdit un prix net négatif) sur la
+  facture ordinaire, `invoice_lines.down_payment_line_id` → ligne d'acompte (hors `$fillable`), même
+  taux de TVA. Posée par `applyToInvoice()` **après** la mise à jour des quantités, dans les 5 chemins :
+  `invoices-request.store`, `.generate-all`, `invoices.store.from.delivery`, facturation directe
+  (`orders.lines.json.store-invoice`), conversion de proforma. Un nouveau chemin de facture doit l'appeler.
+- **Prorata cumulé** : part déduite d'une ligne d'acompte = HT × (HT facturé de la commande d'après
+  `invoiced_qty` / HT commandé) − déjà déduit ; la facture qui solde la commande prend tout le reste.
+  Bornée par la **part payée** (règlements, moins les avoirs) d'un acompte **émis** : brouillon ou
+  impayé = rien déduit (bandeau sur la facture), rattrapé à la facture suivante. Jamais plus que ce que
+  la facture porte pour la commande. Reste à déduire **jamais stocké** : relu sur les lignes (facture
+  supprimée = déduction libérée).
+- **Brouillon** : montant de la déduction modifiable (`invoices.lines.update`, `unit_price` seul, borné ;
+  qté / remise → 422), bouton « Recalculer » (`invoices.down-payments.recompute`).
+- **Comptabilité** : HT de l'acompte et de sa déduction au compte `invoicing.down_payment.account`
+  (`INVOICING_DOWN_PAYMENT_ACCOUNT`, **4191**) au lieu du produit ; déduction = écriture inversée
+  (crédit 411, débit 4191 et TVA). Avoir sur un acompte : même compte. Avoir sur une déduction : refusé.
+- **Factur-X** : acompte en 386 ; facture qui déduit = cadre `B4/S4/M4` (lettre de
+  `invoicing.business_process`) + `InvoiceReferencedDocument` (BT-25) de chaque acompte. PDP : types 1 et 4.
+  **À valider dans le bac à sable SUPER PDP** (quantité négative, cadre 4).
+- **Encours / relances** : `ReceivablesService::RECEIVABLE_TYPES` = 1 et 4 ; les commandes non facturées
+  de l'encours sont diminuées des acomptes pas encore déduits. **CA** (`InvoiceKPIService`) : déductions
+  exclues (un acompte n'est pas du CA, la facture finale compte pour son montant plein).
+- Index des factures : acomptes listés avec un badge. Tests : `tests/Feature/Invoicing/DownPaymentTest.php`.
 
 ## Notation fournisseur à la réception
 
@@ -1905,15 +1938,10 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   de commande et un récapitulatif cumulé sur le PDF (marché, situations antérieures,
   présente situation). Factur-X : facture ordinaire (380) qui porte le montant de la
   période — vérifier le traitement attendu par la PDP.
-- **Acomptes** — issue **#558** (ouverte depuis 2024, user story) → discussion **#409**
-  « Fonctionnement d'un Acompte » (workflow : demande d'acompte sur la commande → facture
-  d'acompte → paiement → confirmation → production / livraison → facture finale qui déduit
-  l'acompte). `invoice_type = 4` et le code Factur-X 386 existent, mais aucun code n'en
-  crée. Points que #409 ne traite pas et à trancher : TVA exigible à l'encaissement de
-  l'acompte (facture d'acompte avec TVA), déduction sur la finale en ligne négative
-  ventilée par taux, écritures (compte 4191 clients – avances reçues), acompte en % ou
-  montant, plusieurs acomptes par commande, et blocage éventuel du lancement tant qu'il
-  n'est pas payé. Sert aussi aux situations de travaux.
+- **Acomptes** — **fait** (section « Factures d'acompte »), issue **#558** / discussion
+  **#409**. Reste : pourcentage d'acompte par défaut (condition de paiement), blocage du
+  lancement tant que l'acompte n'est pas payé, avoir sur une déduction. Sert aussi aux
+  situations de travaux.
 - **Retenue de garantie** (5 % max, loi 71-584) : déduite du net à payer, sans effet sur
   la base HT ni la TVA ; libération à 1 an (ou caution bancaire qui la remplace). Suivi de
   l'échéance de libération, et prise en compte dans `ReceivablesService` (reste dû hors

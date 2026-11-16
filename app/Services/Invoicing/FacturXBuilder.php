@@ -92,6 +92,9 @@ class FacturXBuilder
         $totalPrice   = $calculator->getTotalPrice();
         $subPrice     = $calculator->getSubTotal();
 
+        // Factures d'acompte déduites par des lignes négatives (BT-25, cadre « 4 »).
+        $deductedInvoices = app(DownPayments::class)->deductedInvoices($invoice);
+
         $zugferddatas = ZugferdDocumentBuilder::CreateNew(ZugferdProfiles::PROFILE_EN16931);
         $zugferddatas
         ->setDocumentInformation($invoice->code, $this->documentTypeCode($invoice), $issueDate, $currency)
@@ -100,9 +103,9 @@ class FacturXBuilder
         // unitaire sans commande ni décompte, le cas courant en facturation
         // commerciale ; c'est aussi la valeur des factures de référence des
         // plateformes. Absent, le document part en avertissement.
-        ->setDocumentBusinessProcess(config('invoicing.business_process', 'M1'))
+        ->setDocumentBusinessProcess($this->businessProcess($deductedInvoices))
 
-        ->addDocumentNote('Facture ' . $invoice->code . ' du ' . $issueDate->format('d/m/Y'))
+        ->addDocumentNote(((int) $invoice->invoice_type === 4 ? "Facture d'acompte " : 'Facture ') . $invoice->code . ' du ' . $issueDate->format('d/m/Y'))
 
         // Référence acheteur (BT-10) : référence commande/marché côté client.
         ->setDocumentBuyerReference($invoice->customer_reference ?: $invoice->code)
@@ -190,6 +193,15 @@ class FacturXBuilder
         }
         if ($buyerAddress = $this->electronicAddress($client)) {
             $zugferddatas->setDocumentBuyerCommunication($buyerAddress['scheme'], $buyerAddress['value']);
+        }
+
+        // Facture définitive après acompte : référence des factures d'acompte déduites (BG-3).
+        foreach ($deductedInvoices as $deducted) {
+            $zugferddatas->addDocumentInvoiceReferencedDocument(
+                $deducted->code,
+                '386',
+                \Carbon\Carbon::parse($deducted->created_at)
+            );
         }
 
         // Moyen et conditions de paiement
@@ -284,7 +296,9 @@ class FacturXBuilder
         $currency   = $factory->curency ?? 'EUR';
         $calculator = new InvoiceCalculatorService($invoice);
 
-        $typeDocumentName    = __('general_content.invoice_trans_key');
+        $typeDocumentName    = (int) $invoice->invoice_type === 4
+            ? __('down_payments.document_title')
+            : __('general_content.invoice_trans_key');
         $formattedTotalPrice = Number::currency($calculator->getTotalPrice(), $currency, config('app.locale'));
         $formattedSubPrice   = Number::currency($calculator->getSubTotal(), $currency, config('app.locale'));
         $vatPrice            = $calculator->getVatTotal();
@@ -450,6 +464,22 @@ class FacturXBuilder
         }
 
         return $value !== '' ? ['scheme' => $scheme, 'value' => $value] : null;
+    }
+
+    /**
+     * Cadre de facturation (BT-23). Une facture qui déduit un acompte est une
+     * « facture définitive après acompte » : même lettre (B / S / M), chiffre 4
+     * (B4, S4, M4). Sinon la valeur configurée, inchangée.
+     */
+    private function businessProcess($deductedInvoices): string
+    {
+        $configured = (string) config('invoicing.business_process', 'M1');
+
+        if ($deductedInvoices->isEmpty() || ! preg_match('/^[BSM]\d$/', $configured)) {
+            return $configured;
+        }
+
+        return $configured[0] . '4';
     }
 
     /** Type de document (UNTDID 1001) selon le type de facture interne. */

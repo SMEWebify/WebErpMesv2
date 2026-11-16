@@ -13,7 +13,7 @@ $invoiceSteps = [
 @endphp
 
 @section('content_header')
-  <x-document-header h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}"
+  <x-document-header :h1="((int) $Invoice->invoice_type === 4 ? __('down_payments.document_title') : __('general_content.invoices_trans_key')) . ' : ' . $Invoice->code"
                      previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"
                      :steps="$invoiceSteps" statu="{{ $Invoice->statu }}"
                      endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
@@ -55,6 +55,7 @@ $invoiceSteps = [
     <div class="tab-content">
       <div class="tab-pane active" id="Invoice">
         <x-relational-breadcrumb :entity="$Invoice" />
+        @include('workflow.partials.invoice-down-payments', ['Invoice' => $Invoice])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -174,7 +175,7 @@ $invoiceSteps = [
               </div>
             </x-adminlte-card>
 
-            @if($pdpEnabled && $Invoice->invoice_type === 1)
+            @if($pdpEnabled && in_array((int) $Invoice->invoice_type, [1, 4], true))
             @include('integrations.partials.pdp-invoice-card', ['Invoice' => $Invoice, 'submission' => $pdpSubmission])
             @endif
 

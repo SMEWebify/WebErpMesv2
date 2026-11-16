@@ -124,7 +124,9 @@ class PrintController extends Controller
     public function getInvoicePdf(Invoices $Document)
     {
         abort_if($Document->statu === 1, 403, __('general_content.invoice_draft_no_pdf_trans_key'));
-        $typeDocumentName = __('general_content.invoice_trans_key');
+        $typeDocumentName = (int) $Document->invoice_type === 4
+            ? __('down_payments.document_title')
+            : __('general_content.invoice_trans_key');
         $calculatorService = new InvoiceCalculatorService($Document);
         return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-invoice');
     }
