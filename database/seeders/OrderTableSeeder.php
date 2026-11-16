@@ -40,22 +40,23 @@ class OrderTableSeeder extends Seeder
 
     /**
      * Date de livraison, en jours ouvrés : une commande livrée l'a derrière elle
-     * (alimente l'OTD) ; une commande en cours ou ouverte tombe le plus souvent
-     * dans les 4 semaines, pour charger le planning des 3 prochaines semaines.
+     * (alimente l'OTD) ; une commande en cours ou ouverte tombe pour une part
+     * dans les 3 prochaines semaines (le planning à charger), le reste forme
+     * un carnet étalé sur les mois suivants.
      */
     private function deliveryDate(int $statu): Carbon
     {
         $soonShare = match ($statu) {
             3 => null,
-            2, 4 => 80,
-            default => 55,
+            2, 4 => 50,
+            default => 20,
         };
 
         if ($soonShare === null) {
             return Carbon::today()->subWeekdays(random_int(5, 150))->setTime(17, 0);
         }
 
-        $days = random_int(1, 100) <= $soonShare ? random_int(2, 20) : random_int(21, 60);
+        $days = random_int(1, 100) <= $soonShare ? random_int(2, 15) : random_int(16, 120);
 
         return Carbon::today()->addWeekdays($days)->setTime(17, 0);
     }
