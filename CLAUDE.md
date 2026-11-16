@@ -1304,6 +1304,27 @@ d'acompte **en brouillon**, même numérotation que les factures, `order_id` = l
   exclues (un acompte n'est pas du CA, la facture finale compte pour son montant plein).
 - Index des factures : acomptes listés avec un badge. Tests : `tests/Feature/Invoicing/DownPaymentTest.php`.
 
+## Avoirs entiers ou partiels
+
+`App\Services\Invoicing\CreditNoteBuilder`, formulaire `workflow/partials/invoice-credit-note-form`
+(carte « Faire un avoir » de l'onglet Lignes d'une facture émise), route inchangée
+`credit-notes.store.from.invoice`.
+- Par ligne : `qty[id]` et `unit_price[id]` ; absents = tout ce qui reste créditable au prix de la
+  facture (l'ancien formulaire, qui n'envoie que `selected_invoice_lines`, crédite donc la ligne
+  entière comme avant). Remise de la ligne de facture reprise.
+- **Plafond** (`creditable()`) : quantité et HT de la ligne moins les avoirs non refusés
+  (`receivables.deducted_credit_note_statuses`) ; prix crédité ≤ prix facturé. Une seule facture
+  par avoir, facture verrouillée pendant la création.
+- `credit_note_lines.restores_quantity` (hors `$fillable`, vrai pour l'existant) : case « Remettre
+  ces quantités dans le reste à facturer » (`restore_quantities`, cochée par défaut ; prise en
+  compte seulement si `restore_quantities_sent`). Décochée = geste commercial / rebut non refait :
+  `invoiced_qty` inchangé.
+- **Refus** (statut 3) : `syncQuantities()` reprend les quantités remises à facturer (refusé avec
+  message si elles ont été refacturées depuis) ; rouvert, il les rend. Les écritures suivent déjà
+  par `syncCreditNoteEntries`.
+- Refus d'avoir sur une déduction d'acompte ou un acompte déjà déduit (section « Factures d'acompte »).
+- Tests : `tests/Feature/Invoicing/PartialCreditNoteTest.php`, `tests/Feature/CreditNotesTest.php`.
+
 ## Notation fournisseur à la réception
 
 `App\Services\Purchases\SupplierReceiptRating`. Fenêtre **facultative** sur la fiche réception

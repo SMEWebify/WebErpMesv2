@@ -293,7 +293,9 @@ of the invoice.
 ## 8. Make a credit note {#faire-un-avoir}
 
 A credit note cancels all or part of an **issued** invoice (return, goodwill gesture, mistake).
-"Invoice lines" tab: tick the lines concerned, then **New credit note**.
+"Invoice lines" tab, **Create a credit note** card: tick the lines concerned, adjust the
+**quantity** if needed (2 scrapped parts out of 10) or the **credited unit price** (discount
+after the fact), then **Create the credit note**.
 
 ![Create a credit note](img/24-avoir-creation.png)
 
@@ -302,11 +304,16 @@ The credit note opens with the **Pending** status. Set it to **Approved** once v
 
 ![Credit note](img/25-avoir-fiche.png)
 
-> ⚠️ A ticked line is taken **for its whole quantity**. A credit note cannot be deleted:
+> ⚠️ By default, everything still creditable on the line is taken. You never credit more
+> than the invoice carries, earlier credit notes included. A credit note cannot be deleted:
 > check your selection before clicking.
 >
-> ⚠️ The order lines concerned become "to be invoiced" again: keep this in mind if you
-> invoice them again later.
+> ⚠️ **Put these quantities back into "left to invoice"** box: ticked, the credited parts
+> become "to be invoiced" again (return, remade parts). Untick it for a goodwill gesture or
+> scrap that will not be remade: the order stays invoiced.
+>
+> 💡 Set to **Rejected**, the credit note takes back the quantities it had put back to
+> invoice. Not possible if they have been invoiced again since.
 >
 > 💡 A "Pending" or "Approved" credit note is deducted from the amount due on the invoice in
 > the reminders and the customer outstanding; a "Rejected" credit note is not.

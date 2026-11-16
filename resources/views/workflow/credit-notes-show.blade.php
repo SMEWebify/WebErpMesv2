@@ -158,7 +158,12 @@
                                 </td>
                                 <td>{{ $CreditNotesLine->display_code }}@if(!empty($CreditNotesLine->ind)) <span class="badge text-bg-light" title="{{ __('general_content.plan_index_trans_key') }}">{{ __('general_content.plan_index_short_trans_key') }} {{ $CreditNotesLine->ind }}</span>@endif</td>
                                 <td>{{ $CreditNotesLine->display_label }}</td>
-                                <td>{{ format_qty($CreditNotesLine->qty) }}</td>
+                                <td>
+                                    {{ format_qty($CreditNotesLine->qty) }}
+                                    @if($CreditNotesLine->order_line_id)
+                                    <span class="badge {{ $CreditNotesLine->restores_quantity ? 'text-bg-light border' : 'text-bg-warning' }} ms-1">{{ $CreditNotesLine->restores_quantity ? __('credit_notes.line.restored') : __('credit_notes.line.not_restored') }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ $CreditNotesLine->display_unit_label }}</td>
                                 <td>{{ $CreditNotesLine->formatted_selling_price }}</td>
                                 <td>{{ $CreditNotesLine->resolved_vat_rate }} %</td>
