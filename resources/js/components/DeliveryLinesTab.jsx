@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { askCancelReason, fillPlaceholders } from '../lib/cancelReason';
 import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
@@ -272,6 +273,45 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
         }
     }
 
+    // Annule la ligne de BL (DeliveryLineCancellation) : motif demandé, ligne retirée.
+    async function cancelLine(line) {
+        const t = trans.line_cancel ?? {};
+        const reason = await askCancelReason({
+            ...t,
+            title: t.delivery_title,
+            message: t.delivery_message,
+            confirm: t.delivery_action,
+        });
+        if (!reason) return;
+        setError('');
+        setBusyId(line.id);
+        try {
+            const res = await fetch(endpoints.cancelLine.replace('__LINE__', line.id), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken(),
+                },
+                body: JSON.stringify({ reason }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                setError(data.error ?? data.message ?? 'Erreur');
+            } else {
+                setLines(prev => prev.filter(l => l.id !== line.id));
+                const restored = Number(data.stock_restored) > 0
+                    ? ' ' + fillPlaceholders(t.delivery_stock_restored, { qty: formatQty(data.stock_restored) })
+                    : '';
+                handleSuccess((t.delivery_done ?? 'Ligne de BL annulée') + restored);
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setBusyId(null);
+        }
+    }
+
     return (
         <div>
             {/* Flash success */}
@@ -303,7 +343,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                             <th>{trans.remaining_qty ?? 'Restant'}</th>
                             <th className="text-end">{trans.weight ?? 'Poids'}</th>
                             <th>{trans.invoice_status ?? 'Facturation'}</th>
-                            <th style={{ width: 110 }} className="text-end">{trans.return ?? 'Retour'}</th>
+                            <th style={{ width: 150 }} className="text-end">{trans.return ?? 'Retour'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -344,6 +384,17 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                                 onClick={() => markNotChargeable(line)}
                                             >
                                                 <i className={busyId === line.id ? 'fas fa-spinner fa-spin' : 'fas fa-ban'} />
+                                            </button>
+                                        )}
+                                        {endpoints.cancelLine && line.invoice_status !== 4 && (
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-outline-secondary me-1"
+                                                title={trans.line_cancel?.delivery_action ?? 'Annuler cette ligne de BL'}
+                                                disabled={busyId === line.id}
+                                                onClick={() => cancelLine(line)}
+                                            >
+                                                <i className="fas fa-times" />
                                             </button>
                                         )}
                                         <button

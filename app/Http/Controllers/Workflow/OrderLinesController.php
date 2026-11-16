@@ -47,6 +47,8 @@ use App\Services\Production\ProductionRelease;
 use App\Services\Production\ProductionReleaseException;
 use App\Services\Workflow\OrderLineCalculatedPrice;
 use App\Services\Workflow\OrderLineCalculatedPriceException;
+use App\Services\Workflow\OrderLineCancellation;
+use App\Services\Workflow\OrderLineCancellationException;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -633,6 +635,12 @@ class OrderLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        // Livrée ou facturée : la supprimer casserait le BL / la facture qui la cite.
+        if ($refusal = app(OrderLineCancellation::class)->deletionRefusal($line)) {
+            return response()->json(['message' => $refusal, 'can_cancel' => app(OrderLineCancellation::class)->refusal($line) === null], 422);
+        }
+
         $line->delete();
         Task::where('order_lines_id', $id)->delete();
 
@@ -841,6 +849,28 @@ class OrderLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
     }
 
+    /**
+     * POST — annule le reste non livré de la ligne (OrderLineCancellation), motif obligatoire.
+     */
+    public function cancelLineJson(int $orderId, int $id, Request $request, OrderLineCancellation $cancellation)
+    {
+        abort_unless(auth()->check(), 403);
+        $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        try {
+            $line = $cancellation->cancel($line, Auth::user(), is_scalar($request->input('reason')) ? (string) $request->input('reason') : null);
+        } catch (OrderLineCancellationException $e) {
+            return response()->json(['message' => $e->getMessage()], $e->status());
+        }
+
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'OrderLineDetails:id,order_lines_id,picture']);
+        $line->loadCount(['Task', 'SubAssembly']);
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
+    }
+
     private function formatLineJson(OrderLines $l, string $currency, string $locale): array
     {
         $rawPrice       = (float) ($l->getRawOriginal('selling_price') ?? 0);
@@ -905,6 +935,13 @@ class OrderLinesController extends Controller
             'line_type'            => $l->line_type ?? 'article',
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
+            'cancellation'         => [
+                'cancelled'  => $l->isCancelled(),
+                'at'         => $l->cancelled_at?->format('d/m/Y H:i'),
+                'reason'     => $l->cancel_reason,
+                'qty'        => $l->cancelled_qty !== null ? (float) $l->cancelled_qty : null,
+                'can_cancel' => app(OrderLineCancellation::class)->refusal($l) === null,
+            ],
         ];
     }
 

@@ -60,13 +60,21 @@ class OrderLines extends Model
 
     // released_for_production_* ne sont pas $fillable : seul ProductionRelease les écrit.
     // dossier_* non plus : seul ManufacturingDossierGate les écrit (exigence reprise de la catégorie à la création).
+    // cancelled_* / cancel_reason non plus : seul OrderLineCancellation les écrit.
     protected $casts = [
         'hide_on_pdf' => 'boolean',
         'pdf_package' => 'integer',
         'released_for_production_at' => 'datetime',
         'dossier_required' => 'boolean',
         'dossier_validated_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
+
+    /** Reste non livré annulé (OrderLineCancellation). */
+    public function isCancelled(): bool
+    {
+        return $this->cancelled_at !== null;
+    }
 
     /**
      * Verrou : une ligne de présentation (section, sous-total, texte) ne se
@@ -404,7 +412,8 @@ class OrderLines extends Model
     {
         // BPF et indice tracés : qui a libéré quelle ligne, et pourquoi le BPF est tombé.
         return LogOptions::defaults()->logOnly(['orders_id', 'code', 'label', 'statu', 'ind', 'released_for_production_at', 'released_for_production_by',
-            'dossier_required', 'dossier_validated_at', 'dossier_validated_by', 'dossier_source']);
+            'dossier_required', 'dossier_validated_at', 'dossier_validated_by', 'dossier_source',
+            'qty', 'cancelled_at', 'cancelled_by', 'cancel_reason', 'cancelled_qty']);
         // Chain fluent methods for configuration options
     }
 }

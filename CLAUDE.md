@@ -978,6 +978,29 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
+## Annulation de ligne de commande et de ligne de BL
+
+Une ligne de commande déjà livrée ou facturée ne se supprime plus (`destroyLineJson` → 422
+`delete_used`, `can_cancel`) : sa suppression laissait des lignes de BL orphelines dont le PDF
+ne s'imprimait plus (client dcmetal, nov. 2026). Textes `resources/lang/*/order_line_cancel.php`.
+- **Ligne de commande** (`App\Services\Workflow\OrderLineCancellation`, `orders.lines.json.cancel`,
+  menu de la ligne) : annule le **reste non livré**, motif ≥ 3 caractères obligatoire. `qty` tombe à
+  `delivered_qty`, l'écart dans `cancelled_qty` (avec `cancelled_at / _by`, `cancel_reason`, hors
+  `$fillable`) : le total de la commande baisse. Reste à livrer 0, reste à facturer = livré non
+  facturé. Tâches non terminées fermées (« Finished »). Commande passée livrée si toutes ses lignes
+  le sont et qu'une pièce est partie. Refus : ligne de présentation, déjà annulée, tout livré
+  (retour / avoir), facturé au-delà du livré. Badge « Annulée ». Activitylog `order_line_cancelled`.
+  Aucune permission dédiée ; pas de « désannulation ».
+- **Ligne de BL** (`App\Services\Delivery\DeliveryLineCancellation`, `deliverys.line.cancel`,
+  bouton ✕ de l'onglet Lignes du BL) : ligne supprimée, quantité rendue au reste à livrer (ou ajoutée
+  à `cancelled_qty` si la ligne de commande est annulée), sortie de stock du BL (`typ_move` 9 de la
+  ligne de commande) compensée par une entrée `typ_move` 5 **au CUMP du moment** (CUMP inchangé).
+  Statut de commande 3/4 recalculé. Refus : facturée, retour client, colis, NC liée. Ligne orpheline
+  annulable. Tâches non rouvertes, numéros de série non touchés. Activitylog `delivery_line_cancelled`
+  sur le BL.
+- `print/pdf-delivery` lit la ligne de commande en `?->` (BL orphelin imprimable, rendu inchangé).
+- Tests : `tests/Feature/OrderLineCancellationTest.php`, `resources/js/tests/lib/cancelReason.test.js`.
+
 ## Prix figé des lignes de commande (prix calculé)
 
 `order_lines.use_calculated_price` fait relire le prix sur la gamme à chaque lecture

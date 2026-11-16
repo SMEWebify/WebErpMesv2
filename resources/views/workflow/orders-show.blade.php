@@ -433,6 +433,7 @@ if (!$orderHasInvoicedLines) {
           'store'           => route('orders.lines.json.store',            ['orderId' => $Order->id]),
           'update'          => route('orders.lines.json.update',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'destroy'         => route('orders.lines.json.destroy',          ['orderId' => $Order->id, 'id' => '__ID__']),
+          'cancel'          => route('orders.lines.json.cancel',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'duplicate'       => route('orders.lines.json.duplicate',        ['orderId' => $Order->id, 'id' => '__ID__']),
           'breakdown'       => route('orders.lines.json.breakdown',        ['orderId' => $Order->id, 'id' => '__ID__']),
           'move'            => route('orders.lines.json.move',             ['orderId' => $Order->id, 'id' => '__ID__']),
@@ -479,7 +480,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price')]) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

@@ -203,6 +203,7 @@ $deliverySteps = [
           $dlEndpoints = [
               'store'             => route('returns.json.store'),
               'markNotChargeable' => route('deliverys.line.not-chargeable', ['id' => $Delivery->id, 'lineId' => '__LINE__']),
+              'cancelLine'        => route('deliverys.line.cancel', ['id' => $Delivery->id, 'lineId' => '__LINE__']),
           ];
           $dlTrans = [
               'order'          => __('general_content.order_trans_key'),
@@ -226,6 +227,7 @@ $deliverySteps = [
               'save'           => __('returns.fields.save'),
               'cancel'         => __('general_content.cancel_trans_key'),
               'no_data'        => __('general_content.no_data_trans_key'),
+              'line_cancel'    => __('order_line_cancel.ui'),
           ];
         @endphp
         <div

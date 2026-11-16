@@ -462,6 +462,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{orderId}/lines/json/{id}/delay-history',          'App\Http\Controllers\Workflow\OrderLinesController@delayHistoryJson')->name('orders.lines.json.delay-history');
         Route::get('/{orderId}/lines/json/{id}/tasks',                  'App\Http\Controllers\Workflow\OrderLinesController@tasksForLineJson')->name('orders.lines.json.tasks');
         Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
+        Route::post('/{orderId}/lines/json/{id}/cancel',                'App\Http\Controllers\Workflow\OrderLinesController@cancelLineJson')->name('orders.lines.json.cancel');
         Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
         Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
         Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->middleware('permission:products-edit')->name('orders.lines.json.create-products');
@@ -512,6 +513,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/company-ac', 'App\Http\Controllers\Workflow\DeliverysController@companyAc')->name('deliverys.company-ac');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\DeliverysController@changeStatusJson')->name('deliverys.json.statu');
         Route::post('/{id}/json/line/{lineId}/not-chargeable', 'App\Http\Controllers\Workflow\DeliverysController@markLineNotChargeable')->name('deliverys.line.not-chargeable');
+        Route::post('/{id}/json/line/{lineId}/cancel', 'App\Http\Controllers\Workflow\DeliverysController@cancelLine')->name('deliverys.line.cancel');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::get('/json/{id}/lines', 'App\Http\Controllers\Workflow\DeliverysController@linesJson')->name('deliverys.json.lines');

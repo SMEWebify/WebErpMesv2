@@ -15,6 +15,8 @@ use App\Models\Workflow\Packaging;
 use App\Services\SelectDataService;
 use App\Services\DeliveryService;
 use App\Services\Delivery\PackagingContent;
+use App\Services\Delivery\DeliveryLineCancellation;
+use App\Services\Workflow\OrderLineCancellationException;
 use App\Services\DeliveryLineService;
 use App\Services\DeliveryDataService;
 use App\Services\StockService;
@@ -436,6 +438,33 @@ class DeliverysController extends Controller
             'ok'                      => true,
             'line_id'                 => $line->id,
             'invoice_status'          => 2,
+            'delivery_invoice_status' => $delivery->fresh()->invoice_status,
+        ]);
+    }
+
+    /**
+     * Annule une ligne de BL (DeliveryLineCancellation) : quantité rendue au reste à
+     * livrer de la commande, sortie de stock compensée, motif obligatoire.
+     */
+    public function cancelLine(Request $request, $id, $lineId)
+    {
+        $delivery = Deliverys::findOrFail($id);
+        $line = DeliveryLines::where('deliverys_id', $delivery->id)->findOrFail($lineId);
+
+        try {
+            $result = app(DeliveryLineCancellation::class)->cancel(
+                $line,
+                Auth::user(),
+                is_scalar($request->input('reason')) ? (string) $request->input('reason') : null,
+            );
+        } catch (OrderLineCancellationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status());
+        }
+
+        return response()->json([
+            'ok'                      => true,
+            'line_id'                 => (int) $lineId,
+            'stock_restored'          => $result['stock_restored'],
             'delivery_invoice_status' => $delivery->fresh()->invoice_status,
         ]);
     }
