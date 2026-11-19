@@ -128,7 +128,7 @@ $purchaseSteps = json_encode([
                       <td style="width:50%">{{ __('general_content.purchase_trans_key') }}</td>
                       <td>
                         @if( $Purchase->companies_contacts_id != 0 & $Purchase->companies_addresses_id !=0)
-                        <x-ButtonTextPDF route="{{ route('pdf.purchase', ['Document' => $Purchase->id])}}" />
+                        <x-pdf-print-menu :route="route('pdf.purchase', ['Document' => $Purchase->id])" base="print/pdf-purchases" />
                         @else
                         {{  __('general_content.update_valide_trans_key') }}
                         @endif

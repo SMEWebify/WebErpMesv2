@@ -122,7 +122,7 @@
                         {{ __('general_content.po_receipt_trans_key') }}
                       </td>
                       <td>
-                        <x-ButtonTextPDF route="{{ route('pdf.receipt', ['Document' => $PurchaseReceipt->id])}}" />
+                        <x-pdf-print-menu :route="route('pdf.receipt', ['Document' => $PurchaseReceipt->id])" base="print/pdf-purchases-receipt" />
                       </td>
                   </tr>
                 </table>

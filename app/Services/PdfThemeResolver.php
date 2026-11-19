@@ -45,11 +45,42 @@ class PdfThemeResolver
 
     private function resolveCustomOverride(string $baseViewKey): ?string
     {
+        return $this->customView($baseViewKey);
+    }
+
+    /**
+     * Vue personnalisée (non versionnée) d'une vue de base : print/custom/{client}/
+     * quand pdf.custom_client est renseigné, puis print/custom/ (déploiements d'avant).
+     */
+    public function customView(string $baseViewKey): ?string
+    {
         $parts = explode('/', $baseViewKey);
         $filename = array_pop($parts);
-        $customViewKey = implode('/', $parts) . '/custom/' . $filename;
+        $customRoot = implode('/', $parts) . '/custom/';
 
-        return View::exists($customViewKey) ? $customViewKey : null;
+        $candidates = [$customRoot . $filename];
+        if ($client = self::customClient()) {
+            array_unshift($candidates, $customRoot . $client . '/' . $filename);
+        }
+
+        foreach ($candidates as $customViewKey) {
+            if (View::exists($customViewKey)) {
+                return $customViewKey;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Dossier client des vues personnalisées (PDF_CUSTOM_CLIENT), null si vide ou
+     * si le nom n'est pas un simple nom de dossier.
+     */
+    public static function customClient(): ?string
+    {
+        $client = trim((string) config('pdf.custom_client'));
+
+        return preg_match('/^[A-Za-z0-9_-]+$/', $client) ? $client : null;
     }
 
     public function determineTheme(?Factory $factory = null): string

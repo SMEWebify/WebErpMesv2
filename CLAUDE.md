@@ -800,7 +800,10 @@ Menu PDF des fiches devis et AR (`<x-pdf-print-menu>`) : modèle + langue (`?lay
 `pdf.quote`, `pdf.order`, `pdf.orders.confirm`). Sans paramètre = PDF d'avant ; e-mails,
 signature et relances appellent `DocumentPdfService::render($doc)` sans modèle, donc inchangés.
 - **« short »** = la vue de base (`print/pdf-sales`), thème `pdf_theme` et `print/custom/pdf-sales`
-  compris. Le service est couvert par `SalesPdfLegacyRenderingTest` (mêmes références).
+  compris.
+- **Vues client** (non versionnées) : `print/custom/{client}/` si `PDF_CUSTOM_CLIENT` est renseigné
+  (local : `dcmetal`), puis `print/custom/` (déploiements d'avant) — `PdfThemeResolver::customView()`.
+  Les modèles client passent alors dans `print/custom/{client}/layouts`. Le service est couvert par `SalesPdfLegacyRenderingTest` (mêmes références).
 - **Un modèle = un dossier** qui reprend les noms de fichier de `print/` :
   `print/layouts/{modèle}/pdf-sales.blade.php` (versionné) ou `print/custom/layouts/{modèle}/…`
   (client, non versionné, prioritaire fichier par fichier). Proposé pour un document dès que
@@ -815,6 +818,9 @@ signature et relances appellent `DocumentPdfService::render($doc)` sans modèle,
   principal (rôle `plan`) de la ligne puis de l'article, lu sur disque (`files.thumbnail_path`
   ou image) par `PlanThumbnail` — dompdf ne lit ni PDF ni URL ; estimations de projet cochées
   (case = 1), coûts imprimés « non compris dans le total ».
+- **Achats** : `pdf.purchase`, `pdf.purchase.quotation` et `pdf.receipt` passent aussi par
+  `DocumentPdfService` (`?lang=`, fournisseur étranger) : menu `<x-pdf-print-menu base="print/pdf-purchases">`
+  sur les fiches commande d'achat et réception, liste de langues à côté du bouton PDF de la demande de prix (React).
 - **Langue** : tout le rendu (titre compris) dans `withLocale`, `config('pdf.languages')`. Une vue
   `print/custom` aux textes écrits en dur reste dans sa langue.
 - Tests : `tests/Feature/PdfLayoutTest.php`.

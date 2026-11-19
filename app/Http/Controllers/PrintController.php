@@ -14,7 +14,6 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use App\Models\Workflow\OrderConfirmations;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
-use App\Services\PurchaseCalculatorService;
 use App\Services\Purchases\PurchaseQualityClauses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
@@ -196,31 +195,28 @@ class PrintController extends Controller
      * @param PurchasesQuotation $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getPurchaseQuotationPdf(PurchasesQuotation $Document)
+    public function getPurchaseQuotationPdf(Request $request, PurchasesQuotation $Document)
     {
-        $typeDocumentName = __('general_content.purchase_request_trans_key');
-        return $this->generatePdf($Document, $typeDocumentName, null, 'print/pdf-purchases-quotation');
+        // Même service que les ventes : ?lang= pour un fournisseur étranger.
+        return $this->salesPdf($request, $Document, 'print/pdf-purchases-quotation');
     }
 
     /**
      * @param Purchases $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getPurchasePdf(Purchases $Document)
+    public function getPurchasePdf(Request $request, Purchases $Document)
     {
-        $typeDocumentName = __('general_content.purchase_order_trans_key');
-        $calculatorService = new PurchaseCalculatorService($Document);
-        return $this->generatePdf($Document, $typeDocumentName, $calculatorService, 'print/pdf-purchases');
+        return $this->salesPdf($request, $Document, 'print/pdf-purchases');
     }
 
     /**
      * @param PurchaseReceipt $Document
      * @return \Illuminate\Contracts\View\View
      */
-    public function getReceiptPdf(PurchaseReceipt $Document)
+    public function getReceiptPdf(Request $request, PurchaseReceipt $Document)
     {
-        $typeDocumentName = __('general_content.po_receipt_trans_key');
-        return $this->generatePdf($Document, $typeDocumentName, null, 'print/pdf-purchases-receipt');
+        return $this->salesPdf($request, $Document, 'print/pdf-purchases-receipt');
     }
 
     /**

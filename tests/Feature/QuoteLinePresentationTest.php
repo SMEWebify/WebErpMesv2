@@ -171,11 +171,12 @@ class QuoteLinePresentationTest extends TestCase
 
     public function test_the_custom_view_shows_sections_subtotals_and_packages_too(): void
     {
-        if (!\Illuminate\Support\Facades\View::exists('print/custom/pdf-sales')) {
+        $customView = app(\App\Services\PdfThemeResolver::class)->customView('print/pdf-sales');
+        if ($customView === null) {
             $this->markTestSkipped('Vue print/custom/pdf-sales absente (non versionnée).');
         }
 
-        $html = $this->renderSalesPdf($this->metalworkQuote(), 'print/custom/pdf-sales');
+        $html = $this->renderSalesPdf($this->metalworkQuote(), $customView);
 
         $this->assertStringContainsString('line-section', $html);
         $this->assertStringContainsString('Garde-corps', $html);

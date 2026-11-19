@@ -273,7 +273,7 @@ class SalesPdfLegacyRenderingTest extends TestCase
             return 'standard';
         }
 
-        return View::exists('print/custom/pdf-sales') ? 'custom' : 'standard';
+        return app(PdfThemeResolver::class)->customView('print/pdf-sales') ? 'custom' : 'standard';
     }
 
     /**
@@ -300,6 +300,11 @@ class SalesPdfLegacyRenderingTest extends TestCase
      */
     private function render(string $view, $Document, $calculator, string $typeDocumentName, string $linesKey): string
     {
+        // Vue personnalisée : celle du dossier client (PDF_CUSTOM_CLIENT) en priorité.
+        if (str_contains($view, '/custom/')) {
+            $view = app(PdfThemeResolver::class)->customView(str_replace('/custom/', '/', $view)) ?? $view;
+        }
+
         if (!View::exists($view)) {
             $this->markTestSkipped("Vue {$view} absente (les vues personnalisées ne sont pas versionnées).");
         }

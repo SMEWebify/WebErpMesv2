@@ -331,6 +331,7 @@ async function mountPurchasesQuotationShow() {
             initialContacts:   parse('contacts')   ?? [],
             affairOptions:     parse('affairOptions') ?? [],
             currency:          element.dataset.currency ?? 'EUR',
+            pdfLanguages:      parse('pdfLanguages'),
             endpoints:         parse('endpoints')  ?? {},
             trans:             parse('trans')       ?? {},
         })

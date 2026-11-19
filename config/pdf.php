@@ -38,7 +38,16 @@ return [
     | des prix et les données à préparer — voir print/layouts/long/layout.json.
     */
     'layouts_path'        => 'print/layouts',
-    'custom_layouts_path' => 'print/custom/layouts',
+    'custom_layouts_path' => preg_match('/^[A-Za-z0-9_-]+$/', (string) env('PDF_CUSTOM_CLIENT'))
+        ? 'print/custom/' . env('PDF_CUSTOM_CLIENT') . '/layouts'
+        : 'print/custom/layouts',
+
+    /*
+    | Vues personnalisées (non versionnées) d'un client : print/custom/{client}/
+    | (pdf-sales.blade.php…, layouts/{modèle}). Lues avant print/custom/, qui reste
+    | lu pour les déploiements d'avant. Vide = print/custom/ seulement.
+    */
+    'custom_client' => env('PDF_CUSTOM_CLIENT'),
 
     // Langues proposées à l'impression, indépendamment de celle de l'utilisateur.
     'languages' => [

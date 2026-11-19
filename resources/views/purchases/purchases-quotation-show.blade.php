@@ -26,6 +26,7 @@
     data-contacts="{{ json_encode($reactProps['contacts']) }}"
     data-affair-options="{{ json_encode($reactProps['affairOptions']) }}"
     data-currency="{{ $reactProps['currency'] }}"
+    data-pdf-languages="{{ json_encode(['current' => app()->getLocale(), 'list' => config('pdf.languages', [])]) }}"
     data-endpoints="{{ json_encode($reactEndpoints) }}"
     data-trans="{{ json_encode($reactTrans + ['ui' => __('purchase_ui')]) }}"
 ></div>

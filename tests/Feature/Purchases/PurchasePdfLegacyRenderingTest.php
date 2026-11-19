@@ -98,8 +98,34 @@ class PurchasePdfLegacyRenderingTest extends TestCase
         $this->assertStringContainsString('AO-221<br><small>Tôle DC01 décapée huilée</small></td>', $html);
     }
 
+    /**
+     * Langue du bon de commande choisie à l'impression (fournisseur étranger),
+     * comme pour les devis : ?lang= limité à config('pdf.languages').
+     */
+    public function test_the_purchase_order_prints_in_the_chosen_language(): void
+    {
+        $purchase = $this->makePurchase();
+        $url      = fn (array $query) => route('pdf.purchase', ['Document' => $purchase->id] + $query);
+
+        $this->get($url([]))->assertOk()
+            ->assertHeader('content-disposition', 'attachment; filename=PU-0001.pdf');
+        $this->get($url(['lang' => 'en']))->assertOk();
+        $this->get($url(['lang' => 'fr']))->assertOk();
+        $this->get($url(['lang' => 'de']))->assertNotFound();
+
+        $locale = app()->getLocale();
+        $this->assertStringContainsString('Purchase Order', app(DocumentPdfService::class)->html($purchase->fresh(), null, 'en'));
+        $this->assertStringContainsString('Commande achat', app(DocumentPdfService::class)->html($purchase->fresh(), null, 'fr'));
+        $this->assertSame($locale, app()->getLocale(), "La langue de l'utilisateur est rétablie.");
+    }
+
     private function render(string $view, Purchases $Document): string
     {
+        // Vue personnalisée : celle du dossier client (PDF_CUSTOM_CLIENT) en priorité.
+        if (str_contains($view, '/custom/')) {
+            $view = app(PdfThemeResolver::class)->customView(str_replace('/custom/', '/', $view)) ?? $view;
+        }
+
         if (!View::exists($view)) {
             $this->markTestSkipped("Vue {$view} absente (les vues personnalisées ne sont pas versionnées).");
         }

@@ -440,7 +440,13 @@ function OffersHistory({ offers, trans }) {
     );
 }
 
-function OptionsSidebar({ quotation, offers, endpoints, trans }) {
+function OptionsSidebar({ quotation, offers, pdfLanguages = null, endpoints, trans }) {
+    // Langue du PDF (?lang=), comme le menu d'impression des devis : utile pour un fournisseur étranger.
+    const languages = pdfLanguages?.list ?? {};
+    const [pdfLang, setPdfLang] = useState(pdfLanguages?.current ?? '');
+    const pdfHref = quotation.pdf_url && languages[pdfLang]
+        ? `${quotation.pdf_url}${quotation.pdf_url.includes('?') ? '&' : '?'}lang=${encodeURIComponent(pdfLang)}`
+        : quotation.pdf_url;
     const canPdf = quotation.companies_contacts_id &&
                    quotation.companies_contacts_id !== 0 &&
                    quotation.companies_addresses_id &&
@@ -464,9 +470,23 @@ function OptionsSidebar({ quotation, offers, endpoints, trans }) {
                                 <td style={{ width: '50%' }}>{trans.rfq_label}</td>
                                 <td>
                                     {canPdf && quotation.pdf_url ? (
-                                        <a href={quotation.pdf_url} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
-                                            <i className="fas fa-file-pdf me-1" />PDF
-                                        </a>
+                                        <div className="d-flex flex-wrap align-items-center gap-1">
+                                            {Object.keys(languages).length > 1 && (
+                                                <select
+                                                    className="form-select form-select-sm w-auto"
+                                                    value={languages[pdfLang] ? pdfLang : ''}
+                                                    onChange={(e) => setPdfLang(e.target.value)}
+                                                >
+                                                    {!languages[pdfLang] && <option value="">{String(pdfLang).toUpperCase()}</option>}
+                                                    {Object.entries(languages).map(([code, name]) => (
+                                                        <option key={code} value={code}>{name}</option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                            <a href={pdfHref} className="btn btn-outline-danger btn-sm" target="_blank" rel="noreferrer">
+                                                <i className="fas fa-file-pdf me-1" />PDF
+                                            </a>
+                                        </div>
                                     ) : (
                                         <span className="text-muted small">{trans.update_valid}</span>
                                     )}
@@ -1040,6 +1060,7 @@ export default function PurchasesQuotationShow({
     initialContacts,
     affairOptions = [],
     currency,
+    pdfLanguages = null,
     endpoints,
     trans,
 }) {
@@ -1134,7 +1155,7 @@ export default function PurchasesQuotationShow({
                                 />
                             </div>
                             <div className="col-md-3">
-                                <OptionsSidebar quotation={quotation} offers={offers} endpoints={endpoints} trans={trans} />
+                                <OptionsSidebar quotation={quotation} offers={offers} pdfLanguages={pdfLanguages} endpoints={endpoints} trans={trans} />
                             </div>
                         </div>
                     </div>
