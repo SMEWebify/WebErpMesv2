@@ -57,11 +57,18 @@
                     </a>
                 </div>
 
+                @php
+                    // Colonne Aperçu seulement si l'extracteur a fourni des vignettes
+                    $hasLineImages = $preOrder->lines->contains(fn ($line) => filled($line->image_path));
+                @endphp
                 <div class="table-responsive p-0">
                     <table class="table table-sm table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                @if($hasLineImages)
+                                    <th>Aperçu</th>
+                                @endif
                                 <th>Référence</th>
                                 <th>Produit</th>
                                 <th>Quantité</th>
@@ -76,6 +83,17 @@
                             @foreach($preOrder->lines as $line)
                                 <tr>
                                     <td>{{ $line->row_index }}</td>
+                                    @if($hasLineImages)
+                                        <td>
+                                            @if($line->image_path)
+                                                <a href="{{ route('pre-orders.line-image', [$preOrder, $line]) }}" target="_blank">
+                                                    <img src="{{ route('pre-orders.line-image', [$preOrder, $line]) }}"
+                                                         alt="Aperçu ligne {{ $line->row_index }}" loading="lazy"
+                                                         style="max-width:64px;max-height:48px;object-fit:contain;image-rendering:auto;">
+                                                </a>
+                                            @endif
+                                        </td>
+                                    @endif
                                     <td>{{ $line->reference }}</td>
                                     <td>{{ $line->product }}</td>
                                     <td>{{ format_qty($line->quantity) }}</td>

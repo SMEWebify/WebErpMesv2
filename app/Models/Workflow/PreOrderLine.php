@@ -20,6 +20,7 @@ class PreOrderLine extends Model
         'quantity',
         'unit_price',
         'total_price',
+        'image_path',
         'suggested_product_id',
         'linked_product_id',
         'matching_unit_price',
@@ -59,6 +60,21 @@ class PreOrderLine extends Model
         $currency = $factory->curency ?? 'EUR';
 
         return Number::currency($this->effective_total_price, $currency, config('app.locale'));
+    }
+
+    /**
+     * Nettoie le chemin de vignette lu dans le CSV de l'extracteur : relatif au
+     * dossier de sortie, image uniquement, sans remontée de dossier. Null sinon.
+     */
+    public static function cleanImagePath(mixed $value): ?string
+    {
+        $path = trim(str_replace('\\', '/', (string) $value), '/ ');
+
+        if ($path === '' || strlen($path) > 255 || str_contains($path, '..') || str_contains($path, ':')) {
+            return null;
+        }
+
+        return preg_match('/\.(png|jpe?g|webp)$/i', $path) ? $path : null;
     }
 
     public function preOrder()

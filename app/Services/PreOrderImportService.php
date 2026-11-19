@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Workflow\PreOrder;
 use App\Models\Workflow\PreOrderImport;
+use App\Models\Workflow\PreOrderLine;
 use App\Notifications\PreOrderNotification;
 use App\Services\NotificationService;
 use Illuminate\Support\Carbon;
@@ -60,6 +61,8 @@ class PreOrderImportService
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
                 'total_price' => $totalPrice,
+                // Colonne facultative (extracteur GT Laser) : vignette de la pièce
+                'image_path' => PreOrderLine::cleanImagePath($row['image_path'] ?? null),
             ];
         }
 

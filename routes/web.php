@@ -487,6 +487,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/pdf/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@pdf')->name('pre-orders.pdf');
         Route::get('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@show')->name('pre-orders.show');
         Route::get('/{preOrder}/source-pdf', 'App\Http\Controllers\Workflow\PreOrdersController@sourcePdf')->name('pre-orders.source-pdf');
+        Route::get('/{preOrder}/lines/{line}/image', 'App\Http\Controllers\Workflow\PreOrdersController@lineImage')->name('pre-orders.line-image');
         Route::post('/{preOrder}/matching', 'App\Http\Controllers\Workflow\PreOrdersController@matchArticles')->name('pre-orders.matching');
         Route::post('/{preOrder}/lines/{line}/accept-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptMatching')->name('pre-orders.accept-matching');
         Route::post('/{preOrder}/accept-all-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptAllMatching')->name('pre-orders.accept-all-matching');

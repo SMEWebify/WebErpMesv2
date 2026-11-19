@@ -262,6 +262,69 @@ class PreOrdersController extends Controller
         ]);
     }
 
+    /**
+     * Vignette d'une ligne (pièce) fournie par l'extracteur PDF. Le chemin stocké
+     * est relatif au dossier de sortie de l'extracteur, parent de processed_path.
+     */
+    public function lineImage(PreOrder $preOrder, PreOrderLine $line): StreamedResponse
+    {
+        abort_unless((int) $line->pre_order_id === (int) $preOrder->id, 404);
+
+        $imagePath = $this->resolveLineImagePath($line);
+        abort_if($imagePath === null, 404);
+
+        return Storage::disk(config('filesystems.default'))->response($imagePath, basename($imagePath), [
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
+    }
+
+    private function resolveLineImagePath(PreOrderLine $line): ?string
+    {
+        $relative = PreOrderLine::cleanImagePath($line->image_path);
+        if ($relative === null) {
+            return null;
+        }
+
+        // L'extracteur range processed/ dans son dossier de sortie : le parent de
+        // processed_path est donc ce dossier, vu depuis le disque Laravel.
+        $outputDir = dirname(trim((string) config('pre_orders.processed_path', 'public/output/processed'), '/'));
+        $candidate = trim(($outputDir === '.' ? '' : $outputDir) . '/' . $relative, '/');
+
+        return Storage::disk(config('filesystems.default'))->exists($candidate) ? $candidate : null;
+    }
+
+    /**
+     * Copie la vignette d'une ligne de pré-commande vers les images de lignes de
+     * commande et renvoie le nom de fichier à mettre dans order_line_details.picture.
+     * L'écran des lignes lit images/quote-lines, la fiche de production et le suivi
+     * des tâches images/order-lines : le fichier est écrit dans les deux.
+     */
+    private function copyLineImageForOrder(PreOrderLine $line): ?string
+    {
+        $imagePath = $this->resolveLineImagePath($line);
+        if ($imagePath === null) {
+            return null;
+        }
+
+        $content = Storage::disk(config('filesystems.default'))->get($imagePath);
+        if ($content === null) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION)) ?: 'png';
+        $filename = 'preorder_' . $line->id . '_' . uniqid() . '.' . $extension;
+
+        foreach (['images/order-lines', 'images/quote-lines'] as $dir) {
+            $target = public_path($dir);
+            if (! is_dir($target)) {
+                mkdir($target, 0755, true);
+            }
+            file_put_contents($target . DIRECTORY_SEPARATOR . $filename, $content);
+        }
+
+        return $filename;
+    }
+
     public function sourcePdf(PreOrder $preOrder): StreamedResponse
     {
         $sourcePdfPath = $this->resolveSourcePdfPath($preOrder);
@@ -495,6 +558,7 @@ class PreOrdersController extends Controller
 
                 OrderLineDetails::create([
                     'order_lines_id' => $orderLine->id,
+                    'picture' => $this->copyLineImageForOrder($line),
                 ]);
             }
 
