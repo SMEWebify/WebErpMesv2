@@ -5,6 +5,7 @@ namespace App\Models\Purchases;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Products\Products;
+use App\Models\Products\ProductsPreferredSupplier;
 use App\Services\Purchases\PurchaseCriticality;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Purchases\Purchases;
@@ -54,6 +55,22 @@ class PurchaseLines extends Model
      */
     protected static function booted(): void
     {
+        // Référence fournisseur reprise de l'article (onglet Fournisseurs de la fiche
+        // article) pour le fournisseur de la commande, quand la ligne n'en porte pas.
+        // Une référence saisie n'est jamais remplacée.
+        static::creating(function (PurchaseLines $line) {
+            if (trim((string) $line->supplier_ref) !== '' || ! $line->product_id || ! $line->purchases_id) {
+                return;
+            }
+
+            $companyId = Purchases::query()->whereKey($line->purchases_id)->value('companies_id');
+            $reference = ProductsPreferredSupplier::referenceFor($line->product_id, $companyId);
+
+            if ($reference !== null) {
+                $line->supplier_ref = $reference;
+            }
+        });
+
         static::creating(function (PurchaseLines $line) {
             $missing = array_values(array_filter(
                 PurchaseCriticality::FIELDS,

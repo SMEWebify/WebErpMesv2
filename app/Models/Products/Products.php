@@ -160,7 +160,9 @@ class Products extends Model
 
     //https://github.com/SMEWebify/WebErpMesv2/issues/313
     public function preferredSuppliers() {
-        return $this->belongsToMany(Companies::class, 'products_preferred_suppliers', 'product_id', 'companies_id')->withTimestamps();
+        return $this->belongsToMany(Companies::class, 'products_preferred_suppliers', 'product_id', 'companies_id')
+            ->withPivot('supplier_reference')
+            ->withTimestamps();
     }
 
     public function customerPriceLists()

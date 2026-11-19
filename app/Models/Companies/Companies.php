@@ -408,7 +408,9 @@ class Companies extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function productsfromThisSupplier() {
-        return $this->belongsToMany(Products::class, 'products_preferred_suppliers', 'companies_id', 'product_id')->withTimestamps();
+        return $this->belongsToMany(Products::class, 'products_preferred_suppliers', 'companies_id', 'product_id')
+            ->withPivot('supplier_reference')
+            ->withTimestamps();
     }
 
     /**

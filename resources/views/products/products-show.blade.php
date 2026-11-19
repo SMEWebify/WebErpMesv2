@@ -611,6 +611,7 @@
                       <tr>
                         <th>{{__('general_content.id_trans_key') }}</th>
                         <th>{{__('general_content.customer_trans_key') }}</th>
+                        <th>{{ __('general_content.supplier_reference_trans_key') }}</th>
                         <th>{{ __('general_content.supplier_rate_trans_key') }}</th>
                         <th></th>
                         <th></th>
@@ -621,6 +622,24 @@
                       <tr>
                         <td>{{ $preferredSuppliers->code }}</td>
                         <td>{{ $preferredSuppliers->label }}</td>
+                        <td class="py-1 align-middle">
+                          @if($canEditProduct)
+                          <form method="POST" action="{{ route('products.supplier.create') }}" class="d-flex gap-1">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $Product->id }}">
+                            <input type="hidden" name="companies_id" value="{{ $preferredSuppliers->id }}">
+                            <input type="text" name="supplier_reference" class="form-control form-control-sm" maxlength="100"
+                                   value="{{ $preferredSuppliers->pivot->supplier_reference }}"
+                                   placeholder="{{ __('general_content.supplier_reference_trans_key') }}"
+                                   aria-label="{{ __('general_content.supplier_reference_trans_key') }} {{ $preferredSuppliers->label }}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="{{ __('general_content.submit_trans_key') }}">
+                              <i class="fas fa-save" aria-hidden="true"></i>
+                            </button>
+                          </form>
+                          @else
+                          {{ $preferredSuppliers->pivot->supplier_reference ?: '—' }}
+                          @endif
+                        </td>
                         <td>
                           @for ($i = 1; $i <= 5; $i++)
                               @if ($i <= $preferredSuppliers->averageRating())
@@ -711,6 +730,7 @@
                       <tr>
                         <th>{{__('general_content.id_trans_key') }}</th>
                         <th>{{__('general_content.customer_trans_key') }}</th>
+                        <th>{{ __('general_content.supplier_reference_trans_key') }}</th>
                         <th>{{ __('general_content.supplier_rate_trans_key') }}</th>
                         <th></th>
                         <th></th>
@@ -739,6 +759,11 @@
                         <option value="{{ $item->id }}" >{{ $item->code }} - {{ $item->label }}</option>
                         @endforeach
                     </x-adminlte-select-bs>
+                  </div>
+                  <div class="mb-3">
+                    <label for="new_supplier_reference" class="form-label text-info">{{ __('general_content.supplier_reference_trans_key') }}</label>
+                    <input type="text" name="supplier_reference" id="new_supplier_reference" class="form-control form-control-sm" maxlength="100">
+                    <div class="form-text">{{ __('general_content.supplier_reference_help_trans_key') }}</div>
                   </div>
                   <x-slot name="footerSlot">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

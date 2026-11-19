@@ -234,6 +234,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             label:            product.label  ?? f.label,
             methods_units_id: product.methods_units_id ?? f.methods_units_id,
             selling_price:    product.selling_price    ?? f.selling_price,
+            // Référence de l'article chez le fournisseur de la commande (fiche article)
+            supplier_ref:     product.supplier_reference || f.supplier_ref,
         }));
         setProductSearch(`${product.code} — ${product.label}`);
         setShowProductList(false);
@@ -393,6 +395,9 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                             onMouseLeave={(e) => e.currentTarget.style.background = ''}>
                                             <strong>{p.code}</strong>
                                             <span className="text-muted ms-2">{p.label}</span>
+                                            {p.supplier_reference && (
+                                                <span className="badge text-bg-secondary ms-2">Réf. fournisseur : {p.supplier_reference}</span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

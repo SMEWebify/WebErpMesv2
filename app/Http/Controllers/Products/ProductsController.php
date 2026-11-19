@@ -441,14 +441,22 @@ class ProductsController extends Controller
      */
     public function StoreSupplier(Request $request)
     {
-        $product = Products::find($request->product_id);
-        if (!$product) {
-            return redirect()->back()->withErrors(['message' => 'Product not found.']);
-        }
-        else{
-            $product->preferredSuppliers()->attach($request->companies_id);
-            return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', __('general_content.supplier_added_success_trans_key'));
-        }
+        $validated = $request->validate([
+            'product_id'         => 'required|integer|exists:products,id',
+            'companies_id'       => 'required|integer|exists:companies,id',
+            'supplier_reference' => 'nullable|string|max:100',
+        ]);
+
+        $product   = Products::findOrFail($validated['product_id']);
+        $reference = trim((string) ($validated['supplier_reference'] ?? '')) ?: null;
+
+        // Fournisseur déjà lié : seule sa référence est mise à jour (plus d'erreur
+        // d'unicité sur un second ajout du même fournisseur).
+        $product->preferredSuppliers()->syncWithoutDetaching([
+            $validated['companies_id'] => ['supplier_reference' => $reference],
+        ]);
+
+        return redirect()->route('products.show', ['id' => $product->id])->with('success', __('general_content.supplier_added_success_trans_key'));
     }
 
     public function StoreSupplierPriceQty(Request $request){

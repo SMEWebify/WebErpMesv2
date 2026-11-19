@@ -25,6 +25,7 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class SelectDataService
 {
@@ -240,7 +241,7 @@ class SelectDataService
      * stock locations). The whole catalogue is never loaded: past a few thousand
      * references it no longer fits in PHP memory.
      *
-     * @param string   $search     Matched against code and label (contains).
+     * @param string   $search     Matched against code, label and supplier reference (contains).
      * @param int|null $supplierId Restrict to products having this company as preferred supplier.
      * @param int      $limit      Maximum number of results.
      * @return \Illuminate\Support\Collection
@@ -249,11 +250,29 @@ class SelectDataService
     {
         $query = Products::select('id', 'label', 'code', 'methods_services_id', 'methods_units_id', 'selling_price', 'ind', 'certificate_type', 'construction_code', 'nuclear_level');
 
+        // Référence de l'article chez le fournisseur filtré : l'écran des lignes
+        // d'achat la reprend dans « Réf. fournisseur » au choix de l'article.
+        if ($supplierId) {
+            $query->addSelect(['supplier_reference' => DB::table('products_preferred_suppliers')
+                ->select('supplier_reference')
+                ->whereColumn('products_preferred_suppliers.product_id', 'products.id')
+                ->where('products_preferred_suppliers.companies_id', $supplierId)
+                ->limit(1)]);
+        }
+
         if ($search !== '') {
             $like = '%' . addcslashes($search, '\\%_') . '%';
-            $query->where(function ($q) use ($like) {
+            $query->where(function ($q) use ($like, $supplierId) {
                 $q->where('code', 'like', $like)
-                  ->orWhere('label', 'like', $like);
+                  ->orWhere('label', 'like', $like)
+                  // Référence fournisseur : celle du fournisseur filtré, sinon de n'importe lequel
+                  ->orWhereExists(function ($sub) use ($like, $supplierId) {
+                      $sub->select(DB::raw(1))
+                          ->from('products_preferred_suppliers')
+                          ->whereColumn('products_preferred_suppliers.product_id', 'products.id')
+                          ->where('products_preferred_suppliers.supplier_reference', 'like', $like)
+                          ->when($supplierId, fn ($s) => $s->where('products_preferred_suppliers.companies_id', $supplierId));
+                  });
             });
         }
 
