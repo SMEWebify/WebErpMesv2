@@ -63,10 +63,54 @@ class ProductSupplierReferenceTest extends TestCase
     public function test_supplier_is_added_with_its_reference(): void
     {
         $this->post(route('products.supplier.create'), [
-            'product_id' => $this->product->id, 'companies_id' => $this->supplier->id, 'supplier_reference' => ' AO-221 ',
+            'product_id' => $this->product->id, 'companies_id' => $this->supplier->id,
+            'supplier_reference' => ' AO-221 ', 'supplier_label' => ' Tôle DC01 décapée ',
         ])->assertRedirect();
 
-        $this->assertSame('AO-221', $this->product->preferredSuppliers()->first()->pivot->supplier_reference);
+        $pivot = $this->product->preferredSuppliers()->first()->pivot;
+        $this->assertSame('AO-221', $pivot->supplier_reference);
+        $this->assertSame('Tôle DC01 décapée', $pivot->supplier_label);
+    }
+
+    public function test_purchase_line_takes_the_supplier_description_independently_of_the_reference(): void
+    {
+        $this->product->preferredSuppliers()->attach($this->supplier->id, [
+            'supplier_reference' => 'AO-221', 'supplier_label' => 'Tôle DC01 décapée',
+        ]);
+        $purchase = Purchases::factory()->create(['companies_id' => $this->supplier->id, 'statu' => 1]);
+
+        $auto = $this->line($purchase);
+        $this->assertSame('AO-221', $auto->supplier_ref);
+        $this->assertSame('Tôle DC01 décapée', $auto->supplier_label);
+
+        // Référence saisie : gardée, la désignation est quand même reprise
+        $typed = $this->line($purchase, ['supplier_ref' => 'SAISIE-1']);
+        $this->assertSame('SAISIE-1', $typed->supplier_ref);
+        $this->assertSame('Tôle DC01 décapée', $typed->supplier_label);
+
+        // Désignation saisie : jamais remplacée
+        $this->assertSame('Ma désignation', $this->line($purchase, ['supplier_label' => 'Ma désignation'])->supplier_label);
+    }
+
+    public function test_search_finds_a_product_by_supplier_description_and_returns_it(): void
+    {
+        $this->product->preferredSuppliers()->attach($this->supplier->id, ['supplier_label' => 'Feuille décapée huilée']);
+
+        $found = $this->getJson(route('products.json.search', ['q' => 'décapée', 'supplier_id' => $this->supplier->id]))->assertOk()->json('products');
+
+        $this->assertSame(['TOLE-DC01-2'], array_column($found, 'code'));
+        $this->assertSame('Feuille décapée huilée', $found[0]['supplier_label']);
+    }
+
+    public function test_purchase_line_json_round_trips_the_supplier_description(): void
+    {
+        $purchase = Purchases::factory()->create(['companies_id' => $this->supplier->id, 'statu' => 1]);
+        $line = $this->line($purchase);
+
+        $this->putJson(route('purchases.lines.json.update', ['purchaseId' => $purchase->id, 'id' => $line->id]), [
+            'ordre' => 1, 'label' => 'Tôle DC01 2 mm', 'qty' => 4, 'selling_price' => 100, 'discount' => 0,
+            'supplier_label' => 'Désignation corrigée',
+        ])->assertOk()->assertJsonPath('line.supplier_label', 'Désignation corrigée');
     }
 
     public function test_posting_an_existing_supplier_updates_its_reference_without_duplicate(): void

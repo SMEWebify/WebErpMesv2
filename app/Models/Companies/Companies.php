@@ -409,7 +409,7 @@ class Companies extends Model
      */
     public function productsfromThisSupplier() {
         return $this->belongsToMany(Products::class, 'products_preferred_suppliers', 'companies_id', 'product_id')
-            ->withPivot('supplier_reference')
+            ->withPivot('supplier_reference', 'supplier_label')
             ->withTimestamps();
     }
 

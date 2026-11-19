@@ -1207,7 +1207,8 @@ return [
     //PURCHASE INVOICE
     'invoice_supplier_trans_key'               => 'Facture fournisseur',
     'supplier_reference_trans_key'             => 'Référence fournisseur',
-    'supplier_reference_help_trans_key'        => 'Code de l\'article dans le catalogue du fournisseur. Repris sur les lignes de commande d\'achat de ce fournisseur et imprimé sur le bon de commande.',
+    'supplier_reference_help_trans_key'        => 'Code et désignation de l\'article dans le catalogue du fournisseur. Repris sur les lignes de commande d\'achat de ce fournisseur et imprimés sur le bon de commande.',
+    'supplier_label_trans_key'                 => 'Désignation fournisseur',
     'name_purchase_invoice_trans_key'          => 'Nom de la facture fournisseur',
 
     //QUALITY

@@ -122,7 +122,7 @@
                                 {{ $DocumentLine->purchaseLines->label }}
                             @endif
                         </td>
-                        <td>{{ $DocumentLine->purchaseLines->supplier_ref }}</td>
+                        <td>{{ $DocumentLine->purchaseLines->supplier_ref }}@if(!empty($DocumentLine->purchaseLines->supplier_label))<br><small>{{ $DocumentLine->purchaseLines->supplier_label }}</small>@endif</td>
                         <td>{{ $DocumentLine->purchaseLines->qty  }}</td>
                         <td>{{ $DocumentLine->receipt_qty }}</td>
                     </tr>

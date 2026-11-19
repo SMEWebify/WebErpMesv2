@@ -241,7 +241,7 @@ class SelectDataService
      * stock locations). The whole catalogue is never loaded: past a few thousand
      * references it no longer fits in PHP memory.
      *
-     * @param string   $search     Matched against code, label and supplier reference (contains).
+     * @param string   $search     Matched against code, label, supplier reference and description (contains).
      * @param int|null $supplierId Restrict to products having this company as preferred supplier.
      * @param int      $limit      Maximum number of results.
      * @return \Illuminate\Support\Collection
@@ -253,11 +253,16 @@ class SelectDataService
         // Référence de l'article chez le fournisseur filtré : l'écran des lignes
         // d'achat la reprend dans « Réf. fournisseur » au choix de l'article.
         if ($supplierId) {
-            $query->addSelect(['supplier_reference' => DB::table('products_preferred_suppliers')
-                ->select('supplier_reference')
+            $catalogue = fn (string $column) => DB::table('products_preferred_suppliers')
+                ->select($column)
                 ->whereColumn('products_preferred_suppliers.product_id', 'products.id')
                 ->where('products_preferred_suppliers.companies_id', $supplierId)
-                ->limit(1)]);
+                ->limit(1);
+
+            $query->addSelect([
+                'supplier_reference' => $catalogue('supplier_reference'),
+                'supplier_label'     => $catalogue('supplier_label'),
+            ]);
         }
 
         if ($search !== '') {
@@ -265,12 +270,13 @@ class SelectDataService
             $query->where(function ($q) use ($like, $supplierId) {
                 $q->where('code', 'like', $like)
                   ->orWhere('label', 'like', $like)
-                  // Référence fournisseur : celle du fournisseur filtré, sinon de n'importe lequel
+                  // Référence / désignation fournisseur : du fournisseur filtré, sinon de n'importe lequel
                   ->orWhereExists(function ($sub) use ($like, $supplierId) {
                       $sub->select(DB::raw(1))
                           ->from('products_preferred_suppliers')
                           ->whereColumn('products_preferred_suppliers.product_id', 'products.id')
-                          ->where('products_preferred_suppliers.supplier_reference', 'like', $like)
+                          ->where(fn ($m) => $m->where('products_preferred_suppliers.supplier_reference', 'like', $like)
+                              ->orWhere('products_preferred_suppliers.supplier_label', 'like', $like))
                           ->when($supplierId, fn ($s) => $s->where('products_preferred_suppliers.companies_id', $supplierId));
                   });
             });

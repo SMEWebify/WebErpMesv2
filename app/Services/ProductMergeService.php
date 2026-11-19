@@ -73,19 +73,23 @@ class ProductMergeService
             // 2. Pivot: preferred suppliers — add those not already on master, discard overlaps
             $masterSupplierIds = DB::table('products_preferred_suppliers')
                 ->where('product_id', $masterId)->pluck('companies_id');
-            // Fournisseur commun : la référence fournisseur du doublon complète celle du maître si elle manque
-            $duplicateReferences = DB::table('products_preferred_suppliers')
+            // Fournisseur commun : référence et désignation fournisseur du doublon
+            // complètent celles du maître, chacune seulement si elle manque
+            $duplicateCatalogue = DB::table('products_preferred_suppliers')
                 ->where('product_id', $duplicateId)
                 ->whereIn('companies_id', $masterSupplierIds)
-                ->whereNotNull('supplier_reference')
-                ->where('supplier_reference', '<>', '')
-                ->pluck('supplier_reference', 'companies_id');
-            foreach ($duplicateReferences as $companyId => $reference) {
-                DB::table('products_preferred_suppliers')
-                    ->where('product_id', $masterId)
-                    ->where('companies_id', $companyId)
-                    ->where(fn ($q) => $q->whereNull('supplier_reference')->orWhere('supplier_reference', ''))
-                    ->update(['supplier_reference' => $reference]);
+                ->get(['companies_id', 'supplier_reference', 'supplier_label']);
+            foreach ($duplicateCatalogue as $row) {
+                foreach (['supplier_reference', 'supplier_label'] as $column) {
+                    if (trim((string) $row->{$column}) === '') {
+                        continue;
+                    }
+                    DB::table('products_preferred_suppliers')
+                        ->where('product_id', $masterId)
+                        ->where('companies_id', $row->companies_id)
+                        ->where(fn ($q) => $q->whereNull($column)->orWhere($column, ''))
+                        ->update([$column => $row->{$column}]);
+                }
             }
             DB::table('products_preferred_suppliers')
                 ->where('product_id', $duplicateId)

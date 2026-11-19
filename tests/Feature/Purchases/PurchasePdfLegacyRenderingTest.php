@@ -84,6 +84,20 @@ class PurchasePdfLegacyRenderingTest extends TestCase
         );
     }
 
+    /**
+     * Désignation fournisseur : imprimée sous la référence fournisseur quand la
+     * ligne en porte une (sinon rendu identique, cf. tests ci-dessus).
+     */
+    public function test_the_supplier_description_is_printed_under_the_supplier_reference(): void
+    {
+        $purchase = $this->makePurchase();
+        PurchaseLines::where('purchases_id', $purchase->id)->where('ordre', 1)->update(['supplier_label' => 'Tôle DC01 décapée huilée']);
+
+        $html = app(DocumentPdfService::class)->html($purchase->fresh());
+
+        $this->assertStringContainsString('AO-221<br><small>Tôle DC01 décapée huilée</small></td>', $html);
+    }
+
     private function render(string $view, Purchases $Document): string
     {
         if (!View::exists($view)) {

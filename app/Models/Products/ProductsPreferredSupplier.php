@@ -11,23 +11,30 @@ class ProductsPreferredSupplier extends Model
     // Fillable attributes for mass assignment
     protected $fillable= ['product_id', 
                             'companies_id',
-                            'supplier_reference',];
+                            'supplier_reference',
+                            'supplier_label',];
 
     /**
-     * Référence de l'article chez ce fournisseur, ou null.
+     * Référence et désignation de l'article chez ce fournisseur (valeurs vides
+     * rendues null), en une requête.
+     *
+     * @return array{supplier_reference: ?string, supplier_label: ?string}
      */
-    public static function referenceFor($productId, $companyId): ?string
+    public static function catalogueFor($productId, $companyId): array
     {
-        if (! $productId || ! $companyId) {
-            return null;
-        }
+        $row = ($productId && $companyId)
+            ? static::query()
+                ->where('product_id', $productId)
+                ->where('companies_id', $companyId)
+                ->first(['supplier_reference', 'supplier_label'])
+            : null;
 
-        $reference = static::query()
-            ->where('product_id', $productId)
-            ->where('companies_id', $companyId)
-            ->value('supplier_reference');
+        $clean = fn ($value) => $value === null || trim($value) === '' ? null : $value;
 
-        return $reference === null || trim($reference) === '' ? null : $reference;
+        return [
+            'supplier_reference' => $clean($row?->supplier_reference),
+            'supplier_label'     => $clean($row?->supplier_label),
+        ];
     }
 
     public function QuantityPrice()

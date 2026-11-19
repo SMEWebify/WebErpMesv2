@@ -624,20 +624,29 @@
                         <td>{{ $preferredSuppliers->label }}</td>
                         <td class="py-1 align-middle">
                           @if($canEditProduct)
-                          <form method="POST" action="{{ route('products.supplier.create') }}" class="d-flex gap-1">
+                          <form method="POST" action="{{ route('products.supplier.create') }}" class="d-flex gap-1 align-items-start">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $Product->id }}">
                             <input type="hidden" name="companies_id" value="{{ $preferredSuppliers->id }}">
-                            <input type="text" name="supplier_reference" class="form-control form-control-sm" maxlength="100"
-                                   value="{{ $preferredSuppliers->pivot->supplier_reference }}"
-                                   placeholder="{{ __('general_content.supplier_reference_trans_key') }}"
-                                   aria-label="{{ __('general_content.supplier_reference_trans_key') }} {{ $preferredSuppliers->label }}">
+                            <div class="flex-grow-1">
+                              <input type="text" name="supplier_reference" class="form-control form-control-sm mb-1" maxlength="100"
+                                     value="{{ $preferredSuppliers->pivot->supplier_reference }}"
+                                     placeholder="{{ __('general_content.supplier_reference_trans_key') }}"
+                                     aria-label="{{ __('general_content.supplier_reference_trans_key') }} {{ $preferredSuppliers->label }}">
+                              <input type="text" name="supplier_label" class="form-control form-control-sm" maxlength="255"
+                                     value="{{ $preferredSuppliers->pivot->supplier_label }}"
+                                     placeholder="{{ __('general_content.supplier_label_trans_key') }}"
+                                     aria-label="{{ __('general_content.supplier_label_trans_key') }} {{ $preferredSuppliers->label }}">
+                            </div>
                             <button type="submit" class="btn btn-sm btn-outline-secondary" title="{{ __('general_content.submit_trans_key') }}">
                               <i class="fas fa-save" aria-hidden="true"></i>
                             </button>
                           </form>
                           @else
                           {{ $preferredSuppliers->pivot->supplier_reference ?: '—' }}
+                          @if($preferredSuppliers->pivot->supplier_label)
+                          <div class="small text-muted">{{ $preferredSuppliers->pivot->supplier_label }}</div>
+                          @endif
                           @endif
                         </td>
                         <td>
@@ -763,6 +772,10 @@
                   <div class="mb-3">
                     <label for="new_supplier_reference" class="form-label text-info">{{ __('general_content.supplier_reference_trans_key') }}</label>
                     <input type="text" name="supplier_reference" id="new_supplier_reference" class="form-control form-control-sm" maxlength="100">
+                  </div>
+                  <div class="mb-3">
+                    <label for="new_supplier_label" class="form-label text-info">{{ __('general_content.supplier_label_trans_key') }}</label>
+                    <input type="text" name="supplier_label" id="new_supplier_label" class="form-control form-control-sm" maxlength="255">
                     <div class="form-text">{{ __('general_content.supplier_reference_help_trans_key') }}</div>
                   </div>
                   <x-slot name="footerSlot">

@@ -30,6 +30,7 @@ class PurchaseLines extends Model
                             'product_id',
                             'label',
                             'supplier_ref',
+                            'supplier_label',
                             'qty',
                             'selling_price',
                             'discount',
@@ -55,19 +56,26 @@ class PurchaseLines extends Model
      */
     protected static function booted(): void
     {
-        // Référence fournisseur reprise de l'article (onglet Fournisseurs de la fiche
-        // article) pour le fournisseur de la commande, quand la ligne n'en porte pas.
-        // Une référence saisie n'est jamais remplacée.
+        // Référence et désignation fournisseur reprises de l'article (onglet Fournisseurs
+        // de la fiche article) pour le fournisseur de la commande, chacune seulement si
+        // la ligne n'en porte pas. Une valeur saisie n'est jamais remplacée.
         static::creating(function (PurchaseLines $line) {
-            if (trim((string) $line->supplier_ref) !== '' || ! $line->product_id || ! $line->purchases_id) {
+            $empty = fn ($value) => trim((string) $value) === '';
+            $fillRef   = $empty($line->supplier_ref);
+            $fillLabel = $empty($line->supplier_label);
+
+            if ((! $fillRef && ! $fillLabel) || ! $line->product_id || ! $line->purchases_id) {
                 return;
             }
 
             $companyId = Purchases::query()->whereKey($line->purchases_id)->value('companies_id');
-            $reference = ProductsPreferredSupplier::referenceFor($line->product_id, $companyId);
+            $catalogue = ProductsPreferredSupplier::catalogueFor($line->product_id, $companyId);
 
-            if ($reference !== null) {
-                $line->supplier_ref = $reference;
+            if ($fillRef && $catalogue['supplier_reference'] !== null) {
+                $line->supplier_ref = $catalogue['supplier_reference'];
+            }
+            if ($fillLabel && $catalogue['supplier_label'] !== null) {
+                $line->supplier_label = $catalogue['supplier_label'];
             }
         });
 

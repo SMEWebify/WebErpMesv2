@@ -445,15 +445,19 @@ class ProductsController extends Controller
             'product_id'         => 'required|integer|exists:products,id',
             'companies_id'       => 'required|integer|exists:companies,id',
             'supplier_reference' => 'nullable|string|max:100',
+            'supplier_label'     => 'nullable|string|max:255',
         ]);
 
-        $product   = Products::findOrFail($validated['product_id']);
-        $reference = trim((string) ($validated['supplier_reference'] ?? '')) ?: null;
+        $product = Products::findOrFail($validated['product_id']);
+        $clean   = fn ($key) => trim((string) ($validated[$key] ?? '')) ?: null;
 
-        // Fournisseur déjà lié : seule sa référence est mise à jour (plus d'erreur
-        // d'unicité sur un second ajout du même fournisseur).
+        // Fournisseur déjà lié : seules sa référence et sa désignation sont mises à
+        // jour (plus d'erreur d'unicité sur un second ajout du même fournisseur).
         $product->preferredSuppliers()->syncWithoutDetaching([
-            $validated['companies_id'] => ['supplier_reference' => $reference],
+            $validated['companies_id'] => [
+                'supplier_reference' => $clean('supplier_reference'),
+                'supplier_label'     => $clean('supplier_label'),
+            ],
         ]);
 
         return redirect()->route('products.show', ['id' => $product->id])->with('success', __('general_content.supplier_added_success_trans_key'));

@@ -29,6 +29,7 @@ const EMPTY_FORM = {
     code:               '',
     ind:                '',
     supplier_ref:       '',
+    supplier_label:     '',
     label:              '',
     qty:                1,
     methods_units_id:   '',
@@ -194,6 +195,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 code:               editingLine.code               ?? '',
                 ind:                editingLine.ind                ?? '',
                 supplier_ref:       editingLine.supplier_ref        ?? '',
+                supplier_label:     editingLine.supplier_label      ?? '',
                 label:              editingLine.label              ?? '',
                 qty:                editingLine.qty                ?? 1,
                 methods_units_id:   editingLine.methods_units_id   ?? '',
@@ -234,8 +236,9 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             label:            product.label  ?? f.label,
             methods_units_id: product.methods_units_id ?? f.methods_units_id,
             selling_price:    product.selling_price    ?? f.selling_price,
-            // Référence de l'article chez le fournisseur de la commande (fiche article)
+            // Référence et désignation de l'article chez le fournisseur de la commande (fiche article)
             supplier_ref:     product.supplier_reference || f.supplier_ref,
+            supplier_label:   product.supplier_label     || f.supplier_label,
         }));
         setProductSearch(`${product.code} — ${product.label}`);
         setShowProductList(false);
@@ -398,6 +401,9 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                             {p.supplier_reference && (
                                                 <span className="badge text-bg-secondary ms-2">Réf. fournisseur : {p.supplier_reference}</span>
                                             )}
+                                            {p.supplier_label && (
+                                                <div className="small text-muted">{p.supplier_label}</div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -435,6 +441,17 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                 <input type="number" className={`form-control form-control-sm ${errors.ordre ? 'is-invalid' : ''}`}
                                     min="1" value={form.ordre}
                                     onChange={(e) => set('ordre', e.target.value)} disabled={isReadOnly} />
+                            </div>
+                        </div>
+
+                        {/* Désignation fournisseur (imprimée sous la réf. fournisseur du bon de commande) */}
+                        <div className="mb-3 mb-2">
+                            <label className="mb-1 small fw-bold">Désignation fournisseur</label>
+                            <div className="input-group input-group-sm">
+                                <span className="input-group-text"><i className="fas fa-file-signature" /></span>
+                                <input type="text" className={`form-control ${errors.supplier_label ? 'is-invalid' : ''}`}
+                                    maxLength={255} placeholder="Désignation au catalogue du fournisseur" value={form.supplier_label ?? ''}
+                                    onChange={(e) => set('supplier_label', e.target.value)} disabled={isReadOnly} />
                             </div>
                         </div>
 
@@ -644,7 +661,10 @@ function LineRow({
             <td className="small text-muted">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
 
             {/* Réf. fournisseur */}
-            <td className="small text-muted">{line.supplier_ref || '—'}</td>
+            <td className="small text-muted">
+                {line.supplier_ref || '—'}
+                {line.supplier_label ? <div className="text-truncate" style={{ maxWidth: 180 }} title={line.supplier_label}>{line.supplier_label}</div> : null}
+            </td>
 
             {/* Produit */}
             <td style={{ width: 36 }}>
@@ -946,6 +966,7 @@ export default function PurchaseLinesPage({ purchaseId, purchaseStatu: initialSt
                 || (l.label        ?? '').toLowerCase().includes(q)
                 || (l.code         ?? '').toLowerCase().includes(q)
                 || (l.supplier_ref ?? '').toLowerCase().includes(q)
+                || (l.supplier_label ?? '').toLowerCase().includes(q)
                 || (l.product_code ?? '').toLowerCase().includes(q);
         })
         .sort((a, b) => a.ordre - b.ordre);

@@ -131,7 +131,7 @@
                                 {{ $DocumentLine->label }}@if(!empty($DocumentLine->ind)) — {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif
                             @endif
                         </td>
-                        <td>{{ $DocumentLine->supplier_ref }}</td>
+                        <td>{{ $DocumentLine->supplier_ref }}@if(!empty($DocumentLine->supplier_label))<br><small>{{ $DocumentLine->supplier_label }}</small>@endif</td>
                         <td>{{ $DocumentLine->qty }}</td>
                         <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
                         <td>{{ $DocumentLine->discount }} %</td>

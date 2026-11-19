@@ -1207,7 +1207,8 @@ return [
     //PURCHASE INVOICE
     'invoice_supplier_trans_key'               => 'Invoice supplier',
     'supplier_reference_trans_key'             => 'Supplier reference',
-    'supplier_reference_help_trans_key'        => 'Item code in the supplier\'s catalogue. Copied onto this supplier\'s purchase order lines and printed on the purchase order.',
+    'supplier_reference_help_trans_key'        => 'Item code and description in the supplier\'s catalogue. Copied onto this supplier\'s purchase order lines and printed on the purchase order.',
+    'supplier_label_trans_key'                 => 'Supplier description',
     'name_purchase_invoice_trans_key'          => 'Name of invoice supplier',
 
     //QUALITY
