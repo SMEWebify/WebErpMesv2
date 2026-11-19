@@ -1301,10 +1301,30 @@ export default function TaskStatuApp({
 
     function handleSearch(e) {
         e.preventDefault();
-        const id = parseInt(search.trim(), 10);
-        if (!id) return;
-        window.history.pushState({}, '', `${baseStatuUrl}/${id}`);
-        loadTask(id);
+        const value = search.trim();
+        if (!value) return;
+
+        // N° de tâche saisi au clavier ou ancien code-barres : ouverture directe.
+        if (/^\d+$/.test(value)) {
+            const id = parseInt(value, 10);
+            window.history.pushState({}, '', `${baseStatuUrl}/${id}`);
+            loadTask(id);
+            return;
+        }
+
+        // Code de scan N2P:{of}*{ligne}*{op}*{seq} (fiche suiveuse) : le serveur
+        // retrouve la tâche, l'écran l'ouvre comme une saisie de n°.
+        setLoading(true);
+        setError(null);
+        apiFetch(`${apiBaseUrl}/resolve?code=${encodeURIComponent(value)}`)
+            .then(({ id }) => {
+                window.history.pushState({}, '', `${baseStatuUrl}/${id}`);
+                loadTask(id);
+            })
+            .catch((err) => {
+                setError(err?.message ?? value);
+                setLoading(false);
+            });
     }
 
     function handleNavigate(id) {
@@ -1325,7 +1345,8 @@ export default function TaskStatuApp({
     const searchForm = (inline) => (
         <form className={`ts-search${inline ? ' ts-search--inline' : ''}`} onSubmit={handleSearch}>
             <input
-                type="number"
+                type="text"
+                autoComplete="off"
                 className="ts-input"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}

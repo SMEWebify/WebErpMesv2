@@ -49,9 +49,8 @@ class QualityNonConformityController extends Controller
         $FailuresSelect  = $this->SelectDataService->getQualityFailure();
         $CorrectionsSelect = $this->SelectDataService->getQualityCorrection();
 
-        $LastNonConformity  = QualityNonConformity::orderBy('id', 'desc')->first();
-        $lastId             = $LastNonConformity ? $LastNonConformity->id : 0;
-        $codeNonConformity  = $this->documentCodeGenerator->generateDocumentCode('non-conformities', $lastId);
+        // Numéro seulement proposé : consommé à l'enregistrement, pas à chaque affichage.
+        $codeNonConformity  = $this->documentCodeGenerator->peekNextCode('non-conformities');
 
         $endpoints = [
             'list'         => route('quality.nonConformitie.api.list'),
@@ -83,6 +82,7 @@ class QualityNonConformityController extends Controller
      */
     public function store(StoreQualityNonConformityRequest $request)
     {
+        $this->documentCodeGenerator->consumeIfProposed('non-conformities', $request->validated()['code'] ?? null);
         $this->qualityNonConformityService->createNonConformity($request->validated());
         return redirect()->route('quality.nonConformitie')->with('success', __('general_content.non_conformity_created_success_trans_key'));
     }
@@ -218,6 +218,7 @@ class QualityNonConformityController extends Controller
         $typeValue = (int) ($data['type'] ?? 2);
         if ($typeValue === 2) unset($data['type']);
 
+        $this->documentCodeGenerator->consumeIfProposed('non-conformities', $data['code']);
         $nc = $this->qualityNonConformityService->createNonConformity($data);
         $nc->load(['UserManagement', 'Failure', 'Cause', 'Correction', 'service', 'companie', 'orderLine.order', 'delivery', 'task']);
 

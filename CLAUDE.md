@@ -135,11 +135,12 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 | Commande | Description |
 |---|---|
 | `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (PHP, extensions, APP_KEY, Redis, DB, Pusher) |
-| `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat) |
+| `php artisan wem:n2p:push-order {orderId} [--sync]` | Pousse une commande vers Nest2Prod (queue par défaut, `--sync` pour immédiat). `--open [--dry-run] [--force]` : renvoie toutes les commandes déjà envoyées et non livrées (alignement des rangs `seq`, `docs/pointage-scan.md`) |
 | `php artisan wem:pdp:sync [--tenant=] [--events] [--inbound]` | Synchronise la PDP : cycle de vie des factures émises + réception des factures fournisseurs. Indispensable pour les plateformes sans webhooks (SUPER PDP) |
 | `php artisan wem:pdp:directory [--open=] [--date=] [--close=] [--lookup=] [--search=]` | Annuaire : liste/ouvre/ferme **notre** ligne de réception (prérequis du 1er sept. 2026), et cherche l'adresse de facturation d'un client par SIREN ou raison sociale |
 | `php artisan wem:pdp:seed-sandbox [--force]` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP : vendeur Burger Queen dans `factory`, client Tricatel dans `companies`. Écrase l'identité de la société |
 | `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente : range le devis signé dans la GED et passe le devis en « Gagné » ; range l'accord signé d'une dérogation dans sa GED. Filet de la notification DocuSign (instance non publiée en HTTPS) |
+| `php artisan wem:sharepoint:sync [--failed] [--dry-run]` | Met en file la copie SharePoint des fichiers existants de la GED pas encore recopiés (`--failed` : relance les échecs). Ne fait rien sans liaison active |
 | `php artisan wem:nest2bend:refresh` | Relit l'état de l'abonnement NEST2BEND (`GET /api/v1/compte`) et le garde en base : carte Intégrations, boutons « Simuler ». Ne fait rien sans clé saisie |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques aux utilisateurs selon l'heure configurée |
 | `php artisan preorders:scan-output [--path=] [--pattern=] [--done-path=]` | Scanne le dossier output et importe les CSV comme pré-commandes |
@@ -376,6 +377,39 @@ l'existant. Écriture seulement par `App\Services\Files\FileVersioning::replace(
 - **Ce qui cite un fichier par son id garde cette version** (`inspection_plans.file_id`, FAI) :
   voulu, ne pas les « mettre à jour ». Tests : `tests/Feature/Files/FileVersioningTest.php`.
 
+### Copie vers SharePoint (Microsoft 365)
+Recopie **à sens unique** : la GED reste la source de vérité, SharePoint n'est jamais lu en
+retour et **rien n'y est jamais supprimé** (un fichier détaché dans l'ERP y reste).
+`App\Services\Integrations\SharePoint` : `GraphClient` (Microsoft Graph, jeton
+`client_credentials` en cache, pas de SDK), `SharePointMirror`, job `MirrorFileToSharePoint`.
+- **Configuration en base** : Intégrations → SharePoint (`sharepoint_settings`, singleton) :
+  tenant, application Entra ID, secret chiffré (`encrypted`, `$hidden`, champ vide = conserver),
+  URL du site, bibliothèque (vide = par défaut), dossier racine (`ERP`), case « actif ».
+  L'enregistrement teste la connexion et garde `site_id` / `drive_id`. Droit Graph conseillé :
+  `Sites.Selected` + écriture sur le seul site. Aucune permission ERP dédiée (`your-company-menu`).
+- **Déclenchement** : `FileStorageService::attach()` et `FileVersioning::version()` (qui copie
+  les rattachements en SQL brut) appellent `SharePointMirror::queue()` — une requête si la
+  liaison est inactive, **ne lève jamais** (la GED ne dépend pas de SharePoint). Un nouveau
+  chemin qui écrit dans `fileables` sans passer par eux doit l'appeler aussi.
+- **Arborescence** : `{racine}/{config('sharepoint.folders')[alias]}/{code} - {libellé}/` ; lignes
+  de devis / commande dans un sous-dossier de leur document (`line_parents`). Un dossier
+  d'entité est nommé **une fois** (id gardé dans `sharepoint_mirror_items`) : renommer l'entité
+  ne crée pas de doublon. Noms nettoyés par `SharePointNames` (caractères interdits, noms réservés).
+- **Jamais recopiés** : alias absents de `config('sharepoint.folders')`, alias confidentiels
+  (`FileableRegistry::CONFIDENTIAL`, même si ajoutés à la config), tout fichier **aussi** rattaché
+  à une entité confidentielle, trames de devis et leurs lignes.
+- **Versions** : une ligne `sharepoint_mirror_items` par (lignée, entité) ; une nouvelle version
+  remplace le contenu du **même élément** SharePoint (historique des versions de SharePoint).
+  > 4 Mo : session d'envoi par morceaux (URL de session sans jeton).
+- **Erreurs** : réseau / 429 / 5xx → réessai (Retry-After respecté) ; 401-403, site ou fichier
+  illisible → `failed` aussitôt, bouton « Relancer les échecs ». Dossier / élément supprimé dans
+  SharePoint (404) → recréé une fois. Le worker de queue doit tourner.
+- **Existant** : bouton « Recopier les fichiers existants » ou `wem:sharepoint:sync` (dernières versions).
+- Non fait : bouton « Ouvrir dans SharePoint » dans la GED (`folder_web_url` / `web_url` sont
+  gardés pour ça), création des dossiers à la création d'une affaire, regroupement par client.
+  À valider sur un vrai tenant (tests en `Http::fake`).
+- Tests : `tests/Feature/SharePoint/`.
+
 ## Description des droits
 
 Écran Votre société → Rôles et permissions : chaque droit affiche une description sous son
@@ -549,6 +583,23 @@ de `opportunities.show`, alimenté par `opportunities.json.summary` / `.timeline
   bandeau dans l'onglet ; **jamais bloquant** (test).
 - Tests : `tests/Feature/Affairs/AffairRiskRegisterTest.php`, `resources/js/tests/lib/affairRisks.test.js`.
 
+## Préremplissage des sociétés (répertoire Sirene)
+
+Fenêtre « Nouvelle société » et carte « Informations administratives » de la fiche : recherche
+par SIRET, SIREN ou nom dans l'API Recherche d'entreprises de l'État (gratuite, sans clé),
+`App\Services\Companies\CompanyRegistryLookup`, route `companies.json.registry-search`
+(throttle 30/min, cache 12 h). **N'écrit rien** : l'utilisateur relit puis enregistre.
+- Repris : raison sociale, SIREN, NAF (`25.62B`), adresse (SIRET = l'établissement visé, sinon le
+  siège). TVA **calculée** depuis le SIREN (clé officielle), signalée comme telle : Sirene ne dit
+  pas si l'entreprise est assujettie (la fiche la valide par VIES à l'enregistrement).
+- Création : `storeJson` accepte `siren`, `naf_code`, `intra_community_vat` et `address`, créée
+  comme adresse par défaut (libellé « Siège ») dans la même transaction. Sans ces champs,
+  création identique à avant. Sur la fiche, l'adresse n'est jamais touchée (onglet Adresses).
+- Entreprise ou établissement fermé : badge et avertissement, jamais bloquant.
+- `COMPANY_REGISTRY_ENABLED` (vrai par défaut) : faux = ni bouton ni appel. API injoignable → 503,
+  saisie manuelle possible. Seul le texte cherché part vers l'API.
+- Tests : `tests/Feature/Companies/CompanyRegistryLookupTest.php`, `resources/js/tests/lib/companyRegistry.test.js`.
+
 ## Imports CSV / Excel (sociétés, articles, devis, commandes, lignes, gamme)
 
 - **Assistant** (Votre société → Imports/Exports, onglet « Importer des données », React
@@ -652,6 +703,29 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   une section suit si un de ses articles est commandé. L'API d'upsert ne supprime jamais
   une ligne non article absente du payload.
 
+## Import DPGF (appels d'offres bâtiment)
+
+Option `dpgf.enabled` (`QUOTES_DPGF_IMPORT`, **false** par défaut) : inactive = ni bouton, routes
+en 404. Bouton « Importer un DPGF » de l'écran des lignes de devis (statut 1) :
+`components/quotes/DpgfImportModal.jsx`, `App\Services\Quotes\DpgfImporter`, `config/dpgf.php`.
+- **Parcours** : dépôt (`quotes.lines.json.dpgf.preview`, fichier gardé par
+  `App\Services\Imports\TemporaryImportFile` sous `imports/{user}`, comme l'assistant d'import) →
+  aperçu recalculé à chaque choix d'onglet, de ligne d'en-tête ou de colonne (`.dpgf.analyse`,
+  **rien d'écrit**) → correction ligne par ligne → `.dpgf.store` (lignes en fin de devis,
+  transaction). Le classeur d'origine est alors rangé dans la GED du devis (hashtag `dpgf`).
+- **Détection** : en-tête = première ligne qui nomme la désignation + 2 autres colonnes (N°, unité,
+  qté, PU, montant ; en-tête sur deux lignes accolé), noms dans `dpgf.columns` (exact, sinon le plus
+  long début : « Prix total HT » = montant). Non trouvé → l'utilisateur choisit sur le début de la feuille.
+- **Classement** : poste chiffrable → article (`code` = n° de poste) ; ligne numérotée sans
+  quantité, « Lot … » ou titre en capitales → section (n° gardé dans le libellé : sections **à plat**) ;
+  « Total / Sous-total / Montant » → sous-total ; PM / inclus / sans objet → texte « … — PM » ;
+  total général, TVA, TTC → ignorés. L'utilisateur peut changer chaque type.
+- Unités par groupes d'alias (`dpgf.units` : m² = M2, ens, ft…), sinon montrée et unité par
+  défaut. Ens / ft sans quantité = 1 ; autre poste sans quantité = 0, signalé. Prix = PU, sinon
+  montant ÷ qté, sinon 0. Désignation > 255 caractères → texte complet dans `external_comment`.
+- `SpreadsheetReader::read(..., $sheet)` et `sheetNames()` : autre onglet que le premier.
+- Tests : `tests/Feature/Quotes/DpgfImportTest.php`, `resources/js/tests/lib/dpgfImport.test.js`.
+
 ## Marge du devis (interne)
 
 `App\Services\Quotes\QuoteMargin`, **jamais imprimée** (aucune vue `print/` ne la lit).
@@ -668,6 +742,32 @@ le `methods_units_id` de la section — pas d'unité « forfait » en dur).
   désactivé, lignes sans coût inchangées. Refusée si une ligne a une ligne de commande ou si le
   devis a une commande (même rouvert), et hors statut 1. Les commandes ne sont jamais touchées.
 - Tests : `tests/Feature/QuoteMarginTest.php`, `resources/js/tests/lib/quoteMargin.test.js`.
+
+## Dictée de devis et « Réécrire sans fautes »
+
+Bouton « Dicter » de l'écran des lignes de devis (statut 1), affiché seulement si un fournisseur
+d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteDictationModal.jsx`.
+- **Parcours** : texte (micro ou clavier) → `quotes.lines.json.dictation.propose` (brouillon,
+  **rien d'écrit**) → correction → `quotes.lines.json.dictation.store` (lignes en fin de devis,
+  transaction). Micro : `hooks/useVoiceRecorder.js` (MediaRecorder envoyé à
+  `dictation.transcribe` = `VisitTranscriptionService`, Whisper OVH, audio jamais écrit ; sans
+  clé OVH, dictée du navigateur). Le mémo de visite garde sa propre copie du code micro.
+- **`App\Services\Quotes\QuoteDictation`** : seuls la consigne, la liste des unités et le texte
+  partent chez le provider (ni client ni prix). Unité reconnue par code ou libellé, sinon montrée
+  à l'utilisateur (`unit_text`). **Prix repris seulement s'il est dicté**, sinon 0. Aucun calcul
+  de quantité par l'IA. Matière → `quote_line_details.material`, précisions → `internal_comment`.
+- **Marque** `quote_lines.ai_proposed_at` (hors `$fillable`, `ai_proposed` dans le JSON des
+  lignes, pastille « IA », jamais imprimée) ; remise à null par `QuoteLineCopier` (copie,
+  import, duplication de devis).
+- **Appel IA commun** `App\Services\AI\DirectTextCompletion` (Claude ou API compatible OpenAI,
+  sans outils, aucune consommation enregistrée). Indisponible / en échec → 502 avec message.
+- **« Réécrire sans fautes »** (`App\Services\AI\TextRewriter`, route `ai.rewrite`, throttle 30/min) :
+  proposition avant / après, l'utilisateur choisit de la reprendre. Désignation du tiroir de ligne
+  (`components/ai/RewriteButton.jsx`) et `<x-FormTextareaComment :rewrite="true" :max-length="…">`
+  (commentaire du devis, commentaire externe de ligne), branché par `lib/aiRewrite.js` dans `app.js`.
+  Proposition plus longue que le champ : signalée, non reprise.
+- Tests : `tests/Feature/Quotes/QuoteDictationTest.php`, `tests/Feature/AI/TextRewriteTest.php`,
+  `resources/js/tests/lib/quoteDictation.test.js`.
 
 ## Modèles d'impression (devis, commande, AR)
 
@@ -878,6 +978,29 @@ la date promise au client : posée à la création, **jamais modifiée** (l'obse
   entrées `line_rescheduled` dans la chronologie.
 - Tests : `tests/Feature/OrderLineDelayHistoryTest.php`.
 
+## Annulation de ligne de commande et de ligne de BL
+
+Une ligne de commande déjà livrée ou facturée ne se supprime plus (`destroyLineJson` → 422
+`delete_used`, `can_cancel`) : sa suppression laissait des lignes de BL orphelines dont le PDF
+ne s'imprimait plus (client dcmetal, nov. 2026). Textes `resources/lang/*/order_line_cancel.php`.
+- **Ligne de commande** (`App\Services\Workflow\OrderLineCancellation`, `orders.lines.json.cancel`,
+  menu de la ligne) : annule le **reste non livré**, motif ≥ 3 caractères obligatoire. `qty` tombe à
+  `delivered_qty`, l'écart dans `cancelled_qty` (avec `cancelled_at / _by`, `cancel_reason`, hors
+  `$fillable`) : le total de la commande baisse. Reste à livrer 0, reste à facturer = livré non
+  facturé. Tâches non terminées fermées (« Finished »). Commande passée livrée si toutes ses lignes
+  le sont et qu'une pièce est partie. Refus : ligne de présentation, déjà annulée, tout livré
+  (retour / avoir), facturé au-delà du livré. Badge « Annulée ». Activitylog `order_line_cancelled`.
+  Aucune permission dédiée ; pas de « désannulation ».
+- **Ligne de BL** (`App\Services\Delivery\DeliveryLineCancellation`, `deliverys.line.cancel`,
+  bouton ✕ de l'onglet Lignes du BL) : ligne supprimée, quantité rendue au reste à livrer (ou ajoutée
+  à `cancelled_qty` si la ligne de commande est annulée), sortie de stock du BL (`typ_move` 9 de la
+  ligne de commande) compensée par une entrée `typ_move` 5 **au CUMP du moment** (CUMP inchangé).
+  Statut de commande 3/4 recalculé. Refus : facturée, retour client, colis, NC liée. Ligne orpheline
+  annulable. Tâches non rouvertes, numéros de série non touchés. Activitylog `delivery_line_cancelled`
+  sur le BL.
+- `print/pdf-delivery` lit la ligne de commande en `?->` (BL orphelin imprimable, rendu inchangé).
+- Tests : `tests/Feature/OrderLineCancellationTest.php`, `resources/js/tests/lib/cancelReason.test.js`.
+
 ## Prix figé des lignes de commande (prix calculé)
 
 `order_lines.use_calculated_price` fait relire le prix sur la gamme à chaque lecture
@@ -960,6 +1083,20 @@ d'affiché : fonctionnement d'avant.
   `loadTasks` (sans requête en plus).
 - Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/taskRelease.test.js`.
+
+## Pointage par scan (ERP / MES Nest2Prod)
+
+Contrat commun dans `docs/pointage-scan.md` (codes `N2P:{of}*{ligne}*{op}*{seq}` et `N2P-B:{badge}`,
+événements `task.*`, règles de réception). Un client pointe avec l'ERP **ou** le MES.
+- **Réception MES → ERP** : `HandleTaskEvent` (recherche par (`seq`, `operation_code`), OF et ligne
+  concordants, `task.canceled`, statut sans recul, opérateur de repli `INTEGRATIONS_FALLBACK_USER_EMAIL`).
+  Payload des OF : `tasks[].seq`, `production_released` si l'option BPF est active.
+- **Fiche suiveuse** : option `factory.production_sheet_scan_codes` (fiche inchangée sans elle).
+- **Écran de scan** `/workshop/Scan` : mode `factory.scan_mode` (`open` | `toggle` | `toggle_qty`),
+  `App\Services\Production\ScanStation` + `TaskExecution` (mêmes activités que l'écran tâche).
+- **Badges** `users.badge_code` (RH, masqué, effacé par l'anonymisation) ; compte de poste
+  `workshop-kiosk` enfermé sur l'écran de scan (`RestrictWorkshopKiosk`), badge obligatoire.
+- Tests : `tests/Feature/IntegrationInboundTest.php`, `tests/Feature/Production/{ScanStation,ProductionSheetScanCode}Test.php`.
 
 ## Dossier de fin de fabrication (BL et facture bloqués)
 
@@ -1141,8 +1278,8 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - **Niveau proposé** = le plus bas de (niveau atteint par le retard, niveau suivant la
   dernière relance) : jamais de saut de niveau, et une facture déjà relancée au niveau que
   justifie son retard n'est plus proposée.
-- Seules les factures `invoice_type = 1`, hors brouillons, échues et non soldées. Proformas
-  (pas une créance), avoirs (déjà déduits) et acomptes (aucun code n'en crée) sont exclus.
+- Seules les factures `invoice_type = 1` et les factures d'acompte (`4`), hors brouillons,
+  échues et non soldées. Proformas (pas une créance) et avoirs (déjà déduits) sont exclus.
 - **Aucun envoi automatique.** Un e-mail par client (`InvoiceReminderMail`, PDF de chaque
   facture joint, envoi synchrone comme `EmailController`), une ligne `email_logs` **et** une
   ligne `invoice_reminders` par facture. Un e-mail en échec est tracé mais ne fait pas monter
@@ -1151,6 +1288,65 @@ factures, envoi et paramétrage sous `invoice-reminders-send`.
 - Une tâche planifiée viendra plus tard : sous Windows en production → Planificateur de
   tâches, pas de cron.
 - Tests : `tests/Feature/Receivables/`.
+
+## Factures d'acompte
+
+`invoice_type = 4`, `App\Services\Invoicing\DownPayments`. Carte « Acomptes » de la fiche commande
+(`workflow/partials/order-down-payments`, % ou montant HT, `invoices.down-payments.store`) → facture
+d'acompte **en brouillon**, même numérotation que les factures, `order_id` = la commande.
+- **Aucune quantité touchée** : une ligne par taux de TVA de la commande, sans `order_line_id`
+  (« Acompte 50 % sur commande … », qté 1, HT au prorata de la base de chaque taux). BL, reste à
+  facturer, tâches : inchangés. Somme des acomptes ≤ HT de la commande (lignes article). Refusé sur
+  commande interne ou annulée.
+- **Déduction** : ligne négative (**qté −1, prix positif** : BR-27 interdit un prix net négatif) sur la
+  facture ordinaire, `invoice_lines.down_payment_line_id` → ligne d'acompte (hors `$fillable`), même
+  taux de TVA. Posée par `applyToInvoice()` **après** la mise à jour des quantités, dans les 5 chemins :
+  `invoices-request.store`, `.generate-all`, `invoices.store.from.delivery`, facturation directe
+  (`orders.lines.json.store-invoice`), conversion de proforma. Un nouveau chemin de facture doit l'appeler.
+- **Prorata cumulé** : part déduite d'une ligne d'acompte = HT × (HT facturé de la commande d'après
+  `invoiced_qty` / HT commandé) − déjà déduit ; la facture qui solde la commande prend tout le reste.
+  Bornée par la **part payée** (règlements, moins les avoirs) d'un acompte **émis** : brouillon ou
+  impayé = rien déduit (bandeau sur la facture), rattrapé à la facture suivante. Jamais plus que ce que
+  la facture porte pour la commande. Reste à déduire **jamais stocké** : relu sur les lignes (facture
+  supprimée = déduction libérée).
+- **Brouillon** : montant de la déduction modifiable (`invoices.lines.update`, `unit_price` seul, borné ;
+  qté / remise → 422), bouton « Recalculer » (`invoices.down-payments.recompute`).
+- **Comptabilité** : HT de l'acompte et de sa déduction au compte `invoicing.down_payment.account`
+  (`INVOICING_DOWN_PAYMENT_ACCOUNT`, **4191**) au lieu du produit ; déduction = écriture inversée
+  (crédit 411, débit 4191 et TVA). Avoir sur un acompte **pas encore déduit** : même compte ; sur un
+  acompte déjà déduit (client crédité deux fois) ou sur une ligne de déduction : refusé, l'avoir se
+  fait sur la facture finale.
+- **Proforma** : sa conversion déduit les acomptes payés comme les autres chemins ; elle est refusée
+  (422) si une de ses lignes a été facturée depuis sa création (quantité > reste à facturer), sinon
+  la commande était facturée deux fois.
+- **Factur-X** : acompte en 386 ; facture qui déduit = cadre `B4/S4/M4` (lettre de
+  `invoicing.business_process`) + `InvoiceReferencedDocument` (BT-25) de chaque acompte. PDP : types 1 et 4.
+  **À valider dans le bac à sable SUPER PDP** (quantité négative, cadre 4).
+- **Encours / relances** : `ReceivablesService::RECEIVABLE_TYPES` = 1 et 4 ; les commandes non facturées
+  de l'encours sont diminuées des acomptes pas encore déduits. **CA** (`InvoiceKPIService`) : déductions
+  exclues (un acompte n'est pas du CA, la facture finale compte pour son montant plein).
+- Index des factures : acomptes listés avec un badge. Tests : `tests/Feature/Invoicing/DownPaymentTest.php`.
+
+## Avoirs entiers ou partiels
+
+`App\Services\Invoicing\CreditNoteBuilder`, formulaire `workflow/partials/invoice-credit-note-form`
+(carte « Faire un avoir » de l'onglet Lignes d'une facture émise), route inchangée
+`credit-notes.store.from.invoice`.
+- Par ligne : `qty[id]` et `unit_price[id]` ; absents = tout ce qui reste créditable au prix de la
+  facture (l'ancien formulaire, qui n'envoie que `selected_invoice_lines`, crédite donc la ligne
+  entière comme avant). Remise de la ligne de facture reprise.
+- **Plafond** (`creditable()`) : quantité et HT de la ligne moins les avoirs non refusés
+  (`receivables.deducted_credit_note_statuses`) ; prix crédité ≤ prix facturé. Une seule facture
+  par avoir, facture verrouillée pendant la création.
+- `credit_note_lines.restores_quantity` (hors `$fillable`, vrai pour l'existant) : case « Remettre
+  ces quantités dans le reste à facturer » (`restore_quantities`, cochée par défaut ; prise en
+  compte seulement si `restore_quantities_sent`). Décochée = geste commercial / rebut non refait :
+  `invoiced_qty` inchangé.
+- **Refus** (statut 3) : `syncQuantities()` reprend les quantités remises à facturer (refusé avec
+  message si elles ont été refacturées depuis) ; rouvert, il les rend. Les écritures suivent déjà
+  par `syncCreditNoteEntries`.
+- Refus d'avoir sur une déduction d'acompte ou un acompte déjà déduit (section « Factures d'acompte »).
+- Tests : `tests/Feature/Invoicing/PartialCreditNoteTest.php`, `tests/Feature/CreditNotesTest.php`.
 
 ## Notation fournisseur à la réception
 
@@ -1243,6 +1439,29 @@ Un achat se rattachait à une vente seulement par `tasks_id` de ses lignes, et l
   même nombre de requêtes). Les demandes de prix n'apparaissent pas dans la synthèse.
 - Non fait : rattacher à une tâche une ligne ajoutée à la main sur un document existant.
 - Tests : `tests/Feature/Purchases/PurchaseFromQuoteTest.php`.
+
+## Offres fournisseurs indicées (demandes de prix)
+
+`purchases_quotations` porte `supplier_offer_reference`, `supplier_offer_revision` (indice donné par
+le fournisseur, texte libre), `supplier_offer_date`, `supplier_offer_validity`, et
+`parent_purchase_quotation_id` / `superseded_at` (hors `$fillable`, écrits seulement par
+`App\Services\Purchases\PurchaseOfferRevisions`). Tout nullable : l'existant n'a ni offre ni indice.
+- **Nouvelle offre** (`purchases.quotation.api.revision`, aucune permission dédiée) : copie de la
+  demande et de ses lignes (sans quantités commandées ni prix retenu), famille **à plat** vers le
+  référent, code `{référent}-2`, `-3`… ; indice proposé = précédent + 1 (`str_increment`), date et
+  validité vidées, statut 1. La précédente est **remplacée** (`superseded_at`) — pas un statut : le
+  `statu` 1-6 est réécrit par `UpdatePurchasesQuotationStatus` et par les flèches.
+- Refus (409) : demande déjà remplacée, ou commande déjà sortie (statut 5 / 6, on commanderait deux fois).
+- **Indice remplacé** : conversion en commande refusée (`purchases.orders.store`, flash `error`),
+  écriture de l'en-tête et des lignes refusée (409), prix non retenu (`retain_refused.superseded`),
+  absent du comparatif RFQ. Fiche en lecture + bandeau vers le dernier indice.
+- **GED** : alias `purchase-quotation`, rôle `offre_fournisseur` (`FileRole::forPurchaseQuotations()`).
+- Carte « Historique des offres » (indices, dates, total, une requête), affichée dès 2 indices.
+- **Commande d'achat** : `purchases.supplier_offer_reference / _revision` recopiés à la conversion ;
+  PDF `print/pdf-purchases` par `Purchases::printSupplierOfferCaption()` (**écho** en fin de ligne du
+  `<pre>`, jamais un `@if` : HTML identique sans offre, `PurchasePdfLegacyRenderingTest`). Une vue
+  `print/custom/pdf-purchases` ne l'affiche pas tant qu'elle n'en reprend pas l'appel.
+- Tests : `tests/Feature/Purchases/PurchaseOfferRevisionTest.php`, `resources/js/tests/lib/purchaseOffers.test.js`.
 
 ## Fournisseur qualifié obligatoire (commandes d'achat)
 
@@ -1743,16 +1962,8 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - Try/catch sans logging
 - Tests métier manquants
 
-#### Devis — import DPGF (appels d'offres bâtiment)
-Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
-- **Import Excel → devis** : lecture PhpSpreadsheet sur le patron `InventoryXlsxImporter`
-  (parse → aperçu sans écriture → application en transaction). Détection de la ligne
-  d'en-tête et des colonnes N° / Désignation / Unité / Qté / PU HT / Montant, corrigeables
-  dans l'aperçu. Classement des lignes : titre de lot → `section`, poste → `article`,
-  « Total lot » → `subtotal`, « PM / Inclus / Sans objet » → `text`. N° de poste dans
-  `code`. Correspondance d'unités (m², ml, u, ens, ft…) : le seeder ne crée que KG/MM/UNIT.
-  DPGF d'origine rangé dans la GED du devis. Classeur multi-onglets : un onglet par lot ou
-  onglet choisi.
+#### Devis — suite de l'import DPGF
+L'import est fait (section « Import DPGF »). Reste :
 - **Renvoi du DPGF chiffré au format du maître d'œuvre** (la vraie valeur : l'AO exige son
   fichier, pas notre PDF) : colonne additive nullable `quote_lines.source_ref` (cellule
   d'origine), puis réécriture des PU (et quantités corrigées) dans le classeur d'origine
@@ -1763,8 +1974,8 @@ Rien n'existe aujourd'hui (ni DPGF, ni BPU/DQE, ni notion de lot). Cible :
 - **Contrainte** : sections non imbriquables (pas de parent/niveau sur `quote_lines`) →
   aplatir l'arborescence en sections numérotées + sous-total par lot ; ne pas introduire
   d'imbrication (impact PDF / Factur-X).
-- Lecture du classeur : réutiliser `App\Services\Imports\SpreadsheetReader` (section
-  « Imports CSV / Excel »), qui ne lit que la première feuille.
+- Pour le renvoi : le n° de ligne du fichier (`row` de l'aperçu) et l'onglet sont connus à
+  l'import mais **pas gardés** (pas de `source_ref`) ; le classeur est dans la GED du devis.
 
 #### Facturation bâtiment (marchés de travaux)
 Besoin identifié sur un prospect (oct. 2026 : cuisines, bâtiment léger, serrurerie / pliage
@@ -1776,15 +1987,10 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   de commande et un récapitulatif cumulé sur le PDF (marché, situations antérieures,
   présente situation). Factur-X : facture ordinaire (380) qui porte le montant de la
   période — vérifier le traitement attendu par la PDP.
-- **Acomptes** — issue **#558** (ouverte depuis 2024, user story) → discussion **#409**
-  « Fonctionnement d'un Acompte » (workflow : demande d'acompte sur la commande → facture
-  d'acompte → paiement → confirmation → production / livraison → facture finale qui déduit
-  l'acompte). `invoice_type = 4` et le code Factur-X 386 existent, mais aucun code n'en
-  crée. Points que #409 ne traite pas et à trancher : TVA exigible à l'encaissement de
-  l'acompte (facture d'acompte avec TVA), déduction sur la finale en ligne négative
-  ventilée par taux, écritures (compte 4191 clients – avances reçues), acompte en % ou
-  montant, plusieurs acomptes par commande, et blocage éventuel du lancement tant qu'il
-  n'est pas payé. Sert aussi aux situations de travaux.
+- **Acomptes** — **fait** (section « Factures d'acompte »), issue **#558** / discussion
+  **#409**. Reste : pourcentage d'acompte par défaut (condition de paiement), blocage du
+  lancement tant que l'acompte n'est pas payé, avoir sur une déduction. Sert aussi aux
+  situations de travaux.
 - **Retenue de garantie** (5 % max, loi 71-584) : déduite du net à payer, sans effet sur
   la base HT ni la TVA ; libération à 1 an (ou caution bancaire qui la remplace). Suivi de
   l'échéance de libération, et prise en compte dans `ReceivablesService` (reste dû hors
@@ -1839,11 +2045,14 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   propres `properties` (`route`, `ip`) : à garder dans `properties`.
 
 ### ⚠️ À vérifier
-- `order_lines` : la migration de passage en décimal (`2026_04_21_000004`) a fait tomber le
-  `default(0)` des quantités (`->change()` ne reprend pas les modificateurs). Invisible en
-  production (MySQL `strict => false` met 0), mais toute insertion qui omet `delivered_qty` /
-  `invoiced_qty` échoue sur une base stricte (SQLite des tests). Rétablir les défauts par une
-  migration additive.
+- ✅ `default(0)` des quantités d'`order_lines` et de `stock_moves.qty`, perdu par
+  `2026_04_21_000004` (`->change()` ne reprend pas les modificateurs), rétabli par
+  `2026_11_15_000050`. Tout `->change()` doit répéter `default` / `nullable`.
+- **Quantités restées en entier** (`delivery_lines.qty`, `purchase_lines.qty / receipt_qty /
+  invoiced_qty`, `tasks.qty`, `task_activities.good_qt / bad_qt`, `purchase_receipt_lines.accepted_qty /
+  rejected_qty`…) alors que `order_lines.qty` est décimal : MySQL arrondit 2,5 à 3 sans erreur.
+  **Laissé en l'état (nov. 2026) : aucun client ne livre en décimal.** Un passage en décimal
+  change l'affichage brut des vues Blade et PDF (« 4.000 ») : prévoir le formatage avec.
 - password exclu des logs d'activité User
 - ✅ rgpd:purge passe par RgpdAnonymizationService avant force-delete (personnes et tiers cités par un enregistrement : section « Conservation des enregistrements »)
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage

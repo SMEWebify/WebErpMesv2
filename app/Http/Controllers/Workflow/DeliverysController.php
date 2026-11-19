@@ -15,6 +15,8 @@ use App\Models\Workflow\Packaging;
 use App\Services\SelectDataService;
 use App\Services\DeliveryService;
 use App\Services\Delivery\PackagingContent;
+use App\Services\Delivery\DeliveryLineCancellation;
+use App\Services\Workflow\OrderLineCancellationException;
 use App\Services\DeliveryLineService;
 use App\Services\DeliveryDataService;
 use App\Services\StockService;
@@ -26,6 +28,7 @@ use App\Events\OrderLineUpdated;
 use App\Events\DeliveryStatusChanged;
 use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -314,11 +317,27 @@ class DeliverysController extends Controller
 
         if (!$orderLine->product_id || $orderLine->Task()->exists()) return;
 
+        // Emplacements verrouillés (même ordre que la sortie depuis une tâche) et disponible
+        // relu en lecture verrouillante, donc à jour : deux BL simultanés ne sortent pas
+        // le même stock.
         $quantityRemaining    = $qty;
-        $stockLocationProducts = StockLocationProducts::where('products_id', $orderLine->product_id)->get();
+        $stockLocationProducts = StockLocationProducts::where('products_id', $orderLine->product_id)
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get();
 
         foreach ($stockLocationProducts as $stock) {
-            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+            $available = (float) StockMove::where('stock_location_products_id', $stock->id)
+                ->selectRaw("
+                    COALESCE(SUM(CASE
+                        WHEN typ_move IN (1,3,5,12,14) THEN qty
+                        WHEN typ_move IN (2,4,6,9,15)  THEN -qty
+                        ELSE 0
+                    END), 0) AS available
+                ")
+                ->sharedLock()
+                ->value('available');
+            $quantityToWithdraw = min($available, $quantityRemaining);
 
             if ($quantityToWithdraw != 0) {
                 $this->stockService->createStockMove([
@@ -419,6 +438,33 @@ class DeliverysController extends Controller
             'ok'                      => true,
             'line_id'                 => $line->id,
             'invoice_status'          => 2,
+            'delivery_invoice_status' => $delivery->fresh()->invoice_status,
+        ]);
+    }
+
+    /**
+     * Annule une ligne de BL (DeliveryLineCancellation) : quantité rendue au reste à
+     * livrer de la commande, sortie de stock compensée, motif obligatoire.
+     */
+    public function cancelLine(Request $request, $id, $lineId)
+    {
+        $delivery = Deliverys::findOrFail($id);
+        $line = DeliveryLines::where('deliverys_id', $delivery->id)->findOrFail($lineId);
+
+        try {
+            $result = app(DeliveryLineCancellation::class)->cancel(
+                $line,
+                Auth::user(),
+                is_scalar($request->input('reason')) ? (string) $request->input('reason') : null,
+            );
+        } catch (OrderLineCancellationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status());
+        }
+
+        return response()->json([
+            'ok'                      => true,
+            'line_id'                 => (int) $lineId,
+            'stock_restored'          => $result['stock_restored'],
             'delivery_invoice_status' => $delivery->fresh()->invoice_status,
         ]);
     }

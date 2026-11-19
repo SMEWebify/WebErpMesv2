@@ -95,7 +95,17 @@ function DonutChart({ data }) {
 function quotationColumns(trans) {
     return [
         { key: 'code',        label: trans.id,          sortable: true, nowrap: true,
-          filter: 'text', mobile: 'title' },
+          // Indice de l'offre fournisseur, et offre remplacée par un indice suivant
+          render: q => (
+              <>
+                  {q.code}
+                  {q.supplier_offer_revision && (
+                      <span className="badge text-bg-secondary ms-1">{trans.offer_revision_short} {q.supplier_offer_revision}</span>
+                  )}
+                  {q.superseded && <span className="badge text-bg-warning ms-1">{trans.offer_superseded}</span>}
+              </>
+          ),
+          filterValue: q => q.code, filter: 'text', mobile: 'title' },
         { key: 'label',       label: trans.label,       sortable: true,
           filter: 'text', mobile: 'subtitle' },
         { key: 'rfq_group',   label: trans.rfq_group,

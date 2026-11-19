@@ -244,6 +244,7 @@ return [
     'mark_not_chargeable_trans_key'            => 'Marquer non facturable',
     'confirm_not_chargeable_trans_key'         => 'Marquer cette ligne comme non facturable ? Elle ne sera plus due à facturer.',
     'line_already_invoiced_trans_key'          => 'Cette ligne est déjà facturée.',
+    'no_line_to_invoice_trans_key'             => 'Aucune des lignes sélectionnées n\'est à facturer : déjà facturées ou non facturables.',
     'order_invoiced_no_cancel_trans_key'       => 'Cette commande est facturée : elle ne peut pas être annulée. Émettez un avoir.',
     'delivered_qty_trans_key'                  => 'Qt livrée',
     'remaining_qty_trans_key'                  => 'Qt restante',
@@ -357,6 +358,7 @@ return [
     'invoice_draft_no_pdf_trans_key'           => 'Une facture en brouillon ne peut pas être éditée en PDF.',
     'invoice_draft_no_facturx_trans_key'       => 'Une facture en brouillon ne peut pas produire de Factur-X : elle n\'est pas encore émise.',
     'invoice_proforma_no_facturx_trans_key'    => 'Une proforma n\'est pas une facture : elle ne peut pas produire de Factur-X.',
+    'proforma_lines_already_invoiced_trans_key' => 'Conversion impossible : ces lignes ont été facturées depuis la création de la proforma (:lines). Refaites une proforma sur le reste à facturer.',
 
     'purchase_quotation_trans_key'             => 'Demande d\'achat',
     'purchase_quotation_info_trans_key'        => 'Info Devis d\'achat',
@@ -1664,6 +1666,7 @@ return [
     'file_role_accord_client_trans_key'        => 'Accord client',
     'file_role_contractuel_trans_key'          => 'Document contractuel',
     'file_role_ar_fournisseur_trans_key'       => 'AR fournisseur',
+    'file_role_offre_fournisseur_trans_key'    => 'Offre fournisseur',
     'file_role_autre_trans_key'                => 'Autre',
 
     // Plan de charge (grille services x jours)
@@ -1952,4 +1955,8 @@ return [
     'absence_notification_requested_trans_key' => 'Demande d\'absence à valider : :name, du :start au :end',
     'absence_notification_approved_trans_key' => 'Votre absence du :start au :end est validée',
     'absence_notification_refused_trans_key' => 'Votre absence du :start au :end est refusée',
+    'task_canceled_by_integration_trans_key' => 'Tâche annulée dans le MES',
+    'production_sheet_scan_codes_trans_key' => 'Codes de scan sur la fiche suiveuse',
+    'production_sheet_scan_codes_help_trans_key' => 'Imprime pour chaque opération un QR et un Code128 « N2P:… » lisibles par l\'écran de scan de l\'ERP et par le MES Nest2Prod. Ils remplacent le code-barres « n° de tâche ».',
+    'scan_code_not_found_trans_key' => 'Aucune tâche ne correspond au code « :code ».',
 ];

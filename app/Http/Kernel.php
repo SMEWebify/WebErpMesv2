@@ -39,6 +39,8 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\ActivityByUser::class,
             \App\Http\Middleware\CheckBanned::class,
+            // Compte de poste atelier (workshop-kiosk) : écran de scan seulement.
+            \App\Http\Middleware\RestrictWorkshopKiosk::class,
         ],
 
         'api' => [

@@ -8,6 +8,12 @@
   Toute la tuile est cliquable — pas de petit bouton à viser avec des gants.
 --}}
 <div class="ws-home">
+    <a class="ws-tile ws-tile--scan" href="{{ route('workshop.scan') }}">
+        <i class="ws-tile__icon fas fa-qrcode"></i>
+        <span class="ws-tile__title">{{ __('scan_station.screen.title') }}</span>
+        <span class="ws-tile__text">{{ __('scan_station.modes.' . \App\Services\Production\ScanStation::mode()) }}</span>
+    </a>
+
     <a class="ws-tile ws-tile--tasks" href="{{ route('workshop.task.lines') }}">
         <span class="ws-tile__badge badge text-bg-danger">Beta</span>
         <i class="ws-tile__icon fas fa-tasks"></i>
@@ -55,7 +61,7 @@
     .ws-home {
         flex: 1 1 auto;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         gap: 12px;
         padding: 12px;
@@ -90,6 +96,8 @@
     .ws-tile__text  { font-size: clamp(0.85rem, 1.9vh, 1.15rem); margin-top: 0.35rem; opacity: 0.9; max-width: 90%; }
     .ws-tile__badge { position: absolute; top: 10px; right: 10px; font-size: 0.8rem; }
 
+    /* Scanner : la tuile la plus utilisée au poste, sur toute la hauteur. */
+    .ws-tile--scan       { background-color: #6f42c1; grid-row: span 2; }
     .ws-tile--tasks      { background-color: #17a2b8; }
     .ws-tile--production { background-color: #28a745; }
     .ws-tile--stock      { background-color: #dc3545; }
@@ -101,8 +109,9 @@
     @media (max-width: 575px) {
         .ws-home {
             grid-template-columns: 1fr;
-            grid-template-rows: repeat(4, minmax(110px, 1fr));
+            grid-template-rows: repeat(5, minmax(110px, 1fr));
         }
+        .ws-tile--scan { grid-row: auto; }
         .ws-tile__text { display: none; }
     }
 </style>

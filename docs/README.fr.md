@@ -12,6 +12,10 @@
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/LICENSE"><img src="https://img.shields.io/github/license/SMEWebify/WebErpMesv2" alt="License"></a>
 </p>
 
+<p align="center">
+  🌐 <b><a href="https://nest2prod-erp.com/">nest2prod-erp.com</a></b> — offre hébergée, support et démo par Nest2Prod
+</p>
+
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
 
 ## 🎯 Pourquoi ΣEM pour votre atelier ?
@@ -160,11 +164,8 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 
 ## 🎬 Voir ΣEM en action
 
-### 📺 Démo en ligne
-**[Tester la démo](http://demo.wem-project.org)**
-
-- **Email** : contact@wem-project.org 
-- **Mot de passe** : password
+### 📺 Démo
+**[Demander une démo sur nest2prod-erp.com](https://nest2prod-erp.com/)** — ou l'installer en local en quelques minutes (voir [Installation rapide](#-installation-rapide) ci-dessous).
 
 ### 🎥 Vidéo de présentation
 
@@ -515,8 +516,8 @@ Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 
 - 💭 [Discussions GitHub](https://github.com/SMEWebify/WebErpMesv2/discussions) - Questions, idées, retours
 - 🐛 [Issue Tracker](https://github.com/SMEWebify/WebErpMesv2/issues) - Bugs et demandes de fonctionnalités
-- 📧 [Email](mailto:contact@wem-project.org) - Support direct
-- 🌐 [Démo en ligne](http://demo.wem-project.org) - Tester gratuitement
+- 📧 [Email](mailto:contact@nest2prod.com) - Support direct
+- 🌐 [nest2prod-erp.com](https://nest2prod-erp.com/) - Offre hébergée, support et démo
 
 ## 📄 Licence
 
@@ -545,7 +546,7 @@ Merci à :
 ΣEM est né de l'expérience terrain en tolerie industrielle. Chaque fonctionnalité répond à un besoin réel d'atelier.
 
 **Vous êtes tôlier, mécanicien, usineur ?**  
-Votre retour est précieux pour améliorer l'outil → [Contactez-nous](mailto:contact@wem-project.org)
+Votre retour est précieux pour améliorer l'outil → [Contactez-nous](mailto:contact@nest2prod.com)
 
 **Vous êtes développeur passionné d'industrie ?**  
 Rejoignez-nous → [Guide de contribution](../CONTRIBUTING.md)
@@ -559,5 +560,5 @@ Rejoignez-nous → [Guide de contribution](../CONTRIBUTING.md)
   <a href="https://github.com/SMEWebify/WebErpMesv2/stargazers">⭐ Star le projet</a> •
   <a href="https://github.com/SMEWebify/WebErpMesv2/fork">🍴 Fork</a> •
   <a href="../CONTRIBUTING.md">🤝 Contribuer</a> •
-  <a href="http://demo.wem-project.org">🎬 Tester la démo</a>
+  <a href="https://nest2prod-erp.com/">🌐 nest2prod-erp.com</a>
 </p>

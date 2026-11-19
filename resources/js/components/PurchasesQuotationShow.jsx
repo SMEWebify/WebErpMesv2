@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { csrfToken, apiFetchWithStatus as apiFetch } from '../lib/http';
 import { QUALIFIED, SupplierQualificationBadge, showsBadge, supplierOptionLabel } from '../lib/supplierQualification.jsx';
 import GuideHelp from './GuideHelp';
+import { offerLabel, quotationLocks } from '../lib/purchaseOffers';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -78,6 +79,16 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
     const [contactId,  setContactId]  = useState(quotation.companies_contacts_id ?? '');
     const [delay,      setDelay]      = useState(quotation.delay ?? '');
     const [comment,    setComment]    = useState(quotation.comment ?? '');
+    // Offre reçue du fournisseur (référence, indice, date, validité)
+    const [offer,      setOffer]      = useState({
+        supplier_offer_reference: quotation.supplier_offer_reference ?? '',
+        supplier_offer_revision:  quotation.supplier_offer_revision ?? '',
+        supplier_offer_date:      quotation.supplier_offer_date ?? '',
+        supplier_offer_validity:  quotation.supplier_offer_validity ?? '',
+    });
+    const setOfferField = (field) => (e) => setOffer(prev => ({ ...prev, [field]: e.target.value }));
+    const offerTrans = trans.offers ?? {};
+    const locked = !!quotation.superseded;
     const [saving,     setSaving]     = useState(false);
     const [flash,      setFlash]      = useState(null);
     const [errors,     setErrors]     = useState({});
@@ -114,15 +125,19 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                     delay:   delay   || null,
                     comment: comment || null,
                     affair_link: affairLink || null,
+                    supplier_offer_reference: offer.supplier_offer_reference || null,
+                    supplier_offer_revision:  offer.supplier_offer_revision  || null,
+                    supplier_offer_date:      offer.supplier_offer_date      || null,
+                    supplier_offer_validity:  offer.supplier_offer_validity  || null,
                 }),
             });
             setFlash({ type: 'success', msg: trans.update_success });
-            if (onUpdated) onUpdated({ label, companies_id: companiesId, companies_addresses_id: addressId, companies_contacts_id: contactId, affair_link: affairLink });
+            if (onUpdated) onUpdated({ label, companies_id: companiesId, companies_addresses_id: addressId, companies_contacts_id: contactId, affair_link: affairLink, ...offer });
         } catch (err) {
             if (err.status === 422 && err.data?.errors) {
                 setErrors(err.data.errors);
             } else {
-                setFlash({ type: 'danger', msg: trans.error_generic });
+                setFlash({ type: 'danger', msg: err.data?.message ?? trans.error_generic });
             }
         } finally {
             setSaving(false);
@@ -131,6 +146,8 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
 
     return (
         <form onSubmit={handleSubmit}>
+            {/* Sert seulement à griser le formulaire d'une offre remplacée : sans cadre ni marge */}
+            <fieldset disabled={locked} className="border-0 p-0 m-0" style={{ minWidth: 0 }}>
             <div className="card card-outline card-primary mb-3">
                 <div className="card-header">
                     <h3 className="card-title">{trans.informations}</h3>
@@ -166,7 +183,6 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                     </div>
 
                     <div className="row">
-                        <label className="col-12">{trans.supplier_info}</label>
                         {(!quotation.companies_contacts_id || quotation.companies_contacts_id === 0) &&
                          (!quotation.companies_addresses_id || quotation.companies_addresses_id === 0) && (
                             <div className="col-12">
@@ -242,7 +258,6 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                     </div>
 
                     <div className="row">
-                        <label className="col-12">{trans.date_pay_info}</label>
                         <div className="mb-3 col-md-6">
                             <label>{trans.validity_date}</label>
                             <input
@@ -251,6 +266,55 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                                 value={delay ?? ''}
                                 onChange={e => setDelay(e.target.value)}
                             />
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="supplier-offer-reference">{offerTrans.reference}</label>
+                            <input
+                                id="supplier-offer-reference"
+                                type="text"
+                                maxLength={255}
+                                className={`form-control${errors.supplier_offer_reference ? ' is-invalid' : ''}`}
+                                value={offer.supplier_offer_reference}
+                                onChange={setOfferField('supplier_offer_reference')}
+                            />
+                            {errors.supplier_offer_reference && <div className="invalid-feedback">{errors.supplier_offer_reference[0]}</div>}
+                        </div>
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="supplier-offer-revision">{offerTrans.revision}</label>
+                            <input
+                                id="supplier-offer-revision"
+                                type="text"
+                                maxLength={20}
+                                className={`form-control${errors.supplier_offer_revision ? ' is-invalid' : ''}`}
+                                value={offer.supplier_offer_revision}
+                                onChange={setOfferField('supplier_offer_revision')}
+                            />
+                            {errors.supplier_offer_revision && <div className="invalid-feedback">{errors.supplier_offer_revision[0]}</div>}
+                        </div>
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="supplier-offer-date">{offerTrans.date}</label>
+                            <input
+                                id="supplier-offer-date"
+                                type="date"
+                                className={`form-control${errors.supplier_offer_date ? ' is-invalid' : ''}`}
+                                value={offer.supplier_offer_date}
+                                onChange={setOfferField('supplier_offer_date')}
+                            />
+                            {errors.supplier_offer_date && <div className="invalid-feedback">{errors.supplier_offer_date[0]}</div>}
+                        </div>
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="supplier-offer-validity">{offerTrans.validity}</label>
+                            <input
+                                id="supplier-offer-validity"
+                                type="date"
+                                className={`form-control${errors.supplier_offer_validity ? ' is-invalid' : ''}`}
+                                value={offer.supplier_offer_validity}
+                                onChange={setOfferField('supplier_offer_validity')}
+                            />
+                            {errors.supplier_offer_validity && <div className="invalid-feedback">{errors.supplier_offer_validity[0]}</div>}
                         </div>
                     </div>
 
@@ -277,6 +341,7 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
                     </button>
                 </div>
             </div>
+            </fieldset>
         </form>
     );
 }
@@ -285,7 +350,93 @@ function InfoForm({ quotation, suppliers, supplierQualification, addresses, cont
 // Options sidebar
 // ---------------------------------------------------------------------------
 
-function OptionsSidebar({ quotation, trans }) {
+/**
+ * Nouvelle offre du fournisseur (indice suivant) : la demande et ses lignes sont
+ * recopiées, celle-ci passe « remplacée ». Indice vide = indice suivant proposé.
+ */
+function NewOfferRevision({ endpoint, trans }) {
+    const [revision, setRevision] = useState('');
+    const [saving,   setSaving]   = useState(false);
+    const [error,    setError]    = useState(null);
+
+    async function handleClick() {
+        setSaving(true);
+        setError(null);
+        try {
+            const data = await apiFetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({ supplier_offer_revision: revision.trim() || null }),
+            });
+            window.location.assign(data.redirect);
+        } catch (err) {
+            setError(err.data?.message ?? trans.error_generic);
+            setSaving(false);
+        }
+    }
+
+    return (
+        <>
+            <label htmlFor="new-offer-revision" className="small text-muted d-block">{trans.offers?.revision_prompt}</label>
+            <div className="input-group input-group-sm">
+                <input
+                    id="new-offer-revision"
+                    type="text"
+                    className="form-control"
+                    maxLength={20}
+                    value={revision}
+                    onChange={e => setRevision(e.target.value)}
+                />
+                <button type="button" className="btn btn-outline-primary" disabled={saving} onClick={handleClick}
+                        title={trans.offers?.new_revision_help}>
+                    <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-code-branch'} me-1`} />
+                    {trans.offers?.new_revision}
+                </button>
+            </div>
+            <small className="form-text text-muted">{trans.offers?.new_revision_help}</small>
+            {error && <div className="text-danger small mt-1">{error}</div>}
+        </>
+    );
+}
+
+function OffersHistory({ offers, trans }) {
+    if (!offers || offers.length === 0) return null;
+    const t = trans.offers ?? {};
+
+    return (
+        <div className="card card-outline card-secondary mb-3">
+            <div className="card-header">
+                <h3 className="card-title">{t.history}</h3>
+            </div>
+            <div className="card-body p-0">
+                <table className="table table-sm mb-0">
+                    <tbody>
+                        {offers.map(o => (
+                            <tr key={o.id} className={o.current ? 'table-active' : undefined}>
+                                <td>
+                                    {o.current ? <strong>{o.code}</strong> : <a href={o.url}>{o.code}</a>}
+                                    <div className="small text-muted">{offerLabel(o, t)}</div>
+                                    {(o.date || o.validity) && (
+                                        <div className="small text-muted">
+                                            {o.date}{o.validity && <> → {o.validity}</>}
+                                        </div>
+                                    )}
+                                </td>
+                                <td className="text-end text-nowrap">
+                                    <div>{o.total}</div>
+                                    {o.superseded
+                                        ? <span className="badge text-bg-warning">{t.superseded}</span>
+                                        : <span className="badge text-bg-success">{t.current}</span>}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+function OptionsSidebar({ quotation, offers, endpoints, trans }) {
     const canPdf = quotation.companies_contacts_id &&
                    quotation.companies_contacts_id !== 0 &&
                    quotation.companies_addresses_id &&
@@ -345,10 +496,19 @@ function OptionsSidebar({ quotation, trans }) {
                                     </a>
                                 </td>
                             </tr>
+                            {quotationLocks(quotation).canRevise && endpoints.newRevision && (
+                                <tr>
+                                    <td colSpan={2}>
+                                        <NewOfferRevision endpoint={endpoints.newRevision} trans={trans} />
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <OffersHistory offers={offers} trans={trans} />
 
             {/* Email logs */}
             {quotation.email_logs && quotation.email_logs.length > 0 && (
@@ -663,8 +823,8 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
         }
     }
 
-    const canEdit = quotation.statu === 1;
-    const canOrder = quotation.statu !== 6;
+    // Offre remplacée par un indice suivant : ni modification ni commande
+    const { canEditLines: canEdit, canOrder } = quotationLocks(quotation);
 
     return (
         <div id="PurchaseQuotationLines">
@@ -869,6 +1029,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans, onLinesChan
 
 export default function PurchasesQuotationShow({
     initialQuotation,
+    offers = [],
     suppliers,
     supplierQualification = null,
     initialAddresses,
@@ -934,6 +1095,17 @@ export default function PurchasesQuotationShow({
             </div>
 
             <div className="card-body">
+                {quotation.superseded && (
+                    <div className="alert alert-warning d-flex flex-wrap align-items-center gap-2">
+                        <i className="fas fa-history" />
+                        <span>{(trans.offers?.superseded_banner ?? '').replace(':code', quotation.latest?.code ?? '')}</span>
+                        {quotation.latest?.url && (
+                            <a href={quotation.latest.url} className="btn btn-sm btn-outline-dark ms-auto">
+                                {trans.offers?.open_latest}
+                            </a>
+                        )}
+                    </div>
+                )}
                 <div className="tab-content">
                     {/* Info tab */}
                     <div className={`tab-pane${activeTab === 'info' ? ' active' : ''}`} id="PurchaseQuotation">
@@ -957,7 +1129,7 @@ export default function PurchasesQuotationShow({
                                 />
                             </div>
                             <div className="col-md-3">
-                                <OptionsSidebar quotation={quotation} trans={trans} />
+                                <OptionsSidebar quotation={quotation} offers={offers} endpoints={endpoints} trans={trans} />
                             </div>
                         </div>
                     </div>

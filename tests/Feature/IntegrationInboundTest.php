@@ -4,11 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Integrations\IntegrationDelivery;
 use App\Models\Integrations\IntegrationEndpoint;
+use App\Events\TaskChangeStatu;
+use App\Models\Planning\Status;
 use App\Models\Planning\Task;
 use App\Models\Planning\TaskActivities;
+use App\Models\User;
 use App\Services\Integrations\Handlers\HandleTaskEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -240,6 +244,113 @@ class IntegrationInboundTest extends TestCase
             ->first();
         $this->assertNotNull($delivery->error);
         $this->assertNull($delivery->processed_at);
+    }
+
+    // ── Pointage par scan (docs/pointage-scan.md) ───────────────────────────
+
+    public function test_seq_targets_the_operation_of_that_rank(): void
+    {
+        $first = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 200, 'ordre' => 10]);
+        $second = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 200, 'ordre' => 30]);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, [
+            'of_code' => 'OF200', 'line_ref' => '200', 'operation_code' => 'PLI', 'seq' => 30,
+        ]))->assertStatus(200)->assertJson(['status' => 'processed']);
+
+        $this->assertSame(1, TaskActivities::query()->where('task_id', $second->id)->count());
+        $this->assertSame(0, TaskActivities::query()->where('task_id', $first->id)->count());
+    }
+
+    public function test_seq_with_another_operation_code_is_refused(): void
+    {
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 201, 'ordre' => 10]);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, [
+            'of_code' => 'OF201', 'line_ref' => '201', 'operation_code' => 'LASER-X', 'seq' => 10,
+        ]))->assertStatus(500)->assertJson(['status' => 'failed']);
+
+        $this->assertSame(0, TaskActivities::query()->where('task_id', $task->id)->count());
+    }
+
+    public function test_empty_line_ref_resolves_by_of_code(): void
+    {
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 202, 'ordre' => 10]);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, [
+            'of_code' => 'OF202', 'line_ref' => '', 'operation_code' => 'PLI', 'seq' => 10,
+            'capture_mode' => 'scan',
+        ]))->assertStatus(200)->assertJson(['status' => 'processed']);
+
+        $this->assertSame(1, TaskActivities::query()->where('task_id', $task->id)->count());
+    }
+
+    public function test_late_event_does_not_move_the_status_back(): void
+    {
+        Event::fake([TaskChangeStatu::class]);
+        $inProgress = Status::create(['title' => 'In progress', 'order' => 2]);
+        $finished = Status::create(['title' => 'Finished', 'order' => 4]);
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 203, 'ordre' => 10]);
+        $ref = ['of_code' => 'OF203', 'line_ref' => '203', 'operation_code' => 'PLI', 'seq' => 10];
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, $ref, Carbon::now()->subHours(2)->toIso8601String()))->assertStatus(200);
+        $this->assertSame($inProgress->id, (int) $task->fresh()->status_id);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_FINISHED, $ref, Carbon::now()->subHour()->toIso8601String()))->assertStatus(200);
+        $this->assertSame($finished->id, (int) $task->fresh()->status_id);
+
+        // Un démarrage antérieur à la fin arrive en retard : historisé, statut inchangé.
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, $ref, Carbon::now()->subHours(3)->toIso8601String()))->assertStatus(200);
+        $this->assertSame($finished->id, (int) $task->fresh()->status_id);
+        $this->assertSame(2, TaskActivities::query()->where('task_id', $task->id)->where('type', TaskActivities::TYPE_START)->count());
+    }
+
+    public function test_canceled_closes_the_open_session_without_changing_the_status(): void
+    {
+        Event::fake([TaskChangeStatu::class]);
+        $inProgress = Status::create(['title' => 'In progress', 'order' => 2]);
+        Status::create(['title' => 'Finished', 'order' => 4]);
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 204, 'ordre' => 10]);
+        $ref = ['of_code' => 'OF204', 'line_ref' => '204', 'operation_code' => 'PLI', 'seq' => 10];
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, $ref, Carbon::now()->subMinutes(30)->toIso8601String()))->assertStatus(200);
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_CANCELED, $ref, Carbon::now()->subMinutes(10)->toIso8601String()))
+            ->assertStatus(200)->assertJson(['status' => 'processed']);
+
+        $types = TaskActivities::query()->where('task_id', $task->id)->orderBy('id')->pluck('type')->map(fn ($t) => (int) $t)->all();
+        $this->assertSame([TaskActivities::TYPE_START, TaskActivities::TYPE_END, TaskActivities::TYPE_COMMENT], $types);
+        $this->assertSame($inProgress->id, (int) $task->fresh()->status_id);
+
+        // Le temps s'arrête à l'annulation : 20 min, pas 30.
+        $this->assertEqualsWithDelta(1200, $task->fresh()->getTotalLogSeconds(), 5);
+    }
+
+    public function test_unknown_operator_falls_back_to_the_integration_user(): void
+    {
+        $fallback = User::factory()->create(['email' => 'n2p-technique@example.test']);
+        config(['integrations.fallback_user_email' => 'n2p-technique@example.test']);
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 205, 'ordre' => 10]);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_STARTED, [
+            'of_code' => 'OF205', 'line_ref' => '205', 'operation_code' => 'PLI', 'seq' => 10,
+            'user_email' => 'inconnu@example.test',
+        ]))->assertStatus(200);
+
+        $this->assertSame($fallback->id, (int) TaskActivities::query()->where('task_id', $task->id)->value('user_id'));
+    }
+
+    public function test_operator_is_resolved_by_email(): void
+    {
+        $operator = User::factory()->create(['email' => 'operateur@example.test']);
+        $task = Task::factory()->create(['code' => 'PLI', 'order_lines_id' => 206, 'ordre' => 10]);
+
+        $this->signedPost('n2p', $this->buildBody(HandleTaskEvent::EVENT_DECLARED_BAD, [
+            'of_code' => 'OF206', 'line_ref' => '206', 'operation_code' => 'PLI', 'seq' => 10,
+            'user_email' => 'operateur@example.test', 'bad_qty' => 2,
+        ]))->assertStatus(200);
+
+        $row = TaskActivities::query()->where('task_id', $task->id)->first();
+        $this->assertSame($operator->id, (int) $row->user_id);
+        $this->assertSame(2, (int) $row->bad_qt);
     }
 
     private function buildBody(string $eventType, array $data = [], ?string $occurredAt = null, ?string $eventId = null): string

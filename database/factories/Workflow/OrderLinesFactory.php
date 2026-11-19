@@ -83,9 +83,12 @@ class OrderLinesFactory extends Factory
 			'accounting_vats_id' => AccountingVat::query()->inRandomOrder()->value('id')
                 ?? AccountingVat::factory()->create()->id,
             
-            'delivered_qty' => 0,
-            'invoiced_qty' => 0,
-            'delivery_status' => $statu,
+            // Commande livrée (3) : ligne livrée et facturée, sinon rien de livré.
+            // delivery_status d'une ligne : 1 non livrée, 2 en partie, 3 livrée.
+            'delivered_qty' => $statu == 3 ? $this->qty : 0,
+            'invoiced_qty' => $statu == 3 ? $this->qty : 0,
+            'delivery_status' => $statu == 3 ? 3 : 1,
+            'invoice_status' => $statu == 3 ? 3 : 1,
             'internal_delay' => $order->validity_date,
             'delivery_date' => $order->validity_date,
         ];

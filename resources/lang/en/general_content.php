@@ -244,6 +244,7 @@ return [
     'mark_not_chargeable_trans_key'            => 'Mark as not chargeable',
     'confirm_not_chargeable_trans_key'         => 'Mark this line as not chargeable? It will no longer be due to invoice.',
     'line_already_invoiced_trans_key'          => 'This line is already invoiced.',
+    'no_line_to_invoice_trans_key'             => 'None of the selected lines can be invoiced: already invoiced or not chargeable.',
     'order_invoiced_no_cancel_trans_key'       => 'This order is invoiced and cannot be cancelled. Issue a credit note instead.',
     'delivered_qty_trans_key'                  => 'Delivered qty',
     'remaining_qty_trans_key'                  => 'Remaining qty',
@@ -357,6 +358,7 @@ return [
     'invoice_draft_no_pdf_trans_key'           => 'A draft invoice cannot be exported as a PDF.',
     'invoice_draft_no_facturx_trans_key'       => 'A draft invoice cannot produce a Factur-X document: it has not been issued yet.',
     'invoice_proforma_no_facturx_trans_key'    => 'A proforma is not an invoice: it cannot produce a Factur-X document.',
+    'proforma_lines_already_invoiced_trans_key' => 'Cannot convert: these lines were invoiced after the proforma was created (:lines). Create a new proforma for the remaining quantities.',
 
     'purchase_quotation_trans_key'             => 'Purchase quotation',
     'purchase_quotation_info_trans_key'        => 'Purchase quotation info',
@@ -1664,6 +1666,7 @@ return [
     'file_role_accord_client_trans_key'        => 'Customer approval',
     'file_role_contractuel_trans_key'          => 'Contract document',
     'file_role_ar_fournisseur_trans_key'       => 'Supplier acknowledgement',
+    'file_role_offre_fournisseur_trans_key'    => 'Supplier offer',
     'file_role_autre_trans_key'                => 'Other',
 
     // Load planning (services x days heat grid)
@@ -1952,4 +1955,8 @@ return [
     'absence_notification_requested_trans_key' => 'Absence request to approve: :name, from :start to :end',
     'absence_notification_approved_trans_key' => 'Your absence from :start to :end is approved',
     'absence_notification_refused_trans_key' => 'Your absence from :start to :end is refused',
+    'task_canceled_by_integration_trans_key' => 'Task canceled in the MES',
+    'production_sheet_scan_codes_trans_key' => 'Scan codes on the production sheet',
+    'production_sheet_scan_codes_help_trans_key' => 'Prints a QR and a Code128 "N2P:…" for each operation, read by the ERP scan screen and the Nest2Prod MES. They replace the "task number" barcode.',
+    'scan_code_not_found_trans_key' => 'No task matches the code ":code".',
 ];

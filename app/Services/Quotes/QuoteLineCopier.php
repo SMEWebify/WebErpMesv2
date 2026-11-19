@@ -26,6 +26,8 @@ class QuoteLineCopier
             $newLine->fill($overrides);
             $newLine->quotes_id = $targetQuoteId;
             $newLine->ordre     = $ordre;
+            // La marque « proposé par IA » désigne une ligne créée par la dictée, pas sa copie.
+            $newLine->ai_proposed_at = null;
             $newLine->save();
 
             $details = QuoteLineDetails::where('quote_lines_id', $source->id)->first();

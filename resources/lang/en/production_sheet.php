@@ -89,6 +89,7 @@ return [
         'time_spent' => 'Actual time',
         'visa' => 'Sign-off',
         'declare' => 'Scan',
+        'scan_unavailable' => 'No code ("*" or "|" in the operation code)',
     ],
     'quality' => [
         'check' => 'Check',

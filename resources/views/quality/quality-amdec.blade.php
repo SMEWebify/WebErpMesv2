@@ -216,7 +216,7 @@
                     <x-product-autocomplete name="product_id" label="{{ __('general_content.product_trans_key') }}" />
                 </div>
                 <div class="mb-3 col-md-4">
-                    @include('include.form.form-select-user',['userId' =>   null])
+                    @include('include.form.form-select-user', ['userId' => auth()->id()])
                 </div>
             </div>
 

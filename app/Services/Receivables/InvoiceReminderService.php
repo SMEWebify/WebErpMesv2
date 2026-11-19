@@ -28,9 +28,8 @@ use Throwable;
  * que justifie son retard n'est plus proposée.
  *
  * Aucun envoi automatique : chaque envoi part d'une action de l'utilisateur.
- * Seules les factures (invoice_type 1) sont relancées ; une proforma n'est
- * pas une créance, un avoir n'est pas dû, et aucun code ne crée encore de
- * facture d'acompte.
+ * Seules les factures (invoice_type 1) et factures d'acompte (4) sont
+ * relancées ; une proforma n'est pas une créance, un avoir n'est pas dû.
  */
 class InvoiceReminderService
 {

@@ -68,6 +68,14 @@ class AccountingEntryService
         $salesLabel   = $allocation?->label ?? 'Vente';
         $vatAccount   = $rule?->vat_account  ?: $allocation?->vat_account;
 
+        // Acompte (facture d'acompte ou sa déduction) : le HT va au compte d'avances
+        // reçues, pas au produit — l'acompte n'est pas une vente.
+        $isDownPayment = (int) $invoice->invoice_type === 4 || $invoiceLine->down_payment_line_id !== null;
+        if ($isDownPayment && $salesAccount) {
+            $salesAccount = config('invoicing.down_payment.account', '4191');
+            $salesLabel   = config('invoicing.down_payment.account_label', 'Acomptes reçus');
+        }
+
         if (!$salesAccount) return;
 
         // Montants
@@ -80,7 +88,14 @@ class AccountingEntryService
         $tva = round($ht * $vatRate / 100, 2);
         $ttc = $ht + $tva;
 
-        if ($ttc <= 0) return;
+        // Seule une déduction d'acompte est négative : l'écriture est alors inversée
+        // (crédit 411, débit 4191 et TVA). Toute autre ligne nulle ou négative : rien.
+        $reversed = $ttc < 0 && $invoiceLine->down_payment_line_id !== null;
+        if ($ttc <= 0 && !$reversed) return;
+
+        // [débit, crédit] d'un montant porté au débit du client dans le sens normal.
+        $debitSide  = fn (float $amount) => $reversed ? [0, -$amount] : [$amount, 0];
+        $creditSide = fn (float $amount) => $reversed ? [-$amount, 0] : [0, $amount];
 
         // Client en compte auxiliaire (411 collectif)
         $clientCode  = strtoupper(substr(preg_replace('/[^A-Z0-9]/i', '', $invoice->companie?->code ?? ''), 0, 8));
@@ -92,7 +107,9 @@ class AccountingEntryService
 
         $pieceRef  = $invoice->code;
         $pieceDate = $date;
-        $lib       = 'Vente ' . ($invoiceLine->orderLine?->label ?? $invoice->code);
+        $lib       = $isDownPayment
+            ? ($invoiceLine->label ?? 'Acompte ' . $invoice->code)
+            : 'Vente ' . ($invoiceLine->orderLine?->label ?? $invoice->code);
 
         // Ligne 1 — Débit 411 (TTC)
         AccountingEntry::create($base + [
@@ -105,8 +122,8 @@ class AccountingEntryService
             'document_reference'       => $pieceRef,
             'document_date'            => $pieceDate,
             'entry_label'              => $lib,
-            'debit_amount'             => $ttc,
-            'credit_amount'            => 0,
+            'debit_amount'             => $debitSide($ttc)[0],
+            'credit_amount'            => $debitSide($ttc)[1],
             'invoice_line_id'          => $invoiceLine->id,
         ]);
 
@@ -121,13 +138,13 @@ class AccountingEntryService
             'document_reference'       => $pieceRef,
             'document_date'            => $pieceDate,
             'entry_label'              => $lib,
-            'debit_amount'             => 0,
-            'credit_amount'            => $ht,
+            'debit_amount'             => $creditSide($ht)[0],
+            'credit_amount'            => $creditSide($ht)[1],
             'invoice_line_id'          => $invoiceLine->id,
         ]);
 
         // Ligne 3 — Crédit TVA (seulement si taux > 0)
-        if ($tva > 0) {
+        if (abs($tva) > 0) {
             AccountingEntry::create($base + [
                 'account_number'           => $vatAccount,
                 'account_label'            => 'TVA collectée',
@@ -138,8 +155,8 @@ class AccountingEntryService
                 'document_reference'       => $pieceRef,
                 'document_date'            => $pieceDate,
                 'entry_label'              => $lib,
-                'debit_amount'             => 0,
-                'credit_amount'            => $tva,
+                'debit_amount'             => $creditSide($tva)[0],
+                'credit_amount'            => $creditSide($tva)[1],
                 'invoice_line_id'          => $invoiceLine->id,
             ]);
         }
@@ -414,6 +431,11 @@ class AccountingEntryService
         $salesAccount = $rule?->sales_account ?: $allocation?->code_account;
         $salesLabel   = $allocation?->label ?? 'Vente';
         $vatAccount   = $rule?->vat_account ?: $allocation?->vat_account;
+        // Avoir sur une facture d'acompte : même compte d'avances que l'acompte.
+        if ($salesAccount && (int) $invoiceLine->invoice?->invoice_type === 4) {
+            $salesAccount = config('invoicing.down_payment.account', '4191');
+            $salesLabel   = config('invoicing.down_payment.account_label', 'Acomptes reçus');
+        }
         if (!$salesAccount) {
             return;
         }

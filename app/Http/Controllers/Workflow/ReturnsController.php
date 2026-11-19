@@ -21,7 +21,6 @@ class ReturnsController extends Controller
 
     public function index()
     {
-        $lastReturn = ReturnModel::latest('id')->first();
 
         // Build template URLs without using the {return} route parameter (reserved keyword issue)
         $base = rtrim(route('returns'), '/');
@@ -35,7 +34,8 @@ class ReturnsController extends Controller
         ];
 
         $reactProps = [
-            'nextCode'         => $this->documentCodeGenerator->generateDocumentCode('return', $lastReturn?->id),
+            // Seulement proposé : consommé à l'enregistrement (ReturnService), pas à l'affichage.
+            'nextCode'         => $this->documentCodeGenerator->peekNextCode('return'),
             'deliveries'       => Deliverys::select('id', 'code')->orderBy('code')->get()->toArray(),
             'nonConformities'  => QualityNonConformity::select('id', 'code')->orderBy('code')->get()->toArray(),
         ];

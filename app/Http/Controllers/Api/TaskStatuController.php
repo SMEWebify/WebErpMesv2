@@ -18,6 +18,7 @@ use App\Services\QualityNonConformityService;
 use App\Services\Files\FileKindResolver;
 use App\Services\Inspection\TaskInspection;
 use App\Services\Production\ProductionRelease;
+use App\Services\Production\ScanCode;
 use App\Services\Production\TaskRelease;
 use App\Services\Production\TaskReleaseException;
 use App\Services\Stock\SheetRemnants;
@@ -33,6 +34,25 @@ class TaskStatuController extends Controller
         private readonly QualityNonConformityService $qualityNonConformityService,
         private readonly ProductionRelease $productionRelease,
     ) {}
+
+    // -------------------------------------------------------------------------
+    // GET /production/Task/Statu/Api/resolve?code=
+    // Saisie de douchette : code N2P:{of}*{ligne}*{op}*{seq} (docs/pointage-scan.md)
+    // ou ancien n° de tâche. Renvoie l'id de la tâche, sans rien enregistrer.
+    // -------------------------------------------------------------------------
+    public function resolve(Request $request)
+    {
+        $validated = $request->validate(['code' => 'required|string|max:200']);
+
+        $task = ScanCode::resolveTask($validated['code']);
+        if (! $task) {
+            return response()->json([
+                'message' => __('general_content.scan_code_not_found_trans_key', ['code' => trim($validated['code'])]),
+            ], 404);
+        }
+
+        return response()->json(['id' => $task->getKey()]);
+    }
 
     // -------------------------------------------------------------------------
     // GET /production/Task/Statu/Api/{id}

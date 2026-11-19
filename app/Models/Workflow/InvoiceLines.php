@@ -73,6 +73,20 @@ class InvoiceLines extends Model
         return $this->belongsTo(DeliveryLines::class, 'delivery_line_id');
     }
 
+    /**
+     * Ligne de la facture d'acompte que cette ligne déduit (quantité −1).
+     * Écrit seulement par App\Services\Invoicing\DownPayments, hors $fillable.
+     */
+    public function downPaymentLine()
+    {
+        return $this->belongsTo(self::class, 'down_payment_line_id');
+    }
+
+    public function getIsDownPaymentDeductionAttribute(): bool
+    {
+        return $this->down_payment_line_id !== null;
+    }
+
     public function Product()
     {
         return $this->belongsTo(Products::class, 'product_id');

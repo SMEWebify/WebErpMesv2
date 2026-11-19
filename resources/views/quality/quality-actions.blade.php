@@ -217,7 +217,7 @@
               <x-adminlte-input-switch name="type" is-checked="true" />
             </div>
             <div class="mb-3 col-md-3">
-              @include('include.form.form-select-user',['userId' =>  null ])
+              @include('include.form.form-select-user', ['userId' => auth()->id()])
             </div>
             <div class="mb-3 col-md-3">
               @include('include.form.form-select-nc',['ncId' =>  null])

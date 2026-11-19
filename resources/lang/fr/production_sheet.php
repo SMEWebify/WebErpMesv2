@@ -89,6 +89,7 @@ return [
         'time_spent' => 'Tps réel',
         'visa' => 'Visa',
         'declare' => 'Scanner',
+        'scan_unavailable' => 'Pas de code (« * » ou « | » dans le code opération)',
     ],
     'quality' => [
         'check' => 'Contrôle',

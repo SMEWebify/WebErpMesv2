@@ -399,7 +399,10 @@ function QontoStatusBadge({ status }) {
 function invoiceColumns(trans, pdpEnabled) {
     const columns = [
         { key: 'code',       label: trans.code,       sortable: true,
-          render: inv => <code>{inv.code}</code>, filter: 'text', mobile: 'title', mobileRender: inv => inv.code },
+          render: inv => <>
+              <code>{inv.code}</code>
+              {inv.invoice_type === 4 && <span className="badge text-bg-info ms-1">{trans.down_payment ?? 'Acompte'}</span>}
+          </>, filter: 'text', mobile: 'title', mobileRender: inv => inv.code },
         { key: 'label',      label: trans.label,      sortable: true,
           filter: 'text', mobile: 'subtitle' },
         { key: 'client',     label: trans.client,     sortable: 'companie',

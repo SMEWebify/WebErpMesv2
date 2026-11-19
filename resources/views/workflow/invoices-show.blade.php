@@ -13,7 +13,7 @@ $invoiceSteps = [
 @endphp
 
 @section('content_header')
-  <x-document-header h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}"
+  <x-document-header :h1="((int) $Invoice->invoice_type === 4 ? __('down_payments.document_title') : __('general_content.invoices_trans_key')) . ' : ' . $Invoice->code"
                      previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"
                      :steps="$invoiceSteps" statu="{{ $Invoice->statu }}"
                      endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
@@ -55,6 +55,7 @@ $invoiceSteps = [
     <div class="tab-content">
       <div class="tab-pane active" id="Invoice">
         <x-relational-breadcrumb :entity="$Invoice" />
+        @include('workflow.partials.invoice-down-payments', ['Invoice' => $Invoice])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -174,7 +175,7 @@ $invoiceSteps = [
               </div>
             </x-adminlte-card>
 
-            @if($pdpEnabled && $Invoice->invoice_type === 1)
+            @if($pdpEnabled && in_array((int) $Invoice->invoice_type, [1, 4], true))
             @include('integrations.partials.pdp-invoice-card', ['Invoice' => $Invoice, 'submission' => $pdpSubmission])
             @endif
 
@@ -259,27 +260,7 @@ $invoiceSteps = [
         ></div>
 
         @if($Invoice->statu >= 2)
-        <div class="mt-3">
-          <form action="{{ route('credit-notes.store.from.invoice') }}" method="POST">
-            @csrf
-            @foreach($Invoice->InvoiceLines as $line)
-              <input type="hidden" name="all_invoice_lines[]" value="{{ $line->id }}">
-            @endforeach
-            <div class="d-flex align-items-center">
-              <label class="me-2 mb-0 text-muted small">Sélectionner les lignes pour avoir :</label>
-              <x-guide-help guide="facturation" section="faire-un-avoir" class="ms-0 me-2" />
-              @foreach($Invoice->InvoiceLines as $line)
-                <label class="me-3 mb-0 small">
-                  <input type="checkbox" name="selected_invoice_lines[]" value="{{ $line->id }}" class="me-1">
-                  {{ $line->display_code ?: $line->display_label }}
-                </label>
-              @endforeach
-              <button type="submit" class="btn btn-info btn-sm ms-auto">
-                <i class="fas fa-save me-1"></i>{{ __('general_content.new_credit_note_trans_key') }}
-              </button>
-            </div>
-          </form>
-        </div>
+          @include('workflow.partials.invoice-credit-note-form', ['Invoice' => $Invoice])
         @endif
       </div>
       <div class="tab-pane" id="Payments">

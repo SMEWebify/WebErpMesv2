@@ -283,7 +283,7 @@
                             <x-FormTextareaComment label="{{ __('general_content.internal_comment_trans_key') }}" name="internal_comment" comment="{{ $line->QuoteLineDetails->internal_comment }}" />
                         </div>
                         <div class="row mt-3">
-                            <x-FormTextareaComment label="{{ __('general_content.external_comment_trans_key') }}" name="external_comment" comment="{{ $line->QuoteLineDetails->external_comment }}" />
+                            <x-FormTextareaComment label="{{ __('general_content.external_comment_trans_key') }}" name="external_comment" comment="{{ $line->QuoteLineDetails->external_comment }}" :rewrite="true" :max-length="255" />
                         </div>
                     </div>
                 </div>

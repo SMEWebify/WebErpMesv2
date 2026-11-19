@@ -35,9 +35,8 @@ class QualityActionController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
         $QualityActions = QualityAction::orderBy('id')->paginate(10);
-        $Lastaction = QualityAction::orderBy('id', 'desc')->first();
-        $codeAction = $Lastaction ? $Lastaction->id : 0;
-        $codeAction = $this->documentCodeGenerator->generateDocumentCode('action', $codeAction);
+        // Numéro seulement proposé : consommé à l'enregistrement, pas à chaque affichage.
+        $codeAction = $this->documentCodeGenerator->peekNextCode('action');
         $ActionHistory = $this->history()->forSubjects(QualityAction::class, $QualityActions->pluck('id')->all());
 
         return view('quality/quality-actions', [
@@ -55,6 +54,7 @@ class QualityActionController extends Controller
      */
     public function store(StoreQualityActionRequest $request)
     {
+        $this->documentCodeGenerator->consumeIfProposed('action', $request->input('code'));
         $Action = QualityAction::create($request->only('code',
                                                         'label', 
                                                         'statu',

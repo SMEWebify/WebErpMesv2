@@ -114,6 +114,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     // Assistant IA ERP
     Route::middleware(['auth', 'verified', 'has.role'])->prefix('ai')->name('ai.')->group(function () {
         Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->middleware('throttle:20,1')->name('chat');
+        // « Réécrire sans fautes » des textes destinés au client (proposition, rien n'est enregistré)
+        Route::post('/rewrite', [\App\Http\Controllers\AI\TextRewriteController::class, 'rewrite'])->middleware('throttle:30,1')->name('rewrite');
     });
 
     // Chat direct (commentaires sur devis, commandes, etc.)
@@ -194,6 +196,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Lines/json/list', 'App\Http\Controllers\Workshop\WorkshopController@taskLinesJson')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines.json');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
+        // Écran de scan (docs/pointage-scan.md) : douchette ou caméra, mode de factory.scan_mode.
+        Route::get('/Scan', 'App\Http\Controllers\Workshop\ScanStationController@index')->name('workshop.scan');
+        Route::post('/Scan', 'App\Http\Controllers\Workshop\ScanStationController@scan')->middleware('throttle:120,1')->name('workshop.scan.store');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
         Route::get('/Stock/Detail', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail');
         Route::get('/Stock/Scan', 'App\Http\Controllers\Workshop\WorkshopController@stockScan')->name('workshop.stock.scan');
@@ -220,6 +225,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/list', 'App\Http\Controllers\Companies\CompaniesController@listJson')->name('companies.json.list');
         Route::post('/json/store', 'App\Http\Controllers\Companies\CompaniesController@storeJson')->name('companies.json.store');
         Route::get('/json/select-data', 'App\Http\Controllers\Companies\CompaniesController@selectDataJson')->name('companies.json.select-data');
+        // Répertoire Sirene : préremplissage par SIRET / SIREN / nom
+        Route::get('/json/registry-search', 'App\Http\Controllers\Companies\CompaniesController@registrySearch')
+            ->middleware('throttle:30,1')->name('companies.json.registry-search');
 
         // addresses routes
         Route::group(['prefix' => 'addresses'], function () {
@@ -364,6 +372,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{quoteId}/lines/json/select-data', 'App\Http\Controllers\Workflow\QuoteLinesController@selectDataForQuoteJson')->name('quotes.lines.json.select-data');
         Route::get('/{quoteId}/lines/json/import-sources', 'App\Http\Controllers\Workflow\QuoteLinesController@importSourcesJson')->name('quotes.lines.json.import-sources');
         Route::post('/{quoteId}/lines/json/import-from', 'App\Http\Controllers\Workflow\QuoteLinesController@importFromJson')->name('quotes.lines.json.import-from');
+        // Dictée : audio → texte → lignes en brouillon (rien d'écrit), puis création des lignes validées
+        Route::post('/{quoteId}/lines/json/dictation/transcribe', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'transcribe'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.transcribe');
+        Route::post('/{quoteId}/lines/json/dictation/propose', [\App\Http\Controllers\Workflow\QuoteDictationController::class, 'propose'])->whereNumber('quoteId')->middleware('throttle:20,1')->name('quotes.lines.json.dictation.propose');
+        Route::post('/{quoteId}/lines/json/dictation/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeDictatedJson')->whereNumber('quoteId')->name('quotes.lines.json.dictation.store');
+        // Import DPGF : dépôt du classeur → aperçu recalculé (rien d'écrit), puis création des lignes relues
+        Route::post('/{quoteId}/lines/json/dpgf/preview', [\App\Http\Controllers\Workflow\QuoteDpgfController::class, 'preview'])->whereNumber('quoteId')->middleware('throttle:30,1')->name('quotes.lines.json.dpgf.preview');
+        Route::post('/{quoteId}/lines/json/dpgf/analyse', [\App\Http\Controllers\Workflow\QuoteDpgfController::class, 'analyse'])->whereNumber('quoteId')->middleware('throttle:60,1')->name('quotes.lines.json.dpgf.analyse');
+        Route::post('/{quoteId}/lines/json/dpgf/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeDpgfJson')->whereNumber('quoteId')->name('quotes.lines.json.dpgf.store');
         Route::get('/{quoteId}/lines/json/price-list/{productId}', 'App\Http\Controllers\Workflow\QuoteLinesController@priceListForProductJson')->name('quotes.lines.json.price-list');
         Route::post('/{quoteId}/lines/json/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeLineJson')->name('quotes.lines.json.store');
         Route::post('/{quoteId}/lines/json/price-increase', 'App\Http\Controllers\Workflow\QuoteLinesController@priceIncreaseJson')->name('quotes.lines.json.price-increase');
@@ -446,6 +462,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{orderId}/lines/json/{id}/delay-history',          'App\Http\Controllers\Workflow\OrderLinesController@delayHistoryJson')->name('orders.lines.json.delay-history');
         Route::get('/{orderId}/lines/json/{id}/tasks',                  'App\Http\Controllers\Workflow\OrderLinesController@tasksForLineJson')->name('orders.lines.json.tasks');
         Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
+        Route::post('/{orderId}/lines/json/{id}/cancel',                'App\Http\Controllers\Workflow\OrderLinesController@cancelLineJson')->name('orders.lines.json.cancel');
         Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
         Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
         Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->middleware('permission:products-edit')->name('orders.lines.json.create-products');
@@ -496,6 +513,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/company-ac', 'App\Http\Controllers\Workflow\DeliverysController@companyAc')->name('deliverys.company-ac');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\DeliverysController@changeStatusJson')->name('deliverys.json.statu');
         Route::post('/{id}/json/line/{lineId}/not-chargeable', 'App\Http\Controllers\Workflow\DeliverysController@markLineNotChargeable')->name('deliverys.line.not-chargeable');
+        Route::post('/{id}/json/line/{lineId}/cancel', 'App\Http\Controllers\Workflow\DeliverysController@cancelLine')->name('deliverys.line.cancel');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::get('/json/{id}/lines', 'App\Http\Controllers\Workflow\DeliverysController@linesJson')->name('deliverys.json.lines');
@@ -529,6 +547,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/lines', 'App\Http\Controllers\Workflow\InvoicesController@storeLine')->name('invoices.lines.store');
         Route::delete('/{id}/lines/{lineId}', 'App\Http\Controllers\Workflow\InvoicesController@destroyLine')->name('invoices.lines.destroy');
         Route::patch('/{id}/emit', 'App\Http\Controllers\Workflow\InvoicesController@emit')->name('invoices.emit');
+        Route::post('/down-payments/order/{orderId}', 'App\Http\Controllers\Workflow\DownPaymentController@store')->name('invoices.down-payments.store');
+        Route::post('/{id}/down-payments/recompute', 'App\Http\Controllers\Workflow\DownPaymentController@recompute')->name('invoices.down-payments.recompute');
 
         // Facturation électronique. Routes web et non API : la carte est rendue
         // dans une page Blade authentifiée par session, sans jeton porteur.
@@ -617,6 +637,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/quotation/api/{quotation}/lines',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationStoreLine')->name('purchases.quotation.api.lines.store');
         Route::patch('/quotation/api/{quotation}/lines/{line}', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateLine')->name('purchases.quotation.api.lines.update');
         Route::post('/quotation/api/{quotation}/lines/{line}/retain', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationRetainLine')->name('purchases.quotation.api.lines.retain');
+        Route::post('/quotation/api/{quotation}/revision', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationNewRevision')->name('purchases.quotation.api.revision');
 
         // JSON endpoints for React PurchasesIndex
         Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');
@@ -1041,7 +1062,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/load-planning/calculate-resources', 'App\Http\Controllers\Planning\PlanningController@calculateResources')->name('production.load.planning.calculate.resources');
 
         // JSON API — TaskStatuApp (React)
-        Route::get('/Task/Statu/Api/{id}',               'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
+        // Avant /{id} : « resolve » ne doit pas être pris pour un id.
+        Route::get('/Task/Statu/Api/resolve',            'App\Http\Controllers\Api\TaskStatuController@resolve')->name('production.task.statu.api.resolve');
+        Route::get('/Task/Statu/Api/{id}',              'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
         Route::post('/Task/Statu/Api/{id}/start',        'App\Http\Controllers\Api\TaskStatuController@start')->name('production.task.statu.api.start');
         Route::post('/Task/Statu/Api/{id}/pause',        'App\Http\Controllers\Api\TaskStatuController@pause')->name('production.task.statu.api.pause');
         Route::post('/Task/Statu/Api/{id}/finish',       'App\Http\Controllers\Api\TaskStatuController@finish')->name('production.task.statu.api.finish');
@@ -1139,6 +1162,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/test', [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'test'])->name('test');
         });
 
+        // SharePoint (recopie de la GED, sens unique) : application Entra ID, secret chiffré, site cible.
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/sharepoint')->name('admin.integrations.sharepoint.')->group(function () {
+            Route::get('/',          [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'index'])->name('index');
+            Route::put('/',          [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'update'])->name('update');
+            Route::post('/test',     [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'test'])->middleware('throttle:10,1')->name('test');
+            Route::post('/backfill', [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'backfill'])->middleware('throttle:5,1')->name('backfill');
+            Route::post('/retry',    [\App\Http\Controllers\Admin\SharePointSettingsController::class, 'retry'])->middleware('throttle:10,1')->name('retry');
+        });
+
         Route::middleware(['auth', 'verified', 'has.role'])->prefix('email-logs')->name('admin.email-logs.')->group(function () {
             Route::get('/',        [\App\Http\Controllers\Admin\EmailLogsController::class, 'index'])->name('index');
             Route::get('/{log}',   [\App\Http\Controllers\Admin\EmailLogsController::class, 'show'])->name('show');
@@ -1229,6 +1261,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Update User
         Route::match(['post', 'put'], '/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware('permission:human-resources-menu')->name('human.resources.update.user');
+
+        // Badge opérateur de l'écran de scan (impression)
+        Route::get('/user/{id}/badge', 'App\Http\Controllers\Admin\HumanResourcesController@printUserBadge')->middleware('permission:human-resources-menu')->name('human.resources.user.badge');
 
         //lock User
         Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->middleware('permission:human-resources-menu')->name('human.resources.lock.user');

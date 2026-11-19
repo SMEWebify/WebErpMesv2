@@ -8,6 +8,7 @@ import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineL
 import { apiRequest as apiFetch } from '../lib/http';
 import { calculatedPriceToggle, isValidReason } from '../lib/calculatedPrice';
 import { askCreditOverride } from '../lib/creditLimit';
+import { askCancelReason, fillPlaceholders } from '../lib/cancelReason';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
 import { dossierState, dossierValidatedText, dossierActionIds } from '../lib/manufacturingDossier.js';
@@ -875,7 +876,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {}, releaseTrans = null,
-    dossierTrans = null,
+    dossierTrans = null, onCancel = null, cancelTrans = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -966,6 +967,14 @@ function LineRow({
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.hide_on_pdf && (
                     <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                )}
+                {line.cancellation?.cancelled && (
+                    <span className="badge text-bg-secondary me-1"
+                        title={fillPlaceholders(cancelTrans.badge_title, {
+                            at: line.cancellation.at, qty: formatQty(line.cancellation.qty), reason: line.cancellation.reason,
+                        })}>
+                        <i className="fas fa-ban me-1" />{cancelTrans.badge ?? 'Annulée'}
+                    </span>
                 )}
                 <span title={line.label}>{line.label}</span>
                 <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
@@ -1072,6 +1081,12 @@ function LineRow({
                                     <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
                                 </button>
                             )}
+                            {!isReadOnly && onCancel && line.cancellation?.can_cancel && (
+                                <button className="dropdown-item text-danger"
+                                    onClick={() => { onCancel(line); setMenuOpen(false); }}>
+                                    <i className="fas fa-ban fa-fw me-2" />{cancelTrans.action ?? 'Annuler la ligne'}
+                                </button>
+                            )}
                             {!isReadOnly && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
@@ -1109,6 +1124,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     const tagTrans    = trans.equipment_tags ?? {};
     const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
     const dossierTrans = trans.dossier ?? null; // dossier de fin de fabrication
+    const cancelTrans  = trans.cancel ?? {};     // annulation du reste non livré
     const [dossierMenuOpen, setDossierMenuOpen] = useState(false);
     const [lines, setLines]             = useState([]);
     const [orderStatu, setOrderStatu]   = useState(Number(initialStatu));
@@ -1240,7 +1256,32 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             setSelected((s) => { s.delete(id); return new Set(s); });
             showFlash('success', 'Ligne supprimée');
         } else {
-            showFlash('danger', 'Erreur lors de la suppression');
+            // Ligne livrée ou facturée : refusée, le serveur oriente vers « Annuler la ligne ».
+            const data = await res.json().catch(() => ({}));
+            showFlash('danger', data.message ?? 'Erreur lors de la suppression');
+        }
+    };
+
+    // Annule le reste non livré (OrderLineCancellation) : motif demandé, ligne remplacée.
+    const handleCancel = async (line) => {
+        const reason = await askCancelReason({
+            ...cancelTrans,
+            message: fillPlaceholders(cancelTrans.message, {
+                qty: formatQty(line.delivered_remaining_qty),
+                delivered: formatQty(line.delivered_qty),
+            }),
+        });
+        if (!reason) return;
+        const res  = await apiFetch(endpoints.cancel.replace('__ID__', line.id), {
+            method: 'POST',
+            body: JSON.stringify({ reason }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.line) {
+            setLines((prev) => prev.map((l) => (l.id === data.line.id ? data.line : l)));
+            showFlash('success', cancelTrans.done ?? 'Ligne annulée');
+        } else {
+            showFlash('danger', data.message ?? 'Erreur');
         }
     };
 
@@ -1732,6 +1773,8 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 isReadOnly={isReadOnly}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
+                                onCancel={endpoints.cancel ? handleCancel : null}
+                                cancelTrans={cancelTrans}
                                 onDuplicate={handleDuplicate}
                                 onBreakDown={handleBreakDown}
                                 onOpenTaskModal={setTaskModalLine}

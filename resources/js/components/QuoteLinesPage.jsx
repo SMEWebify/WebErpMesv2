@@ -12,6 +12,9 @@ import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '.
 import { marginLevel, formatMarginRate, readMarginColumnVisible, writeMarginColumnVisible } from '../lib/quoteMargin.js';
 import RequiredOperationsBanner from './affairs/RequiredOperationsBanner.jsx';
 import GuideHelp from './GuideHelp';
+import RewriteButton from './ai/RewriteButton.jsx';
+import QuoteDictationModal from './quotes/QuoteDictationModal.jsx';
+import DpgfImportModal from './quotes/DpgfImportModal.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -232,7 +235,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
 // LineDrawer
 // ---------------------------------------------------------------------------
 
-function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, quoteStatu, tagTrans = {} }) {
+function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endpoints, onSaved, quoteStatu, tagTrans = {}, aiTrans = {} }) {
     const [form, setForm]                   = useState(EMPTY_FORM);
     const [priceList, setPriceList]         = useState([]);
     const [saving, setSaving]               = useState(false);
@@ -518,6 +521,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                     onChange={(e) => set('label', e.target.value)} disabled={isReadOnly} />
                             </div>
                             {errors.label && <div className="invalid-feedback d-block">{errors.label[0]}</div>}
+                            {!isReadOnly && (
+                                <RewriteButton endpoint={endpoints.rewrite} value={form.label} maxLength={255}
+                                    onAccept={(text) => set('label', text)} trans={aiTrans} />
+                            )}
                         </div>
 
                         {/* Repères d'équipement */}
@@ -791,7 +798,7 @@ function LineRow({
     info, onToggleHidden, onInsert,
     showMargin = false, marginThreshold = 0, marginTrans = {}, currency,
     // drag props
-    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, tagTrans = {},
+    canDrag, onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, tagTrans = {}, dictationTrans = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
@@ -895,6 +902,11 @@ function LineRow({
                     <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
                 )}
                 <span title={line.label}>{line.label}</span>
+                {line.ai_proposed && (
+                    <span className="badge text-bg-light border ms-1" title={dictationTrans.badge_title}>
+                        <i className="fas fa-robot me-1" />{dictationTrans.badge ?? 'IA'}
+                    </span>
+                )}
                 {info?.inPackage && (
                     <span className="badge text-bg-light border ms-1" title="Section au forfait : la ligne n'est pas détaillée sur le PDF">forfait</span>
                 )}
@@ -1222,7 +1234,10 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
 
 export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints, trans = {} }) {
     const tagTrans = trans.equipment_tags ?? {};
+    const dictationTrans = trans.quote_dictation ?? {};
+    const aiTrans = trans.ai_text ?? {};
     const marginTrans = trans.quote_margin ?? {};
+    const dpgfTrans = trans.dpgf ?? {};
     const [showMargin, setShowMargin]           = useState(() => readMarginColumnVisible());
     const [marginThreshold, setMarginThreshold] = useState(0);
     const [lines, setLines]             = useState([]);
@@ -1237,6 +1252,8 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const [flash, setFlash]               = useState(null);
     const [taskModalLine, setTaskModalLine] = useState(null);
     const [importOpen, setImportOpen]       = useState(false);
+    const [dictationOpen, setDictationOpen] = useState(false);
+    const [dpgfOpen, setDpgfOpen]           = useState(false);
     const [addMenuOpen, setAddMenuOpen]     = useState(false);
     const [autoEditId, setAutoEditId]       = useState(null);   // ligne de présentation tout juste créée
     const [convertOpen, setConvertOpen]     = useState(false);
@@ -1534,6 +1551,26 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''}`);
     };
 
+    const handleDictatedLines = (newLines) => {
+        setDictationOpen(false);
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', (dictationTrans.created ?? ':count').replace(':count', newLines.length));
+    };
+
+    const handleDpgfLines = (newLines) => {
+        setDpgfOpen(false);
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', (dpgfTrans.created ?? ':count').replace(':count', newLines.length));
+    };
+
     const handleCadImported = (newLines) => {
         setLines((prev) => {
             const updated = [...prev, ...newLines];
@@ -1658,6 +1695,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                         <i className="fas fa-file-import me-1" />Importer d'un autre devis
                     </button>
                 )}
+                {quoteStatu === 1 && endpoints.dictationPropose && (
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => setDictationOpen(true)}>
+                        <i className="fas fa-microphone me-1" />{dictationTrans.button ?? 'Dicter'}
+                    </button>
+                )}
+                {quoteStatu === 1 && endpoints.dpgfPreview && (
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => setDpgfOpen(true)}>
+                        <i className="fas fa-file-excel me-1" />{dpgfTrans.button ?? 'Importer un DPGF'}
+                    </button>
+                )}
                 {quoteStatu === 1 && (
                     <>
                     <div className="btn-group btn-group-sm position-relative">
@@ -1765,6 +1812,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 canDrag={canDrag}
                                 quoteStatu={quoteStatu}
                                 tagTrans={tagTrans}
+                                dictationTrans={dictationTrans}
                                 showMargin={showMargin}
                                 marginThreshold={marginThreshold}
                                 marginTrans={marginTrans}
@@ -1846,7 +1894,28 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 onSaved={handleSaved}
                 quoteStatu={quoteStatu}
                 tagTrans={tagTrans}
+                aiTrans={aiTrans}
             />
+
+            {dictationOpen && (
+                <QuoteDictationModal
+                    endpoints={endpoints}
+                    units={selectData.units ?? []}
+                    trans={dictationTrans}
+                    onCreated={handleDictatedLines}
+                    onClose={() => setDictationOpen(false)}
+                />
+            )}
+
+            {dpgfOpen && (
+                <DpgfImportModal
+                    endpoints={endpoints}
+                    units={selectData.units ?? []}
+                    trans={dpgfTrans}
+                    onCreated={handleDpgfLines}
+                    onClose={() => setDpgfOpen(false)}
+                />
+            )}
 
             {importOpen && (
                 <ImportLinesModal

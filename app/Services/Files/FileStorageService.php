@@ -5,6 +5,7 @@ namespace App\Services\Files;
 use App\Models\File;
 use App\Models\Products\Products;
 use App\Models\UserExpenseReport;
+use App\Services\Integrations\SharePoint\SharePointMirror;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -110,6 +111,9 @@ class FileStorageService
         ]);
 
         $this->refreshLegacyColumns($entity);
+
+        // Copie dans SharePoint si la liaison est active (sans effet sinon, jamais bloquant).
+        app(SharePointMirror::class)->queue($file, $entity->getMorphClass(), (int) $entity->getKey());
     }
 
     /**

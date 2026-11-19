@@ -209,7 +209,7 @@ class DocumentPdfService
             $document instanceof Orders              => ['print/pdf-sales',              new OrderCalculatorService($document),             __('general_content.order_trans_key')],
             $document instanceof OrderConfirmations  => ['print/pdf-sales',              new OrderConfirmationCalculatorService($document), __('general_content.order_confirm_trans_key') . ' ' . $document->revision],
             $document instanceof Deliverys           => ['print/pdf-delivery',           null,                                              __('general_content.delivery_notes_trans_key')],
-            $document instanceof Invoices            => ['print/pdf-invoice',            new InvoiceCalculatorService($document),           $document->invoice_type === 3 ? 'FACTURE PROFORMA' : __('general_content.invoice_trans_key')],
+            $document instanceof Invoices            => ['print/pdf-invoice',            new InvoiceCalculatorService($document),           match ((int) $document->invoice_type) { 3 => 'FACTURE PROFORMA', 4 => __('down_payments.document_title'), default => __('general_content.invoice_trans_key') }],
             $document instanceof CreditNotes         => ['print/pdf-credit-note',        new CreditNoteCalculatorService($document),        __('general_content.credit_note_trans_key')],
             $document instanceof PurchasesQuotation  => ['print/pdf-purchases-quotation', null,                                             __('general_content.purchase_request_trans_key')],
             $document instanceof Purchases           => ['print/pdf-purchases',          new PurchaseCalculatorService($document),          __('general_content.purchase_order_trans_key')],

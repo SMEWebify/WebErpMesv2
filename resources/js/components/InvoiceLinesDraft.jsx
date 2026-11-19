@@ -162,6 +162,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
         const value = parseFloat(rawValue);
         if (isNaN(value)) return;
 
+        const previous = lines.find(l => l.id === lineId)?.[field];
         setLines(prev => prev.map(l => l.id === lineId ? { ...l, [field]: value } : l));
         setSaving(prev => ({ ...prev, [lineId]: true }));
         setError(null);
@@ -170,6 +171,8 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
         try {
             await apiFetch(url, 'PATCH', { [field]: value });
         } catch (e) {
+            // Valeur refusée (ex. déduction d'acompte au-delà de la part payée) : on revient à l'ancienne.
+            setLines(prev => prev.map(l => l.id === lineId ? { ...l, [field]: previous } : l));
             setError(firstError(e, 'Erreur lors de la sauvegarde.'));
         } finally {
             setSaving(prev => ({ ...prev, [lineId]: false }));
@@ -266,7 +269,11 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                         ? <a href={line.order_url} className="btn btn-sm btn-outline-secondary">
                                             <i className="fas fa-external-link-alt me-1"></i>{line.order_code}
                                           </a>
-                                        : <span className="badge text-bg-light border">Ligne libre</span>}
+                                        : line.is_down_payment_deduction
+                                            ? <a href={line.down_payment_url} className="badge text-bg-info text-decoration-none">
+                                                <i className="fas fa-hand-holding-usd me-1"></i>{line.down_payment_code}
+                                              </a>
+                                            : <span className="badge text-bg-light border">Ligne libre</span>}
                                 </td>
                                 <td>
                                     {line.delivery_url
@@ -281,13 +288,16 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                 {isDraft ? (
                                     <>
                                         <td>
-                                            <input
-                                                type="number" min="0" step="0.001"
-                                                className="form-control form-control-sm text-end"
-                                                style={{ width: '80px' }}
-                                                defaultValue={line.qty}
-                                                onBlur={e => handleLineChange(line.id, 'qty', e.target.value)}
-                                            />
+                                            {line.is_down_payment_deduction
+                                                // Déduction d'acompte : quantité −1 figée, seul le montant se règle.
+                                                ? <div className="text-end pe-2">{line.qty}</div>
+                                                : <input
+                                                    type="number" min="0" step="0.001"
+                                                    className="form-control form-control-sm text-end"
+                                                    style={{ width: '80px' }}
+                                                    defaultValue={line.qty}
+                                                    onBlur={e => handleLineChange(line.id, 'qty', e.target.value)}
+                                                  />}
                                         </td>
                                         <td className="small">{line.unit_label}</td>
                                         <td>
@@ -295,18 +305,21 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                                 type="number" min="0" step="0.01"
                                                 className="form-control form-control-sm text-end"
                                                 style={{ width: '100px' }}
+                                                key={`price-${line.id}-${line.unit_price}`}
                                                 defaultValue={line.unit_price}
                                                 onBlur={e => handleLineChange(line.id, 'unit_price', e.target.value)}
                                             />
                                         </td>
                                         <td>
-                                            <input
-                                                type="number" min="0" max="100" step="0.01"
-                                                className="form-control form-control-sm text-end"
-                                                style={{ width: '70px' }}
-                                                defaultValue={line.discount}
-                                                onBlur={e => handleLineChange(line.id, 'discount', e.target.value)}
-                                            />
+                                            {line.is_down_payment_deduction
+                                                ? <div className="text-end pe-2">{line.discount} %</div>
+                                                : <input
+                                                    type="number" min="0" max="100" step="0.01"
+                                                    className="form-control form-control-sm text-end"
+                                                    style={{ width: '70px' }}
+                                                    defaultValue={line.discount}
+                                                    onBlur={e => handleLineChange(line.id, 'discount', e.target.value)}
+                                                  />}
                                         </td>
                                         <td className="text-end small">{line.vat_rate} %</td>
                                         <td className="text-end">

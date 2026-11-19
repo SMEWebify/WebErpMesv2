@@ -36,10 +36,18 @@ class OrdersFactory extends Factory
             ->inRandomOrder()
             ->value('id')
             ?? Companies::factory()->create(['statu_customer' => 2])->id;
-        $contactId = CompaniesContacts::query()->inRandomOrder()->value('id')
-            ?? CompaniesContacts::factory()->create(['companies_id' => $companyId])->id;
-        $addressId = CompaniesAddresses::query()->inRandomOrder()->value('id')
-            ?? CompaniesAddresses::factory()->create(['companies_id' => $companyId])->id;
+        // Contact et adresse pris dans la société de la commande (y compris quand
+        // companies_id est imposé par l'appelant), créés au besoin.
+        $contactId = fn (array $attributes) => CompaniesContacts::query()
+            ->where('companies_id', $attributes['companies_id'])
+            ->inRandomOrder()
+            ->value('id')
+            ?? CompaniesContacts::factory()->create(['companies_id' => $attributes['companies_id']])->id;
+        $addressId = fn (array $attributes) => CompaniesAddresses::query()
+            ->where('companies_id', $attributes['companies_id'])
+            ->inRandomOrder()
+            ->value('id')
+            ?? CompaniesAddresses::factory()->create(['companies_id' => $attributes['companies_id']])->id;
         $userId = User::query()->inRandomOrder()->value('id') ?? User::factory()->create()->id;
         $paymentConditionId = AccountingPaymentConditions::query()->inRandomOrder()->value('id')
             ?? AccountingPaymentConditions::factory()->create()->id;

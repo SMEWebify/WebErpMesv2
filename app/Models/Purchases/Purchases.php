@@ -39,6 +39,9 @@ class Purchases extends Model
                             'opportunities_id',
                             'quotes_id',
                             'orders_id',
+                            // Offre fournisseur dont sort la commande (PurchaseOfferRevisions)
+                            'supplier_offer_reference',
+                            'supplier_offer_revision',
                         ];
 
     protected $casts = [
@@ -187,6 +190,29 @@ class Purchases extends Model
         $currency = $factory->curency ?? 'EUR';
         return Number::currency($this->getTotalPriceAttribute(), $currency, config('app.locale'));
 
+    }
+
+    /**
+     * Ligne « Offre fournisseur : réf. · indice » du PDF, précédée de son saut de
+     * ligne ; chaîne vide sans offre, pour que la vue s'imprime à l'identique
+     * (PurchasePdfLegacyRenderingTest). Lue par un écho, jamais par un @if : un
+     * @endif en fin de ligne mangerait le saut de ligne du <pre>.
+     */
+    public function printSupplierOfferCaption(): string
+    {
+        $reference = trim((string) $this->supplier_offer_reference);
+        $revision  = trim((string) $this->supplier_offer_revision);
+
+        if ($reference === '' && $revision === '') {
+            return '';
+        }
+
+        $parts = array_filter([
+            $reference,
+            $revision !== '' ? __('purchase_offers.print_revision', ['revision' => $revision]) : null,
+        ]);
+
+        return "\n" . __('purchase_offers.print_caption') . ' : ' . implode(' · ', $parts);
     }
 
     public function GetshortCreatedAttribute()

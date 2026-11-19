@@ -27,6 +27,8 @@ use App\Services\InvoiceKPIService;
 use App\Services\SelectDataService;
 use App\Services\DocumentCodeGenerator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Services\Companies\CompanyRegistryLookup;
 use App\Services\NotificationService;
 use Illuminate\Support\Facades\Session;
 use App\Notifications\QuoteNotification;
@@ -116,6 +118,8 @@ class CompaniesController extends Controller
             'list'       => route('companies.json.list'),
             'store'      => route('companies.json.store'),
             'selectData' => route('companies.json.select-data'),
+            'registry'   => app(CompanyRegistryLookup::class)->isEnabled()
+                ? route('companies.json.registry-search') : null,
         ];
 
         $reactTrans = [
@@ -153,6 +157,7 @@ class CompaniesController extends Controller
             'view_all'         => __('general_content.view_all_trans_key'),
             'code'             => __('general_content.id_trans_key'),
             'credit'           => __('receivables.credit.outstanding'),
+            'registry'         => __('company_registry.ui'),
             'currency'         => app('Factory')->curency ?? 'EUR',
             'locale'           => str_replace('_', '-', config('app.locale')),
             'jan' => 'Jan', 'feb' => 'Fév', 'mar' => 'Mar',
@@ -234,23 +239,81 @@ class CompaniesController extends Controller
             'last_name'   => 'nullable|string|max:255|required_if:client_type,2',
             'user_id'     => 'required|exists:users,id',
             'comment'     => 'nullable|string',
+            // Repris du répertoire Sirene (CompanyRegistryLookup), relus par l'utilisateur.
+            'siren'               => 'nullable|string|max:20',
+            'naf_code'            => 'nullable|string|max:10',
+            'intra_community_vat' => 'nullable|string|max:20',
+            'address'             => 'nullable|array',
+            'address.adress'      => 'required_with:address|string|max:255',
+            'address.zipcode'     => 'required_with:address|string|max:20',
+            'address.city'        => 'required_with:address|string|max:255',
+            'address.country'     => 'nullable|string|max:255',
         ]);
 
-        $company = Companies::create(array_merge($validated, ['uuid' => Str::uuid()]));
+        $address = $validated['address'] ?? null;
+        unset($validated['address']);
+
+        $company = DB::transaction(function () use ($validated, $address) {
+            $this->documentCodeGenerator->consumeIfProposed('company', $validated['code']);
+            $company = Companies::create(array_merge($validated, ['uuid' => Str::uuid()]));
+
+            if ($address) {
+                CompaniesAddresses::create([
+                    'companies_id' => $company->id,
+                    'ordre'        => 1,
+                    'label'        => __('company_registry.address_label'),
+                    'adress'       => $address['adress'],
+                    'zipcode'      => $address['zipcode'],
+                    'city'         => $address['city'],
+                    'country'      => ($address['country'] ?? null) ?: 'France',
+                    'default'      => 1,
+                ]);
+            }
+
+            return $company;
+        });
 
         $this->notificationService->sendNotification(CompanieNotification::class, $company, 'companies_notification');
 
         return response()->json(['redirect' => route('companies.show', ['id' => $company->id])], 201);
     }
 
+    /**
+     * Cherche une entreprise dans le répertoire Sirene (SIRET, SIREN ou nom)
+     * pour préremplir la création ou la fiche. N'écrit rien.
+     */
+    public function registrySearch(Request $request, CompanyRegistryLookup $registry)
+    {
+        if (! $registry->isEnabled()) {
+            return response()->json(['message' => __('company_registry.disabled')], 404);
+        }
+
+        $query = CompanyRegistryLookup::normalizeQuery((string) $request->get('q'));
+
+        if (mb_strlen($query) < 3) {
+            return response()->json(['message' => __('company_registry.too_short')], 422);
+        }
+
+        try {
+            return response()->json(['results' => $registry->search($query)]);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'message' => $e->getMessage() === 'rate_limited'
+                    ? __('company_registry.rate_limited')
+                    : __('company_registry.unavailable'),
+            ], 503);
+        }
+    }
+
     public function selectDataJson()
     {
-        $lastCompany = Companies::orderBy('id', 'desc')->first();
-        $nextCode    = $this->documentCodeGenerator->generateDocumentCode('company', $lastCompany?->id ?? 0);
+        // Seulement proposé : consommé à l'enregistrement (storeJson), pas à l'ouverture.
+        $nextCode    = $this->documentCodeGenerator->peekNextCode('company');
 
         return response()->json([
             'next_code' => $nextCode,
             'users'     => User::select('id', 'name')->get(),
+            'current_user_id' => auth()->id(),
         ]);
     }
 

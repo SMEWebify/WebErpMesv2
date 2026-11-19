@@ -298,10 +298,14 @@ if (!$orderHasInvoicedLines) {
                     </td>
                   </tr>
                 </table>
-              @endif  
+              @endif
             </x-adminlte-card>
 
-            
+            @if($Order->type == 1)
+              @include('workflow.partials.order-down-payments', ['Order' => $Order])
+            @endif
+
+
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="secondary" theme-mode="outline" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
@@ -429,6 +433,7 @@ if (!$orderHasInvoicedLines) {
           'store'           => route('orders.lines.json.store',            ['orderId' => $Order->id]),
           'update'          => route('orders.lines.json.update',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'destroy'         => route('orders.lines.json.destroy',          ['orderId' => $Order->id, 'id' => '__ID__']),
+          'cancel'          => route('orders.lines.json.cancel',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'duplicate'       => route('orders.lines.json.duplicate',        ['orderId' => $Order->id, 'id' => '__ID__']),
           'breakdown'       => route('orders.lines.json.breakdown',        ['orderId' => $Order->id, 'id' => '__ID__']),
           'move'            => route('orders.lines.json.move',             ['orderId' => $Order->id, 'id' => '__ID__']),
@@ -475,7 +480,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price')]) }}"
+              data-trans="{{ json_encode(['delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...
@@ -664,7 +669,7 @@ if (!$orderHasInvoicedLines) {
                 <p class="business-balance-info__label">{{ __('general_content.current_margin_trans_key') }}</p>
                 <p class="business-balance-info__value">
                   {{ $currentMarginFormatted }}
-                  @if($businessBalancetotals['realized_cost'] > 0) <span class="business-balance-info__trend">({{ $currentMarginPercentageFormatted }})</span> @endif
+                  @if($businessBalancetotals['realized_cost'] + $businessBalancetotals['realized_purchase_cost'] + $businessBalancetotals['realized_stock_cost'] > 0) <span class="business-balance-info__trend">({{ $currentMarginPercentageFormatted }})</span> @endif
                 </p>
               </div>
             </div>

@@ -11,7 +11,8 @@ use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 /**
  * Lecture des fichiers d'import (CSV, texte, Excel) en lignes de cellules.
  *
- * - .xlsx / .xls : première feuille, valeurs calculées, dates rendues en Y-m-d ;
+ * - .xlsx / .xls : première feuille (ou celle demandée), valeurs calculées,
+ *   dates rendues en Y-m-d ;
  * - .csv / .txt : séparateur détecté sur la première ligne (; puis tabulation
  *   puis ,), lignes de toute longueur, BOM retiré, UTF-16 converti ;
  * - toute cellule ressort en UTF-8 : un texte déjà UTF-8 est gardé tel quel,
@@ -27,15 +28,30 @@ class SpreadsheetReader
     /**
      * @return array<int, array<int, string|null>>
      */
-    public function read(string $path, ?string $extension = null): array
+    public function read(string $path, ?string $extension = null, int $sheet = 0): array
     {
         $extension = strtolower($extension ?? pathinfo($path, PATHINFO_EXTENSION));
 
         $rows = in_array($extension, ['xlsx', 'xls'], true)
-            ? $this->readSpreadsheet($path, $extension)
+            ? $this->readSpreadsheet($path, $extension, $sheet)
             : $this->readCsv($path);
 
         return array_map(fn (array $row) => $this->isBlank($row) ? [] : array_map([self::class, 'normalizeEncoding'], $row), $rows);
+    }
+
+    /**
+     * Noms des feuilles d'un classeur, dans l'ordre (une seule, sans nom, pour un CSV).
+     *
+     * @return list<string>
+     */
+    public function sheetNames(string $path, ?string $extension = null): array
+    {
+        $extension = strtolower($extension ?? pathinfo($path, PATHINFO_EXTENSION));
+        if (! in_array($extension, ['xlsx', 'xls'], true)) {
+            return [''];
+        }
+
+        return array_values(IOFactory::createReader($extension === 'xls' ? 'Xls' : 'Xlsx')->listWorksheetNames($path));
     }
 
     public static function normalizeEncoding(?string $value): ?string
@@ -91,10 +107,10 @@ class SpreadsheetReader
         return $rows;
     }
 
-    private function readSpreadsheet(string $path, string $extension): array
+    private function readSpreadsheet(string $path, string $extension, int $index = 0): array
     {
         $reader = IOFactory::createReader($extension === 'xls' ? 'Xls' : 'Xlsx');
-        $sheet  = $reader->load($path)->getSheet(0);
+        $sheet  = $reader->load($path)->getSheet($index);
 
         $lastRow    = $sheet->getHighestDataRow();
         $lastColumn = Coordinate::columnIndexFromString($sheet->getHighestDataColumn());

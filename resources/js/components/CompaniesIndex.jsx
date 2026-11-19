@@ -3,6 +3,8 @@ import { DataTable, Pagination, MobileFilters, useIndexTab } from './table';
 import { apiFetch } from '../lib/http';
 import CreditBadge from './receivables/CreditBadge';
 import GuideHelp from './GuideHelp';
+import CompanyRegistrySearch from './company/CompanyRegistrySearch';
+import { applyRegistryResult, formatAddress, registryAddress } from '../lib/companyRegistry';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -339,7 +341,12 @@ function CompaniesTable({ companies, loading, sortField, sortAsc, onSort, trans 
 // ---------------------------------------------------------------------------
 
 function CreateModal({ show, onClose, endpoints, trans }) {
-    const emptyForm = { code: '', label: '', client_type: 1, civility: '', last_name: '', user_id: '', comment: '' };
+    const emptyForm = {
+        code: '', label: '', client_type: 1, civility: '', last_name: '', user_id: '', comment: '',
+        siren: '', naf_code: '', intra_community_vat: '', address: null,
+    };
+    const rt = trans.registry ?? {};
+    const [registryPick, setRegistryPick] = useState(null);
     const [form,       setForm]       = useState(emptyForm);
     const [errors,     setErrors]     = useState({});
     const [saving,     setSaving]     = useState(false);
@@ -349,10 +356,14 @@ function CreateModal({ show, onClose, endpoints, trans }) {
         if (show && !selectData) {
             apiFetch(endpoints.selectData).then(data => {
                 setSelectData(data);
-                setForm(prev => ({ ...prev, code: data.next_code ?? '' }));
+                setForm(prev => ({
+                    ...prev,
+                    code:    data.next_code ?? '',
+                    user_id: prev.user_id || (data.current_user_id ? String(data.current_user_id) : ''),
+                }));
             });
         }
-        if (show) { setErrors({}); }
+        if (show) { setErrors({}); setRegistryPick(null); }
     }, [show]);
 
     const set    = (f) => (e) => setForm(prev => ({ ...prev, [f]: e.target.value }));
@@ -366,9 +377,13 @@ function CreateModal({ show, onClose, endpoints, trans }) {
         setSaving(true);
         setErrors({});
         try {
+            // Un particulier n'a ni SIREN ni adresse du répertoire.
+            const payload = isIndividual
+                ? { ...form, siren: '', naf_code: '', intra_community_vat: '', address: null }
+                : form;
             const result = await apiFetch(endpoints.store, {
                 method: 'POST',
-                body:   JSON.stringify(form),
+                body:   JSON.stringify(payload),
             });
             if (result.redirect) {
                 window.location.href = result.redirect;
@@ -397,6 +412,24 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                             )}
                             {selectData && (
                                 <>
+                                    {endpoints.registry && !isIndividual && (
+                                        <div className="card card-body mb-3 bg-body-tertiary">
+                                            <CompanyRegistrySearch
+                                                url={endpoints.registry}
+                                                trans={rt}
+                                                onSelect={r => {
+                                                    setForm(prev => ({ ...applyRegistryResult(prev, r), address: registryAddress(r) }));
+                                                    setRegistryPick(r);
+                                                }}
+                                            />
+                                            {registryPick && (
+                                                <div className={`alert ${registryPick.active ? 'alert-info' : 'alert-warning'} py-2 mb-0 small`}>
+                                                    {!registryPick.active && <div className="fw-bold">{rt.closed_warning}</div>}
+                                                    {rt.filled}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                     <div className="card card-body mb-3">
                                         <div className="row gx-2">
                                             <div className="mb-3 col-md-4">
@@ -459,6 +492,42 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 </>
                                             )}
                                         </div>
+                                        {!isIndividual && (
+                                            <div className="row gx-2">
+                                                <div className="mb-3 col-md-4">
+                                                    <label>{rt.siren}</label>
+                                                    <input className="form-control" value={form.siren} onChange={set('siren')} />
+                                                    {fe('siren')}
+                                                </div>
+                                                <div className="mb-3 col-md-3">
+                                                    <label>{rt.naf_code}</label>
+                                                    <input className="form-control" value={form.naf_code} onChange={set('naf_code')} />
+                                                    {fe('naf_code')}
+                                                </div>
+                                                <div className="mb-3 col-md-5">
+                                                    <label>{rt.vat}</label>
+                                                    <input className="form-control" value={form.intra_community_vat} onChange={set('intra_community_vat')} />
+                                                    {registryPick && form.intra_community_vat && (
+                                                        <small className="form-text text-body-secondary">{rt.vat_hint}</small>
+                                                    )}
+                                                    {fe('intra_community_vat')}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {!isIndividual && form.address && (
+                                            <div className="d-flex align-items-center justify-content-between gap-2 border rounded p-2">
+                                                <div>
+                                                    <div className="small text-body-secondary">{rt.address}</div>
+                                                    <div>{formatAddress(form.address)}{form.address.country && form.address.country !== 'France' ? ` (${form.address.country})` : ''}</div>
+                                                    {fe('address.adress')}{fe('address.zipcode')}{fe('address.city')}
+                                                </div>
+                                                <button type="button" className="btn btn-sm btn-outline-secondary"
+                                                        title={rt.remove_address}
+                                                        onClick={() => setVal('address', null)}>
+                                                    <i className="fas fa-xmark" />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="card card-body mb-3">
                                         <label>{trans.comment}</label>

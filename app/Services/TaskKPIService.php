@@ -107,23 +107,31 @@ class TaskKPIService
      */
     public function getResourceHours()
     {
-        $tasks = Task::with('resources')->get();
-        $resourceHours = [];
+        // Seules les tâches affectées à une ressource comptent ; quantités de ligne
+        // préchargées pour que TotalTime() ne relise pas la ligne tâche par tâche.
+        return Cache::remember('task_resource_hours', now()->addMinutes(10), function () {
+            $tasks = Task::query()
+                ->select(['id', 'order_lines_id', 'quote_lines_id', 'qty', 'planned_qty', 'unit_time', 'seting_time'])
+                ->whereHas('resources')
+                ->with(['resources:methods_ressources.id,methods_ressources.label', 'OrderLines:id,qty', 'QuoteLines:id,qty'])
+                ->get();
+            $resourceHours = [];
 
-        foreach ($tasks as $task) {
-            foreach ($task->resources as $resource) {
-                $resourceName = $resource->label;
-                $totalTime = $task->TotalTime();
+            foreach ($tasks as $task) {
+                foreach ($task->resources as $resource) {
+                    $resourceName = $resource->label;
+                    $totalTime = $task->TotalTime();
 
-                if (array_key_exists($resourceName, $resourceHours)) {
-                    $resourceHours[$resourceName] += $totalTime;
-                } else {
-                    $resourceHours[$resourceName] = $totalTime;
+                    if (array_key_exists($resourceName, $resourceHours)) {
+                        $resourceHours[$resourceName] += $totalTime;
+                    } else {
+                        $resourceHours[$resourceName] = $totalTime;
+                    }
                 }
             }
-        }
 
-        return $resourceHours;
+            return $resourceHours;
+        });
     }
 
     /**

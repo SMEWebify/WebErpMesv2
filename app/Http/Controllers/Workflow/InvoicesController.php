@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Invoicing\DownPayments;
 use Carbon\Carbon;
 use Illuminate\Support\Number;
 use App\Services\InvoiceService;
@@ -37,6 +38,7 @@ use App\Services\InvoiceCalculatorService;
 use App\Services\AccountingPeriodService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class InvoicesController extends Controller
 {
@@ -154,7 +156,7 @@ class InvoicesController extends Controller
         $query = Invoices::withCount('invoiceLines')
             ->selectRaw("invoices.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
-            ->where('invoice_type', 1)
+            ->whereIn('invoice_type', [1, DownPayments::TYPE])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
             ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
@@ -187,6 +189,7 @@ class InvoicesController extends Controller
                 'code'                => $inv->code,
                 'label'               => $inv->label,
                 'statu'               => $inv->statu,
+                'invoice_type'        => (int) $inv->invoice_type,
                 'due_date'            => $inv->due_date,
                 'created_at'          => $inv->created_at?->format('d/m/Y'),
                 'companie'            => $inv->companie ? ['id' => $inv->companie->id, 'label' => $inv->companie->label] : null,
@@ -357,39 +360,45 @@ class InvoicesController extends Controller
             return $refusal;
         }
 
-        // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
-        $this->documentCodeGenerator->consumeIfProposed('invoice', $validated['code']);
+        $invoice = DB::transaction(function () use ($validated) {
+            // Lignes verrouillées et relues sous le verrou : un double envoi ou un second
+            // utilisateur ne facture pas deux fois la même ligne de BL.
+            $deliveryLines = $this->lockInvoiceableDeliveryLines($validated['lines']);
+            if ($deliveryLines->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'lines' => __('general_content.no_line_to_invoice_trans_key'),
+                ]);
+            }
 
-        $invoice = $this->invoiceService->createInvoice(
-            $validated['code'],
-            $validated['label'],
-            $validated['companies_id'],
-            $validated['companies_addresses_id'],
-            $validated['companies_contacts_id'],
-            $validated['user_id'],
-            null,
-            $this->paymentConditionOf(DeliveryLines::whereIn('id', $validated['lines'])->get()),
-        );
+            // Code proposé par l'écran : consommé, sinon le suivant proposé serait le même.
+            // Dans la transaction : un échec plus loin rend le numéro.
+            $this->documentCodeGenerator->consumeIfProposed('invoice', $validated['code']);
 
-        $ordre = 10;
-        foreach ($validated['lines'] as $deliveryLineId) {
-            $deliveryLine = DeliveryLines::find($deliveryLineId);
-            if (!$deliveryLine) continue;
-
-            $this->invoiceLineService->createInvoiceLine(
-                $invoice,
-                $deliveryLine->order_line_id,
-                $deliveryLine->id,
-                $ordre,
-                $deliveryLine->qty,
-                $deliveryLine->OrderLine->accounting_vats_id,
+            $invoice = $this->invoiceService->createInvoice(
+                $validated['code'],
+                $validated['label'],
+                $validated['companies_id'],
+                $validated['companies_addresses_id'],
+                $validated['companies_contacts_id'],
+                $validated['user_id'],
+                null,
+                $this->paymentConditionOf($deliveryLines),
             );
-            $this->updateDeliveryLine($deliveryLine);
-            $orderLine = OrderLines::find($deliveryLine->order_line_id);
-            $this->updateOrderLine($orderLine, $deliveryLine);
 
-            $ordre += 10;
-        }
+            $ordre = 10;
+            foreach ($validated['lines'] as $deliveryLineId) {
+                $deliveryLine = $deliveryLines->get($deliveryLineId);
+                if (!$deliveryLine) continue;
+
+                $this->invoiceDeliveryLine($invoice, $deliveryLine, $ordre);
+                $ordre += 10;
+            }
+
+            // Acomptes payés des commandes facturées : déduits au prorata.
+            app(DownPayments::class)->applyToInvoice($invoice);
+
+            return $invoice;
+        });
 
         return response()->json([
             'redirect' => route('invoices.show', ['id' => $invoice->id]),
@@ -435,36 +444,44 @@ class InvoicesController extends Controller
         $deliveryLines
             ->groupBy(fn($line) => $line->OrderLine?->orders_id)
             ->each(function ($lines) use ($validated, &$invoiceCount) {
-                $lastInvoice = Invoices::latest()->first();
-                $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
-                $code        = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
+                // Une transaction par facture : une commande en échec ne défait pas les autres.
+                $created = DB::transaction(function () use ($lines, $validated) {
+                    $locked = $this->lockInvoiceableDeliveryLines($lines->pluck('id')->all());
+                    if ($locked->isEmpty()) {
+                        return false;
+                    }
 
-                $invoice = $this->invoiceService->createInvoice(
-                    $code, $code,
-                    $validated['companies_id'],
-                    $validated['companies_addresses_id'],
-                    $validated['companies_contacts_id'],
-                    $validated['user_id'],
-                    null,
-                    $this->paymentConditionOf($lines),
-                );
+                    $lastInvoice = Invoices::latest()->first();
+                    $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
+                    $code        = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
 
-                $ordre = 10;
-                foreach ($lines as $deliveryLine) {
-                    $this->invoiceLineService->createInvoiceLine(
-                        $invoice,
-                        $deliveryLine->order_line_id,
-                        $deliveryLine->id,
-                        $ordre,
-                        $deliveryLine->qty,
-                        $deliveryLine->OrderLine->accounting_vats_id,
+                    $invoice = $this->invoiceService->createInvoice(
+                        $code, $code,
+                        $validated['companies_id'],
+                        $validated['companies_addresses_id'],
+                        $validated['companies_contacts_id'],
+                        $validated['user_id'],
+                        null,
+                        $this->paymentConditionOf($locked),
                     );
-                    $this->updateDeliveryLine($deliveryLine);
-                    $orderLine = OrderLines::find($deliveryLine->order_line_id);
-                    $this->updateOrderLine($orderLine, $deliveryLine);
-                    $ordre += 10;
+
+                    $ordre = 10;
+                    foreach ($lines as $line) {
+                        $deliveryLine = $locked->get($line->id);
+                        if (!$deliveryLine) continue;
+
+                        $this->invoiceDeliveryLine($invoice, $deliveryLine, $ordre);
+                        $ordre += 10;
+                    }
+
+                    app(DownPayments::class)->applyToInvoice($invoice);
+
+                    return true;
+                });
+
+                if ($created) {
+                    $invoiceCount++;
                 }
-                $invoiceCount++;
             });
 
         return response()->json([
@@ -503,7 +520,38 @@ class InvoicesController extends Controller
     {
         $DeliveryLine->invoice_status = 4;
         $DeliveryLine->save();
-        event(new DeliveryLineUpdated($DeliveryLine));
+        // Après validation : un écouteur en file ne doit pas relire la ligne avant le commit.
+        DB::afterCommit(fn () => event(new DeliveryLineUpdated($DeliveryLine)));
+    }
+
+    /**
+     * Lignes de BL encore facturables (1 = facturable, 3 = partiellement), verrouillées
+     * jusqu'à la fin de la transaction, indexées par id. À appeler dans une transaction.
+     */
+    private function lockInvoiceableDeliveryLines(array $ids)
+    {
+        return DeliveryLines::with('OrderLine')
+            ->whereIn('id', $ids)
+            ->whereIn('invoice_status', [1, 3])
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
+    }
+
+    /** Ligne de facture d'une ligne de BL, puis BL et ligne de commande marqués facturés. */
+    private function invoiceDeliveryLine(Invoices $invoice, DeliveryLines $deliveryLine, $ordre): void
+    {
+        $this->invoiceLineService->createInvoiceLine(
+            $invoice,
+            $deliveryLine->order_line_id,
+            $deliveryLine->id,
+            $ordre,
+            $deliveryLine->qty,
+            $deliveryLine->OrderLine->accounting_vats_id,
+        );
+        $this->updateDeliveryLine($deliveryLine);
+        $this->updateOrderLine(OrderLines::lockForUpdate()->find($deliveryLine->order_line_id), $deliveryLine);
     }
 
     /**
@@ -530,9 +578,6 @@ class InvoicesController extends Controller
      */
     public function storeFromDelevery($id)
     {
-        $LastInvoice = Invoices::latest()->first();
-        $invoiceId = $LastInvoice ? $LastInvoice->id : 0;
-        $code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
         $DeliveryData = Deliverys::find($id);
 
         $user = Auth::user();
@@ -551,31 +596,45 @@ class InvoicesController extends Controller
             return redirect()->back()->with('error', $refusal);
         }
 
-        $InvoiceCreated = $this->invoiceService->createInvoice(
-            $code,
-            $DeliveryData->label,
-            $DeliveryData->companies_id,
-            $recipient['address_id'],
-            $recipient['contact_id'],
-            $user->id,
-            $DeliveryData->customer_reference,
-            $this->paymentConditionOf($DeliveryLines)
-        );
-
-        foreach ($DeliveryLines as $DeliveryLine) {
+        // Route en GET : un double clic ou un rechargement renvoie la demande. Les lignes
+        // sont relues sous verrou et le numéro n'est pris qu'avec la facture.
+        $InvoiceCreated = DB::transaction(function () use ($DeliveryData, $DeliveryLines, $recipient, $user) {
             // 1 = Facturable, 3 = Partiellement : seules ces lignes sont facturées.
             // 2 = Non facturable, 4 = Facturé : ignorées.
-            if (in_array((int) $DeliveryLine->invoice_status, [1, 3], true)) {
-                // Create invoice line
-                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty, $DeliveryLine->OrderLine->accounting_vats_id);
-
-                // Update delivery line
-                $this->updateDeliveryLine($DeliveryLine);
-
-                // Update order line info
-                $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
-                $this->updateOrderLine($OrderLine, $DeliveryLine);
+            $locked = $this->lockInvoiceableDeliveryLines($DeliveryLines->pluck('id')->all());
+            if ($locked->isEmpty()) {
+                return null;
             }
+
+            $LastInvoice = Invoices::latest()->first();
+            $invoiceId = $LastInvoice ? $LastInvoice->id : 0;
+            $code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
+
+            $InvoiceCreated = $this->invoiceService->createInvoice(
+                $code,
+                $DeliveryData->label,
+                $DeliveryData->companies_id,
+                $recipient['address_id'],
+                $recipient['contact_id'],
+                $user->id,
+                $DeliveryData->customer_reference,
+                $this->paymentConditionOf($DeliveryLines)
+            );
+
+            foreach ($DeliveryLines as $DeliveryLine) {
+                $line = $locked->get($DeliveryLine->id);
+                if (!$line) continue;
+
+                $this->invoiceDeliveryLine($InvoiceCreated, $line, $line->ordre);
+            }
+
+            app(DownPayments::class)->applyToInvoice($InvoiceCreated);
+
+            return $InvoiceCreated;
+        });
+
+        if (!$InvoiceCreated) {
+            return redirect()->back()->with('error', __('general_content.no_line_to_invoice_trans_key'));
         }
 
         // return view on new document
@@ -698,8 +757,24 @@ class InvoicesController extends Controller
         ]);
 
         $line = InvoiceLines::where('id', $lineId)->where('invoices_id', $id)->firstOrFail();
+
+        // Déduction d'acompte : seul le montant se règle, borné par la part payée de l'acompte.
+        if ($line->is_down_payment_deduction) {
+            if (array_diff(array_keys($data), ['unit_price'])) {
+                return response()->json(['message' => __('down_payments.refused.deduction_max', [
+                    'max' => number_format(app(DownPayments::class)->available($line->downPaymentLine, $line->id), 2, ',', ' '),
+                ])], 422);
+            }
+            try {
+                app(DownPayments::class)->setDeduction($line, (float) ($data['unit_price'] ?? $line->unit_price));
+            } catch (\DomainException $e) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+            $data = [];
+        }
+
         $line->update($data);
-        if ($line->wasChanged(['qty', 'unit_price', 'discount'])) {
+        if (! $line->is_down_payment_deduction && $line->wasChanged(['qty', 'unit_price', 'discount'])) {
             app(AccountingEntryService::class)->refreshSaleEntry($line);
         }
 
@@ -844,7 +919,7 @@ class InvoicesController extends Controller
     {
         $invoice = Invoices::findOrFail($id);
 
-        abort_if($invoice->invoice_type !== 1, 422, 'Seules les factures peuvent être déposées sur la plateforme.');
+        abort_unless(in_array((int) $invoice->invoice_type, [1, DownPayments::TYPE], true), 422, 'Seules les factures peuvent être déposées sur la plateforme.');
         abort_if($invoice->statu === 1, 422, "Cette facture est encore en brouillon : émettez-la avant de la déposer.");
 
         try {

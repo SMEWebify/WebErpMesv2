@@ -194,7 +194,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                     </div>
                   </div>
                 <div class="row">
-                  <x-FormTextareaComment  comment="{{ $Quote->comment }}" />
+                  <x-FormTextareaComment  comment="{{ $Quote->comment }}" :rewrite="true" />
                 </div>
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -582,6 +582,11 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             'importSources'   => route('quotes.lines.json.import-sources',  ['quoteId' => $Quote->id]),
             'importFrom'      => route('quotes.lines.json.import-from',     ['quoteId' => $Quote->id]),
           ];
+          if (config('dpgf.enabled')) {
+            $quoteLineEndpoints['dpgfPreview'] = route('quotes.lines.json.dpgf.preview', ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['dpgfAnalyse'] = route('quotes.lines.json.dpgf.analyse', ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['dpgfStore']   = route('quotes.lines.json.dpgf.store',   ['quoteId' => $Quote->id]);
+          }
           if ($Quote->is_template) {
             // Une trame ne se convertit pas en commande.
             unset($quoteLineEndpoints['storeOrder']);
@@ -593,6 +598,16 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
           if (config('cad.line_import')) {
             $quoteLineEndpoints['importCad'] = route('quotes.lines.json.import-cad', ['quoteId' => $Quote->id]);
           }
+          // Dictée et « Réécrire sans fautes » : seulement si un fournisseur d'IA est configuré.
+          $quoteDictation = app(\App\Services\Quotes\QuoteDictation::class);
+          if ($quoteDictation->isAvailable()) {
+            $quoteLineEndpoints['dictationPropose'] = route('quotes.lines.json.dictation.propose', ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['dictationStore']   = route('quotes.lines.json.dictation.store',   ['quoteId' => $Quote->id]);
+            $quoteLineEndpoints['rewrite']          = route('ai.rewrite');
+            if (app(\App\Services\Visits\VisitTranscriptionService::class)->isAvailable()) {
+              $quoteLineEndpoints['dictationTranscribe'] = route('quotes.lines.json.dictation.transcribe', ['quoteId' => $Quote->id]);
+            }
+          }
         @endphp
         <div class="card mb-3">
           <div class="card-body">
@@ -601,7 +616,13 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               data-quote-id="{{ $Quote->id }}"
               data-quote-statu="{{ $Quote->statu }}"
               data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
-              data-trans="{{ json_encode(['equipment_tags' => __('equipment_tags'), 'quote_margin' => __('quote_margin')]) }}"
+              data-trans="{{ json_encode([
+                'equipment_tags'  => __('equipment_tags'),
+                'quote_margin'    => __('quote_margin'),
+                'quote_dictation' => __('quote_dictation') + ['provider' => $quoteDictation->provider(), 'locale' => app()->getLocale()],
+                'ai_text'         => __('ai_text'),
+                'dpgf'            => __('dpgf') + ['max_rows' => config('dpgf.max_rows')],
+              ]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

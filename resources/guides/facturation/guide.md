@@ -293,7 +293,9 @@ de sa fiche.
 ## 8. Faire un avoir {#faire-un-avoir}
 
 Un avoir annule tout ou partie d'une facture **émise** (retour, geste commercial, erreur).
-Onglet « Lignes de facture » : cochez les lignes concernées, puis **Nouvel avoir**.
+Onglet « Lignes de facture », carte **Faire un avoir** : cochez les lignes concernées, ajustez
+si besoin la **quantité** (2 pièces rebutées sur 10) ou le **prix unitaire crédité** (remise
+après coup), puis **Créer l'avoir**.
 
 ![Créer un avoir](img/24-avoir-creation.png)
 
@@ -302,11 +304,16 @@ L'avoir s'ouvre au statut **En attente**. Passez-le à **Approuvée** une fois v
 
 ![Fiche avoir](img/25-avoir-fiche.png)
 
-> ⚠️ Une ligne cochée est reprise **pour sa quantité entière**. Un avoir ne se supprime
-> pas : vérifiez la sélection avant de cliquer.
+> ⚠️ Par défaut, tout ce qui reste créditable sur la ligne est repris. On ne crédite jamais
+> plus que ce que la facture porte, avoirs précédents compris. Un avoir ne se supprime pas :
+> vérifiez la sélection avant de cliquer.
 >
-> ⚠️ Les lignes de commande concernées redeviennent « à facturer » : pensez-y si vous
-> refacturez ensuite.
+> ⚠️ Case **Remettre ces quantités dans le reste à facturer** : cochée, les pièces
+> créditées redeviennent « à facturer » (retour, pièces refaites). Décochez-la pour un geste
+> commercial ou un rebut qui ne sera pas refait : la commande reste facturée.
+>
+> 💡 Passé à **Refusée**, l'avoir reprend les quantités qu'il avait remises à facturer.
+> Impossible si elles ont été refacturées entre-temps.
 >
 > 💡 Un avoir « En attente » ou « Approuvée » est déduit du reste dû de la facture dans
 > les relances et l'encours client ; un avoir « Refusée » ne l'est pas.

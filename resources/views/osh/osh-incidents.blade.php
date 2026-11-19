@@ -142,7 +142,7 @@
                     <input type="date" class="form-control" name="resolution_date">
                 </div>
                 <div class="mb-3">
-                    @include('include.form.form-select-user',['userId' =>  null ])
+                    @include('include.form.form-select-user', ['userId' => auth()->id()])
                 </div>
                 <div class="card-footer">
                     <x-adminlte-button class="rounded-0" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

@@ -80,4 +80,14 @@ return [
         'inputs_dir'  => env('NESTENGINE_INPUTS_DIR', 'storage/app/nesting-inputs'),
     ],
 
+    // Répertoire Sirene (API Recherche d'entreprises de l'État, gratuite, sans
+    // clé) : préremplit une société à partir d'un SIRET, d'un SIREN ou d'un nom.
+    // Seul le texte cherché part vers l'API. Désactivable pour une instance
+    // sans accès Internet sortant.
+    'company_registry' => [
+        'enabled' => (bool) env('COMPANY_REGISTRY_ENABLED', true),
+        'url'     => env('COMPANY_REGISTRY_URL', 'https://recherche-entreprises.api.gouv.fr'),
+        'timeout' => (int) env('COMPANY_REGISTRY_TIMEOUT', 8),
+    ],
+
 ];

@@ -12,6 +12,7 @@ use App\Services\CustomFieldService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\InvoiceLines;
+use App\Services\Invoicing\CreditNoteBuilder;
 use App\Services\CreditNoteKPIService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\AccountingEntryService;
@@ -62,69 +63,29 @@ class CreditNoteController extends Controller
             return redirect()->back()->with('error', 'Veuillez sélectionner au moins une ligne de facture.');
         }
 
+        $request->validate([
+            'qty'          => 'nullable|array',
+            'qty.*'        => 'nullable|numeric|min:0',
+            'unit_price'   => 'nullable|array',
+            'unit_price.*' => 'nullable|numeric|min:0',
+        ]);
+
         $invoiceLines = InvoiceLines::with(['invoice', 'orderLine'])->whereIn('id', $selectedInvoiceLineIds)->get();
 
-        $creditNote = DB::transaction(function () use ($invoiceLines) {
-            $lastCreditNote = CreditNotes::orderBy('id', 'desc')->first();
-            $codeCreditNote = $this->documentCodeGenerator->generateDocumentCode('credit-note', $lastCreditNote?->id ?? 0);
+        // Sans le champ (ancien formulaire), les quantités reviennent au reste à facturer
+        // comme avant ; décoché, l'avoir n'y touche pas (geste commercial, rebut non refait).
+        $restore = $request->has('restore_quantities_sent') ? $request->boolean('restore_quantities') : true;
 
-            $firstLine = $invoiceLines->first();
-            $creditNote = CreditNotes::create([
-                'code'                    => $codeCreditNote,
-                'label'                   => $codeCreditNote,
-                'invoices_id'             => $firstLine->invoices_id,
-                'companies_id'            => $firstLine->invoice->companies_id,
-                'companies_contacts_id'   => $firstLine->invoice->companies_contacts_id,
-                'companies_addresses_id'  => $firstLine->invoice->companies_addresses_id,
-                'statu'                   => 1,
-                'user_id'                 => Auth::id(),
-                'reason'                  => '',
-                'validated_by'            => null,
-                'validated_at'            => null,
-            ]);
-
-            foreach ($invoiceLines as $invoiceLine) {
-                $creditNoteLine = CreditNoteLines::create([
-                    'credit_note_id'     => $creditNote->id,
-                    'order_line_id'      => $invoiceLine->order_line_id,
-                    'invoice_line_id'    => $invoiceLine->id,
-                    'product_id'         => $invoiceLine->product_id ?? $invoiceLine->orderLine?->product_id,
-                    // Snapshot descriptif : une ligne libre n'a pas de ligne de
-                    // commande où retrouver ces informations.
-                    'label'              => $invoiceLine->display_label,
-                    'ind'                => $invoiceLine->display_ind,
-                    'qty'                => $invoiceLine->qty,
-                    // Utilise le snapshot stocké sur la ligne de facture (fix immutabilité)
-                    'unit_price'         => $invoiceLine->resolved_unit_price,
-                    'discount'           => $invoiceLine->resolved_discount,
-                    'vat_rate'           => $invoiceLine->resolved_vat_rate,
-                    'accounting_vats_id' => $invoiceLine->resolved_vat_id,
-                ]);
-                // Écriture d'avoir (montants inversés) : sans elle, l'avoir n'apparaissait pas au FEC.
-                app(AccountingEntryService::class)->createCreditNoteEntry($creditNoteLine);
-
-                // Inverse les quantités facturées sur la ligne de commande.
-                // Sans objet pour une ligne libre, qui n'en a pas.
-                $orderLine = $invoiceLine->order_line_id
-                    ? OrderLines::lockForUpdate()->find($invoiceLine->order_line_id)
-                    : null;
-
-                if ($orderLine) {
-                    $orderLine->invoiced_qty            = max(0, $orderLine->invoiced_qty - $invoiceLine->qty);
-                    $orderLine->invoiced_remaining_qty += $invoiceLine->qty;
-
-                    if ($orderLine->invoiced_qty <= 0) {
-                        $orderLine->invoice_status = 1;
-                    } elseif ($orderLine->invoiced_remaining_qty > 0) {
-                        $orderLine->invoice_status = 2;
-                    }
-
-                    $orderLine->save();
-                }
-            }
-
-            return $creditNote;
-        });
+        try {
+            $creditNote = app(CreditNoteBuilder::class)->create(
+                $invoiceLines,
+                (array) $request->input('qty', []),
+                (array) $request->input('unit_price', []),
+                $restore,
+            );
+        } catch (\DomainException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('credit.notes.show', ['id' => $creditNote->id])->with('success', 'Successfully created credit note');
     }
@@ -222,6 +183,18 @@ class CreditNoteController extends Controller
     public function update(UpdateCreditNoteRequest $request)
     {
         $CreditNote = CreditNotes::find($request->id);
+        $previousStatu = (int) $CreditNote->statu;
+
+        // Refusé, l'avoir reprend les quantités rendues au reste à facturer ; rouvert, il
+        // les rend. Refusé si elles ont été refacturées entre-temps.
+        if ($request->filled('statu') && (int) $request->statu !== $previousStatu) {
+            try {
+                DB::transaction(fn () => app(CreditNoteBuilder::class)->syncQuantities($CreditNote, $previousStatu, (int) $request->statu));
+            } catch (\DomainException $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+        }
+
         $CreditNote->label              = $request->label;
         $CreditNote->statu              = $request->statu;
         $CreditNote->reason             = $request->reason;

@@ -920,21 +920,44 @@ class Task extends Model
      *  - $operationCode: task.code si défini, sinon methods_services.code
      *                    (LASER, PLI...), sinon "op-<task.id>" (voir
      *                    N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX)
+     *  - $seq          : rang de l'opération dans la gamme (tasks.ordre, `seq` du
+     *                    payload). Distingue deux opérations de même code sur une
+     *                    ligne ; renseigné, la tâche de ce rang doit porter le code
+     *                    reçu, sinon rien n'est trouvé.
      */
-    public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode): ?self
+    public static function resolveByExternalRef(string $ofCode, string $lineRef, string $operationCode, ?int $seq = null): ?self
     {
-        $orderLineId = null;
-        if (str_starts_with($ofCode, 'OF')) {
-            $orderLineId = (int) substr($ofCode, 2);
-        } elseif (ctype_digit($lineRef)) {
-            $orderLineId = (int) $lineRef;
+        $fromOf = str_starts_with($ofCode, 'OF') && ctype_digit(substr($ofCode, 2))
+            ? (int) substr($ofCode, 2)
+            : null;
+        $fromLine = $lineRef !== '' && ctype_digit($lineRef) ? (int) $lineRef : null;
+
+        // Les deux désignent la même ligne de commande : s'ils divergent (code
+        // de scan altéré, saisie à la main), rien n'est trouvé plutôt que de
+        // pointer sur la ligne de l'un des deux.
+        if ($fromOf !== null && $fromLine !== null && $fromOf !== $fromLine) {
+            return null;
         }
+
+        $orderLineId = $fromLine ?? $fromOf;
 
         if ($orderLineId === null || $orderLineId <= 0 || $operationCode === '') {
             return null;
         }
 
         $query = static::query()->where('order_lines_id', $orderLineId);
+
+        if ($seq !== null) {
+            return $query->where('ordre', $seq)
+                ->with('service:id,code')
+                ->orderBy('id')
+                ->get()
+                ->first(fn (self $task) => in_array($operationCode, [
+                    (string) $task->code,
+                    (string) $task->service?->code,
+                    \App\Services\N2P\N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX . $task->getKey(),
+                ], true));
+        }
 
         $fallbackPrefix = \App\Services\N2P\N2PPayloadBuilder::OPERATION_CODE_FALLBACK_PREFIX;
         if (str_starts_with($operationCode, $fallbackPrefix)) {

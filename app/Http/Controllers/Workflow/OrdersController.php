@@ -156,21 +156,24 @@ class OrdersController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Orders(), $id->id);
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('order', $id->id);
 
-        $percentageInvoiced = 100;
-        if ($invoicedAmount > 0) {
-            $percentageInvoiced = number_format($totalPrice / $invoicedAmount * 100, 2, '.', ',');
-        }
+        // Part du TTC qui reste à facturer (affichée à côté du « reste à facturer »).
+        $percentageInvoiced = $totalPrice > 0
+            ? number_format(max(0, $totalPrice - $invoicedAmount) / $totalPrice * 100, 2, '.', ',')
+            : 100;
 
-        $forecastMargin = $totalPrice - $businessBalancetotals['total_cost'];
-        $currentMargin = $totalPrice - $businessBalancetotals['realized_cost'] - $businessBalancetotals['realized_purchase_cost'] - $businessBalancetotals['realized_stock_cost'];
+        // Marges sur le HT (remise déduite) : la TVA n'est pas un produit.
+        $forecastMargin = $subPrice - $businessBalancetotals['total_cost'];
+        $currentMargin = $subPrice - $businessBalancetotals['realized_cost'] - $businessBalancetotals['realized_purchase_cost'] - $businessBalancetotals['realized_stock_cost'];
 
         // Calcul des marges en pourcentage (avec gestion des divisions par zéro)
         $forecastMarginPercentage = $businessBalancetotals['total_cost'] > 0
             ? ($forecastMargin / $businessBalancetotals['total_cost']) * 100
             : 0;
 
-        $currentMarginPercentage = $businessBalancetotals['realized_cost'] > 0
-            ? ($currentMargin / $businessBalancetotals['realized_cost']) * 100
+        // Sur le coût réalisé complet (main-d'œuvre, achats, stock), comme la marge elle-même.
+        $realizedTotalCost = $businessBalancetotals['realized_cost'] + $businessBalancetotals['realized_purchase_cost'] + $businessBalancetotals['realized_stock_cost'];
+        $currentMarginPercentage = $realizedTotalCost > 0
+            ? ($currentMargin / $realizedTotalCost) * 100
             : 0;
 
 

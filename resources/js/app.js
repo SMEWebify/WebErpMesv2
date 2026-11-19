@@ -2,9 +2,12 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { installRowLinks } from './lib/rowLink.js';
+import { bindBladeRewriteButtons } from './lib/aiRewrite.js';
 
 // Tableaux Blade : <tr data-row-href="…"> s'ouvre au clic sur la ligne
 installRowLinks();
+// « Réécrire sans fautes » des champs <x-FormTextareaComment rewrite>.
+bindBladeRewriteButtons();
 
 function parseJsonAttribute(value) {
     if (!value) return null;
@@ -320,6 +323,7 @@ async function mountPurchasesQuotationShow() {
     createRoot(element).render(
         React.createElement(PurchasesQuotationShow, {
             initialQuotation:  parse('quotation')  ?? {},
+            offers:            parse('offers')     ?? [],
             suppliers:         parse('suppliers')  ?? [],
             supplierQualification: parse('supplierQualification'),
             initialAddresses:  parse('addresses')  ?? [],
@@ -625,6 +629,7 @@ async function mountCompanyForm() {
             vatRegimes:   parse('vatRegimes') ?? [],
             endpoint:     element.dataset.endpoint ?? '',
             pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
+            registryUrl:  element.dataset.registryUrl ?? '',
             trans:        parse('trans')   ?? {},
         })
     );
@@ -1087,6 +1092,25 @@ async function mountTaskStatuApp() {
     );
 }
 
+async function mountScanStation() {
+    const element = document.getElementById('scan-station-app');
+    if (!element) return;
+
+    const { default: ScanStation } = await import('./components/workshop/ScanStation.jsx');
+    let trans = {};
+    try { trans = JSON.parse(element.dataset.trans ?? '{}'); } catch { trans = {}; }
+
+    createRoot(element).render(
+        React.createElement(ScanStation, {
+            scanUrl:   element.dataset.scanUrl ?? '',
+            modeLabel: element.dataset.modeLabel ?? '',
+            badgeRequired:    element.dataset.badgeRequired === '1',
+            badgeIdleMinutes: parseInt(element.dataset.badgeIdleMinutes ?? '15', 10) || 15,
+            trans,
+        })
+    );
+}
+
 async function mountNonConformitiesIndex() {
     const element = document.getElementById('non-conformities-index-app');
     if (!element) return;
@@ -1476,6 +1500,7 @@ mountSerialNumbersIndex();
 mountSerialNumbersEmbedded();
 mountMethodsOverview();
 mountTaskStatuApp();
+mountScanStation();
 mountGanttChart();
 mountNonConformitiesIndex();
 mountGmaoDashboard();

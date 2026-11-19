@@ -5,6 +5,7 @@ namespace App\Services\Files;
 use App\Models\File;
 use App\Models\Products\Products;
 use App\Models\User;
+use App\Services\Integrations\SharePoint\SharePointMirror;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -117,6 +118,13 @@ class FileVersioning
 
             foreach (Products::whereKey($products)->get() as $product) {
                 $this->storage->refreshLegacyColumns($product);
+            }
+
+            // Les rattachements sont recopiés sans passer par attach() : même copie SharePoint
+            // (la nouvelle version remplace le contenu de l'élément déjà recopié).
+            $mirror = app(SharePointMirror::class);
+            foreach ($pivots as $pivot) {
+                $mirror->queue($file, $pivot->fileable_type, (int) $pivot->fileable_id);
             }
 
             activity()

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import GuideHelp from './GuideHelp';
+import CompanyRegistrySearch from './company/CompanyRegistrySearch';
+import { applyRegistryResult } from '../lib/companyRegistry';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -83,7 +85,7 @@ function Card({ title, theme, children }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyForm({ company: initial, users, vatRegimes = [], endpoint, pdpLookupUrl, trans }) {
+export default function CompanyForm({ company: initial, users, vatRegimes = [], endpoint, pdpLookupUrl, registryUrl, trans }) {
     const [form, setForm]       = useState({ ...initial });
     const [errors, setErrors]   = useState({});
     const [saving, setSaving]   = useState(false);
@@ -91,6 +93,8 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
     const [warning, setWarning] = useState(null);
     const [error, setError]     = useState(null);
     const [pdpLookup, setPdpLookup] = useState({ status: 'idle', message: '' });
+    const [registryPick, setRegistryPick] = useState(null);
+    const rt = trans.registry ?? {};
 
     const set = (field) => (value) => {
         setForm(f => ({ ...f, [field]: value }));
@@ -353,6 +357,25 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
 
             {/* Administrative info */}
             <Card title={trans.administrative_information} theme="warning">
+                {registryUrl && !isIndividual && (
+                    <>
+                        <CompanyRegistrySearch
+                            url={registryUrl}
+                            trans={rt}
+                            initialQuery={form.siren ?? ''}
+                            onSelect={r => {
+                                setForm(f => applyRegistryResult(f, r));
+                                setRegistryPick(r);
+                            }}
+                        />
+                        {registryPick && (
+                            <div className={`alert ${registryPick.active ? 'alert-info' : 'alert-warning'} py-2 small`}>
+                                {!registryPick.active && <div className="fw-bold">{rt.closed_warning}</div>}
+                                {rt.filled_form} {registryPick.intra_community_vat && rt.vat_hint}
+                            </div>
+                        )}
+                    </>
+                )}
                 <div className="row">
                     <div className="col-md-4">
                         <Field error={errors.siren?.[0]}>

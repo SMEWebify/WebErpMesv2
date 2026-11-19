@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use App\Services\Invoicing\DownPayments;
 use App\Casts\EquipmentTags;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,6 +47,8 @@ use App\Services\Production\ProductionRelease;
 use App\Services\Production\ProductionReleaseException;
 use App\Services\Workflow\OrderLineCalculatedPrice;
 use App\Services\Workflow\OrderLineCalculatedPriceException;
+use App\Services\Workflow\OrderLineCancellation;
+use App\Services\Workflow\OrderLineCancellationException;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -310,6 +313,25 @@ class OrderLinesController extends Controller
             ->whereIn('id', array_map('intval', (array) $lineIds))
             ->pluck('id')
             ->all();
+    }
+
+    /**
+     * Lignes cochées de la commande, verrouillées jusqu'à la fin de la transaction et
+     * rendues dans l'ordre de la sélection. À appeler dans une transaction.
+     *
+     * @return \Illuminate\Support\Collection<int, OrderLines>
+     */
+    private function lockOrderLines(int $orderId, ?array $lineIds)
+    {
+        $lineIds = array_map('intval', (array) $lineIds);
+        $lines   = OrderLines::where('orders_id', $orderId)
+            ->whereIn('id', $lineIds)
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
+
+        return collect($lineIds)->unique()->map(fn (int $id) => $lines->get($id))->filter()->values();
     }
 
     /**
@@ -613,6 +635,12 @@ class OrderLinesController extends Controller
     {
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        // Livrée ou facturée : la supprimer casserait le BL / la facture qui la cite.
+        if ($refusal = app(OrderLineCancellation::class)->deletionRefusal($line)) {
+            return response()->json(['message' => $refusal, 'can_cancel' => app(OrderLineCancellation::class)->refusal($line) === null], 422);
+        }
+
         $line->delete();
         Task::where('order_lines_id', $id)->delete();
 
@@ -821,6 +849,28 @@ class OrderLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
     }
 
+    /**
+     * POST — annule le reste non livré de la ligne (OrderLineCancellation), motif obligatoire.
+     */
+    public function cancelLineJson(int $orderId, int $id, Request $request, OrderLineCancellation $cancellation)
+    {
+        abort_unless(auth()->check(), 403);
+        $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        try {
+            $line = $cancellation->cancel($line, Auth::user(), is_scalar($request->input('reason')) ? (string) $request->input('reason') : null);
+        } catch (OrderLineCancellationException $e) {
+            return response()->json(['message' => $e->getMessage()], $e->status());
+        }
+
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'OrderLineDetails:id,order_lines_id,picture']);
+        $line->loadCount(['Task', 'SubAssembly']);
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
+    }
+
     private function formatLineJson(OrderLines $l, string $currency, string $locale): array
     {
         $rawPrice       = (float) ($l->getRawOriginal('selling_price') ?? 0);
@@ -885,6 +935,13 @@ class OrderLinesController extends Controller
             'line_type'            => $l->line_type ?? 'article',
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
+            'cancellation'         => [
+                'cancelled'  => $l->isCancelled(),
+                'at'         => $l->cancelled_at?->format('d/m/Y H:i'),
+                'reason'     => $l->cancel_reason,
+                'qty'        => $l->cancelled_qty !== null ? (float) $l->cancelled_qty : null,
+                'can_cancel' => app(OrderLineCancellation::class)->refusal($l) === null,
+            ],
         ];
     }
 
@@ -949,56 +1006,57 @@ class OrderLinesController extends Controller
         $removeFromStock   = (bool) $request->input('remove_from_stock', false);
         $createSerialNumber= (bool) $request->input('create_serial_number', false);
 
-        $lastDelivery = Deliverys::orderBy('id', 'desc')->first();
-        $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
-        $generator    = app(DocumentCodeGenerator::class);
-        $deliveryCode = $generator->generateDocumentCode('delivery', $deliveryId);
-
+        $generator           = app(DocumentCodeGenerator::class);
         $deliveryService     = app(DeliveryService::class);
         $deliveryLineService = app(DeliveryLineService::class);
         $serialService       = app(SerialNumberService::class);
 
-        $delivery = $deliveryService->createDelivery(
-            $deliveryCode,
-            $order->label,
-            $order->companies_id,
-            $order->companies_addresses_id,
-            $order->companies_contacts_id,
-            Auth::id(),
-            $order->customer_reference
-        );
-
-        if (! $delivery) {
-            return response()->json(['error' => 'Erreur lors de la création du BL'], 500);
-        }
-
-        $ordre          = 10;
-        $linesProcessed = 0;
-        foreach ($lineIds as $lineId) {
-            $line = OrderLines::find($lineId);
-            if (! $line || $line->orders_id !== $orderId) continue;
-            if ($line->delivered_remaining_qty <= 0) continue;
-
-            $deliveryLineService->createDeliveryLine($delivery, $lineId, $ordre, $line->delivered_remaining_qty);
-
-            if ($createSerialNumber) {
-                for ($i = 0; $i < $line->delivered_remaining_qty; $i++) {
-                    $serialService->createSerialNumber($line->product_id, $line->id, 2);
-                }
+        // Lignes relues sous verrou : un double envoi ne livre pas deux fois. Le BL et son
+        // numéro ne sont créés que s'il reste quelque chose à livrer.
+        $delivery = DB::transaction(function () use ($order, $orderId, $lineIds, $createSerialNumber, $generator, $deliveryService, $deliveryLineService, $serialService) {
+            $lines = $this->lockOrderLines($orderId, $lineIds)
+                ->filter(fn (OrderLines $line) => $line->delivered_remaining_qty > 0);
+            if ($lines->isEmpty()) {
+                return null;
             }
 
-            $line->delivered_qty             += $line->delivered_remaining_qty;
-            $line->delivered_remaining_qty    = 0;
-            $line->delivery_status            = 3;
-            $line->save();
-            event(new OrderLineUpdated($line));
+            $lastDelivery = Deliverys::orderBy('id', 'desc')->first();
+            $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
+            $deliveryCode = $generator->generateDocumentCode('delivery', $deliveryId);
 
-            $ordre += 10;
-            $linesProcessed++;
-        }
+            $delivery = $deliveryService->createDelivery(
+                $deliveryCode,
+                $order->label,
+                $order->companies_id,
+                $order->companies_addresses_id,
+                $order->companies_contacts_id,
+                Auth::id(),
+                $order->customer_reference
+            );
 
-        if ($linesProcessed === 0) {
-            $delivery->delete();
+            $ordre = 10;
+            foreach ($lines as $line) {
+                $deliveryLineService->createDeliveryLine($delivery, $line->id, $ordre, $line->delivered_remaining_qty);
+
+                if ($createSerialNumber) {
+                    for ($i = 0; $i < $line->delivered_remaining_qty; $i++) {
+                        $serialService->createSerialNumber($line->product_id, $line->id, 2);
+                    }
+                }
+
+                $line->delivered_qty             += $line->delivered_remaining_qty;
+                $line->delivered_remaining_qty    = 0;
+                $line->delivery_status            = 3;
+                $line->save();
+                DB::afterCommit(fn () => event(new OrderLineUpdated($line)));
+
+                $ordre += 10;
+            }
+
+            return $delivery;
+        });
+
+        if (! $delivery) {
             return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement livrées.'], 422);
         }
         $creditGuard->recordOverride($creditCheck, $delivery, $order->companies_id);
@@ -1033,18 +1091,7 @@ class OrderLinesController extends Controller
         $removeFromStock   = (bool) $request->input('remove_from_stock', false);
         $createSerialNumber= (bool) $request->input('create_serial_number', false);
 
-        $generator = app(DocumentCodeGenerator::class);
-
-        // Facture
-        $lastInvoice = Invoices::orderBy('id', 'desc')->first();
-        $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
-        $invoiceCode = $generator->generateDocumentCode('invoice', $invoiceId);
-
-        // BL généré automatiquement (règle métier : facturer depuis la commande = livrer)
-        $lastDelivery = Deliverys::orderBy('id', 'desc')->first();
-        $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
-        $deliveryCode = $generator->generateDocumentCode('delivery', $deliveryId);
-
+        $generator          = app(DocumentCodeGenerator::class);
         $invoiceService     = app(InvoiceService::class);
         $invoiceLineService = app(InvoiceLineService::class);
         $deliveryService    = app(DeliveryService::class);
@@ -1057,90 +1104,97 @@ class OrderLinesController extends Controller
             $order->companies_addresses_id,
             $order->companies_contacts_id
         );
-        $invoice = $invoiceService->createInvoice(
-            $invoiceCode,
-            $order->label,
-            $order->companies_id,
-            $invoiceRecipient['address_id'],
-            $invoiceRecipient['contact_id'],
-            Auth::id(),
-            $order->customer_reference,
-            $order->accounting_payment_conditions_id
-        );
 
-        if (! $invoice) {
-            return response()->json(['error' => 'Erreur lors de la création de la facture'], 500);
-        }
-
-        $delivery = $deliveryService->createDelivery(
-            $deliveryCode,
-            $order->label,
-            $order->companies_id,
-            $order->companies_addresses_id,
-            $order->companies_contacts_id,
-            Auth::id(),
-            $order->customer_reference
-        );
-
-        if (! $delivery) {
-            $invoice->delete();
-            return response()->json(['error' => 'Erreur lors de la création du BL'], 500);
-        }
-
-        $ordre                = 10;
-        $linesProcessed       = 0;
-        $deliveryLinesCreated = 0;
-        foreach ($lineIds as $lineId) {
-            $line = OrderLines::find($lineId);
-            if (! $line || $line->orders_id !== $orderId) continue;
-            if ($line->invoiced_remaining_qty <= 0) continue;
-
-            // Génère la ligne de BL pour la quantité restant à livrer (le cas échéant)
-            $deliveryLineId = null;
-            if ($line->delivered_remaining_qty > 0) {
-                $deliveryLine   = $deliveryLineService->createDeliveryLine($delivery, $lineId, $ordre, $line->delivered_remaining_qty);
-                $deliveryLineId = $deliveryLine->id;
-
-                // La ligne de BL est facturée immédiatement : on la marque comme telle
-                // (sinon elle réapparaîtrait dans les lignes « à facturer »).
-                $deliveryLine->invoice_status = 4;
-                $deliveryLine->save();
-                event(new DeliveryLineUpdated($deliveryLine));
-
-                if ($createSerialNumber) {
-                    for ($i = 0; $i < $line->delivered_remaining_qty; $i++) {
-                        $serialService->createSerialNumber($line->product_id, $line->id, 2);
-                    }
-                }
-
-                $line->delivered_qty          += $line->delivered_remaining_qty;
-                $line->delivered_remaining_qty = 0;
-                $line->delivery_status         = 3;
-                $deliveryLinesCreated++;
+        // Lignes relues sous verrou : un double envoi ne facture pas deux fois. Facture et
+        // BL ne sont créés (et leur numéro pris) que s'ils ont des lignes : plus de
+        // document créé puis supprimé, qui laissait un trou dans la numérotation.
+        $invoice = DB::transaction(function () use ($order, $orderId, $lineIds, $createSerialNumber, $invoiceRecipient, $generator, $invoiceService, $invoiceLineService, $deliveryService, $deliveryLineService, $serialService) {
+            $lines = $this->lockOrderLines($orderId, $lineIds)
+                ->filter(fn (OrderLines $line) => $line->invoiced_remaining_qty > 0);
+            if ($lines->isEmpty()) {
+                return null;
             }
 
-            // Ligne de facture, rattachée à la ligne de BL générée
-            $invoiceLineService->createInvoiceLine($invoice, $lineId, $deliveryLineId, $ordre, $line->invoiced_remaining_qty, $line->accounting_vats_id);
+            // Facture
+            $lastInvoice = Invoices::orderBy('id', 'desc')->first();
+            $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
+            $invoiceCode = $generator->generateDocumentCode('invoice', $invoiceId);
 
-            $line->invoiced_qty          += $line->invoiced_remaining_qty;
-            $line->invoiced_remaining_qty = 0;
-            $line->invoice_status         = 3;
-            $line->save();
-            event(new OrderLineUpdated($line));
+            $invoice = $invoiceService->createInvoice(
+                $invoiceCode,
+                $order->label,
+                $order->companies_id,
+                $invoiceRecipient['address_id'],
+                $invoiceRecipient['contact_id'],
+                Auth::id(),
+                $order->customer_reference,
+                $order->accounting_payment_conditions_id
+            );
 
-            $ordre += 10;
-            $linesProcessed++;
-        }
+            // BL généré automatiquement (règle métier : facturer depuis la commande = livrer),
+            // seulement si une ligne reste à livrer.
+            $delivery = null;
+            if ($lines->contains(fn (OrderLines $line) => $line->delivered_remaining_qty > 0)) {
+                $lastDelivery = Deliverys::orderBy('id', 'desc')->first();
+                $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
+                $deliveryCode = $generator->generateDocumentCode('delivery', $deliveryId);
 
-        if ($linesProcessed === 0) {
-            $invoice->delete();
-            $delivery->delete();
+                $delivery = $deliveryService->createDelivery(
+                    $deliveryCode,
+                    $order->label,
+                    $order->companies_id,
+                    $order->companies_addresses_id,
+                    $order->companies_contacts_id,
+                    Auth::id(),
+                    $order->customer_reference
+                );
+            }
+
+            $ordre = 10;
+            foreach ($lines as $line) {
+                // Génère la ligne de BL pour la quantité restant à livrer (le cas échéant)
+                $deliveryLineId = null;
+                if ($line->delivered_remaining_qty > 0) {
+                    $deliveryLine   = $deliveryLineService->createDeliveryLine($delivery, $line->id, $ordre, $line->delivered_remaining_qty);
+                    $deliveryLineId = $deliveryLine->id;
+
+                    // La ligne de BL est facturée immédiatement : on la marque comme telle
+                    // (sinon elle réapparaîtrait dans les lignes « à facturer »).
+                    $deliveryLine->invoice_status = 4;
+                    $deliveryLine->save();
+                    DB::afterCommit(fn () => event(new DeliveryLineUpdated($deliveryLine)));
+
+                    if ($createSerialNumber) {
+                        for ($i = 0; $i < $line->delivered_remaining_qty; $i++) {
+                            $serialService->createSerialNumber($line->product_id, $line->id, 2);
+                        }
+                    }
+
+                    $line->delivered_qty          += $line->delivered_remaining_qty;
+                    $line->delivered_remaining_qty = 0;
+                    $line->delivery_status         = 3;
+                }
+
+                // Ligne de facture, rattachée à la ligne de BL générée
+                $invoiceLineService->createInvoiceLine($invoice, $line->id, $deliveryLineId, $ordre, $line->invoiced_remaining_qty, $line->accounting_vats_id);
+
+                $line->invoiced_qty          += $line->invoiced_remaining_qty;
+                $line->invoiced_remaining_qty = 0;
+                $line->invoice_status         = 3;
+                $line->save();
+                DB::afterCommit(fn () => event(new OrderLineUpdated($line)));
+
+                $ordre += 10;
+            }
+
+            // Acomptes payés de la commande : déduits au prorata.
+            app(DownPayments::class)->applyToInvoice($invoice);
+
+            return $invoice;
+        });
+
+        if (! $invoice) {
             return response()->json(['error' => 'Toutes les lignes sélectionnées sont déjà entièrement facturées.'], 422);
-        }
-
-        // Toutes les lignes étaient déjà livrées : aucun BL à conserver
-        if ($deliveryLinesCreated === 0) {
-            $delivery->delete();
         }
 
         return response()->json([

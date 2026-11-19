@@ -121,13 +121,13 @@
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td align="center">{{ $DocumentLine->OrderLine->order['code'] }}</td>
-                        <td align="center">{{ $DocumentLine->OrderLine['code'] }}@if(!empty($DocumentLine->ind))<br> {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</td>
-                        <td align="center">{{ $DocumentLine->OrderLine['label'] }}@if(!empty($DocumentLine->OrderLine?->equipment_tag))<br>{{ __('general_content.equipment_tag_trans_key') }} : {{ $DocumentLine->OrderLine->equipmentTagsText() }}@endif</td>
-                        <td align="center">{{ $DocumentLine->OrderLine['qty'] }}</td>
-                        <td align="center">{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->order?->code }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->code }}@if(!empty($DocumentLine->ind))<br> {{ __('general_content.plan_index_short_trans_key') }} {{ $DocumentLine->ind }}@endif</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->label }}@if(!empty($DocumentLine->OrderLine?->equipment_tag))<br>{{ __('general_content.equipment_tag_trans_key') }} : {{ $DocumentLine->OrderLine->equipmentTagsText() }}@endif</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->qty }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->Unit?->label }}</td>
                         <td align="center">{{ $DocumentLine->qty }}</td>
-                        <td align="center">{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine?->delivered_remaining_qty }}</td>
                     </tr>
                     @empty
                         <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />

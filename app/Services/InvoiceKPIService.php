@@ -41,6 +41,8 @@ class InvoiceKPIService
                                 * (1 - COALESCE(invoice_lines.discount, order_lines.discount, 0)/100)) AS orderSum
                         ')
                         ->where('invoices.invoice_type', 1)
+                        // Une déduction d'acompte n'est pas une baisse du chiffre d'affaires.
+                        ->whereNull('invoice_lines.down_payment_line_id')
                         ->whereNull('invoices.deleted_at')
                         ->whereNull('invoice_lines.deleted_at');
 
@@ -160,6 +162,7 @@ class InvoiceKPIService
                             ->join('invoice_lines', 'invoices.id', '=', 'invoice_lines.invoices_id')
                             ->leftJoin('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                             ->where('invoices.invoice_type', 1)
+                            ->whereNull('invoice_lines.down_payment_line_id')
                             ->whereNull('invoice_lines.deleted_at')
                             ->groupBy('companies_id')
                             ->orderByDesc('total_amount')

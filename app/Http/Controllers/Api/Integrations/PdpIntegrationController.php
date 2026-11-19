@@ -31,9 +31,9 @@ class PdpIntegrationController extends Controller
         $invoice  = Invoices::where('user_id', $tenantId)->findOrFail($invoiceId);
 
         abort_if(
-            $invoice->invoice_type !== 1,
+            ! in_array((int) $invoice->invoice_type, [1, 4], true),
             422,
-            'Seules les factures (type 1) peuvent être déposées sur la plateforme.'
+            'Seules les factures et factures d'acompte (types 1 et 4) peuvent être déposées sur la plateforme.'
         );
 
         abort_if(

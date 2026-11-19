@@ -30,6 +30,11 @@ class CreditNoteLines extends Model
         'accounting_vats_id',
     ];
 
+    // restores_quantity (hors $fillable) : écrit par App\Services\Invoicing\CreditNoteBuilder.
+    protected $casts = [
+        'restores_quantity' => 'boolean',
+    ];
+
     /**
      * Désignation à afficher. Une ligne d'avoir peut porter sur une ligne de
      * facture libre, sans ligne de commande derrière.

@@ -12,9 +12,11 @@ use App\Models\Integrations\PdpInvoiceSubmission;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
+use App\Models\Integrations\SharePointSetting;
 use App\Models\Workflow\QuoteSignature;
 use App\Services\AI\AISettingsResolver;
 use App\Services\Integrations\Nest2Bend\Nest2BendAccess;
+use App\Services\Integrations\SharePoint\SharePointMirror;
 use App\Services\Integrations\Pdp\PdpManager;
 use App\Services\Mail\MailSettingsService;
 use Illuminate\Http\Request;
@@ -56,7 +58,22 @@ class IntegrationHubController extends Controller
             'esign'     => $this->esignatureCard(),
             // Dernier état lu sur NEST2BEND : aucun appel externe à l'affichage.
             'nest2bend' => app(Nest2BendAccess::class)->state(),
+            'sharepoint' => $this->sharepointCard(),
         ]);
+    }
+
+    /**
+     * Copie SharePoint : dernier test, actif ou non, volumétrie. Aucun appel externe.
+     */
+    private function sharepointCard(): array
+    {
+        $setting = SharePointSetting::current();
+
+        return [
+            'status'    => $setting?->status ?? SharePointSetting::STATUS_NONE,
+            'is_active' => (bool) $setting?->is_active,
+            'stats'     => app(SharePointMirror::class)->stats(),
+        ];
     }
 
     /**

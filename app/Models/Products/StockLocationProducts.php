@@ -66,7 +66,9 @@ class StockLocationProducts extends Model
             $query->where('tracability', $traceability);
         }
 
-        return $query->get()->sum('qty');
+        // Somme faite par la base ; « 0 + » garde le type que donnait la somme de collection
+        // (12.5 et non la chaîne décimale "12.500" renvoyée par MySQL).
+        return 0 + $query->sum('qty');
     }
 
     public function getTotalSortingStockMove($traceability = null)
@@ -81,7 +83,7 @@ class StockLocationProducts extends Model
         $query->where('tracability', $traceability);
         }
 
-        return $query->get()->sum('qty');
+        return 0 + $query->sum('qty');
     }
 
     public function getCurrentStockMove($traceability = null)
