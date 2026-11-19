@@ -8,6 +8,7 @@ import { LINE_TYPES, PACKAGE, isArticle, computeLayout } from '../lib/salesLineL
 import { apiRequest as apiFetch } from '../lib/http';
 import { calculatedPriceToggle, isValidReason } from '../lib/calculatedPrice';
 import { askCreditOverride } from '../lib/creditLimit';
+import ConfiguratorButton from './configurators/ConfiguratorButton.jsx';
 import { askCancelReason, fillPlaceholders } from '../lib/cancelReason';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
@@ -996,6 +997,11 @@ function LineRow({
                     </span>
                 )}
                 <span title={line.label}>{line.label}</span>
+                {line.configured && (
+                    <span className="badge text-bg-light border ms-1" title={line.configured}>
+                        <i className="fas fa-sliders-h me-1" />{line.configured}
+                    </span>
+                )}
                 <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
             </td>
 
@@ -1142,6 +1148,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     L = trans.lines ?? {};
     const delaysTrans = trans.delays ?? {};
     const tagTrans    = trans.equipment_tags ?? {};
+    const configuratorTrans = trans.configurators ?? {};
     const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
     const dossierTrans = trans.dossier ?? null; // dossier de fin de fabrication
     const cancelTrans  = trans.cancel ?? {};     // annulation du reste non livré
@@ -1350,6 +1357,21 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             return updated;
         });
         showFlash('success', fmt(newLines.length > 1 ? (L.lines_imported_cad_many ?? ':count lignes importées depuis un fichier CAO') : (L.lines_imported_cad_one ?? ':count ligne importée depuis un fichier CAO'), { count: newLines.length }));
+    };
+
+    // Lignes créées par un configurateur externe : relues pour avoir leur détail et leurs fichiers.
+    const handleConfigured = async (data) => {
+        try {
+            const res  = await fetch(endpoints.lines, { headers: { Accept: 'application/json' } });
+            const body = await res.json();
+            if (res.ok) {
+                setLines(body.lines ?? []);
+                refreshNextOrdre(body.lines ?? []);
+            }
+        } catch {
+            // lignes visibles au prochain chargement
+        }
+        showFlash(data.warnings?.length ? 'warning' : 'success', [data.message, ...(data.warnings ?? [])].filter(Boolean).join(' '));
     };
 
     const handlePriceIncrease = async (creditOverride = null) => {
@@ -1638,6 +1660,14 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 <i className="fas fa-plus-circle me-1" />{L.apply ?? 'Appliquer'}
                             </button>
                     </div>
+                )}
+                {!isReadOnly && orderStatu === 1 && (
+                    <ConfiguratorButton
+                        endpoints={endpoints}
+                        configurators={configuratorTrans.list ?? []}
+                        trans={configuratorTrans.ui ?? {}}
+                        onApplied={handleConfigured}
+                    />
                 )}
                 <span className="badge text-bg-secondary ms-auto">
                     {fmt(filteredLines.length > 1 ? (L.lines_count_many ?? ':count lignes') : (L.lines_count_one ?? ':count ligne'), { count: filteredLines.length })}

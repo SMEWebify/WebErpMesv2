@@ -267,6 +267,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{company}/document-defaults/sync-address/{address}', 'App\Http\Controllers\Companies\CompanyDocumentDefaultsController@syncAddress')->name('companies.document-defaults.sync-address');
     });
 
+    // Configurateurs externes depuis les lignes d'un devis ou d'une commande.
+    Route::group(['prefix' => 'configurators', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::post('/{type}/{documentId}/open',    [\App\Http\Controllers\Workflow\LineConfiguratorController::class, 'open'])->where('type', 'quote|order')->whereNumber('documentId')->middleware('throttle:20,1')->name('configurators.open');
+        Route::post('/sessions/{session}/result',   [\App\Http\Controllers\Workflow\LineConfiguratorController::class, 'result'])->whereUuid('session')->middleware('throttle:30,1')->name('configurators.result');
+        Route::post('/sessions/{session}/apply',    [\App\Http\Controllers\Workflow\LineConfiguratorController::class, 'apply'])->whereUuid('session')->middleware('throttle:20,1')->name('configurators.apply');
+        Route::post('/sessions/{session}/cancel',   [\App\Http\Controllers\Workflow\LineConfiguratorController::class, 'cancel'])->whereUuid('session')->name('configurators.cancel');
+        Route::get('/return/{session}',             [\App\Http\Controllers\Workflow\LineConfiguratorController::class, 'returnPage'])->whereUuid('session')->name('configurators.return');
+    });
+
     Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\LeadsController@update')->name('leads.update');
@@ -1163,6 +1172,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/',      [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'index'])->name('index');
             Route::put('/',      [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'update'])->name('update');
             Route::post('/test', [\App\Http\Controllers\Admin\Nest2BendSettingsController::class, 'test'])->name('test');
+        });
+
+        // Configurateurs externes : URL, clé chiffrée, affichage, documents et familles proposés.
+        Route::middleware(['auth', 'verified', 'has.role'])->prefix('integrations/configurators')->name('admin.integrations.configurators.')->group(function () {
+            Route::get('/',                      [\App\Http\Controllers\Admin\ConfiguratorSettingsController::class, 'index'])->name('index');
+            Route::post('/',                     [\App\Http\Controllers\Admin\ConfiguratorSettingsController::class, 'store'])->name('store');
+            Route::put('/{configurator}',        [\App\Http\Controllers\Admin\ConfiguratorSettingsController::class, 'update'])->whereNumber('configurator')->name('update');
+            Route::post('/{configurator}/test',  [\App\Http\Controllers\Admin\ConfiguratorSettingsController::class, 'test'])->whereNumber('configurator')->middleware('throttle:10,1')->name('test');
         });
 
         // SharePoint (recopie de la GED, sens unique) : application Entra ID, secret chiffré, site cible.

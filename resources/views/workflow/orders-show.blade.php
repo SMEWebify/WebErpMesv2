@@ -469,6 +469,8 @@ if (!$orderHasInvoicedLines) {
         if ($canValidateDossier) {
           $orderLineEndpoints['dossierMany'] = route('orders.lines.json.dossier', ['orderId' => $Order->id]);
         }
+        // Configurateurs externes : bouton « Configurer » seulement si l'un d'eux est actif.
+        $orderLineEndpoints += \App\Services\Configurators\ConfiguratorScreen::endpoints('order', $Order->id);
       @endphp
       <div class="tab-pane " id="Lines">
         <div class="card mb-3">
@@ -480,7 +482,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['lines' => __('sales_lines'), 'delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui')]) }}"
+              data-trans="{{ json_encode(['lines' => __('sales_lines'), 'delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui'), 'configurators' => \App\Services\Configurators\ConfiguratorScreen::trans('order')]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

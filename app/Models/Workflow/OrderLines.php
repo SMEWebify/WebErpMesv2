@@ -164,6 +164,12 @@ class OrderLines extends Model
         return $this->hasOne(OrderLineDetails::class, 'order_lines_id');
     }
 
+    /** Options, cotes, exigences et référence fournisseur d'une ligne configurée. */
+    public function configurationItems()
+    {
+        return $this->morphMany(LineConfigurationItem::class, 'configurable')->orderBy('sort');
+    }
+
     // GED — plans DXF, images, SVG, PDF... attachés à la ligne via le pivot polymorphe.
     /** Reports successifs de delivery_date / internal_delay, du plus ancien au plus récent. */
     public function delayHistories()

@@ -1003,6 +1003,8 @@ class OrderLinesController extends Controller
                 'invoice_url' => $il->invoices_id ? route('invoices.show', ['id' => $il->invoices_id]) : null,
             ]),
             'line_type'            => $l->line_type ?? 'article',
+            // Ligne issue d'un configurateur externe : libellé de la pastille, null sinon.
+            'configured'           => \App\Models\Integrations\ExternalConfigurator::labelFor($l->external_configurator_id),
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
             'cancellation'         => [

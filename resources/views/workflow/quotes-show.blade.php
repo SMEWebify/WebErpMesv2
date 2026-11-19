@@ -587,6 +587,8 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
             $quoteLineEndpoints['dpgfAnalyse'] = route('quotes.lines.json.dpgf.analyse', ['quoteId' => $Quote->id]);
             $quoteLineEndpoints['dpgfStore']   = route('quotes.lines.json.dpgf.store',   ['quoteId' => $Quote->id]);
           }
+          // Configurateurs externes : bouton « Configurer » seulement si l'un d'eux est actif.
+          $quoteLineEndpoints += \App\Services\Configurators\ConfiguratorScreen::endpoints('quote', $Quote->id);
           if ($Quote->is_template) {
             // Une trame ne se convertit pas en commande.
             unset($quoteLineEndpoints['storeOrder']);
@@ -623,6 +625,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
                 'quote_dictation' => __('quote_dictation') + ['provider' => $quoteDictation->provider(), 'locale' => app()->getLocale()],
                 'ai_text'         => __('ai_text'),
                 'dpgf'            => __('dpgf') + ['max_rows' => config('dpgf.max_rows')],
+                'configurators'   => \App\Services\Configurators\ConfiguratorScreen::trans('quote'),
               ]) }}"
             >
               <div class="text-center py-4 text-muted">

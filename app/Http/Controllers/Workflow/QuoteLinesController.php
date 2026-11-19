@@ -812,6 +812,8 @@ class QuoteLinesController extends Controller
             'pdf_package'          => (int) $l->pdf_package,
             'margin'               => $margin,
             'ai_proposed'          => $l->ai_proposed_at !== null,
+            // Ligne issue d'un configurateur externe : libellé de la pastille, null sinon.
+            'configured'           => \App\Models\Integrations\ExternalConfigurator::labelFor($l->external_configurator_id),
         ];
     }
 

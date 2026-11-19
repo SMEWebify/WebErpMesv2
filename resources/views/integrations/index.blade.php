@@ -471,6 +471,31 @@
             </div>
         </div>
 
+        {{-- ──────────────────── Configurateurs externes ──────────────────── --}}
+        @php
+            $cfgTheme = $configurators['errors'] > 0 ? 'danger' : ($configurators['active'] > 0 ? 'success' : 'secondary');
+        @endphp
+        <div class="col-md-6">
+            <div class="card card-outline card-{{ $cfgTheme }} mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-sliders-h me-1"></i> {{ __('configurators.admin.title') }}
+                    </h3>
+                    <div class="card-tools">
+                        <span class="badge text-bg-{{ $cfgTheme }}">{{ __('configurators.admin.count_active', ['count' => $configurators['active']]) }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">{{ __('configurators.admin.card_lead') }}</p>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{{ route('admin.integrations.configurators.index') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog"></i> {{ __('configurators.admin.configure') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- ──────────────────── PDP (facturation électronique) ──────────────────── --}}
         <div class="col-md-6">
             <div class="card card-outline {{ $pdp['enabled'] ? 'card-success' : 'card-secondary' }} mb-3">

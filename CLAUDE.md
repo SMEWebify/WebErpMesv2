@@ -869,6 +869,35 @@ contact a un e-mail valide (`QuoteSignatureService::blockingReason()`).
   attente est annulée (`voided`) et une nouvelle part au clic suivant.
 - Tests : `tests/Feature/ESignature/` (API DocuSign simulée, clé RSA jetable en fixture).
 
+## Configurateurs externes (lignes de devis et de commande)
+
+Contrat complet : `docs/conception/configurateurs-externes.md` (API v1 côté configurateur). L'ERP ne
+configure rien : il ouvre une session chez un configurateur tiers et écrit le résultat qu'il relit.
+Lot 1 fait ; « Reconfigurer », recopie à la conversion, impression PDF des options, webhook et
+`routing` (gamme, Deltafluid) restent à faire.
+- **Réglage en base** : Intégrations → Configurateurs (`external_configurators`, plusieurs) : URL,
+  clé chiffrée (`encrypted`, `$hidden`, champ vide = conserver), `display` iframe | tab,
+  `document_types`, `families`, `price_mode` (`gross` : remise du client appliquée ; `net` : aucune),
+  actif, bouton « Tester » (`GET /api/v1/ping`). `CONFIGURATORS_ENABLED` (vrai) coupe tout.
+  Aucun configurateur actif = ni bouton ni route utile (`ConfiguratorScreen::endpoints()` vide).
+- **Parcours** (`LineConfiguratorController`, `App\Services\Configurators`) : bouton « Configurer »
+  de la barre des lignes (devis statut 1, commande statut 1 hors interne) → `configurators.open`
+  (`POST {api}/sessions` : document, client sans adresse, article, quantité, langue, URL de retour) →
+  iframe ou onglet (ouvert au clic, sinon bloqué) → `postMessage` filtré par origine **et** fenêtre
+  (`lib/configuratorMessage.js`), ou page de retour de l'ERP pour l'onglet (`configurators.return`) →
+  `configurators.result` : **relecture serveur** de `GET {api}/results/{id}`, refusée si le résultat ne
+  ferme pas la session ouverte ici (`configurator_sessions`, liée à l'utilisateur) → aperçu, **rien
+  d'écrit** → `configurators.apply` (session verrouillée : un double clic ne recrée rien).
+- **Écriture** (`ConfiguredLineWriter`) : lignes en fin de document, prix figé, remise selon `price_mode`,
+  TVA par défaut, délai → `delivery_date`, détail (matière, épaisseur, cotes, commentaires), options /
+  cotes / exigences / référence fournisseur en lignes `line_configuration_items` (polymorphe, servira à
+  B5), marque `external_configurator_id` / `configuration_ref` / `configured_at` (hors `$fillable`,
+  pastille `configured` du JSON des lignes). Fichiers téléchargés **depuis l'URL réglée seulement**,
+  bornés (`config/configurators.php`), rangés dans la GED de la ligne (rôle donné, premier plan
+  principal) ou du document ; un fichier en échec est signalé, jamais bloquant. Commande : plafond
+  d'encours contrôlé comme une saisie (409 + passe-droit).
+- Tests : `tests/Feature/Configurators/`, `resources/js/tests/lib/configuratorMessage.test.js`.
+
 ## Simulation de pliage NEST2BEND (iframe)
 
 NEST2BEND (SaaS externe) s'affiche dans l'ERP en iframe. L'utilisateur ne s'y connecte jamais :

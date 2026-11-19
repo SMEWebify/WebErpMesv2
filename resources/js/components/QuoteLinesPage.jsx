@@ -15,6 +15,7 @@ import GuideHelp from './GuideHelp';
 import RewriteButton from './ai/RewriteButton.jsx';
 import QuoteDictationModal from './quotes/QuoteDictationModal.jsx';
 import DpgfImportModal from './quotes/DpgfImportModal.jsx';
+import ConfiguratorButton from './configurators/ConfiguratorButton.jsx';
 import { fmt } from '../lib/i18n.js';
 
 // Textes de l'écran (resources/lang/*/sales_lines.php), posés par QuoteLinesPage
@@ -915,6 +916,11 @@ function LineRow({
                     <i className="fas fa-eye-slash text-muted me-1" title={L.hidden_on_pdf ?? 'Masquée sur le PDF : comptée dans le total, non imprimée'} />
                 )}
                 <span title={line.label}>{line.label}</span>
+                {line.configured && (
+                    <span className="badge text-bg-light border ms-1" title={line.configured}>
+                        <i className="fas fa-sliders-h me-1" />{line.configured}
+                    </span>
+                )}
                 {line.ai_proposed && (
                     <span className="badge text-bg-light border ms-1" title={dictationTrans.badge_title}>
                         <i className="fas fa-robot me-1" />{dictationTrans.badge ?? 'IA'}
@@ -1253,6 +1259,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const aiTrans = trans.ai_text ?? {};
     const marginTrans = trans.quote_margin ?? {};
     const dpgfTrans = trans.dpgf ?? {};
+    const configuratorTrans = trans.configurators ?? {};
     const [showMargin, setShowMargin]           = useState(() => readMarginColumnVisible());
     const [marginThreshold, setMarginThreshold] = useState(0);
     const [lines, setLines]             = useState([]);
@@ -1576,6 +1583,21 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         showFlash('success', (dictationTrans.created ?? ':count').replace(':count', newLines.length));
     };
 
+    // Lignes créées par un configurateur externe : relues pour avoir leur détail et leurs fichiers.
+    const handleConfigured = async (data) => {
+        try {
+            const res  = await fetch(endpoints.lines, { headers: { Accept: 'application/json' } });
+            const body = await res.json();
+            if (res.ok) {
+                setLines(body.lines ?? []);
+                refreshNextOrdre(body.lines ?? []);
+            }
+        } catch {
+            // lignes visibles au prochain chargement
+        }
+        showFlash(data.warnings?.length ? 'warning' : 'success', [data.message, ...(data.warnings ?? [])].filter(Boolean).join(' '));
+    };
+
     const handleDpgfLines = (newLines) => {
         setDpgfOpen(false);
         setLines((prev) => {
@@ -1714,6 +1736,14 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setDictationOpen(true)}>
                         <i className="fas fa-microphone me-1" />{dictationTrans.button ?? 'Dicter'}
                     </button>
+                )}
+                {quoteStatu === 1 && (
+                    <ConfiguratorButton
+                        endpoints={endpoints}
+                        configurators={configuratorTrans.list ?? []}
+                        trans={configuratorTrans.ui ?? {}}
+                        onApplied={handleConfigured}
+                    />
                 )}
                 {quoteStatu === 1 && endpoints.dpgfPreview && (
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setDpgfOpen(true)}>

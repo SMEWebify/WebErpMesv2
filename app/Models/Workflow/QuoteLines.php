@@ -102,6 +102,12 @@ class QuoteLines extends Model
         return $this->hasOne(QuoteLineDetails::class, 'quote_lines_id');
     }
 
+    /** Options, cotes, exigences et référence fournisseur d'une ligne configurée. */
+    public function configurationItems()
+    {
+        return $this->morphMany(LineConfigurationItem::class, 'configurable')->orderBy('sort');
+    }
+
     // GED — plans DXF, images, SVG, PDF... attachés à la ligne via le pivot polymorphe.
     public function files()
     {

@@ -59,6 +59,12 @@ class IntegrationHubController extends Controller
             // Dernier état lu sur NEST2BEND : aucun appel externe à l'affichage.
             'nest2bend' => app(Nest2BendAccess::class)->state(),
             'sharepoint' => $this->sharepointCard(),
+            // Configurateurs externes : nombre de liaisons actives, aucune requête externe.
+            'configurators' => [
+                'total'  => \App\Models\Integrations\ExternalConfigurator::count(),
+                'active' => \App\Models\Integrations\ExternalConfigurator::active()->count(),
+                'errors' => \App\Models\Integrations\ExternalConfigurator::whereNotNull('last_error')->count(),
+            ],
         ]);
     }
 
