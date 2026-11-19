@@ -21,6 +21,9 @@ class UpdateCompanieJsonRequest extends UpdateCompanieRequest
             // n'a pas credit-limit-override (CompaniesController::updateJson).
             'credit_limit'         => 'nullable|numeric|min:0|max:9999999999999',
             'credit_block_level'   => 'nullable|in:none,warn,block',
+            // Conditions et mode de règlement propres au client (vide = ceux de l'instance).
+            'accounting_payment_conditions_id' => 'nullable|integer|exists:accounting_payment_conditions,id',
+            'accounting_payment_methods_id'    => 'nullable|integer|exists:accounting_payment_methods,id',
         ]);
     }
 }

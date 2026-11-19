@@ -72,6 +72,20 @@
                       </div>
                     </div>
                     <div class="row">
+                      <div class="mb-3 col-md-4">
+                        <label for="carrier" class="form-label text-success">{{ __('supplier_shipment.carrier') }}</label>
+                        <input type="text" class="form-control" id="carrier" name="carrier" maxlength="100" value="{{ $PurchaseReceipt->carrier }}">
+                      </div>
+                      <div class="mb-3 col-md-4">
+                        <label for="tracking_number" class="form-label text-success">{{ __('supplier_shipment.tracking_number') }}</label>
+                        <input type="text" class="form-control" id="tracking_number" name="tracking_number" maxlength="100" value="{{ $PurchaseReceipt->tracking_number }}">
+                      </div>
+                      <div class="mb-3 col-md-4">
+                        <label for="shipped_at" class="form-label text-success">{{ __('supplier_shipment.shipped_at') }}</label>
+                        <input type="date" class="form-control" id="shipped_at" name="shipped_at" value="{{ $PurchaseReceipt->shipped_at?->format('Y-m-d') }}">
+                      </div>
+                    </div>
+                    <div class="row">
                       <x-FormTextareaComment  comment="{{ $PurchaseReceipt->comment }}" />
                     </div>
                   <div class="modal-footer">
@@ -135,6 +149,7 @@
         @include('include.file-manager-mount', [
           'fileableType' => 'purchase-receipt',
           'fileableId'   => $PurchaseReceipt->id,
+          'fileRoles'    => \App\Services\Files\FileRole::forPurchaseReceipts(),
         ])
       </div>
     </div>

@@ -804,10 +804,16 @@ class QuotesController extends Controller
             ->where('document_type', 'quote')
             ->first();
 
+        // Conditions et mode de règlement propres au client (null : garder ceux de l'écran).
+        $payment = \App\Models\Companies\Companies::whereKey($companyId)
+            ->first(['accounting_payment_conditions_id', 'accounting_payment_methods_id']);
+
         return response()->json([
             'addresses'          => $addresses,
             'default_address_id' => $docDefault?->companies_addresses_id,
             'default_contact_id' => $docDefault?->companies_contacts_id,
+            'payment_condition_id' => $payment?->accounting_payment_conditions_id,
+            'payment_method_id'    => $payment?->accounting_payment_methods_id,
         ]);
     }
 

@@ -532,6 +532,15 @@ class OrderLinesController extends Controller
             return response()->json(['error' => 'No default VAT or Unit configured'], 422);
         }
 
+        // Plafond d'encours : la ligne ajoute son montant TTC à la commande.
+        [$creditCheck, $creditRefusal] = $this->creditGuardForLines($request, $order, self::lineTtc(
+            $validated['qty'], $validated['selling_price'], $validated['discount'],
+            $validated['accounting_vats_id'] ?? $defaultVat->id
+        ));
+        if ($creditRefusal) {
+            return $creditRefusal;
+        }
+
         $line = OrderLines::create([
             'orders_id'                 => $orderId,
             'ordre'                     => $validated['ordre'],
@@ -558,6 +567,7 @@ class OrderLinesController extends Controller
             }
         }
         OrderLineDetails::create($detailData);
+        app(CreditLimitGuard::class)->recordOverride($creditCheck, $order, $order->companies_id);
 
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
@@ -588,9 +598,22 @@ class OrderLinesController extends Controller
             ...EquipmentTags::RULES,
         ]);
 
+        // Plafond d'encours : seule la hausse du montant TTC de la ligne est contrôlée.
+        $before = self::lineTtc($line->qty, $line->selling_price, $line->discount, $line->accounting_vats_id);
+        $after  = self::lineTtc(
+            $validated['qty'], $validated['selling_price'], $validated['discount'],
+            $validated['accounting_vats_id'] ?? $line->accounting_vats_id
+        );
+        $order = Orders::findOrFail($orderId);
+        [$creditCheck, $creditRefusal] = $this->creditGuardForLines($request, $order, $after - $before);
+        if ($creditRefusal) {
+            return $creditRefusal;
+        }
+
         // Motif du report : facultatif, tronqué plutôt que refusé (jamais bloquant).
         $reason = is_scalar($request->input('delay_reason')) ? (string) $request->input('delay_reason') : null;
         OrderLineDelayContext::run(OrderLineDelayHistory::ORIGIN_MANUAL, fn () => $line->update($validated), $reason);
+        app(CreditLimitGuard::class)->recordOverride($creditCheck, $order, $order->companies_id);
         $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
@@ -670,10 +693,19 @@ class OrderLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
     }
 
-    public function duplicateLineJson($orderId, $id)
+    public function duplicateLineJson($orderId, $id, Request $request)
     {
         abort_unless(auth()->check(), 403);
         $line = OrderLines::where('id', $id)->where('orders_id', $orderId)->firstOrFail();
+
+        // Plafond d'encours : la copie ajoute le montant TTC de la ligne.
+        $order = Orders::findOrFail($orderId);
+        [$creditCheck, $creditRefusal] = $this->creditGuardForLines($request, $order, self::lineTtc(
+            $line->qty, $line->selling_price, $line->discount, $line->accounting_vats_id
+        ));
+        if ($creditRefusal) {
+            return $creditRefusal;
+        }
 
         $newLine = DB::transaction(function () use ($line, $orderId) {
             // La copie s'insère juste sous l'original : on décale la suite.
@@ -713,6 +745,7 @@ class OrderLinesController extends Controller
 
             return $newLine;
         });
+        app(CreditLimitGuard::class)->recordOverride($creditCheck, $order, $order->companies_id);
 
         $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
         $newLine->loadCount(['Task', 'SubAssembly']);
@@ -766,9 +799,46 @@ class OrderLinesController extends Controller
         abort_if($order->statu == 6 || $order->type == 2, 403);
 
         $request->validate(['amount' => 'required|numeric|gt:0']);
-        $count = OrderLines::where('orders_id', $orderId)->increment('selling_price', (float) $request->amount);
+
+        // Plafond d'encours : hausse de chaque ligne (prix + montant, remise et TVA appliquées).
+        $amount = (float) $request->amount;
+        $added = OrderLines::where('orders_id', $orderId)->get(['qty', 'discount', 'accounting_vats_id'])
+            ->sum(fn ($l) => self::lineTtc($l->qty, $amount, $l->discount, $l->accounting_vats_id));
+        [$creditCheck, $creditRefusal] = $this->creditGuardForLines($request, $order, $added);
+        if ($creditRefusal) {
+            return $creditRefusal;
+        }
+
+        $count = OrderLines::where('orders_id', $orderId)->increment('selling_price', $amount);
+        app(CreditLimitGuard::class)->recordOverride($creditCheck, $order, $order->companies_id);
 
         return response()->json(['updated' => $count]);
+    }
+
+    /**
+     * Plafond d'encours à l'ajout ou à la hausse de lignes d'une commande existante :
+     * sans ce contrôle, une commande créée vide (contrôlée à 0) puis remplie
+     * échappait au plafond. Commande client seulement ; une baisse ne contrôle rien.
+     *
+     * @return array{0: \App\Services\Receivables\CreditCheck, 1: ?\Illuminate\Http\JsonResponse}
+     */
+    private function creditGuardForLines(Request $request, Orders $order, float $additional): array
+    {
+        $guard = app(CreditLimitGuard::class);
+        $check = $guard->check(
+            (int) $order->type === 1 && $additional > 0.005 ? (int) $order->companies_id : null,
+            max(0.0, $additional)
+        );
+
+        return [$check, $guard->guardJson($request, $check)];
+    }
+
+    /** Montant TTC d'une ligne : qté × prix × (1 − remise) × (1 + TVA). */
+    private static function lineTtc($qty, $price, $discount, $vatId): float
+    {
+        $rate = $vatId ? (float) AccountingVat::whereKey($vatId)->value('rate') : 0.0;
+
+        return (float) $qty * (float) $price * (1 - (float) $discount / 100) * (1 + $rate / 100);
     }
 
     public function detailEdit($idOrder, $id)

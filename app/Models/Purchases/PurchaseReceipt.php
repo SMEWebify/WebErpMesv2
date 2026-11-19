@@ -21,8 +21,11 @@ class PurchaseReceipt extends Model
     protected $fillable= ['code', 
                             'label', 
                             'companies_id', 
-                            'delivery_note_number',  
-                            'statu',  
+                            'delivery_note_number',
+                            'carrier',
+                            'tracking_number',
+                            'shipped_at',
+                            'statu',
                             'user_id',
                             'comment',
                             'reception_controlled',  
@@ -30,6 +33,10 @@ class PurchaseReceipt extends Model
                             'reception_control_user_id',
                         ];
                         
+    protected $casts = [
+        'shipped_at' => 'date',
+    ];
+
     // Only log changes
     protected static $logOnlyDirty = true;
 
@@ -99,8 +106,11 @@ class PurchaseReceipt extends Model
         return LogOptions::defaults()->logOnly(['code', 
                                                 'label', 
                                                 'companies_id', 
-                                                'delivery_note_number',  
-                                                'statu',  
+                                                'delivery_note_number',
+                                                'carrier',
+                                                'tracking_number',
+                                                'shipped_at',
+                                                'statu',
                                                 'user_id',
                                                 'comment',
                                                 'reception_controlled',  

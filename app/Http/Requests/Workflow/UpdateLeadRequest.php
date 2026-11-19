@@ -30,6 +30,7 @@ class UpdateLeadRequest extends FormRequest
             'source'=>'nullable|string',
             'priority'=>'integer',
             'campaign'=>'nullable|string',
+            'subject'=>'nullable|string|max:255',
             'comment'=>'nullable|string',
         ];
     }

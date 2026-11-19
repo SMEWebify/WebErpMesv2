@@ -175,7 +175,15 @@
     'barcode_value'             => $Companie->barcode_value,
     'credit_limit'              => $Companie->credit_limit,
     'credit_block_level'        => $Companie->credit_block_level ?? 'none',
+    'accounting_payment_conditions_id' => $Companie->accounting_payment_conditions_id,
+    'accounting_payment_methods_id'    => $Companie->accounting_payment_methods_id,
     'can_edit_credit'           => auth()->user()->can(\App\Services\Receivables\CreditLimitGuard::OVERRIDE_PERMISSION),
+  ];
+
+  // Conditions et modes de règlement proposés comme valeurs propres au client.
+  $companyPaymentOptions = [
+    'conditions' => \App\Models\Accounting\AccountingPaymentConditions::orderBy('label')->get(['id', 'label'])->values(),
+    'methods'    => \App\Models\Accounting\AccountingPaymentMethod::orderBy('label')->get(['id', 'label'])->values(),
   ];
 
   $companyFormUsers = $userSelect->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
@@ -243,6 +251,9 @@
     'credit_level_warn'  => __('receivables.credit.level_warn'),
     'credit_level_block' => __('receivables.credit.level_block'),
     'credit_read_only'   => __('receivables.credit.read_only'),
+    'payment_conditions' => __('general_content.payment_conditions_trans_key'),
+    'payment_method'     => __('general_content.payment_method_trans_key'),
+    'payment_defaults_help' => __('receivables.credit.payment_defaults_help'),
   ];
 
   $reactInvoicesEndpoints = [
@@ -439,6 +450,7 @@
               data-company='@json($companyFormData, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-users='@json($companyFormUsers, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-vat-regimes='@json($companyVatRegimes, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+              data-payment-options='@json($companyPaymentOptions, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
               data-endpoint='{{ route('companies.json.update', $Companie->id) }}'
               data-pdp-lookup-url='{{ route('companies.pdp.lookup', $Companie->id) }}'
               data-registry-url='{{ app(\App\Services\Companies\CompanyRegistryLookup::class)->isEnabled() ? route('companies.json.registry-search') : '' }}'

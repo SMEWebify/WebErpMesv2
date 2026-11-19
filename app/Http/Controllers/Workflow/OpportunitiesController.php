@@ -20,6 +20,7 @@ use App\Services\NotificationService;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\AffairCategory;
+use App\Services\Crm\LeadConversion;
 use App\Services\Workflow\LossReasonRecorder;
 use App\Notifications\QuoteNotification;
 use App\Services\OpportunitiesKPIService;
@@ -446,45 +447,14 @@ class OpportunitiesController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeQuote(Opportunities $id)
+    public function storeQuote(Opportunities $id, LeadConversion $conversion)
     {
-        $lastQuote = Quotes::latest('id')->first();
-        $quoteId = $lastQuote ? $lastQuote->id + 1 : 0;
-        $code = "QT-$quoteId";
-        $label = "QT-$quoteId";
-
-        $defaultSettings = [
-            'payment_conditions' => AccountingPaymentConditions::getDefault(),
-            'payment_methods' => AccountingPaymentMethod::getDefault(),
-            'deliveries' => AccountingDelivery::getDefault()
-        ];
-
-        foreach ($defaultSettings as $key => $setting) {
-            if (is_null($setting)) {
-                return redirect()->route('opportunities.show', ['id' => $id->id])
-                                ->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
-            }
+        try {
+            $quotesCreated = $conversion->toQuote($id, Auth::id());
+        } catch (\DomainException $e) {
+            return redirect()->route('opportunities.show', ['id' => $id->id])->with('error', $e->getMessage());
         }
 
-        $quotesCreated = Quotes::create([
-            'uuid' => Str::uuid(),
-            'code' => $code,
-            'label' => $label,
-            'companies_id' => $id->companies_id,
-            'companies_contacts_id' => $id->companies_contacts_id,
-            'companies_addresses_id' => $id->companies_addresses_id,
-            'user_id' => Auth::id(),
-            'opportunities_id' => $id->id,
-            'accounting_payment_conditions_id' => $defaultSettings['payment_conditions']->id,
-            'accounting_payment_methods_id' => $defaultSettings['payment_methods']->id,
-            'accounting_deliveries_id' => $defaultSettings['deliveries']->id,
-        ]);
-
-        $this->notificationService->sendNotification(QuoteNotification::class, $quotesCreated, 'quotes_notification');
-
-        $id->update(['statu' => 2]);
-
-        event(new QuoteCreated($quotesCreated));
         return redirect()->route('quotes.show', ['id' => $quotesCreated->id])
                         ->with('success', 'Successfully created new quote');
     }

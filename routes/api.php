@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
+use App\Http\Controllers\Api\InboundLeadController;
 use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
 use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
@@ -64,6 +65,12 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.n2p.sheet-lots.stock');
 
     Route::get('clients',            [CompanyController::class, 'clients'])->name('api.clients.index');
+
+    // Demandes entrantes : un e-mail relevé par n8n (ou autre) devient une piste.
+    Route::post('leads/inbound', [InboundLeadController::class, 'store'])
+        ->middleware('throttle:60,1')
+        ->name('api.leads.inbound');
+
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');
     Route::post('product',           [ProductController::class, 'store'])->name('api.product.store');

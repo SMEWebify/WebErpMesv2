@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Carbon\Carbon;
+use App\Models\File;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
@@ -29,6 +30,14 @@ class Leads extends Model
         'priority',
         'campaign',
         'comment',
+        'subject',
+        'received_at',
+        'sender_email',
+        'message_id',
+    ];
+
+    protected $casts = [
+        'received_at' => 'datetime',
     ];
 
     // Only log changes
@@ -68,6 +77,12 @@ class Leads extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Documents de la piste (e-mail d'origine et ses pièces jointes)
+    public function files()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot(['role', 'is_primary']);
     }
 
     // Relationship with the lead associated with the Opportunities

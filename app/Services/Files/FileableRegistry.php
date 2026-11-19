@@ -18,6 +18,7 @@ use App\Models\UserExpenseReport;
 use App\Models\Workflow\CreditNotes;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Invoices;
+use App\Models\Workflow\Leads;
 use App\Models\Workflow\Opportunities;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
@@ -38,6 +39,8 @@ class FileableRegistry
      */
     private const MAP = [
         'company' => Companies::class,
+        // Piste : e-mail d'origine d'une demande entrante et ses pièces jointes.
+        'lead' => Leads::class,
         'opportunity' => Opportunities::class,
         'quote' => Quotes::class,
         'quote-line' => QuoteLines::class,

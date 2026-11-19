@@ -600,6 +600,31 @@ par SIRET, SIREN ou nom dans l'API Recherche d'entreprises de l'État (gratuite,
   saisie manuelle possible. Seul le texte cherché part vers l'API.
 - Tests : `tests/Feature/Companies/CompanyRegistryLookupTest.php`, `resources/js/tests/lib/companyRegistry.test.js`.
 
+## Demandes entrantes (pistes créées depuis un e-mail)
+
+L'ERP **ne lit aucune boîte mail** : la relève est faite par n8n (ou autre), l'ERP reçoit et range.
+Un seul service, `App\Services\Crm\InboundLeadService::receive()`, pour deux portes :
+- **API** `POST /api/leads/inbound` (`api.leads.inbound`, Sanctum, capacité `leads:inbound`,
+  60/min, multipart) : `from_email` (requis), `from_name`, `subject`, `received_at`, `body`,
+  `message_id`, `owner_email`, `original` (.eml / .msg), `attachments[]`. 201 créée, 200 si déjà reçue.
+- **Dépôt** d'un `.eml` / `.msg` (bouton « Déposer un e-mail » de l'index des pistes,
+  `leads.json.import-mail`, lu par `InboundMailFile` avec `EmlParser` / `MsgParser` de la GED),
+  piste attribuée à celui qui dépose.
+- **Pas de doublon** : `leads.message_id` unique (Message-ID, sinon `sha1:` expéditeur + date + objet).
+- **Rapprochement** : contact par e-mail, sinon société d'un contact du même domaine (hors
+  `leads.inbound.public_domains`) puis `companies.website` ; à défaut société prospect
+  (`statu_customer` 1) + contact + adresse « à compléter ». Responsable : `owner_email`, sinon
+  `LEADS_INBOUND_OWNER_EMAIL`, sinon aucun ; notifié (`LeadNotification`).
+- `leads.subject`, `received_at`, `sender_email`, `message_id` (nullable) ; texte du mail échappé
+  dans `comment`. E-mail d'origine (principal) et pièces jointes (hors images `Content-ID`) dans la
+  GED de la piste, alias `lead`. Index : colonnes Objet / Reçue le (tri `COALESCE(received_at, created_at)`).
+- **Devis d'un clic** (`leads.store.quote`, POST) : opportunité créée (libellé = objet) ou reprise,
+  puis devis — `App\Services\Crm\LeadConversion`, partagé avec `opportunities.store.quote`.
+- **Journal des échanges** : l'historique de la société (`companies.json.timeline`) liste les
+  `email_logs` de ses documents (type `email`, filtré par permission de module, 200 derniers).
+  Le PDF envoyé n'est toujours pas archivé.
+- Tests : `tests/Feature/Crm/`.
+
 ## Imports CSV / Excel (sociétés, articles, devis, commandes, lignes, gamme)
 
 - **Assistant** (Votre société → Imports/Exports, onglet « Importer des données », React
@@ -1257,6 +1282,10 @@ validation) :
 - commande manuelle (`orders.json.store`, montant ajouté 0), conversion de devis (montant des
   lignes converties), conversion de pré-commande (formulaire Blade), BL (`deliverys-request.store`
   et `orders.lines.json.store-delivery`, montant ajouté 0 : déjà compté dans la commande) ;
+- **lignes d'une commande existante** (`OrderLinesController::creditGuardForLines`) : ajout
+  (montant TTC de la ligne), modification (hausse seulement), duplication, hausse de prix
+  groupée. Sans ce contrôle, une commande créée vide puis remplie échappait au plafond.
+  Passe-droit tracé sur la commande. Tests : `tests/Feature/Receivables/OrderLineCreditLimitTest.php` ;
 - **non contrôlés** : import CSV, proforma (statut 0, payée avant), commandes internes,
   BL automatique de la facturation directe (bloquer la facturation dégraderait la trésorerie).
 - `warn` : le document est créé, avertissement flashé en session (`include/alert-result`).
@@ -1267,6 +1296,14 @@ validation) :
   (`credit_limit_overrides`, polymorphe), affiché sur le tableau de bord de la fiche société.
 - Le plafond lui-même n'est modifiable qu'avec `credit-limit-override` (`updateJson` retire
   les champs sinon).
+
+### Conditions de règlement du client
+`companies.accounting_payment_conditions_id` / `accounting_payment_methods_id` (nullable,
+carte « Encours client » de la fiche) : proposés à la création d'un devis ou d'une commande à
+la place des valeurs par défaut de l'instance (`Companies::paymentDefaults()`) — fenêtres de
+création (`addressesJson` des devis / commandes renvoie `payment_condition_id` / `payment_method_id`),
+devis depuis la fiche société, l'opportunité ou la piste, API `api.quote.store`. Vide = rien ne change.
+Le tiers payeur (société facturée différente) n'existe pas.
 
 ### Relances
 Écran `invoices/reminders` (React `InvoiceRemindersApp`), lecture pour tout le module
@@ -1409,6 +1446,17 @@ de réception (`getAverageReceptionDelayBySupplier`, inchangé).
   Les écrans de planning (Gantt, charge) ne lisent aucune date d'achat.
 - Tests : `tests/Feature/Purchases/SupplierAcknowledgementTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/supplierAck.test.js`.
+
+## Avis de livraison fournisseur (réception)
+
+`purchase_receipts.carrier`, `tracking_number`, `shipped_at` (nullable, activitylog), à côté de
+`delivery_note_number`. Saisis à la création depuis « En attente de réception » (réception avec
+lignes ou vierge, envoi multipart) avec le **BL du fournisseur** (PDF / JPG / PNG, 20 Mo) rangé
+dans la GED de la réception, rôle `bl_fournisseur` (`FileRole::SUPPLIER_DELIVERY_NOTE`,
+principal), puis modifiables sur la fiche réception. GED de la réception : `FileRole::forPurchaseReceipts()`.
+Réception depuis la fiche commande (`purchases.lines.json.store-receipt`) : inchangée, champs à
+compléter sur la fiche. Non fait : lecture IA du BL, livraison directe (réception valant BL client).
+Tests : `tests/Feature/Purchases/SupplierShipmentNoticeTest.php`.
 
 ## Achats liés aux devis et aux affaires
 

@@ -1667,6 +1667,7 @@ return [
     'file_role_contractuel_trans_key'          => 'Document contractuel',
     'file_role_ar_fournisseur_trans_key'       => 'AR fournisseur',
     'file_role_offre_fournisseur_trans_key'    => 'Offre fournisseur',
+    'file_role_bl_fournisseur_trans_key'       => 'BL fournisseur',
     'file_role_autre_trans_key'                => 'Autre',
 
     // Plan de charge (grille services x jours)

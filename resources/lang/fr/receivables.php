@@ -23,6 +23,7 @@ return [
         'level_none'        => 'Aucun contrôle',
         'level_warn'        => 'Alerte, sans bloquer',
         'level_block'       => 'Blocage des commandes et BL',
+        'payment_defaults_help' => 'Proposés à la création des devis et commandes de ce client. Vide = valeurs par défaut de l\'instance.',
         'read_only'         => 'Modifiable par les utilisateurs autorisés à passer outre le plafond.',
         'outstanding'       => 'Encours',
         'invoices_due'      => 'Factures non soldées',

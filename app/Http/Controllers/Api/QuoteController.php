@@ -81,12 +81,17 @@ class QuoteController extends Controller
                     CompaniesContacts::class, 'companies_contacts_id', (int) $data['companies_id']
                 );
 
+                // Conditions et mode de règlement du client, sinon ceux de l'instance.
+                $paymentDefaults = \App\Models\Companies\Companies::find($data['companies_id'])?->paymentDefaults();
+
                 if (empty($data['accounting_payment_conditions_id'])) {
-                    $data['accounting_payment_conditions_id'] = AccountingPaymentConditions::where('default', 1)->value('id');
+                    $data['accounting_payment_conditions_id'] = $paymentDefaults['conditions']
+                        ?? AccountingPaymentConditions::where('default', 1)->value('id');
                 }
 
                 if (empty($data['accounting_payment_methods_id'])) {
-                    $data['accounting_payment_methods_id'] = AccountingPaymentMethod::where('default', 1)->value('id');
+                    $data['accounting_payment_methods_id'] = $paymentDefaults['methods']
+                        ?? AccountingPaymentMethod::where('default', 1)->value('id');
                 }
 
                 if (empty($data['accounting_deliveries_id'])) {

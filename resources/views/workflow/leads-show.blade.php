@@ -70,6 +70,18 @@ $leadSteps = json_encode([
             <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
           </div>
           <div class="row">
+            <div class="mb-3 col-md-8">
+              <label for="subject" class="form-label text-success">{{ __('inbound_leads.subject') }}</label>
+              <input type="text" class="form-control" id="subject" name="subject" maxlength="255" value="{{ $Lead->subject }}">
+            </div>
+            @if($Lead->received_at || $Lead->sender_email)
+            <div class="mb-3 col-md-4">
+              <p class="mb-1"><span class="text-success">{{ __('inbound_leads.received_at') }}</span> : {{ $Lead->received_at?->format('d/m/Y H:i') }}</p>
+              <p class="mb-0"><span class="text-success">{{ __('inbound_leads.sender') }}</span> : {{ $Lead->sender_email }}</p>
+            </div>
+            @endif
+          </div>
+          <div class="row">
             <div class="mb-3 col-md-6">
               <x-adminlte-input type="text" name="source" label="{{ __('general_content.source_trans_key') }}"  value="{{  $Lead->source }}" label-class="text-success">
                 <x-slot name="prependSlot">
@@ -120,6 +132,12 @@ $leadSteps = json_encode([
         </x-slot>
       </x-adminlte-card>
     </form>
+    <x-adminlte-card title="{{ __('general_content.documents_trans_key') }}" theme="secondary" theme-mode="outline" collapsible>
+      @include('include.file-manager-mount', [
+        'fileableType' => 'lead',
+        'fileableId'   => $Lead->id,
+      ])
+    </x-adminlte-card>
   </div>
   <div class="col-md-3">
     <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
@@ -137,6 +155,13 @@ $leadSteps = json_encode([
           </a>
         </p>
       @endforelse
+      <form method="POST" action="{{ route('leads.store.quote', ['id' => $Lead->id]) }}">
+        @csrf
+        <button type="submit" class="btn btn-primary btn-sm">
+          <i class="fas fa-file-invoice-dollar"></i>
+          {{ __('inbound_leads.new_quote') }}
+        </button>
+      </form>
     </x-adminlte-card>
   </div>
 </div>

@@ -23,6 +23,7 @@ return [
         'level_none'        => 'No check',
         'level_warn'        => 'Warn, do not block',
         'level_block'       => 'Block orders and delivery notes',
+        'payment_defaults_help' => 'Offered when creating quotes and orders for this customer. Empty = instance defaults.',
         'read_only'         => 'Editable by users allowed to override the credit limit.',
         'outstanding'       => 'Outstanding',
         'invoices_due'      => 'Unsettled invoices',

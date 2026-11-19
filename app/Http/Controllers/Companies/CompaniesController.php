@@ -541,9 +541,12 @@ class CompaniesController extends Controller
         $code = "QT-$quoteId";
         $label = "QT-$quoteId";
 
+        // Conditions et mode de règlement du client d'abord, sinon ceux de l'instance.
         $defaultSettings = [
-            'accounting_payment_conditions' => AccountingPaymentConditions::getDefault(),
-            'accounting_payment_methods' => AccountingPaymentMethod::getDefault(),
+            'accounting_payment_conditions' => ($id->accounting_payment_conditions_id ? AccountingPaymentConditions::find($id->accounting_payment_conditions_id) : null)
+                ?? AccountingPaymentConditions::getDefault(),
+            'accounting_payment_methods' => ($id->accounting_payment_methods_id ? AccountingPaymentMethod::find($id->accounting_payment_methods_id) : null)
+                ?? AccountingPaymentMethod::getDefault(),
             'accounting_deliveries' => AccountingDelivery::getDefault(),
             'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $id->id]),
             'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $id->id]),
@@ -588,14 +591,14 @@ class CompaniesController extends Controller
 
         if (auth()->user()->can('leads-menu')) {
             Leads::where('companies_id', $companyId)
-                ->select('id', 'statu', 'created_at', 'source', 'priority')
+                ->select('id', 'statu', 'created_at', 'source', 'priority', 'subject')
                 ->get()
                 ->each(function ($lead) use (&$items) {
                     $items->push([
                         'type'   => 'lead',
                         'id'     => $lead->id,
                         'code'   => null,
-                        'label'  => $lead->source ?? '—',
+                        'label'  => $lead->subject ?? $lead->source ?? '—',
                         'statu'  => $lead->statu,
                         'amount' => null,
                         'date'   => $lead->created_at?->toDateString(),
@@ -690,6 +693,39 @@ class CompaniesController extends Controller
                         'amount' => null,
                         'date'   => $purchase->created_at?->toDateString(),
                         'url'    => route('purchases.show', $purchase->id),
+                    ]);
+                });
+        }
+
+        // Journal des échanges : e-mails envoyés depuis l'ERP sur les documents de la
+        // société (une requête), seulement pour les modules ouverts à l'utilisateur.
+        $mailed = collect([
+            Quotes::class                                 => ['quotes-menu', 'quotes.show'],
+            Orders::class                                 => ['orders-menu', 'orders.show'],
+            Deliverys::class                              => ['deliverys-menu', 'deliverys.show'],
+            Invoices::class                               => ['invoices-menu', 'invoices.show'],
+            \App\Models\Workflow\CreditNotes::class       => ['invoices-menu', 'credit.notes.show'],
+            Purchases::class                              => ['purchases-menu', 'purchases.show'],
+            \App\Models\Purchases\PurchasesQuotation::class => ['purchases-menu', 'purchases.quotations.show'],
+        ])->filter(fn ($rule) => auth()->user()->can($rule[0]));
+
+        if ($mailed->isNotEmpty()) {
+            \App\Models\EmailLog::query()
+                ->whereHasMorph('emailable', $mailed->keys()->all(), fn ($q) => $q->where('companies_id', $companyId))
+                ->with('emailable:id,code')
+                ->latest('id')
+                ->limit(200)
+                ->get()
+                ->each(function ($mail) use (&$items, $mailed) {
+                    $items->push([
+                        'type'   => 'email',
+                        'id'     => $mail->id,
+                        'code'   => $mail->emailable?->code,
+                        'label'  => trim($mail->subject . ' → ' . $mail->to),
+                        'statu'  => $mail->status,
+                        'amount' => null,
+                        'date'   => ($mail->sent_at ?? $mail->created_at)?->toDateString(),
+                        'url'    => route($mailed[$mail->emailable_type][1], $mail->emailable_id),
                     ]);
                 });
         }

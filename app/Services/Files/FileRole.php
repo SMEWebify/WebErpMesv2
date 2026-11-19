@@ -28,6 +28,8 @@ class FileRole
     public const SUPPLIER_ACK = 'ar_fournisseur';
     // Offre (PDF) reçue du fournisseur en réponse à une demande de prix
     public const SUPPLIER_OFFER = 'offre_fournisseur';
+    // BL ou avis d'expédition envoyé par le fournisseur (livraison d'une commande d'achat)
+    public const SUPPLIER_DELIVERY_NOTE = 'bl_fournisseur';
     // Human resources
     public const CONTRACT = 'contrat';
     public const PAYSLIP = 'bulletin_paie';
@@ -56,6 +58,7 @@ class FileRole
             self::CONTRACTUAL,
             self::SUPPLIER_ACK,
             self::SUPPLIER_OFFER,
+            self::SUPPLIER_DELIVERY_NOTE,
             self::CONTRACT,
             self::PAYSLIP,
             self::SICK_NOTE,
@@ -106,6 +109,22 @@ class FileRole
             self::SUPPLIER_OFFER,
             self::PLAN,
             self::CERTIFICATE,
+            self::OTHER,
+        ];
+    }
+
+    /**
+     * Roles offered on a purchase receipt, in display order.
+     *
+     * @return array<int, string>
+     */
+    public static function forPurchaseReceipts(): array
+    {
+        return [
+            self::SUPPLIER_DELIVERY_NOTE,
+            self::CERTIFICATE,
+            self::CONTROL,
+            self::PHOTO,
             self::OTHER,
         ];
     }

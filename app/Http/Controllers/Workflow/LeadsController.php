@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\Opportunities;
 use App\Http\Requests\Workflow\UpdateLeadRequest;
+use App\Services\Crm\InboundLeadService;
+use App\Services\Crm\InboundMailFile;
+use App\Services\Crm\LeadConversion;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
 
@@ -76,7 +80,7 @@ class LeadsController extends Controller
         $sortAsc    = $request->boolean('asc', false);
         $companyId  = $request->get('company_id');
 
-        $allowed = ['source', 'campaign', 'priority', 'statu', 'created_at', 'companie'];
+        $allowed = ['source', 'campaign', 'priority', 'statu', 'created_at', 'companie', 'subject', 'received_at'];
         if (!in_array($sortField, $allowed)) {
             $sortField = 'created_at';
         }
@@ -86,6 +90,8 @@ class LeadsController extends Controller
             ->when($search, fn ($q) => $q->where(fn ($q2) =>
                 $q2->where('source', 'like', '%'.$search.'%')
                    ->orWhere('campaign', 'like', '%'.$search.'%')
+                   ->orWhere('subject', 'like', '%'.$search.'%')
+                   ->orWhere('sender_email', 'like', '%'.$search.'%')
             ))
             ->when($statuses,   fn ($q) => $q->whereIn('statu', $statuses))
             ->when($priorities, fn ($q) => $q->whereIn('priority', $priorities))
@@ -93,6 +99,8 @@ class LeadsController extends Controller
 
         match ($sortField) {
             'companie' => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = leads.companies_id) {$dir}"),
+            // File des demandes : heure d'arrivée de l'e-mail, sinon de la saisie.
+            'received_at' => $query->orderByRaw("COALESCE(leads.received_at, leads.created_at) {$dir}"),
             default    => $query->orderBy($sortField, $dir),
         };
 
@@ -106,6 +114,9 @@ class LeadsController extends Controller
                 'priority'   => $l->priority,
                 'statu'      => $l->statu,
                 'created_at' => $l->created_at?->format('d/m/Y'),
+                'subject'    => $l->subject,
+                'received_at' => ($l->received_at ?? $l->created_at)?->format('d/m/Y H:i'),
+                'sender_email' => $l->sender_email,
                 'companie'   => $l->companie        ? ['id' => $l->companie->id,        'label' => $l->companie->label] : null,
                 'contact'    => $l->contact         ? ['id' => $l->contact->id,         'name'  => trim($l->contact->first_name.' '.$l->contact->name)] : null,
                 'user'       => $l->UserManagement  ? ['id' => $l->UserManagement->id,  'name'  => $l->UserManagement->name] : null,
@@ -128,6 +139,7 @@ class LeadsController extends Controller
             'id'       => $l->id,
             'source'   => $l->source,
             'campaign' => $l->campaign,
+            'subject'  => $l->subject,
             'priority' => $l->priority,
             'statu'    => $l->statu,
             'companie' => $l->companie       ? ['id' => $l->companie->id,       'label' => $l->companie->label] : null,
@@ -242,28 +254,60 @@ class LeadsController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeOpportunity($id){
-        
-        // Update lead status
-        Leads::where('id', $id)->update(['statu' => '4']);
+    public function storeOpportunity($id, LeadConversion $conversion){
 
-        // Retrieve the lead
-        $LeadToStore = Leads::findOrFail($id);
+        $OpportunityCreated = $conversion->toOpportunity(Leads::findOrFail($id), Auth::id());
 
-        // Create opportunity
-        $OpportunityCreated = Opportunities::create([
-                        'uuid'=> Str::uuid(),
-                        'companies_id'=>$LeadToStore->companies_id,  
-                        'companies_contacts_id'=>$LeadToStore->companies_contacts_id,    
-                        'companies_addresses_id'=>$LeadToStore->companies_addresses_id,   
-                        'user_id'=>Auth::id(),    
-                        'label'=>'#LEAD'. $id .'#'. $LeadToStore->source .'#'. $LeadToStore->campaign ,
-                        'leads_id'=>$id, 
-                        'budget'=>0,   
-                        'probality'=>50, 
-        ]);
-        
         return redirect()->route('opportunities.show', ['id' => $OpportunityCreated->id])->with('success', 'Successfully created new opportunity');
+    }
+
+    /**
+     * Demande entrante convertie en devis d'un clic : l'opportunité est créée au
+     * passage (elle porte le dossier d'affaire), ou reprise si la piste en a déjà une.
+     */
+    public function storeQuote(int $id, LeadConversion $conversion)
+    {
+        $lead = Leads::findOrFail($id);
+
+        try {
+            $quote = DB::transaction(function () use ($lead, $conversion) {
+                $opportunity = $lead->Opportunity()->latest('id')->first()
+                    ?? $conversion->toOpportunity($lead, Auth::id());
+
+                return $conversion->toQuote($opportunity, Auth::id());
+            });
+        } catch (\DomainException $e) {
+            return redirect()->route('leads.show', ['id' => $lead->id])->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('quotes.show', ['id' => $quote->id])->with('success', __('inbound_leads.quote_created'));
+    }
+
+    /**
+     * Dépôt d'un e-mail (.eml ou .msg) : la demande devient une piste, attribuée à
+     * celui qui la dépose. Un e-mail déjà déposé ramène à sa piste.
+     */
+    public function importMailJson(Request $request, InboundMailFile $reader, InboundLeadService $inbound)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $request->validate([
+            'mail' => ['required', 'file', 'extensions:eml,msg', 'max:' . (int) config('leads.inbound.max_kilobytes', 20480)],
+        ]);
+
+        try {
+            $mail = $reader->read($request->file('mail'));
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => __('inbound_leads.' . $e->getMessage())], 422);
+        }
+
+        [$lead, $created] = $inbound->receive($mail['message'], $mail['attachments'], $mail['original'], Auth::id());
+
+        return response()->json([
+            'created'  => $created,
+            'message'  => __($created ? 'inbound_leads.created' : 'inbound_leads.already_received'),
+            'redirect' => route('leads.show', ['id' => $lead->id]),
+        ], $created ? 201 : 200);
     }
 
     public function changePriorityJson(Request $request, $id)

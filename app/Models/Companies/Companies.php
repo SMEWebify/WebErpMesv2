@@ -84,6 +84,8 @@ class Companies extends Model
                             'credit_limit',
                             'credit_block_level',
                             'requires_control_plan',
+                            'accounting_payment_conditions_id',
+                            'accounting_payment_methods_id',
                         ];
 
     // La fiche lit cette date via ->format() : sans cast, une chaîne → erreur 500.
@@ -100,6 +102,22 @@ class Companies extends Model
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->setDescriptionForEvent(fn (string $event) => "Entreprise {$event}");
+    }
+
+    /**
+     * Conditions et mode de règlement à proposer sur un nouveau devis ou une
+     * nouvelle commande : ceux du client, sinon ceux par défaut de l'instance.
+     *
+     * @return array{conditions: ?int, methods: ?int}
+     */
+    public function paymentDefaults(): array
+    {
+        return [
+            'conditions' => $this->accounting_payment_conditions_id
+                ?? \App\Models\Accounting\AccountingPaymentConditions::where('default', 1)->value('id'),
+            'methods'    => $this->accounting_payment_methods_id
+                ?? \App\Models\Accounting\AccountingPaymentMethod::where('default', 1)->value('id'),
+        ];
     }
 
     /**

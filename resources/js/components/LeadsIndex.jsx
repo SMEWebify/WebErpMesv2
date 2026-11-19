@@ -289,6 +289,8 @@ function leadColumns(trans, locale) {
         { key: 'companie',   label: trans.company    ?? 'Company',  sortable: true,
           render: l => (l.companie ? <span>{l.companie.label}</span> : '—'), filterValue: l => l.companie?.label,
           filter: 'text', mobile: 'title', mobileRender: l => l.companie?.label ?? '—' },
+        { key: 'subject',    label: trans.subject    ?? 'Subject',  sortable: true,
+          render: l => <span>{l.subject ?? '—'}</span>, filter: 'text', mobile: 'subtitle', mobileRender: l => l.subject },
         { key: 'contact',    label: trans.contact    ?? 'Contact',
           render: l => (l.contact ? <span>{l.contact.name}</span> : '—'), filterValue: l => l.contact?.name,
           filter: 'text', mobile: 'subtitle', mobileRender: l => l.contact?.name },
@@ -304,6 +306,9 @@ function leadColumns(trans, locale) {
           render: l => <StatusBadge statu={l.statu} config={STATUS_CONFIG} trans={trans} />, mobile: 'badge' },
         { key: 'created_at', label: trans.created_at ?? 'Created',  sortable: true, align: 'center',
           render: l => (l.created_at ? formatDate(l.created_at, locale) : '—'), filter: 'date' },
+        // File des demandes : trier par arrivée (la plus ancienne d'abord) pour traiter dans l'ordre.
+        { key: 'received_at', label: trans.received_at ?? 'Received', sortable: true, align: 'center',
+          render: l => <span className="text-nowrap">{l.received_at ?? '—'}</span> },
     ];
 }
 
@@ -323,6 +328,107 @@ function LeadsTable({ items, loading, trans, onSort, sortField, sortAsc, locale 
             emptyText={trans.no_data ?? '—'}
             rowHref={l => l.url}
         />
+    );
+}
+
+// ---------------------------------------------------------------------------
+// ImportMailModal — dépôt d'un .eml / .msg qui devient une piste
+// ---------------------------------------------------------------------------
+
+// Envoi d'un .eml / .msg : la piste est créée (ou retrouvée) puis ouverte.
+const MAIL_EXTENSIONS = ['eml', 'msg'];
+
+function isMailFile(file) {
+    return MAIL_EXTENSIONS.includes((file?.name ?? '').split('.').pop().toLowerCase());
+}
+
+/** Premier e-mail d'un glisser-déposer, sinon null. */
+function mailFromDrop(e) {
+    return Array.from(e.dataTransfer?.files ?? []).find(isMailFile) ?? null;
+}
+
+function dragHasFiles(e) {
+    return Array.from(e.dataTransfer?.types ?? []).includes('Files');
+}
+
+async function uploadMail(endpoint, file) {
+    const form = new FormData();
+    form.append('mail', file);
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+        },
+        body: form,
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.errors?.mail?.[0] ?? body.message ?? res.statusText);
+    return body;
+}
+
+function ImportMailModal({ endpoint, trans, onClose }) {
+    const [error,  setError]  = useState(null);
+    const [saving, setSaving] = useState(false);
+    const [over,   setOver]   = useState(false);
+    const inputRef = useRef(null);
+
+    const send = async (file) => {
+        if (!file) return;
+        if (!isMailFile(file)) { setError(trans.import_wrong_type ?? '.eml / .msg'); return; }
+        setSaving(true);
+        setError(null);
+        try {
+            window.location.href = (await uploadMail(endpoint, file)).redirect;
+        } catch (e) {
+            setError(e.message);
+            setSaving(false);
+        }
+    };
+
+    return (
+        <div className="modal d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header text-bg-primary">
+                        <h5 className="modal-title">{trans.import_title ?? 'New request from an e-mail'}</h5>
+                        <button onClick={onClose} aria-label="Close" className="btn-close btn-close-white float-end"></button>
+                    </div>
+                    <div className="modal-body">
+                        <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => !saving && inputRef.current?.click()}
+                            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click(); }}
+                            onDragOver={e => { e.preventDefault(); setOver(true); }}
+                            onDragLeave={() => setOver(false)}
+                            onDrop={e => { e.preventDefault(); setOver(false); send(Array.from(e.dataTransfer.files)[0]); }}
+                            className="text-center p-4 rounded"
+                            style={{
+                                border: `2px dashed ${over ? 'var(--bs-primary)' : 'var(--bs-border-color)'}`,
+                                background: over ? 'var(--bs-primary-bg-subtle)' : 'var(--bs-tertiary-bg)',
+                                cursor: saving ? 'wait' : 'pointer',
+                            }}
+                        >
+                            {saving
+                                ? <i className="fas fa-spinner fa-spin fa-2x" />
+                                : <>
+                                    <i className="fas fa-envelope-open-text fa-2x mb-2 d-block" />
+                                    <strong>{trans.import_drop ?? 'Drop the e-mail here'}</strong>
+                                    <div className="small text-body-secondary">{trans.import_browse ?? 'or click to choose a file'}</div>
+                                  </>}
+                        </div>
+                        <input ref={inputRef} type="file" accept=".eml,.msg" className="d-none"
+                            onChange={e => send(e.target.files?.[0])} />
+                        {error && <div className="alert alert-danger py-1 px-2 mt-2 mb-0 small">{error}</div>}
+                        <small className="text-muted d-block mt-2">{trans.import_hint}</small>
+                    </div>
+                    <div className="modal-footer">
+                        <button className="btn btn-secondary btn-sm" onClick={onClose} disabled={saving}>{trans.close ?? 'Close'}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -609,7 +715,32 @@ function ListTab({ endpoints, trans, locale, companieId }) {
     const [page,       setPage]       = useState(1);
     const [viewType,   setViewType]   = useState('table');
     const [showModal,  setShowModal]  = useState(false);
+    const [showImport, setShowImport] = useState(false);
+    const [dropOver,   setDropOver]   = useState(false);
+    const [dropBusy,   setDropBusy]   = useState(false);
+    const [dropError,  setDropError]  = useState(null);
     const debounceRef = useRef(null);
+
+    // Un .eml / .msg lâché sur la liste devient une piste, sans passer par la fenêtre.
+    const dropHandlers = endpoints.importMail ? {
+        onDragOver:  e => { if (dragHasFiles(e)) { e.preventDefault(); setDropOver(true); } },
+        onDragLeave: e => { if (!e.currentTarget.contains(e.relatedTarget)) setDropOver(false); },
+        onDrop: async e => {
+            if (!dragHasFiles(e)) return;
+            e.preventDefault();
+            setDropOver(false);
+            const file = mailFromDrop(e);
+            if (!file) { setDropError(trans.import_wrong_type ?? '.eml / .msg'); return; }
+            setDropBusy(true);
+            setDropError(null);
+            try {
+                window.location.href = (await uploadMail(endpoints.importMail, file)).redirect;
+            } catch (err) {
+                setDropError(err.message);
+                setDropBusy(false);
+            }
+        },
+    } : {};
 
     // Restore filters from localStorage
     useEffect(() => {
@@ -672,7 +803,24 @@ function ListTab({ endpoints, trans, locale, companieId }) {
     const handlePage           = p   => setPage(p);
 
     return (
-        <div>
+        <div {...dropHandlers} style={{ position: 'relative' }}>
+            {(dropOver || dropBusy) && (
+                <div className="d-flex flex-column align-items-center justify-content-center rounded"
+                    style={{
+                        position: 'absolute', inset: 0, zIndex: 20, pointerEvents: 'none',
+                        border: '2px dashed var(--bs-primary)', background: 'rgba(var(--bs-primary-rgb), 0.08)',
+                    }}>
+                    <i className={`fas ${dropBusy ? 'fa-spinner fa-spin' : 'fa-envelope-open-text'} fa-2x text-primary mb-2`} />
+                    <strong className="text-primary">{trans.import_drop ?? 'Drop the e-mail here'}</strong>
+                </div>
+            )}
+            {dropError && (
+                <div className="alert alert-danger alert-dismissible py-1 px-2 small">
+                    {dropError}
+                    <button type="button" className="btn-close" style={{ padding: '0.6rem' }} onClick={() => setDropError(null)} aria-label="Close" />
+                </div>
+            )}
+
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {/* Search */}
@@ -708,6 +856,13 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     ))}
                 </div>
 
+                {/* New lead from an e-mail */}
+                {endpoints.importMail && (
+                    <button className="btn btn-sm btn-outline-primary flex-shrink-0" onClick={() => setShowImport(true)}>
+                        <i className="fas fa-envelope-open-text me-1" />{trans.import_button ?? 'Drop an e-mail'}
+                    </button>
+                )}
+
                 {/* New lead */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
                     <i className="fas fa-plus me-1" />{trans.new_lead ?? 'New lead'}
@@ -739,6 +894,10 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     </small>
                     <Pagination meta={meta} around={2} jumpButtons ulClassName="pagination pagination-sm mb-0" onPage={handlePage} />
                 </div>
+            )}
+
+            {showImport && (
+                <ImportMailModal endpoint={endpoints.importMail} trans={trans} onClose={() => setShowImport(false)} />
             )}
 
             {showModal && (

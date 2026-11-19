@@ -90,7 +90,7 @@ function Card({ title, theme, children }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyForm({ company: initial, users, vatRegimes = [], endpoint, pdpLookupUrl, registryUrl, trans }) {
+export default function CompanyForm({ company: initial, users, vatRegimes = [], paymentOptions = { conditions: [], methods: [] }, endpoint, pdpLookupUrl, registryUrl, trans }) {
     L = trans?.ui ?? {};
     const [form, setForm]       = useState({ ...initial });
     const [errors, setErrors]   = useState({});
@@ -120,6 +120,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             'account_general_supplier', 'account_auxiliary_supplier',
             'latitude', 'longitude', 'comment', 'barcode_value',
             'credit_limit',
+            'accounting_payment_conditions_id', 'accounting_payment_methods_id',
         ];
         const result = { ...data };
         nullableFields.forEach(f => {
@@ -621,6 +622,36 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                 <small className="text-body-secondary">{trans.credit_read_only}</small>
                             </div>
                         )}
+                    </div>
+                    {/* Conditions et mode de règlement du client, proposés sur ses devis et commandes */}
+                    <div className="row">
+                        <div className="col-md-4">
+                            <Field label={trans.payment_conditions} error={errors.accounting_payment_conditions_id?.[0]}>
+                                <select
+                                    className="form-select"
+                                    value={form.accounting_payment_conditions_id ?? ''}
+                                    onChange={setVal('accounting_payment_conditions_id')}
+                                >
+                                    <option value="">—</option>
+                                    {(paymentOptions?.conditions ?? []).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                                </select>
+                            </Field>
+                        </div>
+                        <div className="col-md-4">
+                            <Field label={trans.payment_method} error={errors.accounting_payment_methods_id?.[0]}>
+                                <select
+                                    className="form-select"
+                                    value={form.accounting_payment_methods_id ?? ''}
+                                    onChange={setVal('accounting_payment_methods_id')}
+                                >
+                                    <option value="">—</option>
+                                    {(paymentOptions?.methods ?? []).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                                </select>
+                            </Field>
+                        </div>
+                        <div className="col-md-4 d-flex align-items-center">
+                            <small className="text-body-secondary">{trans.payment_defaults_help}</small>
+                        </div>
                     </div>
                 </div>
             </div>

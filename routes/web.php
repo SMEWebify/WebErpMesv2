@@ -277,6 +277,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/kanban',                'App\Http\Controllers\Workflow\LeadsController@kanbanJson')->name('leads.json.kanban');
         Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\LeadsController@kanbanMoveJson')->name('leads.json.kanban-move');
         Route::post('/json/store',                'App\Http\Controllers\Workflow\LeadsController@storeJson')->name('leads.json.store');
+        Route::post('/json/import-mail',          'App\Http\Controllers\Workflow\LeadsController@importMailJson')->middleware('throttle:30,1')->name('leads.json.import-mail');
+        Route::post('/{id}/quote',                'App\Http\Controllers\Workflow\LeadsController@storeQuote')->whereNumber('id')->name('leads.store.quote');
         Route::get('/json/select-data',           'App\Http\Controllers\Workflow\LeadsController@selectDataJson')->name('leads.json.select-data');
         Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\LeadsController@addressesJson')->name('leads.json.addresses');
         Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\LeadsController@contactsJson')->name('leads.json.contacts');

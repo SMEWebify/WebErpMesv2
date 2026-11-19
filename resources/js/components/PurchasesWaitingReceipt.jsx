@@ -23,6 +23,24 @@ async function apiFetch(url, options = {}) {
     return body;
 }
 
+// Envoi multipart : le BL du fournisseur part avec la réception.
+async function postForm(url, fields) {
+    const form = new FormData();
+    Object.entries(fields).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === '') return;
+        if (Array.isArray(value)) value.forEach(v => form.append(`${key}[]`, v));
+        else form.append(key, value);
+    });
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
+        body: form,
+    });
+    const body = await res.json().catch(() => ({ message: res.statusText }));
+    if (!res.ok) throw body;
+    return body;
+}
+
 function formatDeliveryDate(dateStr) {
     if (!dateStr) return null;
     try {
@@ -178,6 +196,11 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
     const [label, setLabel]                         = useState(initialCode ?? '');
     const [deliveryNoteNumber, setDeliveryNoteNumber] = useState('');
     const [userId, setUserId]                       = useState('');
+    const [carrier, setCarrier]                     = useState('');
+    const [trackingNumber, setTrackingNumber]       = useState('');
+    const [shippedAt, setShippedAt]                 = useState('');
+    const [deliveryNoteFile, setDeliveryNoteFile]   = useState(null);
+    const shipmentTrans = trans.shipment ?? {};
     const [selectedIds, setSelectedIds]             = useState([]);
 
     // Initial load
@@ -225,6 +248,10 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
         companies_id: companiesId || undefined,
         delivery_note_number: deliveryNoteNumber || undefined,
         user_id: userId || undefined,
+        carrier,
+        tracking_number: trackingNumber,
+        shipped_at: shippedAt,
+        delivery_note_file: deliveryNoteFile,
     });
 
     const handleStore = async (e) => {
@@ -234,10 +261,7 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
         setSubmitting(true);
 
         try {
-            const data = await apiFetch(endpoints.store, {
-                method: 'POST',
-                body: JSON.stringify({ ...buildPayload(), line_ids: selectedIds }),
-            });
+            const data = await postForm(endpoints.store, { ...buildPayload(), line_ids: selectedIds });
             window.location.href = data.redirect;
         } catch (err) {
             if (err.errors) setErrors(err.errors);
@@ -253,10 +277,7 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
         setSubmitting(true);
 
         try {
-            const data = await apiFetch(endpoints.storeEmpty, {
-                method: 'POST',
-                body: JSON.stringify(buildPayload()),
-            });
+            const data = await postForm(endpoints.storeEmpty, buildPayload());
             window.location.href = data.redirect;
         } catch (err) {
             if (err.errors) setErrors(err.errors);
@@ -362,6 +383,55 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                             {errors.user_id && (
                                 <span className="text-danger">{errors.user_id[0]}</span>
                             )}
+                        </div>
+                    </div>
+
+                    {/* Supplier delivery notice */}
+                    <div className="row gx-2">
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="receipt-carrier">{shipmentTrans.carrier ?? 'Transporteur'}</label>
+                            <input
+                                id="receipt-carrier"
+                                type="text"
+                                maxLength={100}
+                                className={`form-control ${errors.carrier ? 'is-invalid' : ''}`}
+                                value={carrier}
+                                onChange={e => setCarrier(e.target.value)}
+                            />
+                        </div>
+                        <div className="mb-3 col-md-3">
+                            <label htmlFor="receipt-tracking">{shipmentTrans.tracking_number ?? 'N° de suivi'}</label>
+                            <input
+                                id="receipt-tracking"
+                                type="text"
+                                maxLength={100}
+                                className={`form-control ${errors.tracking_number ? 'is-invalid' : ''}`}
+                                value={trackingNumber}
+                                onChange={e => setTrackingNumber(e.target.value)}
+                            />
+                        </div>
+                        <div className="mb-3 col-md-2">
+                            <label htmlFor="receipt-shipped-at">{shipmentTrans.shipped_at ?? "Date d'expédition"}</label>
+                            <input
+                                id="receipt-shipped-at"
+                                type="date"
+                                className={`form-control ${errors.shipped_at ? 'is-invalid' : ''}`}
+                                value={shippedAt}
+                                onChange={e => setShippedAt(e.target.value)}
+                            />
+                        </div>
+                        <div className="mb-3 col-md-4">
+                            <label htmlFor="receipt-delivery-note">{shipmentTrans.delivery_note_file ?? 'BL du fournisseur'}</label>
+                            <input
+                                id="receipt-delivery-note"
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                className={`form-control ${errors.delivery_note_file ? 'is-invalid' : ''}`}
+                                onChange={e => setDeliveryNoteFile(e.target.files?.[0] ?? null)}
+                            />
+                            {errors.delivery_note_file
+                                ? <span className="text-danger">{errors.delivery_note_file[0]}</span>
+                                : <small className="text-muted">{shipmentTrans.delivery_note_hint}</small>}
                         </div>
                     </div>
 

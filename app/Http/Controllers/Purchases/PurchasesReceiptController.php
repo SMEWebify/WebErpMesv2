@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Purchases;
 
+use App\Services\Files\FileRole;
+use App\Services\Files\FileStorageService;
 use App\Services\Purchases\SupplierAcknowledgement;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
@@ -103,6 +105,7 @@ class PurchasesReceiptController extends Controller
             'loading'              => __('general_content.notif_loading_trans_key'),
             'error'                => __('general_content.error_trans_key') ?? 'Erreur',
             'no_lines_selected'    => __('general_content.no_lines_selected_trans_key') ?? 'Aucune ligne sélectionnée',
+            'shipment'             => __('supplier_shipment'),
         ];
 
         return view('purchases/purchases-wainting-receipt', compact('reactEndpoints', 'reactTrans', 'initialCode'));
@@ -181,7 +184,7 @@ class PurchasesReceiptController extends Controller
             'delivery_note_number' => 'nullable|string|max:255',
             'line_ids'             => 'required|array|min:1',
             'line_ids.*'           => 'integer|exists:purchase_lines,id',
-        ]);
+        ] + self::SHIPMENT_RULES);
 
         // Transform line_ids into the format PurchaseReceiptService expects
         $data = [];
@@ -195,11 +198,12 @@ class PurchasesReceiptController extends Controller
             'companies_id'         => $validated['companies_id'],
             'delivery_note_number' => $validated['delivery_note_number'] ?? null,
             'user_id'              => $validated['user_id'],
-        ];
+        ] + $this->shipmentDetails($validated);
 
         try {
             $this->documentCodeGenerator->consumeIfProposed('purchase-receipt', $validated['code']);
             $receipt = $this->purchaseReceiptService->createPurchaseReceipt($data, $receiptData);
+            $this->attachDeliveryNote($request, $receipt);
             // rate=1 : la fiche propose la notation rapide du fournisseur
             return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id, 'rate' => 1])]);
         } catch (\Exception $e) {
@@ -218,15 +222,49 @@ class PurchasesReceiptController extends Controller
             'companies_id'         => 'required|exists:companies,id',
             'user_id'              => 'required|exists:users,id',
             'delivery_note_number' => 'nullable|string|max:255',
-        ]);
+        ] + self::SHIPMENT_RULES);
 
         try {
             $this->documentCodeGenerator->consumeIfProposed('purchase-receipt', $validated['code']);
-            $receipt = $this->purchaseReceiptService->createEmptyPurchaseReceipt($validated);
+            $receipt = $this->purchaseReceiptService->createEmptyPurchaseReceipt(
+                collect($validated)->except('delivery_note_file')->all()
+            );
+            $this->attachDeliveryNote($request, $receipt);
             return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id])]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
+    }
+
+    /**
+     * Avis de livraison du fournisseur saisi avec la réception : transporteur, n° de suivi,
+     * date d'expédition, et son BL (PDF ou photo) rangé dans la GED de la réception.
+     */
+    private const SHIPMENT_RULES = [
+        'carrier'            => 'nullable|string|max:100',
+        'tracking_number'    => 'nullable|string|max:100',
+        'shipped_at'         => 'nullable|date',
+        'delivery_note_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:20480',
+    ];
+
+    private function shipmentDetails(array $validated): array
+    {
+        return [
+            'carrier'         => $validated['carrier'] ?? null,
+            'tracking_number' => $validated['tracking_number'] ?? null,
+            'shipped_at'      => $validated['shipped_at'] ?? null,
+        ];
+    }
+
+    private function attachDeliveryNote(Request $request, PurchaseReceipt $receipt): void
+    {
+        if (! $request->hasFile('delivery_note_file')) {
+            return;
+        }
+
+        $storage = app(FileStorageService::class);
+        $file = $storage->store($request->file('delivery_note_file'));
+        $storage->attach($file, $receipt, FileRole::SUPPLIER_DELIVERY_NOTE, true);
     }
 
     /**
@@ -321,6 +359,7 @@ class PurchasesReceiptController extends Controller
         $PurchaseReceipt->label=$request->label;
         $PurchaseReceipt->statu=$request->statu;
         $PurchaseReceipt->delivery_note_number=$request->delivery_note_number;
+        $PurchaseReceipt->fill($this->shipmentDetails($request->validated()));
         $PurchaseReceipt->comment=$request->comment;
         $PurchaseReceipt->save();
         

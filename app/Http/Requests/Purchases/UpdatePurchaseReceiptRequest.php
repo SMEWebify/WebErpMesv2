@@ -26,6 +26,9 @@ class UpdatePurchaseReceiptRequest extends FormRequest
         return [
             //
             'label'=>'required',
+            'carrier' => 'nullable|string|max:100',
+            'tracking_number' => 'nullable|string|max:100',
+            'shipped_at' => 'nullable|date',
         ];
     }
 }

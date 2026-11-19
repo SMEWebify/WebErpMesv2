@@ -585,6 +585,9 @@ function CreateModal({ show, onClose, endpoints, trans, initialTemplateId = null
                 ...f,
                 companies_addresses_id: resolveId(docAddrId, addr),
                 companies_contacts_id:  resolveId(docCtctId, ctct),
+                // Conditions de règlement du client, sinon celles déjà proposées.
+                ...(addrData.payment_condition_id ? { accounting_payment_conditions_id: String(addrData.payment_condition_id) } : {}),
+                ...(addrData.payment_method_id    ? { accounting_payment_methods_id:    String(addrData.payment_method_id) }    : {}),
             }));
         });
     };
