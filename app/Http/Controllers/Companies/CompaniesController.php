@@ -123,6 +123,7 @@ class CompaniesController extends Controller
         ];
 
         $reactTrans = [
+            'ui' => __('crm_ui'),
             'dashboard'        => __('general_content.dashboard_trans_key'),
             'companies_list'   => __('general_content.companies_list_trans_key'),
             'statistiques'     => __('general_content.statistiques_trans_key'),

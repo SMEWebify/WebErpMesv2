@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 function csrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
@@ -19,6 +23,7 @@ const STATUS_META = {
 };
 
 export default function InventoryShow({ endpoints, trans }) {
+    L = trans?.ui ?? {};
     const [inventory, setInventory] = useState(null);
     const [details, setDetails] = useState([]);
     const [summary, setSummary] = useState(null);
@@ -103,7 +108,7 @@ export default function InventoryShow({ endpoints, trans }) {
             });
             const json = await res.json();
             if (!res.ok) {
-                setError(json.message ?? 'Erreur');
+                setError(json.message ?? (L.error ?? 'Erreur'));
                 return;
             }
             await reload();
@@ -123,7 +128,7 @@ export default function InventoryShow({ endpoints, trans }) {
             });
             const json = await res.json();
             if (!res.ok) {
-                setError(json.message ?? 'Erreur');
+                setError(json.message ?? (L.error ?? 'Erreur'));
                 return;
             }
             await reload();
@@ -353,7 +358,7 @@ function ErrorsCard({ errors, trans }) {
                 <p className="text-muted small mb-2">{trans.errors_hint}</p>
                 <table className="table table-sm mb-0">
                     <thead>
-                        <tr><th style={{ width: 80 }}>{trans.row}</th><th>Message</th></tr>
+                        <tr><th style={{ width: 80 }}>{trans.row}</th><th>{L.message ?? 'Message'}</th></tr>
                     </thead>
                     <tbody>
                         {errors.slice(0, 50).map((err, i) => (

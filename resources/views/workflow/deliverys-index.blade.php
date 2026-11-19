@@ -19,6 +19,7 @@
     ];
 
     $reactTrans = [
+        'ui'              => __('billing_ui'),
         // statuts livraison
         'in_progress'     => __('general_content.in_progress_trans_key'),
         'send'            => __('general_content.send_trans_key'),

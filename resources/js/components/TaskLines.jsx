@@ -2,7 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { formatQty } from '../utils';
 import { formatDuration } from '../lib/duration.js';
 
-export default function TaskLines({ endpoints, services, statuses, resources, defaultStatusIds }) {
+// Textes de l'écran (resources/lang/*/production_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
+export default function TaskLines({ endpoints, services, statuses, resources, defaultStatusIds, trans = {} }) {
+    L = trans?.ui ?? {};
     const [rows, setRows]               = useState([]);
     const [loading, setLoading]         = useState(false);
     const [search, setSearch]           = useState('');
@@ -60,7 +65,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="Rechercher une tâche..."
+                            placeholder={L.search_task ?? 'Rechercher une tâche...'}
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                         />
@@ -71,11 +76,11 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 <div className="col-md-3">
                     <div className="card-body">
                         <div className="mb-3">
-                            <label>Service</label>
+                            <label>{L.service ?? 'Service'}</label>
                             <div className="input-group">
                                 <span className="input-group-text"><i className="fas fa-list"></i></span>
                                 <select className="form-select" value={serviceId} onChange={e => setServiceId(e.target.value)}>
-                                    <option value="">-- Sélectionner --</option>
+                                    <option value="">{L.select_dashes ?? '-- Sélectionner --'}</option>
                                     {services.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                                 </select>
                             </div>
@@ -85,7 +90,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 <div className="col-md-3">
                     <div className="card-body">
                         <div className="mb-3">
-                            <label>Statut</label>
+                            <label>{L.status ?? 'Statut'}</label>
                             <div className="form-control overflow-auto" style={{ maxHeight: 200 }}>
                                 {statuses.map(s => (
                                     <div className="form-check" key={s.id}>
@@ -106,11 +111,11 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 <div className="col-md-3">
                     <div className="card-body">
                         <div className="mb-3">
-                            <label>Ressource</label>
+                            <label>{L.resource ?? 'Ressource'}</label>
                             <div className="input-group">
                                 <span className="input-group-text"><i className="fas fa-list"></i></span>
                                 <select className="form-select" value={resourceId} onChange={e => setResourceId(e.target.value)}>
-                                    <option value="">-- Sélectionner --</option>
+                                    <option value="">{L.select_dashes ?? '-- Sélectionner --'}</option>
                                     {resources.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
                                 </select>
                             </div>
@@ -120,7 +125,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                 <div className="col-md-3">
                     <div className="card-body">
                         <div className="mb-3">
-                            <label>Tâches génériques</label>
+                            <label>{L.generic_tasks ?? 'Tâches génériques'}</label>
                             <div>
                                 <input
                                     type="checkbox"
@@ -143,36 +148,36 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                     <table className="table table-hover">
                         <thead>
                             <tr>
-                                <th>Commande</th>
-                                <th>Qté</th>
-                                <th>Libellé commande</th>
-                                <th><SortBtn field="label" label="Tâche" /></th>
-                                <th>Produit</th>
-                                <th><SortBtn field="methods_services_id" label="Service" /></th>
-                                <th>Ressource</th>
-                                <th>Qté req.</th>
-                                <th>Régl.</th>
-                                <th>Tps/u</th>
-                                <th>Tps total</th>
-                                <th>Avancement</th>
-                                <th>Statut</th>
-                                <th><SortBtn field="end_date" label="Fin" /></th>
+                                <th>{L.order ?? 'Commande'}</th>
+                                <th>{L.qty ?? 'Qté'}</th>
+                                <th>{L.order_label ?? 'Libellé commande'}</th>
+                                <th><SortBtn field="label" label={L.task ?? 'Tâche'} /></th>
+                                <th>{L.product ?? 'Produit'}</th>
+                                <th><SortBtn field="methods_services_id" label={L.service ?? 'Service'} /></th>
+                                <th>{L.resource ?? 'Ressource'}</th>
+                                <th>{L.required_qty ?? 'Qté req.'}</th>
+                                <th>{L.setup_short ?? 'Régl.'}</th>
+                                <th>{L.time_per_unit ?? 'Tps/u'}</th>
+                                <th>{L.total_time ?? 'Tps total'}</th>
+                                <th>{L.progression ?? 'Avancement'}</th>
+                                <th>{L.status ?? 'Statut'}</th>
+                                <th><SortBtn field="end_date" label={L.end ?? 'Fin'} /></th>
                             </tr>
                         </thead>
                         <tbody>
                             {rows.length === 0 ? (
-                                <tr><td colSpan={14} className="text-center text-muted">Aucune donnée</td></tr>
+                                <tr><td colSpan={14} className="text-center text-muted">{L.no_data ?? 'Aucune donnée'}</td></tr>
                             ) : rows.map(task => (
                                 <tr key={task.id}>
                                     <td>
                                         {task.order ? (
                                             <a href={endpoints.order.replace('__ID__', task.order.id)} className="btn btn-sm btn-primary">{task.order.code}</a>
-                                        ) : <span className="text-muted">Générique</span>}
+                                        ) : <span className="text-muted">{L.generic ?? 'Générique'}</span>}
                                     </td>
                                     <td>{formatQty(task.qty)}</td>
                                     <td>{task.order_label}</td>
                                     <td>
-                                        <a href={endpoints.task.replace('__ID__', task.id)} className="btn btn-sm btn-success">Voir</a>
+                                        <a href={endpoints.task.replace('__ID__', task.id)} className="btn btn-sm btn-success">{L.view ?? 'Voir'}</a>
                                         {' '}#{task.id} - {task.label}
                                         {task.component && <span> - {task.component.label}</span>}
                                     </td>
@@ -223,10 +228,10 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>Commande</th><th>Qté</th><th>Libellé commande</th><th>Tâche</th>
-                                <th>Produit</th><th>Service</th><th>Ressource</th><th>Qté req.</th>
-                                <th>Régl.</th><th>Tps/u</th><th>Tps total</th><th>Avancement</th>
-                                <th>Statut</th><th>Fin</th>
+                                <th>{L.order ?? 'Commande'}</th><th>{L.qty ?? 'Qté'}</th><th>{L.order_label ?? 'Libellé commande'}</th><th>{L.task ?? 'Tâche'}</th>
+                                <th>{L.product ?? 'Produit'}</th><th>{L.service ?? 'Service'}</th><th>{L.resource ?? 'Ressource'}</th><th>{L.required_qty ?? 'Qté req.'}</th>
+                                <th>{L.setup_short ?? 'Régl.'}</th><th>{L.time_per_unit ?? 'Tps/u'}</th><th>{L.total_time ?? 'Tps total'}</th><th>{L.progression ?? 'Avancement'}</th>
+                                <th>{L.status ?? 'Statut'}</th><th>{L.end ?? 'Fin'}</th>
                             </tr>
                         </tfoot>
                     </table>

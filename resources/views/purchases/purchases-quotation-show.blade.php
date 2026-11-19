@@ -27,7 +27,7 @@
     data-affair-options="{{ json_encode($reactProps['affairOptions']) }}"
     data-currency="{{ $reactProps['currency'] }}"
     data-endpoints="{{ json_encode($reactEndpoints) }}"
-    data-trans="{{ json_encode($reactTrans) }}"
+    data-trans="{{ json_encode($reactTrans + ['ui' => __('purchase_ui')]) }}"
 ></div>
 {{-- Offre PDF du fournisseur et autres pièces de la demande de prix --}}
 <div class="card card-outline card-secondary mb-3">

@@ -1,83 +1,100 @@
 import React, { useState, useEffect } from 'react';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Config per document type
 // ---------------------------------------------------------------------------
 const TYPE_CONFIG = {
     lead: {
-        label:   'Lead',
+        get label() { return L.type_lead ?? 'Lead'; },
         color:   '#17a2b8',
         bg:      '#e8f7fa',
         icon:    'fas fa-bullseye',
         statuses: {
-            1: { label: 'Nouveau',      badge: 'text-bg-info' },
-            2: { label: 'Assigné',      badge: 'text-bg-warning' },
-            3: { label: 'En cours',     badge: 'text-bg-primary' },
-            4: { label: 'Converti',     badge: 'text-bg-success' },
-            5: { label: 'Perdu',        badge: 'text-bg-danger' },
+            1: { get label() { return L.lead_new ?? 'Nouveau'; },      badge: 'text-bg-info' },
+            2: { get label() { return L.lead_assigned ?? 'Assigné'; },      badge: 'text-bg-warning' },
+            3: { get label() { return L.in_progress ?? 'En cours'; },     badge: 'text-bg-primary' },
+            4: { get label() { return L.lead_converted ?? 'Converti'; },     badge: 'text-bg-success' },
+            5: { get label() { return L.lost ?? 'Perdu'; },        badge: 'text-bg-danger' },
         },
     },
     quote: {
-        label:   'Devis',
+        get label() { return L.type_quote ?? 'Devis'; },
         color:   '#007bff',
         bg:      '#e8f0fe',
         icon:    'fas fa-file-alt',
         statuses: {
-            1: { label: 'Brouillon',    badge: 'text-bg-secondary' },
-            2: { label: 'Envoyé',       badge: 'text-bg-info' },
-            3: { label: 'En révision',  badge: 'text-bg-warning' },
-            4: { label: 'Accepté',      badge: 'text-bg-success' },
-            5: { label: 'Refusé',       badge: 'text-bg-danger' },
-            6: { label: 'Expiré',       badge: 'text-bg-dark' },
+            1: { get label() { return L.draft ?? 'Brouillon'; },    badge: 'text-bg-secondary' },
+            2: { get label() { return L.sent_m ?? 'Envoyé'; },       badge: 'text-bg-info' },
+            3: { get label() { return L.under_review ?? 'En révision'; },  badge: 'text-bg-warning' },
+            4: { get label() { return L.accepted ?? 'Accepté'; },      badge: 'text-bg-success' },
+            5: { get label() { return L.refused ?? 'Refusé'; },       badge: 'text-bg-danger' },
+            6: { get label() { return L.expired ?? 'Expiré'; },       badge: 'text-bg-dark' },
         },
     },
     order: {
-        label:   'Commande',
+        get label() { return L.type_order ?? 'Commande'; },
         color:   '#fd7e14',
         bg:      '#fff3e0',
         icon:    'fas fa-shopping-cart',
         statuses: {
-            1: { label: 'Nouvelle',     badge: 'text-bg-info' },
-            2: { label: 'En cours',     badge: 'text-bg-primary' },
-            3: { label: 'Terminée',     badge: 'text-bg-success' },
-            4: { label: 'Annulée',      badge: 'text-bg-danger' },
+            1: { get label() { return L.order_new ?? 'Nouvelle'; },     badge: 'text-bg-info' },
+            2: { get label() { return L.in_progress ?? 'En cours'; },     badge: 'text-bg-primary' },
+            3: { get label() { return L.finished_f ?? 'Terminée'; },     badge: 'text-bg-success' },
+            4: { get label() { return L.canceled_f ?? 'Annulée'; },      badge: 'text-bg-danger' },
         },
     },
     delivery: {
-        label:   'Bon de livraison',
+        get label() { return L.type_delivery ?? 'Bon de livraison'; },
         color:   '#20c997',
         bg:      '#e8faf4',
         icon:    'fas fa-truck',
         statuses: {
-            1: { label: 'Préparation',  badge: 'text-bg-warning' },
-            2: { label: 'Expédié',      badge: 'text-bg-primary' },
-            3: { label: 'Livré',        badge: 'text-bg-success' },
-            4: { label: 'Annulé',       badge: 'text-bg-danger' },
+            1: { get label() { return L.preparation ?? 'Préparation'; },  badge: 'text-bg-warning' },
+            2: { get label() { return L.shipped ?? 'Expédié'; },      badge: 'text-bg-primary' },
+            3: { get label() { return L.delivered ?? 'Livré'; },        badge: 'text-bg-success' },
+            4: { get label() { return L.canceled_m ?? 'Annulé'; },       badge: 'text-bg-danger' },
         },
     },
     invoice: {
-        label:   'Facture',
+        get label() { return L.type_invoice ?? 'Facture'; },
         color:   '#28a745',
         bg:      '#eafaf1',
         icon:    'fas fa-file-invoice-dollar',
         statuses: {
-            1: { label: 'Brouillon',    badge: 'text-bg-secondary' },
-            2: { label: 'Envoyée',      badge: 'text-bg-info' },
-            3: { label: 'Payée',        badge: 'text-bg-success' },
-            4: { label: 'En retard',    badge: 'text-bg-danger' },
-            5: { label: 'Annulée',      badge: 'text-bg-dark' },
+            1: { get label() { return L.draft ?? 'Brouillon'; },    badge: 'text-bg-secondary' },
+            2: { get label() { return L.sent_f ?? 'Envoyée'; },      badge: 'text-bg-info' },
+            3: { get label() { return L.paid ?? 'Payée'; },        badge: 'text-bg-success' },
+            4: { get label() { return L.late ?? 'En retard'; },    badge: 'text-bg-danger' },
+            5: { get label() { return L.canceled_f ?? 'Annulée'; },      badge: 'text-bg-dark' },
         },
     },
     purchase: {
-        label:   'Achat',
+        get label() { return L.type_purchase ?? 'Achat'; },
         color:   '#6f42c1',
         bg:      '#f3eeff',
         icon:    'fas fa-box',
         statuses: {
-            1: { label: 'Brouillon',    badge: 'text-bg-secondary' },
-            2: { label: 'Envoyé',       badge: 'text-bg-info' },
-            3: { label: 'Reçu',         badge: 'text-bg-success' },
-            4: { label: 'Annulé',       badge: 'text-bg-danger' },
+            1: { get label() { return L.draft ?? 'Brouillon'; },    badge: 'text-bg-secondary' },
+            2: { get label() { return L.sent_m ?? 'Envoyé'; },       badge: 'text-bg-info' },
+            3: { get label() { return L.received ?? 'Reçu'; },         badge: 'text-bg-success' },
+            4: { get label() { return L.canceled_m ?? 'Annulé'; },       badge: 'text-bg-danger' },
+        },
+    },
+    // Journal des échanges : e-mails envoyés depuis l'ERP sur un document de la société.
+    email: {
+        get label() { return L.type_email ?? 'E-mail'; },
+        color:   '#0d6efd',
+        bg:      '#e7f1ff',
+        icon:    'fas fa-envelope',
+        statuses: {
+            pending: { get label() { return L.email_pending ?? 'En attente'; }, badge: 'text-bg-secondary' },
+            sent:    { get label() { return L.email_sent ?? 'Envoyé'; },        badge: 'text-bg-success' },
+            failed:  { get label() { return L.email_failed ?? 'Échec'; },       badge: 'text-bg-danger' },
         },
     },
 };
@@ -99,7 +116,7 @@ function formatDate(dateStr) {
 
 function statusInfo(type, statu) {
     const cfg = TYPE_CONFIG[type]?.statuses?.[statu];
-    return cfg ?? { label: `Statut ${statu}`, badge: 'text-bg-secondary' };
+    return cfg ?? { label: fmt(L.status_n ?? 'Statut :status', { status: statu }), badge: 'text-bg-secondary' };
 }
 
 // ---------------------------------------------------------------------------
@@ -179,7 +196,8 @@ function TimelineItem({ item }) {
 // ---------------------------------------------------------------------------
 // CompanyTimeline
 // ---------------------------------------------------------------------------
-export default function CompanyTimeline({ endpoint }) {
+export default function CompanyTimeline({ endpoint, trans = {} }) {
+    L = trans?.ui ?? {};
     const [items,       setItems]       = useState([]);
     const [loading,     setLoading]     = useState(true);
     const [error,       setError]       = useState(null);
@@ -248,7 +266,7 @@ export default function CompanyTimeline({ endpoint }) {
             {/* Timeline */}
             {loading && (
                 <div className="text-center text-muted py-4">
-                    <i className="fas fa-spinner fa-spin me-2" /> Chargement…
+                    <i className="fas fa-spinner fa-spin me-2" /> {L.loading ?? 'Chargement…'}
                 </div>
             )}
             {error && (
@@ -257,14 +275,14 @@ export default function CompanyTimeline({ endpoint }) {
             {!loading && !error && visible.length === 0 && (
                 <div className="text-center text-muted py-4">
                     <i className="fas fa-inbox fa-2x mb-2 d-block" />
-                    Aucun document pour ce client.
+                    {L.no_document ?? 'Aucun document pour ce client.'}
                 </div>
             )}
 
             {!loading && grouped.map((entry, idx) => {
                 if (entry.type === 'separator') {
                     const [y, m] = (entry.month ?? '').split('-');
-                    const label  = entry.month === 'unknown' ? 'Date inconnue'
+                    const label  = entry.month === 'unknown' ? (L.unknown_date ?? 'Date inconnue')
                         : new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(+y, +m - 1));
                     return (
                         <div key={`sep-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '16px 0 8px' }}>

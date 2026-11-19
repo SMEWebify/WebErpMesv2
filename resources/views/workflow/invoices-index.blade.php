@@ -8,6 +8,7 @@
 
 @php
   $reactTrans = [
+    'ui'                 => __('billing_ui'),
     'dashboard'          => __('general_content.dashboard_trans_key'),
     'invoices_list'      => __('general_content.invoices_list_trans_key'),
     'draft'              => 'Brouillon',

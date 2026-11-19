@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import GuideHelp from './GuideHelp';
 
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
@@ -18,15 +22,15 @@ function BalanceBar({ total, paid, credited = 0, remaining }) {
         <div className="mb-3">
             <div className="d-flex justify-content-between mb-1">
                 <span className="text-muted small">
-                    Réglé : <strong>{fmt(paid)} €</strong>
-                    {credited > 0 && <> · Avoirs : <strong>{fmt(credited)} €</strong></>}
+                    {L.paid_label ?? 'Réglé :'} <strong>{fmt(paid)} €</strong>
+                    {credited > 0 && <> {L.credited_label ?? '· Avoirs :'} <strong>{fmt(credited)} €</strong></>}
                 </span>
                 <span className={`text-${remaining <= 0 ? 'success' : 'danger'} small`}>
                     {remaining <= 0
-                        ? <><i className="fas fa-check-circle me-1"></i>Soldée</>
-                        : <>Reste : <strong>{fmt(remaining)} €</strong></>}
+                        ? <><i className="fas fa-check-circle me-1"></i>{L.settled ?? 'Soldée'}</>
+                        : <>{L.remaining_label ?? 'Reste :'} <strong>{fmt(remaining)} €</strong></>}
                 </span>
-                <span className="text-muted small">Total : <strong>{fmt(total)} €</strong></span>
+                <span className="text-muted small">{L.total_label ?? 'Total :'} <strong>{fmt(total)} €</strong></span>
             </div>
             <div className="progress" style={{ height: 8 }}>
                 <div
@@ -38,7 +42,8 @@ function BalanceBar({ total, paid, credited = 0, remaining }) {
     );
 }
 
-export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceId }) {
+export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceId, trans = {} }) {
+    L = trans?.ui ?? {};
     const [data, setData]         = useState({ payments: [], total: 0, paid: 0, remaining: 0 });
     const [loading, setLoading]   = useState(true);
     const [saving, setSaving]     = useState(false);
@@ -58,7 +63,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
             const r = await fetch(endpoints.index, { headers: { Accept: 'application/json' } });
             setData(await r.json());
         } catch {
-            setError('Erreur de chargement');
+            setError((L.error_loading ?? 'Erreur de chargement'));
         } finally {
             setLoading(false);
         }
@@ -85,14 +90,14 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
             setForm(f => ({ ...f, amount: '', reference: '', note: '' }));
             await load();
         } catch {
-            setError('Erreur réseau');
+            setError((L.network_error ?? 'Erreur réseau'));
         } finally {
             setSaving(false);
         }
     }
 
     async function handleDelete(paymentId) {
-        if (!confirm('Supprimer ce règlement ?')) return;
+        if (!confirm((L.confirm_delete_payment ?? 'Supprimer ce règlement ?'))) return;
         const url = endpoints.destroy.replace('__payment__', paymentId);
         try {
             await fetch(url, {
@@ -101,7 +106,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
             });
             await load();
         } catch {
-            setError('Erreur réseau');
+            setError((L.network_error ?? 'Erreur réseau'));
         }
     }
 
@@ -120,11 +125,11 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                 {/* Formulaire de saisie */}
                 <div className="col-md-4">
                     <div className="card card-secondary card-outline mb-3">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus me-1"></i>Saisir un règlement<GuideHelp guide="facturation" section="enregistrer-les-reglements" /></h3></div>
+                        <div className="card-header"><h3 className="card-title"><i className="fas fa-plus me-1"></i>{L.new_payment ?? 'Saisir un règlement'}<GuideHelp guide="facturation" section="enregistrer-les-reglements" /></h3></div>
                         <div className="card-body">
                             <form onSubmit={handleStore}>
                                 <div className="mb-3">
-                                    <label>Montant (€) <span className="text-danger">*</span></label>
+                                    <label>{L.amount_eur ?? 'Montant (€)'} <span className="text-danger">*</span></label>
                                     <input
                                         type="number" step="0.01" min="0.01"
                                         className="form-control"
@@ -134,32 +139,32 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label>Date <span className="text-danger">*</span></label>
+                                    <label>{L.date ?? 'Date'} <span className="text-danger">*</span></label>
                                     <input type="date" className="form-control" name="payment_date" value={form.payment_date} onChange={handleChange} required />
                                 </div>
                                 <div className="mb-3">
-                                    <label>Méthode</label>
+                                    <label>{L.method ?? 'Méthode'}</label>
                                     <select className="form-select" name="payment_method_id" value={form.payment_method_id} onChange={handleChange}>
-                                        <option value="">— Choisir —</option>
+                                        <option value="">{L.choose ?? '— Choisir —'}</option>
                                         {paymentMethods.map(m => (
                                             <option key={m.id} value={m.id}>{m.label}</option>
                                         ))}
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label>Référence</label>
-                                    <input type="text" className="form-control" name="reference" value={form.reference} onChange={handleChange} placeholder="N° virement, chèque…" maxLength={100} />
+                                    <label>{L.reference ?? 'Référence'}</label>
+                                    <input type="text" className="form-control" name="reference" value={form.reference} onChange={handleChange} placeholder={L.reference_placeholder ?? 'N° virement, chèque…'} maxLength={100} />
                                 </div>
                                 <div className="mb-3">
-                                    <label>Note</label>
+                                    <label>{L.note ?? 'Note'}</label>
                                     <textarea className="form-control" name="note" value={form.note} onChange={handleChange} rows={2} maxLength={500}></textarea>
                                 </div>
                                 <button type="submit" className="btn btn-success w-100" disabled={saving || data.remaining <= 0}>
                                     <i className="fas fa-check me-1"></i>
-                                    {saving ? 'Enregistrement…' : 'Enregistrer'}
+                                    {saving ? (L.saving ?? 'Enregistrement…') : (L.save ?? 'Enregistrer')}
                                 </button>
                                 {data.remaining <= 0 && (
-                                    <p className="text-success text-center mt-2 small"><i className="fas fa-lock me-1"></i>Facture soldée</p>
+                                    <p className="text-success text-center mt-2 small"><i className="fas fa-lock me-1"></i>{L.invoice_settled ?? 'Facture soldée'}</p>
                                 )}
                             </form>
                         </div>
@@ -169,23 +174,23 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                 {/* Liste des règlements */}
                 <div className="col-md-8">
                     <div className="card card-primary card-outline mb-3">
-                        <div className="card-header"><h3 className="card-title"><i className="fas fa-list me-1"></i>Historique des règlements</h3></div>
+                        <div className="card-header"><h3 className="card-title"><i className="fas fa-list me-1"></i>{L.payments_history ?? 'Historique des règlements'}</h3></div>
                         <div className="card-body p-0">
                             {loading ? (
-                                <div className="text-center py-4"><i className="fas fa-spinner fa-spin me-2"></i>Chargement…</div>
+                                <div className="text-center py-4"><i className="fas fa-spinner fa-spin me-2"></i>{L.loading ?? 'Chargement…'}</div>
                             ) : data.payments.length === 0 ? (
                                 <div className="text-center text-muted py-4">
-                                    <i className="fas fa-inbox fa-2x d-block mb-2"></i>Aucun règlement enregistré
+                                    <i className="fas fa-inbox fa-2x d-block mb-2"></i>{L.no_payment ?? 'Aucun règlement enregistré'}
                                 </div>
                             ) : (
                                 <table className="table table-sm table-hover mb-0">
                                     <thead className="table-light">
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Méthode</th>
-                                            <th>Référence</th>
-                                            <th className="text-end">Montant</th>
-                                            <th>Par</th>
+                                            <th>{L.date ?? 'Date'}</th>
+                                            <th>{L.method ?? 'Méthode'}</th>
+                                            <th>{L.reference ?? 'Référence'}</th>
+                                            <th className="text-end">{L.amount ?? 'Montant'}</th>
+                                            <th>{L.by ?? 'Par'}</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -206,7 +211,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         onClick={() => handleDelete(p.id)}
-                                                        title="Supprimer"
+                                                        title={L.delete ?? 'Supprimer'}
                                                     >
                                                         <i className="fas fa-trash"></i>
                                                     </button>
@@ -216,7 +221,7 @@ export default function InvoicePaymentsTab({ endpoints, paymentMethods, invoiceI
                                     </tbody>
                                     <tfoot>
                                         <tr className="table-success fw-bold">
-                                            <td colSpan={3} className="text-end">Total réglé</td>
+                                            <td colSpan={3} className="text-end">{L.total_paid ?? 'Total réglé'}</td>
                                             <td className="text-end">{fmt(data.paid)} €</td>
                                             <td colSpan={2}></td>
                                         </tr>

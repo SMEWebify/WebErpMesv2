@@ -4,6 +4,7 @@ import useColumnLayout from './useColumnLayout.js';
 import useMediaQuery from './useMediaQuery.js';
 import { toISODate } from './dates.js';
 import { rowLinkProps, shouldIgnoreRowClick } from '../../lib/rowLink.js';
+import { commonText } from '../../lib/i18n.js';
 
 /*
  * Tableau d'index déclaratif. L'écran garde sa récupération de données (fetch, tri et
@@ -311,7 +312,7 @@ export default function DataTable({
                             className="btn btn-sm btn-outline-secondary"
                             style={{ fontSize: '0.72rem', padding: '1px 8px' }}
                             onClick={() => layout.show(key)}
-                            title="Réafficher la colonne"
+                            title={commonText('show_column', 'Réafficher la colonne')}
                         >
                             + {cols[key].label}
                         </button>
@@ -358,7 +359,7 @@ export default function DataTable({
                                         {hideable && col.hideable !== false && (
                                             <span
                                                 role="button"
-                                                aria-label="Masquer la colonne"
+                                                aria-label={commonText('hide_column', 'Masquer la colonne')}
                                                 style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
                                                 className="text-danger"
                                                 onClick={e => { e.stopPropagation(); layout.hide(col.key); }}
@@ -394,7 +395,7 @@ export default function DataTable({
                                                         type="date"
                                                         className="form-control form-control-sm"
                                                         style={{ ...INPUT_STYLE, flex: 1, minWidth: 0 }}
-                                                        title={bound === 'from' ? 'Du' : 'Au'}
+                                                        title={bound === 'from' ? (commonText('date_from', 'Du')) : (commonText('date_to', 'Au'))}
                                                         value={(colFilters[col.key] ?? {})[bound] ?? ''}
                                                         onChange={e => setColFilter(col.key, { ...(colFilters[col.key] ?? {}), [bound]: e.target.value })}
                                                     />

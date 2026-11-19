@@ -3,6 +3,11 @@ import useProductSearch from '../hooks/useProductSearch';
 import { apiRequest as apiFetch } from '../lib/http';
 import DocumentCheckDrawer, { CertificateCell, DecisionBadge, StatusBadge } from './purchases/DocumentCheckDrawer.jsx';
 import GuideHelp from './GuideHelp';
+import { fmt as tfmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/purchase_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -76,11 +81,11 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
             const url = endpoints.inspection.replace('__ID__', line.id);
             const res = await apiFetch(url, { method: 'POST', body: JSON.stringify(form) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             onSaved(data.line);
             onClose();
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -111,7 +116,7 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
                 transition: 'opacity 0.2s',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: 8, zIndex: 1049,
-            }} title="Fermer">
+            }} title={L.close ?? 'Fermer'}>
                 <i className="fas fa-clipboard-check" style={{ fontSize: 14 }} />
             </button>
 
@@ -129,7 +134,7 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom" style={{ background: teal, color: '#fff' }}>
                     <strong>
                         <i className="fas fa-clipboard-check me-2" />
-                        Détails d'inspection
+                        {L.inspection_details ?? 'Détails d\'inspection'}
                         <GuideHelp guide="achats" section="receptionner" className="text-white-50" />
                         {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
@@ -146,26 +151,26 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
 
                     {line && (
                         <div className="alert alert-light py-2 mb-3 small">
-                            <strong>Qté reçue :</strong> {fmt(line.receipt_qty)}
-                            {line.accepted_qty != null && <span className="ms-3"><strong>Acceptée :</strong> <span className="text-success">{fmt(line.accepted_qty)}</span></span>}
-                            {line.rejected_qty != null && line.rejected_qty > 0 && <span className="ms-3"><strong>Rejetée :</strong> <span className="text-danger">{fmt(line.rejected_qty)}</span></span>}
+                            <strong>{L.received_qty_colon ?? 'Qté reçue :'}</strong> {fmt(line.receipt_qty)}
+                            {line.accepted_qty != null && <span className="ms-3"><strong>{L.accepted_colon ?? 'Acceptée :'}</strong> <span className="text-success">{fmt(line.accepted_qty)}</span></span>}
+                            {line.rejected_qty != null && line.rejected_qty > 0 && <span className="ms-3"><strong>{L.rejected_colon ?? 'Rejetée :'}</strong> <span className="text-danger">{fmt(line.rejected_qty)}</span></span>}
                         </div>
                     )}
 
                     <form id="inspection-form" onSubmit={handleSubmit}>
                         <div className="row gx-2">
                             <div className="mb-3 col-md-6 mb-2">
-                                <label className="mb-1 small fw-bold">Inspecté par</label>
+                                <label className="mb-1 small fw-bold">{L.inspected_by ?? 'Inspecté par'}</label>
                                 <select className="form-select form-select-sm" value={form.inspected_by}
                                     onChange={(e) => set('inspected_by', e.target.value)}>
-                                    <option value="">— Sélectionner —</option>
+                                    <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                                     {(selectData.users ?? []).map((u) => (
                                         <option key={u.id} value={u.id}>{u.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="mb-3 col-md-6 mb-2">
-                                <label className="mb-1 small fw-bold">Date d'inspection</label>
+                                <label className="mb-1 small fw-bold">{L.inspection_date ?? 'Date d\'inspection'}</label>
                                 <input type="date" className="form-control form-control-sm" value={form.inspection_date}
                                     onChange={(e) => set('inspection_date', e.target.value)} />
                             </div>
@@ -173,24 +178,24 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
 
                         <div className="row gx-2">
                             <div className="mb-3 col-md-4 mb-2">
-                                <label className="mb-1 small fw-bold">Qté acceptée</label>
+                                <label className="mb-1 small fw-bold">{L.accepted_qty ?? 'Qté acceptée'}</label>
                                 <input type="number" min="0" className={`form-control form-control-sm ${errors.accepted_qty ? 'is-invalid' : ''}`}
                                     value={form.accepted_qty}
                                     onChange={(e) => set('accepted_qty', e.target.value)} />
                                 {errors.accepted_qty && <div className="invalid-feedback d-block">{errors.accepted_qty[0]}</div>}
                             </div>
                             <div className="mb-3 col-md-4 mb-2">
-                                <label className="mb-1 small fw-bold">Qté rejetée</label>
+                                <label className="mb-1 small fw-bold">{L.rejected_qty ?? 'Qté rejetée'}</label>
                                 <input type="number" min="0" className={`form-control form-control-sm ${errors.rejected_qty ? 'is-invalid' : ''}`}
                                     value={form.rejected_qty}
                                     onChange={(e) => set('rejected_qty', e.target.value)} />
                                 {errors.rejected_qty && <div className="invalid-feedback d-block">{errors.rejected_qty[0]}</div>}
                             </div>
                             <div className="mb-3 col-md-4 mb-2">
-                                <label className="mb-1 small fw-bold">Non-conformité</label>
+                                <label className="mb-1 small fw-bold">{L.non_conformity ?? 'Non-conformité'}</label>
                                 <select className="form-select form-select-sm" value={form.quality_non_conformity_id}
                                     onChange={(e) => set('quality_non_conformity_id', e.target.value)}>
-                                    <option value="">— Aucune —</option>
+                                    <option value="">{L.none_placeholder ?? '— Aucune —'}</option>
                                     {(selectData.non_conformities ?? []).map((nc) => (
                                         <option key={nc.id} value={nc.id}>{nc.code}</option>
                                     ))}
@@ -216,10 +221,10 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
                         </div>
 
                         <div className="mb-3 mb-3">
-                            <label className="mb-1 small fw-bold">Résultat d'inspection</label>
+                            <label className="mb-1 small fw-bold">{L.inspection_result ?? 'Résultat d\'inspection'}</label>
                             <input type="text" className="form-control form-control-sm" value={form.inspection_result}
                                 onChange={(e) => set('inspection_result', e.target.value)}
-                                placeholder="Observations ou résultat…" />
+                                placeholder={L.inspection_result_placeholder ?? 'Observations ou résultat…'} />
                         </div>
 
                         <div className="border rounded p-3">
@@ -228,23 +233,23 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
                                     checked={form.create_non_conformity}
                                     onChange={(e) => set('create_non_conformity', e.target.checked)} />
                                 <label className="form-check-label" htmlFor="create-nc-toggle">
-                                    Créer une NC rapide
+                                    {L.quick_nc ?? 'Créer une NC rapide'}
                                 </label>
                             </div>
                             {form.create_non_conformity && (
                                 <div className="row gx-2">
                                     <div className="mb-3 col-md-6 mb-0">
-                                        <label className="mb-1 small">Libellé NC</label>
+                                        <label className="mb-1 small">{L.nc_label ?? 'Libellé NC'}</label>
                                         <input type="text" className="form-control form-control-sm" value={form.new_nc_label}
                                             onChange={(e) => set('new_nc_label', e.target.value)}
-                                            placeholder="Libellé de la non-conformité" />
+                                            placeholder={L.nc_label_placeholder ?? 'Libellé de la non-conformité'} />
                                     </div>
                                     <div className="mb-3 col-md-6 mb-0">
-                                        <label className="mb-1 small">Commentaire</label>
+                                        <label className="mb-1 small">{L.comment ?? 'Commentaire'}</label>
                                         <textarea className="form-control form-control-sm" rows="2"
                                             value={form.new_nc_comment}
                                             onChange={(e) => set('new_nc_comment', e.target.value)}
-                                            placeholder="Commentaire…" />
+                                            placeholder={L.comment_placeholder ?? 'Commentaire…'} />
                                     </div>
                                 </div>
                             )}
@@ -254,11 +259,11 @@ function InspectionDrawer({ open, line, selectData, endpoints, documentCheck, on
 
                 {/* Footer */}
                 <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-body-tertiary" style={{ gap: '0.5rem' }}>
-                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>Annuler</button>
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                     <button type="submit" form="inspection-form" className="btn btn-sm" style={{ background: teal, color: '#fff' }} disabled={saving}>
                         {saving
-                            ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
-                            : <><i className="fas fa-save me-1" />Enregistrer</>}
+                            ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</>
+                            : <><i className="fas fa-save me-1" />{L.save ?? 'Enregistrer'}</>}
                     </button>
                 </div>
             </div>
@@ -365,7 +370,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
 
     const handleStoreNew = async (e) => {
         e.preventDefault();
-        if (!stockLocationId) { setErrors({ _global: 'Sélectionnez un emplacement de stock.' }); return; }
+        if (!stockLocationId) { setErrors({ _global: (L.select_location ?? 'Sélectionnez un emplacement de stock.') }); return; }
         setSaving(true);
         setErrors({});
         try {
@@ -383,11 +388,11 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
             };
             const res  = await apiFetch(endpoints.storeNewStock, { method: 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             onSaved(line.id, data);
             onClose();
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -395,7 +400,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
 
     const handleEntryExisting = async (e) => {
         e.preventDefault();
-        if (!existingStockId) { setErrors({ _global: 'Sélectionnez un emplacement existant.' }); return; }
+        if (!existingStockId) { setErrors({ _global: (L.select_existing_location ?? 'Sélectionnez un emplacement existant.') }); return; }
         setSaving(true);
         setErrors({});
         try {
@@ -411,11 +416,11 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
             };
             const res  = await apiFetch(endpoints.entryExistingStock, { method: 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             onSaved(line.id, data);
             onClose();
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -445,7 +450,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-success text-white">
                     <strong>
                         <i className="fas fa-warehouse me-2" />
-                        Mise en stock
+                        {L.put_in_stock ?? 'Mise en stock'}
                         <GuideHelp guide="achats" section="receptionner" className="text-white-50" />
                         {line && <span className="ms-2 fw-normal" style={{ opacity: 0.85, fontSize: '0.85em' }}>
                             — {line.purchase_line_label}
@@ -463,33 +468,33 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                     {alreadyStocked ? (
                         <div className="alert alert-success">
                             <i className="fas fa-check-circle me-2" />
-                            Stock assigné :{' '}
+                            {L.assigned_stock ?? 'Stock assigné :'}{' '}
                             <a href={line.stock_url} className="fw-bold alert-link">{line.stock_code}</a>
                             <BatchList batches={line.batches} texts={batchTexts} />
                         </div>
                     ) : !hasProduct ? (
                         <div className="alert alert-warning">
                             <i className="fas fa-exclamation-triangle me-2" />
-                            Aucun produit associé à cette ligne.
+                            {L.no_product ?? 'Aucun produit associé à cette ligne.'}
                         </div>
                     ) : (
                         <>
                             <div className="alert alert-light py-2 mb-3 small">
-                                <strong>Qté reçue :</strong> {fmt(line?.receipt_qty)}
+                                <strong>{L.received_qty_colon ?? 'Qté reçue :'}</strong> {fmt(line?.receipt_qty)}
                             </div>
 
                             <ul className="nav nav-tabs mb-3">
                                 <li className="nav-item">
                                     <a className={`nav-link ${activeTab === 'new' ? 'active' : ''}`} href="#"
                                         onClick={(e) => { e.preventDefault(); setActiveTab('new'); }}>
-                                        <i className="fas fa-plus-circle me-1" />Nouvel emplacement
+                                        <i className="fas fa-plus-circle me-1" />{L.new_location ?? 'Nouvel emplacement'}
                                     </a>
                                 </li>
                                 {filteredStockProducts.length > 0 && (
                                     <li className="nav-item">
                                         <a className={`nav-link ${activeTab === 'existing' ? 'active' : ''}`} href="#"
                                             onClick={(e) => { e.preventDefault(); setActiveTab('existing'); }}>
-                                            <i className="fas fa-boxes me-1" />Existant ({filteredStockProducts.length})
+                                            <i className="fas fa-boxes me-1" />{L.existing_open ?? 'Existant ('}{filteredStockProducts.length})
                                         </a>
                                     </li>
                                 )}
@@ -499,16 +504,16 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                                 <form id="stock-new-form" onSubmit={handleStoreNew}>
                                     <div className="mb-3 mb-2">
                                         <label className="mb-1 small fw-bold">
-                                            Emplacement de stock <span className="text-danger">*</span>
+                                            {L.stock_location ?? 'Emplacement de stock'} <span className="text-danger">*</span>
                                         </label>
                                         <div className="input-group input-group-sm">
                                             <span className="input-group-text"><i className="fas fa-map-marker-alt" /></span>
                                             <select className="form-select" value={stockLocationId}
                                                 onChange={(e) => setStockLocationId(e.target.value)}>
-                                                <option value="">— Sélectionner —</option>
+                                                <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                                                 {(selectData.stock_locations ?? []).map((sl) => (
                                                     <option key={sl.id} value={sl.id}>
-                                                        Stock : {sl.stock_code} | Emplacement : {sl.code}
+                                                        {L.stock_colon ?? 'Stock :'} {sl.stock_code} {L.location_sep ?? '| Emplacement :'} {sl.code}
                                                     </option>
                                                 ))}
                                             </select>
@@ -521,16 +526,16 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                                 <form id="stock-existing-form" onSubmit={handleEntryExisting}>
                                     <div className="mb-3 mb-2">
                                         <label className="mb-1 small fw-bold">
-                                            Ligne de stock existante <span className="text-danger">*</span>
+                                            {L.existing_stock_line ?? 'Ligne de stock existante'} <span className="text-danger">*</span>
                                         </label>
                                         <div className="input-group input-group-sm">
                                             <span className="input-group-text"><i className="fas fa-boxes" /></span>
                                             <select className="form-select" value={existingStockId}
                                                 onChange={(e) => setExistingStockId(e.target.value)}>
-                                                <option value="">— Sélectionner —</option>
+                                                <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                                                 {filteredStockProducts.map((slp) => (
                                                     <option key={slp.id} value={slp.id}>
-                                                        Emplacement : {slp.location_code} | Stock : {slp.code}
+                                                        {L.location_colon ?? 'Emplacement :'} {slp.location_code} {L.stock_sep ?? '| Stock :'} {slp.code}
                                                     </option>
                                                 ))}
                                             </select>
@@ -548,7 +553,7 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                 {/* Footer */}
                 {!alreadyStocked && hasProduct && (
                     <div className="border-top px-3 py-2 d-flex justify-content-end align-items-center bg-body-tertiary" style={{ gap: '0.5rem' }}>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                         <button
                             type="submit"
                             form={activeTab === 'new' ? 'stock-new-form' : 'stock-existing-form'}
@@ -556,8 +561,8 @@ function StockDrawer({ open, line, receiptCode, selectData, endpoints, userId, c
                             disabled={saving}
                         >
                             {saving
-                                ? <><i className="fas fa-spinner fa-spin me-1" />Traitement…</>
-                                : <><i className="fas fa-check me-1" />Mettre en stock</>}
+                                ? <><i className="fas fa-spinner fa-spin me-1" />{L.processing ?? 'Traitement…'}</>
+                                : <><i className="fas fa-check me-1" />{L.put_in_stock_action ?? 'Mettre en stock'}</>}
                         </button>
                     </div>
                 )}
@@ -594,14 +599,14 @@ function ManualLineForm({ endpoints, onAdded }) {
         try {
             const res  = await apiFetch(endpoints.manualLine, { method: 'POST', body: JSON.stringify({ product_id: productId, qty }) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             setProductId('');
             setProductSearch('');
             setQty(1);
             setOpen(false);
             onAdded(data.line);
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -611,7 +616,7 @@ function ManualLineForm({ endpoints, onAdded }) {
         <div className="card card-outline card-info mb-3">
             <div className="card-header py-2 d-flex align-items-center justify-content-between">
                 <strong className="small">
-                    <i className="fas fa-plus-circle me-2 text-info" />Ajouter une ligne manuelle
+                    <i className="fas fa-plus-circle me-2 text-info" />{L.add_manual_line ?? 'Ajouter une ligne manuelle'}
                 </strong>
                 <button type="button" className="btn btn-sm btn-outline-info"
                     onClick={() => setOpen((v) => !v)}>
@@ -624,11 +629,11 @@ function ManualLineForm({ endpoints, onAdded }) {
                     <form onSubmit={handleSubmit}>
                         <div className="row gx-2 align-items-end">
                             <div className="mb-3 col-md-7 mb-0" style={{ position: 'relative' }}>
-                                <label className="mb-1 small fw-bold">Produit <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.product ?? 'Produit'} <span className="text-danger">*</span></label>
                                 <input
                                     type="text"
                                     className={`form-control form-control-sm ${errors.product_id ? 'is-invalid' : ''}`}
-                                    placeholder="Rechercher un produit…"
+                                    placeholder={L.search_product ?? 'Rechercher un produit…'}
                                     value={productSearch}
                                     onChange={(e) => { setProductSearch(e.target.value); setProductId(''); setShowProductList(true); }}
                                     onFocus={() => setShowProductList(true)}
@@ -656,14 +661,14 @@ function ManualLineForm({ endpoints, onAdded }) {
                                 {errors.product_id && <div className="invalid-feedback d-block">{errors.product_id[0]}</div>}
                             </div>
                             <div className="mb-3 col-md-3 mb-0">
-                                <label className="mb-1 small fw-bold">Qté <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.qty ?? 'Qté'} <span className="text-danger">*</span></label>
                                 <input type="number" min="1" className={`form-control form-control-sm ${errors.qty ? 'is-invalid' : ''}`}
                                     value={qty} onChange={(e) => setQty(e.target.value)} />
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
                             <div className="mb-3 col-md-2 mb-0">
                                 <button type="submit" className="btn btn-info btn-sm w-100" disabled={saving || !productId}>
-                                    {saving ? <i className="fas fa-spinner fa-spin" /> : <><i className="fas fa-plus me-1" />Ajouter</>}
+                                    {saving ? <i className="fas fa-spinner fa-spin" /> : <><i className="fas fa-plus me-1" />{L.add ?? 'Ajouter'}</>}
                                 </button>
                             </div>
                         </div>
@@ -691,7 +696,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
                     ? <a href={line.order_url} className="btn btn-sm btn-outline-primary">
                         <i className="fas fa-folder-open me-1" />{line.order_code}
                       </a>
-                    : <span className="text-muted small">Générique</span>}
+                    : <span className="text-muted small">{L.generic ?? 'Générique'}</span>}
             </td>
 
             {/* Bon d'achat */}
@@ -718,7 +723,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
             {/* Libellé ligne */}
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.task_url && (
-                    <a href={line.task_url} className="btn btn-sm btn-success me-1" title={`Tâche #${line.task_id}`}>
+                    <a href={line.task_url} className="btn btn-sm btn-success me-1" title={tfmt(L.task_n ?? 'Tâche #:id', { id: line.task_id })}>
                         <i className="fas fa-eye" />
                     </a>
                 )}
@@ -732,7 +737,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
             {/* Produit */}
             <td style={{ width: 36 }}>
                 {line.product_url
-                    ? <a href={line.product_url} className="btn btn-sm btn-outline-secondary" title="Voir le produit">
+                    ? <a href={line.product_url} className="btn btn-sm btn-outline-secondary" title={L.view_product ?? 'Voir le produit'}>
                         <i className="fas fa-cube" />
                       </a>
                     : '—'}
@@ -798,7 +803,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
                     type="button"
                     className={`btn btn-sm me-1 ${hasInspection ? 'btn-teal' : 'btn-outline-secondary'}`}
                     style={hasInspection ? { background: '#008080', color: '#fff', border: '1px solid #008080' } : {}}
-                    title="Détails d'inspection"
+                    title={L.inspection_details ?? 'Détails d\'inspection'}
                     onClick={() => onInspect(line)}
                 >
                     <i className="fas fa-clipboard-check" />
@@ -815,7 +820,7 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
                     <button
                         type="button"
                         className={`btn btn-sm ${hasStock ? 'btn-success' : 'btn-outline-success'}`}
-                        title={hasStock ? `Stock : ${line.stock_code}` : 'Mise en stock'}
+                        title={hasStock ? tfmt(L.stock_code ?? 'Stock : :code', { code: line.stock_code }) : (L.put_in_stock ?? 'Mise en stock')}
                         onClick={() => onStock(line)}
                     >
                         <i className="fas fa-warehouse" />
@@ -831,7 +836,8 @@ function LineRow({ line, onInspect, onStock, onDocumentCheck, dcTexts }) {
 // PurchaseReceiptLinesPage — main component
 // ---------------------------------------------------------------------------
 
-export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints, documentCheck = {}, batchTexts = {} }) {
+export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userId, endpoints, documentCheck = {}, batchTexts = {}, trans = {} }) {
+    L = trans?.ui ?? {};
     const [lines, setLines]               = useState([]);
     const [selectData, setSelectData]     = useState({});
     const [loading, setLoading]           = useState(true);
@@ -853,13 +859,13 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                 setLines(data.lines ?? []);
                 setSelectData(data.select ?? {});
             })
-            .catch(() => showFlash('danger', 'Erreur lors du chargement des lignes'))
+            .catch(() => showFlash('danger', (L.error_loading_lines ?? 'Erreur lors du chargement des lignes')))
             .finally(() => setLoading(false));
     }, []);
 
     const handleInspectionSaved = (updatedLine) => {
         setLines((prev) => prev.map((l) => l.id === updatedLine.id ? updatedLine : l));
-        showFlash('success', 'Inspection mise à jour');
+        showFlash('success', (L.inspection_updated ?? 'Inspection mise à jour'));
     };
 
     const handleDocumentCheckSaved = (updatedLine) => {
@@ -875,13 +881,13 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
             : l
         ));
         showFlash('success', data.batch
-            ? `Ligne mise en stock avec succès — ${batchTexts.created ?? ''} ${data.batch.code}`
-            : 'Ligne mise en stock avec succès');
+            ? tfmt(L.stocked_with_batch ?? 'Ligne mise en stock avec succès — :created :code', { created: batchTexts.created ?? '', code: data.batch.code })
+            : (L.stocked ?? 'Ligne mise en stock avec succès'));
     };
 
     const handleManualLineAdded = (newLine) => {
         setLines((prev) => [...prev, newLine]);
-        showFlash('success', 'Ligne manuelle ajoutée');
+        showFlash('success', (L.manual_line_added ?? 'Ligne manuelle ajoutée'));
     };
 
     // Les quantités décimales arrivent en texte (« 4.000 ») : sans Number(), la somme les concatène.
@@ -910,38 +916,38 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                 <table className="table table-striped table-sm mb-0" style={{ fontSize: '0.8rem' }}>
                     <thead className="table-light">
                         <tr>
-                            <th>Commande</th>
-                            <th>Bon d'achat</th>
-                            <th className="text-end">Qté cmd</th>
-                            <th>Libellé cmd</th>
-                            <th>Libellé</th>
+                            <th>{L.order_doc ?? 'Commande'}</th>
+                            <th>{L.purchase_order ?? 'Bon d\'achat'}</th>
+                            <th className="text-end">{L.ordered_qty ?? 'Qté cmd'}</th>
+                            <th>{L.order_label ?? 'Libellé cmd'}</th>
+                            <th>{L.label ?? 'Libellé'}</th>
                             <th style={{ width: 36 }} />
-                            <th className="text-end">Qté req.</th>
-                            <th className="text-end">Qté achat</th>
-                            <th className="text-end">Qté reçue</th>
-                            <th className="text-end">Accepté</th>
-                            <th className="text-end">Rejeté</th>
-                            <th>Résultat insp.</th>
-                            <th>Date insp.</th>
-                            <th>Inspecté par</th>
-                            <th>NC</th>
+                            <th className="text-end">{L.required_qty ?? 'Qté req.'}</th>
+                            <th className="text-end">{L.purchase_qty ?? 'Qté achat'}</th>
+                            <th className="text-end">{L.received_qty ?? 'Qté reçue'}</th>
+                            <th className="text-end">{L.accepted ?? 'Accepté'}</th>
+                            <th className="text-end">{L.rejected ?? 'Rejeté'}</th>
+                            <th>{L.inspection_result_short ?? 'Résultat insp.'}</th>
+                            <th>{L.inspection_date_short ?? 'Date insp.'}</th>
+                            <th>{L.inspected_by ?? 'Inspecté par'}</th>
+                            <th>{L.nc ?? 'NC'}</th>
                             <th>{dcTexts.certificate}</th>
                             <th>{dcTexts.document}</th>
                             <th>{dcTexts.decision}</th>
-                            <th>Actions</th>
+                            <th>{L.actions ?? 'Actions'}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
                                 <td colSpan={19} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
                                 </td>
                             </tr>
                         ) : lines.length === 0 ? (
                             <tr>
                                 <td colSpan={19} className="text-center py-4 text-muted">
-                                    Aucune ligne dans ce bon de réception.
+                                    {L.no_line_receipt ?? 'Aucune ligne dans ce bon de réception.'}
                                 </td>
                             </tr>
                         ) : (
@@ -960,7 +966,7 @@ export default function PurchaseReceiptLinesPage({ receiptId, receiptCode, userI
                     {lines.length > 0 && (
                         <tfoot>
                             <tr className="fw-bold bg-body-tertiary">
-                                <td colSpan={8} className="text-end pe-2 small text-muted">Total :</td>
+                                <td colSpan={8} className="text-end pe-2 small text-muted">{L.total_colon ?? 'Total :'}</td>
                                 <td className="text-end">{fmt(totalReceipt)}</td>
                                 <td className="text-end">
                                     {totalAccepted > 0 && <span className="badge text-bg-success">{fmt(totalAccepted)}</span>}

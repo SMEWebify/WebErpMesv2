@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, StatusFilter, MobileFilters, RowOpenLink } from './table';
 import { apiFetchWithStatus as apiFetch } from '../lib/http';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/purchase_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
 
 const STATUS_LABELS = {
-    1: { label: 'En cours',              badge: 'text-bg-info' },
-    2: { label: 'Envoyé',               badge: 'text-bg-primary' },
-    3: { label: 'Partiellement reçu',   badge: 'text-bg-secondary' },
-    4: { label: 'Reçu',                 badge: 'text-bg-info' },
-    5: { label: 'BC partiellement créé',badge: 'text-bg-warning' },
-    6: { label: 'BC créé',              badge: 'text-bg-success' },
+    1: { get label() { return L.in_progress ?? 'En cours'; },              badge: 'text-bg-info' },
+    2: { get label() { return L.sent ?? 'Envoyé'; },               badge: 'text-bg-primary' },
+    3: { get label() { return L.partly_received ?? 'Partiellement reçu'; },   badge: 'text-bg-secondary' },
+    4: { get label() { return L.received ?? 'Reçu'; },                 badge: 'text-bg-info' },
+    5: { get label() { return L.po_partly_created ?? 'BC partiellement créé'; },badge: 'text-bg-warning' },
+    6: { get label() { return L.po_created ?? 'BC créé'; },              badge: 'text-bg-success' },
 };
 
 const LS_COL_ORDER   = 'purchases_quotation_table_col_order';
@@ -56,7 +61,7 @@ function DonutChart({ data }) {
         return {
             d: `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`,
             color: CHART_COLORS[i % CHART_COLORS.length],
-            label: STATUS_LABELS[d.statu]?.label ?? `Statut ${d.statu}`,
+            label: STATUS_LABELS[d.statu]?.label ?? fmt(L.status_n ?? 'Statut :status', { status: d.statu }),
             count: d.count,
         };
     });
@@ -150,6 +155,7 @@ function RfqGroupHeader({ quotation: q, trans }) {
 }
 
 export default function PurchasesQuotationIndex({ endpoints, trans, initialKpi }) {
+    L = trans?.ui ?? {};
     const [quotations, setQuotations] = useState([]);
     const [meta,       setMeta]       = useState({ current_page: 1, last_page: 1, total: 0 });
     const [kpi,        setKpi]        = useState(initialKpi ?? null);

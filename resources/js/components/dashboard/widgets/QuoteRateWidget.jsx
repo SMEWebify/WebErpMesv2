@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DonutChart from '../primitives/DonutChart.jsx';
 import WidgetCard from '../WidgetCard.jsx';
+import { dashboardTexts as L } from '../texts.js';
 
 // ─── Config statuts devis ─────────────────────────────────────────────────────
 
@@ -97,7 +98,7 @@ export default function QuoteRateWidget({
                 setLoading(false);
             })
             .catch(err => {
-                setError(err.message ?? 'Erreur lors du chargement');
+                setError(err.message ?? (L.error_while_loading ?? 'Erreur lors du chargement'));
                 setLoading(false);
             });
     }, [endpoint, year, companyId]);

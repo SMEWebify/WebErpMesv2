@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import GuideHelp from './GuideHelp';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -88,57 +93,57 @@ function NewLineForm({ vats, units, currency, onSubmit, saving }) {
         <form className="card card-outline card-primary mt-3 mb-3" onSubmit={handleSubmit}>
             <div className="card-header py-2">
                 <h3 className="card-title">
-                    <i className="fas fa-plus-circle me-2"></i>Ajouter une ligne<GuideHelp guide="facturation" section="verifier-le-brouillon" />
+                    <i className="fas fa-plus-circle me-2"></i>{L.add_line ?? 'Ajouter une ligne'}<GuideHelp guide="facturation" section="verifier-le-brouillon" />
                 </h3>
                 <span className="text-muted small float-end">
-                    Frais de port, frais de dossier, prestation non commandée
+                    {L.free_line_help ?? 'Frais de port, frais de dossier, prestation non commandée'}
                 </span>
             </div>
             <div className="card-body py-2">
                 <div className="row gx-2 align-items-end">
                     <div className="mb-3 col-md-3 mb-2">
-                        <label className="small mb-1">Désignation *</label>
+                        <label className="small mb-1">{L.designation_required ?? 'Désignation *'}</label>
                         <input type="text" className="form-control form-control-sm" required maxLength={255}
-                               placeholder="Frais de port" value={form.label} onChange={set('label')} />
+                               placeholder={L.shipping_costs ?? 'Frais de port'} value={form.label} onChange={set('label')} />
                     </div>
                     <div className="mb-3 col-md-1 mb-2">
-                        <label className="small mb-1">Réf.</label>
+                        <label className="small mb-1">{L.ref_short ?? 'Réf.'}</label>
                         <input type="text" className="form-control form-control-sm" maxLength={255}
                                value={form.code} onChange={set('code')} />
                     </div>
                     <div className="mb-3 col-md-1 mb-2">
-                        <label className="small mb-1">Qté *</label>
+                        <label className="small mb-1">{L.qty_required ?? 'Qté *'}</label>
                         <input type="number" min="0" step="0.001" className="form-control form-control-sm text-end"
                                required value={form.qty} onChange={set('qty')} />
                     </div>
                     <div className="mb-3 col-md-1 mb-2">
-                        <label className="small mb-1">Unité</label>
+                        <label className="small mb-1">{L.unit ?? 'Unité'}</label>
                         <select className="form-select form-select-sm" value={form.methods_units_id} onChange={set('methods_units_id')}>
                             {units.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
                         </select>
                     </div>
                     <div className="mb-3 col-md-2 mb-2">
-                        <label className="small mb-1">P.U HT *</label>
+                        <label className="small mb-1">{L.unit_price_required ?? 'P.U HT *'}</label>
                         <input type="number" min="0" step="0.01" className="form-control form-control-sm text-end"
                                required value={form.unit_price} onChange={set('unit_price')} />
                     </div>
                     <div className="mb-3 col-md-1 mb-2">
-                        <label className="small mb-1">Remise %</label>
+                        <label className="small mb-1">{L.discount_pct ?? 'Remise %'}</label>
                         <input type="number" min="0" max="100" step="0.01" className="form-control form-control-sm text-end"
                                value={form.discount} onChange={set('discount')} />
                     </div>
                     <div className="mb-3 col-md-1 mb-2">
-                        <label className="small mb-1">TVA</label>
+                        <label className="small mb-1">{L.vat ?? 'TVA'}</label>
                         <select className="form-select form-select-sm" value={form.accounting_vats_id} onChange={set('accounting_vats_id')}>
                             {vats.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
                         </select>
                     </div>
                     <div className="mb-3 col-md-2 mb-2 text-end">
-                        <div className="small text-muted mb-1">{formatCurrency(total, currency)} HT</div>
+                        <div className="small text-muted mb-1">{formatCurrency(total, currency)} {L.excl_tax ?? 'HT'}</div>
                         <button type="submit" className="btn btn-primary btn-sm w-100" disabled={saving}>
                             {saving
-                                ? <><i className="fas fa-spinner fa-spin me-1"></i>Ajout…</>
-                                : <><i className="fas fa-plus me-1"></i>Ajouter</>}
+                                ? <><i className="fas fa-spinner fa-spin me-1"></i>{L.adding ?? 'Ajout…'}</>
+                                : <><i className="fas fa-plus me-1"></i>{L.add ?? 'Ajouter'}</>}
                         </button>
                     </div>
                 </div>
@@ -148,6 +153,7 @@ function NewLineForm({ vats, units, currency, onSubmit, saving }) {
 }
 
 export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, lines: initialLines, endpoints, currency, vats = [], units = [], trans }) {
+    L = trans?.ui ?? {};
     const [lines, setLines]   = useState(initialLines);
     const [statu, setStatu]   = useState(initialStatu);
     const [saving, setSaving] = useState({});
@@ -173,7 +179,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
         } catch (e) {
             // Valeur refusée (ex. déduction d'acompte au-delà de la part payée) : on revient à l'ancienne.
             setLines(prev => prev.map(l => l.id === lineId ? { ...l, [field]: previous } : l));
-            setError(firstError(e, 'Erreur lors de la sauvegarde.'));
+            setError(firstError(e, (L.error_save ?? 'Erreur lors de la sauvegarde.')));
         } finally {
             setSaving(prev => ({ ...prev, [lineId]: false }));
         }
@@ -187,7 +193,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
             setLines(prev => [...prev, data.line]);
             reset();
         } catch (e) {
-            setError(firstError(e, "Erreur lors de l'ajout de la ligne."));
+            setError(firstError(e, (L.error_add_line ?? 'Erreur lors de l\'ajout de la ligne.')));
         } finally {
             setAdding(false);
         }
@@ -195,8 +201,8 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
 
     async function handleDeleteLine(line) {
         const message = line.is_free_line
-            ? `Supprimer la ligne « ${line.order_line_label} » ?`
-            : `Supprimer la ligne « ${line.order_line_label} » ? Les quantités seront rendues à la commande ${line.order_code ?? ''}.`;
+            ? fmt(L.confirm_delete_free_line ?? 'Supprimer la ligne « :label » ?', { label: line.order_line_label })
+            : fmt(L.confirm_delete_line ?? 'Supprimer la ligne « :label » ? Les quantités seront rendues à la commande :order.', { label: line.order_line_label, order: line.order_code ?? '' });
         if (!confirm(message)) return;
 
         setSaving(prev => ({ ...prev, [line.id]: true }));
@@ -205,13 +211,13 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
             await apiFetch(endpoints.deleteLine.replace('__LINE_ID__', line.id), 'DELETE');
             setLines(prev => prev.filter(l => l.id !== line.id));
         } catch (e) {
-            setError(firstError(e, 'Erreur lors de la suppression.'));
+            setError(firstError(e, (L.error_delete ?? 'Erreur lors de la suppression.')));
             setSaving(prev => ({ ...prev, [line.id]: false }));
         }
     }
 
     async function handleEmit() {
-        if (!confirm('Émettre la facture ? Elle ne sera plus modifiable.')) return;
+        if (!confirm((L.confirm_emit ?? 'Émettre la facture ? Elle ne sera plus modifiable.'))) return;
         setEmitting(true);
         setError(null);
         try {
@@ -220,7 +226,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
             setLines(prev => prev.map(l => ({ ...l, invoice_status: 2 })));
             window.location.reload();
         } catch (e) {
-            setError(firstError(e, "Erreur lors de l'émission."));
+            setError(firstError(e, (L.error_emit ?? 'Erreur lors de l\'émission.')));
             setEmitting(false);
         }
     }
@@ -231,12 +237,12 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                 <div className="alert alert-warning d-flex justify-content-between align-items-center py-2 mb-3">
                     <span>
                         <i className="fas fa-edit me-2"></i>
-                        <strong>Brouillon</strong> — Les lignes, prix, quantités et remises sont modifiables. La facture sera verrouillée après émission.<GuideHelp guide="facturation" section="emettre-la-facture" />
+                        <strong>{L.draft ?? 'Brouillon'}</strong> {L.draft_help ?? '— Les lignes, prix, quantités et remises sont modifiables. La facture sera verrouillée après émission.'}<GuideHelp guide="facturation" section="emettre-la-facture" />
                     </span>
                     <button className="btn btn-success btn-sm ms-3" onClick={handleEmit} disabled={emitting}>
                         {emitting
-                            ? <><i className="fas fa-spinner fa-spin me-1"></i>Émission…</>
-                            : <><i className="fas fa-paper-plane me-1"></i>Émettre la facture</>}
+                            ? <><i className="fas fa-spinner fa-spin me-1"></i>{L.emitting ?? 'Émission…'}</>
+                            : <><i className="fas fa-paper-plane me-1"></i>{L.emit ?? 'Émettre la facture'}</>}
                     </button>
                 </div>
             )}
@@ -273,16 +279,16 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                             ? <a href={line.down_payment_url} className="badge text-bg-info text-decoration-none">
                                                 <i className="fas fa-hand-holding-usd me-1"></i>{line.down_payment_code}
                                               </a>
-                                            : <span className="badge text-bg-light border">Ligne libre</span>}
+                                            : <span className="badge text-bg-light border">{L.free_line ?? 'Ligne libre'}</span>}
                                 </td>
                                 <td>
                                     {line.delivery_url
                                         ? <a href={line.delivery_url} className="btn btn-sm btn-outline-secondary">
                                             <i className="fas fa-external-link-alt me-1"></i>{line.delivery_code}
                                           </a>
-                                        : <span className="text-muted small">Sans BL</span>}
+                                        : <span className="text-muted small">{L.no_delivery ?? 'Sans BL'}</span>}
                                 </td>
-                                <td className="small">{line.order_line_code}{line.order_line_ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.order_line_ind}</span> : null}</td>
+                                <td className="small">{line.order_line_code}{line.order_line_ind ? <span className="badge text-bg-light ms-1" title={L.drawing_index ?? 'Indice du plan'}>{L.ind_short ?? 'ind.'} {line.order_line_ind}</span> : null}</td>
                                 <td>{line.order_line_label}</td>
 
                                 {isDraft ? (
@@ -350,7 +356,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                                         <button
                                             type="button"
                                             className="btn btn-sm btn-outline-danger"
-                                            title="Supprimer la ligne"
+                                            title={L.delete_line ?? 'Supprimer la ligne'}
                                             disabled={saving[line.id]}
                                             onClick={() => handleDeleteLine(line)}
                                         >
@@ -361,7 +367,7 @@ export default function InvoiceLinesDraft({ invoiceId, statu: initialStatu, line
                             </tr>
                         ))}
                         {lines.length === 0 && (
-                            <tr><td colSpan={colCount} className="text-center text-muted py-3">Aucune ligne</td></tr>
+                            <tr><td colSpan={colCount} className="text-center text-muted py-3">{L.no_line ?? 'Aucune ligne'}</td></tr>
                         )}
                     </tbody>
                 </table>

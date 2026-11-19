@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Pagination } from './table';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const STATUS_CONFIG = {
-    received:           { badge: 'text-bg-info',      label: 'Reçue' },
-    supplier_unmatched: { badge: 'text-bg-warning',   label: 'Fournisseur inconnu' },
-    converted:          { badge: 'text-bg-success',   label: 'Convertie' },
-    rejected:           { badge: 'text-bg-secondary', label: 'Refusée' },
-    unreadable:         { badge: 'text-bg-danger',    label: 'Illisible' },
+    received:           { badge: 'text-bg-info',      get label() { return L.incoming_received ?? 'Reçue'; } },
+    supplier_unmatched: { badge: 'text-bg-warning',   get label() { return L.incoming_supplier_unmatched ?? 'Fournisseur inconnu'; } },
+    converted:          { badge: 'text-bg-success',   get label() { return L.converted ?? 'Convertie'; } },
+    rejected:           { badge: 'text-bg-secondary', get label() { return L.refused ?? 'Refusée'; } },
+    unreadable:         { badge: 'text-bg-danger',    get label() { return L.incoming_unreadable ?? 'Illisible'; } },
 };
 
 const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected', 'unreadable'];
@@ -20,7 +25,7 @@ const ALL_STATUSES = ['received', 'supplier_unmatched', 'converted', 'rejected',
 const PROVIDER_LABELS = {
     superpdp: 'SUPER PDP',
     qonto:    'Qonto',
-    manual:   'Dépôt manuel',
+    get manual() { return L.manual_upload ?? 'Dépôt manuel'; },
 };
 
 function providerLabel(provider) {
@@ -31,11 +36,11 @@ function providerLabel(provider) {
 // Un motif est exigé sur les statuts défavorables : sans lui, le fournisseur
 // n'a aucun moyen de corriger sa facture.
 const OUTGOING_STATUSES = [
-    { code: 'fr:204', label: 'Prise en charge',   icon: 'fa-inbox' },
-    { code: 'fr:205', label: 'Approuvée',         icon: 'fa-check' },
-    { code: 'fr:207', label: 'En litige',         icon: 'fa-exclamation-triangle', reason: true },
-    { code: 'fr:210', label: 'Refusée',           icon: 'fa-times',                reason: true },
-    { code: 'fr:211', label: 'Paiement transmis', icon: 'fa-money-check' },
+    { code: 'fr:204', get label() { return L.outgoing_204 ?? 'Prise en charge'; },   icon: 'fa-inbox' },
+    { code: 'fr:205', get label() { return L.outgoing_205 ?? 'Approuvée'; },         icon: 'fa-check' },
+    { code: 'fr:207', get label() { return L.outgoing_207 ?? 'En litige'; },         icon: 'fa-exclamation-triangle', reason: true },
+    { code: 'fr:210', get label() { return L.refused ?? 'Refusée'; },           icon: 'fa-times',                reason: true },
+    { code: 'fr:211', get label() { return L.outgoing_211 ?? 'Paiement transmis'; }, icon: 'fa-money-check' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -138,7 +143,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
             <div className="card-header">
                 <h3 className="card-title">
                     <i className="fas fa-inbox me-2 text-muted" />
-                    Déposer une facture électronique reçue
+                    {L.upload_title ?? 'Déposer une facture électronique reçue'}
                 </h3>
             </div>
             <div className="card-body">
@@ -164,7 +169,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
                     {busy ? (
                         <>
                             <i className="fas fa-spinner fa-spin fa-2x mb-2" />
-                            <div>Lecture du document…</div>
+                            <div>{L.reading_document ?? 'Lecture du document…'}</div>
                         </>
                     ) : file ? (
                         <>
@@ -175,8 +180,8 @@ function UploadCard({ uploadUrl, onUploaded }) {
                     ) : (
                         <>
                             <i className="fas fa-cloud-upload-alt fa-2x mb-2" />
-                            <div>Glissez le document ici, ou cliquez pour le choisir</div>
-                            <div className="small text-muted mt-1">PDF Factur-X ou XML (CII, UBL) — 10 Mo maximum</div>
+                            <div>{L.drop_here ?? 'Glissez le document ici, ou cliquez pour le choisir'}</div>
+                            <div className="small text-muted mt-1">{L.upload_formats ?? 'PDF Factur-X ou XML (CII, UBL) — 10 Mo maximum'}</div>
                         </>
                     )}
                 </div>
@@ -184,10 +189,10 @@ function UploadCard({ uploadUrl, onUploaded }) {
                 {file && ! busy && (
                     <div className="d-flex align-items-center mt-3" style={{ gap: '.5rem' }}>
                         <button type="button" className="btn btn-primary" onClick={submit}>
-                            <i className="fas fa-upload me-1" />Importer
+                            <i className="fas fa-upload me-1" />{L.import ?? 'Importer'}
                         </button>
                         <button type="button" className="btn btn-link text-muted" onClick={reset}>
-                            Choisir un autre fichier
+                            {L.choose_other_file ?? 'Choisir un autre fichier'}
                         </button>
                     </div>
                 )}
@@ -197,8 +202,7 @@ function UploadCard({ uploadUrl, onUploaded }) {
 
                 <small className="text-muted d-block mt-3">
                     <i className="fas fa-info-circle me-1" />
-                    Le vendeur est rapproché automatiquement par n° de TVA intracommunautaire ou SIREN.
-                    Les factures transmises par la plateforme arrivent seules, sans dépôt manuel.
+                    {L.upload_help ?? 'Le vendeur est rapproché automatiquement par n° de TVA intracommunautaire ou SIREN. Les factures transmises par la plateforme arrivent seules, sans dépôt manuel.'}
                 </small>
             </div>
         </div>
@@ -209,7 +213,8 @@ function UploadCard({ uploadUrl, onUploaded }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency }) {
+export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency, trans = {} }) {
+    L = trans?.ui ?? {};
     const [rows,    setRows]    = useState([]);
     const [meta,    setMeta]    = useState(null);
     const [loading, setLoading] = useState(false);
@@ -245,10 +250,10 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
         let note = null;
 
         if (status.reason) {
-            note = window.prompt(`Motif — « ${status.label} » pour ${row.seller_name}\n\nCe texte est transmis au fournisseur.`);
+            note = window.prompt(fmt(L.reason_prompt ?? 'Motif — « :label » pour :seller\n\nCe texte est transmis au fournisseur.', { label: status.label, seller: row.seller_name }));
             if (note === null) return;
             if (!note.trim()) {
-                setError('Un motif est obligatoire pour ce statut.');
+                setError((L.reason_required ?? 'Un motif est obligatoire pour ce statut.'));
                 return;
             }
         }
@@ -281,12 +286,10 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                 personne n'avait encore facturé : l'ambiguïté est le vrai danger. */}
             {directory && !directory.reachable && (
                 <div className="alert alert-warning">
-                    <h5><i className="icon fas fa-exclamation-triangle" /> Vous n'êtes pas joignable</h5>
-                    Aucune ligne d'annuaire n'est ouverte : vos fournisseurs ne peuvent pas
-                    vous adresser de facture électronique, et cet écran restera vide.
+                    <h5><i className="icon fas fa-exclamation-triangle" /> {L.unreachable_title ?? 'Vous n\'êtes pas joignable'}</h5>
+                    {L.unreachable_text ?? 'Aucune ligne d\'annuaire n\'est ouverte : vos fournisseurs ne peuvent pas vous adresser de facture électronique, et cet écran restera vide.'}
                     <br />
-                    Ouvrez-la depuis votre compte sur la plateforme — c'est votre inscription
-                    à l'annuaire officiel, en général sous votre numéro SIREN.
+                    {L.unreachable_help ?? 'Ouvrez-la depuis votre compte sur la plateforme — c\'est votre inscription à l\'annuaire officiel, en général sous votre numéro SIREN.'}
                 </div>
             )}
 
@@ -296,7 +299,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                 <div className="card-body pb-2">
                     <div className="btn-group btn-group-sm" role="group">
                         <button className={`btn ${status === '' ? 'btn-secondary' : 'btn-outline-secondary'}`} onClick={() => handleStatus('')}>
-                            Toutes
+                            {L.all_f ?? 'Toutes'}
                         </button>
                         {ALL_STATUSES.map(st => (
                             <button key={st}
@@ -317,19 +320,19 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                             <table className="table table-hover table-sm mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Source</th>
-                                        <th>Vendeur</th>
-                                        <th>N° facture</th>
-                                        <th>Date</th>
-                                        <th className="text-end">TTC</th>
-                                        <th>Fournisseur WEM</th>
-                                        <th className="text-center">Statut</th>
-                                        <th className="text-end">Actions</th>
+                                        <th>{L.source ?? 'Source'}</th>
+                                        <th>{L.seller ?? 'Vendeur'}</th>
+                                        <th>{L.invoice_number ?? 'N° facture'}</th>
+                                        <th>{L.date ?? 'Date'}</th>
+                                        <th className="text-end">{L.incl_tax ?? 'TTC'}</th>
+                                        <th>{L.wem_supplier ?? 'Fournisseur WEM'}</th>
+                                        <th className="text-center">{L.status ?? 'Statut'}</th>
+                                        <th className="text-end">{L.actions ?? 'Actions'}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {rows.length === 0 ? (
-                                        <tr><td colSpan={8} className="text-center text-muted py-4">Aucune facture reçue.</td></tr>
+                                        <tr><td colSpan={8} className="text-center text-muted py-4">{L.no_incoming ?? 'Aucune facture reçue.'}</td></tr>
                                     ) : rows.map(row => (
                                         <tr key={row.id}>
                                             <td><span className="text-muted">{providerLabel(row.provider)}</span></td>
@@ -342,19 +345,19 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                             <td className="text-end text-nowrap">
                                                 {row.purchase_invoice_url && (
                                                     <a href={row.purchase_invoice_url} className="btn btn-sm btn-outline-success">
-                                                        Facture d'achat
+                                                        {L.purchase_invoice ?? 'Facture d\'achat'}
                                                     </a>
                                                 )}
                                                 {row.reconcile_url && (
                                                     <a className="btn btn-sm btn-success" href={row.reconcile_url}
-                                                       title="Sélectionner les réceptions couvertes par cette facture">
-                                                        <i className="fas fa-link me-1" />Rapprocher
+                                                       title={L.match_title ?? 'Sélectionner les réceptions couvertes par cette facture'}>
+                                                        <i className="fas fa-link me-1" />{L.match ?? 'Rapprocher'}
                                                     </a>
                                                 )}
                                                 {row.convert_url && (
                                                     <button className="btn btn-sm btn-outline-success ms-1" disabled={acting === row.id}
-                                                        onClick={() => doAction(row, row.convert_url, 'Créer une facture d\'achat sans rapprochement ? À réserver aux factures sans commande ni réception (frais, abonnements).')}>
-                                                        Sans rapprochement
+                                                        onClick={() => doAction(row, row.convert_url, (L.confirm_without_match ?? 'Créer une facture d\'achat sans rapprochement ? À réserver aux factures sans commande ni réception (frais, abonnements).'))}>
+                                                        {L.without_match ?? 'Sans rapprochement'}
                                                     </button>
                                                 )}
                                                 {row.status_url && (
@@ -363,10 +366,10 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                                                 className="btn btn-sm btn-outline-primary dropdown-toggle"
                                                                 data-bs-toggle="dropdown"
                                                                 disabled={acting === row.id}>
-                                                            Déclarer
+                                                            {L.declare ?? 'Déclarer'}
                                                         </button>
                                                         <div className="dropdown-menu dropdown-menu-end">
-                                                            <h6 className="dropdown-header">Statut renvoyé au fournisseur</h6>
+                                                            <h6 className="dropdown-header">{L.status_sent_back ?? 'Statut renvoyé au fournisseur'}</h6>
                                                             {OUTGOING_STATUSES.map(s => (
                                                                 <button key={s.code} type="button" className="dropdown-item"
                                                                         onClick={() => declareStatus(row, s)}>
@@ -379,12 +382,12 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
                                                 )}
                                                 {row.reject_url && (
                                                     <button className="btn btn-sm btn-outline-secondary ms-1" disabled={acting === row.id}
-                                                        onClick={() => doAction(row, row.reject_url, 'Refuser cette facture ?')}>
-                                                        Refuser
+                                                        onClick={() => doAction(row, row.reject_url, (L.confirm_refuse ?? 'Refuser cette facture ?'))}>
+                                                        {L.refuse ?? 'Refuser'}
                                                     </button>
                                                 )}
                                                 {row.status === 'supplier_unmatched' && (
-                                                    <span className="text-muted small ms-1">TVA {row.seller_vat}</span>
+                                                    <span className="text-muted small ms-1">{L.vat ?? 'TVA'} {row.seller_vat}</span>
                                                 )}
                                             </td>
                                         </tr>
@@ -397,7 +400,7 @@ export default function IncomingInvoicesIndex({ endpoints = {}, locale, currency
 
                 {meta && (
                     <div className="card-footer d-flex align-items-center justify-content-between">
-                        <small className="text-muted">{meta.total} résultats</small>
+                        <small className="text-muted">{meta.total} {L.results_plural ?? 'résultats'}</small>
                         <Pagination meta={meta} onPage={handlePage} around={2} ellipsis={false} ulClassName="pagination pagination-sm justify-content-center mb-0" />
                     </div>
                 )}

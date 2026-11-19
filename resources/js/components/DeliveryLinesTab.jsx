@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import { askCancelReason, fillPlaceholders } from '../lib/cancelReason';
 import { formatQty } from '../utils';
 
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const INVOICE_STATUS = {
-    1: { badge: 'text-bg-info',    label: 'Facturable' },
-    2: { badge: 'text-bg-danger',  label: 'Non facturable' },
-    3: { badge: 'text-bg-warning', label: 'Partiellement' },
-    4: { badge: 'text-bg-success', label: 'Facturé' },
+    1: { badge: 'text-bg-info',    get label() { return L.invoice_status_chargeable ?? 'Facturable'; } },
+    2: { badge: 'text-bg-danger',  get label() { return L.invoice_status_not_chargeable ?? 'Non facturable'; } },
+    3: { badge: 'text-bg-warning', get label() { return L.invoice_status_partly ?? 'Partiellement'; } },
+    4: { badge: 'text-bg-success', get label() { return L.invoice_status_invoiced ?? 'Facturé'; } },
 };
 
 // ---------------------------------------------------------------------------
@@ -72,7 +76,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
             });
             const data = await res.json();
             if (!res.ok) {
-                setErrors(data.errors ?? { _global: data.message ?? 'Erreur' });
+                setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') });
             } else {
                 onSuccess(data.message);
                 onClose();
@@ -225,6 +229,7 @@ function ReturnDrawer({ open, line, deliveryId, nonConformities, endpoints, tran
 // ---------------------------------------------------------------------------
 
 export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonConformities, endpoints, trans }) {
+    L = trans?.ui ?? {};
     const [lines, setLines]           = useState(initialLines ?? []);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [activeLine, setActiveLine] = useState(null);
@@ -261,7 +266,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
             });
             const data = await res.json();
             if (!res.ok) {
-                setError(data.error ?? data.message ?? 'Erreur');
+                setError(data.error ?? data.message ?? (L.error ?? 'Erreur'));
             } else {
                 setLines(prev => prev.map(l => l.id === line.id ? { ...l, invoice_status: 2 } : l));
                 handleSuccess(trans.mark_not_chargeable ?? 'Ligne marquée non facturable');
@@ -297,7 +302,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                setError(data.error ?? data.message ?? 'Erreur');
+                setError(data.error ?? data.message ?? (L.error ?? 'Erreur'));
             } else {
                 setLines(prev => prev.filter(l => l.id !== line.id));
                 const restored = Number(data.stock_restored) > 0
@@ -362,7 +367,7 @@ export default function DeliveryLinesTab({ lines: initialLines, deliveryId, nonC
                                             {line.order_code}
                                         </a>
                                     </td>
-                                    <td><small>{line.code}</small>{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
+                                    <td><small>{line.code}</small>{line.ind ? <span className="badge text-bg-light ms-1" title={L.drawing_index ?? 'Indice du plan'}>{L.ind_short ?? 'ind.'} {line.ind}</span> : null}</td>
                                     <td>{line.label}</td>
                                     <td>{formatQty(line.qty)}</td>
                                     <td><small>{line.unit}</small></td>

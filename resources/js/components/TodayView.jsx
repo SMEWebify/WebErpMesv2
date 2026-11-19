@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/workshop_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Registre des widgets
@@ -7,82 +12,82 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 export const WIDGET_REGISTRY = [
     {
         id:       'invoices_overdue',
-        label:    'Factures échues',
+        get label() { return L.invoices_overdue ?? 'Factures échues'; },
         icon:     'fa-file-invoice-dollar',
         color:    '#dc3545',
         section:  'now',
         endpointKey: 'today_invoices_overdue',
-        emptyMsg: 'Aucune facture échue.',
-        dateLabel: 'Échéance',
-        daysSuffix: (d) => d > 0 ? `${d}j de retard` : 'Échue aujourd\'hui',
+        get emptyMsg() { return L.invoices_overdue_empty ?? 'Aucune facture échue.'; },
+        get dateLabel() { return L.due_date ?? 'Échéance'; },
+        daysSuffix: (d) => d > 0 ? fmt(L.days_late ?? ':daysj de retard', { days: d }) : (L.due_today ?? 'Échue aujourd\'hui'),
         badgeClass: 'text-bg-danger',
     },
     {
         id:       'orders_late',
-        label:    'Commandes en retard',
+        get label() { return L.orders_late ?? 'Commandes en retard'; },
         icon:     'fa-shopping-cart',
         color:    '#fd7e14',
         section:  'now',
         endpointKey: 'today_orders_late',
-        emptyMsg: 'Aucune commande en retard.',
-        dateLabel: 'Livraison prévue',
-        daysSuffix: (d) => d > 0 ? `${d}j de retard` : 'Aujourd\'hui',
+        get emptyMsg() { return L.orders_late_empty ?? 'Aucune commande en retard.'; },
+        get dateLabel() { return L.planned_delivery ?? 'Livraison prévue'; },
+        daysSuffix: (d) => d > 0 ? fmt(L.days_late ?? ':daysj de retard', { days: d }) : (L.today ?? 'Aujourd\'hui'),
         badgeClass: 'text-bg-warning',
     },
     {
         id:       'quotes_expiring',
-        label:    'Devis qui expirent',
+        get label() { return L.quotes_expiring ?? 'Devis qui expirent'; },
         icon:     'fa-file-alt',
         color:    '#007bff',
         section:  'now',
         endpointKey: 'today_quotes_expiring',
-        emptyMsg: 'Aucun devis proche de l\'expiration.',
-        dateLabel: 'Expire le',
-        daysSuffix: (d) => d < 0 ? `Expiré` : d === 0 ? 'Expire aujourd\'hui' : `Dans ${d}j`,
+        get emptyMsg() { return L.quotes_expiring_empty ?? 'Aucun devis proche de l\'expiration.'; },
+        get dateLabel() { return L.expires_on ?? 'Expire le'; },
+        daysSuffix: (d) => d < 0 ? fmt(L.expired ?? 'Expiré', {  }) : d === 0 ? (L.expires_today ?? 'Expire aujourd\'hui') : fmt(L.in_days ?? 'Dans :daysj', { days: d }),
         badgeClass: 'text-bg-info',
     },
     {
         id:       'leads_pending',
-        label:    'Leads non traités',
+        get label() { return L.leads_pending ?? 'Leads non traités'; },
         icon:     'fa-bullseye',
         color:    '#17a2b8',
         section:  'now',
         endpointKey: 'today_leads_pending',
-        emptyMsg: 'Aucun lead en attente.',
-        dateLabel: 'Reçu le',
-        daysSuffix: (d) => `${d}j sans suivi`,
+        get emptyMsg() { return L.leads_pending_empty ?? 'Aucun lead en attente.'; },
+        get dateLabel() { return L.received_on ?? 'Reçu le'; },
+        daysSuffix: (d) => fmt(L.days_without_follow_up ?? ':daysj sans suivi', { days: d }),
         badgeClass: 'text-bg-info',
     },
     {
         id:       'orders_due_week',
-        label:    'Livraisons cette semaine',
+        get label() { return L.orders_due_week ?? 'Livraisons cette semaine'; },
         icon:     'fa-truck',
         color:    '#20c997',
         section:  'week',
         endpointKey: 'today_orders_due_week',
-        emptyMsg: 'Aucune livraison prévue cette semaine.',
-        dateLabel: 'Livraison',
-        daysSuffix: (d) => d === 0 ? 'Aujourd\'hui' : `Dans ${d}j`,
+        get emptyMsg() { return L.orders_due_week_empty ?? 'Aucune livraison prévue cette semaine.'; },
+        get dateLabel() { return L.delivery ?? 'Livraison'; },
+        daysSuffix: (d) => d === 0 ? (L.today ?? 'Aujourd\'hui') : fmt(L.in_days ?? 'Dans :daysj', { days: d }),
         badgeClass: 'text-bg-success',
     },
     {
         id:       'recent_activity',
-        label:    'Activité récente',
+        get label() { return L.recent_activity ?? 'Activité récente'; },
         icon:     'fa-history',
         color:    'var(--bs-secondary-color)',
         section:  'recent',
         endpointKey: 'today_recent_activity',
-        emptyMsg: 'Aucune activité récente.',
-        dateLabel: 'Créé le',
+        get emptyMsg() { return L.recent_activity_empty ?? 'Aucune activité récente.'; },
+        get dateLabel() { return L.created_on ?? 'Créé le'; },
         daysSuffix: null,
         badgeClass: 'text-bg-secondary',
     },
 ];
 
 const SECTIONS = [
-    { id: 'now',    label: 'À faire maintenant',    icon: 'fa-exclamation-circle', color: '#dc3545' },
-    { id: 'week',   label: 'Cette semaine',          icon: 'fa-calendar-week',      color: '#fd7e14' },
-    { id: 'recent', label: 'Récent',                 icon: 'fa-history',            color: 'var(--bs-secondary-color)' },
+    { id: 'now',    get label() { return L.section_now ?? 'À faire maintenant'; },    icon: 'fa-exclamation-circle', color: '#dc3545' },
+    { id: 'week',   get label() { return L.section_week ?? 'Cette semaine'; },          icon: 'fa-calendar-week',      color: '#fd7e14' },
+    { id: 'recent', get label() { return L.section_recent ?? 'Récent'; },                 icon: 'fa-history',            color: 'var(--bs-secondary-color)' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -164,7 +169,7 @@ function TodayItem({ item, def }) {
                 href={item.url}
                 className="btn btn-sm btn-outline-secondary"
                 style={{ fontSize: 10, padding: '1px 6px', flexShrink: 0 }}
-                title="Ouvrir"
+                title={L.open ?? 'Ouvrir'}
             >
                 <i className="fas fa-arrow-right" />
             </a>
@@ -231,7 +236,7 @@ function TodayWidget({ def, endpoint }) {
             )}
             {error && (
                 <div style={{ padding: '8px 12px', color: '#dc3545', fontSize: 12 }}>
-                    <i className="fas fa-exclamation-triangle me-1" />Erreur de chargement
+                    <i className="fas fa-exclamation-triangle me-1" />{L.error_loading ?? 'Erreur de chargement'}
                 </div>
             )}
         </div>
@@ -255,13 +260,13 @@ function ConfigPanel({ layout, onSave, onClose }) {
             zIndex: 1050, padding: '1rem', overflowY: 'auto',
         }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <strong>Personnaliser la vue</strong>
+                <strong>{L.customize_view ?? 'Personnaliser la vue'}</strong>
                 <button className="btn btn-sm btn-light" onClick={onClose}>
                     <i className="fas fa-times" />
                 </button>
             </div>
             <p className="text-muted" style={{ fontSize: '0.8rem' }}>
-                Activez ou désactivez les sections qui vous concernent.
+                {L.customize_help ?? 'Activez ou désactivez les sections qui vous concernent.'}
             </p>
 
             {WIDGET_REGISTRY.map(def => {
@@ -294,7 +299,7 @@ function ConfigPanel({ layout, onSave, onClose }) {
                 className="btn btn-primary w-100 mt-3"
                 onClick={() => { onSave(local); onClose(); }}
             >
-                <i className="fas fa-save me-1" />Enregistrer
+                <i className="fas fa-save me-1" />{L.save ?? 'Enregistrer'}
             </button>
         </div>
     );
@@ -303,7 +308,8 @@ function ConfigPanel({ layout, onSave, onClose }) {
 // ---------------------------------------------------------------------------
 // TodayView — composant principal
 // ---------------------------------------------------------------------------
-export default function TodayView({ endpoints }) {
+export default function TodayView({ endpoints, trans = {} }) {
+    L = trans?.ui ?? {};
     const [layout,      setLayout]      = useState(null);
     const [showConfig,  setShowConfig]  = useState(false);
     const [saving,      setSaving]      = useState(false);
@@ -339,7 +345,7 @@ export default function TodayView({ endpoints }) {
     if (!layout) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
             </div>
         );
     }
@@ -374,9 +380,9 @@ export default function TodayView({ endpoints }) {
                     <button
                         className="btn btn-sm btn-outline-secondary"
                         onClick={() => setShowConfig(s => !s)}
-                        title="Personnaliser"
+                        title={L.customize ?? 'Personnaliser'}
                     >
-                        <i className="fas fa-sliders-h me-1" />Personnaliser
+                        <i className="fas fa-sliders-h me-1" />{L.customize ?? 'Personnaliser'}
                     </button>
                 </div>
             </div>
@@ -419,7 +425,7 @@ export default function TodayView({ endpoints }) {
             {activeWidgets.length === 0 && (
                 <div className="text-center text-muted py-5">
                     <i className="fas fa-sliders-h fa-2x mb-2 d-block" />
-                    Aucun widget activé. Cliquez sur "Personnaliser" pour en ajouter.
+                    {L.no_widget ?? 'Aucun widget activé. Cliquez sur "Personnaliser" pour en ajouter.'}
                 </div>
             )}
 

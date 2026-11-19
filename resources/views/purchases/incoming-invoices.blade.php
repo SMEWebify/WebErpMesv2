@@ -13,7 +13,8 @@
             "upload" => route("purchases.incoming.upload"),
          ])'
          data-locale="{{ str_replace('_', '-', app()->getLocale()) }}"
-         data-currency="{{ optional(app('Factory'))->curency ?? 'EUR' }}">
+         data-currency="{{ optional(app('Factory'))->curency ?? 'EUR' }}"
+         data-trans='@json(['ui' => __('billing_ui')], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
     </div>
 @stop
 

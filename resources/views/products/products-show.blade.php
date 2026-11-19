@@ -552,6 +552,7 @@
             data-statu="{{ $canEditProduct ? 1 : 0 }}"
             data-currency="{{ app('Factory')->curency ?? '€' }}"
             data-endpoints="{{ json_encode($taskManageEndpoints) }}"
+            data-trans="{{ json_encode(['ui' => __('production_ui')]) }}"
           ></div>
         </div>
         @can('stock-lot-serial-management')
@@ -823,7 +824,7 @@
           <div
             id="product-history-app"
             data-endpoint="{{ route('products.json.history', ['id' => $Product->id]) }}"
-            data-trans='@json($historyTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+            data-trans='@json($historyTrans + ['ui' => __('stock_ui')], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
             data-can-purchases="{{ $canPurchases }}"
           ></div>
         </div>
@@ -1121,6 +1122,7 @@
                     data-endpoint="{{ route('products.json.price-history', ['id' => $Product->id]) }}"
                     data-currency="{{ $Factory->curency }}"
                     data-can-purchases="{{ $canPurchasesPriceHist }}"
+                    data-trans="{{ json_encode(['ui' => __('stock_ui')]) }}"
                 ></div>
             </div>
         </div>

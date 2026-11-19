@@ -13,6 +13,7 @@
     id="stock-detail-app"
     data-initial="{{ json_encode($props['initial']) }}"
     data-endpoints="{{ json_encode($props['endpoints']) }}"
+    data-trans="{{ json_encode(['ui' => __('stock_ui')]) }}"
   ></div>
 @stop
 

@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import GuideHelp from './GuideHelp';
 import CompanyRegistrySearch from './company/CompanyRegistrySearch';
 import { applyRegistryResult } from '../lib/companyRegistry';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -86,6 +91,7 @@ function Card({ title, theme, children }) {
 // ---------------------------------------------------------------------------
 
 export default function CompanyForm({ company: initial, users, vatRegimes = [], endpoint, pdpLookupUrl, registryUrl, trans }) {
+    L = trans?.ui ?? {};
     const [form, setForm]       = useState({ ...initial });
     const [errors, setErrors]   = useState({});
     const [saving, setSaving]   = useState(false);
@@ -144,11 +150,14 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             // laissait croire que l'enregistrement avait eu lieu.
             if (err.errors) {
                 setErrors(err.errors);
-                setError(`Enregistrement refusé : ${Object.values(err.errors).flat().join(' ')}`);
+                setError(fmt(L.save_refused ?? 'Enregistrement refusé : :errors', { errors: Object.values(err.errors).flat().join(' ') }));
             } else if (err.status === 419) {
-                setError('Session expirée : rechargez la page puis enregistrez à nouveau.');
+                setError((L.session_expired ?? 'Session expirée : rechargez la page puis enregistrez à nouveau.'));
             } else {
-                setError(`Enregistrement impossible (${err.status ?? 'réseau'})${err.message ? ' : ' + err.message : ''}.`);
+                setError(fmt(L.save_failed ?? 'Enregistrement impossible (:status):message.', {
+                    status: err.status ?? (L.save_failed_network ?? 'réseau'),
+                    message: err.message ? ' : ' + err.message : '',
+                }));
             }
         } finally {
             setSaving(false);
@@ -162,11 +171,11 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
     const handlePdpLookup = async () => {
         const siren = (form.siren ?? '').trim();
         if (!siren) {
-            setPdpLookup({ status: 'error', message: 'Renseignez d’abord le SIREN.' });
+            setPdpLookup({ status: 'error', message: (L.siren_first ?? 'Renseignez d’abord le SIREN.') });
             return;
         }
 
-        setPdpLookup({ status: 'busy', message: 'Consultation de l’annuaire…' });
+        setPdpLookup({ status: 'busy', message: (L.directory_lookup ?? 'Consultation de l’annuaire…') });
 
         try {
             const res  = await fetch(`${pdpLookupUrl}?siren=${encodeURIComponent(siren)}`, {
@@ -176,7 +185,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             const data = await res.json().catch(() => ({}));
 
             if (!res.ok) {
-                setPdpLookup({ status: 'error', message: data.message ?? 'Consultation impossible.' });
+                setPdpLookup({ status: 'error', message: data.message ?? (L.directory_failed ?? 'Consultation impossible.') });
                 return;
             }
 
@@ -184,7 +193,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             if (!active.length) {
                 setPdpLookup({
                     status: 'warning',
-                    message: 'Ce client n’est pas encore inscrit à l’annuaire : demandez-lui son adresse.',
+                    message: L.directory_not_registered ?? 'Ce client n’est pas encore inscrit à l’annuaire : demandez-lui son adresse.',
                 });
                 return;
             }
@@ -195,11 +204,13 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             setPdpLookup({
                 status: 'success',
                 message: active.length > 1
-                    ? `${active.length} adresses trouvées, la première est reprise (${active[0].name ?? ''}).`
-                    : `Adresse trouvée${active[0].name ? ' — ' + active[0].name : ''}.`,
+                    ? fmt(L.addresses_found ?? ':count adresses trouvées, la première est reprise (:name).', { count: active.length, name: active[0].name ?? '' })
+                    : (active[0].name
+                        ? fmt(L.address_found_named ?? 'Adresse trouvée — :name.', { name: active[0].name })
+                        : (L.address_found ?? 'Adresse trouvée.')),
             });
         } catch {
-            setPdpLookup({ status: 'error', message: 'Erreur réseau.' });
+            setPdpLookup({ status: 'error', message: (L.network_error ?? 'Erreur réseau.') });
         }
     };
 
@@ -460,24 +471,24 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
             {/* Electronic invoicing address (EN 16931, BT-49).
                 Vide, le SIREN sert de valeur par défaut : choix de la plupart
                 des entreprises françaises. */}
-            <Card title="Adresse électronique de facturation" theme="info">
+            <Card title={L.e_invoicing_address_title ?? 'Adresse électronique de facturation'} theme="info">
                 <div className="row">
                     <div className="col-md-2">
-                        <Field label="Annuaire" error={errors.electronic_address_scheme?.[0]}>
+                        <Field label={L.directory ?? 'Annuaire'} error={errors.electronic_address_scheme?.[0]}>
                             <select
                                 className="form-select"
                                 value={form.electronic_address_scheme ?? '0225'}
                                 onChange={setVal('electronic_address_scheme')}
                                 disabled={isIndividual}
                             >
-                                <option value="0225">0225 — France</option>
-                                <option value="0208">0208 — Belgique</option>
-                                <option value="0009">0009 — SIRET</option>
+                                <option value="0225">{L.scheme_0225 ?? '0225 — France'}</option>
+                                <option value="0208">{L.scheme_0208 ?? '0208 — Belgique'}</option>
+                                <option value="0009">{L.scheme_0009 ?? '0009 — SIRET'}</option>
                             </select>
                         </Field>
                     </div>
                     <div className="col-md-6">
-                        <Field label="Adresse électronique" error={errors.electronic_address?.[0]}>
+                        <Field label={L.e_invoicing_address ?? 'Adresse électronique'} error={errors.electronic_address?.[0]}>
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -493,7 +504,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                                             className="btn btn-outline-secondary"
                                             onClick={handlePdpLookup}
                                             disabled={pdpLookup.status === 'busy' || isIndividual}
-                                            title="Chercher dans l’annuaire officiel à partir du SIREN"
+                                            title={L.directory_search_title ?? 'Chercher dans l’annuaire officiel à partir du SIREN'}
                                         >
                                             <i className={`fas ${pdpLookup.status === 'busy' ? 'fa-spinner fa-spin' : 'fa-search'}`} />
                                         </button>
@@ -501,7 +512,7 @@ export default function CompanyForm({ company: initial, users, vatRegimes = [], 
                             </div>
                             <small className={`form-text ${pdpLookupClass}`}>
                                 {pdpLookup.status === 'idle'
-                                    ? 'Vide = le SIREN fait office d’adresse.'
+                                    ? (L.e_invoicing_address_help ?? 'Vide = le SIREN fait office d’adresse.')
                                     : pdpLookup.message}
                             </small>
                         </Field>

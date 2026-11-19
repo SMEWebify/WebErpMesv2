@@ -3,6 +3,10 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { apiFetch } from '../lib/http';
 import { formatDate, formatCurrency } from '../utils';
 
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -380,20 +384,20 @@ const LS_HIDDEN_COLS  = 'invoices_table_hidden_cols';
 const PDP_COLUMN_VISIBLE = false;
 
 const QONTO_LIFECYCLE_CONFIG = {
-    pending:      { badge: 'text-bg-secondary', label: 'Non déposée' },
-    submitted:    { badge: 'text-bg-info',      label: 'Émise (à payer)' },
-    acknowledged: { badge: 'text-bg-primary',   label: 'Accusé reçu' },
-    rejected:     { badge: 'text-bg-danger',    label: 'Rejetée' },
-    refused:      { badge: 'text-bg-danger',    label: 'Refusée' },
-    accepted:     { badge: 'text-bg-success',   label: 'Acceptée' },
-    paid:         { badge: 'text-bg-success',   label: 'Payée' },
-    canceled:     { badge: 'text-bg-warning',   label: 'Annulée chez Qonto' },
+    pending:      { badge: 'text-bg-secondary', get label() { return L.qonto_pending ?? 'Non déposée'; } },
+    submitted:    { badge: 'text-bg-info',      get label() { return L.qonto_submitted ?? 'Émise (à payer)'; } },
+    acknowledged: { badge: 'text-bg-primary',   get label() { return L.qonto_acknowledged ?? 'Accusé reçu'; } },
+    rejected:     { badge: 'text-bg-danger',    get label() { return L.qonto_rejected ?? 'Rejetée'; } },
+    refused:      { badge: 'text-bg-danger',    get label() { return L.refused ?? 'Refusée'; } },
+    accepted:     { badge: 'text-bg-success',   get label() { return L.accepted ?? 'Acceptée'; } },
+    paid:         { badge: 'text-bg-success',   get label() { return L.qonto_paid ?? 'Payée'; } },
+    canceled:     { badge: 'text-bg-warning',   get label() { return L.qonto_canceled ?? 'Annulée chez Qonto'; } },
 };
 
 function QontoStatusBadge({ status }) {
     if (!status) return <span className="text-muted small">—</span>;
     const cfg = QONTO_LIFECYCLE_CONFIG[status] ?? { badge: 'text-bg-secondary', label: status };
-    return <span className={`badge ${cfg.badge}`} title="Statut de la facture chez Qonto">{cfg.label}</span>;
+    return <span className={`badge ${cfg.badge}`} title={L.qonto_status_title ?? 'Statut de la facture chez Qonto'}>{cfg.label}</span>;
 }
 
 function invoiceColumns(trans, pdpEnabled) {
@@ -417,7 +421,7 @@ function invoiceColumns(trans, pdpEnabled) {
           render: inv => <span className="badge text-bg-secondary">{inv.invoice_lines_count}</span> },
         { key: 'created_at', label: trans.created_at, sortable: true,
           filter: 'date' },
-        { key: 'total',      label: trans.total,      sortable: 'total_amount', align: 'right', bold: true,
+        { key: (L.total_lower ?? 'total'),      label: trans.total,      sortable: 'total_amount', align: 'right', bold: true,
           render: inv => (inv.total_amount > 0
               ? formatCurrency(inv.total_amount, trans.currency, trans.locale)
               : <span className="text-muted">—</span>),
@@ -610,6 +614,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
 // ---------------------------------------------------------------------------
 
 export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, trans, companieId = null }) {
+    L = trans?.ui ?? {};
     const [activeTab, setActiveTab] = useIndexTab('invoices_index_tab', { forced: companieId ? 'list' : null });
 
     return (

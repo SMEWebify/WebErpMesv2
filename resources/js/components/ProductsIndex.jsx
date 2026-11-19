@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DataTable, Pagination, useIndexTab } from './table';
 import { apiFetch } from '../lib/http';
 import GuideHelp from './GuideHelp';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // KPI Cards
@@ -683,7 +688,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
             );
             setPreview(data);
         } catch {
-            setError('Erreur lors du chargement de l\'aperçu.');
+            setError((L.error_preview ?? 'Erreur lors du chargement de l\'aperçu.'));
         } finally {
             setLoading(false);
         }
@@ -696,7 +701,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
             await apiFetch(`${endpoints.mergeBaseUrl}/${masterId}/${duplicateId}`, { method: 'POST' });
             onMerged();
         } catch {
-            setError('Erreur lors de la fusion.');
+            setError((L.error_merge ?? 'Erreur lors de la fusion.'));
             setMerging(false);
         }
     };
@@ -716,7 +721,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                     <div className="modal-header bg-warning">
                         <h5 className="modal-title">
                             <i className="fas fa-code-branch me-2" />
-                            Fusionner les doublons — code <code>{group.code}</code>
+                            {L.merge_title ?? 'Fusionner les doublons — code'} <code>{group.code}</code>
                             <GuideHelp guide="article" section="la-liste-des-articles" />
                         </h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
@@ -725,8 +730,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                     <div className="modal-body">
                         {/* Choix du master */}
                         <p className="mb-2" style={{ fontSize: '0.85rem' }}>
-                            <strong>Choisissez le produit maître</strong> à conserver.
-                            L'autre sera supprimé et toutes ses références seront transférées.
+                            <strong>{L.choose_master ?? 'Choisissez le produit maître'}</strong> {L.choose_master_help ?? 'à conserver. L\'autre sera supprimé et toutes ses références seront transférées.'}
                         </p>
                         <div className="row mb-3">
                             {group.products.map(p => (
@@ -747,10 +751,10 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                                     </div>
                                                 </div>
                                                 {masterId === p.id && (
-                                                    <span className="badge text-bg-success ms-auto">Maître</span>
+                                                    <span className="badge text-bg-success ms-auto">{L.master ?? 'Maître'}</span>
                                                 )}
                                                 {masterId !== p.id && (
-                                                    <span className="badge text-bg-danger ms-auto">Doublon</span>
+                                                    <span className="badge text-bg-danger ms-auto">{L.duplicate ?? 'Doublon'}</span>
                                                 )}
                                             </div>
                                         </div>
@@ -764,8 +768,8 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                             <div className="text-center mb-3">
                                 <button className="btn btn-outline-info btn-sm" onClick={loadPreview} disabled={loading}>
                                     {loading
-                                        ? <><i className="fas fa-spinner fa-spin me-1" />Chargement…</>
-                                        : <><i className="fas fa-eye me-1" />Voir l'impact</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{L.loading ?? 'Chargement…'}</>
+                                        : <><i className="fas fa-eye me-1" />{L.view_impact ?? 'Voir l\'impact'}</>
                                     }
                                 </button>
                             </div>
@@ -774,32 +778,32 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                         {/* Aperçu */}
                         {preview && (
                             <div className="card card-body bg-body-tertiary mb-3" style={{ fontSize: '0.85rem' }}>
-                                <h6 className="mb-2">Impact du transfert</h6>
+                                <h6 className="mb-2">{L.transfer_impact ?? 'Impact du transfert'}</h6>
 
-                                {impactRow('Lignes de devis', preview.impact.quote_lines)}
-                                {impactRow('Lignes de commande', preview.impact.order_lines)}
-                                {impactRow('Lignes d\'achat', preview.impact.purchase_lines)}
-                                {impactRow('Lignes devis fournisseur', preview.impact.purchase_quotation_lines)}
-                                {impactRow('Lignes avoir', preview.impact.credit_note_lines)}
-                                {impactRow('Tâches', preview.impact.tasks)}
-                                {impactRow('Sous-assemblages', preview.impact.sub_assemblies)}
-                                {impactRow('Numéros de série', preview.impact.serial_numbers)}
-                                {impactRow('Lots', preview.impact.batches)}
-                                {impactRow('AMDEC qualité', preview.impact.quality_amdecs)}
-                                {impactRow('Lignes pré-commande', preview.impact.pre_order_lines)}
+                                {impactRow((L.impact_quote_lines ?? 'Lignes de devis'), preview.impact.quote_lines)}
+                                {impactRow((L.impact_order_lines ?? 'Lignes de commande'), preview.impact.order_lines)}
+                                {impactRow((L.impact_purchase_lines ?? 'Lignes d\'achat'), preview.impact.purchase_lines)}
+                                {impactRow((L.impact_rfq_lines ?? 'Lignes devis fournisseur'), preview.impact.purchase_quotation_lines)}
+                                {impactRow((L.impact_credit_note_lines ?? 'Lignes avoir'), preview.impact.credit_note_lines)}
+                                {impactRow((L.impact_tasks ?? 'Tâches'), preview.impact.tasks)}
+                                {impactRow((L.impact_sub_assemblies ?? 'Sous-assemblages'), preview.impact.sub_assemblies)}
+                                {impactRow((L.impact_serial_numbers ?? 'Numéros de série'), preview.impact.serial_numbers)}
+                                {impactRow((L.impact_batches ?? 'Lots'), preview.impact.batches)}
+                                {impactRow((L.impact_fmea ?? 'AMDEC qualité'), preview.impact.quality_amdecs)}
+                                {impactRow((L.impact_pre_order_lines ?? 'Lignes pré-commande'), preview.impact.pre_order_lines)}
 
                                 {/* Stock */}
                                 {preview.impact.stock.length > 0 && (
                                     <div className="mt-2">
-                                        <div className="fw-bold mb-1">Stock</div>
+                                        <div className="fw-bold mb-1">{L.stock ?? 'Stock'}</div>
                                         {preview.impact.stock.map((s, i) => (
                                             <div key={i} className="d-flex justify-content-between py-1 border-bottom">
-                                                <span className="text-muted">Emplacement #{s.location_id}</span>
+                                                <span className="text-muted">{L.location_hash ?? 'Emplacement #'}{s.location_id}</span>
                                                 <span>
                                                     {s.master_qty} + {s.dup_qty}
                                                     {' → '}
                                                     <strong>{s.merged_qty}</strong>
-                                                    {s.conflict && <span className="badge text-bg-info ms-1">fusion</span>}
+                                                    {s.conflict && <span className="badge text-bg-info ms-1">{L.merge_badge ?? 'fusion'}</span>}
                                                 </span>
                                             </div>
                                         ))}
@@ -809,23 +813,23 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                 {/* Prix clients */}
                                 <div className="alert alert-warning mt-2 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
                                     <i className="fas fa-exclamation-triangle me-1" />
-                                    <strong>Tarifs clients :</strong>{' '}
+                                    <strong>{L.customer_prices ?? 'Tarifs clients :'}</strong>{' '}
                                     {preview.impact.customer_price_lists.duplicate_count > 0
-                                        ? `Les ${preview.impact.customer_price_lists.duplicate_count} tarif(s) du doublon seront supprimés. `
-                                        : 'Aucun tarif sur le doublon. '}
+                                        ? fmt(L.dup_prices_deleted ?? 'Les :count tarif(s) du doublon seront supprimés. ', { count: preview.impact.customer_price_lists.duplicate_count })
+                                        : (L.dup_no_price ?? 'Aucun tarif sur le doublon. ')}
                                     {preview.impact.customer_price_lists.master_count > 0
-                                        ? `Les ${preview.impact.customer_price_lists.master_count} tarif(s) du maître sont conservés.`
-                                        : 'Aucun tarif sur le maître.'}
+                                        ? fmt(L.master_prices_kept ?? 'Les :count tarif(s) du maître sont conservés.', { count: preview.impact.customer_price_lists.master_count })
+                                        : (L.master_no_price ?? 'Aucun tarif sur le maître.')}
                                 </div>
 
                                 {preview.impact.quantity_prices.duplicate_count > 0 && (
                                     <div className="alert alert-warning mt-1 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
                                         <i className="fas fa-exclamation-triangle me-1" />
-                                        <strong>Tarifs quantité :</strong>{' '}
-                                        {`Les ${preview.impact.quantity_prices.duplicate_count} tarif(s) quantité du doublon seront supprimés. `}
+                                        <strong>{L.quantity_prices ?? 'Tarifs quantité :'}</strong>{' '}
+                                        {fmt(L.dup_qty_prices_deleted ?? 'Les :count tarif(s) quantité du doublon seront supprimés. ', { count: preview.impact.quantity_prices.duplicate_count })}
                                         {preview.impact.quantity_prices.master_count > 0
-                                            ? `Les ${preview.impact.quantity_prices.master_count} tarif(s) quantité du maître sont conservés.`
-                                            : 'Aucun tarif quantité sur le maître.'}
+                                            ? fmt(L.master_qty_prices_kept ?? 'Les :count tarif(s) quantité du maître sont conservés.', { count: preview.impact.quantity_prices.master_count })
+                                            : (L.master_no_qty_price ?? 'Aucun tarif quantité sur le maître.')}
                                     </div>
                                 )}
                             </div>
@@ -837,7 +841,7 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                         {preview && (
                             <button
                                 type="button"
@@ -846,8 +850,8 @@ function MergeModal({ group, endpoints, onClose, onMerged }) {
                                 disabled={merging}
                             >
                                 {merging
-                                    ? <><i className="fas fa-spinner fa-spin me-1" />Fusion en cours…</>
-                                    : <><i className="fas fa-code-branch me-1" />Confirmer la fusion</>
+                                    ? <><i className="fas fa-spinner fa-spin me-1" />{L.merging ?? 'Fusion en cours…'}</>
+                                    : <><i className="fas fa-code-branch me-1" />{L.confirm_merge ?? 'Confirmer la fusion'}</>
                                 }
                             </button>
                         )}
@@ -884,7 +888,7 @@ function DuplicatesTab({ endpoints }) {
         return (
             <div className="text-center py-5 text-muted">
                 <i className="fas fa-check-circle fa-3x mb-3 text-success" />
-                <p>Aucun doublon détecté.</p>
+                <p>{L.no_duplicate ?? 'Aucun doublon détecté.'}</p>
             </div>
         );
     }
@@ -893,14 +897,14 @@ function DuplicatesTab({ endpoints }) {
         <div>
             <div className="alert alert-warning py-2 mb-3">
                 <i className="fas fa-exclamation-triangle me-1" />
-                <strong>{groups.length} groupe(s) de doublons</strong> détectés sur le code produit.
+                <strong>{groups.length} {L.duplicate_groups ?? 'groupe(s) de doublons'}</strong> {L.duplicate_groups_help ?? 'détectés sur le code produit.'}
             </div>
 
             <table className="table table-hover table-sm">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Produits concernés</th>
+                        <th>{L.code ?? 'Code'}</th>
+                        <th>{L.products_concerned ?? 'Produits concernés'}</th>
                         <th style={{ width: 100 }} />
                     </tr>
                 </thead>
@@ -926,7 +930,7 @@ function DuplicatesTab({ endpoints }) {
                                     className="btn btn-sm btn-warning"
                                     onClick={() => setMergeGroup(group)}
                                 >
-                                    <i className="fas fa-code-branch me-1" />Fusionner
+                                    <i className="fas fa-code-branch me-1" />{L.merge ?? 'Fusionner'}
                                 </button>
                             </td>
                         </tr>
@@ -951,6 +955,7 @@ function DuplicatesTab({ endpoints }) {
 // ---------------------------------------------------------------------------
 
 export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMerge }) {
+    L = trans?.ui ?? {};
     const [activeTab, setActiveTab] = useIndexTab('products_index_tab', { tabs: canMerge ? ['dashboard', 'list', 'duplicates'] : ['dashboard', 'list'] });
 
     return (
@@ -982,7 +987,7 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMer
                                 href="#"
                                 onClick={e => { e.preventDefault(); setActiveTab('duplicates'); }}
                             >
-                                <i className="fas fa-code-branch me-1" />Doublons
+                                <i className="fas fa-code-branch me-1" />{L.duplicates ?? 'Doublons'}
                             </a>
                         </li>
                     )}

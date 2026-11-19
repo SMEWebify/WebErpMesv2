@@ -13,6 +13,17 @@ import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '.
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
 import { dossierState, dossierValidatedText, dossierActionIds } from '../lib/manufacturingDossier.js';
 import GuideHelp from './GuideHelp';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/sales_lines.php), posés par OrderLinesPage
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
+/** Libellé d'un statut traduit (clé `{prefix}_{id}`), sinon celui de la constante. */
+function statusCfg(config, prefix, id) {
+    const cfg = config[id];
+    return cfg ? { ...cfg, label: L[`${prefix}_${id}`] ?? cfg.label } : { badge: 'text-bg-secondary', label: '—' };
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -140,14 +151,14 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
                 <div className="card-header py-2">
                     <h6 className="card-title mb-0">
                         <i className="fas fa-tag me-1 text-info" />
-                        Grille tarifaire client
+                        {L.price_grid_title ?? 'Grille tarifaire client'}
                     </h6>
                 </div>
                 <div className="card-body p-0">
                     <table className="table table-sm table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>Source</th><th>Qté min</th><th>Qté max</th><th>Prix</th><th />
+                                <th>{L.source ?? 'Source'}</th><th>{L.qty_min ?? 'Qté min'}</th><th>{L.qty_max ?? 'Qté max'}</th><th>{L.price ?? 'Prix'}</th><th />
                             </tr>
                         </thead>
                         <tbody>
@@ -163,7 +174,7 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
                                             className="btn btn-sm btn-outline-primary"
                                             onClick={() => onApplyPrice(e.price)}
                                         >
-                                            Appliquer
+                                            {L.apply ?? 'Appliquer'}
                                         </button>
                                     </td>
                                 </tr>
@@ -224,7 +235,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
             setReason('');
             onLineUpdated(data.line);
         } else {
-            setToggleError(data.message ?? 'Erreur');
+            setToggleError(data.message ?? (L.error ?? 'Erreur'));
             if (data.reason_required) setAskReason(true);
         }
         setToggling(false);
@@ -251,7 +262,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                     style={{ background: '#ffc107', borderRadius: '6px 6px 0 0' }}>
                     <strong className="text-dark">
                         <i className="fas fa-list me-2" />
-                        Tâches — {lineLabel}
+                        {L.tasks_dash ?? 'Tâches —'} {lineLabel}
                         <GuideHelp guide="commande-revue-contrat" section="prix-calcule-tant-que-la-commande-est-en-preparation" />
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-dark" onClick={onClose}>
@@ -263,22 +274,22 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                 <div className="flex-grow-1 overflow-auto p-3">
                     {tasks === null ? (
                         <div className="text-center py-4">
-                            <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                            <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
                         </div>
                     ) : tasks.length === 0 ? (
-                        <p className="text-muted text-center py-4">Aucune tâche pour cette ligne.</p>
+                        <p className="text-muted text-center py-4">{L.no_task ?? 'Aucune tâche pour cette ligne.'}</p>
                     ) : (
                         <table className="table table-hover table-sm mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Ordre</th>
-                                    <th>Libellé</th>
-                                    <th>Service</th>
-                                    <th className="text-end">Temps</th>
-                                    <th className="text-end">Qté</th>
-                                    <th className="text-end">Coût</th>
-                                    <th className="text-end">Marge</th>
-                                    <th className="text-end">Prix</th>
+                                    <th>{L.order ?? 'Ordre'}</th>
+                                    <th>{L.label ?? 'Libellé'}</th>
+                                    <th>{L.service ?? 'Service'}</th>
+                                    <th className="text-end">{L.time ?? 'Temps'}</th>
+                                    <th className="text-end">{L.qty ?? 'Qté'}</th>
+                                    <th className="text-end">{L.cost ?? 'Coût'}</th>
+                                    <th className="text-end">{L.margin ?? 'Marge'}</th>
+                                    <th className="text-end">{L.price ?? 'Prix'}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -304,7 +315,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                 {/* Footer */}
                 <div className="border-top px-3 py-2 d-flex align-items-center justify-content-between flex-wrap" style={{ gap: '0.5rem' }}>
                     <a href={taskUrl} className="btn btn-sm btn-info">
-                        <i className="fas fa-folder me-1" />Gérer les tâches
+                        <i className="fas fa-folder me-1" />{L.manage_tasks ?? 'Gérer les tâches'}
                     </a>
                     {!isReadOnly && (
                         <div className="d-flex align-items-center flex-wrap" style={{ gap: '0.5rem' }}>
@@ -471,8 +482,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         setPriceList([]);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e, creditOverride = null) => {
+        e?.preventDefault();
         if (isReadOnly) return;
         setSaving(true);
         setErrors({});
@@ -485,11 +496,19 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             ...form,
             equipment_tag: parseTags(form.equipment_tag),
             delay_reason:  isEdit && dateChanged ? form.delay_reason : '',
+            ...creditOverride,
         };
         try {
             const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok && data.credit_limit) {
+                // Plafond d'encours dépassé : passe-droit motivé, puis nouvel envoi.
+                setSaving(false);
+                const override = await askCreditOverride(data.credit_limit);
+                if (override) return handleSubmit(null, override);
+                return;
+            }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             onSaved(data.line, isEdit);
             if (isEdit) {
                 onClose();
@@ -497,7 +516,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 resetFormForCreate((data.line.ordre ?? form.ordre) + 1);
             }
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -542,7 +561,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         gap: 8,
                         zIndex: 1049,
                     }}
-                    title="Ajouter une ligne"
+                    title={L.add_line ?? 'Ajouter une ligne'}
                 >
                     <i className="fas fa-plus" style={{ fontSize: 14 }} />
                     <span style={{
@@ -552,7 +571,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         fontWeight: 700,
                         letterSpacing: 1,
                         textTransform: 'uppercase',
-                    }}>Ajouter</span>
+                    }}>{L.add ?? 'Ajouter'}</span>
                 </button>
             )}
 
@@ -571,8 +590,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-body-tertiary">
                     <strong>
                         {editingLine
-                            ? <><i className="fas fa-edit me-2 text-warning" />Modifier la ligne</>
-                            : <><i className="fas fa-plus-circle me-2 text-success" />Nouvelle ligne</>}
+                            ? <><i className="fas fa-edit me-2 text-warning" />{L.edit_line ?? 'Modifier la ligne'}</>
+                            : <><i className="fas fa-plus-circle me-2 text-success" />{L.new_line ?? 'Nouvelle ligne'}</>}
                         <GuideHelp guide="commande-revue-contrat" section="saisir-les-lignes-et-leurs-reperes-dequipement" />
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
@@ -588,13 +607,13 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Product */}
                         <div className="mb-3 mb-2 position-relative">
-                            <label className="mb-1 small fw-bold">Produit</label>
+                            <label className="mb-1 small fw-bold">{L.product ?? 'Produit'}</label>
                             <div className="input-group input-group-sm">
                                 <span className="input-group-text"><i className="fas fa-barcode" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Rechercher un produit…"
+                                    placeholder={L.search_product ?? 'Rechercher un produit…'}
                                     value={productSearch}
                                     onChange={(e) => { setProductSearch(e.target.value); setShowProductList(true); if (!e.target.value) handleProductClear(); }}
                                     onFocus={() => setShowProductList(true)}
@@ -631,22 +650,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Code + Ordre */}
                         <div className="row gx-2">
                             <div className="mb-3 col-5 mb-2">
-                                <label className="mb-1 small fw-bold">Réf. externe</label>
+                                <label className="mb-1 small fw-bold">{L.external_ref ?? 'Réf. externe'}</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                     <input type="text" className={`form-control ${errors.code ? 'is-invalid' : ''}`}
-                                        placeholder="Code externe" value={form.code}
+                                        placeholder={L.external_code ?? 'Code externe'} value={form.code}
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
                             <div className="mb-3 col-3 mb-2">
-                                <label className="mb-1 small fw-bold">Ind. plan</label>
+                                <label className="mb-1 small fw-bold">{L.drawing_index ?? 'Ind. plan'}</label>
                                 <input type="text" className={`form-control form-control-sm ${errors.ind ? 'is-invalid' : ''}`}
                                     maxLength={50} placeholder="A, B…" value={form.ind ?? ''}
                                     onChange={(e) => set('ind', e.target.value)} disabled={isReadOnly} />
                             </div>
                             <div className="mb-3 col-4 mb-2">
-                                <label className="mb-1 small fw-bold">Ordre</label>
+                                <label className="mb-1 small fw-bold">{L.order ?? 'Ordre'}</label>
                                 <input type="number" className={`form-control form-control-sm ${errors.ordre ? 'is-invalid' : ''}`}
                                     min="1" value={form.ordre}
                                     onChange={(e) => set('ordre', e.target.value)} disabled={isReadOnly} />
@@ -655,11 +674,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Label */}
                         <div className="mb-3 mb-2">
-                            <label className="mb-1 small fw-bold">Description <span className="text-danger">*</span></label>
+                            <label className="mb-1 small fw-bold">{L.description ?? 'Description'} <span className="text-danger">*</span></label>
                             <div className="input-group input-group-sm">
                                 <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`}
-                                    placeholder="Description de la ligne" value={form.label}
+                                    placeholder={L.line_description ?? 'Description de la ligne'} value={form.label}
                                     onChange={(e) => set('label', e.target.value)} disabled={isReadOnly} />
                             </div>
                             {errors.label && <div className="invalid-feedback d-block">{errors.label[0]}</div>}
@@ -673,7 +692,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Qty + Unit */}
                         <div className="row gx-2">
                             <div className="mb-3 col-5 mb-2">
-                                <label className="mb-1 small fw-bold">Quantité <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.quantity ?? 'Quantité'} <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-times" /></span>
                                     <input type="number" className={`form-control ${errors.qty ? 'is-invalid' : ''}`}
@@ -683,10 +702,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
                             <div className="mb-3 col-7 mb-2">
-                                <label className="mb-1 small fw-bold">Unité</label>
+                                <label className="mb-1 small fw-bold">{L.unit ?? 'Unité'}</label>
                                 <select className="form-select form-select-sm" value={form.methods_units_id}
                                     onChange={(e) => set('methods_units_id', e.target.value)} disabled={isReadOnly}>
-                                    <option value="">— Unité —</option>
+                                    <option value="">{L.unit_placeholder ?? '— Unité —'}</option>
                                     {(selectData.units ?? []).map((u) => (
                                         <option key={u.id} value={u.id}>{u.code} - {u.label}</option>
                                     ))}
@@ -697,7 +716,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Price + Discount */}
                         <div className="row gx-2">
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Prix unitaire <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.unit_price ?? 'Prix unitaire'} <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text">{selectData.currency ?? '€'}</span>
                                     <input type="number" className={`form-control ${errors.selling_price ? 'is-invalid' : ''}`}
@@ -707,7 +726,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                 {errors.selling_price && <div className="invalid-feedback d-block">{errors.selling_price[0]}</div>}
                             </div>
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Remise %</label>
+                                <label className="mb-1 small fw-bold">{L.discount_pct ?? 'Remise %'}</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-percentage" /></span>
                                     <input type="number" className={`form-control ${errors.discount ? 'is-invalid' : ''}`}
@@ -720,17 +739,17 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* VAT + Delivery */}
                         <div className="row gx-2">
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">TVA</label>
+                                <label className="mb-1 small fw-bold">{L.vat ?? 'TVA'}</label>
                                 <select className="form-select form-select-sm" value={form.accounting_vats_id}
                                     onChange={(e) => set('accounting_vats_id', e.target.value)} disabled={isReadOnly}>
-                                    <option value="">— TVA —</option>
+                                    <option value="">{L.vat_placeholder ?? '— TVA —'}</option>
                                     {(selectData.vats ?? []).map((v) => (
                                         <option key={v.id} value={v.id}>{v.label}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Date livraison</label>
+                                <label className="mb-1 small fw-bold">{L.delivery_date ?? 'Date livraison'}</label>
                                 <input type="date" className="form-control form-control-sm" value={form.delivery_date}
                                     onChange={(e) => set('delivery_date', e.target.value)} disabled={isReadOnly} />
                             </div>
@@ -761,22 +780,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                     {editingLine?.detail_url ? (
                         <a href={editingLine.detail_url} className="btn btn-sm btn-outline-info"
                             target="_blank" rel="noreferrer">
-                            <i className="fas fa-info-circle me-1" />Détails techniques
+                            <i className="fas fa-info-circle me-1" />{L.technical_details ?? 'Détails techniques'}
                         </a>
                     ) : <span />}
                     <div>
                         <button type="button" className="btn btn-sm btn-outline-secondary me-2" onClick={onClose}>
-                            Annuler
+                            {L.cancel ?? 'Annuler'}
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="line-drawer-form" className="btn btn-sm btn-success" disabled={saving}>
                                 {editingLine
                                     ? saving
-                                        ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
-                                        : <><i className="fas fa-save me-1" />Enregistrer</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</>
+                                        : <><i className="fas fa-save me-1" />{L.save ?? 'Enregistrer'}</>
                                     : saving
-                                        ? <><i className="fas fa-spinner fa-spin me-1" />Ajout…</>
-                                        : <><i className="fas fa-plus me-1" />Ajouter</>}
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{L.adding ?? 'Ajout…'}</>
+                                        : <><i className="fas fa-plus me-1" />{L.add ?? 'Ajouter'}</>}
                             </button>
                         )}
                     </div>
@@ -852,14 +871,14 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
                 {type === LINE_TYPES.SECTION && (
                     <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
                         <strong className="text-uppercase flex-grow-1">{line.label}</strong>
-                        {Number(line.pdf_package) !== PACKAGE.NONE && <span className="badge text-bg-light border">forfait</span>}
+                        {Number(line.pdf_package) !== PACKAGE.NONE && <span className="badge text-bg-light border">{L.package_badge ?? 'forfait'}</span>}
                         <span className="fw-bold text-nowrap">{money(info?.amount)}</span>
                     </div>
                 )}
                 {type === LINE_TYPES.SUBTOTAL && (
                     <div className="d-flex">
                         <span className="flex-grow-1 text-end fw-bold me-2">
-                            {line.label || (sectionLabel ? `Sous-total ${sectionLabel}` : 'Sous-total')}
+                            {line.label || (sectionLabel ? fmt(L.subtotal_of ?? 'Sous-total :section', { section: sectionLabel }) : (L.subtotal ?? 'Sous-total'))}
                         </span>
                         <span className="fw-bold text-nowrap">{money(info?.amount)}</span>
                     </div>
@@ -903,9 +922,9 @@ function LineRow({
         setMenuOpen((v) => !v);
     };
 
-    const tasksCfg    = TASKS_STATUS_CONFIG[line.tasks_status]    ?? { badge: 'text-bg-secondary', label: '—' };
-    const deliveryCfg = DELIVERY_STATUS_CONFIG[line.delivery_status] ?? { badge: 'text-bg-secondary', label: '—' };
-    const invoiceCfg  = INVOICE_STATUS_CONFIG[line.invoice_status]   ?? { badge: 'text-bg-secondary', label: '—' };
+    const tasksCfg    = statusCfg(TASKS_STATUS_CONFIG, 'tasks_status', line.tasks_status);
+    const deliveryCfg = statusCfg(DELIVERY_STATUS_CONFIG, 'delivery_status', line.delivery_status);
+    const invoiceCfg  = statusCfg(INVOICE_STATUS_CONFIG, 'invoice_status', line.invoice_status);
 
     const rowStyle = {
         opacity:    isDragging ? 0.4  : 1,
@@ -954,7 +973,7 @@ function LineRow({
             </td>
 
             {/* Code */}
-            <td className="small">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
+            <td className="small">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title={L.drawing_index_title ?? 'Indice du plan'}>{L.ind_short ?? 'ind.'} {line.ind}</span> : null}</td>
 
             {/* Product link */}
             <td style={{ width: 36 }}>
@@ -966,7 +985,7 @@ function LineRow({
             {/* Label */}
             <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.hide_on_pdf && (
-                    <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                    <i className="fas fa-eye-slash text-muted me-1" title={L.hidden_on_pdf ?? 'Masquée sur le PDF : comptée dans le total, non imprimée'} />
                 )}
                 {line.cancellation?.cancelled && (
                     <span className="badge text-bg-secondary me-1"
@@ -988,7 +1007,7 @@ function LineRow({
 
             {/* Price */}
             <td className={`text-end fw-bold ${line.use_calculated_price ? 'bg-warning' : ''}`}
-                title={line.use_calculated_price ? 'Prix calculé' : ''}>
+                title={line.use_calculated_price ? (L.calculated_price ?? 'Prix calculé') : ''}>
                 {line.formatted_price}
             </td>
 
@@ -1055,12 +1074,12 @@ function LineRow({
             {/* Actions */}
             <td>
                 <div className="btn-group btn-group-xs" ref={menuRef}>
-                    <a href={line.detail_url} className="btn btn-sm btn-teal" target="_blank" rel="noreferrer" title="Détails techniques">
+                    <a href={line.detail_url} className="btn btn-sm btn-teal" target="_blank" rel="noreferrer" title={L.technical_details ?? 'Détails techniques'}>
                         <i className="fas fa-info-circle" />
                     </a>
                     {line.task_count > 0 && (
                         <button type="button" className="btn btn-sm btn-warning"
-                            title={`Tâches (${line.task_count})`}
+                            title={fmt(L.tasks_count ?? 'Tâches (:count)', { count: line.task_count })}
                             onClick={() => onOpenTaskModal(line)}>
                             <span className="badge text-bg-dark">{line.task_count}</span>
                         </button>
@@ -1072,13 +1091,13 @@ function LineRow({
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onEdit(line); setMenuOpen(false); }}>
-                                    <i className="fas fa-edit fa-fw me-2 text-warning" />Modifier
+                                    <i className="fas fa-edit fa-fw me-2 text-warning" />{L.edit ?? 'Modifier'}
                                 </button>
                             )}
                             {!isReadOnly && (
                                 <button className="dropdown-item"
                                     onClick={() => { onDuplicate(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
+                                    <i className="fas fa-copy fa-fw me-2 text-info" />{L.duplicate ?? 'Dupliquer'}
                                 </button>
                             )}
                             {!isReadOnly && onCancel && line.cancellation?.can_cancel && (
@@ -1090,22 +1109,22 @@ function LineRow({
                             {!isReadOnly && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-trash fa-fw me-2" />Supprimer
+                                    <i className="fas fa-trash fa-fw me-2" />{L.delete ?? 'Supprimer'}
                                 </button>
                             )}
                             <div className="dropdown-divider" />
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
-                                <i className="fas fa-info-circle fa-fw me-2 text-teal" />Détails techniques
+                                <i className="fas fa-info-circle fa-fw me-2 text-teal" />{L.technical_details ?? 'Détails techniques'}
                             </a>
                             {!isReadOnly && line.product_id && (
                                 <button className="dropdown-item"
                                     onClick={() => { onBreakDown(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-sitemap fa-fw me-2 text-secondary" />Découpage technique
+                                    <i className="fas fa-sitemap fa-fw me-2 text-secondary" />{L.breakdown ?? 'Découpage technique'}
                                 </button>
                             )}
                             <button className="dropdown-item"
                                 onClick={() => { onOpenTaskModal(line); setMenuOpen(false); }}>
-                                <i className="fas fa-list fa-fw me-2 text-warning" />Tâches ({line.task_count})
+                                <i className="fas fa-list fa-fw me-2 text-warning" />{L.tasks_open ?? 'Tâches ('}{line.task_count})
                             </button>
                         </div>
                     )}
@@ -1120,6 +1139,7 @@ function LineRow({
 // ---------------------------------------------------------------------------
 
 export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orderType: initialType, canManageStock, endpoints, trans = {} }) {
+    L = trans.lines ?? {};
     const delaysTrans = trans.delays ?? {};
     const tagTrans    = trans.equipment_tags ?? {};
     const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
@@ -1170,7 +1190,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             const next = ls.reduce((m, l) => Math.max(m, l.ordre), 0) + 1;
             setSelectData({ ...sd, _nextOrdre: next });
         })
-        .catch(() => showFlash('danger', 'Erreur lors du chargement'))
+        .catch(() => showFlash('danger', (L.error_loading ?? 'Erreur lors du chargement')))
         .finally(() => setLoading(false));
     }, []);
 
@@ -1228,7 +1248,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 body: JSON.stringify({ order: reordered.map((l) => ({ id: l.id, ordre: l.ordre })) }),
             });
         } catch {
-            showFlash('danger', 'Erreur lors de la sauvegarde de l\'ordre');
+            showFlash('danger', (L.error_reorder ?? 'Erreur lors de la sauvegarde de l\'ordre'));
         }
     }, [lines, dragOver, search, endpoints]);
 
@@ -1245,20 +1265,20 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', isEdit ? 'Ligne mise à jour' : 'Ligne ajoutée');
+        showFlash('success', isEdit ? (L.line_updated ?? 'Ligne mise à jour') : (L.line_added ?? 'Ligne ajoutée'));
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('Supprimer cette ligne ?')) return;
+        if (!confirm((L.confirm_delete ?? 'Supprimer cette ligne ?'))) return;
         const res = await apiFetch(endpoints.destroy.replace('__ID__', id), { method: 'DELETE' });
         if (res.ok) {
             setLines((prev) => { const u = prev.filter((l) => l.id !== id); refreshNextOrdre(u); return u; });
             setSelected((s) => { s.delete(id); return new Set(s); });
-            showFlash('success', 'Ligne supprimée');
+            showFlash('success', (L.line_deleted ?? 'Ligne supprimée'));
         } else {
             // Ligne livrée ou facturée : refusée, le serveur oriente vers « Annuler la ligne ».
             const data = await res.json().catch(() => ({}));
-            showFlash('danger', data.message ?? 'Erreur lors de la suppression');
+            showFlash('danger', data.message ?? (L.error_delete ?? 'Erreur lors de la suppression'));
         }
     };
 
@@ -1281,13 +1301,21 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             setLines((prev) => prev.map((l) => (l.id === data.line.id ? data.line : l)));
             showFlash('success', cancelTrans.done ?? 'Ligne annulée');
         } else {
-            showFlash('danger', data.message ?? 'Erreur');
+            showFlash('danger', data.message ?? (L.error ?? 'Erreur'));
         }
     };
 
-    const handleDuplicate = async (id) => {
-        const res  = await apiFetch(endpoints.duplicate.replace('__ID__', id), { method: 'POST' });
+    const handleDuplicate = async (id, creditOverride = null) => {
+        const res  = await apiFetch(endpoints.duplicate.replace('__ID__', id), {
+            method: 'POST',
+            ...(creditOverride ? { body: JSON.stringify(creditOverride) } : {}),
+        });
         const data = await res.json();
+        if (!res.ok && data.credit_limit) {
+            const override = await askCreditOverride(data.credit_limit);
+            if (override) return handleDuplicate(id, override);
+            return;
+        }
         if (res.ok) {
             // Le serveur insère la copie sous l'original et décale la suite.
             setLines((prev) => {
@@ -1297,21 +1325,21 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 refreshNextOrdre(u);
                 return u;
             });
-            showFlash('success', 'Ligne dupliquée');
+            showFlash('success', (L.line_duplicated ?? 'Ligne dupliquée'));
         } else {
-            showFlash('danger', 'Erreur lors de la duplication');
+            showFlash('danger', (L.error_duplicate ?? 'Erreur lors de la duplication'));
         }
     };
 
     const handleBreakDown = async (id) => {
-        if (!confirm('Appliquer le découpage technique du produit sur cette ligne ?')) return;
+        if (!confirm((L.confirm_breakdown ?? 'Appliquer le découpage technique du produit sur cette ligne ?'))) return;
         const res  = await apiFetch(endpoints.breakdown.replace('__ID__', id), { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
             setLines((prev) => prev.map((l) => l.id === id ? data.line : l));
-            showFlash('success', 'Découpage technique appliqué');
+            showFlash('success', (L.breakdown_applied ?? 'Découpage technique appliqué'));
         } else {
-            showFlash('danger', 'Erreur lors du découpage technique');
+            showFlash('danger', (L.error_breakdown ?? 'Erreur lors du découpage technique'));
         }
     };
 
@@ -1321,21 +1349,29 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis un fichier CAO`);
+        showFlash('success', fmt(newLines.length > 1 ? (L.lines_imported_cad_many ?? ':count lignes importées depuis un fichier CAO') : (L.lines_imported_cad_one ?? ':count ligne importée depuis un fichier CAO'), { count: newLines.length }));
     };
 
-    const handlePriceIncrease = async () => {
+    const handlePriceIncrease = async (creditOverride = null) => {
         const amt = parseFloat(priceIncAmt);
         if (!amt || amt <= 0) return;
-        const res  = await apiFetch(endpoints.priceIncrease, { method: 'POST', body: JSON.stringify({ amount: amt }) });
+        const res  = await apiFetch(endpoints.priceIncrease, { method: 'POST', body: JSON.stringify({ amount: amt, ...creditOverride }) });
+        if (!res.ok) {
+            const data = await res.clone().json().catch(() => ({}));
+            if (data.credit_limit) {
+                const override = await askCreditOverride(data.credit_limit);
+                if (override) return handlePriceIncrease(override);
+                return;
+            }
+        }
         if (res.ok) {
             const linesRes  = await fetch(endpoints.lines, { headers: { Accept: 'application/json' } });
             const linesData = await linesRes.json();
             setLines(linesData.lines ?? []);
             setPriceIncAmt('');
-            showFlash('success', 'Prix augmenté');
+            showFlash('success', (L.price_increased ?? 'Prix augmenté'));
         } else {
-            showFlash('danger', 'Erreur lors de la mise à jour des prix');
+            showFlash('danger', (L.error_price_update ?? 'Erreur lors de la mise à jour des prix'));
         }
     };
 
@@ -1351,13 +1387,13 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             return line && line.delivered_remaining_qty > 0;
         });
         if (ids.length === 0) {
-            showFlash('warning', 'Toutes les lignes sélectionnées sont déjà entièrement livrées.');
+            showFlash('warning', (L.all_delivered ?? 'Toutes les lignes sélectionnées sont déjà entièrement livrées.'));
             return;
         }
         const skipped = selected.size - ids.length;
         const msg = skipped > 0
-            ? `Créer un BL à partir des ${ids.length} ligne(s) à livrer ? (${skipped} ligne(s) déjà livrée(s) ignorée(s))`
-            : `Créer un BL à partir des ${ids.length} ligne(s) sélectionnée(s) ?`;
+            ? fmt(L.confirm_delivery_skipped ?? 'Créer un BL à partir des :count ligne(s) à livrer ? (:skipped ligne(s) déjà livrée(s) ignorée(s))', { count: ids.length, skipped })
+            : fmt(L.confirm_delivery ?? 'Créer un BL à partir des :count ligne(s) sélectionnée(s) ?', { count: ids.length });
         if (!creditOverride && !confirm(msg)) return;
         try {
             const res  = await apiFetch(endpoints.storeDelivery, {
@@ -1372,10 +1408,10 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 const override = await askCreditOverride(data.credit_limit);
                 if (override) return handleStoreDelivery(override);
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la création du BL');
+                showFlash('danger', data.error ?? (L.error_create_delivery ?? 'Erreur lors de la création du BL'));
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
@@ -1385,13 +1421,13 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             return line && line.invoiced_remaining_qty > 0;
         });
         if (ids.length === 0) {
-            showFlash('warning', 'Toutes les lignes sélectionnées sont déjà entièrement facturées.');
+            showFlash('warning', (L.all_invoiced ?? 'Toutes les lignes sélectionnées sont déjà entièrement facturées.'));
             return;
         }
         const skipped = selected.size - ids.length;
         const msg = skipped > 0
-            ? `Créer une facture à partir des ${ids.length} ligne(s) à facturer ? (${skipped} ligne(s) déjà facturée(s) ignorée(s))`
-            : `Créer une facture à partir des ${ids.length} ligne(s) sélectionnée(s) ?`;
+            ? fmt(L.confirm_invoice_skipped ?? 'Créer une facture à partir des :count ligne(s) à facturer ? (:skipped ligne(s) déjà facturée(s) ignorée(s))', { count: ids.length, skipped })
+            : fmt(L.confirm_invoice ?? 'Créer une facture à partir des :count ligne(s) sélectionnée(s) ?', { count: ids.length });
         if (!confirm(msg)) return;
         try {
             const res  = await apiFetch(endpoints.storeInvoice, {
@@ -1402,10 +1438,10 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             if (res.ok && data.redirect) {
                 window.location.href = data.redirect;
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la création de la facture');
+                showFlash('danger', data.error ?? (L.error_create_invoice ?? 'Erreur lors de la création de la facture'));
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
@@ -1415,11 +1451,11 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             return line && !line.product_id && line.code && line.code.trim() !== '';
         });
         if (ids.length === 0) {
-            showFlash('warning', 'Aucune ligne sélectionnée n\'a de code externe sans produit lié.');
+            showFlash('warning', (L.no_external_code ?? 'Aucune ligne sélectionnée n\'a de code externe sans produit lié.'));
             return;
         }
-        if (!confirm(`Rechercher un produit existant pour ${ids.length} ligne(s) (par code externe) ?`)) return;
-        const updatePrice = confirm('Forcer la mise à jour du prix unitaire des lignes avec le prix de vente du produit ?\n\n(OK = oui, Annuler = conserver le prix actuel des lignes)');
+        if (!confirm(fmt(L.confirm_link_products ?? 'Rechercher un produit existant pour :count ligne(s) (par code externe) ?', { count: ids.length }))) return;
+        const updatePrice = confirm((L.confirm_update_price ?? 'Forcer la mise à jour du prix unitaire des lignes avec le prix de vente du produit ?\n\n(OK = oui, Annuler = conserver le prix actuel des lignes)'));
         try {
             const res  = await apiFetch(endpoints.linkProducts, {
                 method: 'POST',
@@ -1444,17 +1480,17 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                     }
                     return updated;
                 }));
-                let msg = `${linked.length} ligne(s) liée(s)`;
-                if (updatePrice && linked.length > 0) msg += ' (prix mis à jour)';
+                let msg = fmt(L.lines_linked ?? ':count ligne(s) liée(s)', { count: linked.length });
+                if (updatePrice && linked.length > 0) msg += (L.price_updated_suffix ?? ' (prix mis à jour)');
                 if (notFound.length > 0) {
                     msg += ` — ${notFound.length} sans correspondance : ${notFound.map((s) => s.code).join(', ')}`;
                 }
                 showFlash(linked.length > 0 ? 'success' : 'warning', msg);
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la liaison des produits');
+                showFlash('danger', data.error ?? (L.error_link_products ?? 'Erreur lors de la liaison des produits'));
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
@@ -1474,7 +1510,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             });
             const data = await res.json();
             if (!res.ok) {
-                showFlash('danger', data.message ?? 'Erreur');
+                showFlash('danger', data.message ?? (L.error ?? 'Erreur'));
                 return;
             }
             const states = data.lines ?? {};
@@ -1484,7 +1520,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 window.alert(`${dossierTrans.bulk_refused}\n${data.refused.map((r) => `${r.code} — ${r.message}`).join('\n')}`);
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
@@ -1501,7 +1537,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             });
             const data = await res.json();
             if (!res.ok) {
-                showFlash('danger', data.message ?? 'Erreur');
+                showFlash('danger', data.message ?? (L.error ?? 'Erreur'));
                 return;
             }
             const states = data.lines ?? {};
@@ -1512,14 +1548,14 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 window.alert(`${releaseTrans.bulk_refused}\n${data.refused.map((r) => `${r.code} — ${r.message}`).join('\n')}`);
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
     const handleCreateProducts = async () => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!confirm(`Créer des produits à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!confirm(fmt(L.confirm_create_products ?? 'Créer des produits à partir des :count ligne(s) sélectionnée(s) ?', { count: ids.length }))) return;
         try {
             const res  = await apiFetch(endpoints.createProducts, {
                 method: 'POST',
@@ -1533,16 +1569,16 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                     const match = created.find((c) => c.line_id === l.id);
                     return match ? { ...l, product_id: match.product_id, product_url: match.product_url } : l;
                 }));
-                let msg = `${created.length} produit(s) créé(s)`;
+                let msg = fmt(L.products_created ?? ':count produit(s) créé(s)', { count: created.length });
                 if (skipped.length > 0) {
-                    msg += ` — ${skipped.length} ignorée(s) (code déjà existant) : ${skipped.map((s) => s.code).join(', ')}`;
+                    msg += fmt(L.products_skipped ?? ' — :count ignorée(s) (code déjà existant) : :codes', { count: skipped.length, codes: skipped.map((s) => s.code).join(', ') });
                 }
                 showFlash(created.length > 0 ? 'success' : 'warning', msg);
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la création des produits');
+                showFlash('danger', data.error ?? (L.error_create_products ?? 'Erreur lors de la création des produits'));
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
@@ -1585,7 +1621,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
                 <div className="input-group input-group-sm" style={{ maxWidth: 260 }}>
                     <span className="input-group-text"><i className="fas fa-search" /></span>
-                    <input type="text" className="form-control" placeholder="Rechercher…"
+                    <input type="text" className="form-control" placeholder={L.search ?? 'Rechercher…'}
                         value={search} onChange={(e) => setSearch(e.target.value)} />
                     {search && (
                         <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
@@ -1593,18 +1629,18 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 </div>
                 {!isReadOnly && (
                     <div className="input-group input-group-sm" style={{ maxWidth: 280 }}>
-                        <input type="number" className="form-control" placeholder="Augmentation de prix…"
+                        <input type="number" className="form-control" placeholder={L.price_increase ?? 'Augmentation de prix…'}
                             min="0" step="0.01" value={priceIncAmt}
                             onChange={(e) => setPriceIncAmt(e.target.value)} />
                         <button className="btn btn-primary"
-                                onClick={handlePriceIncrease}
+                                onClick={() => handlePriceIncrease()}
                                 disabled={!priceIncAmt || parseFloat(priceIncAmt) <= 0}>
-                                <i className="fas fa-plus-circle me-1" />Appliquer
+                                <i className="fas fa-plus-circle me-1" />{L.apply ?? 'Appliquer'}
                             </button>
                     </div>
                 )}
                 <span className="badge text-bg-secondary ms-auto">
-                    {filteredLines.length} ligne{filteredLines.length > 1 ? 's' : ''}
+                    {fmt(filteredLines.length > 1 ? (L.lines_count_many ?? ':count lignes') : (L.lines_count_one ?? ':count ligne'), { count: filteredLines.length })}
                 </span>
             </div>
 
@@ -1621,7 +1657,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                             checked={removeFromStock}
                                             onChange={(e) => setRemoveFromStock(e.target.checked)} />
                                         <label className="form-check-label small" htmlFor="removeFromStock">
-                                            Retirer du stock
+                                            {L.take_from_stock ?? 'Retirer du stock'}
                                         </label>
                                     </div>
                                     <div className="form-check form-check-inline mb-0">
@@ -1629,7 +1665,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                             checked={createSerialNumber}
                                             onChange={(e) => setCreateSerialNumber(e.target.checked)} />
                                         <label className="form-check-label small" htmlFor="createSerialNumber">
-                                            Créer n° série
+                                            {L.create_serial ?? 'Créer n° série'}
                                         </label>
                                     </div>
                                     <span className="text-muted" style={{ borderLeft: '1px solid var(--bs-border-color)', height: 20 }} />
@@ -1640,7 +1676,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                             {endpoints.createProducts && (
                                 <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
                                     <i className="fas fa-barcode me-1" />
-                                    Créer produits ({selected.size})
+                                    {L.create_products_open ?? 'Créer produits ('}{selected.size})
                                 </button>
                             )}
                             {(() => {
@@ -1651,9 +1687,9 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 if (linkableCount === 0) return null;
                                 return (
                                     <button className="btn btn-info btn-sm" onClick={handleLinkProducts}
-                                        title="Pour chaque ligne avec un code externe mais sans produit lié, chercher un produit existant par code">
+                                        title={L.link_products_help ?? 'Pour chaque ligne avec un code externe mais sans produit lié, chercher un produit existant par code'}>
                                         <i className="fas fa-link me-1" />
-                                        Lier articles existants ({linkableCount})
+                                        {L.link_products_open ?? 'Lier articles existants ('}{linkableCount})
                                     </button>
                                 );
                             })()}
@@ -1694,11 +1730,11 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                             )}
                             <button className="btn btn-primary btn-sm" onClick={handleStoreDelivery}>
                                 <i className="fas fa-folder me-1" />
-                                Nouveau BL ({selected.size})
+                                {L.new_delivery_open ?? 'Nouveau BL ('}{selected.size})
                             </button>
                             <button className="btn btn-primary btn-sm" onClick={handleStoreInvoice}>
                                 <i className="fas fa-file-invoice me-1" />
-                                Nouvelle facture ({selected.size})
+                                {L.new_invoice_open ?? 'Nouvelle facture ('}{selected.size})
                             </button>
                         </div>
                     </div>
@@ -1709,7 +1745,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             {!isReadOnly && filteredLines.length > 1 && !search && (
                 <p className="text-muted small mb-2">
                     <i className="fas fa-grip-vertical me-1" />
-                    Glissez les lignes pour modifier l'ordre.
+                    {L.drag_help ?? 'Glissez les lignes pour modifier l\'ordre.'}
                 </p>
             )}
 
@@ -1718,42 +1754,42 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 <table className="table table-hover table-sm mb-0">
                     <thead className="table-light">
                         <tr>
-                            <th style={{ width: 48 }} title="Glisser pour réordonner">
+                            <th style={{ width: 48 }} title={L.drag_title ?? 'Glisser pour réordonner'}>
                                 <i className="fas fa-grip-vertical text-muted" />
                             </th>
                             <th style={{ width: 32 }}>
                                 <input type="checkbox" checked={allSelected} onChange={handleToggleAll}
                                     disabled={filteredLines.length === 0} />
                             </th>
-                            <th>Réf. ext.</th>
+                            <th>{L.ext_ref_short ?? 'Réf. ext.'}</th>
                             <th style={{ width: 36 }} />
-                            <th>Description</th>
-                            <th className="text-end">Qté</th>
-                            <th>Unité</th>
-                            <th className="text-end">Prix</th>
-                            <th className="text-end">Remise</th>
-                            <th>TVA</th>
-                            <th>Livraison</th>
-                            <th>Tâches</th>
-                            <th>Livraison</th>
-                            <th>Facturation</th>
-                            <th style={{ width: 120 }}>Actions</th>
+                            <th>{L.description ?? 'Description'}</th>
+                            <th className="text-end">{L.qty ?? 'Qté'}</th>
+                            <th>{L.unit ?? 'Unité'}</th>
+                            <th className="text-end">{L.price ?? 'Prix'}</th>
+                            <th className="text-end">{L.discount ?? 'Remise'}</th>
+                            <th>{L.vat ?? 'TVA'}</th>
+                            <th>{L.delivery ?? 'Livraison'}</th>
+                            <th>{L.tasks ?? 'Tâches'}</th>
+                            <th>{L.delivery ?? 'Livraison'}</th>
+                            <th>{L.invoicing ?? 'Facturation'}</th>
+                            <th style={{ width: 120 }}>{L.actions ?? 'Actions'}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
                                 <td colSpan={15} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
                                 </td>
                             </tr>
                         ) : filteredLines.length === 0 ? (
                             <tr>
                                 <td colSpan={15} className="text-center py-4 text-muted">
-                                    {search ? 'Aucune ligne ne correspond.' : 'Aucune ligne dans cette commande.'}
+                                    {search ? (L.no_match ?? 'Aucune ligne ne correspond.') : (L.no_line_order ?? 'Aucune ligne dans cette commande.')}
                                     {!search && !isReadOnly && (
                                         <button className="btn btn-link p-0 ms-2" onClick={handleOpenCreate}>
-                                            Ajouter la première ligne
+                                            {L.add_first_line ?? 'Ajouter la première ligne'}
                                         </button>
                                     )}
                                 </td>

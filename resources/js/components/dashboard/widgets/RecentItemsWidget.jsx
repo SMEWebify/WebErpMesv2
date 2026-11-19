@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import WidgetCard from '../WidgetCard.jsx';
+import { dashboardTexts as L } from '../texts.js';
 
 // ─── Config statuts ───────────────────────────────────────────────────────────
 
@@ -222,7 +223,7 @@ export default function RecentItemsWidget({
                 return res.json();
             })
             .then(json => { setItems(normalize(json)); setLoading(false); })
-            .catch(err => { setError(err.message ?? 'Erreur'); setLoading(false); });
+            .catch(err => { setError(err.message ?? (L.error ?? 'Erreur')); setLoading(false); });
     }, [endpoint, limit]);
 
     // Ré-normaliser si les données Blade changent

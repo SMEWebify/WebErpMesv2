@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import GuideHelp from './GuideHelp';
 
+// Textes de l'écran (resources/lang/*/production_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
@@ -379,22 +383,22 @@ function Toolbar({
     return (
         <div className="lp-toolbar">
             {/* View toggle: only heatmap for now, Timeline stays as a hint. */}
-            <div className="lp-segbar" role="group" aria-label="Vue">
+            <div className="lp-segbar" role="group" aria-label={L.view_mode ?? 'Vue'}>
                 <button
                     type="button"
                     className={`lp-segbar__btn ${viewMode === 'heatmap' ? 'is-active' : ''}`}
                     onClick={() => onViewMode('heatmap')}
-                    title="Charge par service et par jour"
+                    title={L.heatmap_title ?? 'Charge par service et par jour'}
                 >
-                    <i className="fas fa-th-large me-1"></i>Heatmap
+                    <i className="fas fa-th-large me-1"></i>{L.heatmap ?? 'Heatmap'}
                 </button>
                 <button
                     type="button"
                     className="lp-segbar__btn"
                     disabled
-                    title="Bientôt disponible"
+                    title={L.coming_soon ?? 'Bientôt disponible'}
                 >
-                    <i className="fas fa-stream me-1"></i>Timeline
+                    <i className="fas fa-stream me-1"></i>{L.timeline ?? 'Timeline'}
                 </button>
             </div>
 
@@ -418,7 +422,7 @@ function Toolbar({
                         type="button"
                         className="lp-search__clear"
                         onClick={() => { setLocalSearch(''); onSearch(''); }}
-                        title="Effacer"
+                        title={L.clear ?? 'Effacer'}
                     >
                         <i className="fas fa-times"></i>
                     </button>
@@ -426,7 +430,7 @@ function Toolbar({
             </div>
 
             {/* Period picker */}
-            <div className="lp-segbar" role="group" aria-label="Fenêtre">
+            <div className="lp-segbar" role="group" aria-label={L.window ?? 'Fenêtre'}>
                 {windowOptions.map((opt) => (
                     <button
                         key={opt.value}
@@ -445,7 +449,7 @@ function Toolbar({
                     type="button"
                     className="lp-nav__btn"
                     onClick={() => onShift(-1)}
-                    title="Période précédente"
+                    title={L.previous_period ?? 'Période précédente'}
                 >
                     <i className="fas fa-chevron-left"></i>
                 </button>
@@ -456,7 +460,7 @@ function Toolbar({
                     type="button"
                     className="lp-nav__btn"
                     onClick={() => onShift(1)}
-                    title="Période suivante"
+                    title={L.next_period ?? 'Période suivante'}
                 >
                     <i className="fas fa-chevron-right"></i>
                 </button>
@@ -487,55 +491,55 @@ function ScenarioCard({
         <div className="lp-scenario">
             <div className="lp-scenario__row">
                 <div className="lp-field">
-                    <label>Vue</label>
+                    <label>{L.view_mode ?? 'Vue'}</label>
                     <select
                         className="form-select form-select-sm"
                         value={granularity}
                         onChange={(e) => onGranularity(e.target.value)}
                     >
-                        <option value="service">Référence (baseline) · Service</option>
-                        <option value="resource">Référence (baseline) · Ressource</option>
+                        <option value="service">{L.baseline_service ?? 'Référence (baseline) · Service'}</option>
+                        <option value="resource">{L.baseline_resource ?? 'Référence (baseline) · Ressource'}</option>
                     </select>
                 </div>
 
                 <div className="lp-scenario__spacer" />
 
                 <div className="lp-field">
-                    <label>Sens</label>
+                    <label>{L.direction ?? 'Sens'}</label>
                     <select
                         className="form-select form-select-sm"
                         value={direction}
                         onChange={(e) => onDirection(e.target.value)}
-                        title="ALAP : rétro-planifié depuis la date d'engagement client. ASAP : planifié au plus tôt depuis la date de démarrage prévue."
+                        title={L.direction_help ?? 'ALAP : rétro-planifié depuis la date d\'engagement client. ASAP : planifié au plus tôt depuis la date de démarrage prévue.'}
                     >
-                        <option value="alap">Au plus tard (ALAP)</option>
-                        <option value="asap">Au plus tôt (ASAP)</option>
+                        <option value="alap">{L.alap ?? 'Au plus tard (ALAP)'}</option>
+                        <option value="asap">{L.asap ?? 'Au plus tôt (ASAP)'}</option>
                     </select>
                 </div>
 
                 <div className="lp-field">
-                    <label>Capacité</label>
+                    <label>{L.capacity ?? 'Capacité'}</label>
                     <select
                         className="form-select form-select-sm"
                         value={capacityMode}
                         onChange={(e) => onCapacityMode(e.target.value)}
-                        title="Infinie : les tâches concurrentes ne se voient pas (comportement historique). Finie : chaque tâche vérifie la capacité déjà consommée sur sa ressource et se décale si nécessaire."
+                        title={L.capacity_help ?? 'Infinie : les tâches concurrentes ne se voient pas (comportement historique). Finie : chaque tâche vérifie la capacité déjà consommée sur sa ressource et se décale si nécessaire.'}
                     >
-                        <option value="infinite">Infinie</option>
-                        <option value="finite">Finie</option>
+                        <option value="infinite">{L.infinite ?? 'Infinie'}</option>
+                        <option value="finite">{L.finite ?? 'Finie'}</option>
                     </select>
                 </div>
 
                 <label
                     className="lp-check"
-                    title="Coché : afficher la marge en heures (ex. +2h) au lieu du taux de charge (%)."
+                    title={L.hours_diff_help ?? 'Coché : afficher la marge en heures (ex. +2h) au lieu du taux de charge (%).'}
                 >
                     <input
                         type="checkbox"
                         checked={displayHoursDiff}
                         onChange={(e) => onDisplayHoursDiff(e.target.checked)}
                     />
-                    <span>Afficher la marge en heures</span>
+                    <span>{L.hours_diff ?? 'Afficher la marge en heures'}</span>
                 </label>
 
                 <button
@@ -544,12 +548,12 @@ function ScenarioCard({
                     disabled={running}
                     onClick={() => calc.triggerDates(direction, capacityMode)}
                     title={
-                        (direction === 'asap' ? 'Au plus tôt (ASAP) à partir d’aujourd’hui' : 'Au plus tard (ALAP) depuis internal_delay')
-                        + ' · ' + (capacityMode === 'finite' ? 'capacité finie partagée' : 'capacité infinie')
+                        (direction === 'asap' ? (L.asap_from_today ?? 'Au plus tôt (ASAP) à partir d’aujourd’hui') : (L.alap_from_delay ?? 'Au plus tard (ALAP) depuis internal_delay'))
+                        + ' · ' + (capacityMode === 'finite' ? (L.shared_finite_capacity ?? 'capacité finie partagée') : (L.infinite_capacity ?? 'capacité infinie'))
                     }
                 >
                     <i className="fas fa-play me-1"></i>
-                    {running ? 'Calcul…' : 'Simuler'}
+                    {running ? (L.computing ?? 'Calcul…') : (L.simulate ?? 'Simuler')}
                 </button>
             </div>
 
@@ -578,7 +582,7 @@ function ScenarioCard({
                         </button>
                     )}
                     <span className="lp-scenario__hint">
-                        Traiter ces éléments avant de figer la charge.
+                        {L.fix_before_freeze ?? 'Traiter ces éléments avant de figer la charge.'}
                     </span>
                 </div>
             )}
@@ -711,12 +715,12 @@ function RowLabel({ row, stats, byResource, customCapacities, onCustomCapacityCh
             <div className="lp-row-head__meta">
                 <span className="lp-row-head__cap">{capLabel}</span>
                 {stats.taskCount > 0 && (
-                    <span className="lp-row-head__count">{stats.taskCount} tâches</span>
+                    <span className="lp-row-head__count">{stats.taskCount} {L.tasks_lower ?? 'tâches'}</span>
                 )}
                 {stats.overloadedDays > 0 && (
                     <span className="lp-row-head__over">
                         <i className="fas fa-exclamation-triangle me-1"></i>
-                        {stats.overloadedDays} j en surcharge
+                        {stats.overloadedDays} {L.days_overloaded ?? 'j en surcharge'}
                     </span>
                 )}
                 {!byResource && row.capacity === 0 && (
@@ -729,7 +733,7 @@ function RowLabel({ row, stats, byResource, customCapacities, onCustomCapacityCh
                         value={customCapacities[row.id] ?? ''}
                         placeholder="8"
                         onChange={(e) => onCustomCapacityChange(row.id, e.target.value)}
-                        title="Capacité personnalisée (h/j)"
+                        title={L.custom_capacity ?? 'Capacité personnalisée (h/j)'}
                     />
                 )}
             </div>
@@ -771,7 +775,7 @@ function LoadCell({ day, cell, capacity, taskCount, unreleasedCount = 0, trans }
                     </span>
                     <span className="lp-tile__count">
                         {taskCount > 0
-                            ? `${taskCount} tâche${taskCount > 1 ? 's' : ''}`
+                            ? fmt(taskCount > 1 ? (L.task_count_many ?? ':count tâches') : (L.task_count_one ?? ':count tâche'), { count: taskCount })
                             : '—'}
                     </span>
                     <span className="lp-tile__pct">{cell.label}</span>
@@ -889,7 +893,9 @@ function Heatmap({
                             <tr>
                                 <td colSpan={days.length + 1} className="lp-empty">
                                     <i className="fas fa-inbox me-2"></i>
-                                    Aucun {byResource ? 'ressource' : 'service'} ne correspond à la recherche.
+                                    {byResource
+                                        ? (L.no_row_match_resource ?? 'Aucun ressource ne correspond à la recherche.')
+                                        : (L.no_row_match_service ?? 'Aucun service ne correspond à la recherche.')}
                                 </td>
                             </tr>
                         )}
@@ -960,6 +966,7 @@ export default function LoadPlanningIndex({
     endpoints,
     trans,
 }) {
+    L = trans?.ui ?? {};
     const locale = currentLocale();
 
     // Window is derived from persisted preference — the initial dates from the
@@ -1065,7 +1072,7 @@ export default function LoadPlanningIndex({
     );
 
     const periodLabel = formatPeriodLabel(startDate, endDate, locale);
-    const rowLabel = granularity === 'resource' ? 'ressource' : 'service';
+    const rowLabel = granularity === 'resource' ? (L.row_resource ?? 'ressource') : (L.row_service ?? 'service');
 
     return (
         <div className="lp-app">
@@ -1073,7 +1080,7 @@ export default function LoadPlanningIndex({
             <div className="lp-topbar">
                 <div className="lp-topbar__title">
                     <p className="lp-topbar__subtitle">
-                        Charge par {rowLabel} · {periodLabel}
+                        {fmt(L.load_by ?? 'Charge par :row · :period', { row: rowLabel, period: periodLabel })}
                     </p>
                 </div>
                 <Toolbar
@@ -1113,7 +1120,7 @@ export default function LoadPlanningIndex({
             {loading && !data && (
                 <div className="lp-loading">
                     <div className="spinner-border text-warning" role="status"></div>
-                    <span className="ms-2">Chargement du planning…</span>
+                    <span className="ms-2">{L.loading_planning ?? 'Chargement du planning…'}</span>
                 </div>
             )}
 

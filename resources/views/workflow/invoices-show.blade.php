@@ -229,6 +229,7 @@ $invoiceSteps = [
               'emit'       => route('invoices.emit', $Invoice->id),
           ];
           $linesTrans = [
+              'ui'          => __('billing_ui'),
               'order'       => __('general_content.order_trans_key'),
               'delivery'    => __('general_content.delivery_notes_trans_key'),
               'ref'         => __('general_content.external_id_trans_key'),
@@ -269,6 +270,7 @@ $invoiceSteps = [
           data-invoice-id="{{ $Invoice->id }}"
           data-endpoints="{{ json_encode($paymentEndpoints) }}"
           data-payment-methods="{{ json_encode($paymentMethods) }}"
+          data-trans="{{ json_encode(['ui' => __('billing_ui')]) }}"
         ></div>
       </div>
       @if($CustomFields)

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import WidgetCard from '../WidgetCard.jsx';
+import { dashboardTexts as L } from '../texts.js';
 
 function StatPill({ value, label, color }) {
     return (
@@ -18,8 +19,8 @@ function RateBar({ internal, label }) {
     return (
         <div style={{ marginTop: '0.75rem' }}>
             <div className="d-flex justify-content-between" style={{ fontSize: '0.75rem', marginBottom: 3 }}>
-                <span><span style={{ color: '#dc3545' }}>■</span> {label} interne {Math.round(internal ?? 0)}%</span>
-                <span><span style={{ color: '#17a2b8' }}>■</span> externe {Math.round(ext)}%</span>
+                <span><span style={{ color: '#dc3545' }}>■</span> {label} {L.internal ?? 'interne'} {Math.round(internal ?? 0)}%</span>
+                <span><span style={{ color: '#17a2b8' }}>■</span> {L.external ?? 'externe'} {Math.round(ext)}%</span>
             </div>
             <div style={{ height: 6, background: '#17a2b8', borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${internal ?? 0}%`, background: '#dc3545', borderRadius: 3 }} />

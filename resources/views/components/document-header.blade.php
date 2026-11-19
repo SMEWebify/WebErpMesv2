@@ -87,6 +87,7 @@
              data-statu="{{ $statu }}"
              data-endpoint="{{ $endpoint }}"
              data-redirect="{{ $redirect }}"
+             data-error-text="{{ __('crm_ui.status_change_error') }}"
              @if($loss) data-loss="{{ json_encode($loss) }}" @endif></div>
     @else
         <div class="doc-header__steps"></div>

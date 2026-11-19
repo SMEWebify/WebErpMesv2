@@ -187,6 +187,9 @@
     <meta name="guide-links" content="{{ json_encode(app(\App\Services\Guides\GuideLibrary::class)->helpLinks(auth()->user()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}">
     @endauth
 
+    {{-- Textes communs des briques React partagées (DataTable, Pagination…) : lib/i18n.js, commonText() --}}
+    <meta name="ui-common" content="{{ json_encode(__('ui_common'), JSON_UNESCAPED_UNICODE) }}">
+
     {{-- Unité d'affichage des temps opératoires (JS : resources/js/lib/duration.js) --}}
     @auth
     <meta name="time-unit" content="{{ \App\Support\TimeDisplay::unit() }}">

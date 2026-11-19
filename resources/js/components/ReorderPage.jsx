@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { SupplierQualificationBadge, sendWithSupplierOverride, supplierOptionLabel } from '../lib/supplierQualification.jsx';
+import { fmt as tfmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/purchase_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // Réapprovisionnement : propositions d'achat calculées par ReorderService
 // (seuil mini + besoins réservés − stock − en commande), éditables, puis une
@@ -16,7 +21,8 @@ function priceFor(row, supplierId, qty) {
     return breaks.length ? breaks[0].price : row.purchased_price;
 }
 
-export default function ReorderPage({ endpoints, scope = 'all', products = [], quantities = {}, currency = '€' }) {
+export default function ReorderPage({ endpoints, scope = 'all', products = [], quantities = {}, currency = '€', trans = {} }) {
+    L = trans?.ui ?? {};
     // quantities : { product_id: qté } imposée par l'écran appelant (besoin du nesting)
     const imposed = Object.keys(quantities).length > 0;
     const [rows, setRows] = useState([]);
@@ -34,7 +40,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
         products.forEach((id) => params.append('products[]', id));
         try {
             const res = await fetch(`${endpoints.json}?${params}`, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error(`Erreur ${res.status}`);
+            if (!res.ok) throw new Error(tfmt(L.error_status ?? 'Erreur :status', { status: res.status }));
             const data = await res.json();
             setSuppliers(data.suppliers);
             setQualification(data.supplier_qualification ?? null);
@@ -92,7 +98,7 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
                 })),
             });
             if (!ok) {
-                setError(data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || `Erreur ${status}`));
+                setError(data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || tfmt(L.error_status ?? 'Erreur :status', { status })));
             } else {
                 setCreated(data.purchases);
             }
@@ -106,17 +112,17 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
         return (
             <div className="card mb-3">
                 <div className="card-body">
-                    <h5 className="text-success"><i className="fas fa-check-circle me-2" />{created.length} commande(s) d'achat créée(s) en brouillon</h5>
-                    <p className="text-muted small">Relisez-les, ajustez si besoin, puis passez-les au statut « Commandé » pour les envoyer.</p>
+                    <h5 className="text-success"><i className="fas fa-check-circle me-2" />{created.length} {L.reorder_created ?? 'commande(s) d\'achat créée(s) en brouillon'}</h5>
+                    <p className="text-muted small">{L.reorder_created_help ?? 'Relisez-les, ajustez si besoin, puis passez-les au statut « Commandé » pour les envoyer.'}</p>
                     <ul className="list-group mb-3">
                         {created.map((p) => (
                             <a key={p.id} href={p.url} className="list-group-item list-group-item-action d-flex justify-content-between">
                                 <span><i className="fas fa-file-invoice me-2" />{p.code}</span>
-                                <span className="text-muted">{p.lines} ligne(s)</span>
+                                <span className="text-muted">{p.lines} {L.lines_suffix ?? 'ligne(s)'}</span>
                             </a>
                         ))}
                     </ul>
-                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={load}><i className="fas fa-redo me-1" />Nouvelle analyse</button>
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={load}><i className="fas fa-redo me-1" />{L.new_analysis ?? 'Nouvelle analyse'}</button>
                 </div>
             </div>
         );
@@ -127,24 +133,24 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
             <div className="card-header d-flex align-items-center py-2">
                 <span className="small text-muted">
                     {imposed
-                        ? 'À commander = besoin de l\'imbrication − stock − déjà en commande.'
-                        : 'À commander = seuil mini + besoins réservés − stock − déjà en commande (arrondi à la qté éco. d\'achat).'}
+                        ? (L.reorder_formula_nesting ?? 'À commander = besoin de l\'imbrication − stock − déjà en commande.')
+                        : (L.reorder_formula ?? 'À commander = seuil mini + besoins réservés − stock − déjà en commande (arrondi à la qté éco. d\'achat).')}
                 </span>
-                <button type="button" className="btn btn-sm btn-link ms-auto" onClick={load} disabled={loading}><i className="fas fa-sync me-1" />Recalculer</button>
+                <button type="button" className="btn btn-sm btn-link ms-auto" onClick={load} disabled={loading}><i className="fas fa-sync me-1" />{L.recompute ?? 'Recalculer'}</button>
             </div>
             <div className="card-body p-0">
                 {notPurchasable > 0 && (
                     <div className="alert alert-warning py-2 small m-2">
                         <i className="fas fa-exclamation-triangle me-1" />
-                        {notPurchasable} article(s) demandé(s) ne sont pas proposés : cochez « Acheté » sur leur fiche article pour pouvoir les commander.
+                        {notPurchasable} {L.not_purchasable ?? 'article(s) demandé(s) ne sont pas proposés : cochez « Acheté » sur leur fiche article pour pouvoir les commander.'}
                     </div>
                 )}
-                {loading &&<div className="p-3 text-muted"><i className="fas fa-spinner fa-spin me-2" />Analyse du stock…</div>}
+                {loading &&<div className="p-3 text-muted"><i className="fas fa-spinner fa-spin me-2" />{L.analysing_stock ?? 'Analyse du stock…'}</div>}
                 {!loading && rows.length === 0 && !error && (
                     <div className="p-4 text-center text-muted">
                         <i className="fas fa-check-circle text-success fa-2x mb-2 d-block" />
-                        Rien à commander : aucun article n'est sous son seuil mini.
-                        {scope === 'tools' && <div className="small mt-1">Seuls les outils liés à un article de stock (avec un seuil mini) sont analysés.</div>}
+                        {L.nothing_to_order ?? 'Rien à commander : aucun article n\'est sous son seuil mini.'}
+                        {scope === 'tools' && <div className="small mt-1">{L.tools_only_help ?? 'Seuls les outils liés à un article de stock (avec un seuil mini) sont analysés.'}</div>}
                     </div>
                 )}
                 {!loading && rows.length > 0 && (
@@ -153,19 +159,19 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
                             <thead className="table-light">
                                 <tr>
                                     <th style={{ width: 32 }}>
-                                        <input type="checkbox" className="form-check-input" aria-label="Tout sélectionner"
+                                        <input type="checkbox" className="form-check-input" aria-label={L.select_all ?? 'Tout sélectionner'}
                                             checked={rows.every((r) => r.selected)}
                                             onChange={(e) => setRows((prev) => prev.map((r) => ({ ...r, selected: e.target.checked })))} />
                                     </th>
-                                    <th>Article</th>
-                                    <th className="text-end">Stock</th>
-                                    <th className="text-end">Mini</th>
-                                    <th className="text-end">Réservé</th>
-                                    <th className="text-end">En commande</th>
-                                    <th style={{ width: 100 }}>À commander</th>
-                                    <th style={{ minWidth: 200 }}>Fournisseur</th>
-                                    <th style={{ width: 120 }}>Prix unit.</th>
-                                    <th className="text-end">Total</th>
+                                    <th>{L.item ?? 'Article'}</th>
+                                    <th className="text-end">{L.stock ?? 'Stock'}</th>
+                                    <th className="text-end">{L.mini ?? 'Mini'}</th>
+                                    <th className="text-end">{L.reserved ?? 'Réservé'}</th>
+                                    <th className="text-end">{L.on_order ?? 'En commande'}</th>
+                                    <th style={{ width: 100 }}>{L.to_order ?? 'À commander'}</th>
+                                    <th style={{ minWidth: 200 }}>{L.supplier ?? 'Fournisseur'}</th>
+                                    <th style={{ width: 120 }}>{L.unit_price_abbr ?? 'Prix unit.'}</th>
+                                    <th className="text-end">{L.total ?? 'Total'}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -189,13 +195,13 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
                                             <td>
                                                 <select className={`form-select form-select-sm ${r.selected && !r.supplier ? 'is-invalid' : ''}`} value={r.supplier}
                                                     onChange={(e) => update(r.product_id, { supplier: e.target.value })}>
-                                                    <option value="">— choisir —</option>
+                                                    <option value="">{L.choose_lower ?? '— choisir —'}</option>
                                                     {r.preferred_suppliers.length > 0 && (
-                                                        <optgroup label="Fournisseurs préférés">
+                                                        <optgroup label={L.preferred_suppliers ?? 'Fournisseurs préférés'}>
                                                             {r.preferred_suppliers.map((s) => <option key={s.id} value={s.id}>{supplierOptionLabel(s.label, supplierStatus(s.id), qualification)}</option>)}
                                                         </optgroup>
                                                     )}
-                                                    <optgroup label="Tous les fournisseurs">
+                                                    <optgroup label={L.all_suppliers ?? 'Tous les fournisseurs'}>
                                                         {suppliers.filter((s) => !preferredIds.has(String(s.id))).map((s) => <option key={s.id} value={s.id}>{supplierOptionLabel(s.label, s.qualification, qualification)}</option>)}
                                                     </optgroup>
                                                 </select>
@@ -220,18 +226,18 @@ export default function ReorderPage({ endpoints, scope = 'all', products = [], q
                         <div className="d-flex flex-wrap gap-2 mb-2 small">
                             {[...groups.entries()].map(([id, g]) => (
                                 <span key={id} className="badge text-bg-light border">
-                                    {supplierLabel(id)} · {g.lines} ligne(s) · {money(g.total, currency)}
+                                    {supplierLabel(id)} · {g.lines} {L.lines_suffix_dot ?? 'ligne(s) ·'} {money(g.total, currency)}
                                 </span>
                             ))}
                         </div>
                     )}
                     {missingSupplier.length > 0 && (
-                        <div className="small text-danger mb-2">{missingSupplier.length} ligne(s) cochée(s) sans fournisseur.</div>
+                        <div className="small text-danger mb-2">{missingSupplier.length} {L.lines_without_supplier ?? 'ligne(s) cochée(s) sans fournisseur.'}</div>
                     )}
                     {error && <div className="alert alert-danger py-2 small mb-2">{error}</div>}
                     <button type="button" className="btn btn-warning" disabled={saving || selected.length === 0 || missingSupplier.length > 0} onClick={submit}>
                         {saving ? <i className="fas fa-spinner fa-spin me-1" /> : <i className="fas fa-cart-plus me-1" />}
-                        Créer {groups.size || ''} commande(s) d'achat en brouillon
+                        {L.create ?? 'Créer'} {groups.size || ''} {L.draft_purchase_orders ?? 'commande(s) d\'achat en brouillon'}
                     </button>
                 </div>
             )}

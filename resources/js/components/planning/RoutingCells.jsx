@@ -5,7 +5,12 @@ import { formatQty } from '../../utils';
 // Par défaut une opération suit la précédente (fin-début) avec la quantité de
 // la ligne : on ne saisit que les exceptions, directement dans le tableau.
 
+// Textes posés par TaskManagePage (resources/lang/*/production_ui.php) ; repli sur le français.
+let L = {};
+export function setRoutingTexts(texts) { L = texts ?? {}; }
+
 const LINKS_HELP = 'Exemples : 20FD;30FD · 20DD+2h · 20DD+10pc;20FF+10pc — vide = après l\'opération précédente';
+const linksHelp = () => L.links_help ?? LINKS_HELP;
 
 /**
  * Liens d'une opération en notation courte. Un clic ouvre la saisie ;
@@ -35,7 +40,7 @@ export function LinksCell({ info, canEdit, onSave }) {
             setEditing(false);
             setError(null);
         } else {
-            setError(result.error ?? 'Erreur');
+            setError(result.error ?? (L.error ?? 'Erreur'));
         }
     };
 
@@ -44,11 +49,11 @@ export function LinksCell({ info, canEdit, onSave }) {
             <td style={{ minWidth: 150 }}>
                 <input
                     autoFocus
-                    aria-label="Liens"
+                    aria-label={L.links ?? 'Liens'}
                     className={`form-control form-control-sm${error ? ' is-invalid' : ''}`}
                     value={value}
                     placeholder="20FD;30FD"
-                    title={LINKS_HELP}
+                    title={linksHelp()}
                     readOnly={saving}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={(e) => {
@@ -64,7 +69,7 @@ export function LinksCell({ info, canEdit, onSave }) {
     return (
         <td
             onClick={start}
-            title={canEdit ? LINKS_HELP : undefined}
+            title={canEdit ? linksHelp() : undefined}
             style={{ fontSize: 12, cursor: canEdit ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
         >
             {(!info || !info.display) && <span className="text-muted">—</span>}
@@ -101,7 +106,7 @@ export function PlannedQtyCell({ plannedQty, lineQty, canEdit, onSave }) {
         const raw = value.trim().replace(',', '.');
         const parsed = raw === '' ? null : Number(raw);
         if (parsed !== null && (Number.isNaN(parsed) || parsed < 0)) {
-            setError('Quantité invalide');
+            setError((L.invalid_qty ?? 'Quantité invalide'));
             return;
         }
         setSaving(true);
@@ -111,7 +116,7 @@ export function PlannedQtyCell({ plannedQty, lineQty, canEdit, onSave }) {
             setEditing(false);
             setError(null);
         } else {
-            setError(result.error ?? 'Erreur');
+            setError(result.error ?? (L.error ?? 'Erreur'));
         }
     };
 
@@ -120,12 +125,12 @@ export function PlannedQtyCell({ plannedQty, lineQty, canEdit, onSave }) {
             <td style={{ minWidth: 80 }}>
                 <input
                     autoFocus
-                    aria-label="Quantité de l'opération"
+                    aria-label={L.operation_qty ?? 'Quantité de l\'opération'}
                     inputMode="decimal"
                     className={`form-control form-control-sm${error ? ' is-invalid' : ''}`}
                     value={value}
                     placeholder={formatQty(lineQty)}
-                    title="Vide = quantité de la ligne"
+                    title={L.empty_line_qty ?? 'Vide = quantité de la ligne'}
                     readOnly={saving}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={(e) => {
@@ -141,7 +146,7 @@ export function PlannedQtyCell({ plannedQty, lineQty, canEdit, onSave }) {
     return (
         <td
             onClick={start}
-            title={canEdit ? 'Quantité traitée par cette opération — vide = quantité de la ligne' : undefined}
+            title={canEdit ? (L.planned_qty_cell_title ?? 'Quantité traitée par cette opération — vide = quantité de la ligne') : undefined}
             style={{ textAlign: 'right', fontSize: 12, cursor: canEdit ? 'pointer' : 'default' }}
         >
             {hasOwn

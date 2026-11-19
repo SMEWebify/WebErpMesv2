@@ -15,7 +15,7 @@
        data-statuses='@json($statuses, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
        data-resources='@json($resources, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
        data-default-status-ids='@json($defaultStatusIds, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-       data-trans='@json($trans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+       data-trans='@json($trans + ['ui' => __('production_ui')], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
   </div>
 
   <x-InfocalloutComponent :note="__('general_content.tasks_info_1_trans_key')"  />
@@ -46,6 +46,7 @@
           data-statu="1"
           data-currency="{{ app('Factory')->curency ?? '€' }}"
           data-endpoints="{{ json_encode($genericEndpoints) }}"
+          data-trans="{{ json_encode(['ui' => __('production_ui')]) }}"
         ></div>
       </div>
     </div>

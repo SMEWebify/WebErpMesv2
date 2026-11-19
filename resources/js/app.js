@@ -123,6 +123,7 @@ async function mountReorderPage() {
         products:  parseJsonAttribute(element.dataset.products) || [],
         quantities: parseJsonAttribute(element.dataset.quantities) || {},
         currency:  element.dataset.currency,
+        trans:     parseJsonAttribute(element.dataset.trans) || {},
     }));
 }
 
@@ -430,6 +431,7 @@ async function mountProformasIndex() {
     createRoot(element).render(
         React.createElement(ProformasIndex, {
             endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }
@@ -448,6 +450,7 @@ async function mountProformasRequest() {
             users:        parse('users')         ?? [],
             companies:    parse('companies')     ?? [],
             endpoints:    parse('endpoints')     ?? {},
+            trans:        parse('trans')         ?? {},
         })
     );
 }
@@ -523,6 +526,7 @@ async function mountIncomingInvoicesIndex() {
             endpoints: parse('endpoints') ?? {},
             locale:    element.dataset.locale   ?? 'fr-FR',
             currency:  element.dataset.currency ?? 'EUR',
+            trans:     parse('trans')           ?? {},
         })
     );
 }
@@ -590,6 +594,7 @@ async function mountProductPriceHistory() {
             endpoint:    element.dataset.endpoint ?? '',
             currency:    element.dataset.currency ?? '€',
             canPurchases: element.dataset.canPurchases === 'true',
+            trans:       (() => { try { return JSON.parse(element.dataset.trans ?? 'null') ?? {}; } catch { return {}; } })(),
         })
     );
 }
@@ -627,6 +632,7 @@ async function mountCompanyForm() {
             company:      parse('company') ?? {},
             users:        parse('users')   ?? [],
             vatRegimes:   parse('vatRegimes') ?? [],
+            paymentOptions: parse('paymentOptions') ?? { conditions: [], methods: [] },
             endpoint:     element.dataset.endpoint ?? '',
             pdpLookupUrl: element.dataset.pdpLookupUrl ?? '',
             registryUrl:  element.dataset.registryUrl ?? '',
@@ -705,6 +711,7 @@ async function mountCompanyTimeline() {
     createRoot(element).render(
         React.createElement(CompanyTimeline, {
             endpoint: element.dataset.endpoint ?? '',
+            trans:    (() => { try { return JSON.parse(element.dataset.trans ?? 'null') ?? {}; } catch { return {}; } })(),
         })
     );
 }
@@ -807,6 +814,7 @@ async function mountPurchaseLinesPage() {
             purchaseStatu: parseInt(element.dataset.purchaseStatu, 10),
             endpoints:     parse('endpoints') ?? {},
             ack:           parse('ack'),
+            trans:         parse('trans') ?? {},
         })
     );
 }
@@ -829,6 +837,7 @@ async function mountPurchaseReceiptLinesPage() {
             endpoints:    parse('endpoints') ?? {},
             documentCheck: parse('documentCheck') ?? {},
             batchTexts:   parse('batchTexts') ?? {},
+            trans:        parse('trans') ?? {},
         })
     );
 }
@@ -1217,6 +1226,7 @@ async function mountTaskManagePage() {
                 currency: element.dataset.currency ?? '€',
             },
             endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans') ?? {},
         })
     );
 }
@@ -1371,6 +1381,7 @@ async function mountStockDetailPage() {
         React.createElement(StockDetailPage, {
             initial:   parse('initial')   ?? {},
             endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }
@@ -1386,6 +1397,7 @@ async function mountWorkshopReportsApp() {
         React.createElement(WorkshopReportsApp, {
             initial:   parse('initial'),
             endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans') ?? {},
         })
     );
 }
@@ -1604,6 +1616,7 @@ async function mountTaskLines() {
             statuses:         JSON.parse(el.dataset.statuses),
             resources:        JSON.parse(el.dataset.resources),
             defaultStatusIds: JSON.parse(el.dataset.defaultStatusIds),
+            trans:            JSON.parse(el.dataset.trans ?? '{}'),
         })
     );
 }
@@ -1829,6 +1842,7 @@ async function mountArrowSteps() {
                 endpoint:     el.dataset.endpoint ?? '',
                 redirectUrl:  el.dataset.redirect  ?? '',
                 loss:         parse('loss'),
+                ...(el.dataset.errorText ? { errorText: el.dataset.errorText } : {}),
             })
         );
     });
@@ -1885,6 +1899,7 @@ async function mountStockShortagesApp() {
     createRoot(el).render(
         React.createElement(StockShortagesApp, {
             endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }
@@ -1911,6 +1926,7 @@ async function mountInvoicePaymentsTab() {
             endpoints:      parse('endpoints')      ?? {},
             paymentMethods: parse('paymentMethods') ?? [],
             invoiceId:      Number(el.dataset.invoiceId),
+            trans:          parse('trans')          ?? {},
         })
     );
 }

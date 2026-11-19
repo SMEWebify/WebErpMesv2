@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DashboardGrid from './dashboard/DashboardGrid.jsx';
 import TodayView from './TodayView.jsx';
 import { useMediaQuery, MOBILE_QUERY } from './table';
+import { dashboardTexts as L, setDashboardTexts } from './dashboard/texts.js';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -48,6 +49,7 @@ export default function HomeDashboard({
     urls,
     endpoints,
 }) {
+    setDashboardTexts(trans?.ui);
     const [activeView, setActiveView] = useState(null); // null = loading
     const [editMode,   setEditMode]   = useState(false);
     const isMobile = useMediaQuery(MOBILE_QUERY);
@@ -89,7 +91,7 @@ export default function HomeDashboard({
     if (activeView === null) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
             </div>
         );
     }
@@ -105,14 +107,14 @@ export default function HomeDashboard({
                         className={`btn w-50 ${activeView === 'today' ? 'btn-info' : 'btn-outline-info'}`}
                         onClick={() => switchView('today')}
                     >
-                        <i className="fas fa-sun me-1" />Vue du jour
+                        <i className="fas fa-sun me-1" />{L.today_view ?? 'Vue du jour'}
                     </button>
                     <button
                         type="button"
                         className={`btn w-50 ${activeView === 'kpi' ? 'btn-primary' : 'btn-outline-primary'}`}
                         onClick={() => switchView('kpi')}
                     >
-                        <i className="fas fa-chart-bar me-1" />Dashboard KPI
+                        <i className="fas fa-chart-bar me-1" />{L.kpi_dashboard ?? 'Dashboard KPI'}
                     </button>
                 </div>
             )}
@@ -132,29 +134,29 @@ export default function HomeDashboard({
                 <button
                     style={{ ...sideBtn.base, ...(activeView === 'today' ? sideBtn.todayActive : sideBtn.today) }}
                     onClick={() => switchView('today')}
-                    title="Vue du jour"
+                    title={L.today_view ?? 'Vue du jour'}
                 >
                     <i className="fas fa-sun" />
-                    Vue du jour
+                    {L.today_view ?? 'Vue du jour'}
                 </button>
 
                 <button
                     style={{ ...sideBtn.base, ...(activeView === 'kpi' ? sideBtn.kpiActive : sideBtn.kpi) }}
                     onClick={() => switchView('kpi')}
-                    title="Dashboard KPI"
+                    title={L.kpi_dashboard ?? 'Dashboard KPI'}
                 >
                     <i className="fas fa-chart-bar" />
-                    Dashboard KPI
+                    {L.kpi_dashboard ?? 'Dashboard KPI'}
                 </button>
 
                 {activeView === 'kpi' && (
                     <button
                         style={{ ...sideBtn.base, ...(editMode ? sideBtn.customizeOn : sideBtn.customize) }}
                         onClick={() => setEditMode(e => !e)}
-                        title={editMode ? 'Terminer la personnalisation' : 'Personnaliser'}
+                        title={editMode ? (L.finish_customizing ?? 'Terminer la personnalisation') : (L.customize ?? 'Personnaliser')}
                     >
                         <i className={`fas ${editMode ? 'fa-check' : 'fa-edit'}`} />
-                        {editMode ? 'Terminer' : 'Personnaliser'}
+                        {editMode ? (L.finish ?? 'Terminer') : (L.customize ?? 'Personnaliser')}
                     </button>
                 )}
             </div>
@@ -162,7 +164,7 @@ export default function HomeDashboard({
 
             {/* Contenu */}
             {activeView === 'today' ? (
-                <TodayView endpoints={endpoints} />
+                <TodayView endpoints={endpoints} trans={{ ui: trans?.today }} />
             ) : (
                 <DashboardGrid
                     dashProps={dashProps}

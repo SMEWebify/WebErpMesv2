@@ -17,6 +17,7 @@
     ];
 
     $reactTrans = [
+        'ui'             => __('billing_ui'),
         // statuts
         'pending'        => __('general_content.pending_trans_key'),
         'approved'       => __('general_content.approved_trans_key'),

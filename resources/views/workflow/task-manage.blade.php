@@ -50,6 +50,7 @@ $endpoints = [
   data-statu="{{ $Document->statu }}"
   data-currency="{{ $Factory->curency ?? '€' }}"
   data-endpoints="{{ json_encode($endpoints) }}"
+  data-trans="{{ json_encode(['ui' => __('production_ui')]) }}"
 ></div>
 
 @stop

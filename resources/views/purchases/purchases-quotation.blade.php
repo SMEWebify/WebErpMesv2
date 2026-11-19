@@ -14,7 +14,7 @@
 <div
     id="purchases-quotation-index-app"
     data-endpoints="{{ json_encode($reactEndpoints) }}"
-    data-trans="{{ json_encode($reactTrans) }}"
+    data-trans="{{ json_encode($reactTrans + ['ui' => __('purchase_ui')]) }}"
     data-kpi="{{ json_encode($reactProps['kpi']) }}"
 ></div>
 @stop

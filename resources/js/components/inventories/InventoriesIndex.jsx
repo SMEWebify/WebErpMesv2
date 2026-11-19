@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import GuideHelp from '../GuideHelp';
+import { fmt } from '../../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 function csrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -19,6 +24,7 @@ const SCOPE_LABEL_KEY = {
 };
 
 export default function InventoriesIndex({ endpoints, trans, stockLocations, categories }) {
+    L = trans?.ui ?? {};
     const [inventories, setInventories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('');
@@ -118,7 +124,7 @@ export default function InventoriesIndex({ endpoints, trans, stockLocations, cat
 }
 
 function CreateInventoryModal({ endpoints, trans, stockLocations, categories, onClose }) {
-    const [label, setLabel] = useState(`Inventaire ${new Date().toLocaleDateString(trans.locale)}`);
+    const [label, setLabel] = useState(fmt(L.inventory_default_label ?? 'Inventaire :date', { date: new Date().toLocaleDateString(trans.locale) }));
     const [scopeType, setScopeType] = useState('all');
     const [scopeIds, setScopeIds] = useState([]);
     const [submitting, setSubmitting] = useState(false);

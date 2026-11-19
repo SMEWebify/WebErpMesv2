@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { formatQty } from '../utils';
-import { LinksCell, PlannedQtyCell } from './planning/RoutingCells';
+import { LinksCell, PlannedQtyCell, setRoutingTexts } from './planning/RoutingCells';
 import { formatDuration, unitLabel } from '../lib/duration.js';
 import TimeInput from './TimeInput.jsx';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/production_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -231,7 +236,7 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
 
         setSaving(false);
         if (!res.ok) {
-            setErrors(data.errors ?? { _global: data.message ?? 'Erreur' });
+            setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') });
             if (data.errors?.methods_tools_id) setToolWarning(true);
             return;
         }
@@ -245,16 +250,16 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
 
             <div className="row gx-2">
                 <div className="col-3">
-                    <Field label="N° ordre" error={errors.ordre?.[0]}>
+                    <Field label={L.order_no ?? 'N° ordre'} error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
                                onChange={e => set('ordre', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-9">
-                    <Field label="Service" error={errors.methods_services_id?.[0]}>
+                    <Field label={L.service ?? 'Service'} error={errors.methods_services_id?.[0]}>
                         <Select value={form.methods_services_id} error={errors.methods_services_id?.[0]}
                                 onChange={e => handleServiceChange(e.target.value)}>
-                            <option value="">— Sélectionner —</option>
+                            <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                             {selectData.services_techcut?.map(s => (
                                 <option key={s.id} value={s.id}>{s.code} — {s.label}</option>
                             ))}
@@ -263,21 +268,21 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
                 </div>
             </div>
 
-            <Field label="Libellé" error={errors.label?.[0]}>
+            <Field label={L.label ?? 'Libellé'} error={errors.label?.[0]}>
                 <Input type="text" value={form.label} error={errors.label?.[0]}
-                       onChange={e => set('label', e.target.value)} placeholder="Libellé de l'opération" />
+                       onChange={e => set('label', e.target.value)} placeholder={L.operation_label ?? 'Libellé de l\'opération'} />
             </Field>
 
-            <Field label="Outil (optionnel)" error={errors.methods_tools_id?.[0]}>
+            <Field label={L.tool_optional ?? 'Outil (optionnel)'} error={errors.methods_tools_id?.[0]}>
                 {toolWarning && (
                     <div className="alert alert-warning py-1 mb-1" style={{ fontSize: 12 }}>
                         <i className="fas fa-exclamation-triangle me-1" />
-                        Cet outil est déjà réservé sur cette période.
+                        {L.tool_booked ?? 'Cet outil est déjà réservé sur cette période.'}
                     </div>
                 )}
                 <Select value={form.methods_tools_id} error={errors.methods_tools_id?.[0]}
                         onChange={e => { set('methods_tools_id', e.target.value); setToolWarning(false); }}>
-                    <option value="">— Aucun outil —</option>
+                    <option value="">{L.no_tool ?? '— Aucun outil —'}</option>
                     {selectData.tools?.map(t => (
                         <option key={t.id} value={t.id}>{t.code} — {t.label}</option>
                     ))}
@@ -285,16 +290,16 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
             </Field>
 
             <div style={{ background: 'var(--bs-tertiary-bg)', border: '1px solid var(--bs-border-color)', borderRadius: 4, padding: '12px 14px', marginBottom: 14 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bs-secondary-color)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Temps</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bs-secondary-color)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{L.time ?? 'Temps'}</div>
                 <div className="row gx-2">
                     <div className="col-6">
-                        <Field label={`Temps de réglage (${unitLabel()})`} error={errors.seting_time?.[0]}>
+                        <Field label={fmt(L.setup_time ?? 'Temps de réglage (:unit)', { unit: unitLabel() })} error={errors.seting_time?.[0]}>
                             <TimeInput as={Input} value={form.seting_time} error={errors.seting_time?.[0]}
                                    onChange={v => handleTimeChange('seting_time', v)} />
                         </Field>
                     </div>
                     <div className="col-6">
-                        <Field label={`Temps unitaire (${unitLabel()})`} error={errors.unit_time?.[0]}>
+                        <Field label={fmt(L.unit_time ?? 'Temps unitaire (:unit)', { unit: unitLabel() })} error={errors.unit_time?.[0]}>
                             <TimeInput as={Input} value={form.unit_time} error={errors.unit_time?.[0]}
                                    onChange={v => handleTimeChange('unit_time', v)} />
                         </Field>
@@ -308,17 +313,17 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
 
             <div className="row gx-2">
                 <div className="col-6">
-                    <Field label={`Coût unitaire (${context.currency})`} error={errors.unit_cost?.[0]}>
+                    <Field label={fmt(L.unit_cost_cur ?? 'Coût unitaire (:currency)', { currency: context.currency })} error={errors.unit_cost?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_cost} error={errors.unit_cost?.[0]}
                                onChange={e => set('unit_cost', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-6">
-                    <Field label={`Prix unitaire (${context.currency})`} error={errors.unit_price?.[0]}>
+                    <Field label={fmt(L.unit_price_cur ?? 'Prix unitaire (:currency)', { currency: context.currency })} error={errors.unit_price?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_price} error={errors.unit_price?.[0]}
                                onChange={e => set('unit_price', e.target.value)} />
                         {selectedService?.margin > 0 && (
-                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
+                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>{L.margin_colon ?? 'Marge:'} {selectedService.margin}%</small>
                         )}
                     </Field>
                 </div>
@@ -327,13 +332,13 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
             {context.idType !== 'quote_lines_id' && (
                 <div className="row gx-2">
                     <div className="col-6">
-                        <Field label="Date début" error={errors.start_date?.[0]}>
+                        <Field label={L.start_date ?? 'Date début'} error={errors.start_date?.[0]}>
                             <Input type="datetime-local" value={form.start_date} error={errors.start_date?.[0]}
                                    onChange={e => set('start_date', e.target.value)} />
                         </Field>
                     </div>
                     <div className="col-6">
-                        <Field label="Date fin" error={errors.end_date?.[0]}>
+                        <Field label={L.end_date ?? 'Date fin'} error={errors.end_date?.[0]}>
                             <Input type="datetime-local" value={form.end_date} error={errors.end_date?.[0]}
                                    onChange={e => set('end_date', e.target.value)} />
                         </Field>
@@ -342,9 +347,9 @@ function TechCutForm({ editingItem, selectData, endpoints, context, lineQty, onS
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter l\'opération')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</> : (editingItem ? (L.update ?? 'Mettre à jour') : (L.add_operation ?? 'Ajouter l\'opération'))}
                 </button>
             </div>
         </form>
@@ -424,7 +429,7 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
         const data = await res.json();
 
         setSaving(false);
-        if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+        if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
         onSaved(data.task, isEdit);
         if (isEdit) { onClose(); } else { setForm(f => ({ ...EMPTY_BOM, ordre: f.ordre + 10 })); }
     };
@@ -435,16 +440,16 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
 
             <div className="row gx-2">
                 <div className="col-3">
-                    <Field label="N° ordre" error={errors.ordre?.[0]}>
+                    <Field label={L.order_no ?? 'N° ordre'} error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
                                onChange={e => set('ordre', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-9">
-                    <Field label="Service / Type matière" error={errors.methods_services_id?.[0]}>
+                    <Field label={L.service_material ?? 'Service / Type matière'} error={errors.methods_services_id?.[0]}>
                         <Select value={form.methods_services_id} error={errors.methods_services_id?.[0]}
                                 onChange={e => handleServiceChange(e.target.value)}>
-                            <option value="">— Sélectionner —</option>
+                            <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                             {selectData.services_bom?.map(s => (
                                 <option key={s.id} value={s.id}>{s.code} — {s.label}</option>
                             ))}
@@ -453,54 +458,54 @@ function BOMForm({ editingItem, selectData, endpoints, context, lineQty, onSaved
                 </div>
             </div>
 
-            <Field label="Libellé" error={errors.label?.[0]}>
+            <Field label={L.label ?? 'Libellé'} error={errors.label?.[0]}>
                 <Input type="text" value={form.label} error={errors.label?.[0]}
-                       onChange={e => set('label', e.target.value)} placeholder="Libellé du composant" />
+                       onChange={e => set('label', e.target.value)} placeholder={L.component_label ?? 'Libellé du composant'} />
             </Field>
 
-            <Field label="Composant (référence article)" error={errors.component_id?.[0]}>
+            <Field label={L.component_ref ?? 'Composant (référence article)'} error={errors.component_id?.[0]}>
                 <Select value={form.component_id} error={errors.component_id?.[0]}
                         onChange={e => handleComponentChange(e.target.value)}>
-                    <option value="">— Sélectionner un article —</option>
+                    <option value="">{L.select_item ?? '— Sélectionner un article —'}</option>
                     {selectData.products_bom?.map(p => (
                         <option key={p.id} value={p.id}>{p.code} — {p.label}</option>
                     ))}
                 </Select>
                 {selectedProduct && (
                     <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>
-                        Prix d'achat: {selectedProduct.purchased_price?.toFixed(2)} {context.currency}
+                        {L.purchase_price_colon ?? 'Prix d\'achat:'} {selectedProduct.purchased_price?.toFixed(2)} {context.currency}
                     </small>
                 )}
             </Field>
 
             <div className="row gx-2">
                 <div className="col-4">
-                    <Field label="Quantité" error={errors.qty?.[0]}>
+                    <Field label={L.quantity ?? 'Quantité'} error={errors.qty?.[0]}>
                         <Input type="number" step="0.001" min="0" value={form.qty} error={errors.qty?.[0]}
                                onChange={e => set('qty', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-4">
-                    <Field label={`Coût unitaire (${context.currency})`} error={errors.unit_cost?.[0]}>
+                    <Field label={fmt(L.unit_cost_cur ?? 'Coût unitaire (:currency)', { currency: context.currency })} error={errors.unit_cost?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_cost} error={errors.unit_cost?.[0]}
                                onChange={e => set('unit_cost', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-4">
-                    <Field label={`Prix unitaire (${context.currency})`} error={errors.unit_price?.[0]}>
+                    <Field label={fmt(L.unit_price_cur ?? 'Prix unitaire (:currency)', { currency: context.currency })} error={errors.unit_price?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_price} error={errors.unit_price?.[0]}
                                onChange={e => set('unit_price', e.target.value)} />
                         {selectedService?.margin > 0 && (
-                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>Marge: {selectedService.margin}%</small>
+                            <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>{L.margin_colon ?? 'Marge:'} {selectedService.margin}%</small>
                         )}
                     </Field>
                 </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                 <button type="submit" className="btn btn-success btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le composant')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</> : (editingItem ? (L.update ?? 'Mettre à jour') : (L.add_component ?? 'Ajouter le composant'))}
                 </button>
             </div>
         </form>
@@ -558,7 +563,7 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
         const data = await res.json();
 
         setSaving(false);
-        if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+        if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
         onSaved(data.sub_assembly, isEdit);
         if (isEdit) { onClose(); } else { setForm(f => ({ ...EMPTY_SUBASSEMBLY, ordre: f.ordre + 10 })); }
     };
@@ -569,37 +574,37 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
 
             <div className="row gx-2">
                 <div className="col-3">
-                    <Field label="N° ordre" error={errors.ordre?.[0]}>
+                    <Field label={L.order_no ?? 'N° ordre'} error={errors.ordre?.[0]}>
                         <Input type="number" value={form.ordre} min="1" error={errors.ordre?.[0]}
                                onChange={e => set('ordre', e.target.value)} />
                     </Field>
                 </div>
             </div>
 
-            <Field label="Sous-ensemble (article de type assemblage)" error={errors.child_id?.[0]}>
+            <Field label={L.sub_assembly_item ?? 'Sous-ensemble (article de type assemblage)'} error={errors.child_id?.[0]}>
                 <Select value={form.child_id} error={errors.child_id?.[0]}
                         onChange={e => handleChildChange(e.target.value)}>
-                    <option value="">— Sélectionner —</option>
+                    <option value="">{L.select_placeholder ?? '— Sélectionner —'}</option>
                     {selectData.products_subassembly?.map(p => (
                         <option key={p.id} value={p.id}>{p.code} — {p.label}</option>
                     ))}
                 </Select>
                 {selectedChild && (
                     <small style={{ color: 'var(--bs-secondary-color)', fontSize: 11 }}>
-                        Label: {selectedChild.label}
+                        {L.label_colon ?? 'Label:'} {selectedChild.label}
                     </small>
                 )}
             </Field>
 
             <div className="row gx-2">
                 <div className="col-6">
-                    <Field label="Quantité" error={errors.qty?.[0]}>
+                    <Field label={L.quantity ?? 'Quantité'} error={errors.qty?.[0]}>
                         <Input type="number" step="0.001" min="0" value={form.qty} error={errors.qty?.[0]}
                                onChange={e => set('qty', e.target.value)} />
                     </Field>
                 </div>
                 <div className="col-6">
-                    <Field label={`Prix unitaire (${context.currency})`} error={errors.unit_price?.[0]}>
+                    <Field label={fmt(L.unit_price_cur ?? 'Prix unitaire (:currency)', { currency: context.currency })} error={errors.unit_price?.[0]}>
                         <Input type="number" step="0.01" min="0" value={form.unit_price} error={errors.unit_price?.[0]}
                                onChange={e => set('unit_price', e.target.value)} />
                     </Field>
@@ -607,9 +612,9 @@ function SubAssemblyForm({ editingItem, selectData, endpoints, context, onSaved,
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                 <button type="submit" className="btn btn-warning btn-sm" disabled={saving}>
-                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</> : (editingItem ? 'Mettre à jour' : 'Ajouter le sous-ensemble')}
+                    {saving ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</> : (editingItem ? (L.update ?? 'Mettre à jour') : (L.add_sub_assembly ?? 'Ajouter le sous-ensemble'))}
                 </button>
             </div>
         </form>
@@ -638,7 +643,7 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
         setLoading(false);
         if (!res.ok) {
             const fileError = data.errors?.csv_file?.[0];
-            setResult({ success_count: 0, errors: [fileError ?? data.message ?? 'Import impossible.'] });
+            setResult({ success_count: 0, errors: [fileError ?? data.message ?? (L.import_failed ?? 'Import impossible.')] });
             return;
         }
         setResult(data);
@@ -652,21 +657,21 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Importer la gamme / nomenclature (CSV ou Excel)</h5>
+                        <h5 className="modal-title">{L.import_title ?? 'Importer la gamme / nomenclature (CSV ou Excel)'}</h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="modal-body">
                             <p style={{ fontSize: 12, color: 'var(--bs-secondary-color)' }}>
-                                Première ligne = en-tête avec les colonnes : <code>ordre, service_code, label, component_code, unit_code, qty, unit_cost, unit_price</code>
-                                (facultatives : <code>seting_time, unit_time</code>). Une opération sans composant laisse <code>component_code</code> vide ;
-                                <code>qty</code> vide = 1, coûts et prix vides = 0. Séparateur <code>;</code> <code>,</code> ou tabulation.
+                                {L.import_help_1 ?? 'Première ligne = en-tête avec les colonnes :'} <code>ordre, service_code, label, component_code, unit_code, qty, unit_cost, unit_price</code>
+                                {L.import_help_2 ?? '(facultatives :'} <code>seting_time, unit_time</code>{L.import_help_3 ?? '). Une opération sans composant laisse'} <code>component_code</code> {L.import_help_4 ?? 'vide ;'}
+                                <code>qty</code> {L.import_help_5 ?? 'vide = 1, coûts et prix vides = 0. Séparateur'} <code>;</code> <code>,</code> {L.import_help_6 ?? 'ou tabulation.'}
                             </p>
                             <input type="file" accept=".csv,.txt,.xlsx,.xls" className="form-control"
                                    onChange={e => setFile(e.target.files[0])} />
                             {result && (
                                 <div className="mt-3">
-                                    <div className="alert alert-success py-2">{result.success_count} ligne(s) importée(s)</div>
+                                    <div className="alert alert-success py-2">{result.success_count} {L.lines_imported ?? 'ligne(s) importée(s)'}</div>
                                     {result.errors?.map((err, i) => (
                                         <div key={i} className="alert alert-warning py-1" style={{ fontSize: 12 }}>{err}</div>
                                     ))}
@@ -674,9 +679,9 @@ function CsvImportModal({ open, endpoint, onImported, onClose }) {
                             )}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Fermer</button>
+                            <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>{L.close ?? 'Fermer'}</button>
                             <button type="submit" className="btn btn-success btn-sm" disabled={loading || !file}>
-                                {loading ? <><i className="fas fa-spinner fa-spin me-1" />Import…</> : 'Importer'}
+                                {loading ? <><i className="fas fa-spinner fa-spin me-1" />{L.importing ?? 'Import…'}</> : (L.import ?? 'Importer')}
                             </button>
                         </div>
                     </form>
@@ -752,7 +757,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
             <td style={{ maxWidth: 150 }}>
                 {statuUrl ? (
                     <a href={statuUrl}
-                       title={`${task.label} — écran de suivi`}
+                       title={fmt(L.tracking_screen ?? ':label — écran de suivi', { label: task.label })}
                        style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {task.label}
                         <i className="fas fa-external-link-alt ms-1" style={{ fontSize: 10, opacity: 0.6 }} />
@@ -810,14 +815,14 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
                                 <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 900 }} />
                                 <div className="dropdown-menu show" style={{ right: 0, left: 'auto', zIndex: 901 }}>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onEdit(task); }}>
-                                        <i className="fas fa-edit me-2" />Modifier
+                                        <i className="fas fa-edit me-2" />{L.edit ?? 'Modifier'}
                                     </button>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onDuplicate(task.id); }}>
-                                        <i className="fas fa-copy me-2" />Dupliquer
+                                        <i className="fas fa-copy me-2" />{L.duplicate ?? 'Dupliquer'}
                                     </button>
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item text-danger" onClick={() => { setMenuOpen(false); onDelete(task.id); }}>
-                                        <i className="fas fa-trash me-2" />Supprimer
+                                        <i className="fas fa-trash me-2" />{L.delete ?? 'Supprimer'}
                                     </button>
                                 </div>
                             </>
@@ -861,14 +866,14 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
                                 <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 900 }} />
                                 <div className="dropdown-menu show" style={{ right: 0, left: 'auto', zIndex: 901 }}>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onEdit(sa); }}>
-                                        <i className="fas fa-edit me-2" />Modifier
+                                        <i className="fas fa-edit me-2" />{L.edit ?? 'Modifier'}
                                     </button>
                                     <button className="dropdown-item" onClick={() => { setMenuOpen(false); onDuplicate(sa.id); }}>
-                                        <i className="fas fa-copy me-2" />Dupliquer
+                                        <i className="fas fa-copy me-2" />{L.duplicate ?? 'Dupliquer'}
                                     </button>
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item text-danger" onClick={() => { setMenuOpen(false); onDelete(sa.id); }}>
-                                        <i className="fas fa-trash me-2" />Supprimer
+                                        <i className="fas fa-trash me-2" />{L.delete ?? 'Supprimer'}
                                     </button>
                                 </div>
                             </>
@@ -890,7 +895,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit, showLin
         return (
             <tfoot>
                 <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
-                    <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>Total sous-ensembles</td>
+                    <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>{L.total_sub_assemblies ?? 'Total sous-ensembles'}</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{total.toFixed(2)} {currency}</td>
                     {canEdit && <td />}
                 </tr>
@@ -904,7 +909,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit, showLin
         return (
             <tfoot>
                 <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
-                    <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>Total nomenclature</td>
+                    <td colSpan={5} style={{ textAlign: 'right', fontSize: 12 }}>{L.total_bom ?? 'Total nomenclature'}</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{totalCost.toFixed(2)} {currency}</td>
                     <td style={{ textAlign: 'right', fontSize: 12, color: margin >= 0 ? '#28a745' : '#dc3545' }}>{margin}%</td>
                     <td style={{ textAlign: 'right', fontSize: 12 }}>{totalPrice.toFixed(2)} {currency}</td>
@@ -923,7 +928,7 @@ function SectionTotals({ items, currency, isBOM, isSubAssembly, canEdit, showLin
     return (
         <tfoot>
             <tr style={{ background: 'var(--bs-tertiary-bg)', fontWeight: 600 }}>
-                <td colSpan={showLinks ? 4 : 3} style={{ textAlign: 'right', fontSize: 12 }}>Total gamme</td>
+                <td colSpan={showLinks ? 4 : 3} style={{ textAlign: 'right', fontSize: 12 }}>{L.total_routing ?? 'Total gamme'}</td>
                 <td />
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(totalSeting, { hoursDecimals: 3, hoursSuffix: 'h' })}</td>
                 <td style={{ textAlign: 'right', fontSize: 12 }}>{formatDuration(totalUnit, { hoursDecimals: 3, hoursSuffix: 'h' })}</td>
@@ -965,9 +970,9 @@ function SectionCard({ title, icon, colorClass, extra, children }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TAB_DEFS = [
-    { type: DRAWER.TECHCUT,    label: 'Opération',    bg: '#007bff', top: '30%' },
-    { type: DRAWER.BOM,        label: 'Composant',    bg: '#28a745', top: '50%' },
-    { type: DRAWER.SUBASSEMBLY,label: 'Sous-ensemble',bg: '#fd7e14', top: '70%' },
+    { type: DRAWER.TECHCUT,    get label() { return L.tab_operation ?? 'Opération'; },    bg: '#007bff', top: '30%' },
+    { type: DRAWER.BOM,        get label() { return L.component ?? 'Composant'; },    bg: '#28a745', top: '50%' },
+    { type: DRAWER.SUBASSEMBLY,get label() { return L.tab_sub_assembly ?? 'Sous-ensemble'; },bg: '#fd7e14', top: '70%' },
 ];
 
 function DrawerTabs({ drawerOpen, drawerType, canEdit, hideSubAssembly, onOpen }) {
@@ -979,7 +984,7 @@ function DrawerTabs({ drawerOpen, drawerType, canEdit, hideSubAssembly, onOpen }
                     key={tab.type}
                     type="button"
                     onClick={() => onOpen(tab.type)}
-                    title={`Ajouter — ${tab.label}`}
+                    title={fmt(L.add_drawer_title ?? 'Ajouter — :label', { label: tab.label })}
                     style={{
                         position: 'fixed',
                         right: 0,
@@ -1027,7 +1032,7 @@ function NomenclatureTemplatesCard({ templates, canEdit, onApply, loading }) {
     return (
         <div className="card mb-3">
             <div className="card-header" style={{ padding: '8px 16px' }}>
-                <h6 className="mb-0"><i className="fas fa-clone me-2 text-secondary" />Modèles standards</h6>
+                <h6 className="mb-0"><i className="fas fa-clone me-2 text-secondary" />{L.standard_templates ?? 'Modèles standards'}</h6>
             </div>
             <div className="card-body" style={{ padding: '10px 16px' }}>
                 <div className="d-flex flex-wrap" style={{ gap: 8 }}>
@@ -1037,7 +1042,7 @@ function NomenclatureTemplatesCard({ templates, canEdit, onApply, loading }) {
                             className="btn btn-outline-secondary btn-sm"
                             onClick={() => onApply(tpl.id)}
                             disabled={loading}
-                            title={`Copie ${tpl.task_count} opération(s) dans la gamme`}
+                            title={fmt(L.template_copy ?? 'Copie :count opération(s) dans la gamme', { count: tpl.task_count })}
                         >
                             {loading ? <i className="fas fa-spinner fa-spin me-1" /> : <i className="fas fa-file-import me-1" />}
                             {tpl.label}
@@ -1061,13 +1066,13 @@ function ContextHeader({ line, isLocked }) {
             {isLocked && (
                 <div className="alert alert-warning alert-dismissible py-2 mb-3">
                     <i className="fas fa-lock me-2" />
-                    Document verrouillé — consultation uniquement.
+                    {L.locked ?? 'Document verrouillé — consultation uniquement.'}
                 </div>
             )}
             {line.custom_requirements?.length > 0 && (
                 <div className="card mb-3">
                     <div className="card-header" style={{ padding: '8px 16px' }}>
-                        <h6 className="mb-0"><i className="fas fa-swatchbook me-2 text-secondary" />Exigences client</h6>
+                        <h6 className="mb-0"><i className="fas fa-swatchbook me-2 text-secondary" />{L.customer_requirements ?? 'Exigences client'}</h6>
                     </div>
                     <div className="card-body py-2">
                         <ul className="mb-0" style={{ fontSize: 13 }}>
@@ -1086,7 +1091,9 @@ function ContextHeader({ line, isLocked }) {
 // Root component
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function TaskManagePage({ context, endpoints }) {
+export default function TaskManagePage({ context, endpoints, trans = {} }) {
+    L = trans?.ui ?? {};
+    setRoutingTexts(L);
     const [line, setLine]               = useState(null);
     const [techCutTasks, setTechCutTasks] = useState([]);
     const [bomTasks, setBomTasks]         = useState([]);
@@ -1129,7 +1136,7 @@ export default function TaskManagePage({ context, endpoints }) {
                     apiFetch(endpoints.initial_data),
                     apiFetch(endpoints.select_data),
                 ]);
-                if (!dataRes.ok || !selectRes.ok) throw new Error('Chargement échoué');
+                if (!dataRes.ok || !selectRes.ok) throw new Error((L.load_failed ?? 'Chargement échoué'));
                 const [data, selects] = await Promise.all([dataRes.json(), selectRes.json()]);
                 setLine(data.line);
                 setTechCutTasks(data.tasks.technical_cut ?? []);
@@ -1175,7 +1182,7 @@ export default function TaskManagePage({ context, endpoints }) {
     }, []);
 
     const handleTaskDelete = useCallback(async (id) => {
-        if (!window.confirm('Supprimer cette tâche ?')) return;
+        if (!window.confirm((L.confirm_delete_task ?? 'Supprimer cette tâche ?'))) return;
         await apiFetch(endpoints.task_destroy.replace('__ID__', id), { method: 'DELETE' });
         setTechCutTasks(prev => prev.filter(t => t.id !== id));
         setBomTasks(prev => prev.filter(t => t.id !== id));
@@ -1202,7 +1209,7 @@ export default function TaskManagePage({ context, endpoints }) {
             method: 'PUT', body: JSON.stringify({ notation }),
         });
         const data = await res.json();
-        if (!res.ok) return { ok: false, error: data.errors?.links?.[0] ?? data.message ?? 'Erreur' };
+        if (!res.ok) return { ok: false, error: data.errors?.links?.[0] ?? data.message ?? (L.error ?? 'Erreur') };
         setLinks(Object.fromEntries((data.routing ?? []).map(r => [r.id, r])));
         return { ok: true };
     }, [endpoints]);
@@ -1212,7 +1219,7 @@ export default function TaskManagePage({ context, endpoints }) {
             method: 'PATCH', body: JSON.stringify({ planned_qty: value }),
         });
         const data = await res.json();
-        if (!res.ok) return { ok: false, error: data.errors?.planned_qty?.[0] ?? data.message ?? 'Erreur' };
+        if (!res.ok) return { ok: false, error: data.errors?.planned_qty?.[0] ?? data.message ?? (L.error ?? 'Erreur') };
         setTechCutTasks(prev => prev.map(t => t.id === taskId ? data.task : t));
         return { ok: true };
     }, [endpoints]);
@@ -1241,7 +1248,7 @@ export default function TaskManagePage({ context, endpoints }) {
     }, []);
 
     const handleSubAssemblyDelete = useCallback(async (id) => {
-        if (!window.confirm('Supprimer ce sous-ensemble ?')) return;
+        if (!window.confirm((L.confirm_delete_sub_assembly ?? 'Supprimer ce sous-ensemble ?'))) return;
         await apiFetch(endpoints.subassembly_destroy.replace('__ID__', id), { method: 'DELETE' });
         setSubAssemblies(prev => prev.filter(s => s.id !== id));
     }, [endpoints]);
@@ -1255,7 +1262,7 @@ export default function TaskManagePage({ context, endpoints }) {
     // ── Apply nomenclature ──────────────────────────────────────────────────
 
     const handleApplyNomenclature = useCallback(async (tplId) => {
-        if (!window.confirm('Ajouter toutes les opérations de ce modèle à la gamme ?')) return;
+        if (!window.confirm((L.confirm_apply_template ?? 'Ajouter toutes les opérations de ce modèle à la gamme ?'))) return;
         setNomenclatureLoading(true);
         const url = endpoints.apply_nomenclature.replace('__TPL_ID__', tplId);
         const res  = await apiFetch(url, { method: 'POST' });
@@ -1279,9 +1286,9 @@ export default function TaskManagePage({ context, endpoints }) {
     // ── Drawer title ────────────────────────────────────────────────────────
 
     const drawerTitle = {
-        [DRAWER.TECHCUT]:    editingItem ? 'Modifier l\'opération' : 'Nouvelle opération',
-        [DRAWER.BOM]:        editingItem ? 'Modifier le composant' : 'Nouveau composant',
-        [DRAWER.SUBASSEMBLY]: editingItem ? 'Modifier le sous-ensemble' : 'Nouveau sous-ensemble',
+        [DRAWER.TECHCUT]:    editingItem ? (L.edit_operation ?? 'Modifier l\'opération') : (L.new_operation ?? 'Nouvelle opération'),
+        [DRAWER.BOM]:        editingItem ? (L.edit_component ?? 'Modifier le composant') : (L.new_component ?? 'Nouveau composant'),
+        [DRAWER.SUBASSEMBLY]: editingItem ? (L.edit_sub_assembly ?? 'Modifier le sous-ensemble') : (L.new_sub_assembly ?? 'Nouveau sous-ensemble'),
     }[drawerType] ?? '';
 
     // ── Render ──────────────────────────────────────────────────────────────
@@ -1290,7 +1297,7 @@ export default function TaskManagePage({ context, endpoints }) {
         return (
             <div className="text-center py-5">
                 <i className="fas fa-spinner fa-spin fa-2x text-secondary" />
-                <p className="mt-2 text-muted">Chargement de la gamme…</p>
+                <p className="mt-2 text-muted">{L.loading_routing ?? 'Chargement de la gamme…'}</p>
             </div>
         );
     }
@@ -1314,14 +1321,14 @@ export default function TaskManagePage({ context, endpoints }) {
 
             {/* ── Gamme opératoire (TechCut) ── */}
             <SectionCard
-                title="Gamme opératoire"
+                title={L.routing ?? 'Gamme opératoire'}
                 icon="fas fa-cogs"
                 colorClass="text-primary"
             >
                 {techCutTasks.length === 0 ? (
                     <div className="text-center text-muted py-4" style={{ fontSize: 13 }}>
                         <i className="fas fa-tools mb-2" style={{ fontSize: 24 }} /><br />
-                        Aucune opération. {canEdit && 'Cliquez sur "+ Opération" pour commencer.'}
+                        {L.no_operation ?? 'Aucune opération.'} {canEdit && (L.no_operation_help ?? 'Cliquez sur "+ Opération" pour commencer.')}
                     </div>
                 ) : (
                     <div className="table-responsive">
@@ -1330,22 +1337,22 @@ export default function TaskManagePage({ context, endpoints }) {
                                 <tr>
                                     <th style={{ width: 40 }}>N°</th>
                                     {showLinks && (
-                                        <th style={{ width: 130 }} title="Opérations amont : 20FD;30FD · 20DD+2h · 20DD+10pc;20FF+10pc — vide = après la précédente">Liens</th>
+                                        <th style={{ width: 130 }} title={L.links_title ?? 'Opérations amont : 20FD;30FD · 20DD+2h · 20DD+10pc;20FF+10pc — vide = après la précédente'}>{L.links ?? 'Liens'}</th>
                                     )}
-                                    <th style={{ width: 90 }}>Service</th>
-                                    <th>Libellé</th>
-                                    <th style={{ width: 70, textAlign: 'right' }}>Outil</th>
-                                    <th style={{ width: 60, textAlign: 'right' }}>Régl.</th>
-                                    <th style={{ width: 60, textAlign: 'right' }}>Unit.</th>
+                                    <th style={{ width: 90 }}>{L.service ?? 'Service'}</th>
+                                    <th>{L.label ?? 'Libellé'}</th>
+                                    <th style={{ width: 70, textAlign: 'right' }}>{L.tool ?? 'Outil'}</th>
+                                    <th style={{ width: 60, textAlign: 'right' }}>{L.setup_short ?? 'Régl.'}</th>
+                                    <th style={{ width: 60, textAlign: 'right' }}>{L.unit_short ?? 'Unit.'}</th>
                                     {showQty && (
-                                        <th style={{ width: 60, textAlign: 'right' }} title="Quantité traitée par l'opération — vide = quantité de la ligne">Qté</th>
+                                        <th style={{ width: 60, textAlign: 'right' }} title={L.planned_qty_title ?? 'Quantité traitée par l\'opération — vide = quantité de la ligne'}>{L.qty ?? 'Qté'}</th>
                                     )}
-                                    <th style={{ width: 90 }}>Statut</th>
-                                    <th style={{ width: 80 }}>Avance</th>
-                                    <th style={{ width: 80, textAlign: 'right' }}>Coût</th>
-                                    <th style={{ width: 60, textAlign: 'right' }}>Marge</th>
-                                    <th style={{ width: 80, textAlign: 'right' }}>Prix</th>
-                                    {context.idType !== 'quote_lines_id' && <th style={{ width: 80 }}>Fin prév.</th>}
+                                    <th style={{ width: 90 }}>{L.status ?? 'Statut'}</th>
+                                    <th style={{ width: 80 }}>{L.progress ?? 'Avance'}</th>
+                                    <th style={{ width: 80, textAlign: 'right' }}>{L.cost ?? 'Coût'}</th>
+                                    <th style={{ width: 60, textAlign: 'right' }}>{L.margin ?? 'Marge'}</th>
+                                    <th style={{ width: 80, textAlign: 'right' }}>{L.price ?? 'Prix'}</th>
+                                    {context.idType !== 'quote_lines_id' && <th style={{ width: 80 }}>{L.planned_end ?? 'Fin prév.'}</th>}
                                     {context.idType === 'quote_lines_id' && <th />}
                                     {canEdit && <th style={{ width: 40 }} />}
                                 </tr>
@@ -1372,19 +1379,19 @@ export default function TaskManagePage({ context, endpoints }) {
 
             {/* ── Nomenclature matières (BOM) ── */}
             <SectionCard
-                title="Nomenclature matières"
+                title={L.bom ?? 'Nomenclature matières'}
                 icon="fas fa-list-alt"
                 colorClass="text-success"
                 extra={canEdit && (
                     <button className="btn btn-sm btn-outline-success" onClick={() => setCsvModalOpen(true)}>
-                        <i className="fas fa-file-import me-1" />CSV / Excel
+                        <i className="fas fa-file-import me-1" />{L.csv_excel ?? 'CSV / Excel'}
                     </button>
                 )}
             >
                 {bomTasks.length === 0 ? (
                     <div className="text-center text-muted py-4" style={{ fontSize: 13 }}>
                         <i className="fas fa-boxes mb-2" style={{ fontSize: 24 }} /><br />
-                        Aucun composant. {canEdit && 'Ajoutez des matières ou importez un CSV.'}
+                        {L.no_component ?? 'Aucun composant.'} {canEdit && (L.no_component_help ?? 'Ajoutez des matières ou importez un CSV.')}
                     </div>
                 ) : (
                     <div className="table-responsive">
@@ -1392,13 +1399,13 @@ export default function TaskManagePage({ context, endpoints }) {
                             <thead className="table-light">
                                 <tr>
                                     <th style={{ width: 40 }}>N°</th>
-                                    <th style={{ width: 90 }}>Service</th>
-                                    <th>Libellé</th>
-                                    <th style={{ width: 90 }}>Composant</th>
-                                    <th style={{ width: 60, textAlign: 'right' }}>Qté</th>
-                                    <th style={{ width: 80, textAlign: 'right' }}>Coût</th>
-                                    <th style={{ width: 60, textAlign: 'right' }}>Marge</th>
-                                    <th style={{ width: 80, textAlign: 'right' }}>Prix</th>
+                                    <th style={{ width: 90 }}>{L.service ?? 'Service'}</th>
+                                    <th>{L.label ?? 'Libellé'}</th>
+                                    <th style={{ width: 90 }}>{L.component ?? 'Composant'}</th>
+                                    <th style={{ width: 60, textAlign: 'right' }}>{L.qty ?? 'Qté'}</th>
+                                    <th style={{ width: 80, textAlign: 'right' }}>{L.cost ?? 'Coût'}</th>
+                                    <th style={{ width: 60, textAlign: 'right' }}>{L.margin ?? 'Marge'}</th>
+                                    <th style={{ width: 80, textAlign: 'right' }}>{L.price ?? 'Prix'}</th>
                                     <th />
                                     {canEdit && <th style={{ width: 40 }} />}
                                 </tr>
@@ -1422,14 +1429,14 @@ export default function TaskManagePage({ context, endpoints }) {
             {/* ── Sous-ensembles ── */}
             {context.idType !== 'nomenclature_lines_id' && (
                 <SectionCard
-                    title="Sous-ensembles"
+                    title={L.sub_assemblies ?? 'Sous-ensembles'}
                     icon="fas fa-cubes"
                     colorClass="text-warning"
                 >
                     {subAssemblies.length === 0 ? (
                         <div className="text-center text-muted py-4" style={{ fontSize: 13 }}>
                             <i className="fas fa-cube mb-2" style={{ fontSize: 24 }} /><br />
-                            Aucun sous-ensemble. {canEdit && 'Ajoutez un assemblage enfant.'}
+                            {L.no_sub_assembly ?? 'Aucun sous-ensemble.'} {canEdit && (L.no_sub_assembly_help ?? 'Ajoutez un assemblage enfant.')}
                         </div>
                     ) : (
                         <div className="table-responsive">
@@ -1437,11 +1444,11 @@ export default function TaskManagePage({ context, endpoints }) {
                                 <thead className="table-light">
                                     <tr>
                                         <th style={{ width: 40 }}>N°</th>
-                                        <th style={{ width: 90 }}>Code</th>
-                                        <th>Libellé</th>
-                                        <th style={{ width: 60, textAlign: 'right' }}>Qté</th>
+                                        <th style={{ width: 90 }}>{L.code ?? 'Code'}</th>
+                                        <th>{L.label ?? 'Libellé'}</th>
+                                        <th style={{ width: 60, textAlign: 'right' }}>{L.qty ?? 'Qté'}</th>
                                         <th style={{ width: 80, textAlign: 'right' }}>P.U.</th>
-                                        <th style={{ width: 80, textAlign: 'right' }}>Total</th>
+                                        <th style={{ width: 80, textAlign: 'right' }}>{L.total ?? 'Total'}</th>
                                         {canEdit && <th style={{ width: 40 }} />}
                                     </tr>
                                 </thead>

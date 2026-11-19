@@ -3,6 +3,10 @@ import { formatQty } from '../utils';
 import { rowLinkProps } from '../lib/rowLink.js';
 import { formatDuration } from '../lib/duration.js';
 
+// Textes de l'écran (resources/lang/*/production_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -388,7 +392,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                             className="btn btn-sm btn-outline-secondary"
                             style={{ fontSize: '0.72rem', padding: '1px 8px' }}
                             onClick={() => showCol(colId)}
-                            title="Réafficher la colonne"
+                            title={L.show_column ?? 'Réafficher la colonne'}
                         >
                             + {COLS[colId].label}
                         </button>
@@ -430,7 +434,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                                         )}
                                         <span
                                             role="button"
-                                            aria-label="Masquer la colonne"
+                                            aria-label={L.hide_column ?? 'Masquer la colonne'}
                                             style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
                                             className="text-danger"
                                             onClick={(e) => { e.stopPropagation(); hideCol(colId); }}
@@ -465,7 +469,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                                                 type="date"
                                                 className="form-control form-control-sm"
                                                 style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Du"
+                                                title={L.from ?? 'Du'}
                                                 value={(colFilters[colId] ?? {}).from ?? ''}
                                                 onChange={(e) =>
                                                     setColFilters((prev) => ({
@@ -478,7 +482,7 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
                                                 type="date"
                                                 className="form-control form-control-sm"
                                                 style={{ ...inputStyle, flex: 1, minWidth: 0 }}
-                                                title="Au"
+                                                title={L.to ?? 'Au'}
                                                 value={(colFilters[colId] ?? {}).to ?? ''}
                                                 onChange={(e) =>
                                                     setColFilters((prev) => ({
@@ -539,6 +543,7 @@ export default function TasksIndex({
     defaultStatusIds,
     trans,
 }) {
+    L = trans?.ui ?? {};
     const [serviceId,        setServiceId]        = useState('');
     const [selectedStatuses, setSelectedStatuses] = useState(defaultStatusIds ?? []);
     const [resourceId,       setResourceId]       = useState('');

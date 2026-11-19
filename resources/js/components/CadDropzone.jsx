@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { canRenderThumbnail, fileThumbnail } from '../lib/files/fileThumbnail';
+import { commonText, fmt } from '../lib/i18n.js';
 
 // ---------------------------------------------------------------------------
 // CadDropzone — drag and drop of CAD files to create quote or order lines
@@ -48,7 +49,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
 
         if (accepted.length === 0) {
             setStatus('error');
-            setResults([{ ok: false, msg: `Aucun fichier reconnu (${ACCEPT_ATTRIBUTE}).` }]);
+            setResults([{ ok: false, msg: fmt(commonText('cad_no_file', 'Aucun fichier reconnu (:formats).'), { formats: ACCEPT_ATTRIBUTE }) }]);
             return;
         }
 
@@ -72,7 +73,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
 
             if (!response.ok) {
                 setStatus('error');
-                setResults([{ ok: false, msg: data.error ?? "Erreur lors de l'import." }]);
+                setResults([{ ok: false, msg: data.error ?? (commonText('cad_import_error', 'Erreur lors de l\'import.')) }]);
                 return;
             }
 
@@ -88,7 +89,7 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
             }
         } catch {
             setStatus('error');
-            setResults([{ ok: false, msg: "Erreur réseau lors de l'envoi." }]);
+            setResults([{ ok: false, msg: (commonText('cad_network_error', 'Erreur réseau lors de l\'envoi.')) }]);
         }
     };
 
@@ -132,22 +133,16 @@ export default function CadDropzone({ endpoint, disabled = false, onImported }) 
                 {status === 'uploading' ? (
                     <span className="text-muted">
                         <i className="fas fa-spinner fa-spin me-2" />
-                        Import en cours…
+                        {commonText('cad_importing', 'Import en cours…')}
                     </span>
                 ) : (
                     <>
                         <div className="text-muted small">
                             <i className="fas fa-file-import me-2 text-primary" />
-                            Déposer des fichiers <strong>{ACCEPT_ATTRIBUTE.replace(/,/g, ' ')}</strong> ici
-                            pour créer les lignes automatiquement
-                            &nbsp;—&nbsp;ou cliquer pour sélectionner
+                            {commonText('cad_drop', 'Déposer des fichiers')} <strong>{ACCEPT_ATTRIBUTE.replace(/,/g, ' ')}</strong>{' '}{commonText('cad_drop_help', 'ici pour créer les lignes automatiquement  — ou cliquer pour sélectionner')}
                         </div>
                         <div className="text-muted mt-1" style={{ fontSize: '0.75rem' }}>
-                            Le plan déposé est rattaché à la ligne dans la GED (hors .sym, .drg et .bvc, entièrement lus à l'import).
-                            Un .geo produit en plus un SVG exploitable par l'imbrication.
-                            Une imbrication RADAN (.drg) crée une ligne par pièce, quantité = pièces par tôle × nombre de tôles.
-                            Un job BySoft (.bvc) crée une ligne par pièce avec son contour en SVG, quantité = quantité du job.
-                            Un plan .pdf est lu par l'IA (Intégrations → IA) : cartouche à vérifier sur la ligne créée.
+                            {commonText('cad_help', 'Le plan déposé est rattaché à la ligne dans la GED (hors .sym, .drg et .bvc, entièrement lus à l\'import). Un .geo produit en plus un SVG exploitable par l\'imbrication. Une imbrication RADAN (.drg) crée une ligne par pièce, quantité = pièces par tôle × nombre de tôles. Un job BySoft (.bvc) crée une ligne par pièce avec son contour en SVG, quantité = quantité du job. Un plan .pdf est lu par l\'IA (Intégrations → IA) : cartouche à vérifier sur la ligne créée.')}
                         </div>
                     </>
                 )}

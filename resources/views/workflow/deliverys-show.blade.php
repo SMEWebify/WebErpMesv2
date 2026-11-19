@@ -206,6 +206,7 @@ $deliverySteps = [
               'cancelLine'        => route('deliverys.line.cancel', ['id' => $Delivery->id, 'lineId' => '__LINE__']),
           ];
           $dlTrans = [
+              'ui'             => __('billing_ui'),
               'order'          => __('general_content.order_trans_key'),
               'code'           => __('general_content.external_id_trans_key'),
               'description'    => __('general_content.description_trans_key'),

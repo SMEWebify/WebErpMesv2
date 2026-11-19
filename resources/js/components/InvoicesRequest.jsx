@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { formatQty } from '../utils';
 import { apiFetchWithStatus as apiFetch } from '../lib/http';
 
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
@@ -14,6 +18,7 @@ export default function InvoicesRequest({
     endpoints,
     trans,
 }) {
+    L = trans?.ui ?? {};
     const [form, setForm] = useState({
         code:                  initialCode ?? '',
         label:                 initialCode ?? '',
@@ -403,7 +408,7 @@ export default function InvoicesRequest({
                                                     onChange={e => handleSelectAll(e.target.checked)}
                                                 />
                                                 <label className="form-check-label" htmlFor="selectAllInvoiceLines">
-                                                    {allChecked ? 'Tout désélect.' : 'Tout sélect.'}
+                                                    {allChecked ? (L.unselect_all ?? 'Tout désélect.') : (L.select_all ?? 'Tout sélect.')}
                                                 </label>
                                             </div>
                                         )}

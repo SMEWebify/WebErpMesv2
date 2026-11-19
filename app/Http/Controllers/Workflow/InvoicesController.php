@@ -231,6 +231,7 @@ class InvoicesController extends Controller
         ];
 
         $reactTrans = [
+            'ui'                    => __('billing_ui'),
             'dossier_pending'       => __('manufacturing_dossier.not_validated'),
             'dossier_pending_title' => __('manufacturing_dossier.pending_title'),
             'company'         => __('general_content.sort_companie_trans_key'),

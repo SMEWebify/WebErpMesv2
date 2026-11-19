@@ -1,4 +1,5 @@
 import React from 'react';
+import { dashboardTexts as L } from './texts.js';
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 
@@ -58,7 +59,7 @@ export default function WidgetCard({
     loading = false,
     error = null,
     empty = false,
-    emptyText = 'Aucune donnée',
+    emptyText = (L.no_data ?? 'Aucune donnée'),
     children,
     footer,
     fillHeight = false,
@@ -90,7 +91,7 @@ export default function WidgetCard({
                                 style={{ height: 26, padding: '0 0.4rem', fontSize: '0.75rem', width: 'auto' }}
                                 value={currentType}
                                 onChange={e => onTypeChange(e.target.value)}
-                                title="Changer le type de graphique"
+                                title={L.change_chart_type ?? 'Changer le type de graphique'}
                             >
                                 {availableTypes.map(t => (
                                     <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
@@ -103,7 +104,7 @@ export default function WidgetCard({
                                 type="button"
                                 className="btn btn-sm btn-outline-danger"
                                 style={{ padding: '0 0.4rem', height: 26, lineHeight: 1 }}
-                                title="Supprimer ce widget"
+                                title={L.remove_widget ?? 'Supprimer ce widget'}
                                 onClick={onRemove}
                             >
                                 <i className="fas fa-times" style={{ fontSize: '0.7rem' }} />
@@ -112,7 +113,7 @@ export default function WidgetCard({
                         {/* Drag handle */}
                         <span
                             className="wem-drag-handle"
-                            title="Déplacer"
+                            title={L.move ?? 'Déplacer'}
                             style={{ cursor: 'grab', color: 'inherit', opacity: 0.7, padding: '0 2px' }}
                         >
                             <i className="fas fa-grip-vertical" style={{ fontSize: '0.75rem' }} />

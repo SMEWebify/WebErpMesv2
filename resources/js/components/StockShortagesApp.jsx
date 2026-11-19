@@ -1,4 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -6,8 +11,8 @@ function getCsrf() {
 
 const STATUS_CONFIG = {
     success: { label: 'OK',      icon: 'fas fa-check-circle',        badge: 'text-bg-success' },
-    warning: { label: 'Alerte',  icon: 'fas fa-exclamation-triangle', badge: 'text-bg-warning' },
-    danger:  { label: 'Rupture', icon: 'fas fa-times-circle',         badge: 'text-bg-danger'  },
+    warning: { get label() { return L.alert ?? 'Alerte'; },  icon: 'fas fa-exclamation-triangle', badge: 'text-bg-warning' },
+    danger:  { get label() { return L.shortage ?? 'Rupture'; }, icon: 'fas fa-times-circle',         badge: 'text-bg-danger'  },
 };
 
 function StatusBadge({ color }) {
@@ -29,12 +34,12 @@ function TaskBreakdown({ tasks, taskUrlBase }) {
                     <thead>
                         <tr>
                             <th style={{ width: '2rem' }} />
-                            <th>Tâche</th>
-                            <th>Commande</th>
-                            <th>Échéance</th>
-                            <th className="text-end">Demandé</th>
-                            <th className="text-end">Réservé</th>
-                            <th className="text-end">Manque</th>
+                            <th>{L.task ?? 'Tâche'}</th>
+                            <th>{L.order ?? 'Commande'}</th>
+                            <th>{L.due_date ?? 'Échéance'}</th>
+                            <th className="text-end">{L.requested ?? 'Demandé'}</th>
+                            <th className="text-end">{L.reserved ?? 'Réservé'}</th>
+                            <th className="text-end">{L.missing ?? 'Manque'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,7 +77,7 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
     const canExpand = product.purchased && product.reservation_breakdown.length > 0;
 
     async function createOrder() {
-        if (!confirm(`Créer une commande interne pour "${product.label}" (qté : ${product.qty_need}) ?`)) return;
+        if (!confirm(fmt(L.confirm_internal_order ?? 'Créer une commande interne pour ":label" (qté : :qty) ?', { label: product.label, qty: product.qty_need }))) return;
         setOrdering(true);
         setError(null);
         try {
@@ -86,7 +91,7 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                 body: JSON.stringify({ product_id: product.id, qty: product.qty_need }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error ?? 'Erreur serveur');
+            if (!res.ok) throw new Error(data.error ?? (L.server_error ?? 'Erreur serveur'));
             window.location.href = data.redirect_url;
         } catch (e) {
             setError(e.message);
@@ -99,7 +104,7 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
             <tr>
                 <td className="text-center align-middle" style={{ width: '2rem' }}>
                     {canExpand ? (
-                        <button className="btn btn-sm btn-link p-0" onClick={onToggle} title="Voir la répartition par tâche">
+                        <button className="btn btn-sm btn-link p-0" onClick={onToggle} title={L.view_task_breakdown ?? 'Voir la répartition par tâche'}>
                             <i className={`fas fa-chevron-${expanded ? 'down' : 'right'}`} />
                         </button>
                     ) : null}
@@ -115,19 +120,19 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                         <strong className={product.status_color === 'danger' ? 'text-danger' : ''}>{product.qty_need}</strong>
                     </span>
                     {(product.undelivered_qty > 0 || product.task_qty > 0) && (
-                        <div className="text-muted small">OF : {product.undelivered_qty} · Tâches : {product.task_qty}</div>
+                        <div className="text-muted small">{L.mo_colon ?? 'OF :'} {product.undelivered_qty} {L.tasks_colon ?? '· Tâches :'} {product.task_qty}</div>
                     )}
                 </td>
                 <td className="align-middle text-end">
                     {product.reserved_total > 0 ? (
                         <>
                             <div>
-                                <span className="badge text-bg-primary">Réservé {product.reserved_total}</span>
+                                <span className="badge text-bg-primary">{L.reserved ?? 'Réservé'} {product.reserved_total}</span>
                             </div>
                             <div className="text-muted small mt-1">
-                                Dispo <strong className={product.available_qty < 0 ? 'text-danger' : ''}>{product.available_qty}</strong>
+                                {L.available ?? 'Dispo'} <strong className={product.available_qty < 0 ? 'text-danger' : ''}>{product.available_qty}</strong>
                                 {product.missing_total > 0 && (
-                                    <> · <span className="text-danger">Manque {product.missing_total}</span></>
+                                    <> · <span className="text-danger">{L.missing ?? 'Manque'} {product.missing_total}</span></>
                                 )}
                             </div>
                         </>
@@ -143,7 +148,7 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                                 {product.locations.map((loc) => (
                                     <a key={loc.id} href={loc.url}
                                        className={`btn btn-sm btn-${loc.color}`}
-                                       title={`Qté : ${loc.current_stock} (min : ${loc.mini_qty})`}>
+                                       title={fmt(L.qty_min_title ?? 'Qté : :qty (min : :min)', { qty: loc.current_stock, min: loc.mini_qty })}>
                                         {loc.code}
                                         <span className="ms-1 badge text-bg-light text-dark">{loc.current_stock}</span>
                                     </a>
@@ -152,12 +157,12 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
                         )}
                 </td>
                 <td className="align-middle text-center">
-                    <a href={product.product_url} className="btn btn-sm btn-info me-1" title="Voir le produit">
+                    <a href={product.product_url} className="btn btn-sm btn-info me-1" title={L.view_product ?? 'Voir le produit'}>
                         <i className="fas fa-eye" />
                     </a>
                     {product.qty_need > 0 && (
                         <button className="btn btn-sm btn-primary" onClick={createOrder} disabled={ordering}
-                                title="Créer une commande interne">
+                                title={L.create_internal_order ?? 'Créer une commande interne'}>
                             <i className={`fas ${ordering ? 'fa-spinner fa-spin' : 'fa-folder-plus'}`} />
                         </button>
                     )}
@@ -169,7 +174,8 @@ function ProductRow({ product, expanded, onToggle, endpoints }) {
     );
 }
 
-export default function StockShortagesApp() {
+export default function StockShortagesApp({ trans = {} } = {}) {
+    L = trans?.ui ?? {};
     const [data, setData]       = useState(null);
     const [error, setError]     = useState(null);
     const [expanded, setExpanded] = useState({});
@@ -200,8 +206,8 @@ export default function StockShortagesApp() {
         });
     }, [data, statusFilter, typeFilter, search]);
 
-    if (error)  return <div className="alert alert-danger">Erreur : {error}</div>;
-    if (!data)  return <div className="text-muted"><i className="fas fa-spinner fa-spin me-1" /> Chargement...</div>;
+    if (error)  return <div className="alert alert-danger">{L.error_colon ?? 'Erreur :'} {error}</div>;
+    if (!data)  return <div className="text-muted"><i className="fas fa-spinner fa-spin me-1" /> {L.loading_dots ?? 'Chargement...'}</div>;
 
     const t = data.totals;
 
@@ -210,19 +216,19 @@ export default function StockShortagesApp() {
             <div className="row mb-3">
                 <div className="col-md-3">
                     <div className="small-box text-bg-success">
-                        <div className="inner"><h4>{t.ok_count}</h4><p>Stock OK</p></div>
+                        <div className="inner"><h4>{t.ok_count}</h4><p>{L.stock_ok ?? 'Stock OK'}</p></div>
                         <i className="small-box-icon fas fa-check-circle" aria-hidden="true" />
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="small-box text-bg-warning">
-                        <div className="inner"><h4>{t.warning_count}</h4><p>Seuil / alerte</p></div>
+                        <div className="inner"><h4>{t.warning_count}</h4><p>{L.threshold_alert ?? 'Seuil / alerte'}</p></div>
                         <i className="small-box-icon fas fa-exclamation-triangle" aria-hidden="true" />
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="small-box text-bg-danger">
-                        <div className="inner"><h4>{t.danger_count}</h4><p>Rupture</p></div>
+                        <div className="inner"><h4>{t.danger_count}</h4><p>{L.shortage ?? 'Rupture'}</p></div>
                         <i className="small-box-icon fas fa-times-circle" aria-hidden="true" />
                     </div>
                 </div>
@@ -230,7 +236,7 @@ export default function StockShortagesApp() {
                     <div className="small-box text-bg-info">
                         <div className="inner">
                             <h4>{t.missing_qty}</h4>
-                            <p>Qté manquante ({t.shortage_tasks} tâches)</p>
+                            <p>{L.missing_qty_open ?? 'Qté manquante ('}{t.shortage_tasks} {L.tasks_close ?? 'tâches)'}</p>
                         </div>
                         <i className="small-box-icon fas fa-tasks" aria-hidden="true" />
                     </div>
@@ -245,25 +251,25 @@ export default function StockShortagesApp() {
                                 <button key={s} type="button"
                                         className={`btn ${statusFilter === s ? 'btn-primary' : 'btn-outline-primary'}`}
                                         onClick={() => setStatusFilter(s)}>
-                                    {s === 'all' ? 'Tous' : STATUS_CONFIG[s].label}
+                                    {s === 'all' ? (L.all ?? 'Tous') : STATUS_CONFIG[s].label}
                                 </button>
                             ))}
                         </div>
                         <div className="btn-group btn-group-sm" role="group">
                             <button type="button"
                                     className={`btn ${typeFilter === 'all' ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                                    onClick={() => setTypeFilter('all')}>Tous produits</button>
+                                    onClick={() => setTypeFilter('all')}>{L.all_products ?? 'Tous produits'}</button>
                             <button type="button"
                                     className={`btn ${typeFilter === 'purchased' ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                                    onClick={() => setTypeFilter('purchased')}>Achetés</button>
+                                    onClick={() => setTypeFilter('purchased')}>{L.purchased ?? 'Achetés'}</button>
                             <button type="button"
                                     className={`btn ${typeFilter === 'manufactured' ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                                    onClick={() => setTypeFilter('manufactured')}>Fabriqués</button>
+                                    onClick={() => setTypeFilter('manufactured')}>{L.manufactured ?? 'Fabriqués'}</button>
                         </div>
-                        <input type="search" className="form-control form-control-sm" placeholder="Recherche..."
+                        <input type="search" className="form-control form-control-sm" placeholder={L.search_dots ?? 'Recherche...'}
                                value={search} onChange={(e) => setSearch(e.target.value)}
                                style={{ maxWidth: '220px' }} />
-                        <span className="text-muted small ms-auto">{filtered.length} / {t.total_products} produits</span>
+                        <span className="text-muted small ms-auto">{filtered.length} / {t.total_products} {L.products_lower ?? 'produits'}</span>
                     </div>
                 </div>
                 <div className="card-body p-0 table-responsive">
@@ -271,17 +277,17 @@ export default function StockShortagesApp() {
                         <thead>
                             <tr>
                                 <th style={{ width: '2rem' }} />
-                                <th>Produit</th>
-                                <th className="text-center">Statut</th>
-                                <th>Stock / Besoin</th>
-                                <th className="text-end">Réservé / Dispo</th>
-                                <th>Emplacements</th>
-                                <th className="text-center">Actions</th>
+                                <th>{L.product ?? 'Produit'}</th>
+                                <th className="text-center">{L.status ?? 'Statut'}</th>
+                                <th>{L.stock_need ?? 'Stock / Besoin'}</th>
+                                <th className="text-end">{L.reserved_available ?? 'Réservé / Dispo'}</th>
+                                <th>{L.locations ?? 'Emplacements'}</th>
+                                <th className="text-center">{L.actions ?? 'Actions'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtered.length === 0
-                                ? <tr><td colSpan={7} className="text-center text-muted py-3">Aucun produit ne correspond au filtre.</td></tr>
+                                ? <tr><td colSpan={7} className="text-center text-muted py-3">{L.no_product_match ?? 'Aucun produit ne correspond au filtre.'}</td></tr>
                                 : filtered.map((p) => (
                                     <ProductRow key={p.id} product={p} endpoints={data.endpoints}
                                                 expanded={!!expanded[p.id]}

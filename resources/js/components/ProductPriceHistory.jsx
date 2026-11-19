@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     try {
@@ -21,7 +25,7 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
                 <h6 style={{ color }} className="mb-2">
                     <i className={`${icon} me-1`} /> {title}
                 </h6>
-                <p className="text-muted small">Aucun historique.</p>
+                <p className="text-muted small">{L.no_history ?? 'Aucun historique.'}</p>
             </div>
         );
     }
@@ -35,11 +39,11 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
                 <table className="table table-sm table-hover">
                     <thead>
                         <tr>
-                            <th>Début</th>
-                            <th>Fin</th>
-                            <th>Prix</th>
-                            <th>Durée</th>
-                            <th>Par</th>
+                            <th>{L.start ?? 'Début'}</th>
+                            <th>{L.end ?? 'Fin'}</th>
+                            <th>{L.price ?? 'Prix'}</th>
+                            <th>{L.duration ?? 'Durée'}</th>
+                            <th>{L.by ?? 'Par'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +61,7 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
                                     <td>{formatDate(row.started_at)}</td>
                                     <td>
                                         {isCurrent
-                                            ? <span className="badge text-bg-success">En cours</span>
+                                            ? <span className="badge text-bg-success">{L.in_progress ?? 'En cours'}</span>
                                             : formatDate(row.ended_at)}
                                     </td>
                                     <td>{formatPrice(row.price, currency)}</td>
@@ -73,7 +77,8 @@ function PriceTable({ title, icon, color, rows, currency, sectionKey }) {
     );
 }
 
-export default function ProductPriceHistory({ endpoint, currency = '€', canPurchases = true }) {
+export default function ProductPriceHistory({ endpoint, currency = '€', canPurchases = true, trans = {} }) {
+    L = trans?.ui ?? {};
     const [data,    setData]    = useState(null);
     const [loading, setLoading] = useState(true);
     const [error,   setError]   = useState(null);
@@ -87,7 +92,7 @@ export default function ProductPriceHistory({ endpoint, currency = '€', canPur
 
     if (loading) return (
         <div className="text-center text-muted py-4">
-            <i className="fas fa-spinner fa-spin me-2" /> Chargement…
+            <i className="fas fa-spinner fa-spin me-2" /> {L.loading ?? 'Chargement…'}
         </div>
     );
 
@@ -97,7 +102,7 @@ export default function ProductPriceHistory({ endpoint, currency = '€', canPur
         <div>
             {canPurchases && (
                 <PriceTable
-                    title="Prix d'achat"
+                    title={L.purchase_price ?? 'Prix d\'achat'}
                     icon="fas fa-cart-arrow-down"
                     color="#6f42c1"
                     rows={data?.purchase ?? []}
@@ -106,7 +111,7 @@ export default function ProductPriceHistory({ endpoint, currency = '€', canPur
                 />
             )}
             <PriceTable
-                title="Prix de vente"
+                title={L.selling_price ?? 'Prix de vente'}
                 icon="fas fa-tag"
                 color="#28a745"
                 rows={data?.sale ?? []}

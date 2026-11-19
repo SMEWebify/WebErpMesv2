@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import GuideHelp from './GuideHelp';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -142,14 +147,14 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
             <div className="card-header py-2">
                 <h3 className="card-title">
                     <i className="fas fa-file-invoice me-2 text-muted" />
-                    Document reçu — {incoming.seller_name}
+                    {L.received_document ?? 'Document reçu —'} {incoming.seller_name}
                     {incoming.invoice_number && <span className="ms-2 text-muted">n° {incoming.invoice_number}</span>}
                     <GuideHelp guide="achats" section="les-factures-electroniques-recues" />
                 </h3>
                 {incoming.issue_date && (
                     <span className="float-end text-muted small">
-                        Émise le {incoming.issue_date}
-                        {incoming.due_date && ` — échéance ${incoming.due_date}`}
+                        {L.issued_on ?? 'Émise le'} {incoming.issue_date}
+                        {incoming.due_date && fmt(L.due_on ?? ' — échéance :date', { date: incoming.due_date })}
                     </span>
                 )}
             </div>
@@ -158,14 +163,14 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
                     <table className="table table-sm mb-2">
                         <thead>
                             <tr>
-                                <th>Ce que le fournisseur facture</th>
-                                <th className="text-end" style={{ width: 140 }}>Quantité</th>
-                                <th className="text-end" style={{ width: 140 }}>Total HT</th>
+                                <th>{L.supplier_invoices_what ?? 'Ce que le fournisseur facture'}</th>
+                                <th className="text-end" style={{ width: 140 }}>{L.quantity ?? 'Quantité'}</th>
+                                <th className="text-end" style={{ width: 140 }}>{L.total_ht ?? 'Total HT'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {incoming.lines.length === 0 && (
-                                <tr><td colSpan={3} className="text-muted">Aucune ligne dans le document.</td></tr>
+                                <tr><td colSpan={3} className="text-muted">{L.no_line_document ?? 'Aucune ligne dans le document.'}</td></tr>
                             )}
                             {incoming.lines.map((line, i) => (
                                 <tr key={i}>
@@ -177,11 +182,11 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colSpan={2} className="text-end">Total facturé HT</th>
+                                <th colSpan={2} className="text-end">{L.total_invoiced_ht ?? 'Total facturé HT'}</th>
                                 <th className="text-end">{money(incoming.total_ht)}</th>
                             </tr>
                             <tr className="text-muted">
-                                <td colSpan={2} className="text-end">TVA / TTC</td>
+                                <td colSpan={2} className="text-end">{L.vat_ttc ?? 'TVA / TTC'}</td>
                                 <td className="text-end">{money(incoming.total_vat)} / {money(incoming.total_ttc)}</td>
                             </tr>
                         </tfoot>
@@ -190,10 +195,10 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
 
                 <div className={`alert py-2 mb-0 ${matched ? 'alert-success' : 'alert-warning'}`}>
                     <i className={`fas ${matched ? 'fa-check' : 'fa-balance-scale-right'} me-2`} />
-                    Réceptions sélectionnées : <strong>{money(selectedTotal)}</strong>
+                    {L.selected_receipts ?? 'Réceptions sélectionnées :'} <strong>{money(selectedTotal)}</strong>
                     {matched
-                        ? ' — le total correspond au document reçu.'
-                        : <> — écart de <strong>{money(gap)}</strong> avec le document reçu.</>}
+                        ? (L.total_matches ?? ' — le total correspond au document reçu.')
+                        : <> {L.gap_of ?? '— écart de'} <strong>{money(gap)}</strong> {L.with_received_document ?? 'avec le document reçu.'}</>}
                 </div>
             </div>
         </div>
@@ -201,6 +206,7 @@ function IncomingDocumentPanel({ incoming, selectedTotal, money }) {
 }
 
 export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode }) {
+    L = trans?.ui ?? {};
     const [companies, setCompanies]         = useState([]);
     const [users, setUsers]                 = useState([]);
     const [lines, setLines]                 = useState([]);
@@ -374,7 +380,7 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                         {/* Numéro de la facture du fournisseur : unique par tiers,
                             c'est lui qui rattache notre écriture à son document. */}
                         <div className="mb-3 col-md-3">
-                            <label>Référence fournisseur</label>
+                            <label>{L.supplier_reference ?? 'Référence fournisseur'}</label>
                             <div className="input-group">
                                 <span className="input-group-text"><i className="fas fa-hashtag" /></span>
                                 <input
@@ -382,7 +388,7 @@ export default function PurchasesWaitingInvoice({ endpoints, trans, initialCode 
                                     className={`form-control ${errors.supplier_reference ? 'is-invalid' : ''}`}
                                     value={supplierReference}
                                     onChange={e => setSupplierReference(e.target.value)}
-                                    placeholder="N° de facture du fournisseur"
+                                    placeholder={L.supplier_invoice_number ?? 'N° de facture du fournisseur'}
                                 />
                             </div>
                             {errors.supplier_reference && (

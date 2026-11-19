@@ -15,6 +15,18 @@ import GuideHelp from './GuideHelp';
 import RewriteButton from './ai/RewriteButton.jsx';
 import QuoteDictationModal from './quotes/QuoteDictationModal.jsx';
 import DpgfImportModal from './quotes/DpgfImportModal.jsx';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/sales_lines.php), posés par QuoteLinesPage
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
+/** « 1 ligne » / « 3 lignes » */
+function nLines(count, one = 'lines_count_one', many = 'lines_count_many') {
+    const fallback = { lines_count_one: ':count ligne', lines_count_many: ':count lignes', lines_imported_one: ':count ligne importée', lines_imported_many: ':count lignes importées', lines_imported_cad_one: ':count ligne importée depuis un fichier CAO', lines_imported_cad_many: ':count lignes importées depuis un fichier CAO' };
+    const key = count > 1 ? many : one;
+    return fmt(L[key] ?? fallback[key], { count });
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -64,14 +76,14 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
                 <div className="card-header py-2">
                     <h6 className="card-title mb-0">
                         <i className="fas fa-tag me-1 text-info" />
-                        Grille tarifaire client
+                        {L.price_grid_title ?? 'Grille tarifaire client'}
                     </h6>
                 </div>
                 <div className="card-body p-0">
                     <table className="table table-sm table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>Source</th><th>Qté min</th><th>Qté max</th><th>Prix</th><th />
+                                <th>{L.source ?? 'Source'}</th><th>{L.qty_min ?? 'Qté min'}</th><th>{L.qty_max ?? 'Qté max'}</th><th>{L.price ?? 'Prix'}</th><th />
                             </tr>
                         </thead>
                         <tbody>
@@ -87,7 +99,7 @@ function PriceGrid({ priceList, currentQty, onApplyPrice }) {
                                             className="btn btn-sm btn-outline-primary"
                                             onClick={() => onApplyPrice(e.price)}
                                         >
-                                            Appliquer
+                                            {L.apply ?? 'Appliquer'}
                                         </button>
                                     </td>
                                 </tr>
@@ -158,7 +170,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
                     style={{ background: '#ffc107', borderRadius: '6px 6px 0 0' }}>
                     <strong className="text-dark">
                         <i className="fas fa-list me-2" />
-                        Tâches — {lineLabel}
+                        {L.tasks_dash ?? 'Tâches —'} {lineLabel}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-dark" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -169,22 +181,22 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
                 <div className="flex-grow-1 overflow-auto p-3">
                     {tasks === null ? (
                         <div className="text-center py-4">
-                            <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                            <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
                         </div>
                     ) : tasks.length === 0 ? (
-                        <p className="text-muted text-center py-4">Aucune tâche pour cette ligne.</p>
+                        <p className="text-muted text-center py-4">{L.no_task ?? 'Aucune tâche pour cette ligne.'}</p>
                     ) : (
                         <table className="table table-hover table-sm mb-0">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Ordre</th>
-                                    <th>Libellé</th>
-                                    <th>Service</th>
-                                    <th className="text-end">Temps</th>
-                                    <th className="text-end">Qté</th>
-                                    <th className="text-end">Coût</th>
-                                    <th className="text-end">Marge</th>
-                                    <th className="text-end">Prix</th>
+                                    <th>{L.order ?? 'Ordre'}</th>
+                                    <th>{L.label ?? 'Libellé'}</th>
+                                    <th>{L.service ?? 'Service'}</th>
+                                    <th className="text-end">{L.time ?? 'Temps'}</th>
+                                    <th className="text-end">{L.qty ?? 'Qté'}</th>
+                                    <th className="text-end">{L.cost ?? 'Coût'}</th>
+                                    <th className="text-end">{L.margin ?? 'Marge'}</th>
+                                    <th className="text-end">{L.price ?? 'Prix'}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -210,7 +222,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
                 {/* Footer */}
                 <div className="border-top px-3 py-2 d-flex align-items-center justify-content-between flex-wrap" style={{ gap: '0.5rem' }}>
                     <a href={taskUrl} className="btn btn-sm btn-info">
-                        <i className="fas fa-folder me-1" />Gérer les tâches
+                        <i className="fas fa-folder me-1" />{L.manage_tasks ?? 'Gérer les tâches'}
                     </a>
                     {quoteStatu === 1 && (
                         <button
@@ -222,7 +234,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
                             {toggling
                                 ? <i className="fas fa-spinner fa-spin me-1" />
                                 : <i className={`fas ${calcPrice ? 'fa-toggle-on' : 'fa-toggle-off'} me-1`} />}
-                            {calcPrice ? 'Désactiver prix calculé' : 'Activer prix calculé'}
+                            {calcPrice ? (L.calc_price_disable ?? 'Désactiver prix calculé') : (L.calc_price_enable ?? 'Activer prix calculé')}
                         </button>
                     )}
                 </div>
@@ -348,7 +360,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         try {
             const res  = await apiFetch(url, { method: isEdit ? 'PUT' : 'POST', body: JSON.stringify({ ...form, equipment_tag: parseTags(form.equipment_tag) }) });
             const data = await res.json();
-            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
+            if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? (L.error ?? 'Erreur') }); return; }
             onSaved(data.line, isEdit);
             if (isEdit) {
                 onClose();
@@ -356,7 +368,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 resetFormForCreate((data.line.ordre ?? form.ordre) + 1);
             }
         } catch {
-            setErrors({ _global: 'Erreur réseau' });
+            setErrors({ _global: (L.network_error ?? 'Erreur réseau') });
         } finally {
             setSaving(false);
         }
@@ -401,7 +413,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         gap: 8,
                         zIndex: 1049,
                     }}
-                    title="Ajouter une ligne"
+                    title={L.add_line ?? 'Ajouter une ligne'}
                 >
                     <i className="fas fa-plus" style={{ fontSize: 14 }} />
                     <span style={{
@@ -411,7 +423,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         fontWeight: 700,
                         letterSpacing: 1,
                         textTransform: 'uppercase',
-                    }}>Ajouter</span>
+                    }}>{L.add ?? 'Ajouter'}</span>
                 </button>
             )}
 
@@ -430,8 +442,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                 <div className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-body-tertiary">
                     <strong>
                         {editingLine
-                            ? <><i className="fas fa-edit me-2 text-warning" />Modifier la ligne</>
-                            : <><i className="fas fa-plus-circle me-2 text-success" />Nouvelle ligne</>}
+                            ? <><i className="fas fa-edit me-2 text-warning" />{L.edit_line ?? 'Modifier la ligne'}</>
+                            : <><i className="fas fa-plus-circle me-2 text-success" />{L.new_line ?? 'Nouvelle ligne'}</>}
                     </strong>
                     <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                         <i className="fas fa-times" />
@@ -446,13 +458,13 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Product */}
                         <div className="mb-3 mb-2 position-relative">
-                            <label className="mb-1 small fw-bold">Produit</label>
+                            <label className="mb-1 small fw-bold">{L.product ?? 'Produit'}</label>
                             <div className="input-group input-group-sm">
                                 <span className="input-group-text"><i className="fas fa-barcode" /></span>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder="Rechercher un produit…"
+                                    placeholder={L.search_product ?? 'Rechercher un produit…'}
                                     value={productSearch}
                                     onChange={(e) => { setProductSearch(e.target.value); setShowProductList(true); if (!e.target.value) handleProductClear(); }}
                                     onFocus={() => setShowProductList(true)}
@@ -489,22 +501,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Code + Ordre */}
                         <div className="row gx-2">
                             <div className="mb-3 col-5 mb-2">
-                                <label className="mb-1 small fw-bold">Réf. externe</label>
+                                <label className="mb-1 small fw-bold">{L.external_ref ?? 'Réf. externe'}</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-external-link-square-alt" /></span>
                                     <input type="text" className={`form-control ${errors.code ? 'is-invalid' : ''}`}
-                                        placeholder="Code externe" value={form.code}
+                                        placeholder={L.external_code ?? 'Code externe'} value={form.code}
                                         onChange={(e) => set('code', e.target.value)} disabled={isReadOnly} />
                                 </div>
                             </div>
                             <div className="mb-3 col-3 mb-2">
-                                <label className="mb-1 small fw-bold">Ind. plan</label>
+                                <label className="mb-1 small fw-bold">{L.drawing_index ?? 'Ind. plan'}</label>
                                 <input type="text" className={`form-control form-control-sm ${errors.ind ? 'is-invalid' : ''}`}
                                     maxLength={50} placeholder="A, B…" value={form.ind ?? ''}
                                     onChange={(e) => set('ind', e.target.value)} disabled={isReadOnly} />
                             </div>
                             <div className="mb-3 col-4 mb-2">
-                                <label className="mb-1 small fw-bold">Ordre</label>
+                                <label className="mb-1 small fw-bold">{L.order ?? 'Ordre'}</label>
                                 <input type="number" className={`form-control form-control-sm ${errors.ordre ? 'is-invalid' : ''}`}
                                     min="1" value={form.ordre}
                                     onChange={(e) => set('ordre', e.target.value)} disabled={isReadOnly} />
@@ -513,11 +525,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
                         {/* Label */}
                         <div className="mb-3 mb-2">
-                            <label className="mb-1 small fw-bold">Description <span className="text-danger">*</span></label>
+                            <label className="mb-1 small fw-bold">{L.description ?? 'Description'} <span className="text-danger">*</span></label>
                             <div className="input-group input-group-sm">
                                 <span className="input-group-text"><i className="fas fa-tags" /></span>
                                 <input type="text" className={`form-control ${errors.label ? 'is-invalid' : ''}`}
-                                    placeholder="Description de la ligne" value={form.label}
+                                    placeholder={L.line_description ?? 'Description de la ligne'} value={form.label}
                                     onChange={(e) => set('label', e.target.value)} disabled={isReadOnly} />
                             </div>
                             {errors.label && <div className="invalid-feedback d-block">{errors.label[0]}</div>}
@@ -535,7 +547,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Qty + Unit */}
                         <div className="row gx-2">
                             <div className="mb-3 col-5 mb-2">
-                                <label className="mb-1 small fw-bold">Quantité <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.quantity ?? 'Quantité'} <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-times" /></span>
                                     <input type="number" className={`form-control ${errors.qty ? 'is-invalid' : ''}`}
@@ -545,10 +557,10 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                 {errors.qty && <div className="invalid-feedback d-block">{errors.qty[0]}</div>}
                             </div>
                             <div className="mb-3 col-7 mb-2">
-                                <label className="mb-1 small fw-bold">Unité</label>
+                                <label className="mb-1 small fw-bold">{L.unit ?? 'Unité'}</label>
                                 <select className="form-select form-select-sm" value={form.methods_units_id}
                                     onChange={(e) => set('methods_units_id', e.target.value)} disabled={isReadOnly}>
-                                    <option value="">— Unité —</option>
+                                    <option value="">{L.unit_placeholder ?? '— Unité —'}</option>
                                     {(selectData.units ?? []).map((u) => (
                                         <option key={u.id} value={u.id}>{u.code} - {u.label}</option>
                                     ))}
@@ -559,7 +571,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Price + Discount */}
                         <div className="row gx-2">
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Prix unitaire <span className="text-danger">*</span></label>
+                                <label className="mb-1 small fw-bold">{L.unit_price ?? 'Prix unitaire'} <span className="text-danger">*</span></label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text">{selectData.currency ?? '€'}</span>
                                     <input type="number" className={`form-control ${errors.selling_price ? 'is-invalid' : ''}`}
@@ -569,7 +581,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                                 {errors.selling_price && <div className="invalid-feedback d-block">{errors.selling_price[0]}</div>}
                             </div>
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Remise %</label>
+                                <label className="mb-1 small fw-bold">{L.discount_pct ?? 'Remise %'}</label>
                                 <div className="input-group input-group-sm">
                                     <span className="input-group-text"><i className="fas fa-percentage" /></span>
                                     <input type="number" className={`form-control ${errors.discount ? 'is-invalid' : ''}`}
@@ -582,17 +594,17 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* VAT + Delivery */}
                         <div className="row gx-2">
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">TVA</label>
+                                <label className="mb-1 small fw-bold">{L.vat ?? 'TVA'}</label>
                                 <select className="form-select form-select-sm" value={form.accounting_vats_id}
                                     onChange={(e) => set('accounting_vats_id', e.target.value)} disabled={isReadOnly}>
-                                    <option value="">— TVA —</option>
+                                    <option value="">{L.vat_placeholder ?? '— TVA —'}</option>
                                     {(selectData.vats ?? []).map((v) => (
                                         <option key={v.id} value={v.id}>{v.label}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="mb-3 col-6 mb-2">
-                                <label className="mb-1 small fw-bold">Date livraison</label>
+                                <label className="mb-1 small fw-bold">{L.delivery_date ?? 'Date livraison'}</label>
                                 <input type="date" className="form-control form-control-sm" value={form.delivery_date}
                                     onChange={(e) => set('delivery_date', e.target.value)} disabled={isReadOnly} />
                             </div>
@@ -601,11 +613,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         {/* Statut (edit only) */}
                         {editingLine && (
                             <div className="mb-3 mb-2">
-                                <label className="mb-1 small fw-bold">Statut</label>
+                                <label className="mb-1 small fw-bold">{L.status ?? 'Statut'}</label>
                                 <select className="form-select form-select-sm" value={form.statu}
                                     onChange={(e) => set('statu', Number(e.target.value))} disabled={isReadOnly}>
                                     {Object.entries(STATUS_CONFIG).map(([id, cfg]) => (
-                                        <option key={id} value={id}>{cfg.label}</option>
+                                        <option key={id} value={id}>{L[`quote_status_${id}`] ?? cfg.label}</option>
                                     ))}
                                 </select>
                             </div>
@@ -621,22 +633,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                     {editingLine?.detail_url ? (
                         <a href={editingLine.detail_url} className="btn btn-sm btn-outline-info"
                             target="_blank" rel="noreferrer">
-                            <i className="fas fa-info-circle me-1" />Détails techniques
+                            <i className="fas fa-info-circle me-1" />{L.technical_details ?? 'Détails techniques'}
                         </a>
                     ) : <span />}
                     <div>
                         <button type="button" className="btn btn-sm btn-outline-secondary me-2" onClick={onClose}>
-                            Annuler
+                            {L.cancel ?? 'Annuler'}
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="line-drawer-form" className="btn btn-sm btn-success" disabled={saving}>
                                 {editingLine
                                     ? saving
-                                        ? <><i className="fas fa-spinner fa-spin me-1" />Enregistrement…</>
-                                        : <><i className="fas fa-save me-1" />Enregistrer</>
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Enregistrement…'}</>
+                                        : <><i className="fas fa-save me-1" />{L.save ?? 'Enregistrer'}</>
                                     : saving
-                                        ? <><i className="fas fa-spinner fa-spin me-1" />Ajout…</>
-                                        : <><i className="fas fa-plus me-1" />Ajouter</>}
+                                        ? <><i className="fas fa-spinner fa-spin me-1" />{L.adding ?? 'Ajout…'}</>
+                                        : <><i className="fas fa-plus me-1" />{L.add ?? 'Ajouter'}</>}
                             </button>
                         )}
                     </div>
@@ -652,8 +664,8 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 
 const PRESENTATION_LABELS = {
     [LINE_TYPES.SECTION]:  'Section',
-    [LINE_TYPES.SUBTOTAL]: 'Sous-total',
-    [LINE_TYPES.TEXT]:     'Texte',
+    get [LINE_TYPES.SUBTOTAL]() { return L.subtotal ?? 'Sous-total'; },
+    get [LINE_TYPES.TEXT]() { return L.text ?? 'Texte'; },
 };
 
 function PresentationRow({
@@ -685,16 +697,16 @@ function PresentationRow({
         background: type === LINE_TYPES.SECTION ? '#e9ecef' : type === LINE_TYPES.SUBTOTAL ? '#f8f9fa' : undefined,
     };
 
-    const subtotalLabel = line.label || (sectionLabel ? `Sous-total ${sectionLabel}` : 'Sous-total');
+    const subtotalLabel = line.label || (sectionLabel ? fmt(L.subtotal_of ?? 'Sous-total :section', { section: sectionLabel }) : (L.subtotal ?? 'Sous-total'));
 
     const editor = type === LINE_TYPES.TEXT ? (
         <textarea className="form-control form-control-sm" rows={2} maxLength={255} autoFocus
             value={label} onChange={(e) => setLabel(e.target.value)} onKeyDown={onKeyDown}
-            placeholder="Texte imprimé sur le devis (Ctrl+Entrée pour valider)" />
+            placeholder={L.text_placeholder ?? 'Texte imprimé sur le devis (Ctrl+Entrée pour valider)'} />
     ) : (
         <input type="text" className="form-control form-control-sm" maxLength={255} autoFocus
             value={label} onChange={(e) => setLabel(e.target.value)} onKeyDown={onKeyDown}
-            placeholder={type === LINE_TYPES.SUBTOTAL ? subtotalLabel : 'Titre de la section'} />
+            placeholder={type === LINE_TYPES.SUBTOTAL ? subtotalLabel : (L.section_title ?? 'Titre de la section')} />
     );
 
     return (
@@ -713,15 +725,15 @@ function PresentationRow({
             </td>
             <td colSpan={11 + extraColumns}>
                 <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
-                    <span className="badge text-bg-light border" title={PRESENTATION_LABELS[type]}>
+                    <span className="badge text-bg-light border" title={L[`type_${type}`] ?? PRESENTATION_LABELS[type]}>
                         <i className={`fas fa-fw ${type === LINE_TYPES.SECTION ? 'fa-heading' : type === LINE_TYPES.SUBTOTAL ? 'fa-equals' : 'fa-paragraph'}`} />
                     </span>
 
                     {editing ? (
                         <div className="flex-grow-1 d-flex" style={{ gap: '0.25rem' }}>
                             {editor}
-                            <button type="button" className="btn btn-sm btn-success" onClick={save} title="Enregistrer"><i className="fas fa-check" /></button>
-                            <button type="button" className="btn btn-sm btn-outline-secondary" title="Annuler"
+                            <button type="button" className="btn btn-sm btn-success" onClick={save} title={L.save ?? 'Enregistrer'}><i className="fas fa-check" /></button>
+                            <button type="button" className="btn btn-sm btn-outline-secondary" title={L.cancel ?? 'Annuler'}
                                 onClick={() => { setLabel(line.label ?? ''); setEditing(false); }}><i className="fas fa-times" /></button>
                         </div>
                     ) : type === LINE_TYPES.SECTION ? (
@@ -729,9 +741,9 @@ function PresentationRow({
                             <strong className="text-uppercase">{line.label}</strong>
                             {info?.empty && (
                                 <span className="badge text-bg-warning ms-2"
-                                    title="Une section regroupe les lignes placées en dessous d'elle, jusqu'à la section suivante">
+                                    title={L.section_help ?? 'Une section regroupe les lignes placées en dessous d\'elle, jusqu\'à la section suivante'}>
                                     <i className="fas fa-exclamation-triangle me-1" />
-                                    Section vide : placez-la au-dessus de ses lignes
+                                    {L.section_empty ?? 'Section vide : placez-la au-dessus de ses lignes'}
                                 </span>
                             )}
                         </span>
@@ -745,21 +757,21 @@ function PresentationRow({
                         <>
                             <select className="form-select form-select-sm" style={{ width: 'auto' }}
                                 value={Number(line.pdf_package ?? 0)} disabled={!editable}
-                                title="Impression de la section sur le devis"
+                                title={L.section_print ?? 'Impression de la section sur le devis'}
                                 onChange={(e) => onPresentation(line, { pdf_package: Number(e.target.value) })}>
-                                <option value={PACKAGE.NONE}>Détail imprimé</option>
-                                <option value={PACKAGE.AMOUNT}>Forfait : montant seul</option>
-                                <option value={PACKAGE.UNIT}>Forfait : 1 × unité</option>
+                                <option value={PACKAGE.NONE}>{L.package_none ?? 'Détail imprimé'}</option>
+                                <option value={PACKAGE.AMOUNT}>{L.package_amount ?? 'Forfait : montant seul'}</option>
+                                <option value={PACKAGE.UNIT}>{L.package_unit ?? 'Forfait : 1 × unité'}</option>
                             </select>
                             {Number(line.pdf_package) === PACKAGE.UNIT && (
                                 <select className="form-select form-select-sm" style={{ width: 'auto' }}
                                     value={line.methods_units_id ?? ''} disabled={!editable}
-                                    title="Unité imprimée — créez une unité « Forfait » dans Méthodes > Unités si besoin"
+                                    title={L.package_unit_help ?? 'Unité imprimée — créez une unité « Forfait » dans Méthodes > Unités si besoin'}
                                     onChange={(e) => onPresentation(line, { methods_units_id: Number(e.target.value) })}>
                                     {(units ?? []).map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
                                 </select>
                             )}
-                            <span className="fw-bold text-nowrap" title="Total HT de la section, lignes masquées comprises">
+                            <span className="fw-bold text-nowrap" title={L.section_total_help ?? 'Total HT de la section, lignes masquées comprises'}>
                                 {money(info?.amount)}
                             </span>
                         </>
@@ -767,7 +779,7 @@ function PresentationRow({
 
                     {type === LINE_TYPES.SUBTOTAL && (
                         <span className={`fw-bold text-nowrap ${info?.inPackage ? 'text-muted' : ''}`}
-                            title={info?.inPackage ? 'Non imprimé : la section est au forfait' : 'Calculé, jamais saisi'}>
+                            title={info?.inPackage ? (L.subtotal_in_package ?? 'Non imprimé : la section est au forfait') : (L.subtotal_computed ?? 'Calculé, jamais saisi')}>
                             {money(info?.amount)}
                         </span>
                     )}
@@ -776,10 +788,10 @@ function PresentationRow({
             <td>
                 {editable && !editing && (
                     <div className="btn-group btn-group-xs">
-                        <button type="button" className="btn btn-sm btn-outline-secondary" title="Modifier le libellé" onClick={() => setEditing(true)}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" title={L.edit_label ?? 'Modifier le libellé'} onClick={() => setEditing(true)}>
                             <i className="fas fa-edit text-warning" />
                         </button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" title="Supprimer" onClick={() => onDelete(line.id)}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" title={L.delete ?? 'Supprimer'} onClick={() => onDelete(line.id)}>
                             <i className="fas fa-trash text-danger" />
                         </button>
                     </div>
@@ -825,7 +837,8 @@ function LineRow({
         setMenuOpen((v) => !v);
     };
 
-    const cfg      = STATUS_CONFIG[line.statu] ?? { badge: 'text-bg-secondary', label: '—' };
+    const statusCfg = STATUS_CONFIG[line.statu];
+    const cfg      = statusCfg ? { ...statusCfg, label: L[`quote_status_${line.statu}`] ?? statusCfg.label } : { badge: 'text-bg-secondary', label: '—' };
     const level    = marginLevel(line.margin, marginThreshold);
     const money    = (v) => Number(v ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: currency || 'EUR' });
     const marginTitle = level === 'none'
@@ -887,7 +900,7 @@ function LineRow({
             </td>
 
             {/* Code */}
-            <td className="small">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title="Indice du plan">ind. {line.ind}</span> : null}</td>
+            <td className="small">{line.code || '—'}{line.ind ? <span className="badge text-bg-light ms-1" title={L.drawing_index_title ?? 'Indice du plan'}>{L.ind_short ?? 'ind.'} {line.ind}</span> : null}</td>
 
             {/* Product link */}
             <td style={{ width: 36 }}>
@@ -899,7 +912,7 @@ function LineRow({
             {/* Label */}
             <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {line.hide_on_pdf && (
-                    <i className="fas fa-eye-slash text-muted me-1" title="Masquée sur le PDF : comptée dans le total, non imprimée" />
+                    <i className="fas fa-eye-slash text-muted me-1" title={L.hidden_on_pdf ?? 'Masquée sur le PDF : comptée dans le total, non imprimée'} />
                 )}
                 <span title={line.label}>{line.label}</span>
                 {line.ai_proposed && (
@@ -908,7 +921,7 @@ function LineRow({
                     </span>
                 )}
                 {info?.inPackage && (
-                    <span className="badge text-bg-light border ms-1" title="Section au forfait : la ligne n'est pas détaillée sur le PDF">forfait</span>
+                    <span className="badge text-bg-light border ms-1" title={L.in_package ?? 'Section au forfait : la ligne n\'est pas détaillée sur le PDF'}>{L.package_badge ?? 'forfait'}</span>
                 )}
                 <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
             </td>
@@ -921,7 +934,7 @@ function LineRow({
 
             {/* Price */}
             <td className={`text-end fw-bold ${line.use_calculated_price ? 'bg-warning' : ''}`}
-                title={line.use_calculated_price ? 'Prix calculé' : ''}>
+                title={line.use_calculated_price ? (L.calculated_price ?? 'Prix calculé') : ''}>
                 {line.formatted_price}
             </td>
 
@@ -966,17 +979,17 @@ function LineRow({
                 <div className="btn-group btn-group-xs" ref={menuRef}>
                     {quoteStatu === 1 && (
                         <button type="button" className="btn btn-sm btn-outline-secondary"
-                            title={line.hide_on_pdf ? 'Afficher sur le PDF' : 'Masquer sur le PDF (reste comptée dans le total)'}
+                            title={line.hide_on_pdf ? (L.show_on_pdf ?? 'Afficher sur le PDF') : (L.hide_on_pdf ?? 'Masquer sur le PDF (reste comptée dans le total)')}
                             onClick={() => onToggleHidden(line)}>
                             <i className={`fas ${line.hide_on_pdf ? 'fa-eye-slash text-muted' : 'fa-eye'}`} />
                         </button>
                     )}
-                    <a href={line.detail_url} className="btn btn-sm btn-teal" target="_blank" rel="noreferrer" title="Détails techniques">
+                    <a href={line.detail_url} className="btn btn-sm btn-teal" target="_blank" rel="noreferrer" title={L.technical_details ?? 'Détails techniques'}>
                         <i className="fas fa-info-circle" />
                     </a>
                     {line.task_count > 0 && (
                         <button type="button" className="btn btn-sm btn-warning"
-                            title={`Tâches (${line.task_count})`}
+                            title={fmt(L.tasks_count ?? 'Tâches (:count)', { count: line.task_count })}
                             onClick={() => onOpenTaskModal(line)}>
                             <span className="badge text-bg-dark">{line.task_count}</span>
                         </button>
@@ -988,25 +1001,25 @@ function LineRow({
                             {quoteStatu === 1 && (
                                 <button className="dropdown-item"
                                     onClick={() => { onEdit(line); setMenuOpen(false); }}>
-                                    <i className="fas fa-edit fa-fw me-2 text-warning" />Modifier
+                                    <i className="fas fa-edit fa-fw me-2 text-warning" />{L.edit ?? 'Modifier'}
                                 </button>
                             )}
                             {quoteStatu === 1 && (
                                 <button className="dropdown-item"
                                     onClick={() => { onDuplicate(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-copy fa-fw me-2 text-info" />Dupliquer
+                                    <i className="fas fa-copy fa-fw me-2 text-info" />{L.duplicate ?? 'Dupliquer'}
                                 </button>
                             )}
                             {quoteStatu === 1 && (
                                 <button className="dropdown-item text-danger"
                                     onClick={() => { onDelete(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-trash fa-fw me-2" />Supprimer
+                                    <i className="fas fa-trash fa-fw me-2" />{L.delete ?? 'Supprimer'}
                                 </button>
                             )}
                             {quoteStatu === 1 && onCreateProduct && line.code && line.label && (
                                 <button className="dropdown-item"
                                     onClick={() => { onCreateProduct(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-barcode fa-fw me-2 text-success" />Créer un produit
+                                    <i className="fas fa-barcode fa-fw me-2 text-success" />{L.create_product ?? 'Créer un produit'}
                                 </button>
                             )}
                             {quoteStatu === 1 && (
@@ -1014,31 +1027,31 @@ function LineRow({
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item"
                                         onClick={() => { onInsert(LINE_TYPES.SECTION, line.ordre); setMenuOpen(false); }}>
-                                        <i className="fas fa-heading fa-fw me-2 text-secondary" />Insérer une section au-dessus
+                                        <i className="fas fa-heading fa-fw me-2 text-secondary" />{L.insert_section ?? 'Insérer une section au-dessus'}
                                     </button>
                                     <button className="dropdown-item"
                                         onClick={() => { onInsert(LINE_TYPES.TEXT, line.ordre); setMenuOpen(false); }}>
-                                        <i className="fas fa-paragraph fa-fw me-2 text-secondary" />Insérer un texte au-dessus
+                                        <i className="fas fa-paragraph fa-fw me-2 text-secondary" />{L.insert_text ?? 'Insérer un texte au-dessus'}
                                     </button>
                                     <button className="dropdown-item"
                                         onClick={() => { onInsert(LINE_TYPES.SUBTOTAL, line.ordre + 1); setMenuOpen(false); }}>
-                                        <i className="fas fa-equals fa-fw me-2 text-secondary" />Insérer un sous-total en dessous
+                                        <i className="fas fa-equals fa-fw me-2 text-secondary" />{L.insert_subtotal ?? 'Insérer un sous-total en dessous'}
                                     </button>
                                 </>
                             )}
                             <div className="dropdown-divider" />
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
-                                <i className="fas fa-info-circle fa-fw me-2 text-teal" />Détails techniques
+                                <i className="fas fa-info-circle fa-fw me-2 text-teal" />{L.technical_details ?? 'Détails techniques'}
                             </a>
                             {quoteStatu === 1 && line.product_id && (
                                 <button className="dropdown-item"
                                     onClick={() => { onBreakDown(line.id); setMenuOpen(false); }}>
-                                    <i className="fas fa-sitemap fa-fw me-2 text-secondary" />Découpage technique
+                                    <i className="fas fa-sitemap fa-fw me-2 text-secondary" />{L.breakdown ?? 'Découpage technique'}
                                 </button>
                             )}
                             <button className="dropdown-item"
                                 onClick={() => { onOpenTaskModal(line); setMenuOpen(false); }}>
-                                <i className="fas fa-list fa-fw me-2 text-warning" />Tâches ({line.task_count})
+                                <i className="fas fa-list fa-fw me-2 text-warning" />{L.tasks_open ?? 'Tâches ('}{line.task_count})
                             </button>
                         </div>
                     )}
@@ -1060,19 +1073,18 @@ function ConvertOrderModal({ count, onConfirm, onClose }) {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Créer une commande ({count} ligne{count > 1 ? 's' : ''})<GuideHelp guide="vente-complete" section="transformer-le-devis-en-commande" /></h5>
+                        <h5 className="modal-title">{fmt(count > 1 ? (L.create_order_title_many ?? 'Créer une commande (:count lignes)') : (L.create_order_title_one ?? 'Créer une commande (:count ligne)'), { count })}<GuideHelp guide="vente-complete" section="transformer-le-devis-en-commande" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">
-                        <p className="mb-2">Ce devis contient des sections, sous-totaux ou textes. Sur la commande :</p>
+                        <p className="mb-2">{L.convert_intro ?? 'Ce devis contient des sections, sous-totaux ou textes. Sur la commande :'}</p>
                         <div className="form-check mb-2">
                             <input type="radio" id="presentation-keep" className="form-check-input"
                                 checked={presentation === 'keep'} onChange={() => setPresentation('keep')} />
                             <label className="form-check-label" htmlFor="presentation-keep">
-                                <strong>Reporter la mise en page</strong>
+                                <strong>{L.convert_keep ?? 'Reporter la mise en page'}</strong>
                                 <div className="small text-muted">
-                                    Les sections des lignes choisies, leurs sous-totaux et textes, les forfaits et lignes masquées :
-                                    le PDF de commande ressemble au devis.
+                                    {L.convert_keep_help ?? 'Les sections des lignes choisies, leurs sous-totaux et textes, les forfaits et lignes masquées : le PDF de commande ressemble au devis.'}
                                 </div>
                             </label>
                         </div>
@@ -1080,19 +1092,19 @@ function ConvertOrderModal({ count, onConfirm, onClose }) {
                             <input type="radio" id="presentation-drop" className="form-check-input"
                                 checked={presentation === 'drop'} onChange={() => setPresentation('drop')} />
                             <label className="form-check-label" htmlFor="presentation-drop">
-                                <strong>Articles seuls</strong>
-                                <div className="small text-muted">La commande ne reprend que les lignes article.</div>
+                                <strong>{L.convert_drop ?? 'Articles seuls'}</strong>
+                                <div className="small text-muted">{L.convert_drop_help ?? 'La commande ne reprend que les lignes article.'}</div>
                             </label>
                         </div>
                         <p className="small text-muted mt-3 mb-0">
                             <i className="fas fa-info-circle me-1" />
-                            Dans les deux cas, seuls les articles se livrent et se facturent.
+                            {L.convert_note ?? 'Dans les deux cas, seuls les articles se livrent et se facturent.'}
                         </p>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                         <button type="button" className="btn btn-primary btn-sm" onClick={() => onConfirm(presentation)}>
-                            <i className="fas fa-folder me-1" />Créer la commande
+                            <i className="fas fa-folder me-1" />{L.create_order_confirm ?? 'Créer la commande'}
                         </button>
                     </div>
                 </div>
@@ -1145,7 +1157,7 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
         if (res.ok) {
             onImported(data.lines ?? []);
         } else {
-            setError(data.message ?? "Erreur lors de l'import des lignes");
+            setError(data.message ?? (L.error_import ?? 'Erreur lors de l\'import des lignes'));
             setSaving(false);
         }
     };
@@ -1157,24 +1169,24 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
             <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title"><i className="fas fa-file-import me-2" />Importer des lignes d'un autre devis<GuideHelp guide="devis-avance" section="copier-des-lignes-dun-autre-devis-ou-dune-trame" /></h5>
+                        <h5 className="modal-title"><i className="fas fa-file-import me-2" />{L.import_title ?? 'Importer des lignes d\'un autre devis'}<GuideHelp guide="devis-avance" section="copier-des-lignes-dun-autre-devis-ou-dune-trame" /></h5>
                         <button type="button" onClick={onClose} aria-label="Close" className="btn-close float-end"></button>
                     </div>
                     <div className="modal-body">
                         <div className="input-group input-group-sm mb-3">
                             <span className="input-group-text"><i className="fas fa-search" /></span>
                             <input type="text" className="form-control" autoFocus
-                                placeholder="Code, libellé, client ou ligne…"
+                                placeholder={L.import_search ?? 'Code, libellé, client ou ligne…'}
                                 value={search} onChange={(e) => setSearch(e.target.value)} />
                         </div>
                         <p className="text-muted small">
-                            Les lignes sont recopiées en fin de devis avec leur détail technique, leur gamme, leur nomenclature et leurs fichiers.
+                            {L.import_help ?? 'Les lignes sont recopiées en fin de devis avec leur détail technique, leur gamme, leur nomenclature et leurs fichiers.'}
                         </p>
                         {error && <div className="alert alert-danger py-2">{error}</div>}
                         {sources === null ? (
-                            <div className="text-center py-4"><i className="fas fa-spinner fa-spin me-2" />Chargement…</div>
+                            <div className="text-center py-4"><i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}</div>
                         ) : sources.length === 0 ? (
-                            <p className="text-muted text-center py-4">Aucun devis ne correspond.</p>
+                            <p className="text-muted text-center py-4">{L.import_none ?? 'Aucun devis ne correspond.'}</p>
                         ) : sources.map((source) => {
                             const isOpen   = open.has(source.id);
                             const selected = source.lines.filter((l) => picked.has(l.id)).length;
@@ -1188,12 +1200,12 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
                                             onChange={() => toggleQuote(source)} />
                                         <i className={`fas fa-chevron-${isOpen ? 'down' : 'right'} text-muted`} />
                                         {source.is_template
-                                            ? <span className="badge text-bg-info"><i className="fas fa-layer-group me-1" />Trame</span>
+                                            ? <span className="badge text-bg-info"><i className="fas fa-layer-group me-1" />{L.template ?? 'Trame'}</span>
                                             : <span className="badge text-bg-light">{source.code}</span>}
                                         <strong className="text-truncate">{source.label}</strong>
                                         {source.companie && <span className="text-muted small text-truncate">— {source.companie}</span>}
                                         <span className="ms-auto badge text-bg-secondary">
-                                            {selected > 0 ? `${selected} / ` : ''}{source.lines.length} ligne{source.lines.length > 1 ? 's' : ''}
+                                            {selected > 0 ? `${selected} / ` : ''}{nLines(source.lines.length)}
                                         </span>
                                     </div>
                                     {isOpen && (
@@ -1220,10 +1232,12 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
                         })}
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>Annuler</button>
+                        <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>{L.cancel ?? 'Annuler'}</button>
                         <button type="button" className="btn btn-primary btn-sm" disabled={picked.size === 0 || saving} onClick={handleImport}>
                             {saving ? <i className="fas fa-spinner fa-spin me-1" /> : <i className="fas fa-file-import me-1" />}
-                            Importer {picked.size > 0 ? `${picked.size} ligne${picked.size > 1 ? 's' : ''}` : ''}
+                            {picked.size > 0
+                                ? fmt(picked.size > 1 ? (L.import_n_lines_many ?? 'Importer :count lignes') : (L.import_n_lines_one ?? 'Importer :count ligne'), { count: picked.size })
+                                : (L.import ?? 'Importer')}
                         </button>
                     </div>
                 </div>
@@ -1233,6 +1247,7 @@ function ImportLinesModal({ endpoints, onImported, onClose }) {
 }
 
 export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endpoints, trans = {} }) {
+    L = trans.lines ?? {};
     const tagTrans = trans.equipment_tags ?? {};
     const dictationTrans = trans.quote_dictation ?? {};
     const aiTrans = trans.ai_text ?? {};
@@ -1295,7 +1310,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             const next = ls.reduce((m, l) => Math.max(m, l.ordre), 0) + 1;
             setSelectData({ ...sd, _nextOrdre: next });
         })
-        .catch(() => showFlash('danger', 'Erreur lors du chargement'))
+        .catch(() => showFlash('danger', (L.error_loading ?? 'Erreur lors du chargement')))
         .finally(() => setLoading(false));
     }, []);
 
@@ -1342,7 +1357,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 body: JSON.stringify({ order: reordered.map((l) => ({ id: l.id, ordre: l.ordre })) }),
             });
         } catch {
-            showFlash('danger', 'Erreur lors de la sauvegarde de l\'ordre');
+            showFlash('danger', (L.error_reorder ?? 'Erreur lors de la sauvegarde de l\'ordre'));
         }
     }, [lines, dragOver, search, endpoints]);
 
@@ -1359,18 +1374,18 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', isEdit ? 'Ligne mise à jour' : 'Ligne ajoutée');
+        showFlash('success', isEdit ? (L.line_updated ?? 'Ligne mise à jour') : (L.line_added ?? 'Ligne ajoutée'));
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('Supprimer cette ligne ?')) return;
+        if (!confirm((L.confirm_delete ?? 'Supprimer cette ligne ?'))) return;
         const res = await apiFetch(endpoints.destroy.replace('__ID__', id), { method: 'DELETE' });
         if (res.ok) {
             setLines((prev) => { const u = prev.filter((l) => l.id !== id); refreshNextOrdre(u); return u; });
             setSelected((s) => { s.delete(id); return new Set(s); });
-            showFlash('success', 'Ligne supprimée');
+            showFlash('success', (L.line_deleted ?? 'Ligne supprimée'));
         } else {
-            showFlash('danger', 'Erreur lors de la suppression');
+            showFlash('danger', (L.error_delete ?? 'Erreur lors de la suppression'));
         }
     };
 
@@ -1386,21 +1401,21 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 refreshNextOrdre(u);
                 return u;
             });
-            showFlash('success', 'Ligne dupliquée');
+            showFlash('success', (L.line_duplicated ?? 'Ligne dupliquée'));
         } else {
-            showFlash('danger', 'Erreur lors de la duplication');
+            showFlash('danger', (L.error_duplicate ?? 'Erreur lors de la duplication'));
         }
     };
 
     const handleBreakDown = async (id) => {
-        if (!confirm('Appliquer le découpage technique du produit sur cette ligne ?')) return;
+        if (!confirm((L.confirm_breakdown ?? 'Appliquer le découpage technique du produit sur cette ligne ?'))) return;
         const res  = await apiFetch(endpoints.breakdown.replace('__ID__', id), { method: 'POST' });
         const data = await res.json();
         if (res.ok) {
             setLines((prev) => prev.map((l) => l.id === id ? data.line : l));
-            showFlash('success', 'Découpage technique appliqué');
+            showFlash('success', (L.breakdown_applied ?? 'Découpage technique appliqué'));
         } else {
-            showFlash('danger', 'Erreur lors du découpage technique');
+            showFlash('danger', (L.error_breakdown ?? 'Erreur lors du découpage technique'));
         }
     };
 
@@ -1411,14 +1426,14 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const handleInsert = async (lineType, ordre) => {
         setAddMenuOpen(false);
         const at = ordre ?? (lines.reduce((m, l) => Math.max(m, l.ordre), 0) + 1);
-        const defaults = { [LINE_TYPES.SECTION]: 'Nouvelle section', [LINE_TYPES.TEXT]: 'Texte', [LINE_TYPES.SUBTOTAL]: '' };
+        const defaults = { [LINE_TYPES.SECTION]: (L.new_section ?? 'Nouvelle section'), [LINE_TYPES.TEXT]: (L.text ?? 'Texte'), [LINE_TYPES.SUBTOTAL]: '' };
         const res  = await apiFetch(endpoints.store, {
             method: 'POST',
             body: JSON.stringify({ line_type: lineType, ordre: at, label: defaults[lineType] }),
         });
         const data = await res.json();
         if (!res.ok) {
-            showFlash('danger', data.message ?? data.error ?? 'Erreur lors de l\'ajout');
+            showFlash('danger', data.message ?? data.error ?? (L.error_add ?? 'Erreur lors de l\'ajout'));
             return;
         }
         // Le serveur insère à la position demandée et décale la suite.
@@ -1437,7 +1452,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         });
         const data = await res.json();
         if (!res.ok) {
-            showFlash('danger', data.message ?? 'Libellé invalide');
+            showFlash('danger', data.message ?? (L.invalid_label ?? 'Libellé invalide'));
             return false;
         }
         replaceLine(data.line);
@@ -1455,7 +1470,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         if (res.ok) {
             replaceLine(data.line);
         } else {
-            showFlash('danger', data.message ?? 'Erreur lors de la mise à jour');
+            showFlash('danger', data.message ?? (L.error_update ?? 'Erreur lors de la mise à jour'));
         }
     };
 
@@ -1470,7 +1485,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
     const handleStoreOrder = async (presentation = 'keep', overrides = null) => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!overrides && !hasPresentation && !confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!overrides && !hasPresentation && !confirm(fmt(L.confirm_create_order ?? 'Créer une commande à partir des :count ligne(s) sélectionnée(s) ?', { count: ids.length }))) return;
         setConvertOpen(false);
         try {
             const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids, presentation, ...overrides }) });
@@ -1486,17 +1501,17 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 const override = await askCreditOverride(data.credit_limit);
                 if (override) return handleStoreOrder(presentation, { ...overrides, ...override });
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
+                showFlash('danger', data.error ?? (L.error_create_order ?? 'Erreur lors de la création de la commande'));
             }
         } catch {
-            showFlash('danger', 'Erreur lors de la création de la commande');
+            showFlash('danger', (L.error_create_order ?? 'Erreur lors de la création de la commande'));
         }
     };
 
     const handleCreateProducts = async () => {
         const ids = [...selected];
         if (ids.length === 0) return;
-        if (!confirm(`Créer des produits à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        if (!confirm(fmt(L.confirm_create_products ?? 'Créer des produits à partir des :count ligne(s) sélectionnée(s) ?', { count: ids.length }))) return;
         try {
             const res  = await apiFetch(endpoints.createProducts, {
                 method: 'POST',
@@ -1510,22 +1525,22 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     const match = created.find((c) => c.line_id === l.id);
                     return match ? { ...l, product_id: match.product_id, product_url: match.product_url } : l;
                 }));
-                let msg = `${created.length} produit(s) créé(s)`;
+                let msg = fmt(L.products_created ?? ':count produit(s) créé(s)', { count: created.length });
                 if (skipped.length > 0) {
-                    msg += ` — ${skipped.length} ignorée(s) (code déjà existant) : ${skipped.map((s) => s.code).join(', ')}`;
+                    msg += fmt(L.products_skipped ?? ' — :count ignorée(s) (code déjà existant) : :codes', { count: skipped.length, codes: skipped.map((s) => s.code).join(', ') });
                 }
                 showFlash(created.length > 0 ? 'success' : 'warning', msg);
             } else {
-                showFlash('danger', data.error ?? 'Erreur lors de la création des produits');
+                showFlash('danger', data.error ?? (L.error_create_products ?? 'Erreur lors de la création des produits'));
             }
         } catch {
-            showFlash('danger', 'Erreur réseau');
+            showFlash('danger', (L.network_error ?? 'Erreur réseau'));
         }
     };
 
     const handleCreateProduct = async (id) => {
         if (!endpoints.createProduct) {
-            showFlash('danger', 'Endpoint manquant — rechargez la page.');
+            showFlash('danger', (L.missing_endpoint ?? 'Endpoint manquant — rechargez la page.'));
             return;
         }
         const res  = await apiFetch(endpoints.createProduct.replace('__ID__', id), { method: 'POST' });
@@ -1535,9 +1550,9 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 ? { ...l, product_id: data.product_id, product_code: data.product_code, product_url: data.product_url }
                 : l
             ));
-            showFlash('success', 'Produit créé et lié à la ligne');
+            showFlash('success', (L.product_created_linked ?? 'Produit créé et lié à la ligne'));
         } else {
-            showFlash('danger', data.error ?? 'Erreur lors de la création du produit');
+            showFlash('danger', data.error ?? (L.error_create_product ?? 'Erreur lors de la création du produit'));
         }
     };
 
@@ -1548,7 +1563,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''}`);
+        showFlash('success', nLines(newLines.length, 'lines_imported_one', 'lines_imported_many'));
     };
 
     const handleDictatedLines = (newLines) => {
@@ -1577,7 +1592,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             refreshNextOrdre(updated);
             return updated;
         });
-        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis un fichier CAO`);
+        showFlash('success', nLines(newLines.length, 'lines_imported_cad_one', 'lines_imported_cad_many'));
     };
 
     const handlePriceIncrease = async () => {
@@ -1589,9 +1604,9 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             const linesData = await linesRes.json();
             setLines(linesData.lines ?? []);
             setPriceIncAmt('');
-            showFlash('success', `Prix augmenté`);
+            showFlash('success', fmt(L.price_increased ?? 'Prix augmenté', {  }));
         } else {
-            showFlash('danger', 'Erreur lors de la mise à jour des prix');
+            showFlash('danger', (L.error_price_update ?? 'Erreur lors de la mise à jour des prix'));
         }
     };
 
@@ -1660,19 +1675,19 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 {endpoints.createProducts && quoteStatu === 1 && selected.size > 0 && (
                     <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
                         <i className="fas fa-barcode me-1" />
-                        Créer produits ({selected.size})
+                        {L.create_products_open ?? 'Créer produits ('}{selected.size})
                     </button>
                 )}
                 {endpoints.storeOrder && (quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
                     <button className="btn btn-primary btn-sm"
                         onClick={() => (hasPresentation ? setConvertOpen(true) : handleStoreOrder())}>
                         <i className="fas fa-folder me-1" />
-                        Créer une commande ({selected.size})
+                        {L.create_order_open ?? 'Créer une commande ('}{selected.size})
                     </button>
                 )}
                 <div className="input-group input-group-sm" style={{ maxWidth: 260 }}>
                     <span className="input-group-text"><i className="fas fa-search" /></span>
-                    <input type="text" className="form-control" placeholder="Rechercher…"
+                    <input type="text" className="form-control" placeholder={L.search ?? 'Rechercher…'}
                         value={search} onChange={(e) => setSearch(e.target.value)} />
                     {search && (
                         <button className="btn btn-outline-secondary" onClick={() => setSearch('')}><i className="fas fa-times" /></button>
@@ -1680,19 +1695,19 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 </div>
                 {quoteStatu === 1 && (
                     <div className="input-group input-group-sm" style={{ maxWidth: 280 }}>
-                        <input type="number" className="form-control" placeholder="Augmentation de prix…"
+                        <input type="number" className="form-control" placeholder={L.price_increase ?? 'Augmentation de prix…'}
                             min="0" step="0.01" value={priceIncAmt}
                             onChange={(e) => setPriceIncAmt(e.target.value)} />
                         <button className="btn btn-primary"
                                 onClick={handlePriceIncrease}
                                 disabled={!priceIncAmt || parseFloat(priceIncAmt) <= 0}>
-                                <i className="fas fa-plus-circle me-1" />Appliquer
+                                <i className="fas fa-plus-circle me-1" />{L.apply ?? 'Appliquer'}
                             </button>
                     </div>
                 )}
                 {quoteStatu === 1 && endpoints.importFrom && (
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setImportOpen(true)}>
-                        <i className="fas fa-file-import me-1" />Importer d'un autre devis
+                        <i className="fas fa-file-import me-1" />{L.import_from_quote ?? 'Importer d\'un autre devis'}
                     </button>
                 )}
                 {quoteStatu === 1 && endpoints.dictationPropose && (
@@ -1710,18 +1725,18 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     <div className="btn-group btn-group-sm position-relative">
                         <button type="button" className="btn btn-outline-secondary dropdown-toggle"
                             onClick={() => setAddMenuOpen((v) => !v)}>
-                            <i className="fas fa-heading me-1" />Mise en page
+                            <i className="fas fa-heading me-1" />{L.layout ?? 'Mise en page'}
                         </button>
                         {addMenuOpen && (
                             <div className="dropdown-menu show" style={{ zIndex: 1060 }}>
                                 <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.SECTION)}>
-                                    <i className="fas fa-heading fa-fw me-2 text-secondary" />Ajouter une section
+                                    <i className="fas fa-heading fa-fw me-2 text-secondary" />{L.add_section ?? 'Ajouter une section'}
                                 </button>
                                 <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.SUBTOTAL)}>
-                                    <i className="fas fa-equals fa-fw me-2 text-secondary" />Ajouter un sous-total
+                                    <i className="fas fa-equals fa-fw me-2 text-secondary" />{L.add_subtotal ?? 'Ajouter un sous-total'}
                                 </button>
                                 <button className="dropdown-item" onClick={() => handleInsert(LINE_TYPES.TEXT)}>
-                                    <i className="fas fa-paragraph fa-fw me-2 text-secondary" />Ajouter un texte
+                                    <i className="fas fa-paragraph fa-fw me-2 text-secondary" />{L.add_text ?? 'Ajouter un texte'}
                                 </button>
                             </div>
                         )}
@@ -1736,7 +1751,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     <i className="fas fa-percentage me-1" />{marginTrans.column ?? 'Marge'}
                 </button>
                 <span className="badge text-bg-secondary">
-                    {articleCount} ligne{articleCount > 1 ? 's' : ''}
+                    {nLines(articleCount)}
                 </span>
             </div>
 
@@ -1744,13 +1759,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             {quoteStatu === 1 && filteredLines.length > 1 && !search && (
                 <p className="text-muted small mb-2">
                     <i className="fas fa-grip-vertical me-1" />
-                    Glissez les lignes pour modifier l'ordre. Une section emporte ses lignes.
+                    {L.drag_help_sections ?? 'Glissez les lignes pour modifier l\'ordre. Une section emporte ses lignes.'}
                 </p>
             )}
             {quoteStatu === 1 && filteredLines.length > 1 && search && (
                 <p className="text-muted small mb-2">
                     <i className="fas fa-info-circle me-1" />
-                    Videz la recherche pour réordonner les lignes.
+                    {L.drag_clear_search ?? 'Videz la recherche pour réordonner les lignes.'}
                 </p>
             )}
 
@@ -1759,45 +1774,45 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                 <table className="table table-hover table-sm mb-0">
                     <thead className="table-light">
                         <tr>
-                            <th style={{ width: 48 }} title="Glisser pour réordonner">
+                            <th style={{ width: 48 }} title={L.drag_title ?? 'Glisser pour réordonner'}>
                                 <i className="fas fa-grip-vertical text-muted" />
                             </th>
                             <th style={{ width: 32 }}>
                                 <input type="checkbox" checked={allSelected} onChange={handleToggleAll}
                                     disabled={(quoteStatu !== 1 && quoteStatu !== 2) || filteredLines.length === 0} />
                             </th>
-                            <th>Réf. ext.</th>
+                            <th>{L.ext_ref_short ?? 'Réf. ext.'}</th>
                             <th style={{ width: 36 }} />
-                            <th>Description</th>
-                            <th className="text-end">Qté</th>
-                            <th>Unité</th>
-                            <th className="text-end">Prix</th>
-                            <th className="text-end">Remise</th>
+                            <th>{L.description ?? 'Description'}</th>
+                            <th className="text-end">{L.qty ?? 'Qté'}</th>
+                            <th>{L.unit ?? 'Unité'}</th>
+                            <th className="text-end">{L.price ?? 'Prix'}</th>
+                            <th className="text-end">{L.discount ?? 'Remise'}</th>
                             {showMargin && (
                                 <th className="text-end" title={marginTrans.internal}>
                                     <i className="fas fa-lock me-1 text-body-secondary" />{marginTrans.column ?? 'Marge'}
                                 </th>
                             )}
-                            <th>TVA</th>
-                            <th>Livraison</th>
-                            <th>Statut</th>
-                            <th style={{ width: 120 }}>Actions</th>
+                            <th>{L.vat ?? 'TVA'}</th>
+                            <th>{L.delivery ?? 'Livraison'}</th>
+                            <th>{L.status ?? 'Statut'}</th>
+                            <th style={{ width: 120 }}>{L.actions ?? 'Actions'}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
                                 <td colSpan={13 + extraColumns} className="text-center py-4">
-                                    <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                                    <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
                                 </td>
                             </tr>
                         ) : filteredLines.length === 0 ? (
                             <tr>
                                 <td colSpan={13 + extraColumns} className="text-center py-4 text-muted">
-                                    {search ? 'Aucune ligne ne correspond.' : 'Aucune ligne dans ce devis.'}
+                                    {search ? (L.no_match ?? 'Aucune ligne ne correspond.') : (L.no_line_quote ?? 'Aucune ligne dans ce devis.')}
                                     {!search && quoteStatu === 1 && (
                                         <button className="btn btn-link p-0 ms-2" onClick={handleOpenCreate}>
-                                            Ajouter la première ligne
+                                            {L.add_first_line ?? 'Ajouter la première ligne'}
                                         </button>
                                     )}
                                 </td>
@@ -1861,10 +1876,10 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             {layout.hiddenOutsidePackage.count > 0 && (
                 <div className="alert alert-warning py-2 mt-2 mb-0 small">
                     <i className="fas fa-eye-slash me-1" />
-                    {layout.hiddenOutsidePackage.count} ligne{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} masquée{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} hors forfait :{' '}
-                    <strong>{layout.hiddenOutsidePackage.amount.toLocaleString('fr-FR', { style: 'currency', currency: selectData.currency || 'EUR' })} HT</strong>{' '}
-                    compté{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} dans le total mais absent{layout.hiddenOutsidePackage.count > 1 ? 's' : ''} du PDF.
-                    La somme des lignes imprimées sera inférieure au total.
+                    {fmt(layout.hiddenOutsidePackage.count > 1 ? (L.hidden_outside_package_many ?? ':count lignes masquées hors forfait :') : (L.hidden_outside_package_one ?? ':count ligne masquée hors forfait :'), { count: layout.hiddenOutsidePackage.count })}{' '}
+                    <strong>{layout.hiddenOutsidePackage.amount.toLocaleString('fr-FR', { style: 'currency', currency: selectData.currency || 'EUR' })} {L.excl_tax ?? 'HT'}</strong>{' '}
+                    {layout.hiddenOutsidePackage.count > 1 ? (L.hidden_note_many ?? 'comptés dans le total mais absents du PDF.') : (L.hidden_note_one ?? 'compté dans le total mais absent du PDF.')}
+                    {' '}{L.hidden_note_sum ?? 'La somme des lignes imprimées sera inférieure au total.'}
                 </div>
             )}
 

@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, Pagination, StatusFilter, MobileFilters, RowOpenLink } from './table';
 
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -204,7 +208,7 @@ function CreateForm({ endpoints, props, trans, onCreated, onCancel }) {
                     </button>
 
                     <div className="d-flex justify-content-end" style={{ gap: 8 }}>
-                        <button type="button" className="btn btn-secondary" onClick={onCancel}>{trans.choose === 'Choisir' ? 'Annuler' : 'Cancel'}</button>
+                        <button type="button" className="btn btn-secondary" onClick={onCancel}>{L.cancel ?? (trans.choose === 'Choisir' ? 'Annuler' : 'Cancel')}</button>
                         <button type="submit" className="btn btn-success" disabled={saving}>
                             <i className="fas fa-save me-1" />{trans.save}
                         </button>
@@ -328,6 +332,7 @@ function returnColumns(trans) {
 // ---------------------------------------------------------------------------
 
 export default function ReturnsIndex({ endpoints, props, trans }) {
+    L = trans?.ui ?? {};
 const [rows, setRows]         = useState([]);
     const [meta, setMeta]         = useState(null);
     const [loading, setLoading]   = useState(true);
@@ -351,7 +356,7 @@ const [rows, setRows]         = useState([]);
         if (!endpoints?.list) {
             console.error('ReturnsIndex: endpoints.list is missing', endpoints);
             setLoading(false);
-            setFetchError('Configuration manquante : endpoint list non défini');
+            setFetchError((L.missing_list_endpoint ?? 'Configuration manquante : endpoint list non défini'));
             return;
         }
         setLoading(true);
@@ -365,7 +370,7 @@ const [rows, setRows]         = useState([]);
             setMeta(json.meta ?? null);
         } catch (err) {
             console.error('ReturnsIndex fetch error:', err);
-            setFetchError(err?.message ?? 'Erreur de chargement');
+            setFetchError(err?.message ?? (L.error_loading ?? 'Erreur de chargement'));
             setRows([]);
         } finally {
             setLoading(false);

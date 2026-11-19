@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ── Mode "depuis commande existante" ────────────────────────────────────────
 function FromOrderForm({ users, companies, endpoints, initialCode, userId }) {
     const [code,         setCode]         = useState(initialCode ?? '');
@@ -38,7 +42,7 @@ function FromOrderForm({ users, companies, endpoints, initialCode, userId }) {
     function handleSubmit(e) {
         e.preventDefault();
         setError('');
-        if (selected.length === 0) { setError('Sélectionnez au moins une ligne.'); return; }
+        if (selected.length === 0) { setError((L.select_one_line ?? 'Sélectionnez au moins une ligne.')); return; }
         setSubmitting(true);
         fetch(endpoints.store, {
             method: 'POST',
@@ -47,7 +51,7 @@ function FromOrderForm({ users, companies, endpoints, initialCode, userId }) {
         })
             .then(r => r.json())
             .then(d => { if (d.redirect) window.location.href = d.redirect; })
-            .catch(() => setError('Erreur lors de la création.'))
+            .catch(() => setError((L.error_create ?? 'Erreur lors de la création.')))
             .finally(() => setSubmitting(false));
     }
 
@@ -65,7 +69,7 @@ function FromOrderForm({ users, companies, endpoints, initialCode, userId }) {
                     emptyMsg="Aucune ligne de commande trouvée pour ce client." />
             )}
 
-            <SubmitFooter submitting={submitting} count={selected.length} label="Créer la proforma" />
+            <SubmitFooter submitting={submitting} count={selected.length} label={L.create_proforma ?? 'Créer la proforma'} />
         </form>
     );
 }
@@ -118,8 +122,8 @@ function FromQuoteForm({ users, companies, endpoints, initialCode, userId }) {
     function handleSubmit(e) {
         e.preventDefault();
         setError('');
-        if (!quoteId) { setError('Sélectionnez un devis.'); return; }
-        if (selected.length === 0) { setError('Sélectionnez au moins une ligne.'); return; }
+        if (!quoteId) { setError((L.select_quote ?? 'Sélectionnez un devis.')); return; }
+        if (selected.length === 0) { setError((L.select_one_line ?? 'Sélectionnez au moins une ligne.')); return; }
         setSubmitting(true);
         fetch(endpoints.storeFromQuote, {
             method: 'POST',
@@ -128,7 +132,7 @@ function FromQuoteForm({ users, companies, endpoints, initialCode, userId }) {
         })
             .then(r => r.json())
             .then(d => { if (d.redirect) window.location.href = d.redirect; })
-            .catch(() => setError('Erreur lors de la création.'))
+            .catch(() => setError((L.error_create ?? 'Erreur lors de la création.')))
             .finally(() => setSubmitting(false));
     }
 
@@ -143,12 +147,12 @@ function FromQuoteForm({ users, companies, endpoints, initialCode, userId }) {
 
             {companyId && (
                 <div className="mb-3">
-                    <label>Devis source</label>
+                    <label>{L.source_quote ?? 'Devis source'}</label>
                     {loading
-                        ? <p><i className="fas fa-spinner fa-spin" /> Chargement…</p>
+                        ? <p><i className="fas fa-spinner fa-spin" /> {L.loading ?? 'Chargement…'}</p>
                         : (
                             <select className="form-select" value={quoteId} onChange={e => setQuoteId(e.target.value)} required>
-                                <option value="">-- Choisir un devis --</option>
+                                <option value="">{L.choose_quote ?? '-- Choisir un devis --'}</option>
                                 {quotes.map(q => <option key={q.id} value={q.id}>{q.code} — {q.label}</option>)}
                             </select>
                         )
@@ -161,7 +165,7 @@ function FromQuoteForm({ users, companies, endpoints, initialCode, userId }) {
                     emptyMsg="Ce devis n'a pas de lignes." />
             )}
 
-            <SubmitFooter submitting={submitting} count={selected.length} label="Créer la proforma (+ commande brouillon)" />
+            <SubmitFooter submitting={submitting} count={selected.length} label={L.create_proforma_draft_order ?? 'Créer la proforma (+ commande brouillon)'} />
         </form>
     );
 }
@@ -174,40 +178,40 @@ function CommonHeader({ code, setCode, label, setLabel, selectedUser, setSelecte
         <>
             <div className="row">
                 <div className="col-md-3 mb-3">
-                    <label>Code proforma</label>
+                    <label>{L.proforma_code ?? 'Code proforma'}</label>
                     <input className="form-control" value={code} onChange={e => setCode(e.target.value)} required />
                 </div>
                 <div className="col-md-5 mb-3">
-                    <label>Libellé</label>
+                    <label>{L.label ?? 'Libellé'}</label>
                     <input className="form-control" value={label} onChange={e => setLabel(e.target.value)} required />
                 </div>
                 <div className="col-md-4 mb-3">
-                    <label>Responsable</label>
+                    <label>{L.owner ?? 'Responsable'}</label>
                     <select className="form-select" value={selectedUser} onChange={e => setSelectedUser(e.target.value)} required>
-                        <option value="">-- Choisir --</option>
+                        <option value="">{L.choose_dashes ?? '-- Choisir --'}</option>
                         {(users ?? []).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
             </div>
             <div className="row">
                 <div className="col-md-4 mb-3">
-                    <label>Client</label>
+                    <label>{L.customer ?? 'Client'}</label>
                     <select className="form-select" value={companyId} onChange={e => setCompanyId(e.target.value)} required>
-                        <option value="">-- Choisir un client --</option>
+                        <option value="">{L.choose_customer ?? '-- Choisir un client --'}</option>
                         {(companies ?? []).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                     </select>
                 </div>
                 <div className="col-md-4 mb-3">
-                    <label>Adresse</label>
+                    <label>{L.address ?? 'Adresse'}</label>
                     <select className="form-select" value={addressId} onChange={e => setAddressId(e.target.value)} required>
-                        <option value="">-- Adresse --</option>
+                        <option value="">{L.address_placeholder ?? '-- Adresse --'}</option>
                         {addresses.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
                     </select>
                 </div>
                 <div className="col-md-4 mb-3">
-                    <label>Contact</label>
+                    <label>{L.contact ?? 'Contact'}</label>
                     <select className="form-select" value={contactId} onChange={e => setContactId(e.target.value)} required>
-                        <option value="">-- Contact --</option>
+                        <option value="">{L.contact_placeholder ?? '-- Contact --'}</option>
                         {contacts.map(c => <option key={c.id} value={c.id}>{c.first_name} {c.name}</option>)}
                     </select>
                 </div>
@@ -217,13 +221,13 @@ function CommonHeader({ code, setCode, label, setLabel, selectedUser, setSelecte
 }
 
 function LineTable({ lines, selected, toggleLine, loading, emptyMsg }) {
-    if (loading) return <p><i className="fas fa-spinner fa-spin" /> Chargement…</p>;
+    if (loading) return <p><i className="fas fa-spinner fa-spin" /> {L.loading ?? 'Chargement…'}</p>;
     if (lines.length === 0) return <p className="text-muted">{emptyMsg}</p>;
     return (
         <table className="table table-sm table-hover mt-3">
             <thead>
                 <tr>
-                    <th></th><th>Code</th><th>Désignation</th><th>Qté</th><th>PU HT</th><th>Remise</th>
+                    <th></th><th>{L.code ?? 'Code'}</th><th>{L.designation ?? 'Désignation'}</th><th>{L.qty ?? 'Qté'}</th><th>{L.unit_price_ht ?? 'PU HT'}</th><th>{L.discount ?? 'Remise'}</th>
                 </tr>
             </thead>
             <tbody>
@@ -247,21 +251,22 @@ function SubmitFooter({ submitting, count, label }) {
     return (
         <div className="card-footer">
             <button type="submit" className="btn btn-success" disabled={submitting || count === 0}>
-                {submitting ? <><i className="fas fa-spinner fa-spin me-1" />Création…</> : <><i className="fas fa-file-invoice me-1" />{label}</>}
+                {submitting ? <><i className="fas fa-spinner fa-spin me-1" />{L.creating ?? 'Création…'}</> : <><i className="fas fa-file-invoice me-1" />{label}</>}
             </button>
-            <span className="ms-3 text-muted">{count} ligne(s) sélectionnée(s)</span>
+            <span className="ms-3 text-muted">{count} {L.lines_selected ?? 'ligne(s) sélectionnée(s)'}</span>
         </div>
     );
 }
 
 // ── Composant principal ─────────────────────────────────────────────────────
-export default function ProformasRequest({ initialCode, userId, users, companies, endpoints }) {
+export default function ProformasRequest({ initialCode, userId, users, companies, endpoints, trans = {} }) {
+    L = trans?.ui ?? {};
     const [mode, setMode] = useState('quote'); // 'quote' | 'order'
 
     return (
         <div className="card card-primary mb-3">
             <div className="card-header">
-                <h3 className="card-title">Nouvelle facture proforma</h3>
+                <h3 className="card-title">{L.new_proforma_title ?? 'Nouvelle facture proforma'}</h3>
             </div>
             <div className="card-body">
                 <div className="mb-4">
@@ -269,13 +274,13 @@ export default function ProformasRequest({ initialCode, userId, users, companies
                         <button type="button"
                             className={`btn ${mode === 'quote' ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => setMode('quote')}>
-                            <i className="fas fa-file-alt me-1" /> Depuis un devis
-                            <small className="d-block text-muted" style={{fontSize:'0.75em'}}>Crée une commande brouillon (statu 0)</small>
+                            <i className="fas fa-file-alt me-1" /> {L.from_quote ?? 'Depuis un devis'}
+                            <small className="d-block text-muted" style={{fontSize:'0.75em'}}>{L.from_quote_help ?? 'Crée une commande brouillon (statu 0)'}</small>
                         </button>
                         <button type="button"
                             className={`btn ${mode === 'order' ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => setMode('order')}>
-                            <i className="fas fa-shopping-cart me-1" /> Depuis une commande existante
+                            <i className="fas fa-shopping-cart me-1" /> {L.from_order ?? 'Depuis une commande existante'}
                         </button>
                     </div>
                 </div>

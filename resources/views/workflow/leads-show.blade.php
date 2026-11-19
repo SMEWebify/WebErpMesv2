@@ -31,7 +31,8 @@ $leadSteps = json_encode([
      data-steps="{{ json_encode([['value' => 1, 'label' => __('general_content.burning_trans_key')], ['value' => 2, 'label' => __('general_content.hot_trans_key')], ['value' => 3, 'label' => __('general_content.lukewarm_trans_key')], ['value' => 4, 'label' => __('general_content.cold_trans_key')]]) }}"
      data-statu="{{ $Lead->priority }}"
      data-endpoint="{{ route('leads.json.priority', $Lead->id) }}"
-     data-redirect="{{ route('leads.show', $Lead->id) }}"></div>
+     data-redirect="{{ route('leads.show', $Lead->id) }}"
+     data-error-text="{{ __('crm_ui.status_change_error') }}"></div>
 <x-relational-breadcrumb :entity="$Lead" />
 <div class="row">
   <div class="col-md-9">

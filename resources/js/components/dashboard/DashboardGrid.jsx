@@ -4,6 +4,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import REGISTRY, { WIDGET_MAP, DEFAULT_LAYOUT } from './WidgetRegistry.js';
 import { useMediaQuery, MOBILE_QUERY } from '../table';
+import { dashboardTexts as L } from './texts.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -126,16 +127,16 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions, onDragStart, o
             }}
         >
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <strong>Ajouter un widget</strong>
+                <strong>{L.add_widget ?? 'Ajouter un widget'}</strong>
                 <button className="btn btn-sm btn-light" onClick={onClose}>
                     <i className="fas fa-times" />
                 </button>
             </div>
             {available.length === 0 && (
-                <p className="text-muted" style={{ fontSize: '0.85rem' }}>Tous les widgets sont déjà affichés.</p>
+                <p className="text-muted" style={{ fontSize: '0.85rem' }}>{L.all_widgets_shown ?? 'Tous les widgets sont déjà affichés.'}</p>
             )}
             <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.75rem' }}>
-                <i className="fas fa-hand-pointer me-1" />Cliquez ou <i className="fas fa-arrows-alt me-1" />glissez dans la grille
+                <i className="fas fa-hand-pointer me-1" />{L.click_or ?? 'Cliquez ou'} <i className="fas fa-arrows-alt me-1" />{L.drag_into_grid ?? 'glissez dans la grille'}
             </p>
             {available.map(w => (
                 <div
@@ -269,7 +270,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
     if (!layout) {
         return (
             <div className="text-center py-5 text-muted">
-                <i className="fas fa-spinner fa-spin me-2" />Chargement…
+                <i className="fas fa-spinner fa-spin me-2" />{L.loading ?? 'Chargement…'}
             </div>
         );
     }
@@ -309,20 +310,20 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
                 <div className="d-flex justify-content-end align-items-center mb-2" style={{ gap: '0.5rem' }}>
                     {saving && (
                         <small className="text-muted">
-                            <i className="fas fa-spinner fa-spin me-1" />Sauvegarde…
+                            <i className="fas fa-spinner fa-spin me-1" />{L.saving ?? 'Sauvegarde…'}
                         </small>
                     )}
                     <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(s => !s)}>
-                        <i className="fas fa-plus me-1" />Ajouter
+                        <i className="fas fa-plus me-1" />{L.add ?? 'Ajouter'}
                     </button>
                     <button className="btn btn-sm btn-outline-secondary" onClick={resetLayout}>
-                        <i className="fas fa-undo me-1" />Réinitialiser
+                        <i className="fas fa-undo me-1" />{L.reset ?? 'Réinitialiser'}
                     </button>
                     <button
                         className="btn btn-sm btn-success"
                         onClick={() => { onEditModeChange?.(false); setShowAdd(false); setDraggingWidget(null); }}
                     >
-                        <i className="fas fa-check me-1" />Terminer
+                        <i className="fas fa-check me-1" />{L.finish ?? 'Terminer'}
                     </button>
                 </div>
             )}
@@ -382,7 +383,7 @@ export default function DashboardGrid({ dashProps, configEndpoint, editMode = fa
                                         className="btn btn-sm btn-outline-danger"
                                         style={{ padding: '0 6px', fontSize: '0.75rem' }}
                                         onClick={() => removeWidget(item.i)}
-                                        title="Supprimer ce widget"
+                                        title={L.remove_widget ?? 'Supprimer ce widget'}
                                     >
                                         <i className="fas fa-times" />
                                     </button>

@@ -617,6 +617,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Quo
               data-quote-statu="{{ $Quote->statu }}"
               data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
               data-trans="{{ json_encode([
+                'lines'           => __('sales_lines'),
                 'equipment_tags'  => __('equipment_tags'),
                 'quote_margin'    => __('quote_margin'),
                 'quote_dictation' => __('quote_dictation') + ['provider' => $quoteDictation->provider(), 'locale' => app()->getLocale()],

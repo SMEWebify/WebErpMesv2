@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, Pagination, StatusFilter, MobileFilters, RowOpenLink } from './table';
 
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -89,7 +93,7 @@ function confirmationColumns(trans) {
           render: r => (
               <>
                   <span className="badge text-bg-dark">{r.revision}</span>
-                  {r.is_current && <i className="fas fa-check-circle text-success ms-1" title="Indice en vigueur" />}
+                  {r.is_current && <i className="fas fa-check-circle text-success ms-1" title={L.current_revision ?? 'Indice en vigueur'} />}
               </>
           ),
           mobile: 'title', mobileRender: r => `ind. ${r.revision}` },
@@ -116,6 +120,7 @@ function confirmationColumns(trans) {
 }
 
 export default function OrderConfirmationsIndex({ endpoints, trans }) {
+    L = trans?.ui ?? {};
     const [rows, setRows]             = useState([]);
     const [meta, setMeta]             = useState(null);
     const [loading, setLoading]       = useState(true);
@@ -135,7 +140,7 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
         if (!endpoints?.list) {
             console.error('OrderConfirmationsIndex: endpoints.list is missing', endpoints);
             setLoading(false);
-            setFetchError('Configuration manquante : endpoint list non défini');
+            setFetchError((L.missing_list_endpoint ?? 'Configuration manquante : endpoint list non défini'));
             return;
         }
         setLoading(true);
@@ -148,7 +153,7 @@ export default function OrderConfirmationsIndex({ endpoints, trans }) {
             setMeta(json.meta ?? null);
         } catch (err) {
             console.error('OrderConfirmationsIndex fetch error:', err);
-            setFetchError(err?.message ?? 'Erreur de chargement');
+            setFetchError(err?.message ?? (L.error_loading ?? 'Erreur de chargement'));
             setRows([]);
         } finally {
             setLoading(false);

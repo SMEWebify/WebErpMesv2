@@ -11,11 +11,12 @@ import TopClientsWidget    from './widgets/TopClientsWidget.jsx';
 import NcStatsWidget       from './widgets/NcStatsWidget.jsx';
 import SupplierDelayWidget from './widgets/SupplierDelayWidget.jsx';
 import OtdWidget           from './widgets/OtdWidget.jsx';
+import { dashboardTexts as L } from './texts.js';
 
 const REGISTRY = [
     {
         id: 'kpi_stats',
-        label: 'KPI principaux',
+        get label() { return L.widget_kpi_stats ?? 'KPI principaux'; },
         icon: 'fa-tachometer-alt',
         defaultW: 12, defaultH: 2,
         minW: 6,      minH: 2,
@@ -29,7 +30,7 @@ const REGISTRY = [
     },
     {
         id: 'monthly_stats',
-        label: 'Suivi mensuel',
+        get label() { return L.widget_monthly_stats ?? 'Suivi mensuel'; },
         icon: 'fa-calendar-alt',
         defaultW: 12, defaultH: 2,
         minW: 6,      minH: 2,
@@ -42,7 +43,7 @@ const REGISTRY = [
     },
     {
         id: 'orders_monthly',
-        label: 'Graphique mensuel',
+        get label() { return L.widget_orders_monthly ?? 'Graphique mensuel'; },
         icon: 'fa-chart-line',
         defaultW: 8, defaultH: 5,
         minW: 4,     minH: 3,
@@ -61,7 +62,7 @@ const REGISTRY = [
     },
     {
         id: 'delivery_board',
-        label: 'Planning livraisons',
+        get label() { return L.widget_delivery_board ?? 'Planning livraisons'; },
         icon: 'fa-truck',
         defaultW: 12, defaultH: 4,
         minW: 6,      minH: 3,
@@ -74,7 +75,7 @@ const REGISTRY = [
     },
     {
         id: 'recent_orders',
-        label: 'Dernières commandes',
+        get label() { return L.widget_recent_orders ?? 'Dernières commandes'; },
         icon: 'fa-shopping-cart',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -88,7 +89,7 @@ const REGISTRY = [
     },
     {
         id: 'recent_quotes',
-        label: 'Derniers devis',
+        get label() { return L.widget_recent_quotes ?? 'Derniers devis'; },
         icon: 'fa-calculator',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -102,7 +103,7 @@ const REGISTRY = [
     },
     {
         id: 'quote_rate',
-        label: 'Taux de transformation',
+        get label() { return L.widget_quote_rate ?? 'Taux de transformation'; },
         icon: 'fa-percent',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -114,7 +115,7 @@ const REGISTRY = [
     },
     {
         id: 'goal',
-        label: 'Objectif annuel',
+        get label() { return L.widget_goal ?? 'Objectif annuel'; },
         icon: 'fa-bullseye',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -129,7 +130,7 @@ const REGISTRY = [
     },
     {
         id: 'recent_invoices',
-        label: 'Dernières factures',
+        get label() { return L.widget_recent_invoices ?? 'Dernières factures'; },
         icon: 'fa-file-invoice',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -143,7 +144,7 @@ const REGISTRY = [
     },
     {
         id: 'recent_deliveries',
-        label: 'Derniers bons de livraison',
+        get label() { return L.widget_recent_deliveries ?? 'Derniers bons de livraison'; },
         icon: 'fa-truck',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -157,7 +158,7 @@ const REGISTRY = [
     },
     {
         id: 'recent_purchases',
-        label: 'Commandes achat en attente',
+        get label() { return L.widget_pending_purchases ?? 'Commandes achat en attente'; },
         icon: 'fa-box',
         permission: 'purchases',
         defaultW: 4, defaultH: 5,
@@ -172,7 +173,7 @@ const REGISTRY = [
     },
     {
         id: 'top_clients',
-        label: 'Top clients (CA)',
+        get label() { return L.widget_top_clients ?? 'Top clients (CA)'; },
         icon: 'fa-trophy',
         defaultW: 4, defaultH: 5,
         minW: 3,     minH: 3,
@@ -187,7 +188,7 @@ const REGISTRY = [
     },
     {
         id: 'nc_stats',
-        label: 'Qualité — NC ouvertes',
+        get label() { return L.widget_nc_stats ?? 'Qualité — NC ouvertes'; },
         icon: 'fa-exclamation-triangle',
         defaultW: 4, defaultH: 4,
         minW: 3,     minH: 3,
@@ -200,7 +201,7 @@ const REGISTRY = [
     },
     {
         id: 'supplier_delays',
-        label: 'Délai moyen fournisseurs',
+        get label() { return L.widget_supplier_delay ?? 'Délai moyen fournisseurs'; },
         icon: 'fa-shipping-fast',
         permission: 'purchases',
         defaultW: 4, defaultH: 5,
@@ -213,7 +214,7 @@ const REGISTRY = [
     },
     {
         id: 'otd',
-        label: 'Taux de service (OTD)',
+        get label() { return L.widget_otd ?? 'Taux de service (OTD)'; },
         icon: 'fa-clock',
         defaultW: 4, defaultH: 4,
         minW: 3,     minH: 3,
@@ -225,7 +226,7 @@ const REGISTRY = [
     },
     {
         id: 'announcement',
-        label: 'Annonces',
+        get label() { return L.widget_announcement ?? 'Annonces'; },
         icon: 'fa-envelope',
         defaultW: 4, defaultH: 3,
         minW: 3,     minH: 2,
@@ -237,7 +238,7 @@ const REGISTRY = [
     },
     {
         id: 'mood_tracker',
-        label: 'Niko Niko',
+        get label() { return L.widget_mood ?? 'Niko Niko'; },
         icon: 'fa-smile',
         defaultW: 4, defaultH: 4,
         minW: 3,     minH: 3,

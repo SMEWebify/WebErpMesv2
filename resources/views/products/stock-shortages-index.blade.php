@@ -20,6 +20,7 @@
            'product'   => url('/'.app()->getLocale().'/products'),
            'task'      => url('/'.app()->getLocale().'/task'),
        ]) }}"
+       data-trans="{{ json_encode(['ui' => __('stock_ui')]) }}"
   ></div>
 @stop
 

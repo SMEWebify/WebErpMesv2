@@ -1,6 +1,11 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { getTimeUnit, hoursToUnit, unitLabel } from '../lib/duration.js';
 import GuideHelp from './GuideHelp';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/production_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // Le viewer embarque three.js / OCCT-WASM : chargé à la demande uniquement,
 // pour ne pas alourdir l'écran quand la tâche n'a aucun plan lié.
@@ -817,9 +822,9 @@ function StockWithdrawalCard({ task, apiBase, onReload, trans }) {
         <Card title={<>{t('remove_from_stock_trans_key')}<GuideHelp guide="atelier" section="sortir-la-matiere-du-stock" /></>}>
             {r && (
                 <div className="ts-badges">
-                    <Pill>Demandé {r.requested}</Pill>
-                    <Pill tone="accent">Réservé {r.reserved}</Pill>
-                    {r.missing > 0 && <Pill tone="danger">Manque {r.missing}</Pill>}
+                    <Pill>{L.requested ?? 'Demandé'} {r.requested}</Pill>
+                    <Pill tone="accent">{L.reserved ?? 'Réservé'} {r.reserved}</Pill>
+                    {r.missing > 0 && <Pill tone="danger">{L.missing ?? 'Manque'} {r.missing}</Pill>}
                 </div>
             )}
             <form onSubmit={handleSubmit}>
@@ -957,7 +962,7 @@ function PlanningCard({ task, apiBase, onReload, trans }) {
                             checked={notRecalculate}
                             onChange={(e) => setNotRecalculate(e.target.checked)}
                         />
-                        Ne pas recalculer
+                        {L.do_not_recompute ?? 'Ne pas recalculer'}
                     </label>
                 </form>
 
@@ -1038,7 +1043,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                 </button>
                 <button type="button" className="ts-btn ts-btn--sm" onClick={() => setShowAndon(!showAndon)}>
                     <i className="fas fa-bell" />
-                    Alerte Andon
+                    {L.andon_alert ?? 'Alerte Andon'}
                 </button>
             </div>
 
@@ -1049,7 +1054,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                     <input type="hidden" name="resource_id" value={task.selected_resource_id ?? ''} />
                     <div className="ts-stack">
                         <div>
-                            <span className="ts-label">{"Type d'alerte"}</span>
+                            <span className="ts-label">{L.alert_type ?? 'Type d\'alerte'}</span>
                             <input
                                 type="text"
                                 className="ts-input"
@@ -1060,7 +1065,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                             />
                         </div>
                         <div>
-                            <span className="ts-label">Description</span>
+                            <span className="ts-label">{L.description ?? 'Description'}</span>
                             <textarea
                                 className="ts-input"
                                 name="description"
@@ -1071,7 +1076,7 @@ function QualityCard({ task, apiBase, andonStoreUrl, trans }) {
                             />
                         </div>
                         <button type="submit" className="ts-btn ts-btn--primary">
-                            {"Ajouter l'alerte"}
+                            {L.add_alert ?? 'Ajouter l\'alerte'}
                         </button>
                     </div>
                 </form>
@@ -1275,6 +1280,7 @@ export default function TaskStatuApp({
     trans,
     fileTrans,
 }) {
+    L = trans?.ui ?? {};
     const [search, setSearch] = useState(initialTaskId ? String(initialTaskId) : '');
     const [task, setTask] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -1291,7 +1297,7 @@ export default function TaskStatuApp({
                 setTask(data);
                 setSearch(String(id));
             })
-            .catch(() => setError(`Tâche #${id} introuvable.`))
+            .catch(() => setError(fmt(L.task_not_found ?? 'Tâche #:id introuvable.', { id })))
             .finally(() => setLoading(false));
     }
 

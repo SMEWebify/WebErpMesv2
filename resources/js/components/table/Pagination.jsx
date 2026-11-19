@@ -1,4 +1,5 @@
 import React from 'react';
+import { commonText } from '../../lib/i18n.js';
 
 /**
  * Pages à afficher, avec `null` pour une ellipse.
@@ -69,7 +70,7 @@ export default function Pagination({
         <nav className={navClassName}>
             {showTotal && (
                 <small className="text-muted">
-                    {meta.total} {meta.total > 1 ? 'résultats' : 'résultat'}
+                    {meta.total} {meta.total > 1 ? (commonText('results', 'résultats')) : (commonText('result', 'résultat'))}
                 </small>
             )}
             <ul className={ulClassName}>

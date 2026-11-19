@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LineChart from '../primitives/LineChart.jsx';
 import WidgetCard from '../WidgetCard.jsx';
+import { dashboardTexts as L } from '../texts.js';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -254,7 +255,7 @@ export default function OrdersMonthlyWidget({
                 setLoading(false);
             })
             .catch(err => {
-                setError(err.message ?? 'Erreur de chargement');
+                setError(err.message ?? (L.error_loading ?? 'Erreur de chargement'));
                 setLoading(false);
             });
     }, [endpoint, year]);

@@ -4,17 +4,21 @@ import { QUALIFIED, SupplierQualificationBadge, showsBadge, supplierOptionLabel 
 import GuideHelp from './GuideHelp';
 import { offerLabel, quotationLocks } from '../lib/purchaseOffers';
 
+// Textes de l'écran (resources/lang/*/purchase_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Utilities
 // ---------------------------------------------------------------------------
 
 const STATUS_LABELS = [
-    { value: 1, label: 'En cours' },
-    { value: 2, label: 'Envoyé' },
-    { value: 3, label: 'Partiellement reçu' },
-    { value: 4, label: 'Reçu' },
-    { value: 5, label: 'BC partiellement créé' },
-    { value: 6, label: 'BC créé' },
+    { value: 1, get label() { return L.in_progress ?? 'En cours'; } },
+    { value: 2, get label() { return L.sent ?? 'Envoyé'; } },
+    { value: 3, get label() { return L.partly_received ?? 'Partiellement reçu'; } },
+    { value: 4, get label() { return L.received ?? 'Reçu'; } },
+    { value: 5, get label() { return L.po_partly_created ?? 'BC partiellement créé'; } },
+    { value: 6, get label() { return L.po_created ?? 'BC créé'; } },
 ];
 
 // ---------------------------------------------------------------------------
@@ -1039,6 +1043,7 @@ export default function PurchasesQuotationShow({
     endpoints,
     trans,
 }) {
+    L = trans?.ui ?? {};
     const [quotation,  setQuotation]  = useState(initialQuotation);
     const [products,   setProducts]   = useState([]);
     const [activeTab,  setActiveTab]  = useState('info');

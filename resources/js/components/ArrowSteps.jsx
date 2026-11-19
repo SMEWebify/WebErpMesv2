@@ -108,7 +108,7 @@ function injectStyles() {
  * à l'étape perdue ouvre la fenêtre avant d'envoyer le statut ; une fois perdu,
  * le motif s'affiche sous les flèches avec un bouton pour le renseigner ou le corriger.
  */
-export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl, loss = null }) {
+export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl, loss = null, errorText = 'Erreur lors du changement de statut.' }) {
     const [busy, setBusy]   = useState(false);
     const [error, setError] = useState('');
 
@@ -151,10 +151,10 @@ export default function ArrowSteps({ steps, currentStatu, endpoint, redirectUrl,
                 return;
             }
             if (!result.cancelled || result.refused) {
-                setError(result.data.error ?? result.data.message ?? 'Erreur lors du changement de statut.');
+                setError(result.data.error ?? result.data.message ?? errorText);
             }
         } catch {
-            setError('Erreur lors du changement de statut.');
+            setError(errorText);
         }
         setBusy(false);
     };

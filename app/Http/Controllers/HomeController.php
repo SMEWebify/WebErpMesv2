@@ -371,6 +371,9 @@ class HomeController extends Controller
                     'otd_promised'      => __('order_delays.otd_promised'),
                     'otd_promised_help' => __('order_delays.otd_promised_help'),
                     'otd_fallback'      => __('order_delays.otd_fallback'),
+                    // textes des écrans React du tableau de bord et de la vue du jour
+                    'ui'    => __('dashboard_ui'),
+                    'today' => __('workshop_ui'),
                 ]
             ),
         ];

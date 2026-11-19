@@ -1,29 +1,35 @@
 import React, { useState } from 'react';
 import { formatQty } from '../utils';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 const TYP_MOVE_LABELS = {
     1:  'Inventaire',
-    2:  'Allocation tâche',
-    3:  'Réception commande achat',
-    4:  'Mouvements inter-stocks',
-    5:  'Réception stock manuelle',
-    6:  'Dispatching stock manuel',
-    7:  'Réservation',
-    8:  'Annulation réservation',
-    9:  'Livraison partielle',
-    10: 'En production',
-    11: 'Réservation composant production',
-    12: 'Entrée composant fabriqué',
-    13: 'Inventaire direct',
-    14: 'Entrée transfert',
-    15: 'Écart inventaire (sortie)',
+    get 2() { return L.move_task_allocation ?? 'Allocation tâche'; },
+    get 3() { return L.move_purchase_receipt ?? 'Réception commande achat'; },
+    get 4() { return L.move_inter_stock ?? 'Mouvements inter-stocks'; },
+    get 5() { return L.move_manual_receipt ?? 'Réception stock manuelle'; },
+    get 6() { return L.move_manual_dispatch ?? 'Dispatching stock manuel'; },
+    get 7() { return L.move_reservation ?? 'Réservation'; },
+    get 8() { return L.move_reservation_cancel ?? 'Annulation réservation'; },
+    get 9() { return L.move_partial_delivery ?? 'Livraison partielle'; },
+    get 10() { return L.move_in_production ?? 'En production'; },
+    get 11() { return L.move_component_reservation ?? 'Réservation composant production'; },
+    get 12() { return L.move_manufactured_entry ?? 'Entrée composant fabriqué'; },
+    get 13() { return L.move_direct_inventory ?? 'Inventaire direct'; },
+    get 14() { return L.move_transfer_entry ?? 'Entrée transfert'; },
+    get 15() { return L.move_inventory_gap ?? 'Écart inventaire (sortie)'; },
 };
 
 function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
 
-export default function StockDetailPage({ initial, endpoints }) {
+export default function StockDetailPage({ initial, endpoints, trans = {} }) {
+    L = trans?.ui ?? {};
     const [stockMove, setStockMove] = useState(initial);
     const [form, setForm] = useState({
         x_size:       initial.x_size       ?? '',
@@ -55,8 +61,8 @@ export default function StockDetailPage({ initial, endpoints }) {
                 },
                 body: JSON.stringify(form),
             });
-            if (!res.ok) throw new Error('Erreur serveur');
-            setSaveMsg({ type: 'success', text: 'Stock mis à jour avec succès.' });
+            if (!res.ok) throw new Error((L.server_error ?? 'Erreur serveur'));
+            setSaveMsg({ type: 'success', text: (L.stock_updated ?? 'Stock mis à jour avec succès.') });
             // Reflect tracability change in the trace URL
             setStockMove(prev => ({ ...prev, tracability: form.tracability }));
         } catch (err) {
@@ -82,14 +88,14 @@ export default function StockDetailPage({ initial, endpoints }) {
         }
     }
 
-    const typMoveLabel = TYP_MOVE_LABELS[stockMove.typ_move] ?? `Type ${stockMove.typ_move}`;
+    const typMoveLabel = TYP_MOVE_LABELS[stockMove.typ_move] ?? fmt(L.type_n ?? 'Type :type', { type: stockMove.typ_move });
 
     return (
         <div>
             {/* Trace button */}
             {stockMove.trace_url && (
                 <a href={stockMove.trace_url} className="btn btn-primary mb-3">
-                    Trace
+                    {L.trace ?? 'Trace'}
                 </a>
             )}
 
@@ -97,7 +103,7 @@ export default function StockDetailPage({ initial, endpoints }) {
             <div className="card card-primary mb-3">
                 <div className="card-header">
                     <h3 className="card-title">
-                        Stock — {stockMove.product_code}
+                        {L.stock_dash ?? 'Stock —'} {stockMove.product_code}
                     </h3>
                     <div className="card-tools">
                         <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
@@ -109,14 +115,14 @@ export default function StockDetailPage({ initial, endpoints }) {
                     <table className="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Utilisateur</th>
-                                <th>Date/Heure</th>
-                                <th>Qté</th>
-                                <th>Commande</th>
-                                <th>Tâche</th>
-                                <th>BL Achat</th>
-                                <th>Type</th>
-                                <th>Prix</th>
+                                <th>{L.user ?? 'Utilisateur'}</th>
+                                <th>{L.datetime ?? 'Date/Heure'}</th>
+                                <th>{L.qty ?? 'Qté'}</th>
+                                <th>{L.order ?? 'Commande'}</th>
+                                <th>{L.task ?? 'Tâche'}</th>
+                                <th>{L.purchase_receipt_doc ?? 'BL Achat'}</th>
+                                <th>{L.type ?? 'Type'}</th>
+                                <th>{L.price ?? 'Prix'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -135,7 +141,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                                 <td>
                                     {stockMove.task?.url ? (
                                         <a href={stockMove.task.url} className="btn btn-sm btn-success">
-                                            Voir
+                                            {L.view ?? 'Voir'}
                                         </a>
                                     ) : stockMove.task ? `#${stockMove.task.id}` : null}
                                 </td>
@@ -158,7 +164,7 @@ export default function StockDetailPage({ initial, endpoints }) {
             {/* ── Edit form ── */}
             <div className="card card-warning mb-3">
                 <div className="card-header">
-                    <h3 className="card-title">Stock — Détails</h3>
+                    <h3 className="card-title">{L.stock_details ?? 'Stock — Détails'}</h3>
                     <div className="card-tools">
                         <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                             <i className="fas fa-expand" />
@@ -245,7 +251,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                                 </div>
                             </div>
                             <div className="mb-3 col-md-4">
-                                <label>Traçabilité</label>
+                                <label>{L.traceability ?? 'Traçabilité'}</label>
                                 <div className="input-group">
                                     <span className="input-group-text">
                                             <i className="fas fa-barcode" />
@@ -256,7 +262,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                                         name="tracability"
                                         value={form.tracability}
                                         onChange={handleChange}
-                                        placeholder="Traçabilité"
+                                        placeholder={L.traceability ?? 'Traçabilité'}
                                     />
                                 </div>
                             </div>
@@ -264,7 +270,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                         <div className="card-footer px-0 pb-0">
                             <button type="submit" className="btn btn-info rounded-0" disabled={saving}>
                                 <i className={`fas fa-lg me-1 ${saving ? 'fa-spinner fa-spin' : 'fa-save'}`} />
-                                {saving ? 'Enregistrement…' : 'Mettre à jour'}
+                                {saving ? (L.saving ?? 'Enregistrement…') : (L.update ?? 'Mettre à jour')}
                             </button>
                         </div>
                     </form>
@@ -274,7 +280,7 @@ export default function StockDetailPage({ initial, endpoints }) {
             {/* ── Barcode ── */}
             <div className="card card-secondary mb-3">
                 <div className="card-header">
-                    <h3 className="card-title">Code-barres</h3>
+                    <h3 className="card-title">{L.barcode ?? 'Code-barres'}</h3>
                     <div className="card-tools">
                         <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                             <i className="fas fa-expand" />
@@ -294,7 +300,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                 <div className="col-md-12">
                     <div className="card card-info mb-3">
                         <div className="card-header">
-                            <h3 className="card-title">Photos</h3>
+                            <h3 className="card-title">{L.photos ?? 'Photos'}</h3>
                             <div className="card-tools">
                                 <button type="button" className="btn btn-tool" data-lte-toggle="card-maximize">
                                     <i className="fas fa-expand" />

@@ -1,4 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/workshop_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 /**
  * WorkshopReportsApp — écran de rapports orienté atelier.
@@ -107,7 +112,7 @@ function BarChart({ labels, series, height = 200, formatValue = fmtNum }) {
 
 // ─── Tableau de répartition ───────────────────────────────────────────────────
 
-function BreakdownCard({ title, icon, rows, showSessions = true }) {
+function BreakdownCard({ title, icon, rows, showSessions = true, byUser = false }) {
     return (
         <div className="card mb-3">
             <div className="card-header">
@@ -117,17 +122,17 @@ function BreakdownCard({ title, icon, rows, showSessions = true }) {
                 <table className="table table-sm table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>{title.includes('opérateur') ? 'Opérateur' : 'Libellé'}</th>
-                            <th className="text-end">Heures</th>
-                            <th className="text-end">Bonnes</th>
-                            <th className="text-end">Rebuts</th>
-                            <th className="text-end">% rebut</th>
-                            {showSessions && <th className="text-end">Sessions</th>}
+                            <th>{byUser ? (L.operator ?? 'Opérateur') : (L.label ?? 'Libellé')}</th>
+                            <th className="text-end">{L.hours ?? 'Heures'}</th>
+                            <th className="text-end">{L.good ?? 'Bonnes'}</th>
+                            <th className="text-end">{L.scrap ?? 'Rebuts'}</th>
+                            <th className="text-end">{L.scrap_pct ?? '% rebut'}</th>
+                            {showSessions && <th className="text-end">{L.sessions ?? 'Sessions'}</th>}
                         </tr>
                     </thead>
                     <tbody>
                         {rows.length === 0 && (
-                            <tr><td colSpan={showSessions ? 6 : 5} className="text-center text-muted p-3">Aucune déclaration</td></tr>
+                            <tr><td colSpan={showSessions ? 6 : 5} className="text-center text-muted p-3">{L.no_declaration ?? 'Aucune déclaration'}</td></tr>
                         )}
                         {rows.map((row, i) => (
                             <tr key={`${row.label}-${i}`}>
@@ -160,7 +165,8 @@ function BreakdownCard({ title, icon, rows, showSessions = true }) {
 
 // ─── Écran principal ──────────────────────────────────────────────────────────
 
-export default function WorkshopReportsApp({ initial, endpoints }) {
+export default function WorkshopReportsApp({ initial, endpoints, trans = {} }) {
+    L = trans?.ui ?? {};
     const [report, setReport]   = useState(initial);
     const [period, setPeriod]   = useState(initial?.period?.key ?? 'today');
     const [loading, setLoading] = useState(false);
@@ -174,7 +180,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
             const url = new URL(endpoints.report, window.location.origin);
             url.searchParams.set('period', key);
             const res = await fetch(url, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error('Chargement impossible');
+            if (!res.ok) throw new Error((L.load_failed ?? 'Chargement impossible'));
             setReport(await res.json());
         } catch (err) {
             setError(err.message);
@@ -197,7 +203,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
         return () => clearInterval(timer);
     }, [period, load]);
 
-    if (!report) return <div className="p-4 text-muted">Aucune donnée.</div>;
+    if (!report) return <div className="p-4 text-muted">{L.no_data ?? 'Aucune donnée.'}</div>;
 
     const { kpi, per_day: perDay, per_resource: perResource, per_user: perUser,
             per_service: perService, andon, in_progress: inProgress } = report;
@@ -223,7 +229,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                 </button>
                 <div className="mb-2 text-muted">
                     <div>{report.period.from} → {report.period.to}</div>
-                    <small>Mis à jour à {report.generated_at} — rafraîchissement auto toutes les 60 s</small>
+                    <small>{L.updated_at ?? 'Mis à jour à'} {report.generated_at} {L.auto_refresh ?? '— rafraîchissement auto toutes les 60 s'}</small>
                 </div>
             </div>
 
@@ -231,37 +237,37 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
 
             {/* KPI */}
             <div className="row">
-                <Tile icon="fas fa-stopwatch"       color="#17a2b8" label="Heures pointées" value={fmtHours(kpi.declared_hours)} hint={`${fmtNum(kpi.sessions)} session(s)`} />
-                <Tile icon="fas fa-check-circle"    color="#28a745" label="Pièces bonnes"   value={fmtNum(kpi.good_qty)} />
-                <Tile icon="fas fa-times-circle"    color="#dc3545" label="Rebuts"          value={fmtNum(kpi.bad_qty)} hint={`Taux ${kpi.scrap_rate} %`} />
-                <Tile icon="fas fa-flag-checkered"  color="#6f42c1" label="Tâches terminées" value={fmtNum(kpi.finished_tasks)} />
-                <Tile icon="fas fa-users"           color="#20c997" label="Opérateurs actifs" value={fmtNum(kpi.active_users)} />
-                <Tile icon="fas fa-play-circle"     color="#fd7e14" label="En cours"        value={fmtNum(inProgress.length)} hint="sessions ouvertes" />
-                <Tile icon="fas fa-hourglass-end"   color="#e83e8c" label="Tâches en retard" value={fmtNum(kpi.late_tasks)} hint="échéance dépassée" />
-                <Tile icon="fas fa-bell"            color="#ffc107" label="Andon ouverts"   value={fmtNum(andon.open)} hint={andon.avg_minutes !== null ? `Résolution moy. ${fmtDuration(andon.avg_minutes)}` : 'aucune résolution'} />
+                <Tile icon="fas fa-stopwatch"       color="#17a2b8" label={L.clocked_hours ?? 'Heures pointées'} value={fmtHours(kpi.declared_hours)} hint={fmt(L.sessions_count ?? ':count session(s)', { count: fmtNum(kpi.sessions) })} />
+                <Tile icon="fas fa-check-circle"    color="#28a745" label={L.good_parts ?? 'Pièces bonnes'}   value={fmtNum(kpi.good_qty)} />
+                <Tile icon="fas fa-times-circle"    color="#dc3545" label={L.scrap ?? 'Rebuts'}          value={fmtNum(kpi.bad_qty)} hint={fmt(L.scrap_rate ?? 'Taux :rate %', { rate: kpi.scrap_rate })} />
+                <Tile icon="fas fa-flag-checkered"  color="#6f42c1" label={L.finished_tasks ?? 'Tâches terminées'} value={fmtNum(kpi.finished_tasks)} />
+                <Tile icon="fas fa-users"           color="#20c997" label={L.active_operators ?? 'Opérateurs actifs'} value={fmtNum(kpi.active_users)} />
+                <Tile icon="fas fa-play-circle"     color="#fd7e14" label={L.in_progress ?? 'En cours'}        value={fmtNum(inProgress.length)} hint={L.open_sessions ?? 'sessions ouvertes'} />
+                <Tile icon="fas fa-hourglass-end"   color="#e83e8c" label={L.late_tasks ?? 'Tâches en retard'} value={fmtNum(kpi.late_tasks)} hint={L.past_due ?? 'échéance dépassée'} />
+                <Tile icon="fas fa-bell"            color="#ffc107" label={L.open_andon ?? 'Andon ouverts'}   value={fmtNum(andon.open)} hint={andon.avg_minutes !== null ? fmt(L.avg_resolution_n ?? 'Résolution moy. :duration', { duration: fmtDuration(andon.avg_minutes) }) : (L.no_resolution ?? 'aucune résolution')} />
             </div>
 
             {/* En cours maintenant */}
             <div className="card card-warning card-outline mb-3">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-play me-2" />En cours maintenant</h3>
+                    <h3 className="card-title"><i className="fas fa-play me-2" />{L.in_progress_now ?? 'En cours maintenant'}</h3>
                     <span className="badge text-bg-warning right">{inProgress.length}</span>
                 </div>
                 <div className="card-body p-0" style={{ maxHeight: 300, overflowY: 'auto' }}>
                     <table className="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Tâche</th>
-                                <th>Service</th>
-                                <th>Ressource</th>
-                                <th>Opérateur</th>
-                                <th>Depuis</th>
-                                <th className="text-end">Durée</th>
+                                <th>{L.task ?? 'Tâche'}</th>
+                                <th>{L.service ?? 'Service'}</th>
+                                <th>{L.resource ?? 'Ressource'}</th>
+                                <th>{L.operator ?? 'Opérateur'}</th>
+                                <th>{L.since ?? 'Depuis'}</th>
+                                <th className="text-end">{L.duration ?? 'Durée'}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {inProgress.length === 0 && (
-                                <tr><td colSpan={6} className="text-center text-muted p-3">Aucune tâche en cours</td></tr>
+                                <tr><td colSpan={6} className="text-center text-muted p-3">{L.no_task_in_progress ?? 'Aucune tâche en cours'}</td></tr>
                             )}
                             {inProgress.map(row => (
                                 <tr key={row.task_id}>
@@ -296,14 +302,14 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                 <div className="col-md-6">
                     <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-cubes me-2" />Pièces par jour</h3>
+                            <h3 className="card-title"><i className="fas fa-cubes me-2" />{L.parts_per_day ?? 'Pièces par jour'}</h3>
                         </div>
                         <div className="card-body">
                             <BarChart
                                 labels={perDay.map(d => d.label)}
                                 series={[
-                                    { label: 'Bonnes', color: '#28a745', values: perDay.map(d => d.good) },
-                                    { label: 'Rebuts', color: '#dc3545', values: perDay.map(d => d.bad) },
+                                    { label: (L.good ?? 'Bonnes'), color: '#28a745', values: perDay.map(d => d.good) },
+                                    { label: (L.scrap ?? 'Rebuts'), color: '#dc3545', values: perDay.map(d => d.bad) },
                                 ]}
                             />
                         </div>
@@ -312,12 +318,12 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                 <div className="col-md-6">
                     <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-clock me-2" />Heures pointées par jour</h3>
+                            <h3 className="card-title"><i className="fas fa-clock me-2" />{L.hours_per_day ?? 'Heures pointées par jour'}</h3>
                         </div>
                         <div className="card-body">
                             <BarChart
                                 labels={perDay.map(d => d.label)}
-                                series={[{ label: 'Heures', color: '#17a2b8', values: perDay.map(d => d.hours) }]}
+                                series={[{ label: (L.hours ?? 'Heures'), color: '#17a2b8', values: perDay.map(d => d.hours) }]}
                                 formatValue={fmtHours}
                             />
                         </div>
@@ -328,33 +334,33 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
             {/* Répartitions */}
             <div className="row">
                 <div className="col-md-6">
-                    <BreakdownCard title="Par ressource" icon="fas fa-cogs" rows={perResource} />
+                    <BreakdownCard title={L.by_resource ?? 'Par ressource'} icon="fas fa-cogs" rows={perResource} />
                 </div>
                 <div className="col-md-6">
-                    <BreakdownCard title="Par opérateur" icon="fas fa-user-clock" rows={perUser} />
+                    <BreakdownCard title={L.by_operator ?? 'Par opérateur'} icon="fas fa-user-clock" rows={perUser} byUser />
                 </div>
                 <div className="col-md-6">
-                    <BreakdownCard title="Par service" icon="fas fa-sitemap" rows={perService} showSessions={false} />
+                    <BreakdownCard title={L.by_service ?? 'Par service'} icon="fas fa-sitemap" rows={perService} showSessions={false} />
                 </div>
                 <div className="col-md-6">
                     <div className="card mb-3">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-bell me-2" />Alertes andon</h3>
-                            <span className="badge text-bg-secondary right">{andon.total} sur la période</span>
+                            <h3 className="card-title"><i className="fas fa-bell me-2" />{L.andon_alerts ?? 'Alertes andon'}</h3>
+                            <span className="badge text-bg-secondary right">{andon.total} {L.over_period ?? 'sur la période'}</span>
                         </div>
                         <div className="card-body p-0" style={{ maxHeight: 320, overflowY: 'auto' }}>
                             <table className="table table-sm table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Type</th>
-                                        <th className="text-end">Total</th>
-                                        <th className="text-end">Non résolues</th>
-                                        <th className="text-end">Résolution moy.</th>
+                                        <th>{L.type ?? 'Type'}</th>
+                                        <th className="text-end">{L.total ?? 'Total'}</th>
+                                        <th className="text-end">{L.unresolved ?? 'Non résolues'}</th>
+                                        <th className="text-end">{L.avg_resolution ?? 'Résolution moy.'}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {andon.by_type.length === 0 && (
-                                        <tr><td colSpan={4} className="text-center text-muted p-3">Aucune alerte</td></tr>
+                                        <tr><td colSpan={4} className="text-center text-muted p-3">{L.no_alert ?? 'Aucune alerte'}</td></tr>
                                     )}
                                     {andon.by_type.map(row => (
                                         <tr key={row.label}>
@@ -374,7 +380,7 @@ export default function WorkshopReportsApp({ initial, endpoints }) {
                             </table>
                             {andon.by_resource.length > 0 && (
                                 <div className="p-2 border-top">
-                                    <small className="text-muted d-block mb-1">Ressources les plus alertées</small>
+                                    <small className="text-muted d-block mb-1">{L.most_alerted ?? 'Ressources les plus alertées'}</small>
                                     {andon.by_resource.map(r => (
                                         <span key={r.label} className="badge text-bg-light me-1" style={{ fontSize: 12 }}>
                                             {r.label} <strong>{r.count}</strong>

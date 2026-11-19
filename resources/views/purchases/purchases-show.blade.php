@@ -211,6 +211,7 @@ $purchaseSteps = json_encode([
                   ],
                   'trans' => __('supplier_ack.screen'),
               ]) }}"
+              data-trans="{{ json_encode(['ui' => __('purchase_ui')]) }}"
           ></div>
       </div>
       @if($CustomFields)

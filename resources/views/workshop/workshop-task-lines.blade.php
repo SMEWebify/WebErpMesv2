@@ -23,6 +23,7 @@
         data-statuses="{{ json_encode($taskLinesProps['statuses']) }}"
         data-resources="{{ json_encode($taskLinesProps['resources']) }}"
         data-default-status-ids="{{ json_encode($taskLinesProps['default_status_ids']) }}"
+        data-trans="{{ json_encode(['ui' => __('production_ui')]) }}"
     ></div>
 @stop
 

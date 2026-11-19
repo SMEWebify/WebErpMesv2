@@ -67,6 +67,7 @@ class PurchasesInvoiceController extends Controller
         ];
 
         $reactTrans = [
+            'ui'                => __('billing_ui'),
             'sort_company'      => __('general_content.sort_companie_trans_key'),
             'select_company'    => __('general_content.select_company_trans_key'),
             'no_select_company' => __('general_content.no_select_company_trans_key'),

@@ -247,6 +247,7 @@
   <x-adminlte-card title="Valorisation du stock (CUMP)" theme="info" collapsible="collapsed" removable maximizable>
       <div id="stock-valuation-app"
           data-endpoints="{{ json_encode(['valuation' => route('products.stock.json.valuation')]) }}"
+          data-trans="{{ json_encode(['ui' => __('stock_ui')]) }}"
       ></div>
   </x-adminlte-card>
   @endcan

@@ -187,6 +187,7 @@
     ->values();
 
   $companyFormTrans = [
+    'ui'                     => __('crm_ui'),
     'registry'               => __('company_registry.ui'),
     'general_information'    => __('general_content.general_information_trans_key'),
     'external_id'            => __('general_content.external_id_trans_key'),
@@ -501,7 +502,8 @@
       <div class="tab-pane" id="timeline">
         <div
           id="company-timeline-app"
-          data-endpoint="{{ route('companies.json.timeline', $Companie->id) }}">
+          data-endpoint="{{ route('companies.json.timeline', $Companie->id) }}"
+          data-trans='@json(['ui' => __('crm_ui')], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
         </div>
       </div>
       <div class="tab-pane" id="evaluation">

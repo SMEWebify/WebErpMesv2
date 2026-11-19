@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable, Pagination, MobileFilters } from './table';
 import { formatCurrencyRounded as formatCurrency } from '../utils';
+import { shortMonths } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/billing_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -18,7 +23,7 @@ const INVOICE_STATUS = {
     4: { badge: 'text-bg-success', label: 'invoiced' },
 };
 
-const MONTHS_SHORT_ALL = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+// Mois abrégés : shortMonths() (lib/i18n), selon la langue de la page.
 
 const LS_COL_ORDER   = 'deliverys_col_order';
 const LS_HIDDEN_COLS = 'deliverys_hidden_cols';
@@ -99,7 +104,7 @@ function DonutChart({ data, colors, labels }) {
                 ))}
                 <circle cx={cx} cy={cy} r={innerR} fill="white" />
                 <text x={cx} y={cy - 6} textAnchor="middle" fill="#444" fontSize="20" fontWeight="700">{total}</text>
-                <text x={cx} y={cy + 12} textAnchor="middle" fill="#999" fontSize="11">total</text>
+                <text x={cx} y={cy + 12} textAnchor="middle" fill="#999" fontSize="11">{L.total_lower ?? 'total'}</text>
             </svg>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', marginTop: '6px' }}>
                 {slices.map((s, i) => (
@@ -119,7 +124,7 @@ function DonutChart({ data, colors, labels }) {
 
 function BarChart({ monthlyData, currency, locale, startMonth = 1 }) {
     const monthsLabels = Array.from({ length: 12 }, (_, i) =>
-        MONTHS_SHORT_ALL[((startMonth - 1) + i) % 12]
+        shortMonths()[((startMonth - 1) + i) % 12]
     );
     const months = Array.from({ length: 12 }, (_, i) => {
         const calMonth = ((startMonth - 1 + i) % 12) + 1;
@@ -261,6 +266,7 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
 // ---------------------------------------------------------------------------
 
 export default function DeliverysIndex({ kpi, chartData, endpoints, trans, companieId = null }) {
+    L = trans?.ui ?? {};
     // ---- Filters (localStorage) ----
     const defaultFilters = { search: '', statuses: [], invoiceStatuses: [] };
     const [filters, setFilters] = useState(() => {

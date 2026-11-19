@@ -1,56 +1,61 @@
 import React, { useState, useEffect } from 'react';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/stock_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Config per document type
 // ---------------------------------------------------------------------------
 const TYPE_CONFIG = {
     quote: {
-        label:   'Devis',
+        get label() { return L.type_quote ?? 'Devis'; },
         color:   '#007bff',
         bg:      '#e8f0fe',
         icon:    'fas fa-file-alt',
         statuses: {
-            1: { label: 'Brouillon',   badge: 'text-bg-secondary' },
-            2: { label: 'Envoyé',      badge: 'text-bg-info' },
-            3: { label: 'En révision', badge: 'text-bg-warning' },
-            4: { label: 'Accepté',     badge: 'text-bg-success' },
-            5: { label: 'Refusé',      badge: 'text-bg-danger' },
-            6: { label: 'Expiré',      badge: 'text-bg-dark' },
+            1: { get label() { return L.draft ?? 'Brouillon'; },   badge: 'text-bg-secondary' },
+            2: { get label() { return L.sent_m ?? 'Envoyé'; },      badge: 'text-bg-info' },
+            3: { get label() { return L.under_review ?? 'En révision'; }, badge: 'text-bg-warning' },
+            4: { get label() { return L.accepted ?? 'Accepté'; },     badge: 'text-bg-success' },
+            5: { get label() { return L.refused ?? 'Refusé'; },      badge: 'text-bg-danger' },
+            6: { get label() { return L.expired ?? 'Expiré'; },      badge: 'text-bg-dark' },
         },
     },
     order: {
-        label:   'Commande',
+        get label() { return L.order ?? 'Commande'; },
         color:   '#fd7e14',
         bg:      '#fff3e0',
         icon:    'fas fa-shopping-cart',
         statuses: {
-            1: { label: 'Nouvelle',  badge: 'text-bg-info' },
-            2: { label: 'En cours',  badge: 'text-bg-primary' },
-            3: { label: 'Terminée', badge: 'text-bg-success' },
-            4: { label: 'Annulée',  badge: 'text-bg-danger' },
+            1: { get label() { return L.new_f ?? 'Nouvelle'; },  badge: 'text-bg-info' },
+            2: { get label() { return L.in_progress ?? 'En cours'; },  badge: 'text-bg-primary' },
+            3: { get label() { return L.finished_f ?? 'Terminée'; }, badge: 'text-bg-success' },
+            4: { get label() { return L.canceled_f ?? 'Annulée'; },  badge: 'text-bg-danger' },
         },
     },
     purchase: {
-        label:   'Achat',
+        get label() { return L.type_purchase ?? 'Achat'; },
         color:   '#6f42c1',
         bg:      '#f3eeff',
         icon:    'fas fa-cart-arrow-down',
         statuses: {
-            1: { label: 'Brouillon', badge: 'text-bg-secondary' },
-            2: { label: 'Envoyé',   badge: 'text-bg-info' },
-            3: { label: 'Reçu',     badge: 'text-bg-success' },
-            4: { label: 'Annulé',   badge: 'text-bg-danger' },
+            1: { get label() { return L.draft ?? 'Brouillon'; }, badge: 'text-bg-secondary' },
+            2: { get label() { return L.sent_m ?? 'Envoyé'; },   badge: 'text-bg-info' },
+            3: { get label() { return L.received ?? 'Reçu'; },     badge: 'text-bg-success' },
+            4: { get label() { return L.canceled_m ?? 'Annulé'; },   badge: 'text-bg-danger' },
         },
     },
     // Lot reçu : le libellé porte la coulée, le lot fournisseur et le certificat
     batch: {
-        label:   'Lot',
+        get label() { return L.type_batch ?? 'Lot'; },
         color:   '#20c997',
         bg:      'var(--bs-tertiary-bg)',
         icon:    'fas fa-fire',
         statuses: {
-            1: { label: 'Ouvert',   badge: 'text-bg-success' },
-            2: { label: 'Clôturé', badge: 'text-bg-secondary' },
+            1: { get label() { return L.open ?? 'Ouvert'; },   badge: 'text-bg-success' },
+            2: { get label() { return L.closed ?? 'Clôturé'; }, badge: 'text-bg-secondary' },
         },
     },
 };
@@ -72,7 +77,7 @@ function statusInfo(type, statu, trans = {}) {
     const cfg = TYPE_CONFIG[type]?.statuses?.[statu];
     const label = trans[`${type}_statu_${statu}`];
     if (cfg && label) return { ...cfg, label };
-    return cfg ?? { label: `Statut ${statu}`, badge: 'text-bg-secondary' };
+    return cfg ?? { label: fmt(L.status_n ?? 'Statut :status', { status: statu }), badge: 'text-bg-secondary' };
 }
 
 // ---------------------------------------------------------------------------
@@ -153,6 +158,7 @@ function TimelineItem({ item, trans = {} }) {
 // ProductHistory
 // ---------------------------------------------------------------------------
 export default function ProductHistory({ endpoint, canPurchases = true, trans = {} }) {
+    L = trans?.ui ?? {};
     const [items,       setItems]       = useState([]);
     const [loading,     setLoading]     = useState(true);
     const [error,       setError]       = useState(null);
@@ -226,14 +232,14 @@ export default function ProductHistory({ endpoint, canPurchases = true, trans = 
             {/* States */}
             {loading && (
                 <div className="text-center text-muted py-4">
-                    <i className="fas fa-spinner fa-spin me-2" /> Chargement…
+                    <i className="fas fa-spinner fa-spin me-2" /> {L.loading ?? 'Chargement…'}
                 </div>
             )}
             {error && <div className="alert alert-danger">{error}</div>}
             {!loading && !error && visible.length === 0 && (
                 <div className="text-center text-muted py-4">
                     <i className="fas fa-inbox fa-2x mb-2 d-block" />
-                    Aucun document pour ce produit.
+                    {L.no_document ?? 'Aucun document pour ce produit.'}
                 </div>
             )}
 
@@ -241,7 +247,7 @@ export default function ProductHistory({ endpoint, canPurchases = true, trans = 
             {!loading && grouped.map((entry, idx) => {
                 if (entry.type === 'separator') {
                     const [y, m] = (entry.month ?? '').split('-');
-                    const label  = entry.month === 'unknown' ? 'Date inconnue'
+                    const label  = entry.month === 'unknown' ? (L.unknown_date ?? 'Date inconnue')
                         : new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(+y, +m - 1));
                     return (
                         <div key={`sep-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '16px 0 8px' }}>

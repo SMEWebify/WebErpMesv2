@@ -6,6 +6,10 @@ import GuideHelp from './GuideHelp';
 import CompanyRegistrySearch from './company/CompanyRegistrySearch';
 import { applyRegistryResult, formatAddress, registryAddress } from '../lib/companyRegistry';
 
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -241,8 +245,8 @@ function MonthlyBarChart({ chartData, trans }) {
 // ---------------------------------------------------------------------------
 
 function CustomerBadge({ statu }) {
-    if (statu === 2) return <span className="badge text-bg-warning"><i className="fa fa-check me-1" />Client</span>;
-    if (statu === 3) return <span className="badge text-bg-success"><i className="fa fa-check-double me-1" />Prospect</span>;
+    if (statu === 2) return <span className="badge text-bg-warning"><i className="fa fa-check me-1" />{L.customer ?? 'Client'}</span>;
+    if (statu === 3) return <span className="badge text-bg-success"><i className="fa fa-check-double me-1" />{L.prospect ?? 'Prospect'}</span>;
     return <span className="badge text-bg-secondary">—</span>;
 }
 
@@ -710,6 +714,7 @@ function DashboardTab({ kpi, chartData, trans }) {
 // ---------------------------------------------------------------------------
 
 export default function CompaniesIndex({ kpi, chartData, endpoints, trans }) {
+    L = trans?.ui ?? {};
     const [activeTab, setActiveTab] = useIndexTab('companies_index_tab');
 
     return (

@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { formatQty, formatDate, formatCurrency } from '../utils';
 import { DataTable, Pagination, MobileFilters } from './table';
 import { isReleased, releasedOnText } from '../lib/productionRelease.js';
+import { fmt } from '../lib/i18n.js';
+
+// Textes de l'écran (resources/lang/*/crm_ui.php), posés par le composant principal
+// avant le rendu de ses enfants ; repli sur le texte français.
+let L = {};
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -329,6 +334,7 @@ function OrderLinesTable({ lines, sortField, sortAsc, onSort, trans, currency, l
 // ---------------------------------------------------------------------------
 
 export default function OrderLinesIndex({ endpoints, trans, release = null }) {
+    L = trans?.ui ?? {};
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 
@@ -414,7 +420,7 @@ export default function OrderLinesIndex({ endpoints, trans, release = null }) {
                     <div className="flex-grow-1" />
 
                     {loading && <span className="text-muted"><i className="fas fa-spinner fa-spin me-1" /></span>}
-                    {meta && <small className="text-muted">{meta.total} lignes</small>}
+                    {meta && <small className="text-muted">{fmt(L.lines_total ?? ':count lignes', { count: meta.total })}</small>}
                 </div>
 
                 <OrderLinesTable

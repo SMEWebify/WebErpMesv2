@@ -75,7 +75,7 @@
     data-display-hours-diff="{{ $displayHoursDiff ? 'true' : 'false' }}"
     data-granularity="{{ $granularity }}"
     data-endpoints="{{ json_encode($endpointsData) }}"
-    data-trans="{{ json_encode($transData) }}"
+    data-trans="{{ json_encode($transData + ['ui' => __('production_ui')]) }}"
   ></div>
 @stop
 

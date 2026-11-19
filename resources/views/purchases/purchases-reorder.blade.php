@@ -28,6 +28,7 @@
              'store' => route('purchases.reorder.store'),
          ]) }}"
          data-scope="{{ $scope }}"
+         data-trans="{{ json_encode(['ui' => __('purchase_ui')]) }}"
          data-products="{{ json_encode($products) }}"
          data-quantities="{{ json_encode($quantities) }}"
          data-currency="{{ $Factory->curency }}"></div>
