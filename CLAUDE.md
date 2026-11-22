@@ -1920,9 +1920,22 @@ n'importe qui pouvait POSTer `statu=2` sur sa demande, et le solde n'aurait rien
 **Notifications** (`App\Services\HumanResources\AbsenceNotifier`, cloche seulement,
 `AbsenceRequestNotification`) : une nouvelle demande prévient les RH (`human-resources-menu`
 ou rôle Admin) et le responsable `users.supervisor_id` ; un changement de `statu` vers
-validé / refusé prévient le salarié. Celui qui agit n'est jamais notifié. Le responsable est
-**prévenu** mais ne valide pas : la validation reste aux RH (`AbsenceController`).
-Tests : `tests/Feature/HumanResources/AbsenceNotificationTest.php`.
+validé / refusé prévient le salarié. Celui qui agit n'est jamais notifié.
+
+**Validation par le responsable** : `times.absence.decide` (`statu` 2 | 3 seulement, ni dates
+ni type) — RH sur toute demande, responsable direct (`users.supervisor_id`) sur une demande
+**à valider** d'un autre que lui (`AbsenceController::canDecide`), sinon 403. Carte « Demandes
+de mon équipe à valider » de l'onglet Demande d'absence du profil ; la notification d'un
+responsable sans droit RH y mène (`#LeaveRequest`). Revenir sur une décision reste aux RH.
+Tests : `tests/Feature/HumanResources/AbsenceNotificationTest.php`, `AbsenceSupervisorApprovalTest.php`.
+
+**Capacité du planning** : `ResourceCapacityService` retire les absences **validées** des
+postes de main-d'œuvre (`is_labor`, personnes rattachées par `users()`), au prorata des
+présents ; demi-journée / deux demi-journées / heures = 0,5 / 1 jour / `hours_count`, au total
+de la demande (même lecture que `daysForAbsence`), réparti sur les jours de semaine de la
+plage. Vaut pour la maille ressource, l'ordonnancement et l'affectation, et pour la maille
+service (`capacityPerDay` de `mapServices` : capacité fixe × part disponible de chaque
+ressource ce jour-là, arrêts machine compris ; service sans ressource inchangé).
 
 ### Notes de frais — justificatifs et lecture IA
 - **Justificatifs dans la GED**, alias `expense-report` (`UserExpenseReport`), **confidentiel**
@@ -2036,10 +2049,6 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   `HumanResourcesController@UpdateUser` (voir RH).
 
 #### RH — reste à faire
-- **Validation d'absence par le responsable** : `users.supervisor_id` reçoit la notification
-  d'une demande mais ne peut pas la valider (droit RH uniquement)
-- **Absences absentes de la capacité planning** : `PlanningController` ne tient compte que des
-  jours fériés, pas des congés validés
 - **Alerte de péremption des habilitations** : `expiration_date` est affichée sur la matrice
   mais aucune notification n'est déclenchée, alors que le patron existe juste à côté
   (`quality:dispatch-calibration-alerts`)

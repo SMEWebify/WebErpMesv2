@@ -98,7 +98,7 @@ class PlanningController extends Controller
             $rows = $this->mapResources($dates, $hours);
         } else {
             [$hours, $tasks] = $this->calculateHoursAndTasks($taches);
-            $rows = $this->mapServices($this->getServices());
+            $rows = $this->mapServices($this->getServices(), $dates);
         }
 
         return [
@@ -286,7 +286,7 @@ class PlanningController extends Controller
         // withCount('services') sur les ressources : une machine partagée entre
         // plusieurs services ne doit pas voir sa capacité comptée en entier dans
         // chacun d'eux (cf. mapServices).
-        return MethodsServices::with(['Ressources' => fn ($query) => $query->withCount('services')])
+        return MethodsServices::with(['Ressources' => fn ($query) => $query->withCount('services')->with('shiftPattern.slots')])
                     ->where(function (Builder $query) {
                         return $query->where('type', MethodsServices::TYPE_PRODUCTIVE)
                                     ->orWhere('type', MethodsServices::TYPE_SUB_CONTRACTING);
@@ -301,20 +301,62 @@ class PlanningController extends Controller
      * Une ressource pouvant réaliser plusieurs services, sa capacité est répartie
      * à parts égales entre eux : la somme des capacités par service reste ainsi
      * égale à la capacité réelle de l'atelier, sans double comptage.
+     *
+     * capacityPerDay : la même capacité, diminuée chaque jour des indisponibilités
+     * de ses ressources (absences validées de la main-d'œuvre, arrêts machine),
+     * dans la proportion que ResourceCapacityService applique à la maille
+     * ressource. Un jour sans indisponibilité garde la capacité de la ligne.
      */
-    private function mapServices($services): \Illuminate\Support\Collection
+    private function mapServices($services, array $dates = []): \Illuminate\Support\Collection
     {
-        return $services->map(fn ($s) => [
-            'id'       => (string) $s->id,
-            'label'    => $s->label,
-            'avatar'   => $s->picture ? '/storage/images/methods/' . $s->picture : null,
+        $capacityService = app(ResourceCapacityService::class);
+        $availability = [];
+
+        return $services->map(function ($s) use ($dates, $capacityService, &$availability) {
             // capacity is stored weekly — convert to daily (÷5) for load rate display
-            'capacity' => round(
-                $s->Ressources->sum(fn ($resource) => $resource->capacity / max(1, (int) $resource->services_count))
-                    / \App\Models\Methods\MethodsRessources::WORKING_DAYS_PER_WEEK,
-                2
-            ),
-        ])->values();
+            $shares = $s->Ressources->map(fn ($resource) => [
+                'resource' => $resource,
+                'hours'    => $resource->capacity / max(1, (int) $resource->services_count)
+                    / MethodsRessources::WORKING_DAYS_PER_WEEK,
+            ]);
+            $capacity = round($shares->sum('hours'), 2);
+
+            $row = [
+                'id'       => (string) $s->id,
+                'label'    => $s->label,
+                'avatar'   => $s->picture ? '/storage/images/methods/' . $s->picture : null,
+                'capacity' => $capacity,
+            ];
+
+            // Sans ressource, la capacité saisie à l'écran (ou 8 h) s'applique telle quelle.
+            if ($capacity <= 0) {
+                return $row;
+            }
+
+            foreach ($dates as $date) {
+                $row['capacityPerDay'][$date] = round($shares->sum(function (array $share) use ($date, $capacityService, &$availability) {
+                    $resource = $share['resource'];
+                    $availability[$resource->id][$date] ??= $this->availabilityRatio($capacityService, $resource, $date);
+
+                    return $share['hours'] * $availability[$resource->id][$date];
+                }), 2);
+            }
+
+            return $row;
+        })->values();
+    }
+
+    /** Part des heures ouvertes d'une ressource réellement disponible ce jour-là (1 si fermée). */
+    private function availabilityRatio(ResourceCapacityService $capacityService, MethodsRessources $resource, string $date): float
+    {
+        $day = Carbon::parse($date);
+        $open = $capacityService->openHours($resource, $day);
+
+        if ($open <= 0) {
+            return 1.0;
+        }
+
+        return max(0.0, 1 - $capacityService->unavailableHours($resource, $day, $open) / $open);
     }
 
     private function countTaskNullRessource()

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Times;
 
 use App\Models\Times\TimesAbsence;
+use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Times\StoreAbsenceRequest;
 use App\Http\Requests\Times\UpdateAbsenceRequest;
@@ -83,6 +85,45 @@ class AbsenceController extends Controller
             return redirect()->route('times')->with('success', __('general_content.absence_request_updated_success_trans_key'));
         }
 
+    }
+
+    /**
+     * Validation ou refus d'une demande, sans toucher à ses dates : RH, ou
+     * responsable direct du salarié (users.supervisor_id) tant que la demande
+     * est à valider. Personne d'autre que les RH ne traite sa propre demande.
+     */
+    public function decide(Request $request, int $id, AbsenceNotifier $notifier)
+    {
+        $data = $request->validate(['statu' => 'required|integer|in:2,3']);
+        $Absence = TimesAbsence::with('User')->findOrFail($id);
+
+        abort_unless(self::canDecide($Absence, Auth::user()), 403);
+
+        $previousStatu = (int) $Absence->statu;
+        $Absence->statu = (int) $data['statu'];
+        $Absence->save();
+
+        if ((int) $Absence->statu !== $previousStatu) {
+            $notifier->decided($Absence, Auth::id());
+        }
+
+        return back()->with('success', __('general_content.absence_request_updated_success_trans_key'));
+    }
+
+    /** Droit de valider / refuser une demande : RH, ou responsable direct sur une demande à valider. */
+    public static function canDecide(TimesAbsence $absence, ?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->can('human-resources-menu')) {
+            return true;
+        }
+
+        return (int) $absence->statu === 1
+            && (int) $absence->user_id !== (int) $user->id
+            && (int) ($absence->User?->supervisor_id ?? 0) === (int) $user->id;
     }
 
     /**

@@ -7,9 +7,11 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Planning\Status;
 use App\Models\Planning\Task;
 use App\Models\Planning\TaskResources;
+use App\Models\Times\TimesAbsence;
 use App\Models\Times\WorkShiftPattern;
 use App\Models\User;
 use App\Models\Workflow\OrderLines;
+use App\Services\ResourceCapacityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -69,6 +71,58 @@ class LoadPlanningGranularityTest extends TestCase
         $this->assertSame('service', $data['granularity']);
         $this->assertSame([(string) $this->service->id], collect($data['rows'])->pluck('id')->all());
         $this->assertEqualsWithDelta(4.0, $data['hoursPerRowDay'][(string) $this->service->id][self::MONDAY], 0.001);
+    }
+
+    /** La capacité d'un service baisse les jours où sa main-d'œuvre est absente. */
+    public function test_service_rows_lose_the_capacity_of_validated_absences()
+    {
+        $team = MethodsRessources::factory()->create([
+            'methods_services_id' => $this->service->id,
+            'capacity' => 40,
+            'is_labor' => true,
+        ]);
+        $operators = User::factory()->count(2)->create();
+        $team->users()->sync($operators->pluck('id'));
+
+        TimesAbsence::create([
+            'user_id' => $operators[0]->id,
+            'absence_type' => 1,
+            'absence_type_day' => 3,
+            'statu' => ResourceCapacityService::ABSENCE_VALIDATED,
+            'start_date' => '2026-08-18',
+            'end_date' => '2026-08-19',
+        ]);
+        // Refusée : ne retire rien.
+        TimesAbsence::create([
+            'user_id' => $operators[1]->id,
+            'absence_type' => 1,
+            'absence_type_day' => 3,
+            'statu' => 3,
+            'start_date' => '2026-08-18',
+            'end_date' => '2026-08-18',
+        ]);
+
+        $this->task();
+
+        $row = collect($this->fetch('service')['rows'])->firstWhere('id', (string) $this->service->id);
+
+        $this->assertEqualsWithDelta(8.0, $row['capacity'], 0.001);
+        $this->assertEqualsWithDelta(8.0, $row['capacityPerDay'][self::MONDAY], 0.001);
+        // Un opérateur sur deux absent mardi et mercredi.
+        $this->assertEqualsWithDelta(4.0, $row['capacityPerDay']['2026-08-18'], 0.001);
+        $this->assertEqualsWithDelta(4.0, $row['capacityPerDay']['2026-08-19'], 0.001);
+        $this->assertEqualsWithDelta(8.0, $row['capacityPerDay'][self::FRIDAY], 0.001);
+    }
+
+    /** Sans ressource, la capacité reste celle saisie à l'écran : rien n'est envoyé par jour. */
+    public function test_a_service_without_resource_has_no_daily_capacity()
+    {
+        $this->task();
+
+        $row = collect($this->fetch('service')['rows'])->firstWhere('id', (string) $this->service->id);
+
+        $this->assertSame(0, (int) $row['capacity']);
+        $this->assertArrayNotHasKey('capacityPerDay', $row);
     }
 
     /** Une machine et un opérateur portent chacun leur quotité de la même tâche. */

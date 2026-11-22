@@ -34,6 +34,13 @@ class UsersController extends Controller
         $userId    = Auth::user()->id;
         $UserProfil = User::find($userId);
         $TimesAbsences = TimesAbsence::with('leaveType')->where('user_id', $userId)->orderByDesc('start_date')->get();
+        // Demandes à valider des salariés dont l'utilisateur est le responsable direct.
+        $TeamAbsences = TimesAbsence::with(['User', 'leaveType'])
+            ->where('statu', 1)
+            ->where('user_id', '!=', $userId)
+            ->whereHas('User', fn ($query) => $query->where('supervisor_id', $userId))
+            ->orderBy('start_date')
+            ->get();
         $LeaveSummary = app(LeaveBalanceService::class)->summaryFor($userId);
         $LeaveTypes = LeaveType::active()->orderBy('ordre')->orderBy('label')->get();
         $ExpenseReports = UserExpenseReport::where('user_id', $userId)->get();
@@ -127,6 +134,7 @@ class UsersController extends Controller
         return view('profile', [
             'UserProfil'             => $UserProfil,
             'TimesAbsences'          => $TimesAbsences,
+            'TeamAbsences'           => $TeamAbsences,
             'LeaveSummary'           => $LeaveSummary,
             'LeaveTypes'             => $LeaveTypes,
             'ExpenseReports'         => $ExpenseReports,

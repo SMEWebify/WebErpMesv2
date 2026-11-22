@@ -6,7 +6,7 @@ order: 40
 duration: 20
 icon: fas fa-user-clock
 can: settings-time-menu
-updated: 2026-10-31
+updated: 2026-11-22
 ---
 
 **Goal**: describe when the workshop works (shifts, public holidays), and manage leave from
@@ -172,8 +172,9 @@ arrives in the **bell** (top of the screen) of:
 - the employee's **supervisor**, chosen on their employee record (guide "Human
   resources — employee record and expense reports").
 
-Clicking the notification opens the **Times and absences** screen. Whoever sends the
-request is never notified of their own action.
+Clicking the notification opens the **Times and absences** screen (HR) or, for the
+supervisor, the **Leave request** tab of their profile. Whoever sends the request is never
+notified of their own action.
 
 > ⚠️ The "Afternoon absence" type counts a full day: for a half-day, use "Morning absence"
 > or an absence in hours.
@@ -193,9 +194,14 @@ number of days charged. **Edit** on a request:
 The employee then gets "Your absence from … to … is approved" (or "refused") in their
 bell; clicking it opens their profile.
 
-> ⚠️ The supervisor is **notified**, they do not **approve**: only people with the human
-> resources permission change the status of a request. Let them know if approval depends
-> on the team leader's agreement.
+**The supervisor can approve too.** On their profile, **Leave request** tab, the card
+"My team's requests to approve" lists the pending requests of the employees they
+supervise, with two buttons: **Approve** and **Refuse**. They cannot change the dates or
+the type, and a request already handled is no longer offered to them: only HR can reverse
+a decision. Nobody but HR approves their own request.
+
+> 💡 An approved absence immediately lowers the capacity of the load planning, on the
+> labour resources the employee is attached to (half-days and absences in hours pro rata).
 >
 > 💡 Notifications only appear in the bell and in the **Notification history** tab of the
 > profile: no e-mail is sent.

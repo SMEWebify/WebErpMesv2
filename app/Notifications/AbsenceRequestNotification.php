@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Demande d'absence : « requested » vers les valideurs (RH, responsable), « approved » /
@@ -49,15 +50,20 @@ class AbsenceRequestNotification extends Notification implements ShouldQueue
 
     /**
      * Icône, lien et texte dans la cloche et la liste du profil : une demande mène à
-     * l'écran Temps (onglet Absence du valideur), une décision au profil du salarié.
+     * l'écran Temps (onglet Absence des RH) ou, pour un responsable sans droit RH, aux
+     * demandes de son équipe sur son profil ; une décision au profil du salarié.
      *
      * @return array{icon: string, route: string, text: string}
      */
     public static function present(array $data): array
     {
-        $route = ($data['event'] ?? null) === self::REQUESTED
-            ? route('times')
-            : route('user.profile', ['id' => $data['employee_id'] ?? 0]);
+        $viewer = Auth::user();
+
+        $route = match (true) {
+            ($data['event'] ?? null) !== self::REQUESTED => route('user.profile', ['id' => $data['employee_id'] ?? 0]),
+            $viewer && ! $viewer->can('human-resources-menu') => route('user.profile', ['id' => $viewer->id]) . '#LeaveRequest',
+            default => route('times'),
+        };
 
         return ['icon' => 'fas fa-plane-departure', 'route' => $route, 'text' => $data['code'] ?? ''];
     }

@@ -121,16 +121,50 @@ class ResourceCapacityService
             return 0.0;
         }
 
+        // Part de journée perdue par personne absente, plafonnée à une journée
+        // quand plusieurs demandes se recouvrent.
         $absent = $this->absencesFor($resource)
             ->filter(fn (TimesAbsence $absence) => $date->betweenIncluded(
                 Carbon::parse($absence->start_date)->startOfDay(),
                 Carbon::parse($absence->end_date)->endOfDay()
             ))
-            ->pluck('user_id')
-            ->unique()
-            ->count();
+            ->groupBy('user_id')
+            ->sum(fn ($absences) => min(1.0, $absences->sum(fn (TimesAbsence $absence) => $this->absenceShare($absence, $openHours))));
 
         return $openHours * min(1, $absent / $headcount);
+    }
+
+    /**
+     * Part d'une journée ouverte qu'une demande retire chaque jour de sa plage.
+     * Même lecture que le décompte des congés (LeaveBalanceService::daysForAbsence) :
+     * une demi-journée vaut 0,5 jour, deux demi-journées 1 jour et une absence en
+     * heures `hours_count`, au total de la demande ; ce total est réparti sur les
+     * jours de semaine de la plage. Une journée entière vaut 1 chaque jour.
+     */
+    private function absenceShare(TimesAbsence $absence, float $openHours): float
+    {
+        $total = match ((int) $absence->absence_type) {
+            2 => 0.5,
+            3 => 1.0,
+            4 => $openHours > 0 ? (float) ($absence->hours_count ?? 0) / $openHours : 0.0,
+            default => null,
+        };
+
+        if ($total === null) {
+            return 1.0;
+        }
+
+        $start = Carbon::parse($absence->start_date)->startOfDay();
+        $end = Carbon::parse($absence->end_date)->startOfDay();
+        $weekdays = 0;
+
+        for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+            if (! $day->isWeekend()) {
+                $weekdays++;
+            }
+        }
+
+        return min(1.0, $total / max(1, $weekdays));
     }
 
     /**
@@ -209,7 +243,7 @@ class ResourceCapacityService
         return $this->absenceCache[$resource->id] ??= TimesAbsence::query()
             ->where('statu', self::ABSENCE_VALIDATED)
             ->whereIn('user_id', $resource->users()->pluck('users.id'))
-            ->get(['user_id', 'start_date', 'end_date']);
+            ->get(['user_id', 'start_date', 'end_date', 'absence_type', 'hours_count']);
     }
 
     private function headcountFor(MethodsRessources $resource): int

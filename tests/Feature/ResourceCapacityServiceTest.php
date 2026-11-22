@@ -149,6 +149,40 @@ class ResourceCapacityServiceTest extends TestCase
         $this->assertSame(6.0, $this->service->availableHours($team->fresh(), Carbon::parse(self::MONDAY)));
     }
 
+    /** Une demi-journée ou une absence en heures ne retire que sa part de la journée. */
+    public function test_a_partial_day_absence_only_removes_its_share()
+    {
+        $team = MethodsRessources::factory()->create([
+            'capacity' => 40,
+            'is_labor' => true,
+            'work_shift_pattern_id' => $this->dayShiftPattern()->id,
+        ]);
+
+        $operators = User::factory()->count(2)->create();
+        $team->users()->sync($operators->pluck('id'));
+
+        TimesAbsence::create([
+            'user_id' => $operators[0]->id,
+            'absence_type' => 2, // une demi-journée
+            'absence_type_day' => 3,
+            'statu' => ResourceCapacityService::ABSENCE_VALIDATED,
+            'start_date' => self::MONDAY,
+            'end_date' => self::MONDAY,
+        ]);
+        TimesAbsence::create([
+            'user_id' => $operators[1]->id,
+            'absence_type' => 4, // en heures
+            'absence_type_day' => 3,
+            'hours_count' => 2,
+            'statu' => ResourceCapacityService::ABSENCE_VALIDATED,
+            'start_date' => self::MONDAY,
+            'end_date' => self::MONDAY,
+        ]);
+
+        // (0,5 + 2/8) personne absente sur 2 : 8 h - 37,5 %.
+        $this->assertSame(5.0, $this->service->availableHours($team->fresh(), Carbon::parse(self::MONDAY)));
+    }
+
     /** Une demande non validée ne retire rien : elle peut encore être refusée. */
     public function test_a_pending_absence_request_does_not_reduce_capacity()
     {

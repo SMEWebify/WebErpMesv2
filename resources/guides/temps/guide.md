@@ -6,7 +6,7 @@ order: 40
 duration: 20
 icon: fas fa-user-clock
 can: settings-time-menu
-updated: 2026-10-31
+updated: 2026-11-22
 ---
 
 **Objectif** : décrire quand l'atelier travaille (horaires, jours fériés), et gérer les
@@ -170,8 +170,9 @@ dans la **cloche** (en haut de l'écran) :
 - du **superviseur** du salarié, choisi sur sa fiche salarié (guide « Ressources
   humaines — fiche salarié et notes de frais »).
 
-Un clic sur la notification ouvre l'écran **Temps et absences**. Celui qui envoie la
-demande n'est jamais prévenu de sa propre action.
+Un clic sur la notification ouvre l'écran **Temps et absences** (RH) ou, pour le
+superviseur, l'onglet **Demande d'absence** de son profil. Celui qui envoie la demande
+n'est jamais prévenu de sa propre action.
 
 > ⚠️ Le type « Absence après-midi » compte une journée entière : pour une demi-journée,
 > utilisez « Absence matin » ou une absence en heures.
@@ -191,9 +192,14 @@ avec le nombre de jours décomptés. **Modifier** sur une demande :
 Le salarié reçoit alors dans sa cloche « Votre absence du … au … est validée » (ou
 « refusée ») ; un clic ouvre son profil.
 
-> ⚠️ Le superviseur est **prévenu**, il ne **valide** pas : seules les personnes qui ont la
-> permission ressources humaines changent le statut d'une demande. Prévenez-les si la
-> validation dépend de l'accord du chef d'équipe.
+**Le superviseur valide aussi.** Sur son profil, onglet **Demande d'absence**, la carte
+« Demandes de mon équipe à valider » liste les demandes en attente des salariés dont il est
+le superviseur, avec deux boutons : **Valider** et **Refuser**. Il ne change ni les dates ni
+le type, et une demande déjà traitée ne lui est plus proposée : seules les RH peuvent
+revenir sur une décision. Personne, hors RH, ne valide sa propre demande.
+
+> 💡 Une absence validée réduit aussitôt la capacité du planning de charge, sur les postes
+> de main-d'œuvre où le salarié est rattaché (demi-journée et absence en heures au prorata).
 >
 > 💡 Les notifications n'apparaissent que dans la cloche et l'onglet **Notification
 > historique** du profil : aucun e-mail n'est envoyé.

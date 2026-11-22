@@ -856,6 +856,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'absence'], function () {
             Route::post('/create', 'App\Http\Controllers\Times\AbsenceController@store')->name('times.absence.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Times\AbsenceController@update')->name('times.absence.update');
+            Route::post('/decide/{id}', 'App\Http\Controllers\Times\AbsenceController@decide')->name('times.absence.decide');
         });
     
         // Bank Holiday routes

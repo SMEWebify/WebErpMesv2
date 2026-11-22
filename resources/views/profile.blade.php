@@ -220,6 +220,66 @@
                 </div>
             </div>
             <div class="tab-pane" id="LeaveRequest">
+                @if($TeamAbsences->isNotEmpty())
+                <div class="row">
+                    <div class="col-md-12">
+                        <x-adminlte-card title="{{ __('general_content.absence_team_requests_trans_key') }}" theme="warning" icon="fas fa-user-check" collapsible>
+                            <p class="text-body-secondary small mb-2">{{ __('general_content.absence_team_requests_help_trans_key') }}</p>
+                            <div class="table-responsive p-0">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ __('general_content.user_trans_key') }}</th>
+                                        <th>{{ __('general_content.leave_type_trans_key') }}</th>
+                                        <th>{{ __('general_content.type_trans_key') }}</th>
+                                        <th>{{ __('general_content.start_date_trans_key') }}</th>
+                                        <th>{{ __('general_content.end_date_trans_key') }}</th>
+                                        <th class="text-end">{{ __('general_content.leave_days_trans_key') }}</th>
+                                        <th>{{ __('general_content.comment_trans_key') }}</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach ($TeamAbsences as $TeamAbsence)
+                                    <tr>
+                                        <td>{{ $TeamAbsence->User['name'] }}</td>
+                                        <td>
+                                            @if($TeamAbsence->leaveType)
+                                                <span class="badge" style="background-color: {{ $TeamAbsence->leaveType->color ?? '#6c757d' }}">&nbsp;</span>
+                                                {{ $TeamAbsence->leaveType->label }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($TeamAbsence->absence_type  == 1){{ __('general_content.full_day_absence_trans_key') }} @endif
+                                            @if($TeamAbsence->absence_type  == 2){{ __('general_content.1_half_day_absence_trans_key') }} @endif
+                                            @if($TeamAbsence->absence_type  == 3){{ __('general_content.2_half_day_absence_trans_key') }} @endif
+                                            @if($TeamAbsence->absence_type  == 4){{ __('general_content.absence_in_hours_trans_key') }} @endif
+                                        </td>
+                                        <td>{{ $TeamAbsence->start_date }}</td>
+                                        <td>{{ $TeamAbsence->end_date }}</td>
+                                        <td class="text-end">{{ number_format((float) $TeamAbsence->days_count, 2, ',', ' ') }}</td>
+                                        <td>{{ $TeamAbsence->comment }}</td>
+                                        <td class="text-nowrap">
+                                            <form method="POST" action="{{ route('times.absence.decide', ['id' => $TeamAbsence->id]) }}" class="d-inline">
+                                                @csrf
+                                                <input type="hidden" name="statu" value="2">
+                                                <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i> {{ __('general_content.absence_approve_trans_key') }}</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('times.absence.decide', ['id' => $TeamAbsence->id]) }}" class="d-inline">
+                                                @csrf
+                                                <input type="hidden" name="statu" value="3">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> {{ __('general_content.absence_refuse_trans_key') }}</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </x-adminlte-card>
+                    </div>
+                </div>
+                @endif
                 <div class="row">
                     <div class="col-md-12">
                         <x-adminlte-card title="{{ __('general_content.leave_balances_trans_key') }} — {{ $LeaveSummary['period_label'] }}" theme="info" maximizable collapsible>
