@@ -234,8 +234,7 @@
                             <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ __('general_content.order_rate_trans_key') }}</h6>
                             <form action="{{ route('order.ratings.store') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="orders_id" value="{{ $Order->id }}">
-                                <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}">
+                                <input type="hidden" name="uuid" value="{{ $Order->uuid }}">
                                 <div class="mb-3">
                                     <label class="form-label small">{{ __('general_content.order_rate_trans_key') }}</label>
                                     <div class="input-group input-group-sm">

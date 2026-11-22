@@ -47,7 +47,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/pointage', [AttendanceController::class, 'store'])->name('attendance.store');
     //Rating
-    Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');
+    Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->middleware('throttle:10,1')->name('order.ratings.store');
 
     Route::prefix('customer')->name('customer.')->group(function () {
         Route::middleware('guest:customer')->group(function () {

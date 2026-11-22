@@ -223,8 +223,7 @@
                             <form action="{{ route('order.ratings.store') }}" method="POST">
                                 @csrf
                                 <div class="card-body">
-                                    <input type="hidden" name="orders_id" value="{{ $order->id }}">
-                                    <input type="hidden" name="companies_id" value="{{ $order->companies_id }}">
+                                    <input type="hidden" name="uuid" value="{{ $order->uuid }}">
                                     <div class="mb-3">
                                         <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
                                         <div class="input-group">
