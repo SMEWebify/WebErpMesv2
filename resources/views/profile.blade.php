@@ -2,6 +2,7 @@
 @extends('adminlte::page')
 
 @section('title', __('general_content.profile_trans_key'))
+@section('plugins.Quill', true)
 
 @section('content_header')
     <h1>{{ __('general_content.profile_trans_key') }}</h1>
@@ -17,6 +18,7 @@
             <li class="nav-item"><a class="nav-link" href="#LeaveRequest" data-bs-toggle="tab">{{ __('general_content.leave_request_trans_key') }}</a></li> 
             <li class="nav-item"><a class="nav-link" href="#ExpenseReport" data-bs-toggle="tab">{{ __('general_content.expense_report_trans_key') }}</a></li> 
             <li class="nav-item"><a class="nav-link" href="#MyDocuments" data-bs-toggle="tab">{{ __('general_content.documents_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#EmailSignature" data-bs-toggle="tab"><i class="fas fa-signature me-1"></i>{{ __('mail_personalization.tab') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#Appearance" data-bs-toggle="tab"><i class="fas fa-palette me-1"></i>{{ __('appearance.tab') }}</a></li>
         </ul>
     </div>
@@ -558,6 +560,9 @@
                         'fileRoles' => \App\Services\Files\FileRole::forHumanResources(),
                     ])
                 </x-adminlte-card>
+            </div>
+            <div class="tab-pane" id="EmailSignature">
+                @include('include.email-signature-settings')
             </div>
             <div class="tab-pane" id="Appearance">
                 @include('include.appearance-settings')

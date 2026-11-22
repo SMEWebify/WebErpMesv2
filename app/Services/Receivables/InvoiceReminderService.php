@@ -8,6 +8,7 @@ use App\Models\Workflow\InvoiceReminder;
 use App\Models\Workflow\InvoiceReminderLevel;
 use App\Models\Workflow\Invoices;
 use App\Services\Documents\DocumentPdfService;
+use App\Services\Mail\MailPersonalization;
 use App\Support\SafeHtml;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -127,7 +128,7 @@ class InvoiceReminderService
         return [
             'to'       => $rows->pluck('contact_mail')->filter()->first() ?? '',
             'subject'  => $this->render($subject, $rows, html: false),
-            'message'  => $this->render($content, $rows, html: true),
+            'message'  => MailPersonalization::withSignature($this->render($content, $rows, html: true), Auth::user()),
             'level'    => $level?->level,
             'label'    => $level?->label,
             'invoices' => $rows->pluck('code')->all(),
@@ -298,7 +299,8 @@ class InvoiceReminderService
 
     /**
      * Variables du modèle : {client}, {factures}, {total_du}, {retard},
-     * {entreprise}. Valeurs échappées ; {factures} est un tableau HTML.
+     * {entreprise}, {utilisateur}. Valeurs échappées ; {factures} est un
+     * tableau HTML. {signature} est posée par MailPersonalization.
      */
     private function render(string $text, Collection $rows, bool $html): string
     {
@@ -309,6 +311,7 @@ class InvoiceReminderService
             '{total_du}'   => $esc($this->money($rows->sum('balance'))),
             '{retard}'     => (string) $rows->max('days_late'),
             '{entreprise}' => $esc(app('Factory')->name ?? config('app.name')),
+            '{utilisateur}' => $esc(Auth::user()?->name),
             '{factures}'   => $html ? $this->invoicesTable($rows) : $rows->pluck('code')->implode(', '),
         ];
 

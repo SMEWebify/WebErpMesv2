@@ -794,6 +794,21 @@ d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteD
 - Tests : `tests/Feature/Quotes/QuoteDictationTest.php`, `tests/Feature/AI/TextRewriteTest.php`,
   `resources/js/tests/lib/quoteDictation.test.js`.
 
+## E-mails des documents : variables et signature
+
+`App\Services\Mail\MailPersonalization`, appelé par `EmailController::create` (devis, commande,
+BL, facture, avoir, achats) et `InvoiceReminderService::preview` (relances). Tout est remplacé
+**à l'ouverture** de l'écran d'envoi : l'éditeur montre ce qui partira, rien n'est recalculé à l'envoi.
+- **Variables** : `{code}`, `{libelle}`, `{client}`, `{contact}`, `{utilisateur}`, `{entreprise}`,
+  `{signature}` (échappées en HTML ; inconnue = laissée telle quelle). Objet sans `{code}` : numéro
+  ajouté à la suite, comme avant. Aide : `include/email-variables-help` (modèles, profil).
+- **Signature** : `users.email_signature` (nullable, HTML `SafeHtml`), Profil → onglet « E-mail »
+  (`profile.email-signature.update`, Quill ; éditeur vidé = null). Posée à la place de
+  `{signature}`, sinon en fin de message ; sans signature, message inchangé.
+- `emails/document` n'affiche plus le titre « Quotes #id » (nom de classe et id interne).
+- Pas de modèle par utilisateur ni de logo en CID (image collée = data URI, souvent bloquée).
+- Tests : `tests/Feature/Mail/MailPersonalizationTest.php`.
+
 ## Modèles d'impression (devis, commande, AR)
 
 Menu PDF des fiches devis et AR (`<x-pdf-print-menu>`) : modèle + langue (`?layout=&lang=` sur

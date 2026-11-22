@@ -285,6 +285,11 @@ the sender address and name, then "Save" and **"Send a test email"**.
 > 💡 Email texts are set in **Template mail** (one template per document
 > type). The **Email log** keeps a record of every email sent.
 
+> 💡 A template accepts variables — `{contact}`, `{client}`, `{code}`, `{utilisateur}`,
+> `{entreprise}`, `{signature}` — replaced when the sending screen opens. Each user sets
+> their **signature** in **Profile › E-mail**: it is added under the message, or in place
+> of `{signature}`.
+
 ---
 
 ## 9. Bringing in your data {#reprendre-vos-donnees}

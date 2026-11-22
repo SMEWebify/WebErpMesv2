@@ -282,6 +282,11 @@ l'adresse et le nom d'expédition, puis « Enregistrer » et **« Envoyer un e-m
 > 💡 Les textes des e-mails se règlent dans **Template de mail** (un modèle par type de
 > document). Le **Journal des e-mails** garde la trace de chaque envoi.
 
+> 💡 Un modèle accepte des variables — `{contact}`, `{client}`, `{code}`, `{utilisateur}`,
+> `{entreprise}`, `{signature}` — remplacées à l'ouverture de l'écran d'envoi. Chaque
+> utilisateur règle sa **signature** dans **Profil › E-mail** : elle s'ajoute sous le
+> message, ou à la place de `{signature}`.
+
 ---
 
 ## 9. Reprendre vos données {#reprendre-vos-donnees}

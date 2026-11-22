@@ -84,6 +84,7 @@
                 </div>
             </form>
         </x-adminlte-card>
+        @include('include.email-variables-help')
     </div>
 </div>
 @stop

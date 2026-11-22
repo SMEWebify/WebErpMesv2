@@ -1678,6 +1678,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::put('/profile/appearance', [\App\Http\Controllers\UiAppearanceController::class, 'update'])
         ->middleware(['auth'])->name('profile.appearance.update');
 
+    // Signature des e-mails envoyés depuis l'ERP, par utilisateur.
+    Route::put('/profile/email-signature', [\App\Http\Controllers\EmailSignatureController::class, 'update'])
+        ->middleware(['auth'])->name('profile.email-signature.update');
+
     // Self-service RGPD utilisateur interne (Art. 15 / 17 / 20)
     Route::middleware(['auth'])->prefix('me/rgpd')->name('me.rgpd.')->group(function () {
         Route::get('/',       [\App\Http\Controllers\RgpdSelfServiceController::class, 'index'])->name('index');

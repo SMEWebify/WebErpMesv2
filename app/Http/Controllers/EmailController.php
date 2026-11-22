@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\DocumentMail;
 use App\Models\Admin\EmailTemplate;
 use App\Services\Documents\DocumentPdfService;
+use App\Services\Mail\MailPersonalization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -36,16 +37,24 @@ class EmailController extends Controller
 
         $contactMail = $model->contact->mail ?? null;
         $emailTemplate = EmailTemplate::where('document_type', $type)->first();
+        $values = MailPersonalization::documentValues($model, Auth::user());
 
+        // Un objet sans {code} reçoit le numéro à la suite, comme avant les variables.
         $object = $emailTemplate
-            ? $emailTemplate->subject . ' ' . $model->code
+            ? MailPersonalization::replace($emailTemplate->subject, $values, html: false)
+                . (str_contains($emailTemplate->subject, '{code}') ? '' : ' ' . $model->code)
             : $model->code;
+
+        $message = MailPersonalization::withSignature(
+            MailPersonalization::replace($emailTemplate->content ?? '', $values, html: true),
+            Auth::user(),
+        );
 
         session(['previous_url' => url()->previous()]);
 
         $pdfPreviewUrl = $this->pdfPreviewUrl($type, $model);
 
-        return view('emails.create', compact('model', 'type', 'object', 'emailTemplate', 'contactMail', 'pdfPreviewUrl'));
+        return view('emails.create', compact('model', 'type', 'object', 'message', 'contactMail', 'pdfPreviewUrl'));
     }
 
     /**
