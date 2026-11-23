@@ -2159,9 +2159,13 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
 - Cache::rememberForever() Status IDs → php artisan cache:clear si renommage
 
 ### RGPD — Reste à faire (hors code) — ⚠️ exigible dès maintenant (client en prod)
-- Registre des traitements
-- Mentions légales par client déployé (client 1 concerné depuis avril 2026)
-- Durées de conservation documentées par type de donnée
+Modèle fourni : `docs/registre-traitements.md` (registre art. 30 pré-rempli + mentions légales
+à compléter) ; page `/rgpd-policy` alignée sur le code (durées réelles, sous-traitants, date de
+révision `$revisedAt` à changer à chaque modification). Reste, côté entreprise déployée :
+- Compléter et tenir le registre (champs `[à compléter]`)
+- Publier les mentions légales (identité, hébergeur, directeur de la publication)
+- Durées « suppression par l'entreprise » (prospects 3 ans, RH 5 ans) : **aucune purge
+  automatique**, à appliquer à la main ou à automatiser plus tard
 
 ## Fait ✅
 
