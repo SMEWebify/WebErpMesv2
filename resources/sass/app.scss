@@ -12,3 +12,9 @@
 tr[data-row-href] {
     cursor: pointer;
 }
+
+// Tableau de bord : la poignée de redimensionnement passe au-dessus du contenu
+// du widget (le pied « Voir détail » des cartes est en z-index 10).
+.react-grid-item > .react-resizable-handle {
+    z-index: 20;
+}

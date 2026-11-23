@@ -11,13 +11,20 @@ import React from 'react';
  *   url     string         — optional link on "View details"
  *   urlText string         — link label (default "→")
  *   trend   number         — optional % change shown as ↑ / ↓ badge
+ *   fill    boolean        — occupe toute la hauteur du parent, sans marge basse
+ *                            (lien « Voir détail » collé en bas) : widgets du tableau de bord
  */
-export default function StatCard({ value, label, icon, theme = 'info', url, urlText = '→', trend }) {
+export default function StatCard({ value, label, icon, theme = 'info', url, urlText = '→', trend, fill = false }) {
     return (
-        <div className={`small-box text-bg-${theme}`}>
-            <div className="inner">
-                <h3 style={{ fontSize: '1.4rem', wordBreak: 'break-word' }}>{value ?? '—'}</h3>
-                <p style={{ fontSize: '0.85rem' }}>{label}</p>
+        <div
+            className={`small-box text-bg-${theme}`}
+            style={fill ? { height: '100%', marginBottom: 0, display: 'flex', flexDirection: 'column' } : undefined}
+        >
+            <div className="inner" style={fill ? { flex: '1 1 auto' } : undefined}>
+                {/* Tailles d'AdminLTE (h3 2,2 rem, p 1 rem) ; retour à la ligne permis
+                    pour qu'un montant long ne soit pas coupé dans une colonne étroite. */}
+                <h3 style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{value ?? '—'}</h3>
+                <p>{label}</p>
             </div>
             <i className={`small-box-icon fas ${icon}`} aria-hidden="true" />
             {trend !== undefined && trend !== null && (
