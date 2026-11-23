@@ -96,7 +96,6 @@ const TARGETS = [
 // Fichiers générés, tiers ou hors Bootstrap, à ne jamais réécrire.
 const EXCLUDE = [
     /resources[\\/]views[\\/]vendor[\\/]/,
-    /public[\\/]js[\\/](spreadsheet|app|bootstrap|three\.min|three\.module|OrbitControls|STLLoader|node_modules_vue_dist_vue_esm-bundler_js)\.js$/,
 ];
 // PDF (dompdf, CSS propre, HTML comparé à des références figées par
 // SalesPdfLegacyRenderingTest) et gabarits d'e-mail : hors Bootstrap, sauf les

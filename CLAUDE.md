@@ -2030,8 +2030,6 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
 - **Sauvegarde de la disposition du tableau de bord** à revérifier après le passage de
   `react-grid-layout` en 2.3.0 (Dependabot) : l'enregistrement serveur fonctionne, le
   comportement du glisser-redimensionner reste à observer en navigateur.
-- **Fichiers morts** : `public/js/{app,bootstrap,node_modules_vue…,three*,OrbitControls,STLLoader}.js`
-  et `public/css/app.css` (anciens builds Laravel Mix), composant `components/header-print`.
 - **Font Awesome 6 → 7** (non prioritaire) : seule `fa-vector-square`
   (`FileKindResolver::icon()`) disparaît, et la v7 rend toutes les icônes à largeur fixe
   (contrôle visuel). Remplacer `public/vendor/fontawesome-free/{css,webfonts}` par ceux du
