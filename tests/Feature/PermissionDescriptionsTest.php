@@ -17,7 +17,7 @@ class PermissionDescriptionsTest extends TestCase
     {
         $this->seed(PermissionTableSeeder::class);
 
-        foreach (['fr', 'en'] as $locale) {
+        foreach (['fr', 'en', 'it'] as $locale) {
             $descriptions = trans('permissions.descriptions', [], $locale);
             $missing = Permission::pluck('name')
                 ->reject(fn ($name) => ! empty($descriptions[$name]))

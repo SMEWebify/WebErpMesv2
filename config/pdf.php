@@ -53,6 +53,7 @@ return [
     'languages' => [
         'fr' => 'Français',
         'en' => 'English',
+        'it' => 'Italiano',
     ],
 
     'themes' => [

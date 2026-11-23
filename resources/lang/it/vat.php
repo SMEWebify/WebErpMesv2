@@ -1,0 +1,98 @@
+<?php
+
+return [
+    // Onglets de la comptabilité
+    'tab_references'      => 'Regimi / Nature',
+    'tab_matrix_sales'    => 'Matrice IVA vendite',
+    'tab_matrix_purchase' => 'Matrice IVA acquisti',
+
+    // Champs communs
+    'code'             => 'Codice',
+    'label'            => 'Descrizione',
+    'regime'           => 'Regime',
+    'nature'           => 'Natura',
+    'regime_customer'  => 'Regime (cliente)',
+    'regime_supplier'  => 'Regime (fornitore)',
+    'nature_product'   => 'Natura (articolo)',
+    'vat_code'         => 'Codice IVA',
+    'save'             => 'Salva',
+    'add'              => 'Aggiungi',
+    'edit_title'       => 'Modifica :code',
+    'edit_rule'        => 'Modifica la regola',
+    'default_option'   => '— (codice IVA predefinito)',
+
+    // Régimes et natures
+    'regimes_title'         => 'Regimi IVA (scheda cliente)',
+    'natures_title'         => 'Nature IVA (scheda articolo / leva di imputazione)',
+    'no_regime'             => 'Nessun regime',
+    'no_nature'             => 'Nessuna natura',
+    'regime_code_example'   => 'Codice (es. UE)',
+    'nature_code_example'   => 'Codice (es. attrezzature)',
+    'confirm_delete_regime' => 'Eliminare questo regime?',
+    'confirm_delete_nature' => 'Eliminare questa natura?',
+    'regime_created'        => 'Regime IVA creato.',
+    'regime_updated'        => 'Regime IVA aggiornato.',
+    'regime_deleted'        => 'Regime IVA eliminato.',
+    'nature_created'        => 'Natura IVA creata.',
+    'nature_updated'        => 'Natura IVA aggiornata.',
+    'nature_deleted'        => 'Natura IVA eliminata.',
+    'reference_in_use'      => 'Eliminazione impossibile: questo valore è ancora utilizzato da una regola della matrice. Rimuovere prima le regole interessate.',
+
+    // Matrices
+    'matrix_sales_title'    => 'Matrice IVA — vendite',
+    'matrix_purchase_title' => 'Matrice IVA — acquisti',
+    'new_sales_rule'        => 'Nuova regola (vendita)',
+    'new_purchase_rule'     => 'Nuova regola (acquisto)',
+    'no_rule'               => 'Nessuna regola — senza regola, la riga ricade sul codice IVA predefinito.',
+    'confirm_delete_rule'   => 'Eliminare questa regola?',
+    'sales_account'         => 'Conto ricavi di vendita',
+    'sales_account_short'   => 'Conto vendite',
+    'vat_collected_account' => 'Conto IVA a debito',
+    'vat_account_short'     => 'Conto IVA',
+    'vat_collected_hint'    => 'es. 445710 (vuoto se esente)',
+    'purchase_account'      => 'Conto acquisti',
+    'purchase_account_short'=> 'Conto acquisti',
+    'vat_deductible_account'=> 'Conto IVA detraibile',
+    'vat_deductible_short'  => 'IVA detraibile',
+    'vat_autoliq_account'   => 'Conto IVA dovuta (inversione contabile)',
+    'vat_autoliq_hint'      => 'es. 445200 (riferimento, registrazione manuale)',
+    'autoliq_short'         => 'Rev. charge',
+    'manual_vat'            => 'Inversione contabile — registrazione IVA manuale',
+    'manual_badge'          => 'manuale',
+    'pair_exists_sales'     => 'Esiste già una regola per questa coppia regime × natura (vendite).',
+    'pair_exists_purchase'  => 'Esiste già una regola per questa coppia regime × natura (acquisti).',
+    'sales_rule_created'    => 'Regola di vendita creata.',
+    'sales_rule_updated'    => 'Regola di vendita aggiornata.',
+    'sales_rule_deleted'    => 'Regola di vendita eliminata.',
+    'purchase_rule_created' => 'Regola di acquisto creata.',
+    'purchase_rule_updated' => 'Regola di acquisto aggiornata.',
+    'purchase_rule_deleted' => 'Regola di acquisto eliminata.',
+    'rule_not_found_sale'     => 'Nessuna regola IVA (vendita) per la coppia regime #:regime × natura #:nature. Completare la matrice in Contabilità → Matrice IVA.',
+    'rule_not_found_purchase' => 'Nessuna regola IVA (acquisto) per la coppia regime #:regime × natura #:nature. Completare la matrice in Contabilità → Matrice IVA.',
+
+    // Code TVA : champs EN 16931
+    'en16931_help'          => 'Fatturazione elettronica (EN 16931) — lasciare vuoto mantiene il comportamento precedente (S se aliquota > 0, altrimenti Z).',
+    'en16931_category'      => 'Categoria EN 16931',
+    'category_fallback'     => '— (ripiego S / Z)',
+    'categories' => [
+        'S'  => 'S — aliquota ordinaria',
+        'Z'  => 'Z — aliquota zero',
+        'E'  => 'E — esente',
+        'AE' => 'AE — inversione contabile (reverse charge)',
+        'K'  => 'K — cessione intracomunitaria',
+        'G'  => 'G — esportazione extra UE',
+    ],
+    'exemption_reason_code' => 'Motivo di esenzione — codice (BT-121)',
+    'exemption_reason_text' => 'Motivo di esenzione — testo (BT-120)',
+    'exemption_text_example'=> 'es. Esenzione art. 262 ter I del CGI',
+    'legal_mention'         => 'Dicitura legale (fattura)',
+    'legal_mention_hint'    => 'Dicitura stampata sulla fattura',
+
+    // Fiche article
+    'product_nature'        => 'Natura IVA',
+
+    // Fiche société
+    'company_card'          => 'Regime IVA',
+    'attestation_ref'       => 'Rif. attestazione (franchigia art. 275)',
+    'attestation_valid_until' => 'Attestazione valida fino al',
+];

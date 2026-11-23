@@ -54,6 +54,7 @@ class ERPAssistantModule
             'en'    => 'English',
             'de'    => 'Deutsch',
             'es'    => 'español',
+            'it'    => 'italiano',
             default => $appLocale,
         };
 

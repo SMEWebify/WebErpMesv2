@@ -24,6 +24,20 @@ class LocalizedMenuLinkTest extends TestCase
     }
 
     /** @test */
+    public function a_language_link_switches_the_language()
+    {
+        \LaravelLocalization::setLocale('fr');
+        $filter = new LocalizedHrefFilter();
+
+        $english = $filter->transform(['text' => 'English', 'href' => url('/en')]);
+        $italian = $filter->transform(['text' => 'Italiano', 'href' => url('/it')]);
+
+        $this->assertStringContainsString('/en', $english['href']);
+        $this->assertStringContainsString('/it', $italian['href']);
+        $this->assertStringNotContainsString('/fr', $italian['href']);
+    }
+
+    /** @test */
     public function the_audit_menu_entry_is_not_localized()
     {
         $entry = collect(config('adminlte.menu'))

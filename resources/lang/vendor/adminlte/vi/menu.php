@@ -6,6 +6,7 @@ return [
     'language_trans_key'                       => 'Ngôn ngữ',
     'english_trans_key'                        => 'Tiếng Anh',
     'french_trans_key'                         => 'Tiếng Pháp',
+    'italian_trans_key'                        => 'Tiếng Ý',
     'vietnamese_trans_key'                     => 'Tiếng Việt',
     'dashboard_trans_key'                      => 'Bảng điều khiển',
     'companies_trans_key'                      => 'Công ty',

@@ -22,6 +22,7 @@ export function extensionFor(mime) {
 function speechLang(locale) {
     if (locale === 'fr') return 'fr-FR';
     if (locale === 'es') return 'es-ES';
+    if (locale === 'it') return 'it-IT';
     return 'en-US';
 }
 

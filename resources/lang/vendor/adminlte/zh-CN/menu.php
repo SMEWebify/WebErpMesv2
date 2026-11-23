@@ -6,6 +6,7 @@ return [
     'language_trans_key'                       => '语言',
     'english_trans_key'                        => '英语',
     'french_trans_key'                         => '法语',
+    'italian_trans_key'                        => '意大利语',
     'vietnamese_trans_key'                     => '越南语',
     'dashboard_trans_key'                      => '仪表盘',
     'companies_trans_key'                      => '公司',

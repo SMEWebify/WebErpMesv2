@@ -112,6 +112,7 @@ class VisitReportService
         $language = match (app()->getLocale()) {
             'fr' => 'français',
             'es' => 'espagnol',
+            'it' => 'italien',
             default => 'anglais',
         };
 

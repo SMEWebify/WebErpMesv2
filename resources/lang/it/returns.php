@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => 'Ricevuto',
+        'diagnosed' => 'Diagnosticato',
+        'in_rework' => 'In rilavorazione',
+        'closed' => 'Chiuso',
+    ],
+    'messages' => [
+        'created' => 'Reso registrato con successo.',
+        'diagnosed' => 'Reso diagnosticato con successo.',
+        'tasks_reopened' => 'Le fasi di ritocco sono state generate con successo.',
+        'no_task' => 'Nessuna fase da riaprire per questo reso.',
+        'closed' => 'Reso chiuso con successo.',
+        'no_line' => 'Aggiungete almeno una riga compilata per registrare il reso.',
+    ],
+    'fields' => [
+        'add_return' => 'Nuovo reso',
+        'list' => 'Elenco dei resi',
+        'code' => 'Codice',
+        'label' => 'Descrizione',
+        'delivery' => 'Consegna',
+        'non_conformity' => 'Non conformità',
+        'customer_report' => 'Reso cliente',
+        'lines' => 'Righe',
+        'delivery_line' => 'Riga di consegna',
+        'task' => 'Fase',
+        'issue' => 'Descrizione del problema',
+        'action' => 'Istruzioni di ritocco',
+        'diagnosis' => 'Diagnosi',
+        'closure_comment' => 'Commento di chiusura',
+        'status' => 'Stato',
+        'created_at' => 'Creato il',
+        'actions' => 'Azioni',
+        'view' => 'Vedi',
+        'add_line' => 'Aggiungi una riga',
+        'save' => 'Salva',
+        'choose' => 'Scegli',
+        'reopen_tasks' => 'Genera le fasi di rilavorazione',
+        'close_return' => 'Chiudi il reso',
+    ],
+];

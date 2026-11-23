@@ -19,4 +19,12 @@ return [
     'password_reset_message'      => 'Resetta la password',
     'reset_password'              => 'Resetta la password',
     'send_password_reset_link'    => 'Invia link di reset della password',
+    'username'                    => 'Nome utente',
+    'verify_message'              => 'Il tuo account deve essere verificato',
+    'verify_email_sent'           => 'Un nuovo link di verifica è stato inviato al tuo indirizzo e-mail.',
+    'verify_check_your_email'     => 'Prima di procedere, controlla la tua e-mail per il link di verifica.',
+    'verify_if_not_recieved'      => 'Se non hai ricevuto l\'e-mail',
+    'verify_request_another'      => 'clicca qui per richiederne un altro',
+    'confirm_password_message'    => 'Conferma la password per continuare.',
+    'remember_me_hint'            => 'Mantienimi connesso a tempo indeterminato o finché non mi disconnetto manualmente',
 ];

@@ -32,6 +32,15 @@ class LocalizedHrefFilter implements FilterInterface
             return $item;
         }
 
+        // Sélecteur de langue (/en, /it…) : la page courante dans cette langue. Préfixé
+        // comme les autres liens, il gardait la langue courante et ne changeait rien.
+        $path = trim((string) parse_url($item['href'], PHP_URL_PATH), '/');
+        if (array_key_exists($path, LaravelLocalization::getSupportedLocales())) {
+            $item['href'] = LaravelLocalization::getLocalizedURL($path, null, [], true);
+
+            return $item;
+        }
+
         $localized = LaravelLocalization::getLocalizedURL(null, $item['href']);
 
         if (is_string($localized) && $localized !== '') {

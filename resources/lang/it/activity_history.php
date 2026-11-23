@@ -1,0 +1,48 @@
+<?php
+
+return [
+    'title'  => 'Cronologia delle modifiche',
+    'empty'  => 'Nessuna modifica registrata.',
+    'system' => 'Sistema',
+    'yes'    => 'Sì',
+    'no'     => 'No',
+    'loading' => 'Caricamento…',
+    'error'  => 'Cronologia non disponibile.',
+
+    'events' => [
+        'created'              => 'Creazione',
+        'updated'              => 'Modifica',
+        'deleted'              => 'Eliminazione',
+        'restored'             => 'Ripristino',
+        'task_released'        => 'Fase rilasciata',
+        'task_release_revoked' => 'Rilascio annullato',
+    ],
+
+    'fields' => [
+        'ind'                        => 'Revisione',
+        'code'                       => 'Codice',
+        'label'                      => 'Descrizione',
+        'statu'                      => 'Stato',
+        'type'                       => 'Tipo',
+        'user_id'                    => 'Responsabile',
+        'service_id'                 => 'Centro di lavoro',
+        'failure_id'                 => 'Difetto',
+        'failure_comment'            => 'Commento difetto',
+        'causes_id'                  => 'Causa',
+        'causes_comment'             => 'Commento causa',
+        'correction_id'              => 'Correzione',
+        'correction_comment'         => 'Commento correzione',
+        'companie_id'                => 'Azienda',
+        'order_lines_id'             => 'Riga d\'ordine',
+        'deliverys_id'               => 'DDT',
+        'delivery_line_id'           => 'Riga di DDT',
+        'task_id'                    => 'Fase',
+        'qty'                        => 'Quantità',
+        'resolution_date'            => 'Data di risoluzione',
+        'pb_descp'                   => 'Descrizione del problema',
+        'cause'                      => 'Descrizione della causa',
+        'action'                     => 'Descrizione dell\'azione',
+        'color'                      => 'Colore',
+        'quality_non_conformitie_id' => 'Non conformità',
+    ],
+];

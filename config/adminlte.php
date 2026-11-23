@@ -829,6 +829,11 @@ return [
                     'url'=> 'fr',
                 ],
                 [
+                    'text'=>'italian_trans_key',
+                    'icon' => 'flag-icon flag-icon-it',
+                    'url'=> 'it',
+                ],
+                [
                     'text'=>'vietnamese_trans_key',
                     'icon' => 'flag-icon flag-icon-vi',
                     'url'=> 'vi',
