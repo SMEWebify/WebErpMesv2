@@ -127,6 +127,7 @@
                           <label for="color">{{ __('general_content.color_trans_key') }}</label>
                           <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                         </div>
+                        @include('include.equipment-kind-select', ['id' => 'equipment_kind_' . $MethodsService->id, 'value' => $MethodsService->equipment_kind, 'help' => __('equipment.kind_help_service')])
                         <div class="mb-3">
                           <div class="form-check form-switch">
                             <input type="hidden" name="is_nesting" value="0">
@@ -275,6 +276,7 @@
               <label for="color">{{ __('general_content.color_trans_key') }}</label>
               <input type="color" class="form-control"  name="color" id="color" >
             </div>
+            @include('include.equipment-kind-select', ['id' => 'equipment_kind_new', 'value' => old('equipment_kind'), 'help' => __('equipment.kind_help_service')])
             <div class="mb-3">
               <div class="form-check form-switch">
                 <input type="hidden" name="is_nesting" value="0">

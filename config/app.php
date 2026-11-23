@@ -184,6 +184,8 @@ return [
         App\Providers\AIServiceProvider::class,
         App\Providers\MailSettingsServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
+        // Avant RouteServiceProvider : déclare la macro Route::factoryTwin si le package est là.
+        App\Providers\FactoryTwinServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         // TelescopeServiceProvider : enregistré par AppServiceProvider seulement si
         // laravel/telescope (require-dev) est installé — `composer install --no-dev`.

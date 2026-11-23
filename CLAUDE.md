@@ -967,6 +967,38 @@ la liaison est une **clé API `n2b_…` par société**, et c'est NEST2BEND qui 
 - Tests : `tests/Feature/Nest2Bend/` (NEST2BEND simulé par `Http::fake`),
   `resources/js/tests/lib/nest2bendMessage.test.js`.
 
+## Jumeau numérique d'atelier (package commercial factory-twin)
+
+`/production/digital-twin` (menu Planification) : écran 3D du package **propriétaire**
+`nestprod/factory-twin` (dépôt séparé, aussi utilisé par le MES), **jamais** dans le `composer.json`
+de l'ERP (LGPL). `App\Providers\FactoryTwinServiceProvider` le charge depuis `FACTORY_TWIN_PATH`
+(`services.factory_twin.path`, relatif à la racine sauf chemin absolu ; autoloader PSR-4 propre,
+pas `addPsr4()` de Composer qui mémorise les classes introuvables), avant `RouteServiceProvider` :
+macro `Route::factoryTwin` (page kiosque, `scene`, `snapshot`, `order`, `assets`), migration
+`twin_scenes` chargée depuis le package. **Sans le dossier** : `Route::view` de la page de
+présentation, ni table ni route en plus (`FactoryTwinPackageTest`).
+- **Données** : `App\Services\Integrations\FactoryTwin\FactoryTwinSnapshot` (ne dépend pas du
+  package, testé partout), transmis par `ErpTwinDataProvider` (cache `FACTORY_TWIN_CACHE_SECONDS`, 15).
+  Opération = poste productif (type 1), **code en majuscules** ; machine = ressource non
+  main-d'œuvre (tâche rangée par sa ressource `machine` de `task_resources`) ; OF = ligne de
+  commande (`OF{id}`) ; tâches des lignes article de commandes statu 1-3. Charge du jour :
+  capacité `ResourceCapacityService`, fait = temps pointé depuis minuit, reste = tâches en cours
+  ou prévues jusqu'à ce soir. Flux : opération précédente de la ligne finie (ou bonnes déclarées)
+  → suivante non démarrée ; ligne finie avec reste à livrer → expédition. Suivi de commande par
+  `orders.code`. Pas encore : tôles / imbrications, stock, palettes, plan proposé (`initialScene` null,
+  postes rangés en grille par le front ; la scène se range dans `twin_scenes`).
+- **Type d'équipement** (`App\Enums\EquipmentKind`, 17 valeurs) : `methods_services.equipment_kind`
+  et `methods_ressources.equipment_kind` (nullable, liste des écrans Postes de charge / Ressources,
+  `include/equipment-kind-select`, absent de la requête = inchangé). Snapshot : `kind` de la
+  ressource = le sien sinon celui du poste ; `kind` de l'opération = celui du poste (poste sans
+  machine). Le package choisit le modèle 3D par `kind` (`KIND_BUILDERS`), sinon le devine par le nom ou
+  un code court usuel (LAS, FRAI, POLI, ASS / ASSY, EMBA, ETUD…). **Liste identique des deux
+  côtés** : une valeur ajoutée ici l'est aussi dans le package et dans
+  `resources/lang/{fr,en}/equipment.php` (`FactoryTwinPackageTest` compare les deux listes quand le
+  package est présent). Tests : `tests/Feature/Methods/EquipmentKindTest.php`.
+- Requêtes en nombre constant (+ capacité par machine), test de comptage.
+- Tests : `tests/Feature/FactoryTwin/`.
+
 ## Dérogations — accord du client (ISO 19443)
 
 Écran Qualité → Dérogations (`quality_derogations`, 2021) + fiche `/quality/derogation/{id}`

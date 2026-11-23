@@ -34,6 +34,7 @@ class UpdateServicesRequest extends FormRequest
             'is_nesting'      => 'nullable|boolean',
             'is_bending'      => 'nullable|boolean',
             'requires_release' => 'nullable|boolean',
+            'equipment_kind'  => ['nullable', \Illuminate\Validation\Rule::enum(\App\Enums\EquipmentKind::class)],
         ];
     }
 }

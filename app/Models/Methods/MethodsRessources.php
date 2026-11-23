@@ -21,7 +21,7 @@ class MethodsRessources extends Model
     use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['ordre', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'methods_services_id',  'comment', 'is_labor', 'labor_ratio', 'work_shift_pattern_id'];
+    protected $fillable= ['ordre', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'methods_services_id',  'comment', 'is_labor', 'labor_ratio', 'work_shift_pattern_id', 'equipment_kind'];
 
     protected $casts = [
         'is_labor'    => 'boolean',

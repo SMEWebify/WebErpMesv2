@@ -55,6 +55,7 @@ class RessourcesController extends Controller
                 'is_labor'    => (bool) $request->boolean('is_labor'),
                 'labor_ratio' => $request->input('labor_ratio', 0),
                 'work_shift_pattern_id' => $request->input('work_shift_pattern_id') ?: null,
+                'equipment_kind' => $request->input('equipment_kind') ?: null,
             ]
         ));
 
@@ -82,6 +83,11 @@ class RessourcesController extends Controller
     public function update(UpdateRessourceRequest $request)
     {
         $ressource = MethodsRessources::findOrFail($request->id);
+
+        // Absent de la requête = inchangé (ancien formulaire).
+        if ($request->has('equipment_kind')) {
+            $ressource->equipment_kind = $request->input('equipment_kind') ?: null;
+        }
 
         $ressource->update([
             'ordre' => $request->ordre,

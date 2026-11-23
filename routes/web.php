@@ -1064,8 +1064,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/calendar/tasks/events', 'App\Http\Controllers\Planning\CalendarController@eventsTasks')->name('production.calendar.tasks.events');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         Route::get('/gantt/order/{order_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrder')->name('production.gantt.order');
-        // Jumeau numérique : présentation de la version commerciale (aucune donnée lue).
-        Route::view('/digital-twin', 'planning/digital-twin')->name('production.digital-twin');
+        // Jumeau numérique : le package commercial s'il est chargé (FACTORY_TWIN_PATH,
+        // App\Providers\FactoryTwinServiceProvider), sinon la page de présentation.
+        if (\App\Providers\FactoryTwinServiceProvider::available()) {
+            Route::factoryTwin('digital-twin', 'production.digital-twin');
+        } else {
+            Route::view('/digital-twin', 'planning/digital-twin')->name('production.digital-twin');
+        }
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
         Route::get('/load-planning/data', 'App\Http\Controllers\Planning\PlanningController@dataJson')->name('production.load.planning.data');

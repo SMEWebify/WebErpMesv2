@@ -150,6 +150,7 @@
                           </div>
                           <small class="text-muted">{{ __('general_content.labor_resource_hint_trans_key') }}</small>
                         </div>
+                        @include('include.equipment-kind-select', ['id' => 'equipment_kind_' . $MethodsRessource->id, 'value' => $MethodsRessource->equipment_kind, 'help' => __('equipment.kind_help_resource')])
                         <div class="mb-3">
                           <label for="labor_ratio_{{ $MethodsRessource->id }}">{{ __('general_content.labor_ratio_trans_key') }}</label>
                           <div class="input-group">
@@ -300,6 +301,7 @@
               </div>
               <small class="text-muted">{{ __('general_content.labor_resource_hint_trans_key') }}</small>
             </div>
+            @include('include.equipment-kind-select', ['id' => 'equipment_kind_new', 'value' => old('equipment_kind'), 'help' => __('equipment.kind_help_resource')])
             <div class="mb-3">
               <label for="labor_ratio">{{ __('general_content.labor_ratio_trans_key') }}</label>
               <div class="input-group">

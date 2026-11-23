@@ -31,7 +31,7 @@ class MethodsServices extends Model
     public const TYPE_COMPOSED        = 8;
 
     // Fillable attributes for mass assignment
-    protected $fillable = ['code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'picture', 'companies_id', 'is_nesting', 'is_bending', 'requires_release'];
+    protected $fillable = ['code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'picture', 'companies_id', 'is_nesting', 'is_bending', 'requires_release', 'equipment_kind'];
 
     /**
      * `requires_release` : une phase terminée sur ce poste attend le visa d'un

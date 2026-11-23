@@ -80,6 +80,14 @@ return [
         'inputs_dir'  => env('NESTENGINE_INPUTS_DIR', 'storage/app/nesting-inputs'),
     ],
 
+    // Jumeau numérique d'atelier (package commercial, hors Composer) : dossier
+    // du package, relatif à base_path() sauf chemin absolu. Vide ou absent =
+    // page de présentation (App\Providers\FactoryTwinServiceProvider).
+    'factory_twin' => [
+        'path'          => env('FACTORY_TWIN_PATH'),
+        'cache_seconds' => (int) env('FACTORY_TWIN_CACHE_SECONDS', 15),
+    ],
+
     // Répertoire Sirene (API Recherche d'entreprises de l'État, gratuite, sans
     // clé) : préremplit une société à partir d'un SIRET, d'un SIREN ou d'un nom.
     // Seul le texte cherché part vers l'API. Désactivable pour une instance
