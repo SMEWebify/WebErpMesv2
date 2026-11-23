@@ -169,7 +169,7 @@ class PdfLayoutTest extends TestCase
         $this->get($url(['layout' => 'unknown']))->assertNotFound();
         $this->get($url(['layout' => '../pdf-sales']))->assertNotFound();
         $this->get($url(['layout' => 'custom/pdf-sales']))->assertNotFound();
-        $this->get($url(['lang' => 'de']))->assertNotFound();
+        $this->get($url(['lang' => 'nl']))->assertNotFound();
     }
 
     public function test_an_order_confirmation_in_progress_still_cannot_be_printed(): void

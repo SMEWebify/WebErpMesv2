@@ -178,7 +178,7 @@ class HomeController extends Controller
 
         // ── Props React HomeDashboard ────────────────────────────────────────
         $locale   = config('app.locale', 'fr');
-        $intlLocale = match($locale) { 'fr' => 'fr-FR', 'en' => 'en-GB', 'es' => 'es-ES', 'it' => 'it-IT', default => 'fr-FR' };
+        $intlLocale = match($locale) { 'fr' => 'fr-FR', 'en' => 'en-GB', 'es' => 'es-ES', 'it' => 'it-IT', 'de' => 'de-DE', default => 'fr-FR' };
         $monthNames = __('general_content.chart_months_trans_key');
         $monthKeys  = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 

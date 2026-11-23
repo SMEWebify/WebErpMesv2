@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => 'Eingegangen',
+        'diagnosed' => 'Diagnostiziert',
+        'in_rework' => 'In Nacharbeit',
+        'closed' => 'Geschlossen',
+    ],
+    'messages' => [
+        'created' => 'Rücksendung erfolgreich gespeichert.',
+        'diagnosed' => 'Rücksendung erfolgreich diagnostiziert.',
+        'tasks_reopened' => 'Die Nacharbeitsgänge wurden erfolgreich erzeugt.',
+        'no_task' => 'Kein Arbeitsgang für diese Rücksendung wieder zu öffnen.',
+        'closed' => 'Rücksendung erfolgreich geschlossen.',
+        'no_line' => 'Fügen Sie mindestens eine ausgefüllte Position hinzu, um die Rücksendung zu speichern.',
+    ],
+    'fields' => [
+        'add_return' => 'Neue Rücksendung',
+        'list' => 'Liste der Rücksendungen',
+        'code' => 'Code',
+        'label' => 'Bezeichnung',
+        'delivery' => 'Lieferung',
+        'non_conformity' => 'Abweichung',
+        'customer_report' => 'Kundenrücksendung',
+        'lines' => 'Positionen',
+        'delivery_line' => 'Lieferposition',
+        'task' => 'Arbeitsgang',
+        'issue' => 'Problembeschreibung',
+        'action' => 'Nacharbeitsanweisungen',
+        'diagnosis' => 'Diagnose',
+        'closure_comment' => 'Abschlusskommentar',
+        'status' => 'Status',
+        'created_at' => 'Angelegt am',
+        'actions' => 'Aktionen',
+        'view' => 'Anzeigen',
+        'add_line' => 'Position hinzufügen',
+        'save' => 'Speichern',
+        'choose' => 'Auswählen',
+        'reopen_tasks' => 'Nacharbeitsgänge erzeugen',
+        'close_return' => 'Rücksendung schließen',
+    ],
+];

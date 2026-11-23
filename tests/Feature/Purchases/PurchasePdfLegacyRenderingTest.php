@@ -111,7 +111,7 @@ class PurchasePdfLegacyRenderingTest extends TestCase
             ->assertHeader('content-disposition', 'attachment; filename=PU-0001.pdf');
         $this->get($url(['lang' => 'en']))->assertOk();
         $this->get($url(['lang' => 'fr']))->assertOk();
-        $this->get($url(['lang' => 'de']))->assertNotFound();
+        $this->get($url(['lang' => 'nl']))->assertNotFound();
 
         $locale = app()->getLocale();
         $this->assertStringContainsString('Purchase Order', app(DocumentPdfService::class)->html($purchase->fresh(), null, 'en'));

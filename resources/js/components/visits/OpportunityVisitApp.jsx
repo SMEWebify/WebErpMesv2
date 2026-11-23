@@ -407,7 +407,7 @@ function VoiceSection({ visit, transcript, onTranscript, onVisit, onBeforeSend, 
             return;
         }
         const recognition = new SpeechRecognition();
-        recognition.lang = locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : locale === 'it' ? 'it-IT' : 'en-US';
+        recognition.lang = locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : locale === 'it' ? 'it-IT' : locale === 'de' ? 'de-DE' : 'en-US';
         recognition.continuous = true;
         recognition.interimResults = false;
         recognition.onresult = (event) => {

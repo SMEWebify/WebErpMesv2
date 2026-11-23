@@ -7,6 +7,7 @@ return [
     'english_trans_key'                        => 'Anglais',
     'french_trans_key'                         => 'Français',
     'italian_trans_key'                        => 'Italien',
+    'german_trans_key'                         => 'Allemand',
     'vietnamese_trans_key'                     => 'Vietnamien',
     'dashboard_trans_key'                      => 'Tableau de bord',
     'companies_trans_key'                      => 'Tiers',

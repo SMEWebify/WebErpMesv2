@@ -1,0 +1,98 @@
+<?php
+
+return [
+    // Onglets de la comptabilité
+    'tab_references'      => 'Regelungen / Arten',
+    'tab_matrix_sales'    => 'MwSt.-Matrix Verkauf',
+    'tab_matrix_purchase' => 'MwSt.-Matrix Einkauf',
+
+    // Champs communs
+    'code'             => 'Code',
+    'label'            => 'Bezeichnung',
+    'regime'           => 'Regelung',
+    'nature'           => 'Art',
+    'regime_customer'  => 'Regelung (Kunde)',
+    'regime_supplier'  => 'Regelung (Lieferant)',
+    'nature_product'   => 'Art (Artikel)',
+    'vat_code'         => 'MwSt.-Code',
+    'save'             => 'Speichern',
+    'add'              => 'Hinzufügen',
+    'edit_title'       => ':code bearbeiten',
+    'edit_rule'        => 'Regel bearbeiten',
+    'default_option'   => '— (Standard-MwSt.-Code)',
+
+    // Régimes et natures
+    'regimes_title'         => 'Umsatzsteuerregelungen (Kundenstamm)',
+    'natures_title'         => 'Umsatzsteuerarten (Artikelstamm / Kontierungsmerkmal)',
+    'no_regime'             => 'Keine Regelung',
+    'no_nature'             => 'Keine Art',
+    'regime_code_example'   => 'Code (z. B. EU)',
+    'nature_code_example'   => 'Code (z. B. Werkzeuge)',
+    'confirm_delete_regime' => 'Diese Regelung löschen?',
+    'confirm_delete_nature' => 'Diese Art löschen?',
+    'regime_created'        => 'Umsatzsteuerregelung angelegt.',
+    'regime_updated'        => 'Umsatzsteuerregelung aktualisiert.',
+    'regime_deleted'        => 'Umsatzsteuerregelung gelöscht.',
+    'nature_created'        => 'Umsatzsteuerart angelegt.',
+    'nature_updated'        => 'Umsatzsteuerart aktualisiert.',
+    'nature_deleted'        => 'Umsatzsteuerart gelöscht.',
+    'reference_in_use'      => 'Löschen nicht möglich: Dieser Wert wird noch von einer Regel der Matrix verwendet. Entfernen Sie zuerst die betreffenden Regeln.',
+
+    // Matrices
+    'matrix_sales_title'    => 'MwSt.-Matrix — Verkauf',
+    'matrix_purchase_title' => 'MwSt.-Matrix — Einkauf',
+    'new_sales_rule'        => 'Neue Regel (Verkauf)',
+    'new_purchase_rule'     => 'Neue Regel (Einkauf)',
+    'no_rule'               => 'Keine Regel — ohne Regel greift die Position auf den Standard-MwSt.-Code zurück.',
+    'confirm_delete_rule'   => 'Diese Regel löschen?',
+    'sales_account'         => 'Erlöskonto',
+    'sales_account_short'   => 'Erlöskonto',
+    'vat_collected_account' => 'Konto Umsatzsteuer',
+    'vat_account_short'     => 'MwSt.-Konto',
+    'vat_collected_hint'    => 'z. B. 445710 (leer bei Steuerbefreiung)',
+    'purchase_account'      => 'Aufwandskonto',
+    'purchase_account_short'=> 'Aufwandskonto',
+    'vat_deductible_account'=> 'Konto Vorsteuer',
+    'vat_deductible_short'  => 'Vorsteuer',
+    'vat_autoliq_account'   => 'Konto geschuldete Umsatzsteuer (Reverse-Charge)',
+    'vat_autoliq_hint'      => 'z. B. 445200 (Orientierung, manuelle Buchung)',
+    'autoliq_short'         => 'Reverse-Ch.',
+    'manual_vat'            => 'Reverse-Charge — MwSt.-Buchung manuell',
+    'manual_badge'          => 'manuell',
+    'pair_exists_sales'     => 'Für dieses Paar Regelung × Art gibt es bereits eine Regel (Verkauf).',
+    'pair_exists_purchase'  => 'Für dieses Paar Regelung × Art gibt es bereits eine Regel (Einkauf).',
+    'sales_rule_created'    => 'Verkaufsregel angelegt.',
+    'sales_rule_updated'    => 'Verkaufsregel aktualisiert.',
+    'sales_rule_deleted'    => 'Verkaufsregel gelöscht.',
+    'purchase_rule_created' => 'Einkaufsregel angelegt.',
+    'purchase_rule_updated' => 'Einkaufsregel aktualisiert.',
+    'purchase_rule_deleted' => 'Einkaufsregel gelöscht.',
+    'rule_not_found_sale'     => 'Keine MwSt.-Regel (Verkauf) für das Paar Regelung #:regime × Art #:nature. Ergänzen Sie die Matrix unter Buchhaltung → MwSt.-Matrix.',
+    'rule_not_found_purchase' => 'Keine MwSt.-Regel (Einkauf) für das Paar Regelung #:regime × Art #:nature. Ergänzen Sie die Matrix unter Buchhaltung → MwSt.-Matrix.',
+
+    // Code TVA : champs EN 16931
+    'en16931_help'          => 'Elektronische Rechnungsstellung (EN 16931) — leer lassen behält das bisherige Verhalten bei (S bei Steuersatz > 0, sonst Z).',
+    'en16931_category'      => 'Kategorie EN 16931',
+    'category_fallback'     => '— (Rückfall auf S / Z)',
+    'categories' => [
+        'S'  => 'S — Regelsteuersatz',
+        'Z'  => 'Z — Nullsatz',
+        'E'  => 'E — steuerbefreit',
+        'AE' => 'AE — Steuerschuldnerschaft des Leistungsempfängers (Reverse-Charge)',
+        'K'  => 'K — innergemeinschaftliche Lieferung',
+        'G'  => 'G — Ausfuhr außerhalb der EU',
+    ],
+    'exemption_reason_code' => 'Befreiungsgrund — Code (BT-121)',
+    'exemption_reason_text' => 'Befreiungsgrund — Text (BT-120)',
+    'exemption_text_example'=> 'z. B. Steuerbefreiung gemäß Art. 262 ter I CGI',
+    'legal_mention'         => 'Pflichtangabe (Rechnung)',
+    'legal_mention_hint'    => 'Auf der Rechnung gedruckter Hinweis',
+
+    // Fiche article
+    'product_nature'        => 'Umsatzsteuerart',
+
+    // Fiche société
+    'company_card'          => 'Umsatzsteuerregelung',
+    'attestation_ref'       => 'Ref. Bescheinigung (Steuerbefreiung Art. 275)',
+    'attestation_valid_until' => 'Bescheinigung gültig bis',
+];

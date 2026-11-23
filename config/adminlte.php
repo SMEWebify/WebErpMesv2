@@ -834,6 +834,11 @@ return [
                     'url'=> 'it',
                 ],
                 [
+                    'text'=>'german_trans_key',
+                    'icon' => 'flag-icon flag-icon-de',
+                    'url'=> 'de',
+                ],
+                [
                     'text'=>'vietnamese_trans_key',
                     'icon' => 'flag-icon flag-icon-vi',
                     'url'=> 'vi',

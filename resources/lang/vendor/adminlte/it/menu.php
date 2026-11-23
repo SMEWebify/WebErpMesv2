@@ -22,6 +22,7 @@ return [
     'english_trans_key'                        => 'Inglese',
     'french_trans_key'                         => 'Francese',
     'italian_trans_key'                        => 'Italiano',
+    'german_trans_key'                         => 'Tedesco',
     'vietnamese_trans_key'                     => 'Vietnamita',
     'dashboard_trans_key'                      => 'Cruscotto',
     'companies_trans_key'                      => 'Anagrafiche',

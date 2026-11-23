@@ -99,7 +99,7 @@ class PackingListTest extends TestCase
         $this->get($url(['layout' => 'packing-list', 'lang' => 'fr']))->assertOk();
         $this->get($url(['layout' => 'long']))->assertNotFound();
         $this->get($url(['layout' => 'unknown']))->assertNotFound();
-        $this->get($url(['lang' => 'de']))->assertNotFound();
+        $this->get($url(['lang' => 'nl']))->assertNotFound();
     }
 
     public function test_the_packing_list_is_offered_for_the_delivery_note_only(): void

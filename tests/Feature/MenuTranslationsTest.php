@@ -52,7 +52,7 @@ class MenuTranslationsTest extends TestCase
      */
     public static function localeProvider(): array
     {
-        return [['fr'], ['en'], ['it']];
+        return [['fr'], ['en'], ['it'], ['de']];
     }
 
     /**

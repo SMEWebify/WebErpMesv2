@@ -113,6 +113,7 @@ class VisitReportService
             'fr' => 'français',
             'es' => 'espagnol',
             'it' => 'italien',
+            'de' => 'allemand',
             default => 'anglais',
         };
 

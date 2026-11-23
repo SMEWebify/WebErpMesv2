@@ -1,0 +1,48 @@
+<?php
+
+return [
+    'title'  => 'Änderungsverlauf',
+    'empty'  => 'Keine Änderung erfasst.',
+    'system' => 'System',
+    'yes'    => 'Ja',
+    'no'     => 'Nein',
+    'loading' => 'Wird geladen…',
+    'error'  => 'Verlauf nicht verfügbar.',
+
+    'events' => [
+        'created'              => 'Anlage',
+        'updated'              => 'Änderung',
+        'deleted'              => 'Löschung',
+        'restored'             => 'Wiederherstellung',
+        'task_released'        => 'Arbeitsgang freigegeben',
+        'task_release_revoked' => 'Freigabe zurückgenommen',
+    ],
+
+    'fields' => [
+        'ind'                        => 'Index',
+        'code'                       => 'Code',
+        'label'                      => 'Bezeichnung',
+        'statu'                      => 'Status',
+        'type'                       => 'Typ',
+        'user_id'                    => 'Verantwortlicher',
+        'service_id'                 => 'Arbeitsplatz',
+        'failure_id'                 => 'Fehler',
+        'failure_comment'            => 'Kommentar Fehler',
+        'causes_id'                  => 'Ursache',
+        'causes_comment'             => 'Kommentar Ursache',
+        'correction_id'              => 'Korrektur',
+        'correction_comment'         => 'Kommentar Korrektur',
+        'companie_id'                => 'Unternehmen',
+        'order_lines_id'             => 'Auftragsposition',
+        'deliverys_id'               => 'Lieferschein',
+        'delivery_line_id'           => 'Lieferscheinposition',
+        'task_id'                    => 'Arbeitsgang',
+        'qty'                        => 'Menge',
+        'resolution_date'            => 'Lösungsdatum',
+        'pb_descp'                   => 'Problembeschreibung',
+        'cause'                      => 'Ursachenbeschreibung',
+        'action'                     => 'Maßnahmenbeschreibung',
+        'color'                      => 'Farbe',
+        'quality_non_conformitie_id' => 'Abweichung',
+    ],
+];

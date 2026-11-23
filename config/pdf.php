@@ -54,6 +54,7 @@ return [
         'fr' => 'Français',
         'en' => 'English',
         'it' => 'Italiano',
+        'de' => 'Deutsch',
     ],
 
     'themes' => [

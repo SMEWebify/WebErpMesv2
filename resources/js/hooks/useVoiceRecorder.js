@@ -23,6 +23,7 @@ function speechLang(locale) {
     if (locale === 'fr') return 'fr-FR';
     if (locale === 'es') return 'es-ES';
     if (locale === 'it') return 'it-IT';
+    if (locale === 'de') return 'de-DE';
     return 'en-US';
 }
 
