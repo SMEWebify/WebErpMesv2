@@ -970,8 +970,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
             Route::get('/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
 
-            // Stock current (React)
-            Route::get('/json/current', 'App\Http\Controllers\Products\StockController@stockCurrentJson')->name('products.stock.json.current');
+            // Commande d'achat depuis l'écran Statut du stock
             Route::post('/json/store-order', 'App\Http\Controllers\Products\StockController@storeOrderJson')->name('products.stock.json.store-order');
 
             // Stock detail

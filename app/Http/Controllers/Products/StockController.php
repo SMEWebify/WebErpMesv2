@@ -203,60 +203,6 @@ class StockController extends Controller
         return redirect()->route('products.stock.detail.show', ['id' => $StockDetail->id])->with('success', 'Successfully updated stock');
     }
 
-    public function stockCurrentJson(): \Illuminate\Http\JsonResponse
-    {
-        $products = Products::with(['Stock_location_product', 'undeliveredOrderLines', 'unFinishedTaskLines.OrderLines'])->get();
-
-        $data = $products->map(function ($product) {
-            $totalStockMove = $product->getTotalStockMove();
-            $undeliveredQty = $product->getTotalUndeliveredQtyWithoutTasksAttribute();
-            $taskQty        = $product->getTotalUnFinishedTaskLinesQtyAttribute();
-            $qtyNeed        = $undeliveredQty + $taskQty;
-
-            if ($totalStockMove > $qtyNeed) {
-                $statusColor = 'success';
-            } elseif ($totalStockMove < $qtyNeed) {
-                $statusColor = 'danger';
-            } else {
-                $statusColor = 'warning';
-            }
-
-            $locations = $product->Stock_location_product->map(function ($loc) {
-                $current = $loc->getCurrentStockMove();
-                if ($current > $loc->mini_qty) {
-                    $color = 'success';
-                } elseif ($current < $loc->mini_qty) {
-                    $color = 'danger';
-                } else {
-                    $color = 'warning';
-                }
-                return [
-                    'id'            => $loc->id,
-                    'code'          => $loc->code,
-                    'url'           => route('products.stockline.show', ['id' => $loc->id]),
-                    'current_stock' => $current,
-                    'mini_qty'      => $loc->mini_qty,
-                    'color'         => $color,
-                ];
-            })->values();
-
-            return [
-                'id'               => $product->id,
-                'label'            => $product->label,
-                'product_url'      => route('products.show', ['id' => $product->id]),
-                'total_stock_move' => $totalStockMove,
-                'qty_need'         => $qtyNeed,
-                'undelivered_qty'  => $undeliveredQty,
-                'task_qty'         => $taskQty,
-                'status_color'     => $statusColor,
-                'location_count'   => $product->StockLocationProductCount(),
-                'locations'        => $locations,
-            ];
-        });
-
-        return response()->json($data);
-    }
-
     public function storeOrderJson(Request $request): \Illuminate\Http\JsonResponse
     {
         $productId       = $request->input('product_id');

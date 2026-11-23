@@ -1849,19 +1849,6 @@ async function mountArrowSteps() {
     });
 }
 
-async function mountStockCurrentApp() {
-    const el = document.getElementById('stock-current-app');
-    if (!el) return;
-    const { default: StockCurrentApp } = await import('./components/StockCurrentApp.jsx');
-    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
-    createRoot(el).render(
-        React.createElement(StockCurrentApp, {
-            endpoints: parse('endpoints') ?? {},
-            trans:     parse('trans')     ?? {},
-        })
-    );
-}
-
 async function mountChatLive() {
     const elements = document.querySelectorAll('[data-react="chat-live"]');
     if (!elements.length) return;
@@ -1963,7 +1950,6 @@ mountAffairRisks();
 mountAffairTimeline();
 mountContractReview();
 mountArrowSteps();
-mountStockCurrentApp();
 mountChatLive();
 mountStockValuationApp();
 mountStockShortagesApp();

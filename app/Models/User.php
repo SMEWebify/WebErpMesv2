@@ -14,7 +14,6 @@ use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
 use App\Models\Methods\MethodsRessources;
-use App\Models\HumanResources\Attendance;
 use App\Models\Products\StockLocation;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;

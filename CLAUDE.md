@@ -2054,9 +2054,6 @@ en commençant par les plus menacés (RE, CR, EN, VU, puis NT).
   (`quality:dispatch-calibration-alerts`)
 - **Mapping des codes rubrique paie** par éditeur (Silae, Sage, Cegid…) : l'export sort un
   format neutre, la correspondance des codes reste à faire côté client
-- **Doublons de classes `Attendance`** : `App\Models\Attendance` (câblé aux routes) et
-  `App\Models\HumanResources\Attendance` (inutilisé) pointent sur la même table, idem pour
-  les deux `AttendanceController`. À dédoublonner
 - **Périmètre de droits du module RH** : le groupe `human-resources` n'exige que `has.role`
   (n'importe quel rôle), la permission `human-resources-menu` ne masque que le menu. Les
   routes de congés ajoutées la portent, les routes historiques (fiches salarié, contrats,
@@ -2137,7 +2134,6 @@ simples devis / factures ? Rien n'existe aujourd'hui hors ce qui est marqué « 
   affectation inchangé). À trancher : qui affecte (magasin / méthodes avec droit dédié, ou
   opérateur), écart de coulée = avertissement ou blocage, articles concernés (`tracability_type = 2`
   ou tout article ayant des lots)
-- **Retirer StockCurrentApp** (composant + mount app.js + endpoint `stockCurrentJson`) une fois l'écran Statut du stock validé en usage réel
 
 #### Dépendances — montées majeures repoussées
 - **spatie/laravel-activitylog 4 → 5** (PR Dependabot #1220 fermée, version 5 ignorée, nov. 2026) :
