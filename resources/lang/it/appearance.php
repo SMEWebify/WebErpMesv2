@@ -9,6 +9,9 @@ return [
     'primary_default' => "Quello del tema",
     'save' => 'Salva',
     'saved' => 'Aspetto salvato.',
+    'readable' => 'Lettura facilitata',
+    'readable_hint' => "Un carattere pensato per distinguere le lettere simili (b/d, p/q, I/l/1), testo un po' più grande, interlinea e spaziatura più ampie, niente testo giustificato né corsivo. Cambia solo la tua visualizzazione, non i PDF.",
+    'readable_label' => 'Attiva la lettura facilitata',
     'groups' => [
         'brand' => 'Marchio',
         'light' => 'Chiaro',

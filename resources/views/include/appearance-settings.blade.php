@@ -73,6 +73,15 @@
         @endforeach
     </div>
 
+    <h5 class="mt-4 mb-1">{{ __('appearance.readable') }}</h5>
+    <p class="text-muted small mb-2">{{ __('appearance.readable_hint') }}</p>
+    <div class="form-check form-switch">
+        <input type="hidden" name="ui_readable" value="0">
+        <input type="checkbox" class="form-check-input" role="switch" id="ui-readable" name="ui_readable" value="1"
+               @checked(\App\Support\UiTheme::readable(auth()->user()))>
+        <label class="form-check-label" for="ui-readable">{{ __('appearance.readable_label') }}</label>
+    </div>
+
     <div class="mt-4">
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-save me-1"></i> {{ __('appearance.save') }}

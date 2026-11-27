@@ -1,0 +1,49 @@
+/*
+ * « Lecture facilitée » (Profil → Apparence, users.ui_readable) : chargé seulement
+ * pour l'utilisateur qui l'a choisie (App\Support\UiTheme::apply), tout est scopé
+ * sous body.wem-readable. Police Atkinson Hyperlegible (lettres faciles à
+ * distinguer : b/d, p/q, I/l/1, O/0), texte plus grand, interlignes et espacements
+ * plus larges, jamais justifié, sans italique. Les PDF n'utilisent pas ce gabarit.
+ */
+body.wem-readable {
+    --bs-body-font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+    --bs-body-font-size: 1.0625rem;
+    --bs-body-line-height: 1.7;
+    font-family: var(--bs-body-font-family);
+    letter-spacing: .02em;
+    word-spacing: .08em;
+}
+
+/* Champs, boutons, menus et tableaux suivent la même police (Bootstrap la fige parfois). */
+body.wem-readable :is(input, select, textarea, button, .btn, .form-control, .form-select,
+    .dropdown-menu, .nav-link, .table, .tooltip, .popover, .modal, .ts-control, .ts-dropdown, .ql-editor) {
+    font-family: var(--bs-body-font-family);
+    letter-spacing: inherit;
+}
+
+/* Lignes de texte plus aérées ; les tableaux gardent un interligne plus serré pour rester compacts. */
+body.wem-readable .app-main :is(p, li:not(.nav-item):not(.page-item):not(.breadcrumb-item), dd, label, .form-text, .ql-editor) {
+    line-height: 1.7;
+}
+body.wem-readable .table {
+    line-height: 1.5;
+}
+
+/* Jamais de texte justifié : les écarts irréguliers entre les mots gênent la lecture.
+   Seul le justifié est visé : text-center / text-end gardent leur alignement. */
+body.wem-readable .text-justify,
+body.wem-readable [style*="text-align: justify"],
+body.wem-readable [style*="text-align:justify"] {
+    text-align: start !important;
+}
+
+/* L'italique déforme les lettres : remplacé par du gras léger. */
+body.wem-readable :is(em, i:not([class*="fa"]):not([class*="bi"]), .fst-italic, cite) {
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Petits textes : jamais en dessous de 0,9 rem. */
+body.wem-readable :is(small, .small, .form-text, .badge) {
+    font-size: max(.9rem, .875em);
+}

@@ -9,6 +9,9 @@ return [
     'primary_default' => "The theme's own",
     'save' => 'Save',
     'saved' => 'Appearance saved.',
+    'readable' => 'Easier reading',
+    'readable_hint' => 'A typeface designed to tell look-alike letters apart (b/d, p/q, I/l/1), slightly larger text, wider line and letter spacing, no justified or italic text. Only changes your own display, not the PDFs.',
+    'readable_label' => 'Turn on easier reading',
     'groups' => [
         'brand' => 'Brand',
         'light' => 'Light',

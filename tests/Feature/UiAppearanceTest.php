@@ -98,4 +98,36 @@ class UiAppearanceTest extends TestCase
             ->assertSee('value="steel"', false)
             ->assertSee(__('appearance.presets.gradient-teal'));
     }
+    public function test_easier_reading_is_off_by_default_and_changes_nothing(): void
+    {
+        $html = $this->get(route('user.profile', ['id' => $this->user->id]))->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('wem-readable', $html);
+        $this->assertStringNotContainsString('atkinson-hyperlegible', $html);
+        $this->assertStringContainsString('id="ui-readable"', $html);
+    }
+
+    public function test_easier_reading_loads_the_font_and_marks_the_body(): void
+    {
+        $this->put(route('profile.appearance.update'), ['ui_preset' => '', 'ui_primary' => '', 'ui_readable' => '1'])
+            ->assertRedirect();
+        $this->assertTrue((bool) $this->user->refresh()->ui_readable);
+
+        $html = $this->get(route('user.profile', ['id' => $this->user->id]))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/<body class="[^"]*wem-readable/', $html);
+        $this->assertStringContainsString('vendor/fonts/atkinson-hyperlegible/index.css', $html);
+        $this->assertStringContainsString('css/wem-readable.css', $html);
+    }
+
+    public function test_easier_reading_is_kept_when_the_field_is_not_sent_and_can_be_turned_off(): void
+    {
+        $this->user->forceFill(['ui_readable' => true])->save();
+
+        $this->put(route('profile.appearance.update'), ['ui_preset' => 'navy'])->assertRedirect();
+        $this->assertTrue((bool) $this->user->refresh()->ui_readable, 'champ absent : inchangé');
+
+        $this->put(route('profile.appearance.update'), ['ui_readable' => '0'])->assertRedirect();
+        $this->assertFalse((bool) $this->user->refresh()->ui_readable);
+    }
 }

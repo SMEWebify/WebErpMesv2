@@ -114,5 +114,17 @@ class UiTheme
         // Le thème de la marque redéfinit les couleurs Bootstrap : il ne doit
         // pas masquer un autre habillage ni une autre couleur primaire.
         Config::set('adminlte.plugins.ThemeNest2Prod.active', self::preset($user) === self::NEST2PROD && $primary === null);
+
+        // Lecture facilitée : police et espacements (public/css/wem-readable.css), scopés sous body.wem-readable.
+        $readable = self::readable($user);
+        Config::set('adminlte.plugins.ReadableText.active', $readable);
+        if ($readable) {
+            Config::set('adminlte.classes_body', trim(config('adminlte.classes_body').' wem-readable'));
+        }
+    }
+
+    public static function readable(?User $user): bool
+    {
+        return (bool) ($user?->ui_readable ?? false);
     }
 }

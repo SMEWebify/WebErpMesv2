@@ -127,6 +127,10 @@ dans `users.ui_preset` / `users.ui_primary` (null = défaut), réglé dans Profi
 appliqué par `View::composer('adminlte::page')`. Le thème Nest2Prod (`theme-nest2prod.css`)
 n'est chargé que si l'utilisateur garde cet habillage sans autre couleur principale.
 Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
+**Lecture facilitée** (`users.ui_readable`, faux par défaut, même onglet) : `UiTheme::apply()` ajoute
+`wem-readable` au `<body>` et active le plugin `ReadableText` (police Atkinson Hyperlegible, OFL,
+copie locale `public/vendor/fonts/atkinson-hyperlegible`, + `public/css/wem-readable.css`, tout scopé
+sous `body.wem-readable`). Pages AdminLTE seulement ; PDF et pages autonomes inchangés.
 
 ## Commandes Artisan
 

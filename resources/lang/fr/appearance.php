@@ -9,6 +9,9 @@ return [
     'primary_default' => "Celle de l'habillage",
     'save' => 'Enregistrer',
     'saved' => 'Apparence enregistrée.',
+    'readable' => 'Lecture facilitée',
+    'readable_hint' => 'Police conçue pour distinguer les lettres qui se ressemblent (b/d, p/q, I/l/1), texte un peu plus grand, interlignes et espacements plus larges, ni texte justifié ni italique. Ne change que votre affichage, pas les PDF.',
+    'readable_label' => 'Activer la lecture facilitée',
     'groups' => [
         'brand' => 'Marque',
         'light' => 'Clair',

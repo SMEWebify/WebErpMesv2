@@ -18,11 +18,16 @@ class UiAppearanceController extends Controller
         $validated = $request->validate([
             'ui_preset' => ['nullable', 'string', Rule::in(array_keys(UiTheme::PRESETS))],
             'ui_primary' => ['nullable', 'string', Rule::in(UiTheme::PRIMARIES)],
+            'ui_readable' => ['nullable', 'boolean'],
         ]);
 
         $user = $request->user();
         $user->ui_preset = $validated['ui_preset'] ?? null;
         $user->ui_primary = $validated['ui_primary'] ?? null;
+        // Absent de la requête (ancien formulaire) : inchangé.
+        if ($request->has('ui_readable')) {
+            $user->ui_readable = (bool) $validated['ui_readable'];
+        }
         $user->save();
 
         return redirect()

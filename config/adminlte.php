@@ -1642,6 +1642,23 @@ return [
                 ],
             ],
         ],
+        // « Lecture facilitée » (Profil → Apparence) : chargée seulement pour
+        // l'utilisateur qui l'a choisie, par App\Support\UiTheme::apply().
+        'ReadableText' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/fonts/atkinson-hyperlegible/index.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/wem-readable.css',
+                ],
+            ],
+        ],
         // Mode "pro" : chargé en permanence, tout est scopé sous body.theme-pro
         // et ne s'applique donc que si l'utilisateur a choisi ce mode.
         'ThemePro' => [
