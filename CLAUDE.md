@@ -784,6 +784,13 @@ d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteD
 - **Marque** `quote_lines.ai_proposed_at` (hors `$fillable`, `ai_proposed` dans le JSON des
   lignes, pastille « IA », jamais imprimée) ; remise à null par `QuoteLineCopier` (copie,
   import, duplication de devis).
+- **Commande** (`App\Services\Workflow\OrderDictation`, `OrderDictationController`, routes
+  `orders.lines.json.dictation.*`) : même brouillon (`QuoteDictation::propose`) et même fenêtre ;
+  permise **seulement** sur une commande client (pas interne) au statut 1 **sans aucun ARC**
+  (`refusal()`, sinon 403 avec message, endpoints non posés). Lignes en fin de commande, restes à
+  livrer / facturer = qté, TVA par défaut, plafond d'encours contrôlé (409 + passe-droit dans la
+  fenêtre). Marque `order_lines.ai_proposed_at` (hors `$fillable`), remise à null à la duplication.
+  Tests : `tests/Feature/Orders/OrderDictationTest.php`.
 - **Appel IA commun** `App\Services\AI\DirectTextCompletion` (Claude ou API compatible OpenAI,
   sans outils, aucune consommation enregistrée). Indisponible / en échec → 502 avec message.
 - **« Réécrire sans fautes »** (`App\Services\AI\TextRewriter`, route `ai.rewrite`, throttle 30/min) :

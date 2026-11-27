@@ -41,4 +41,9 @@ return [
     'empty_text' => 'Dettate o inserite prima ciò che va quotato.',
     'failed' => 'La risposta dell\'IA è illeggibile. Riformulate o riprovate.',
     'no_lines' => 'L\'IA non ha trovato alcuna riga in questo testo.',
+
+    // Dettatura su un ordine (OrderDictation).
+    'order_refused_internal' => 'Nessuna dettatura su un ordine interno.',
+    'order_refused_status' => 'La dettatura è possibile solo su un ordine aperto.',
+    'order_refused_confirmation' => 'Esiste già una conferma d\'ordine: la dettatura non è più possibile.',
 ];

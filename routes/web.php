@@ -478,6 +478,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
         Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->middleware('permission:products-edit')->name('orders.lines.json.create-products');
         Route::post('/{orderId}/lines/json/link-products',              'App\Http\Controllers\Workflow\OrderLinesController@linkProductsToLinesJson')->name('orders.lines.json.link-products');
+        Route::post('/{orderId}/lines/json/dictation/transcribe', [\App\Http\Controllers\Workflow\OrderDictationController::class, 'transcribe'])->whereNumber('orderId')->middleware('throttle:20,1')->name('orders.lines.json.dictation.transcribe');
+        Route::post('/{orderId}/lines/json/dictation/propose', [\App\Http\Controllers\Workflow\OrderDictationController::class, 'propose'])->whereNumber('orderId')->middleware('throttle:20,1')->name('orders.lines.json.dictation.propose');
+        Route::post('/{orderId}/lines/json/dictation/store', 'App\Http\Controllers\Workflow\OrderLinesController@storeDictatedJson')->whereNumber('orderId')->name('orders.lines.json.dictation.store');
         Route::post('/{orderId}/lines/json/import-cad',                 'App\Http\Controllers\Workflow\OrderLinesController@importCadJson')->name('orders.lines.json.import-cad');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');

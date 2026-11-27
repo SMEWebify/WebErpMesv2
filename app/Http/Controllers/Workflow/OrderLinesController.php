@@ -49,6 +49,8 @@ use App\Services\Workflow\OrderLineCalculatedPrice;
 use App\Services\Workflow\OrderLineCalculatedPriceException;
 use App\Services\Workflow\OrderLineCancellation;
 use App\Services\Workflow\OrderLineCancellationException;
+use App\Services\Workflow\OrderDictation;
+use App\Services\Quotes\QuoteDictation;
 use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
@@ -578,6 +580,53 @@ class OrderLinesController extends Controller
         return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))], 201);
     }
 
+    /**
+     * Dictée : lignes relues dans le brouillon (OrderDictationController),
+     * ajoutées en fin de commande et marquées ai_proposed_at.
+     */
+    public function storeDictatedJson($orderId, Request $request, OrderDictation $dictation)
+    {
+        abort_unless(auth()->check(), 403);
+        $order = Orders::findOrFail($orderId);
+        if ($refusal = $dictation->refusal($order)) {
+            return response()->json(['message' => $refusal], 403);
+        }
+
+        $validated = $request->validate([
+            'lines'                    => 'required|array|min:1|max:' . QuoteDictation::MAX_LINES,
+            'lines.*.label'            => 'required|string|max:255',
+            'lines.*.qty'              => 'required|numeric|min:0',
+            'lines.*.methods_units_id' => 'nullable|exists:methods_units,id',
+            'lines.*.selling_price'    => 'nullable|numeric|min:0',
+            'lines.*.material'         => 'nullable|string|max:255',
+            'lines.*.internal_comment' => 'nullable|string|max:2000',
+        ]);
+
+        try {
+            // Plafond d'encours : les lignes ajoutent leur montant TTC à la commande.
+            [$creditCheck, $creditRefusal] = $this->creditGuardForLines($request, $order, $dictation->ttc($validated['lines']));
+            if ($creditRefusal) {
+                return $creditRefusal;
+            }
+            $created = $dictation->create($order, $validated['lines']);
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        app(CreditLimitGuard::class)->recordOverride($creditCheck, $order, $order->companies_id);
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        $lines = $created->map(function (OrderLines $line) use ($currency) {
+            $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'OrderLineDetails:id,order_lines_id,picture']);
+            $line->loadCount(['Task', 'SubAssembly']);
+
+            return $this->formatLineJson($line, $currency, config('app.locale'));
+        });
+
+        return response()->json(['lines' => $lines->values()], 201);
+    }
+
     public function updateLineJson($orderId, $id, Request $request)
     {
         abort_unless(auth()->check(), 403);
@@ -719,6 +768,8 @@ class OrderLinesController extends Controller
             $newLine->label = $line->label . '#dup' . $line->id;
             // Un repère désigne un seul équipement : la copie n'en reprend aucun.
             $newLine->equipment_tag = null;
+            // La copie n'a pas été proposée par l'IA.
+            $newLine->ai_proposed_at = null;
             // Reset delivery/invoice tracking fields
             $newLine->delivered_qty           = 0;
             $newLine->delivered_remaining_qty = $line->qty;
@@ -1005,6 +1056,7 @@ class OrderLinesController extends Controller
             'line_type'            => $l->line_type ?? 'article',
             // Ligne issue d'un configurateur externe : libellé de la pastille, null sinon.
             'configured'           => \App\Models\Integrations\ExternalConfigurator::labelFor($l->external_configurator_id),
+            'ai_proposed'          => $l->ai_proposed_at !== null,
             'hide_on_pdf'          => (bool) $l->hide_on_pdf,
             'pdf_package'          => (int) $l->pdf_package,
             'cancellation'         => [

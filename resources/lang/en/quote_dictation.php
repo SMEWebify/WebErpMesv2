@@ -41,4 +41,9 @@ return [
     'empty_text' => 'First dictate or type what needs to be quoted.',
     'failed' => 'The AI answer is unreadable. Rephrase or try again.',
     'no_lines' => 'The AI found no line in this text.',
+
+    // Dictation on an order (OrderDictation).
+    'order_refused_internal' => 'Dictation is not available on an internal order.',
+    'order_refused_status' => 'Dictation is only available on an open order.',
+    'order_refused_confirmation' => 'An order acknowledgement already exists for this order: dictation is no longer available.',
 ];

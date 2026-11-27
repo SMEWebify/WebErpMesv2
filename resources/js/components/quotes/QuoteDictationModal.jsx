@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { apiFetch, csrfToken } from '../../lib/http';
 import { toDrafts, toPayload, appendText, fill } from '../../lib/quoteDictation.js';
 import useVoiceRecorder, { extensionFor } from '../../hooks/useVoiceRecorder.js';
+import { askCreditOverride } from '../../lib/creditLimit';
 
 function formatDuration(seconds) {
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-// Dictée de lignes de devis : texte (micro ou clavier) → lignes en brouillon
-// proposées par l'IA → correction → création. Rien n'est enregistré avant « Créer ».
+// Dictée de lignes de devis ou de commande : texte (micro ou clavier) → lignes en
+// brouillon proposées par l'IA → correction → création. Rien n'est enregistré avant
+// « Créer ». Commande : un plafond d'encours dépassé (409) ouvre la fenêtre de passe-droit.
 export default function QuoteDictationModal({ endpoints, units = [], trans: t = {}, onCreated, onClose }) {
     const [text, setText]       = useState('');
     const [step, setStep]       = useState('text'); // text | drafts
@@ -61,13 +63,19 @@ export default function QuoteDictationModal({ endpoints, units = [], trans: t = 
         }
     };
 
-    const create = async () => {
+    const create = async (creditOverride = null) => {
         setBusy('creating');
         setError(null);
         try {
-            const data = await apiFetch(endpoints.dictationStore, { method: 'POST', body: JSON.stringify({ lines: toPayload(drafts) }) });
+            const data = await apiFetch(endpoints.dictationStore, { method: 'POST', body: JSON.stringify({ lines: toPayload(drafts), ...creditOverride }) });
             onCreated(data.lines ?? []);
         } catch (e) {
+            if (e?.credit_limit) {
+                const override = await askCreditOverride(e.credit_limit);
+                if (override) return create(override);
+                setBusy(null);
+                return;
+            }
             setError(e?.message ?? t.failed);
             setBusy(null);
         }
@@ -211,7 +219,7 @@ export default function QuoteDictationModal({ endpoints, units = [], trans: t = 
                                 <button type="button" className="btn btn-outline-secondary btn-sm me-auto" disabled={busy !== null} onClick={() => setStep('text')}>
                                     <i className="fas fa-arrow-left me-1" />{t.back}
                                 </button>
-                                <button type="button" className="btn btn-primary btn-sm" disabled={busy !== null || kept === 0} onClick={create}>
+                                <button type="button" className="btn btn-primary btn-sm" disabled={busy !== null || kept === 0} onClick={() => create()}>
                                     {busy === 'creating' ? <i className="fas fa-spinner fa-spin me-1" /> : <i className="fas fa-check me-1" />}
                                     {fill(t.create, { count: kept })}
                                 </button>

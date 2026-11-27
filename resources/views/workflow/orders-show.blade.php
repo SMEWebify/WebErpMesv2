@@ -471,6 +471,15 @@ if (!$orderHasInvoicedLines) {
         }
         // Configurateurs externes : bouton « Configurer » seulement si l'un d'eux est actif.
         $orderLineEndpoints += \App\Services\Configurators\ConfiguratorScreen::endpoints('order', $Order->id);
+        // Dictée : fournisseur d'IA configuré, commande client ouverte et sans ARC.
+        $orderDictation = app(\App\Services\Quotes\QuoteDictation::class);
+        if ($orderDictation->isAvailable() && app(\App\Services\Workflow\OrderDictation::class)->refusal($Order) === null) {
+          $orderLineEndpoints['dictationPropose'] = route('orders.lines.json.dictation.propose', ['orderId' => $Order->id]);
+          $orderLineEndpoints['dictationStore']   = route('orders.lines.json.dictation.store',   ['orderId' => $Order->id]);
+          if (app(\App\Services\Visits\VisitTranscriptionService::class)->isAvailable()) {
+            $orderLineEndpoints['dictationTranscribe'] = route('orders.lines.json.dictation.transcribe', ['orderId' => $Order->id]);
+          }
+        }
       @endphp
       <div class="tab-pane " id="Lines">
         <div class="card mb-3">
@@ -482,7 +491,7 @@ if (!$orderHasInvoicedLines) {
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
               data-endpoints="{{ json_encode($orderLineEndpoints) }}"
-              data-trans="{{ json_encode(['lines' => __('sales_lines'), 'delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui'), 'configurators' => \App\Services\Configurators\ConfiguratorScreen::trans('order')]) }}"
+              data-trans="{{ json_encode(['lines' => __('sales_lines'), 'delays' => __('order_delays'), 'equipment_tags' => __('equipment_tags'), 'release' => $orderLineRelease, 'dossier' => $orderLineDossier, 'calculated_price' => __('calculated_price'), 'cancel' => __('order_line_cancel.ui'), 'configurators' => \App\Services\Configurators\ConfiguratorScreen::trans('order'), 'quote_dictation' => __('quote_dictation') + ['provider' => $orderDictation->provider(), 'locale' => app()->getLocale()]]) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin me-2"></i> Chargement des lignes...

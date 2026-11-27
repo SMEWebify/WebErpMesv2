@@ -41,4 +41,9 @@ return [
     'empty_text' => 'Dictez ou saisissez d\'abord ce qu\'il faut chiffrer.',
     'failed' => 'La réponse de l\'IA est illisible. Reformulez ou réessayez.',
     'no_lines' => 'L\'IA n\'a trouvé aucune ligne dans ce texte.',
+
+    // Dictée sur une commande (OrderDictation).
+    'order_refused_internal' => 'Pas de dictée sur une commande interne.',
+    'order_refused_status' => 'La dictée n\'est possible que sur une commande ouverte.',
+    'order_refused_confirmation' => 'Un ARC existe déjà pour cette commande : la dictée n\'est plus possible.',
 ];

@@ -41,4 +41,9 @@ return [
     'empty_text' => 'Diktieren oder geben Sie zuerst ein, was kalkuliert werden soll.',
     'failed' => 'Die Antwort der KI ist unlesbar. Formulieren Sie um oder versuchen Sie es erneut.',
     'no_lines' => 'Die KI hat in diesem Text keine Position gefunden.',
+
+    // Diktat in einem Auftrag (OrderDictation).
+    'order_refused_internal' => 'Kein Diktat bei einem internen Auftrag.',
+    'order_refused_status' => 'Das Diktat ist nur bei einem offenen Auftrag möglich.',
+    'order_refused_confirmation' => 'Für diesen Auftrag gibt es bereits eine Auftragsbestätigung: Das Diktat ist nicht mehr möglich.',
 ];

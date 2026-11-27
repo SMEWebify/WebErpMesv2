@@ -9,6 +9,7 @@ import { apiRequest as apiFetch } from '../lib/http';
 import { calculatedPriceToggle, isValidReason } from '../lib/calculatedPrice';
 import { askCreditOverride } from '../lib/creditLimit';
 import ConfiguratorButton from './configurators/ConfiguratorButton.jsx';
+import QuoteDictationModal from './quotes/QuoteDictationModal.jsx';
 import { askCancelReason, fillPlaceholders } from '../lib/cancelReason';
 import { EquipmentTagsInput, EquipmentTagBadges, parseTags, formatTags } from '../lib/equipmentTags';
 import { isReleased, releasedOnText, releasableIds } from '../lib/productionRelease.js';
@@ -895,7 +896,7 @@ function OrderPresentationRow({ line, info, sectionLabel, currency }) {
 
 function LineRow({
     line, isReadOnly, onEdit, onDelete, onDuplicate, onBreakDown, onOpenTaskModal, onToggleSelect, selected,
-    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {}, releaseTrans = null,
+    onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging, t = {}, tagTrans = {}, dictationTrans = {}, releaseTrans = null,
     dossierTrans = null, onCancel = null, cancelTrans = {},
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -1000,6 +1001,11 @@ function LineRow({
                 {line.configured && (
                     <span className="badge text-bg-light border ms-1" title={line.configured}>
                         <i className="fas fa-sliders-h me-1" />{line.configured}
+                    </span>
+                )}
+                {line.ai_proposed && (
+                    <span className="badge text-bg-light border ms-1" title={dictationTrans.badge_title}>
+                        <i className="fas fa-robot me-1" />{dictationTrans.badge ?? 'IA'}
                     </span>
                 )}
                 <EquipmentTagBadges tags={line.equipment_tag} title={tagTrans.label} />
@@ -1149,6 +1155,8 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
     const delaysTrans = trans.delays ?? {};
     const tagTrans    = trans.equipment_tags ?? {};
     const configuratorTrans = trans.configurators ?? {};
+    const dictationTrans = trans.quote_dictation ?? {};
+    const [dictationOpen, setDictationOpen] = useState(false);
     const releaseTrans = trans.release ?? null; // null = bon pour fabrication non exigé
     const dossierTrans = trans.dossier ?? null; // dossier de fin de fabrication
     const cancelTrans  = trans.cancel ?? {};     // annulation du reste non livré
@@ -1372,6 +1380,16 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             // lignes visibles au prochain chargement
         }
         showFlash(data.warnings?.length ? 'warning' : 'success', [data.message, ...(data.warnings ?? [])].filter(Boolean).join(' '));
+    };
+
+    const handleDictatedLines = (newLines) => {
+        setDictationOpen(false);
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', fmt(dictationTrans.created ?? ':count', { count: newLines.length }));
     };
 
     const handlePriceIncrease = async (creditOverride = null) => {
@@ -1669,6 +1687,12 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                         onApplied={handleConfigured}
                     />
                 )}
+                {/* Dictée : endpoints posés seulement sur une commande ouverte sans ARC (OrderDictation). */}
+                {!isReadOnly && orderStatu === 1 && endpoints.dictationPropose && (
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => setDictationOpen(true)}>
+                        <i className="fas fa-microphone me-1" />{dictationTrans.button ?? 'Dicter'}
+                    </button>
+                )}
                 <span className="badge text-bg-secondary ms-auto">
                     {fmt(filteredLines.length > 1 ? (L.lines_count_many ?? ':count lignes') : (L.lines_count_one ?? ':count ligne'), { count: filteredLines.length })}
                 </span>
@@ -1848,6 +1872,7 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                                 selected={selected.has(line.id)}
                                 t={delaysTrans}
                                 tagTrans={tagTrans}
+                                dictationTrans={dictationTrans}
                                 releaseTrans={releaseTrans}
                                 dossierTrans={dossierTrans}
                                 onDragStart={(e) => handleDragStart(e, index)}
@@ -1881,6 +1906,16 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                 t={delaysTrans}
                 tagTrans={tagTrans}
             />
+
+            {dictationOpen && (
+                <QuoteDictationModal
+                    endpoints={endpoints}
+                    units={selectData.units ?? []}
+                    trans={dictationTrans}
+                    onCreated={handleDictatedLines}
+                    onClose={() => setDictationOpen(false)}
+                />
+            )}
 
             {/* Task modal */}
             {taskModalLine && (
