@@ -2,6 +2,8 @@ import React from 'react';
 import usePreview from './usePreview.js';
 import PreviewStatus from './PreviewStatus.jsx';
 import { formatSize, mailDocument } from '../../../lib/files/filePreview.js';
+import { htmlToText } from '../../../lib/readAloud.js';
+import ReadAloudButton from '../../ReadAloudButton.jsx';
 
 function formatDate(iso) {
     if (!iso) return '';
@@ -45,6 +47,10 @@ export default function MailViewer({ file, t, height = 620 }) {
                         <i className="fas fa-download me-1" />
                         {t('download')}
                     </a>
+                    <ReadAloudButton
+                        t={{ read: t('read_aloud'), stop: t('read_aloud_stop') }}
+                        getText={() => [data.subject, data.html ? htmlToText(data.html) : data.text].filter(Boolean).join('. ')}
+                    />
                 </div>
             </div>
 

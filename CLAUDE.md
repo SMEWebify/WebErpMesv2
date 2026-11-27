@@ -131,6 +131,13 @@ Indépendant du mode clair / sombre / pro (`App\Support\ThemeMode`, en session).
 `wem-readable` au `<body>` et active le plugin `ReadableText` (police Atkinson Hyperlegible, OFL,
 copie locale `public/vendor/fonts/atkinson-hyperlegible`, + `public/css/wem-readable.css`, tout scopé
 sous `body.wem-readable`). Pages AdminLTE seulement ; PDF et pages autonomes inchangés.
+Elle pose aussi **« Lire à voix haute »** (`lib/readAloud.js`, `speechSynthesis` du navigateur, rien ne
+part vers un serveur, phrases de 200 caractères au plus, voix de la langue de la page) : bouton
+`include/read-aloud-button` (rendu seulement si `UiTheme::readable()`, masqué tant que le navigateur
+ne sait pas lire) dans `<x-FormTextareaComment>`, sous les éditeurs riches (`include/ai-rewrite-rich`)
+et `ReadAloudButton.jsx` dans le lecteur d'e-mails de la GED. Tests : `tests/Feature/ReadAloudTest.php`,
+`resources/js/tests/lib/readAloud.test.js`.
+
 
 ## Commandes Artisan
 

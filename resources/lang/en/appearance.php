@@ -10,7 +10,7 @@ return [
     'save' => 'Save',
     'saved' => 'Appearance saved.',
     'readable' => 'Easier reading',
-    'readable_hint' => 'A typeface designed to tell look-alike letters apart (b/d, p/q, I/l/1), slightly larger text, wider line and letter spacing, no justified or italic text. Only changes your own display, not the PDFs.',
+    'readable_hint' => 'A typeface designed to tell look-alike letters apart (b/d, p/q, I/l/1), slightly larger text, wider line and letter spacing, no justified or italic text. Only changes your own display, not the PDFs. Also adds « Read aloud » buttons under text fields and e-mails.',
     'readable_label' => 'Turn on easier reading',
     'groups' => [
         'brand' => 'Brand',

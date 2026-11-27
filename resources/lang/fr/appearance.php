@@ -10,7 +10,7 @@ return [
     'save' => 'Enregistrer',
     'saved' => 'Apparence enregistrée.',
     'readable' => 'Lecture facilitée',
-    'readable_hint' => 'Police conçue pour distinguer les lettres qui se ressemblent (b/d, p/q, I/l/1), texte un peu plus grand, interlignes et espacements plus larges, ni texte justifié ni italique. Ne change que votre affichage, pas les PDF.',
+    'readable_hint' => 'Police conçue pour distinguer les lettres qui se ressemblent (b/d, p/q, I/l/1), texte un peu plus grand, interlignes et espacements plus larges, ni texte justifié ni italique. Ne change que votre affichage, pas les PDF. Ajoute aussi des boutons « Lire à voix haute » sous les champs de texte et les e-mails.',
     'readable_label' => 'Activer la lecture facilitée',
     'groups' => [
         'brand' => 'Marque',

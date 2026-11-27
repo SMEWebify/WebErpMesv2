@@ -10,7 +10,7 @@ return [
     'save' => 'Speichern',
     'saved' => 'Darstellung gespeichert.',
     'readable' => 'Leichteres Lesen',
-    'readable_hint' => 'Eine Schrift, die ähnliche Buchstaben unterscheidbar macht (b/d, p/q, I/l/1), etwas größerer Text, größere Zeilen- und Zeichenabstände, kein Blocksatz und keine Kursivschrift. Ändert nur Ihre eigene Anzeige, nicht die PDFs.',
+    'readable_hint' => 'Eine Schrift, die ähnliche Buchstaben unterscheidbar macht (b/d, p/q, I/l/1), etwas größerer Text, größere Zeilen- und Zeichenabstände, kein Blocksatz und keine Kursivschrift. Ändert nur Ihre eigene Anzeige, nicht die PDFs. Fügt außerdem Schaltflächen « Vorlesen » unter Textfeldern und E-Mails hinzu.',
     'readable_label' => 'Leichteres Lesen aktivieren',
     'groups' => [
         'brand' => 'Marke',

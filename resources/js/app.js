@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { installRowLinks } from './lib/rowLink.js';
 import { bindBladeRewriteButtons, bindRichRewriteButtons } from './lib/aiRewrite.js';
+import { bindReadAloudButtons } from './lib/readAloud.js';
 
 // Tableaux Blade : <tr data-row-href="…"> s'ouvre au clic sur la ligne
 installRowLinks();
@@ -10,6 +11,8 @@ installRowLinks();
 bindBladeRewriteButtons();
 // … et sous les éditeurs riches (include/ai-rewrite-rich).
 bindRichRewriteButtons();
+// « Lire à voix haute » (include/read-aloud-button, lecture facilitée).
+bindReadAloudButtons();
 
 function parseJsonAttribute(value) {
     if (!value) return null;

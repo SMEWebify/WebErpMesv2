@@ -1,4 +1,4 @@
-<div class="col-12" @if($rewriteUrl) data-ai-rewrite-field @endif>
+<div class="col-12" data-read-aloud-scope @if($rewriteUrl) data-ai-rewrite-field @endif>
     <label for="comment"  class="text-primary" >
         @if($label)
             {{ $label}}
@@ -14,10 +14,16 @@
     </div>
     @if($rewriteUrl)
     <div class="mt-1" data-ai-rewrite data-url="{{ $rewriteUrl }}" data-max="{{ $maxLength }}" data-trans="{{ json_encode(__('ai_text')) }}">
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-ai-rewrite-button>
-            <i class="fas fa-spell-check me-1"></i>{{ __('ai_text.rewrite') }}
-        </button>
+        <div class="d-flex flex-wrap gap-1">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-ai-rewrite-button>
+                <i class="fas fa-spell-check me-1"></i>{{ __('ai_text.rewrite') }}
+            </button>
+            @include('include.read-aloud-button')
+        </div>
         <div data-ai-rewrite-result></div>
     </div>
+    @elseif(auth()->user()?->ui_readable)
+    {{-- Lecture facilitée sans IA : seulement « Lire à voix haute ». --}}
+    <div class="mt-1">@include('include.read-aloud-button')</div>
     @endif
 </div>

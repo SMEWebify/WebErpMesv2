@@ -80,6 +80,8 @@ class FileTranslations
             'mail_no_body'       => __('general_content.file_mail_no_body_trans_key'),
             'mail_attachments'   => __('general_content.file_mail_attachments_trans_key'),
             'mail_attachment_unavailable' => __('general_content.file_mail_attachment_unavailable_trans_key'),
+            'read_aloud'         => __('read_aloud.read'),
+            'read_aloud_stop'    => __('read_aloud.stop'),
             'office_edit_excel'  => __('general_content.file_office_edit_excel_trans_key'),
             'office_edit_word'   => __('general_content.file_office_edit_word_trans_key'),
             'office_edit_hint'   => __('general_content.file_office_edit_hint_trans_key'),

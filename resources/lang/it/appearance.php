@@ -10,7 +10,7 @@ return [
     'save' => 'Salva',
     'saved' => 'Aspetto salvato.',
     'readable' => 'Lettura facilitata',
-    'readable_hint' => "Un carattere pensato per distinguere le lettere simili (b/d, p/q, I/l/1), testo un po' più grande, interlinea e spaziatura più ampie, niente testo giustificato né corsivo. Cambia solo la tua visualizzazione, non i PDF.",
+    'readable_hint' => "Un carattere pensato per distinguere le lettere simili (b/d, p/q, I/l/1), testo un po' più grande, interlinea e spaziatura più ampie, niente testo giustificato né corsivo. Cambia solo la tua visualizzazione, non i PDF. Aggiunge anche i pulsanti « Leggi ad alta voce » sotto i campi di testo e le e-mail.",
     'readable_label' => 'Attiva la lettura facilitata',
     'groups' => [
         'brand' => 'Marchio',
