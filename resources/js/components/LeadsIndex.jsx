@@ -3,6 +3,7 @@ import { DataTable, Pagination, StatusBadge, StatusFilter, MobileFilters, useInd
 import { apiFetchOrThrow as apiFetch } from '../lib/http';
 import { formatDate } from '../utils';
 import GuideHelp from './GuideHelp';
+import LeadDictationModal from './leads/LeadDictationModal.jsx';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -716,6 +717,7 @@ function ListTab({ endpoints, trans, locale, companieId }) {
     const [viewType,   setViewType]   = useState('table');
     const [showModal,  setShowModal]  = useState(false);
     const [showImport, setShowImport] = useState(false);
+    const [showDictation, setShowDictation] = useState(false);
     const [dropOver,   setDropOver]   = useState(false);
     const [dropBusy,   setDropBusy]   = useState(false);
     const [dropError,  setDropError]  = useState(null);
@@ -863,6 +865,13 @@ function ListTab({ endpoints, trans, locale, companieId }) {
                     </button>
                 )}
 
+                {/* New lead dictated (only when personal data may be sent to the AI provider) */}
+                {endpoints.dictationPropose && (
+                    <button className="btn btn-sm btn-outline-primary flex-shrink-0" onClick={() => setShowDictation(true)}>
+                        <i className="fas fa-microphone me-1" />{trans.lead_dictation?.button ?? 'Dictate a lead'}
+                    </button>
+                )}
+
                 {/* New lead */}
                 <button className="btn btn-sm btn-success flex-shrink-0" onClick={() => setShowModal(true)}>
                     <i className="fas fa-plus me-1" />{trans.new_lead ?? 'New lead'}
@@ -898,6 +907,10 @@ function ListTab({ endpoints, trans, locale, companieId }) {
 
             {showImport && (
                 <ImportMailModal endpoint={endpoints.importMail} trans={trans} onClose={() => setShowImport(false)} />
+            )}
+
+            {showDictation && (
+                <LeadDictationModal endpoints={endpoints} trans={trans.lead_dictation ?? {}} onClose={() => setShowDictation(false)} />
             )}
 
             {showModal && (

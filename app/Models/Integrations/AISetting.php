@@ -28,6 +28,9 @@ class AISetting extends Model
     protected $casts = [
         'api_key'   => 'encrypted',
         'is_active' => 'boolean',
+        // Écrits seulement par AISettingsController (hors $fillable).
+        'allow_personal_data'      => 'boolean',
+        'personal_data_allowed_at' => 'datetime',
     ];
 
     /**

@@ -23,8 +23,8 @@ use Throwable;
  */
 class AISettingsResolver
 {
-    // v2 : la valeur cachée porte désormais le provider (claude | ovh).
-    private const CACHE_KEY = 'ai_settings.active.v2';
+    // v3 : la valeur cachée porte aussi l'autorisation des données personnelles.
+    private const CACHE_KEY = 'ai_settings.active.v3';
     private const CACHE_TTL = 60;
 
     /** Providers OpenAI-compatibles câblés (clé = valeur de ai_settings.provider). */
@@ -119,6 +119,16 @@ class AISettingsResolver
     }
 
     /**
+     * L'entreprise autorise l'envoi de données personnelles de tiers (noms,
+     * e-mails, téléphones) au provider configuré. Faux sans ligne en base : une
+     * instance réglée par le seul .env n'a rien autorisé.
+     */
+    public function allowsPersonalData(): bool
+    {
+        return (bool) ($this->row()['allow_personal_data'] ?? false);
+    }
+
+    /**
      * Endpoint /messages à appeler. Toujours l'API officielle pour Claude ;
      * on ne surcharge que si base_url a été explicitement renseigné.
      */
@@ -150,6 +160,7 @@ class AISettingsResolver
                     'max_tokens' => (int) $row->max_tokens,
                     'timeout'    => (int) $row->timeout_seconds,
                     'base_url'   => $row->base_url,
+                    'allow_personal_data' => (bool) $row->allow_personal_data,
                 ];
             } catch (Throwable) {
                 // Table pas encore migrée (déploiement en cours) : fallback env.

@@ -76,6 +76,21 @@ $endpoints = [
     'addresses'  => route('leads.json.addresses', ['companyId' => '__ID__']),
     'contacts'   => route('leads.json.contacts',  ['companyId' => '__ID__']),
 ];
+
+// Dictée d'une piste : fournisseur d'IA configuré ET envoi de données personnelles autorisé (carte IA).
+$leadDictation = app(\App\Services\Crm\LeadDictation::class);
+if ($leadDictation->isAvailable()) {
+    $endpoints['dictationPropose'] = route('leads.json.dictation.propose');
+    $endpoints['dictationStore']   = route('leads.json.dictation.store');
+    if (app(\App\Services\Visits\VisitTranscriptionService::class)->isAvailable()) {
+        $endpoints['dictationTranscribe'] = route('leads.json.dictation.transcribe');
+    }
+    // Textes du micro repris de la dictée de devis, le reste propre à la piste.
+    $trans['lead_dictation'] = array_merge(__('quote_dictation'), __('lead_dictation'), [
+        'provider' => $leadDictation->provider(),
+        'locale'   => app()->getLocale(),
+    ]);
+}
 @endphp
 
 <div

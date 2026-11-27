@@ -286,6 +286,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/kanban',                'App\Http\Controllers\Workflow\LeadsController@kanbanJson')->name('leads.json.kanban');
         Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\LeadsController@kanbanMoveJson')->name('leads.json.kanban-move');
         Route::post('/json/store',                'App\Http\Controllers\Workflow\LeadsController@storeJson')->name('leads.json.store');
+        Route::post('/json/dictation/transcribe', [\App\Http\Controllers\Workflow\LeadDictationController::class, 'transcribe'])->middleware('throttle:20,1')->name('leads.json.dictation.transcribe');
+        Route::post('/json/dictation/propose',    [\App\Http\Controllers\Workflow\LeadDictationController::class, 'propose'])->middleware('throttle:20,1')->name('leads.json.dictation.propose');
+        Route::post('/json/dictation/store',      [\App\Http\Controllers\Workflow\LeadDictationController::class, 'store'])->name('leads.json.dictation.store');
         Route::post('/json/import-mail',          'App\Http\Controllers\Workflow\LeadsController@importMailJson')->middleware('throttle:30,1')->name('leads.json.import-mail');
         Route::post('/{id}/quote',                'App\Http\Controllers\Workflow\LeadsController@storeQuote')->whereNumber('id')->name('leads.store.quote');
         Route::get('/json/select-data',           'App\Http\Controllers\Workflow\LeadsController@selectDataJson')->name('leads.json.select-data');

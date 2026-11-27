@@ -791,6 +791,20 @@ d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteD
   livrer / facturer = qté, TVA par défaut, plafond d'encours contrôlé (409 + passe-droit dans la
   fenêtre). Marque `order_lines.ai_proposed_at` (hors `$fillable`), remise à null à la duplication.
   Tests : `tests/Feature/Orders/OrderDictationTest.php`.
+- **Données personnelles vers l'IA** : `ai_settings.allow_personal_data` (faux par défaut, hors
+  `$fillable`, `personal_data_allowed_at / _by` tracés), interrupteur de la carte Intégrations → IA,
+  lu par `AISettingsResolver::allowsPersonalData()` (faux sans ligne en base : le .env seul n'autorise
+  rien). **Changer de provider le retire.** Ne conditionne que les fonctions qui envoient des noms /
+  coordonnées de tiers — aujourd'hui la seule dictée de piste ; assistant, visite, justificatifs,
+  dictée de devis / commande ne le lisent pas. Une nouvelle fonction de ce type doit le lire.
+- **Piste** (`App\Services\Crm\LeadDictation`, `LeadDictationController`, routes
+  `leads.json.dictation.*`, bouton « Dicter une piste » de l'index, `components/leads/LeadDictationModal.jsx`) :
+  exige l'autorisation ci-dessus (403 sinon, bouton absent). L'IA extrait société, contact,
+  coordonnées, objet, besoin, priorité ; l'**ERP** rapproche (contact par e-mail → sa société, sinon
+  nom de société identique ; nom approchant = simple proposition), rien de la base ne part. Création :
+  société inconnue = prospect (`InboundLeadService::createProspect`), contact créé, adresse à compléter,
+  source « Téléphone » modifiable, piste attribuée à celui qui dicte. Tests : `tests/Feature/Crm/LeadDictationTest.php`,
+  `resources/js/tests/lib/leadDictation.test.js`.
 - **Appel IA commun** `App\Services\AI\DirectTextCompletion` (Claude ou API compatible OpenAI,
   sans outils, aucune consommation enregistrée). Indisponible / en échec → 502 avec message.
 - **« Réécrire sans fautes »** (`App\Services\AI\TextRewriter`, route `ai.rewrite`, throttle 30/min) :

@@ -47,6 +47,9 @@ class AISettingsController extends Controller
             'env_key_set'   => $resolved['provider'] === 'claude' && $envKey !== '',
             'has_key'       => ! empty($resolved['api_key']),
             'default_model' => $resolved['model'],
+            'personal_data_by' => $setting?->personal_data_allowed_by
+                ? \App\Models\User::withTrashed()->whereKey($setting->personal_data_allowed_by)->value('name')
+                : null,
         ]);
     }
 
@@ -61,6 +64,7 @@ class AISettingsController extends Controller
             'timeout_seconds' => 'required|integer|min:5|max:300',
             'base_url'        => 'nullable|url|max:255',
             'is_active'       => 'nullable|boolean',
+            'allow_personal_data' => 'nullable|boolean',
         ]);
 
         // Provider grisé côté UI mais quelqu'un pourrait POSTer directement : refuser proprement.
@@ -89,12 +93,24 @@ class AISettingsController extends Controller
             $setting->api_key = $validated['api_key'];
         }
 
+        // Données personnelles : l'autorisation vaut pour un provider. En changer
+        // la retire, elle se redonne en connaissance du nouveau destinataire.
+        $allow = ! $providerChanged && (bool) ($validated['allow_personal_data'] ?? false);
+        $withdrawn = $providerChanged && $setting->allow_personal_data;
+        if ($allow !== (bool) $setting->allow_personal_data) {
+            $setting->allow_personal_data      = $allow;
+            $setting->personal_data_allowed_at = $allow ? now() : null;
+            $setting->personal_data_allowed_by = $allow ? $request->user()?->id : null;
+        }
+
         $setting->save();
         $this->resolver->forget();
 
         return redirect()
             ->route('admin.integrations.ai.index')
-            ->with('success', 'Configuration IA enregistrée.');
+            ->with('success', $withdrawn
+                ? 'Configuration IA enregistrée. L\'autorisation d\'envoyer des données personnelles a été retirée avec le changement de provider : redonnez-la si le nouveau provider convient.'
+                : 'Configuration IA enregistrée.');
     }
 
     /**

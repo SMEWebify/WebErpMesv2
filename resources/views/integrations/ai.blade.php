@@ -152,6 +152,36 @@
                                    @checked(old('is_active', $setting->is_active ?? true))>
                             <label class="form-check-label" for="is_active">Configuration active</label>
                         </div>
+
+                        {{-- Données personnelles : décision de l'entreprise, propre au provider choisi. --}}
+                        <hr>
+                        <div class="form-check form-switch">
+                            <input type="hidden" name="allow_personal_data" value="0">
+                            <input type="checkbox"
+                                   id="allow_personal_data"
+                                   name="allow_personal_data"
+                                   value="1"
+                                   class="form-check-input"
+                                   @checked(old('allow_personal_data', $setting->allow_personal_data ?? false))>
+                            <label class="form-check-label fw-bold" for="allow_personal_data">
+                                Autoriser les fonctions qui envoient des données personnelles à ce provider
+                            </label>
+                        </div>
+                        <small class="form-text text-muted d-block">
+                            Noms, e-mails et téléphones de vos clients et prospects partent chez le provider pour être
+                            analysés. Aujourd'hui : <strong>dictée d'une piste</strong> (société et contact reconnus dans
+                            la dictée). Vérifiez que le provider convient à votre registre des traitements :
+                            <strong>Anthropic Claude</strong> traite les données hors de l'Union européenne ;
+                            <strong>OVHcloud</strong> les traite en France. Changer de provider retire l'autorisation.
+                            Sans elle, ces fonctions sont masquées ; les autres (dictée de devis et de commande,
+                            assistant, compte rendu de visite, justificatifs) ne changent pas.
+                        </small>
+                        @if($setting?->allow_personal_data && $setting->personal_data_allowed_at)
+                            <small class="text-success d-block mt-1">
+                                <i class="fas fa-check-circle"></i>
+                                Autorisé le {{ $setting->personal_data_allowed_at->format('d/m/Y à H:i') }}@if($personal_data_by) par {{ $personal_data_by }}@endif.
+                            </small>
+                        @endif
                     </div>
 
                     <div class="card-footer d-flex justify-content-between align-items-center">
@@ -198,6 +228,8 @@
                         <li><strong>ChatWidget</strong> (bulle en bas à droite) — assistant ERP.</li>
                         <li><strong>get_daily_journal</strong> — génération du journal.</li>
                         <li><strong>UniversalQueryTool</strong> — requêtes ad hoc (top clients, retards…).</li>
+                        <li><strong>Dictée</strong> de lignes de devis et de commande.</li>
+                        <li><strong>Dictée d'une piste</strong> — seulement si l'envoi de données personnelles est autorisé.</li>
                     </ul>
                     <p class="mb-2 text-muted">
                         La modification est prise en compte au bout de <strong>60 secondes</strong>

@@ -119,13 +119,11 @@ class InboundLeadService
         $company = $domain ? $this->companyOfDomain($domain) : null;
 
         if (! $company) {
-            $company = Companies::create([
-                'uuid'    => Str::uuid(),
-                'code'    => $this->codes->generateDocumentCode('company', (int) Companies::withTrashed()->max('id')),
-                'label'   => $name ?: ($domain && ! self::isPublic($domain) ? $domain : $email),
-                'user_id' => $ownerId ?? 0,
-                'comment' => __('inbound_leads.created_comment', ['email' => $email]),
-            ]);
+            $company = $this->createProspect(
+                $name ?: ($domain && ! self::isPublic($domain) ? $domain : $email),
+                $ownerId,
+                __('inbound_leads.created_comment', ['email' => $email]),
+            );
         }
 
         [$firstName, $lastName] = self::splitName($name, $email);
@@ -139,6 +137,18 @@ class InboundLeadService
         ]);
 
         return [$company, $contact, $this->addressOf($company)];
+    }
+
+    /** Société prospect créée pour une demande (e-mail reçu, dictée). */
+    public function createProspect(string $label, ?int $ownerId, ?string $comment): Companies
+    {
+        return Companies::create([
+            'uuid'    => Str::uuid(),
+            'code'    => $this->codes->generateDocumentCode('company', (int) Companies::withTrashed()->max('id')),
+            'label'   => $label,
+            'user_id' => $ownerId ?? 0,
+            'comment' => $comment,
+        ]);
     }
 
     private function companyOfDomain(string $domain): ?Companies
@@ -160,7 +170,7 @@ class InboundLeadService
     }
 
     /** Adresse par défaut de la société, sinon la première, sinon une adresse à compléter. */
-    private function addressOf(Companies $company): CompaniesAddresses
+    public function addressOf(Companies $company): CompaniesAddresses
     {
         return CompaniesAddresses::where('companies_id', $company->id)->orderByDesc('default')->orderBy('ordre')->first()
             ?? CompaniesAddresses::create([

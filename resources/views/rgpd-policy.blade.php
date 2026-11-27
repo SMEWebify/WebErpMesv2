@@ -9,7 +9,7 @@
 @section('content')
 
 {{-- Date de révision écrite à la main : à changer à chaque modification du contenu. --}}
-@php($revisedAt = '23/11/2026')
+@php($revisedAt = '27/11/2026')
 
 <div class="float-end">
     <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image shadow ms-2">
@@ -100,7 +100,14 @@
     <h5 class="mt-3"><i class="fas fa-microphone me-1"></i> Visites sur site et dictée</h5>
     <p>
         Les photos prises lors d'une visite sont rangées avec l'opportunité. Les mémos vocaux et la dictée
-        de devis sont transcrits puis <strong>jamais conservés</strong> sous forme audio par l'application.
+        de devis, de commande ou de piste sont transcrits puis <strong>jamais conservés</strong> sous forme
+        audio par l'application.
+    </p>
+    <p>
+        La <strong>dictée d'une piste</strong> envoie au fournisseur d'IA le texte dicté, avec les noms,
+        e-mails et téléphones qu'il contient. Elle n'est proposée que si l'entreprise l'a autorisé
+        (Intégrations → IA, autorisation tracée et retirée à chaque changement de fournisseur). Société et
+        contact sont rapprochés de la base par l'application : aucune donnée de la base ne part.
     </p>
 
 </x-adminlte-card>
@@ -294,8 +301,8 @@
             </tr>
             <tr>
                 <td>Anthropic (Claude) <em>(optionnel)</em></td>
-                <td>Fonctions d'intelligence artificielle : assistant, dictée de devis, réécriture de textes, lecture de justificatifs et de cotes, compte rendu de visite</td>
-                <td>Texte saisi ou dicté, image du justificatif ou de la zone de plan concernée</td>
+                <td>Fonctions d'intelligence artificielle : assistant, dictée de devis, de commande et de piste, réécriture de textes, lecture de justificatifs et de cotes, compte rendu de visite</td>
+                <td>Texte saisi ou dicté (noms et coordonnées compris pour la dictée de piste, si autorisée), image du justificatif ou de la zone de plan concernée</td>
                 <td>États-Unis</td>
             </tr>
             <tr>
@@ -471,8 +478,14 @@
 
     <h5 class="mt-3"><i class="fas fa-microphone me-1"></i> Site visits and dictation</h5>
     <p>
-        Photos taken during a site visit are stored with the opportunity. Voice memos and quote dictation
-        are transcribed and the audio is <strong>never kept</strong> by the application.
+        Photos taken during a site visit are stored with the opportunity. Voice memos and quote, order or
+        lead dictation are transcribed and the audio is <strong>never kept</strong> by the application.
+    </p>
+    <p>
+        <strong>Lead dictation</strong> sends the dictated text to the AI provider, including the names,
+        emails and phone numbers it contains. It is only offered if the company has allowed it
+        (Integrations → AI, permission recorded and withdrawn whenever the provider changes). Company and
+        contact are matched against the database by the application: no database data is sent.
     </p>
 
 </x-adminlte-card>
@@ -578,7 +591,7 @@
         <tbody>
             <tr><td>SMTP server (configurable)</td><td>Email delivery (quotes, invoices, reminders, notifications)</td><td>Name, email, document content</td><td>Depends on the chosen provider</td></tr>
             <tr><td>S3-compatible object storage <em>(optional)</em></td><td>Storage of uploaded files or backups</td><td>Uploaded files, backups</td><td>Depends on the chosen provider and region</td></tr>
-            <tr><td>Anthropic (Claude) <em>(optional)</em></td><td>AI features: assistant, quote dictation, text rewriting, reading receipts and drawing dimensions, site visit reports</td><td>Text typed or dictated, image of the receipt or of the drawing area concerned</td><td>United States</td></tr>
+            <tr><td>Anthropic (Claude) <em>(optional)</em></td><td>AI features: assistant, quote, order and lead dictation, text rewriting, reading receipts and drawing dimensions, site visit reports</td><td>Text typed or dictated (names and contact details included for lead dictation, if allowed), image of the receipt or of the drawing area concerned</td><td>United States</td></tr>
             <tr><td>OVHcloud AI Endpoints <em>(optional)</em></td><td>Same AI features, plus voice memo transcription</td><td>Typed text, image, audio recording (not kept by the application)</td><td>France</td></tr>
             <tr><td>DocuSign <em>(optional)</em></td><td>Electronic signature of quotes and deviation requests</td><td>Document to sign, signer name and email</td><td>Depends on the DocuSign account (EU or United States)</td></tr>
             <tr><td>Microsoft 365 / SharePoint <em>(optional)</em></td><td>Copy of document management files</td><td>Uploaded files (never the employee file or expense reports)</td><td>Depends on the company's Microsoft tenant</td></tr>
