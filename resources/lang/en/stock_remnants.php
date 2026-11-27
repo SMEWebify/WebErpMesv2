@@ -28,4 +28,10 @@ return [
     'remnants_created'   => ':count offcut(s) put back into stock.',
     'task_remnant'       => 'Offcut put back into stock (optional)',
     'task_remnant_hint'  => 'Length × width in mm',
+    'drawing'              => 'Offcut drawing',
+    'drawing_hint'         => 'Offcut drawing (DXF or SVG, optional), filed in the documents of its stock entry.',
+    'drawing_download'     => 'Download the offcut drawing',
+    'drawing_invalid'      => 'Offcut drawing: only DXF and SVG files are accepted.',
+    'drawing_without_size' => 'Offcut drawing: enter the offcut size as well.',
+    'drawing_failed'       => 'The offcut drawing could not be saved: nothing was taken out of stock. Try again.',
 ];

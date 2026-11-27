@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Services\StockCalculationService;
 use App\Services\Stock\SheetRemnants;
+use App\Services\Files\FileRole;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockMoveRequest;
 use App\Http\Requests\Products\StoreStockLocationProductsRequest;
@@ -46,7 +47,8 @@ class StockLocationProductsController extends Controller
     public function show($id)
     {
         
-        $StockMoves = StockMove::with('batch')->where('stock_location_products_id', $id)->orderby('created_at', 'desc')->get();
+        $StockMoves = StockMove::with(['batch', 'files' => fn ($q) => $q->where('fileables.role', FileRole::VECTOR)->whereNull('files.superseded_at')])
+            ->where('stock_location_products_id', $id)->orderby('created_at', 'desc')->get();
         $StockLocationProduct = StockLocationProducts::findOrFail($id);
         $Product = Products::findOrFail($StockLocationProduct->products_id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
@@ -305,7 +307,7 @@ class StockLocationProductsController extends Controller
 
         // Pièce choisie (tôle entière, chute) : sortie de cette pièce et remise en
         // stock de ses chutes. Sans pièce choisie, la sortie d'avant ci-dessous.
-        if ($request->filled('piece') || $request->filled('remnants')) {
+        if ($request->filled('piece') || $request->filled('remnants') || $request->hasFile('remnants')) {
             return $this->sortPiece($request, $stockLocationProduct);
         }
 
@@ -336,7 +338,7 @@ class StockLocationProductsController extends Controller
         $remnants = app(SheetRemnants::class);
 
         try {
-            $rows = $remnants->normalize($request->input('remnants'));
+            $rows = $remnants->normalize($request->input('remnants'), $request->file('remnants'));
             // Une chute sans pièce choisie ne saurait d'où elle vient.
             if (! $request->filled('piece')) {
                 if ($rows !== []) {

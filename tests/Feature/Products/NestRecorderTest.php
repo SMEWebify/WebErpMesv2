@@ -19,7 +19,9 @@ use App\Models\Workflow\Orders;
 use App\Services\Stock\NestRecorder;
 use App\Services\Stock\SheetRemnants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Spatie\Permission\Models\Permission;
@@ -127,6 +129,26 @@ class NestRecorderTest extends TestCase
 
         $this->get(route('products.nests.show', ['nest' => $nest->id]))->assertOk()->assertSee('PRG-001');
         $this->get(route('products.nests'))->assertOk()->assertSee('PRG-001');
+    }
+
+    public function test_the_offcut_drawing_of_a_nest_is_filed_on_its_stock_entry(): void
+    {
+        Storage::fake(config('files.disk'));
+        $task = $this->lineWithTask(1000, 1000);
+
+        $this->post(route('products.nests.store'), [
+            'stock_location_products_id' => $this->slp->id,
+            'piece' => $this->fullSheetKey(),
+            'sheet_qty' => 1,
+            'name' => 'PRG-DXF',
+            'parts' => [$task->id => 1],
+            'remnants' => [['x_size' => 1500, 'y_size' => 1000, 'drawing' => UploadedFile::fake()->create('CH-77-1.dxf', 8, 'image/vnd.dxf')]],
+        ])->assertRedirect()->assertSessionHas('success');
+
+        $offcut = StockMove::whereNotNull('remnant_source_move_id')->sole();
+        $this->assertSame('CH-77-1.dxf', $offcut->files()->wherePivot('role', 'vectoriel')->sole()->original_file_name);
+
+        $this->get(route('products.nests.show', ['nest' => Nest::sole()->id]))->assertOk()->assertSee('CH-77-1.dxf');
     }
 
     public function test_a_nest_without_parts_is_refused_and_nothing_is_written(): void

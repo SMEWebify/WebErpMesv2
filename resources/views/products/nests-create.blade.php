@@ -17,7 +17,7 @@
     @include('include.alert-result')
     <p class="text-body-secondary">{{ __('nests.declare_hint') }}</p>
 
-    <form method="POST" action="{{ route('products.nests.store') }}">
+    <form method="POST" action="{{ route('products.nests.store') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
         <div class="row">
@@ -67,6 +67,8 @@
                             <input type="number" class="form-control" name="remnants[{{ $i }}][y_size]" placeholder="Y" min="0" step="any" aria-label="Y" value="{{ old("remnants.$i.y_size") }}">
                             <input type="number" class="form-control" style="max-width: 4.5rem" name="remnants[{{ $i }}][qty]" placeholder="1" min="1" step="1" aria-label="{{ __('stock_remnants.remnant_qty') }}" value="{{ old("remnants.$i.qty") }}">
                         </div>
+                        <input type="file" class="form-control form-control-sm mb-2" name="remnants[{{ $i }}][drawing]" accept=".dxf,.svg"
+                               aria-label="{{ __('stock_remnants.drawing') }} {{ $i + 1 }}" title="{{ __('stock_remnants.drawing_hint') }}">
                         @endfor
 
                         <div class="mt-3">

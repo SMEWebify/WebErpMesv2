@@ -31,6 +31,8 @@ class StoreStockMoveRequest extends FormRequest
             // Sortie d'une pièce précise et chutes remises en stock (SheetRemnants).
             'piece'    => 'nullable|string|max:255',
             'remnants' => 'nullable|array',
+            // Dessin de la chute (contour réel), rangé dans la GED de son entrée.
+            'remnants.*.drawing' => 'nullable|file|extensions:dxf,svg|max:20480',
         ];
     }
 }

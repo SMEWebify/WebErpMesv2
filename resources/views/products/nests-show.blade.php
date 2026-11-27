@@ -161,6 +161,7 @@
                             </td>
                             <td>{{ $isRemnant ? __('nests.move_remnant') : __('nests.move_exit') }}
                                 @if($move->x_size && $move->y_size)<span class="small text-body-secondary">{{ $move->x_size + 0 }} × {{ $move->y_size + 0 }}</span>@endif
+                                @if($move->files->isNotEmpty())<br>@include('include.remnant-drawings', ['drawings' => $move->files->map(fn ($f) => ['id' => $f->id, 'name' => $f->original_file_name ?: $f->name])])@endif
                             </td>
                             <td>{{ $move->batch?->heat_number ? __('batches.heat_short') . ' ' . $move->batch->heat_number : $move->tracability }}</td>
                             <td>

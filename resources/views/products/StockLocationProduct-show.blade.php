@@ -68,7 +68,9 @@
                       <span class="badge text-bg-success">{{ __('stock_remnants.full_piece') }}</span>
                     @endif
                   </td>
-                  <td>{{ $piece['format'] ?? __('stock_remnants.format_standard') }}</td>
+                  <td>{{ $piece['format'] ?? __('stock_remnants.format_standard') }}
+                    @if($piece['drawings'])<br>@include('include.remnant-drawings', ['drawings' => $piece['drawings']])@endif
+                  </td>
                   <td>
                     {{ $piece['batch_code'] ?? $piece['tracability'] }}
                     @if($piece['heat_number'])
@@ -157,6 +159,7 @@
                     @if(4 == $StockMove->typ_move ){{__('general_content.inter_stock_mvts_trans_key') }} @endif
                     @if(5 == $StockMove->typ_move && $StockMove->remnant_source_move_id){{ __('stock_remnants.remnant_entry') }}
                       <br><span class="small text-body-secondary">{{ $StockMove->x_size + 0 }} × {{ $StockMove->y_size + 0 }} — {{ __('stock_remnants.remnant_of', ['id' => $StockMove->remnant_source_move_id]) }}</span>
+                      @if($StockMove->files->isNotEmpty())<br>@include('include.remnant-drawings', ['drawings' => $StockMove->files->map(fn ($f) => ['id' => $f->id, 'name' => $f->original_file_name ?: $f->name])])@endif
                     @elseif(5 == $StockMove->typ_move ){{__('general_content.manual_stock_recep_trans_key') }} @endif
                     @if(6 == $StockMove->typ_move ){{__('general_content.manual_stock_dispatching_trans_key') }} @endif
                     @if(7 == $StockMove->typ_move ){{__('general_content.reservation_trans_key') }} @endif
@@ -270,7 +273,7 @@
         </x-adminlte-card>
       </form>
 
-      <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
+      <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal" enctype="multipart/form-data">
         <x-adminlte-card title="{{ __('general_content.new_sorting_stock_trans_key') }}" theme="warning" maximizable>
           @csrf
           <div class="mb-3">
@@ -325,6 +328,8 @@
               <input type="number" class="form-control" name="remnants[{{ $i }}][y_size]" placeholder="Y" min="0" step=".001" aria-label="Y">
               <input type="number" class="form-control" style="max-width: 4.5rem" name="remnants[{{ $i }}][qty]" placeholder="1" min="1" step="1" aria-label="{{ __('stock_remnants.remnant_qty') }}">
             </div>
+            <input type="file" class="form-control form-control-sm mb-2" name="remnants[{{ $i }}][drawing]" accept=".dxf,.svg"
+                   aria-label="{{ __('stock_remnants.drawing') }} {{ $i + 1 }}" title="{{ __('stock_remnants.drawing_hint') }}">
             @endfor
           </div>
           @endif

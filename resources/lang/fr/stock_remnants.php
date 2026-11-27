@@ -28,4 +28,10 @@ return [
     'remnants_created'   => ':count chute(s) remise(s) en stock.',
     'task_remnant'       => 'Chute remise en stock (facultatif)',
     'task_remnant_hint'  => 'Longueur × largeur en mm',
+    'drawing'              => 'Dessin de la chute',
+    'drawing_hint'         => 'Dessin de la chute (DXF ou SVG, facultatif), rangé dans les documents de son entrée en stock.',
+    'drawing_download'     => 'Télécharger le dessin de la chute',
+    'drawing_invalid'      => 'Dessin de chute : seuls les fichiers DXF et SVG sont acceptés.',
+    'drawing_without_size' => 'Dessin de chute : indiquer aussi les dimensions de la chute.',
+    'drawing_failed'       => 'Le dessin de la chute n\'a pas pu être enregistré : rien n\'a été sorti du stock. Réessayez.',
 ];

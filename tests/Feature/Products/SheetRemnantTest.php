@@ -13,6 +13,8 @@ use App\Models\Products\StockMove;
 use App\Models\User;
 use App\Services\Stock\SheetRemnants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
@@ -304,5 +306,75 @@ class SheetRemnantTest extends TestCase
 
         $this->assertEquals(1, $row['stock_qty']);
         $this->assertEquals(1, $row['remnant_qty']);
+    }
+
+    // ------------------------------------------------------------------
+    // Dessin de la chute (DXF / SVG)
+    // ------------------------------------------------------------------
+
+    public function test_the_offcut_drawing_is_filed_in_the_ged_of_its_stock_entry(): void
+    {
+        Storage::fake(config('files.disk'));
+        $slp = $this->sheetLine(2);
+
+        $this->sortPiece($slp, $this->pieces($slp)[0]['key'], 1, [
+            ['x_size' => 1500, 'y_size' => 2000, 'drawing' => UploadedFile::fake()->create('chute-1.dxf', 12, 'image/vnd.dxf')],
+            ['x_size' => 500, 'y_size' => 1000],
+        ])->assertSessionHas('success');
+
+        $withDrawing = StockMove::whereNotNull('remnant_source_move_id')->where('x_size', 1500)->sole();
+        $file = $withDrawing->files()->sole();
+        $this->assertSame('vectoriel', $file->pivot->role);
+        $this->assertTrue((bool) $file->pivot->is_primary);
+        Storage::disk(config('files.disk'))->assertExists($file->path);
+        $this->assertSame(0, StockMove::whereNotNull('remnant_source_move_id')->where('x_size', 500)->sole()->files()->count());
+
+        $offcut = collect($this->pieces($slp))->firstWhere('format', '1500 × 2000 × 10');
+        $this->assertSame([['id' => $file->id, 'name' => 'chute-1.dxf']], $offcut['drawings']);
+        $this->assertSame([], collect($this->pieces($slp))->firstWhere('format', '500 × 1000 × 10')['drawings']);
+
+        $this->get(route('products.stockline.show', ['id' => $slp->id]))->assertOk()->assertSee('chute-1.dxf');
+    }
+
+    public function test_two_offcuts_of_the_same_size_and_batch_are_one_piece_listing_both_drawings(): void
+    {
+        Storage::fake(config('files.disk'));
+        $slp = $this->sheetLine(2);
+
+        $this->sortPiece($slp, $this->pieces($slp)[0]['key'], 1, [
+            ['x_size' => 1500, 'y_size' => 2000, 'drawing' => UploadedFile::fake()->create('a.svg', 4, 'image/svg+xml')],
+        ]);
+        $this->sortPiece($slp, $this->pieces($slp)[0]['key'], 1, [
+            ['x_size' => 1500, 'y_size' => 2000, 'drawing' => UploadedFile::fake()->create('b.dxf', 4, 'image/vnd.dxf')],
+        ]);
+
+        $offcuts = collect($this->pieces($slp))->where('is_remnant', true)->values();
+        $this->assertCount(1, $offcuts);
+        $this->assertEquals(2, $offcuts[0]['qty']);
+        $this->assertSame(['a.svg', 'b.dxf'], array_column($offcuts[0]['drawings'], 'name'));
+    }
+
+    public function test_an_offcut_drawing_of_another_format_is_refused_and_nothing_is_written(): void
+    {
+        Storage::fake(config('files.disk'));
+        $slp = $this->sheetLine(2);
+
+        $this->sortPiece($slp, $this->pieces($slp)[0]['key'], 1, [
+            ['x_size' => 1500, 'y_size' => 2000, 'drawing' => UploadedFile::fake()->create('chute.pdf', 12, 'application/pdf')],
+        ])->assertSessionHasErrors('remnants.0.drawing');
+
+        $this->assertSame(0, StockMove::where('typ_move', 6)->count());
+    }
+
+    public function test_an_offcut_drawing_without_size_is_refused(): void
+    {
+        Storage::fake(config('files.disk'));
+        $slp = $this->sheetLine(2);
+
+        $this->sortPiece($slp, $this->pieces($slp)[0]['key'], 1, [
+            ['x_size' => '', 'y_size' => '', 'drawing' => UploadedFile::fake()->create('chute.dxf', 12, 'image/vnd.dxf')],
+        ])->assertSessionHas('error', __('stock_remnants.drawing_without_size'));
+
+        $this->assertSame(0, StockMove::where('typ_move', 6)->count());
     }
 }

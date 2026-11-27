@@ -28,4 +28,10 @@ return [
     'remnants_created'   => ':count sfrido/i ricaricato/i a magazzino.',
     'task_remnant'       => 'Sfrido ricaricato a magazzino (facoltativo)',
     'task_remnant_hint'  => 'Lunghezza × larghezza in mm',
+    'drawing'              => 'Disegno dello sfrido',
+    'drawing_hint'         => 'Disegno dello sfrido (DXF o SVG, facoltativo), archiviato nei documenti del suo carico a magazzino.',
+    'drawing_download'     => 'Scaricare il disegno dello sfrido',
+    'drawing_invalid'      => 'Disegno dello sfrido: sono accettati solo file DXF e SVG.',
+    'drawing_without_size' => 'Disegno dello sfrido: indicare anche le dimensioni dello sfrido.',
+    'drawing_failed'       => 'Il disegno dello sfrido non è stato salvato: nulla è stato scaricato dal magazzino. Riprovare.',
 ];

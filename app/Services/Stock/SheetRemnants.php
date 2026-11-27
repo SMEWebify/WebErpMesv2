@@ -5,9 +5,13 @@ namespace App\Services\Stock;
 use App\Models\Products\Batch;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Products\StockMove;
+use App\Services\Files\FileRole;
+use App\Services\Files\FileStorageService;
 use App\Services\StockService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Pièces physiques d'une ligne de stock (tôle entière, chute) et remise en stock
@@ -36,8 +40,13 @@ class SheetRemnants
 
     private const EPSILON = 0.0001;
 
-    public function __construct(private readonly StockService $stockService)
-    {
+    /** Dessin d'une chute (contour réel), rangé dans la GED de son mouvement d'entrée. */
+    public const DRAWING_EXTENSIONS = ['dxf', 'svg'];
+
+    public function __construct(
+        private readonly StockService $stockService,
+        private readonly FileStorageService $files,
+    ) {
     }
 
     /**
@@ -60,16 +69,62 @@ class SheetRemnants
         $batches = Batch::whereIn('id', $pieces->pluck('batch_id')->filter()->unique())
             ->get(['id', 'code', 'heat_number'])
             ->keyBy('id');
+        $drawings = $this->drawingsByPiece($slp);
 
-        return $pieces->map(function ($p) use ($batches) {
+        return $pieces->map(function ($p) use ($batches, $drawings) {
             $batch = $p['batch_id'] ? $batches->get($p['batch_id']) : null;
 
             return $p + [
                 'batch_code'  => $batch?->code,
                 'heat_number' => $batch?->heat_number,
                 'format'      => $this->format($p['x_size'], $p['y_size'], $p['z_size']),
+                'drawings'    => $drawings[$p['key']] ?? [],
             ];
         })->all();
+    }
+
+    /**
+     * Dessins (rôle vectoriel, dernière version) des entrées d'une ligne de stock,
+     * par clé de pièce. Deux chutes de même lot et même format sont une même pièce :
+     * leurs dessins sont tous listés. Deux requêtes.
+     *
+     * @return array<string, array<int, array{id: int, name: string}>>
+     */
+    private function drawingsByPiece(StockLocationProducts $slp): array
+    {
+        return $this->drawingsByPieces([$slp->id])[$slp->id] ?? [];
+    }
+
+    /**
+     * Même chose pour plusieurs lignes de stock (API des chutes), clé
+     * [ligne de stock][clé de pièce]. Deux requêtes quel que soit le nombre de lignes.
+     *
+     * @param  array<int, int>  $slpIds
+     * @return array<int, array<string, array<int, array{id: int, name: string}>>>
+     */
+    public function drawingsByPieces(array $slpIds): array
+    {
+        if ($slpIds === []) {
+            return [];
+        }
+
+        $drawing = fn ($q) => $q->where('fileables.role', FileRole::VECTOR)->whereNull('files.superseded_at');
+
+        $moves = StockMove::whereIn('stock_location_products_id', $slpIds)
+            ->whereIn('typ_move', self::INCOMING)
+            ->whereHas('files', $drawing)
+            ->with(['files' => $drawing])
+            ->get(array_merge(['id', 'stock_location_products_id'], self::PIECE_COLUMNS));
+
+        $out = [];
+        foreach ($moves as $move) {
+            $key = $this->key($move->only(self::PIECE_COLUMNS));
+            foreach ($move->files as $file) {
+                $out[(int) $move->stock_location_products_id][$key][$file->id] = ['id' => $file->id, 'name' => $file->original_file_name ?: $file->name];
+            }
+        }
+
+        return array_map(fn ($pieces) => array_map('array_values', $pieces), $out);
     }
 
     /**
@@ -93,6 +148,42 @@ class SheetRemnants
         }
 
         return $out;
+    }
+
+    /**
+     * Pièces en stock de plusieurs articles, toutes lignes de stock confondues
+     * (API des FAO tierces). Chutes seules par défaut, tôles entières en plus avec
+     * $withFullSheets, avec leurs dessins. Requêtes en nombre constant (soldes, lots,
+     * dessins).
+     *
+     * @param  array<int, int>  $productIds
+     * @return array<int, array<string, mixed>>
+     */
+    public function available(array $productIds, bool $withFullSheets = false): array
+    {
+        if ($productIds === []) {
+            return [];
+        }
+
+        $pieces = $this->settle($this->balances(productIds: $productIds))
+            ->filter(fn ($p) => $p['qty'] > self::EPSILON && ($withFullSheets || $p['is_remnant']))
+            ->values();
+
+        $batches = Batch::whereIn('id', $pieces->pluck('batch_id')->filter()->unique())
+            ->get(['id', 'code', 'heat_number'])
+            ->keyBy('id');
+
+        $drawings = $this->drawingsByPieces($pieces->pluck('slp_id')->unique()->values()->all());
+
+        return $pieces->map(function ($p) use ($batches, $drawings) {
+            $batch = $p['batch_id'] ? $batches->get($p['batch_id']) : null;
+
+            return $p + [
+                'batch_code'  => $batch?->code,
+                'heat_number' => $batch?->heat_number,
+                'drawings'    => $drawings[$p['slp_id']][$p['key']] ?? [],
+            ];
+        })->all();
     }
 
     /**
@@ -214,6 +305,10 @@ class SheetRemnants
             }
 
             $move->forceFill(['remnant_source_move_id' => $exit->id, 'nest_id' => $exit->nest_id])->save();
+
+            if (($r['drawing'] ?? null) instanceof UploadedFile) {
+                $this->attachDrawing($move, $r['drawing']);
+            }
             $moves[] = $move;
         }
 
@@ -221,35 +316,62 @@ class SheetRemnants
     }
 
     /**
-     * Lignes saisies → chutes à créer. Lignes vides ignorées.
+     * Dessin d'une chute dans la GED de son mouvement d'entrée, principal. Un échec
+     * d'écriture annule toute la sortie (transaction de l'appelant) : une chute
+     * déclarée avec son dessin n'est jamais créée sans lui.
+     *
+     * @throws \DomainException
+     */
+    private function attachDrawing(StockMove $move, UploadedFile $upload): void
+    {
+        try {
+            $file = $this->files->store($upload);
+            $this->files->attach($file, $move, FileRole::VECTOR, true);
+        } catch (\Throwable $e) {
+            Log::warning('Remnant drawing not stored', ['move' => $move->id, 'error' => $e->getMessage()]);
+
+            throw new \DomainException(__('stock_remnants.drawing_failed'), 0, $e);
+        }
+    }
+
+    /**
+     * Lignes saisies → chutes à créer. Lignes vides ignorées. `$files` : fichiers
+     * envoyés sous le même tableau (`remnants[i][drawing]`), dessin DXF / SVG.
      *
      * @param  mixed  $input
-     * @return array<int, array{x_size: float, y_size: float, qty: int}>
+     * @param  mixed  $files
+     * @return array<int, array{x_size: float, y_size: float, qty: int, drawing?: UploadedFile}>
      *
-     * @throws \DomainException ligne à moitié remplie ou valeur non positive
+     * @throws \DomainException ligne à moitié remplie, valeur non positive, dessin sans dimensions ou d'un autre format
      */
-    public function normalize($input): array
+    public function normalize($input, $files = null): array
     {
-        if (! is_array($input)) {
-            return [];
-        }
+        $input = is_array($input) ? $input : [];
+        $files = is_array($files) ? $files : [];
 
         $out = [];
-        foreach ($input as $row) {
-            if (! is_array($row)) {
-                continue;
-            }
+        foreach ($input + $files as $i => $_) {
+            $row = is_array($input[$i] ?? null) ? $input[$i] : [];
+            $drawing = $files[$i]['drawing'] ?? null;
+            $drawing = $drawing instanceof UploadedFile ? $drawing : null;
+
             $x = $row['x_size'] ?? null;
             $y = $row['y_size'] ?? null;
             if (($x === null || $x === '') && ($y === null || $y === '')) {
+                if ($drawing) {
+                    throw new \DomainException(__('stock_remnants.drawing_without_size'));
+                }
                 continue;
+            }
+            if ($drawing && ! in_array(mb_strtolower($drawing->getClientOriginalExtension()), self::DRAWING_EXTENSIONS, true)) {
+                throw new \DomainException(__('stock_remnants.drawing_invalid'));
             }
             $q = ($row['qty'] ?? '') === '' ? 1 : $row['qty'];
             if (! is_numeric($x) || ! is_numeric($y) || (float) $x <= 0 || (float) $y <= 0
                 || ! is_numeric($q) || (int) $q != $q || (int) $q < 1) {
                 throw new \DomainException(__('stock_remnants.invalid_dimensions'));
             }
-            $out[] = ['x_size' => (float) $x, 'y_size' => (float) $y, 'qty' => (int) $q];
+            $out[] = ['x_size' => (float) $x, 'y_size' => (float) $y, 'qty' => (int) $q] + ($drawing ? ['drawing' => $drawing] : []);
         }
 
         if (count($out) > self::MAX_REMNANTS) {

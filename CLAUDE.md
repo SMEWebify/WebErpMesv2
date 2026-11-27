@@ -1765,6 +1765,11 @@ Le stock reste une somme de mouvements ; une **pièce** = mouvements de même lo
   (passe par `StockService::createStockMove`) ; dimensions ou coût inconnus → sans valeur, CUMP intact.
 - **Refus** (`DomainException`, flash `error` ou 422) : chute qui ne tient pas dans la pièce (rotation
   admise), chutes ≥ surface sortie, quantité > pièce, dimensions invalides, plus de 4 lignes.
+- **Dessin de la chute** (DXF / SVG, facultatif, `remnants[i][drawing]`) : sortie depuis la ligne de stock
+  et déclaration d'imbrication (pas l'écran tâche, pas N2P). Rangé dans la GED du mouvement d'entrée
+  (alias `stock-move`, rôle `vectoriel`, principal) ; dessin sans dimensions ou autre format refusé,
+  échec d'écriture = toute la sortie annulée. La pièce reste identifiée par lot + dimensions : deux
+  chutes de même format et même lot sont **une même pièce**, qui liste leurs dessins (`pieces()['drawings']`).
 - **Écran tâche** : `good-qty-stock` accepte `remnants` (composant au format tôle,
   `component.x_size / y_size` du JSON) ; chute posée sur la ligne et le lot de la dernière sortie.
   Le FIFO de la tâche reste aveugle au format (une chute peut partir comme une tôle).

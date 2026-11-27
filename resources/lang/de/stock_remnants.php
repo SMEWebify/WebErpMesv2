@@ -28,4 +28,10 @@ return [
     'remnants_created'   => ':count Restblech(e) wieder eingelagert.',
     'task_remnant'       => 'Wieder eingelagertes Restblech (optional)',
     'task_remnant_hint'  => 'Länge × Breite in mm',
+    'drawing'              => 'Zeichnung des Restblechs',
+    'drawing_hint'         => 'Zeichnung des Restblechs (DXF oder SVG, optional), abgelegt in den Dokumenten seines Lagerzugangs.',
+    'drawing_download'     => 'Zeichnung des Restblechs herunterladen',
+    'drawing_invalid'      => 'Zeichnung des Restblechs: nur DXF- und SVG-Dateien sind zulässig.',
+    'drawing_without_size' => 'Zeichnung des Restblechs: bitte auch die Abmessungen angeben.',
+    'drawing_failed'       => 'Die Zeichnung des Restblechs konnte nicht gespeichert werden: es wurde nichts aus dem Lager entnommen. Bitte erneut versuchen.',
 ];

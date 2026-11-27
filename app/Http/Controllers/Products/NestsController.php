@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use App\Http\Controllers\Controller;
 use App\Models\Products\Nest;
 use App\Models\Products\StockLocationProducts;
+use App\Services\Files\FileRole;
 use App\Services\Stock\NestRecorder;
 use App\Services\Stock\SheetRemnants;
 use Illuminate\Http\Request;
@@ -62,6 +63,7 @@ class NestsController extends Controller
             'parts'                      => 'nullable|array',
             'parts.*'                    => 'nullable|numeric|min:0',
             'remnants'                   => 'nullable|array',
+            'remnants.*.drawing'         => 'nullable|file|extensions:dxf,svg|max:20480',
         ]);
 
         $slp = StockLocationProducts::with('Product')->findOrFail($validated['stock_location_products_id']);
@@ -79,7 +81,7 @@ class NestsController extends Controller
                 $validated['piece'],
                 (float) $validated['sheet_qty'],
                 $parts,
-                $this->remnants->normalize($request->input('remnants')),
+                $this->remnants->normalize($request->input('remnants'), $request->file('remnants')),
                 [
                     'name'          => $validated['name'],
                     'usage_percent' => $validated['usage_percent'] ?? null,
@@ -102,7 +104,11 @@ class NestsController extends Controller
             'user:id,name',
             'parts.task',
             'parts.orderLine.order',
-            'stockMoves' => fn ($q) => $q->with(['StockLocationProducts.StockLocation', 'batch'])->orderBy('id'),
+            'stockMoves' => fn ($q) => $q->with([
+                'StockLocationProducts.StockLocation',
+                'batch',
+                'files' => fn ($f) => $f->where('fileables.role', FileRole::VECTOR)->whereNull('files.superseded_at'),
+            ])->orderBy('id'),
         ]);
 
         return view('products.nests-show', [
