@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\Orders;
 use App\Services\Integrations\NestEngine\NestEngineClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -68,6 +70,50 @@ class NestingComputeTest extends TestCase
             ->assertOk()
             ->assertJsonPath('engine', 'nestengine')
             ->assertJsonPath('services', []);
+    }
+
+    /**
+     * The delivery date range keeps late lines when only the end is set, and
+     * drops (and counts) the undated lines once a bound is given.
+     *
+     * @test
+     */
+    public function the_delivery_date_range_narrows_the_lines(): void
+    {
+        config([
+            'services.nestengine.enabled' => true,
+            'services.nestengine.url'     => 'http://nestengine.test',
+        ]);
+        Http::fake(['nestengine.test/healthz' => Http::response(['status' => 'ok'])]);
+
+        $order = Orders::factory()->create(['statu' => 2]);
+        $line = fn (?string $date) => OrderLines::factory()->create([
+            'orders_id' => $order->id, 'delivery_date' => $date,
+        ])->id;
+        $late   = $line('2026-11-01');
+        $soon   = $line('2026-12-10');
+        $later  = $line('2027-06-01');
+        $undated = $line(null);
+
+        $lineIds = fn ($response) => collect($response->json('missing_service'))->pluck('line_id')->sort()->values()->all();
+        $user = User::factory()->create();
+
+        $all = $this->actingAs($user)->postJson(route('nesting.compute'), [])->assertOk();
+        $this->assertSame([$late, $soon, $later, $undated], $lineIds($all));
+        $all->assertJsonPath('stats.lines_without_date', 0);
+
+        $horizon = $this->postJson(route('nesting.compute'), ['delivery_to' => '2026-12-31'])->assertOk();
+        $this->assertSame([$late, $soon], $lineIds($horizon));
+        $horizon->assertJsonPath('stats.lines_without_date', 1);
+
+        $range = $this->postJson(route('nesting.compute'), [
+            'delivery_from' => '2026-12-01', 'delivery_to' => '2026-12-31',
+        ])->assertOk();
+        $this->assertSame([$soon], $lineIds($range));
+
+        $this->postJson(route('nesting.compute'), [
+            'delivery_from' => '2026-12-31', 'delivery_to' => '2026-12-01',
+        ])->assertStatus(422);
     }
 
     /**

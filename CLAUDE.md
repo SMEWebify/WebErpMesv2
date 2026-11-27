@@ -1826,6 +1826,10 @@ Sanity check : `curl http://127.0.0.1:8000/healthz` retourne `{"status":"ok"}`.
   `files_unreadable` ; `job_failed`) et s'affiche « Non imbriqué » avec la raison.
 - Le tableau « Besoin tôles » est alimenté par le nombre de tôles des jobs terminés
   (format = `sheet_format` du job), puis croisé avec le stock comme avant.
+- **Périmètre** : commandes lancées (statut 2, + ouvertes si cochée), filtrables par plage sur
+  `order_lines.delivery_date` (`delivery_from` / `delivery_to`, facultatifs, raccourcis
+  « 2 sem. / 1 mois / 3 mois » = fin seule, retards gardés). Dès qu'une borne est posée, une
+  ligne sans date est écartée et comptée (`stats.lines_without_date`).
 - Tests : `tests/Feature/NestingComputeTest.php`.
 - Le format tôle envoyé à NestEngine est résolu par `resolveSheetFormat()` :
   produit stock exact → même matière → plus grande dispo → 3000×1500 en dernier

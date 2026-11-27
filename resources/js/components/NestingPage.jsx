@@ -683,6 +683,9 @@ export default function NestingPage({ engineEnabled = false, commercial = {}, re
     const [barLengths, setBarLengths] = useState(DEFAULT_BAR_LENGTHS);
     const [kerf, setKerf]             = useState(DEFAULT_KERF_MM);
     const [includeOpen, setIncludeOpen] = useState(false);
+    // Plage sur la date de livraison des lignes ; vide = toutes les commandes.
+    const [deliveryFrom, setDeliveryFrom] = useState('');
+    const [deliveryTo, setDeliveryTo]     = useState('');
     const [services, setServices]     = useState([]);
     const [serviceIds, setServiceIds] = useState(new Set());
     const [sheetStock, setSheetStock] = useState([]);
@@ -789,6 +792,8 @@ export default function NestingPage({ engineEnabled = false, commercial = {}, re
             const res = await window.axios.post('/nesting/compute', {
                 include_open: includeOpen,
                 service_ids: Array.from(serviceIds),
+                delivery_from: deliveryFrom || null,
+                delivery_to: deliveryTo || null,
             });
             setData(res.data);
         } catch (e) {
@@ -796,7 +801,17 @@ export default function NestingPage({ engineEnabled = false, commercial = {}, re
         } finally {
             setLoading(false);
         }
-    }, [engineEnabled, includeOpen, serviceIds]);
+    }, [engineEnabled, includeOpen, serviceIds, deliveryFrom, deliveryTo]);
+
+    // Raccourci « jusqu'à J+n » : la borne de début reste vide pour garder les
+    // lignes en retard, qui sont toujours à débiter.
+    const setHorizon = days => {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        const pad = n => String(n).padStart(2, '0');
+        setDeliveryFrom('');
+        setDeliveryTo(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`);
+    };
 
     // Sheet summary — sheets returned by NestEngine per (material, thickness,
     // sheet format). Groups still computing are counted apart.
@@ -976,6 +991,49 @@ export default function NestingPage({ engineEnabled = false, commercial = {}, re
                             </label>
                         </div>
 
+                        <div className="mb-3">
+                            <label className="small fw-bold mb-1">Date de livraison des lignes</label>
+                            <div className="input-group input-group-sm mb-1">
+                                <span className="input-group-text">Du</span>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    value={deliveryFrom}
+                                    max={deliveryTo || undefined}
+                                    onChange={e => setDeliveryFrom(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-group input-group-sm mb-1">
+                                <span className="input-group-text">Au</span>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    value={deliveryTo}
+                                    min={deliveryFrom || undefined}
+                                    onChange={e => setDeliveryTo(e.target.value)}
+                                />
+                            </div>
+                            <div className="d-flex flex-wrap gap-1">
+                                {[[14, '2 sem.'], [30, '1 mois'], [90, '3 mois']].map(([days, label]) => (
+                                    <button key={days} type="button" className="btn btn-sm py-0 btn-outline-secondary"
+                                        title={`Lignes à livrer d'ici ${label}, retards compris`}
+                                        onClick={() => setHorizon(days)}>
+                                        {label}
+                                    </button>
+                                ))}
+                                {(deliveryFrom || deliveryTo) && (
+                                    <button type="button" className="btn btn-sm py-0 btn-outline-secondary"
+                                        title="Toutes les dates"
+                                        onClick={() => { setDeliveryFrom(''); setDeliveryTo(''); }}>
+                                        <i className="fas fa-times" />
+                                    </button>
+                                )}
+                            </div>
+                            <small className="text-muted d-block mt-1">
+                                Vide = toutes les dates. Les lignes sans date sont écartées dès qu'une borne est posée.
+                            </small>
+                        </div>
+
                         {services.length > 0 && (
                             <div className="mb-3">
                                 <label className="small fw-bold mb-1">Moyens de débit</label>
@@ -1030,6 +1088,12 @@ export default function NestingPage({ engineEnabled = false, commercial = {}, re
                                     {data.stats.orders_included} commande(s) analysée(s)<br />
                                     {data.stats.lines_scanned} ligne(s) parcourue(s)
                                 </div>
+                                {data.stats.lines_without_date > 0 && (
+                                    <div className="text-warning-emphasis mt-1">
+                                        <i className="fas fa-exclamation-triangle me-1" />
+                                        {data.stats.lines_without_date} ligne(s) sans date de livraison écartée(s)
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

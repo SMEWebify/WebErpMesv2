@@ -40,7 +40,7 @@ class NestingController extends Controller
      * Compute the material requirement from a fleet of open/launched orders.
      *
      * POST /nesting/compute
-     * Body: { include_open: bool }
+     * Body: { include_open: bool, service_ids: int[], delivery_from?: date, delivery_to?: date }
      *
      * Returns lines grouped by nesting service > (material, thickness), plus
      * two anomaly buckets (missing geometry / missing material-thickness).
@@ -194,6 +194,8 @@ class NestingController extends Controller
             'include_open' => 'sometimes|boolean',
             'service_ids'  => 'sometimes|array',
             'service_ids.*' => 'integer',
+            'delivery_from' => 'nullable|date',
+            'delivery_to'   => 'nullable|date|after_or_equal:delivery_from',
         ]);
 
         // L'imbrication repose entièrement sur NestEngine : sans lui (version
@@ -220,9 +222,22 @@ class NestingController extends Controller
         $allowedStatus = $includeOpen ? [1, 2] : [2];
         $serviceIds    = collect($request->input('service_ids', []))->map(fn ($v) => (int) $v)->filter()->values();
 
-        $lines = OrderLines::query()
+        // Plage facultative sur la date de livraison de la ligne (dernière date
+        // saisie) : écarte les commandes de marché ou à produire dans des mois.
+        // Dès qu'une borne est posée, une ligne sans date est écartée et comptée.
+        $deliveryFrom = $request->filled('delivery_from') ? $request->date('delivery_from')->toDateString() : null;
+        $deliveryTo   = $request->filled('delivery_to') ? $request->date('delivery_to')->toDateString() : null;
+        $dateFiltered = $deliveryFrom !== null || $deliveryTo !== null;
+
+        $scope = OrderLines::query()
             ->articles()
-            ->whereHas('order', fn ($q) => $q->whereIn('statu', $allowedStatus))
+            ->whereHas('order', fn ($q) => $q->whereIn('statu', $allowedStatus));
+
+        $linesWithoutDate = $dateFiltered ? (clone $scope)->whereNull('delivery_date')->count() : 0;
+
+        $lines = $scope
+            ->when($deliveryFrom, fn ($q) => $q->whereDate('delivery_date', '>=', $deliveryFrom))
+            ->when($deliveryTo, fn ($q) => $q->whereDate('delivery_date', '<=', $deliveryTo))
             ->with([
                 'Product:id,code,label,material,thickness',
                 'order:id,code,statu',
@@ -281,7 +296,7 @@ class NestingController extends Controller
         // NestEngine, the SVG only when there is no DXF and the engine reads SVG
         // (cutFileFor); otherwise the piece is reported in `excluded_pieces`.
         $cadKinds = [FileKindResolver::KIND_CAD2D, FileKindResolver::KIND_VECTOR];
-        $kindOrder = "FIELD(files.kind, '" . FileKindResolver::KIND_VECTOR . "', '" . FileKindResolver::KIND_CAD2D . "')";
+        $kindOrder = "CASE WHEN files.kind = '" . FileKindResolver::KIND_VECTOR . "' THEN 1 ELSE 2 END";
 
         $productFiles = $productIds->isEmpty() ? collect() : File::query()
             ->join('fileables', 'fileables.file_id', '=', 'files.id')
@@ -456,6 +471,9 @@ class NestingController extends Controller
                 'lines_scanned'   => $lines->count(),
                 'orders_included' => $lines->pluck('orders_id')->unique()->count(),
                 'include_open'    => $includeOpen,
+                'delivery_from'   => $deliveryFrom,
+                'delivery_to'     => $deliveryTo,
+                'lines_without_date' => $linesWithoutDate,
             ],
         ]);
     }
