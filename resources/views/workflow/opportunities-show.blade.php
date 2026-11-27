@@ -158,6 +158,7 @@ $lossDialog = app(\App\Services\Workflow\LossReasonRecorder::class)->dialog($Opp
                             igroup-size="sm" placeholder="..." :config="$config"> 
                             {{  $Opportunity->comment }}
                         </x-adminlte-text-editor>
+                        @include('include.ai-rewrite-rich', ['target' => 'comment', 'personal' => true])
                     </div>
                   </div>
                   <x-slot name="footerSlot">

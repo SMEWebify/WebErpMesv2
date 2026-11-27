@@ -816,6 +816,13 @@ d'IA est configuré (`QuoteDictation::isAvailable()`). `components/quotes/QuoteD
   (`components/ai/RewriteButton.jsx`) et `<x-FormTextareaComment :rewrite="true" :max-length="…">`
   (commentaire du devis, commentaire externe de ligne), branché par `lib/aiRewrite.js` dans `app.js`.
   Proposition plus longue que le champ : signalée, non reprise.
+  **Éditeurs riches** (`include/ai-rewrite-rich`, `bindRichRewriteButtons`) : e-mail des documents,
+  commentaires de piste, d'opportunité et d'article. `ai.rewrite` avec `html` →
+  `TextRewriter::rewriteHtml()` : seuls les morceaux de texte partent (JSON `segments`, même nombre
+  exigé sinon 502), remplacés un à un, balises / liens / images / signature intacts, morceau dont les
+  `{variables}` changent gardé tel quel, sortie passée par `SafeHtml`. E-mail, piste, opportunité
+  (`personal`) : bouton seulement si `allowsPersonalData()` ; article : toujours. Tests :
+  `tests/Feature/AI/RichTextRewriteTest.php`.
 - Tests : `tests/Feature/Quotes/QuoteDictationTest.php`, `tests/Feature/AI/TextRewriteTest.php`,
   `resources/js/tests/lib/quoteDictation.test.js`.
 

@@ -2,12 +2,14 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { installRowLinks } from './lib/rowLink.js';
-import { bindBladeRewriteButtons } from './lib/aiRewrite.js';
+import { bindBladeRewriteButtons, bindRichRewriteButtons } from './lib/aiRewrite.js';
 
 // Tableaux Blade : <tr data-row-href="…"> s'ouvre au clic sur la ligne
 installRowLinks();
 // « Réécrire sans fautes » des champs <x-FormTextareaComment rewrite>.
 bindBladeRewriteButtons();
+// … et sous les éditeurs riches (include/ai-rewrite-rich).
+bindRichRewriteButtons();
 
 function parseJsonAttribute(value) {
     if (!value) return null;

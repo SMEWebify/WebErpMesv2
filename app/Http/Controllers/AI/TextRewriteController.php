@@ -16,11 +16,16 @@ class TextRewriteController extends Controller
 {
     public function rewrite(Request $request, TextRewriter $rewriter): JsonResponse
     {
+        // `html` : contenu d'un éditeur riche (e-mail, commentaire), corrigé sans toucher à sa mise en forme.
         $validated = $request->validate([
-            'text' => 'required|string|max:' . TextRewriter::MAX_INPUT,
+            'text' => 'required_without:html|nullable|string|max:' . TextRewriter::MAX_INPUT,
+            'html' => 'required_without:text|nullable|string|max:' . TextRewriter::MAX_HTML,
         ]);
 
         try {
+            if (isset($validated['html'])) {
+                return response()->json($rewriter->rewriteHtml($validated['html']));
+            }
             $text = $rewriter->rewrite($validated['text']);
         } catch (RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 502);

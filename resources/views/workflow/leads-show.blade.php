@@ -125,6 +125,7 @@ $leadSteps = json_encode([
                 igroup-size="sm" placeholder="..." :config="$config"> 
                 {{  $Lead->comment }}
             </x-adminlte-text-editor>
+            @include('include.ai-rewrite-rich', ['target' => 'comment', 'personal' => true])
           </div>
         </div>
         <x-slot name="footerSlot">

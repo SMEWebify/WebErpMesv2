@@ -382,6 +382,9 @@
                         igroup-size="sm" placeholder="..." :config="$config"> 
                         {{  $Product->comment }}
                     </x-adminlte-text-editor>
+                    @if($canEditProduct)
+                    @include('include.ai-rewrite-rich', ['target' => 'comment', 'personal' => false])
+                    @endif
                   </div>
                 </div>
               </div>

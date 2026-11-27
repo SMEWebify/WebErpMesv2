@@ -12,4 +12,6 @@ return [
     'ignore' => 'Ignorer',
     'unchanged' => 'Aucune faute trouvée.',
     'too_long' => 'La proposition dépasse la longueur autorisée (:max caractères) : raccourcissez-la avant de la reprendre.',
+    'too_long_input' => "Texte trop long pour être relu d'un coup (:max caractères au plus) : corrigez-le en plusieurs fois.",
+    'unchanged_rich' => "Aucune faute trouvée. La mise en forme n'est jamais modifiée.",
 ];

@@ -2,6 +2,9 @@
 
 namespace App\Services\AI;
 
+use App\Support\SafeHtml;
+use DOMDocument;
+use DOMXPath;
 use RuntimeException;
 
 /**
@@ -13,6 +16,8 @@ use RuntimeException;
 class TextRewriter
 {
     public const MAX_INPUT = 5000;
+    /** Taille du HTML d'un éditeur riche (images collées en data URI comprises). */
+    public const MAX_HTML = 2000000;
 
     public function __construct(private readonly DirectTextCompletion $ai)
     {
@@ -44,6 +49,105 @@ class TextRewriter
         }
 
         return $answer;
+    }
+
+    /**
+     * Même correction pour le HTML d'un éditeur riche (e-mail, commentaire) :
+     * seuls les morceaux de texte entre les balises partent chez le provider et
+     * sont remplacés un à un, la structure (gras, liens, images, signature) ne
+     * bouge pas. Un morceau dont les variables {…} changeraient, ou revenu vide,
+     * est gardé tel quel.
+     *
+     * @return array{html: string, changed: bool}
+     *
+     * @throws RuntimeException message affichable tel quel à l'utilisateur
+     */
+    public function rewriteHtml(string $html): array
+    {
+        $doc = new DOMDocument();
+        $previous = libxml_use_internal_errors(true);
+        $doc->loadHTML('<?xml encoding="UTF-8"><div id="wem-rewrite-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+
+        $root = $doc->getElementById('wem-rewrite-root');
+        $nodes = [];
+        foreach ((new DOMXPath($doc))->query('.//text()[normalize-space()]', $root) as $node) {
+            if (! in_array(strtolower($node->parentNode->nodeName), ['script', 'style'], true)) {
+                $nodes[] = $node;
+            }
+        }
+
+        $segments = array_map(fn ($node) => trim($node->nodeValue), $nodes);
+        if ($segments === []) {
+            throw new RuntimeException(__('ai_text.empty'));
+        }
+        if (mb_strlen(implode(' ', $segments)) > self::MAX_INPUT) {
+            throw new RuntimeException(__('ai_text.too_long_input', ['max' => self::MAX_INPUT]));
+        }
+
+        $answer = $this->ai->complete(
+            $this->system() . "\n\n" . $this->segmentsRules(),
+            "<texte>\n" . json_encode(['segments' => $segments], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n</texte>",
+            max(600, (int) ceil(mb_strlen(implode(' ', $segments)) * 0.7)),
+        );
+
+        $corrected = $this->parseSegments($answer, count($segments));
+        $changed = false;
+        foreach ($nodes as $i => $node) {
+            $fixed = trim((string) $corrected[$i]);
+            if ($fixed === '' || $fixed === $segments[$i] || self::tokens($fixed) !== self::tokens($segments[$i])) {
+                continue;
+            }
+            preg_match('/^\s*/u', $node->nodeValue, $lead);
+            preg_match('/\s*$/u', $node->nodeValue, $trail);
+            $node->data = $lead[0] . $fixed . $trail[0];
+            $changed = true;
+        }
+
+        $out = '';
+        foreach ($root->childNodes as $child) {
+            $out .= $doc->saveHTML($child);
+        }
+
+        return ['html' => SafeHtml::clean($out), 'changed' => $changed];
+    }
+
+    /** @return list<string> */
+    private function parseSegments(string $answer, int $count): array
+    {
+        if (! preg_match('/\{.*\}/s', $answer, $match)) {
+            throw new RuntimeException(__('ai_text.failed'));
+        }
+        $data = json_decode($match[0], true);
+        $list = is_array($data) ? ($data['segments'] ?? null) : null;
+        if (! is_array($list) || count($list) !== $count) {
+            throw new RuntimeException(__('ai_text.failed'));
+        }
+
+        return array_map(fn ($s) => is_scalar($s) ? (string) $s : '', array_values($list));
+    }
+
+    /** Variables du modèle d'e-mail ({client}, {signature}…) : triées pour comparer. */
+    private static function tokens(string $text): array
+    {
+        preg_match_all('/\{[a-z_]+\}/i', $text, $m);
+        sort($m[0]);
+
+        return $m[0];
+    }
+
+    private function segmentsRules(): string
+    {
+        return <<<PROMPT
+Ici le texte est un objet JSON {"segments": [...]} : les morceaux de texte d'un document mis en forme,
+dans l'ordre. Un morceau peut n'être qu'une partie de phrase (coupée par du gras, un lien…) : corrige-le
+en tenant compte des morceaux voisins, sans déplacer de mots d'un morceau à l'autre.
+- Réponds UNIQUEMENT par un objet JSON {"segments": [...]} avec exactement le même nombre de morceaux,
+  dans le même ordre.
+- Ne modifie jamais les variables entre accolades ({client}, {signature}…), ni les adresses e-mail,
+  numéros de téléphone et adresses web.
+PROMPT;
     }
 
     /**

@@ -12,4 +12,6 @@ return [
     'ignore' => 'Ignorieren',
     'unchanged' => 'Keine Fehler gefunden.',
     'too_long' => 'Der Vorschlag überschreitet die zulässige Länge (:max Zeichen): kürzen Sie ihn, bevor Sie ihn übernehmen.',
+    'too_long_input' => 'Text zu lang für eine einzige Prüfung (höchstens :max Zeichen): bitte in mehreren Schritten korrigieren.',
+    'unchanged_rich' => 'Keine Fehler gefunden. Die Formatierung wird nie verändert.',
 ];

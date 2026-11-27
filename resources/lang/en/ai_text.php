@@ -12,4 +12,6 @@ return [
     'ignore' => 'Ignore',
     'unchanged' => 'No mistake found.',
     'too_long' => 'The proposal exceeds the allowed length (:max characters): shorten it before using it.',
+    'too_long_input' => 'Text too long to be checked at once (:max characters at most): correct it in several goes.',
+    'unchanged_rich' => 'No mistake found. Formatting is never changed.',
 ];

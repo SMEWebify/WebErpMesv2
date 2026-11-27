@@ -61,6 +61,7 @@
                 <x-adminlte-text-editor name="message" label="{{ __('general_content.message_trans_key') }}" label-class="text-primary"
                     igroup-size="sm" placeholder="..." :config="$config">{{ \App\Support\SafeHtml::clean(old('message', $message)) }}
                 </x-adminlte-text-editor>
+                @include('include.ai-rewrite-rich', ['target' => 'message', 'personal' => true])
             </div>
 
             <div class="mb-3">
@@ -158,4 +159,9 @@
         </x-adminlte-card>
     @endif
 
+@stop
+
+@section('js')
+    {{-- « Réécrire sans fautes » sous l'éditeur (lib/aiRewrite.js). --}}
+    @vite(['resources/js/app.js'])
 @stop
