@@ -1963,5 +1963,7 @@ return [
     'task_canceled_by_integration_trans_key' => 'Fase annullata nel MES',
     'production_sheet_scan_codes_trans_key' => 'Codici di scansione sulla scheda di lavorazione',
     'production_sheet_scan_codes_help_trans_key' => 'Stampa per ogni operazione un QR e un Code128 « N2P:… » leggibili dalla schermata di scansione dell\'ERP e dal MES Nest2Prod. Sostituiscono il codice a barre « n° fase ».',
+    'hide_production_times_trans_key' => 'Nascondi tempi e avanzamento nella schermata fase',
+    'hide_production_times_help_trans_key' => 'Gli operatori non vedono più tempi previsti, tempo registrato, OEE né avanzamento in tempo; la registrazione e la dichiarazione dei pezzi restano invariate. Il permesso « production-times-view » mantiene la visualizzazione completa.',
     'scan_code_not_found_trans_key' => 'Nessuna fase corrisponde al codice « :code ».',
 ];

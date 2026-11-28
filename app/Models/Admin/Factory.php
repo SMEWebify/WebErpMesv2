@@ -18,6 +18,7 @@ class Factory extends Model
         // Relit aussi les valeurs chiffrées autrefois avec encrypt() (sérialisées).
         'iban' => EncryptedLegacyString::class,
         'bic' => EncryptedLegacyString::class,
+        'hide_production_times' => 'boolean',
     ];
 
     // Fillable attributes for mass assignment
@@ -50,6 +51,7 @@ class Factory extends Model
                             'enable_construction_site',
                             'production_sheet_scan_codes',
                             'scan_mode',
+                            'hide_production_times',
                             'fiscal_year_start_month',
                             'iban',
                             'bic'];

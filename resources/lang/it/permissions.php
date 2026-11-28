@@ -57,5 +57,6 @@ return [
         'affair-risk-close' => 'Chiudere un rischio critico del registro dei rischi di una commessa.',
         'quality-rework-order' => 'Avviare un ordine di rilavorazione da una non conformità (fasi sulla riga d\'ordine) e posticipare la data di consegna della riga.',
         'workshop-kiosk' => 'Account di postazione d\'officina condiviso: apre solo la schermata di scansione, e ogni timbratura richiede il badge di un operatore. Da assegnare solo a un ruolo dedicato «Postazione officina».',
+        'production-times-view' => 'Vedere tempi previsti, tempo registrato, OEE e avanzamento nella schermata fase quando l’opzione «Nascondi tempi e avanzamento» è attiva.',
     ],
 ];

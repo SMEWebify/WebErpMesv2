@@ -177,7 +177,9 @@ class WorkshopController extends Controller
      */
     public function statu(Request $request, TaskKPIService $taskKPIService)
     {
-        $rawResourceHours = $taskKPIService->getResourceHours();
+        // Option « masquer les temps » : ni heures ni TRS sur l'accueil de l'écran tâche.
+        $timesHidden = app(\App\Services\Production\ProductionTimesVisibility::class)->hiddenFor($request->user());
+        $rawResourceHours = $timesHidden ? [] : $taskKPIService->getResourceHours();
 
         $kpi = [
             'tasksOpen'             => $taskKPIService->getOpenTasksCount(),
@@ -185,9 +187,10 @@ class WorkshopController extends Controller
             'tasksPending'          => $taskKPIService->getPendingTasksCount(),
             'tasksOngoing'          => $taskKPIService->getSuppliedTasksCount(),
             'tasksCompleted'        => $taskKPIService->getFinishedTasksCount(),
-            'averageProcessingTime' => $taskKPIService->getAverageProcessingTime(),
-            'totalProducedHours'    => $taskKPIService->getTotalProducedHoursCurrentMonth(),
-            'averageTRS'            => $taskKPIService->getMonthlyAverageTRS(),
+            'averageProcessingTime' => $timesHidden ? null : $taskKPIService->getAverageProcessingTime(),
+            'totalProducedHours'    => $timesHidden ? null : $taskKPIService->getTotalProducedHoursCurrentMonth(),
+            'averageTRS'            => $timesHidden ? null : $taskKPIService->getMonthlyAverageTRS(),
+            'timesHidden'           => $timesHidden,
         ];
 
         $userProductivity = $taskKPIService->getUserProductivity()->values();

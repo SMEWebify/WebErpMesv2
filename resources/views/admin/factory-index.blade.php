@@ -551,6 +551,13 @@
                             </select>
                             <small class="form-text text-muted d-block">{{ __('scan_station.settings.mode_help') }}</small>
                         </div>
+                        <div class="mt-3">
+                            <input type="hidden" name="hide_production_times" value="0">
+                            <input type="checkbox" name="hide_production_times" id="hide_production_times" value="1" class="me-2"
+                                @if($Factory->hide_production_times) checked @endif>
+                            <label for="hide_production_times" class="mb-0">{{ __('general_content.hide_production_times_trans_key') }}</label>
+                            <small class="form-text text-muted d-block">{{ __('general_content.hide_production_times_help_trans_key') }}</small>
+                        </div>
                     </x-adminlte-card>
                     
                     <x-adminlte-card title="{{ __('general_content.modules_trans_key') }}" theme="dark" collapsible maximizable>

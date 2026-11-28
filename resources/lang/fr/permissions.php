@@ -57,5 +57,6 @@ return [
         'affair-risk-close' => 'Clôturer un risque critique du registre des risques d\'une affaire.',
         'quality-rework-order' => 'Lancer un ordre de retouche depuis une non-conformité (tâches sur la ligne de commande) et reporter la date de livraison de la ligne.',
         'workshop-kiosk' => 'Compte de poste atelier partagé : n\'ouvre que l\'écran de scan, et chaque pointage exige le badge d\'un opérateur. À ne donner qu\'à un rôle dédié « Poste atelier ».',
+        'production-times-view' => 'Voir les temps prévus, le temps pointé, le TRS et l\'avancement sur l\'écran tâche quand l\'option « Masquer les temps et l\'avancement » est active.',
     ],
 ];

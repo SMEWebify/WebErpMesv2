@@ -18,6 +18,7 @@ use App\Services\QualityNonConformityService;
 use App\Services\Files\FileKindResolver;
 use App\Services\Inspection\TaskInspection;
 use App\Services\Production\ProductionRelease;
+use App\Services\Production\ProductionTimesVisibility;
 use App\Services\Production\ScanCode;
 use App\Services\Production\TaskRelease;
 use App\Services\Production\TaskReleaseException;
@@ -155,6 +156,10 @@ class TaskStatuController extends Controller
             ];
         }
 
+        // Option « masquer les temps » : retirés de la réponse, pas seulement de
+        // l'écran. Coût, prix et marge ne sont jamais envoyés à l'atelier.
+        $timesHidden = app(ProductionTimesVisibility::class)->hiddenFor(Auth::user());
+
         return response()->json([
             'id'                  => $task->id,
             'label'               => $task->label,
@@ -164,24 +169,22 @@ class TaskStatuController extends Controller
             'methods_services_id' => $task->methods_services_id,
             'order_lines_id'      => $task->order_lines_id,
             'component_id'        => $task->component_id,
-            'seting_time'         => $task->seting_time,
-            'unit_time'           => $task->unit_time,
+            'seting_time'         => $timesHidden ? null : $task->seting_time,
+            'unit_time'           => $timesHidden ? null : $task->unit_time,
             'qty'                 => $task->qty,
             'end_date'            => $task->end_date,
             'not_recalculate'     => (bool) $task->not_recalculate,
+            'times_hidden'        => $timesHidden,
             // computed
-            'total_log_time'      => $task->getTotalLogTime(),
-            'total_log_seconds'   => $task->getTotalLogSeconds(),
+            'total_log_time'      => $timesHidden ? null : $task->getTotalLogTime(),
+            'total_log_seconds'   => $timesHidden ? null : $task->getTotalLogSeconds(),
             'total_log_good_qt'   => $task->getTotalLogGoodQt(),
             'total_log_bad_qt'    => $task->getTotalLogBadQt(),
             'total_net_good_qt'   => $task->getTotalNetGoodQt(),
-            'trs'                 => $task->getTRSAttribute(),
-            'progress'            => $task->progress(),
+            'trs'                 => $timesHidden ? null : $task->getTRSAttribute(),
+            'progress'            => $timesHidden ? null : $task->progress(),
             'formatted_end_date'  => $task->getFormattedEndDateAttribute(),
-            'formatted_unit_cost' => $task->getFormattedUnitCostAttribute(),
-            'formatted_unit_price'=> $task->getFormattedUnitPriceAttribute(),
-            'margin'              => $task->unit_cost > 0 ? $task->Margin() : null,
-            'total_time'          => $task->TotalTime(),
+            'total_time'          => $timesHidden ? null : $task->TotalTime(),
             'order_qty'           => $task->GetOrderQtyLine(),
             // relations
             'status'              => $task->status ? ['id' => $task->status->id, 'title' => $task->status->title] : null,

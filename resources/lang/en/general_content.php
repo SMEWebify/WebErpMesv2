@@ -1963,5 +1963,7 @@ return [
     'task_canceled_by_integration_trans_key' => 'Task canceled in the MES',
     'production_sheet_scan_codes_trans_key' => 'Scan codes on the production sheet',
     'production_sheet_scan_codes_help_trans_key' => 'Prints a QR and a Code128 "N2P:…" for each operation, read by the ERP scan screen and the Nest2Prod MES. They replace the "task number" barcode.',
+    'hide_production_times_trans_key' => 'Hide times and progress on the task screen',
+    'hide_production_times_help_trans_key' => 'Operators no longer see planned times, logged time, OEE or time progress; clocking and part declaration are unchanged. The "production-times-view" permission keeps the full display.',
     'scan_code_not_found_trans_key' => 'No task matches the code ":code".',
 ];

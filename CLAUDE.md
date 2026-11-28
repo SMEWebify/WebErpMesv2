@@ -1230,6 +1230,20 @@ d'affiché : fonctionnement d'avant.
 - Tests : `tests/Feature/Production/TaskReleaseTest.php`, `AffairSummaryServiceTest`,
   `resources/js/tests/lib/taskRelease.test.js`.
 
+## Temps masqués à l'atelier (écran tâche)
+
+`factory.hide_production_times` (case de Votre société, carte des réglages atelier, **faux par
+défaut**) : sur l'écran tâche (`TaskStatuApp`, `/production/Task/Statu` et `/workshop/Task/Statu`),
+ni temps prévus (réglage, unitaire, total), ni temps pointé / chrono, ni TRS, ni avancement en
+temps ; accueil sans heures ni TRS. Pour ne pas presser l'opérateur : **le pointage est inchangé**
+(Play / Pause / Fin, pièces bonnes / rebutées, avancement en quantité), les temps restent enregistrés.
+- `App\Services\Production\ProductionTimesVisibility::hiddenFor($user)` : champs mis à **null côté
+  serveur** (`TaskStatuController::show`, `statu()` des deux contrôleurs), `times_hidden` /
+  `kpi.timesHidden` pour l'écran. Droit `production-times-view` (Admin par migration) = tout voir.
+- Coût, prix et marge ne sont **plus jamais** envoyés par l'écran tâche, option ou non.
+- Hors périmètre : fiche suiveuse, lignes atelier (`TaskLines`), Kanban, écran de scan.
+- Tests : `tests/Feature/Production/ProductionTimesVisibilityTest.php`.
+
 ## Pointage par scan (ERP / MES Nest2Prod)
 
 Contrat commun dans `docs/pointage-scan.md` (codes `N2P:{of}*{ligne}*{op}*{seq}` et `N2P-B:{badge}`,

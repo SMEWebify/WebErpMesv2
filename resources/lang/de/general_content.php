@@ -1963,5 +1963,7 @@ return [
     'task_canceled_by_integration_trans_key' => 'Aufgabe im MES storniert',
     'production_sheet_scan_codes_trans_key' => 'Scan-Codes auf der Laufkarte',
     'production_sheet_scan_codes_help_trans_key' => 'Druckt für jeden Arbeitsgang einen QR-Code und einen Code128 „N2P:…“, die vom Scan-Bildschirm des ERP und vom MES Nest2Prod gelesen werden können. Sie ersetzen den Barcode „Aufgabennummer“.',
+    'hide_production_times_trans_key' => 'Zeiten und Fortschritt auf dem Aufgabenbildschirm ausblenden',
+    'hide_production_times_help_trans_key' => 'Bediener sehen weder Vorgabezeiten, gebuchte Zeit, OEE noch Zeitfortschritt; Zeiterfassung und Stückmeldung bleiben unverändert. Die Berechtigung „production-times-view“ behält die vollständige Anzeige.',
     'scan_code_not_found_trans_key' => 'Keine Aufgabe entspricht dem Code „:code“.',
 ];

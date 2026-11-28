@@ -57,5 +57,6 @@ return [
         'affair-risk-close' => 'Close a critical risk of an affair risk register.',
         'quality-rework-order' => 'Launch a rework order from a non-conformity (tasks on the order line) and postpone the line delivery date.',
         'workshop-kiosk' => 'Shared workshop station account: only opens the scan screen, and every scan needs an operator badge. Give it only to a dedicated "Workshop station" role.',
+        'production-times-view' => 'See planned times, logged time, OEE and progress on the task screen when the "Hide times and progress" option is on.',
     ],
 ];

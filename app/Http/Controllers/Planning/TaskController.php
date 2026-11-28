@@ -540,7 +540,9 @@ class TaskController extends Controller
      */
     public function statu(Request $request)
     {
-        $rawResourceHours = $this->taskKPIService->getResourceHours();
+        // Option « masquer les temps » : ni heures ni TRS sur l'accueil de l'écran tâche.
+        $timesHidden = app(\App\Services\Production\ProductionTimesVisibility::class)->hiddenFor($request->user());
+        $rawResourceHours = $timesHidden ? [] : $this->taskKPIService->getResourceHours();
 
         $kpi = [
             'tasksOpen'             => $this->taskKPIService->getOpenTasksCount(),
@@ -548,9 +550,10 @@ class TaskController extends Controller
             'tasksPending'          => $this->taskKPIService->getPendingTasksCount(),
             'tasksOngoing'          => $this->taskKPIService->getSuppliedTasksCount(),
             'tasksCompleted'        => $this->taskKPIService->getFinishedTasksCount(),
-            'averageProcessingTime' => $this->taskKPIService->getAverageProcessingTime(),
-            'totalProducedHours'    => $this->taskKPIService->getTotalProducedHoursCurrentMonth(),
-            'averageTRS'            => $this->taskKPIService->getMonthlyAverageTRS(),
+            'averageProcessingTime' => $timesHidden ? null : $this->taskKPIService->getAverageProcessingTime(),
+            'totalProducedHours'    => $timesHidden ? null : $this->taskKPIService->getTotalProducedHoursCurrentMonth(),
+            'averageTRS'            => $timesHidden ? null : $this->taskKPIService->getMonthlyAverageTRS(),
+            'timesHidden'           => $timesHidden,
         ];
 
         $userProductivity = $this->taskKPIService->getUserProductivity()->values();

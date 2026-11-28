@@ -57,5 +57,6 @@ return [
         'affair-risk-close' => 'Ein kritisches Risiko im Risikoregister eines Projekts schließen.',
         'quality-rework-order' => 'Aus einer Abweichung einen Nacharbeitsauftrag starten (Aufgaben auf der Auftragsposition) und den Liefertermin der Position verschieben.',
         'workshop-kiosk' => 'Gemeinsames Werkstatt-Terminalkonto: öffnet nur den Scan-Bildschirm, und jede Zeiterfassung erfordert den Ausweis eines Bedieners. Nur einer eigenen Rolle „Werkstatt-Terminal“ zuweisen.',
+        'production-times-view' => 'Vorgabezeiten, gebuchte Zeit, OEE und Fortschritt auf dem Aufgabenbildschirm sehen, wenn die Option „Zeiten und Fortschritt ausblenden“ aktiv ist.',
     ],
 ];

@@ -120,14 +120,20 @@ function splitIconClass(iconClass) {
 function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
     const t = (key) => trans?.[key] ?? key;
     const avgHours = kpi.averageProcessingTime ? (kpi.averageProcessingTime / 3600).toFixed(2) : '0.00';
+    // Option « masquer les temps » : ni heures ni TRS (le serveur ne les envoie pas).
+    const showTimes = !kpi.timesHidden;
 
     return (
         <>
             <div className="ts-metrics">
                 <Metric tone="accent" value={kpi.tasksInProgress} label={t('current_count_task_trans_key')} />
-                <Metric tone="ok" value={kpi.totalProducedHours} unit="h" label={t('total_hours_per_month_trans_key')} />
-                <Metric tone="warn" value={avgHours} unit="h" label={t('average_time_task_trans_key')} />
-                <Metric value={parseFloat(kpi.averageTRS ?? 0).toFixed(2)} unit="%" label={t('trs_per_month_trans_key')} />
+                {showTimes && (
+                    <>
+                        <Metric tone="ok" value={kpi.totalProducedHours} unit="h" label={t('total_hours_per_month_trans_key')} />
+                        <Metric tone="warn" value={avgHours} unit="h" label={t('average_time_task_trans_key')} />
+                        <Metric value={parseFloat(kpi.averageTRS ?? 0).toFixed(2)} unit="%" label={t('trs_per_month_trans_key')} />
+                    </>
+                )}
             </div>
 
             <div className="row">
@@ -166,6 +172,7 @@ function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
                     </section>
                 </div>
 
+                {showTimes && (
                 <div className="col-lg-4">
                     <section className="ts-card">
                         <header className="ts-card__head">
@@ -189,6 +196,7 @@ function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
                         </table>
                     </section>
                 </div>
+                )}
             </div>
         </>
     );
@@ -200,7 +208,8 @@ function KpiDashboard({ kpi, userProductivity, resourceHours, trans }) {
 function TaskHeader({ task, onNavigate, trans, searchSlot }) {
     const t = (key) => trans?.[key] ?? key;
     const ol = task.order_lines;
-    const isInternal = task.service?.type === 1;
+    // Temps masqués (option de l'usine) : pas de chrono ni de barre de temps, les quantités restent.
+    const showTimes = task.service?.type === 1 && !task.times_hidden;
     const running = task.last_activity_type === ACT_START;
     const loggedSeconds = useLiveSeconds(task.total_log_seconds ?? 0, running);
     const plannedSeconds = Math.round(Number(task.total_time ?? 0) * 3600);
@@ -261,7 +270,7 @@ function TaskHeader({ task, onNavigate, trans, searchSlot }) {
             </div>
 
             {/* Temps et quantités avancent séparément : 70 % du temps pour 10 % des pièces se voit d'un coup d'œil. */}
-            {isInternal && (
+            {showTimes && (
                 <ProgressRow
                     icon="fas fa-stopwatch"
                     title={t('total_time_trans_key')}
@@ -1103,7 +1112,7 @@ function TaskDetail({
     const t = (key) => trans?.[key] ?? key;
     const [tab, setTab] = useState('activity');
     const reload = () => onRefresh(task.id);
-    const isInternal = task.service?.type === 1;
+    const showTimes = task.service?.type === 1 && !task.times_hidden;
     // Article avec plan de contrôle validé : les cotes restent sous les yeux, onglet Contrôle d'abord.
     const inspection = task.inspection;
     const [stage, setStage] = useState(inspection ? 'control' : 'drawing');
@@ -1125,13 +1134,13 @@ function TaskDetail({
             <TaskHeader task={task} onNavigate={onNavigate} trans={trans} searchSlot={searchSlot} />
 
             <div className="ts-metrics">
-                {isInternal && (
+                {showTimes && (
                     <Metric tone="accent" value={task.total_log_time} unit="h" label={t('total_time_trans_key')} />
                 )}
                 <Metric tone="ok" value={task.total_log_good_qt} label={t('finish_part_qty_trans_key')} />
                 <Metric tone="danger" value={task.total_log_bad_qt} label={t('bad_part_qty_trans_key')} />
                 <Metric value={task.total_net_good_qt} label={t('net_production_qty_trans_key')} />
-                {isInternal && <Metric tone="warn" value={task.trs} unit="%" label={t('trs_trans_key')} />}
+                {showTimes && <Metric tone="warn" value={task.trs} unit="%" label={t('trs_trans_key')} />}
             </div>
 
             <div className="ts-shop">
@@ -1242,10 +1251,8 @@ function TaskDetail({
                                 <div className="ts-specs">
                                     <Spec label={t('statu_trans_key')} value={task.status?.title} />
                                     <Spec label={t('qty_trans_key')} value={task.order_qty} />
-                                    <Spec label={t('cost_trans_key')} value={task.formatted_unit_cost} />
-                                    <Spec label={t('price_trans_key')} value={task.formatted_unit_price} />
-                                    <Spec label={t('margin_trans_key')} value={task.margin} unit=" %" />
-                                    {isInternal && (
+                                    {/* Ni coût, ni prix, ni marge à l'atelier. */}
+                                    {showTimes && (
                                         <>
                                             <Spec label={t('setting_time_trans_key')} value={timeValue(task.seting_time)} unit={timeUnitSuffix()} />
                                             <Spec label={t('unit_time_trans_key')} value={timeValue(task.unit_time)} unit={timeUnitSuffix()} />
@@ -1253,7 +1260,7 @@ function TaskDetail({
                                             <Spec label={t('trs_trans_key')} value={task.trs} unit=" %" />
                                         </>
                                     )}
-                                    <Spec label={t('progress_trans_key')} value={task.progress} unit=" %" />
+                                    {!task.times_hidden && <Spec label={t('progress_trans_key')} value={task.progress} unit=" %" />}
                                 </div>
                             )}
                         </div>

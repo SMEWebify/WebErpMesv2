@@ -109,6 +109,9 @@ class FactoryController extends Controller
         if (in_array($request->input('scan_mode'), \App\Services\Production\ScanStation::MODES, true)) {
             $Factory->scan_mode = $request->input('scan_mode');
         }
+        if ($request->has('hide_production_times')) {
+            $Factory->hide_production_times = $request->boolean('hide_production_times');
+        }
         $Factory->public_link_cgv =  $request->public_link_cgv;
         $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
         $Factory->enable_construction_site = $request->boolean('enable_construction_site');
