@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\InboundLeadController;
+use App\Http\Controllers\Api\InboundNestController;
 use App\Http\Controllers\Api\InboundProspectController;
 use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
 use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
@@ -76,6 +77,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('prospects', [InboundProspectController::class, 'store'])
         ->middleware('throttle:60,1')
         ->name('api.prospects.store');
+
+    // Imbrications réalisées d'une FAO tierce : tôle sortie, pièces par OF, chutes.
+    Route::post('nests', [InboundNestController::class, 'store'])
+        ->middleware('throttle:60,1')
+        ->name('api.nests.store');
 
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');

@@ -52,4 +52,11 @@ return [
     'no_parts'         => 'Geben Sie für mindestens eine Aufgabe die geschnittene Menge an.',
     'task_mismatch'    => 'Eine der Aufgaben verwendet dieses Blech nicht. Laden Sie die Seite neu.',
     'n2p_pending'      => 'Verschachtelung von Nest2Prod MES empfangen: Die Teileliste folgt mit der Nachricht „nest.updated“.',
+    // API des FAO tierces (POST /api/nests).
+    'api' => [
+        'product_not_found' => 'Blechartikel nicht gefunden: sheet.product_code prüfen.',
+        'stock_line_not_found' => 'Keine Lagerzeile für diesen Blechartikel (oder für sheet.stock_line_code).',
+        'piece_not_found' => 'Kein Blech auf Lager, um :qty Stück im Format :format zu entnehmen (angeforderte Charge eingeschlossen). Nichts wurde gespeichert.',
+        'product_locked' => 'Die Schachtelung wurde bereits auf einem anderen Blechartikel ausgebucht: der Artikel kann nicht mehr geändert werden.',
+    ],
 ];

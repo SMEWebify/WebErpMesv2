@@ -1824,10 +1824,20 @@ la vérité est l'imbrication réellement découpée (FAO ou Nest2Prod MES).
   écrit les chutes **une fois**, imbrication terminée et sortie reçue, ordre d'arrivée
   indifférent. Chute impossible ignorée et journalisée (le message reste accepté).
   N2P n'émet pas encore `nest.updated` : à ajouter côté MES.
+- **FAO tierce** `POST /api/nests` (`api.nests.store`, Sanctum, capacité `nests:write` **et**
+  `stock-lot-serial-management`, 60/min, `InboundNestController` →
+  `upsertFromImport()`) : source `import`, `external_id` = `{system}:{id}`, rejouable (pièces
+  remplacées). Tôle par `sheet.product_code` ; pièce en stock choisie par format (rotation admise,
+  0,5 mm) et lot / coulée facultatifs, sur la première ligne de stock qui l'a. Sortie + chutes
+  **une seule fois**, au premier envoi `done` (`consume_stock: false` = rien au stock) ; ensuite
+  avertissement `stock_already_recorded`. **Synchrone, tout ou rien** : sortie impossible → 422,
+  rien d'écrit (à l'inverse de N2P). Pièces : `order_line_id` ou `of_code` `OF<id>`, inconnue =
+  non rattachée (`part_unmatched:`). Tests : `tests/Feature/Products/InboundNestApiTest.php`.
 - **Coût par ligne** (`allocation()`, à la lecture) : sorties (valeur, sinon CUMP actuel) −
   chutes rendues, au prorata de la surface des pièces, sinon du poids, sinon du nombre.
 - Non fait : réservation de lot / pièce sur la tâche (soldée par l'imbrication), import CSV
-  d'une FAO tierce, coût repris sur la marge de la commande, avancement des tâches.
+  d'une FAO tierce (l'API existe), coût repris sur la marge de la commande, avancement des tâches,
+  annulation d'une sortie déjà faite par l'API.
 - Tests : `tests/Feature/Products/NestRecorderTest.php`.
 
 ## Nesting (imbrication tôle)

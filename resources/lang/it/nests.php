@@ -52,4 +52,11 @@ return [
     'no_parts'         => 'Indicare la quantità tagliata per almeno una fase.',
     'task_mismatch'    => 'Una delle fasi non utilizza questa lamiera. Ricaricate la pagina.',
     'n2p_pending'      => 'Nesting ricevuto da Nest2Prod MES: l\'elenco dei pezzi arriva con il messaggio «nest.updated».',
+    // API des FAO tierces (POST /api/nests).
+    'api' => [
+        'product_not_found' => 'Articolo lamiera non trovato: verificare sheet.product_code.',
+        'stock_line_not_found' => 'Nessuna riga di magazzino per questo articolo lamiera (o per sheet.stock_line_code).',
+        'piece_not_found' => 'Nessuna lamiera in magazzino per prelevare :qty pezzo/i nel formato :format (lotto richiesto compreso). Nulla è stato registrato.',
+        'product_locked' => 'Il nesting è già stato prelevato dal magazzino su un altro articolo lamiera: l\'articolo non può più cambiare.',
+    ],
 ];

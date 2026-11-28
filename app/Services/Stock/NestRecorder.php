@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Log;
  * les lignes de commande de ses pièces, et les chutes qu'elle rend au stock.
  *
  * Trois portes, un seul modèle : saisie à la main (écran Imbrications), message
- * Nest2Prod MES (`nest.updated` + `stock.consumed`), import d'une FAO tierce
- * (à venir). Les estimations NestEngine n'en sont jamais : elles ne disent pas ce
+ * Nest2Prod MES (`nest.updated` + `stock.consumed`), FAO tierce par l'API
+ * (`POST /api/nests`, upsertFromImport). Les estimations NestEngine n'en sont jamais : elles ne disent pas ce
  * qui sera découpé.
  */
 class NestRecorder
@@ -186,6 +186,196 @@ class NestRecorder
 
             return $nest;
         });
+    }
+
+    /**
+     * Imbrication envoyée par une FAO tierce (API `POST /api/nests`) : identifiée par
+     * (`system`, `external_id`), rejouable. Les pièces sont remplacées à chaque appel ;
+     * à la fin de la découpe (`done`), la tôle est sortie du stock et les chutes y sont
+     * remises, **une seule fois**. Contrairement à Nest2Prod, l'appel est synchrone :
+     * une sortie impossible refuse tout l'appel (rien n'est écrit), l'émetteur corrige
+     * et renvoie.
+     *
+     * @param  array<string, mixed>  $data  champs validés (voir InboundNestController)
+     * @return array{nest: Nest, created: bool, stock_recorded_now: bool, parts: array<int, array<string, mixed>>, warnings: list<string>}
+     *
+     * @throws \DomainException  article ou pièce de tôle introuvable, stock insuffisant, chute impossible
+     */
+    public function upsertFromImport(string $system, array $data, User $user): array
+    {
+        $externalId = mb_substr($system . ':' . $data['external_id'], 0, 255);
+        $sheet = $data['sheet'] ?? [];
+        $product = $this->sheetProduct($sheet);
+        $status = $data['status'] ?? Nest::STATUS_DONE;
+
+        return DB::transaction(function () use ($externalId, $data, $sheet, $product, $status, $user) {
+            $nest = Nest::where('source', Nest::SOURCE_IMPORT)->where('external_id', $externalId)->lockForUpdate()->first();
+            $created = $nest === null;
+            $nest ??= new Nest(['source' => Nest::SOURCE_IMPORT, 'external_id' => $externalId, 'user_id' => $user->id]);
+            $warnings = [];
+
+            if (! $created && $nest->product_id && $nest->product_id !== $product->id && $nest->stockMoves()->exists()) {
+                throw new \DomainException(__('nests.api.product_locked'));
+            }
+
+            $nest->fill([
+                'name'          => $data['name'] ?? $nest->name ?? (string) $data['external_id'],
+                'product_id'    => $product->id,
+                'material'      => $data['material'] ?? $nest->material ?? $product->material,
+                'thickness'     => $this->num($sheet['z_size'] ?? null) ?? $nest->thickness ?? $this->num($product->thickness),
+                'sheet_x'       => $this->num($sheet['x_size'] ?? null) ?? $nest->sheet_x ?? $this->num($product->x_size),
+                'sheet_y'       => $this->num($sheet['y_size'] ?? null) ?? $nest->sheet_y ?? $this->num($product->y_size),
+                'sheet_qty'     => (float) $data['sheet_qty'],
+                'usage_percent' => $this->num($data['usage_percent'] ?? null) ?? $nest->usage_percent,
+                'machine'       => $data['machine'] ?? $nest->machine,
+                'status'        => $status,
+                'cut_at'        => $data['cut_at'] ?? $nest->cut_at ?? ($status === Nest::STATUS_DONE ? now() : null),
+                'comment'       => $data['comment'] ?? $nest->comment,
+                'payload'       => $data,
+            ])->save();
+
+            $parts = $this->replaceImportParts($nest, $data['parts'] ?? [], $product);
+            foreach ($parts as $part) {
+                if ($part['order_line_id'] === null) {
+                    $warnings[] = 'part_unmatched:' . ($part['part_ref'] ?? $part['of_code'] ?? '?');
+                }
+            }
+
+            $alreadyRecorded = $nest->stockMoves()->where('typ_move', self::EXIT_TYPE)->exists();
+            $recordedNow = false;
+
+            if ($status === Nest::STATUS_DONE && ($data['consume_stock'] ?? true) && ! $alreadyRecorded) {
+                $this->consumeImportedSheet($nest, $product, $sheet, $data['remnants'] ?? [], $parts, $user);
+                $recordedNow = true;
+            } elseif ($alreadyRecorded && ($status !== Nest::STATUS_DONE || ! empty($data['remnants']))) {
+                // Le stock déjà sorti n'est ni annulé ni refait : signalé, jamais rejoué.
+                $warnings[] = 'stock_already_recorded';
+            }
+
+            return [
+                'nest'               => $nest->fresh(),
+                'created'            => $created,
+                'stock_recorded_now' => $recordedNow,
+                'parts'              => $parts,
+                'warnings'           => array_values(array_unique($warnings)),
+            ];
+        });
+    }
+
+    /** Article tôle désigné par son code (ou son id) ; introuvable → refus. */
+    private function sheetProduct(array $sheet): Products
+    {
+        $product = isset($sheet['product_id'])
+            ? Products::find($sheet['product_id'])
+            : Products::where('code', (string) ($sheet['product_code'] ?? ''))->first();
+
+        if (! $product) {
+            throw new \DomainException(__('nests.api.product_not_found'));
+        }
+
+        return $product;
+    }
+
+    /**
+     * Sort la tôle découpée (pièce au format et au lot donnés, sinon au format de
+     * l'imbrication, sinon au format de l'article) et remet les chutes en stock.
+     */
+    private function consumeImportedSheet(Nest $nest, Products $product, array $sheet, array $remnants, array $parts, User $user): void
+    {
+        $lines = StockLocationProducts::where('products_id', $product->id)
+            ->when(isset($sheet['stock_line_code']), fn ($q) => $q->where('code', $sheet['stock_line_code']))
+            ->orderBy('id')
+            ->get();
+        if ($lines->isEmpty()) {
+            throw new \DomainException(__('nests.api.stock_line_not_found'));
+        }
+
+        $qty = (float) $nest->sheet_qty;
+        $x = $nest->sheet_x;
+        $y = $nest->sheet_y;
+        $batch = isset($sheet['batch']) ? trim((string) $sheet['batch']) : null;
+
+        foreach ($lines as $slp) {
+            $piece = collect($this->remnants->pieces($slp))->first(fn ($p) => $p['qty'] + 0.0001 >= $qty
+                && ($batch === null || $batch === '' || in_array($batch, [$p['batch_code'], $p['heat_number']], true))
+                && self::sameSize($p['x_size'], $p['y_size'], $x, $y));
+
+            if ($piece) {
+                $taskIds = array_values(array_unique(array_filter(array_column($parts, 'task_id'))));
+                $this->remnants->dispatchPiece($slp, $piece['key'], $qty, $this->remnants->normalize(array_map(
+                    fn ($r) => ['x_size' => $r['width'] ?? null, 'y_size' => $r['height'] ?? null, 'qty' => $r['quantity'] ?? 1],
+                    $remnants,
+                )), [
+                    'user_id'         => $user->id,
+                    'typ_move'        => self::EXIT_TYPE,
+                    'task_id'         => count($taskIds) === 1 ? $taskIds[0] : null,
+                    'nest_id'         => $nest->id,
+                    'component_price' => (float) $slp->unit_cost,
+                ]);
+                $nest->forceFill(['remnants_recorded_at' => now()])->save();
+
+                return;
+            }
+        }
+
+        throw new \DomainException(__('nests.api.piece_not_found', [
+            'qty'    => rtrim(rtrim(number_format($qty, 3, '.', ''), '0'), '.'),
+            'format' => $x && $y ? rtrim(rtrim((string) $x, '0'), '.') . ' × ' . rtrim(rtrim((string) $y, '0'), '.') : '—',
+        ]));
+    }
+
+    /** Même format, rotation admise (0,5 mm près) ; format inconnu d'un côté = accepté. */
+    private static function sameSize(?float $ax, ?float $ay, ?float $bx, ?float $by): bool
+    {
+        if (! ($ax > 0 && $ay > 0 && $bx > 0 && $by > 0)) {
+            return true;
+        }
+
+        return (abs($ax - $bx) < 0.5 && abs($ay - $by) < 0.5) || (abs($ax - $by) < 0.5 && abs($ay - $bx) < 0.5);
+    }
+
+    /**
+     * Pièces d'une imbrication importée, remplacées à chaque appel. Ligne de commande
+     * par `order_line_id`, sinon `of_code` « OF<id> » ; tâche = celle de la ligne dont
+     * le composant est la tôle.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function replaceImportParts(Nest $nest, array $parts, Products $product): array
+    {
+        $nest->parts()->delete();
+        $out = [];
+
+        foreach ($parts as $part) {
+            $orderLine = isset($part['order_line_id'])
+                ? OrderLines::find($part['order_line_id'])
+                : $this->orderLineFromRef((string) ($part['of_code'] ?? ''), '');
+            $task = $orderLine
+                ? Task::where('order_lines_id', $orderLine->id)->where('component_id', $product->id)->orderBy('ordre')->orderBy('id')->first()
+                : null;
+
+            $row = $nest->parts()->create([
+                'order_line_id' => $orderLine?->id,
+                'task_id'       => $task?->id,
+                'part_ref'      => $part['part_ref'] ?? null,
+                'external_ref'  => $part['external_ref'] ?? null,
+                'qty'           => (float) $part['qty'],
+                'good_qty'      => $this->num($part['good_qty'] ?? null),
+                'bad_qty'       => $this->num($part['bad_qty'] ?? null),
+                'area_mm2'      => $this->num($part['area_mm2'] ?? null),
+                'weight_kg'     => $this->num($part['weight_kg'] ?? null),
+            ]);
+
+            $out[] = [
+                'id'            => $row->id,
+                'part_ref'      => $row->part_ref,
+                'of_code'       => $part['of_code'] ?? null,
+                'order_line_id' => $row->order_line_id,
+                'task_id'       => $row->task_id,
+            ];
+        }
+
+        return $out;
     }
 
     /**

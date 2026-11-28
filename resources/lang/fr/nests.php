@@ -52,4 +52,11 @@ return [
     'no_parts'         => 'Indiquer la quantité découpée pour au moins une tâche.',
     'task_mismatch'    => 'Une des tâches n\'utilise pas cette tôle. Rechargez la page.',
     'n2p_pending'      => 'Imbrication reçue de Nest2Prod MES : la liste des pièces arrive avec le message « nest.updated ».',
+    // API des FAO tierces (POST /api/nests).
+    'api' => [
+        'product_not_found' => 'Article tôle introuvable : vérifier sheet.product_code.',
+        'stock_line_not_found' => 'Aucune ligne de stock pour cet article tôle (ou pour sheet.stock_line_code).',
+        'piece_not_found' => 'Pas de tôle en stock pour sortir :qty pièce(s) au format :format (lot demandé compris). Rien n\'a été enregistré.',
+        'product_locked' => 'L\'imbrication a déjà été sortie du stock sur un autre article tôle : son article ne peut plus changer.',
+    ],
 ];

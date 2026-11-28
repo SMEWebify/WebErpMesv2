@@ -52,4 +52,11 @@ return [
     'no_parts'         => 'Enter the quantity cut for at least one task.',
     'task_mismatch'    => 'One of the tasks does not use this sheet. Reload the page.',
     'n2p_pending'      => 'Nest received from Nest2Prod MES: the parts list comes with the "nest.updated" message.',
+    // API des FAO tierces (POST /api/nests).
+    'api' => [
+        'product_not_found' => 'Sheet item not found: check sheet.product_code.',
+        'stock_line_not_found' => 'No stock line for this sheet item (or for sheet.stock_line_code).',
+        'piece_not_found' => 'No sheet in stock to take out :qty piece(s) in format :format (requested batch included). Nothing was saved.',
+        'product_locked' => 'The nest was already taken out of stock on another sheet item: its item can no longer change.',
+    ],
 ];

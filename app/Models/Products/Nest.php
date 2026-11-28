@@ -16,6 +16,8 @@ class Nest extends Model
 {
     public const SOURCE_MANUAL = 'manual';
     public const SOURCE_N2P = 'n2p';
+    /** FAO tierce par l'API (`external_id` = « {système}:{id} »). */
+    public const SOURCE_IMPORT = 'import';
 
     public const STATUS_PLANNED = 'planned';
     public const STATUS_IN_PROGRESS = 'in_progress';
