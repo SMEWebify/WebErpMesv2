@@ -77,7 +77,7 @@ class InboundLeadTest extends TestCase
 
         $company = Companies::findOrFail($lead->companies_id);
         $this->assertSame('Jane Buyer', $company->label);
-        $this->assertSame(1, (int) $company->statu_customer);
+        $this->assertSame(3, (int) $company->statu_customer); // prospect (1 = inactif)
         $contact = CompaniesContacts::findOrFail($lead->companies_contacts_id);
         $this->assertSame(['Jane', 'Buyer', 'jane.buyer@acme-metal.test'], [$contact->first_name, $contact->name, $contact->mail]);
         $this->assertSame($company->id, CompaniesAddresses::findOrFail($lead->companies_addresses_id)->companies_id);

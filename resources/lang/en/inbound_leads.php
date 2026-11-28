@@ -21,4 +21,8 @@ return [
     'quote_created'       => 'Quote created from the request.',
     'address_to_complete' => 'Address to complete',
     'created_comment'     => 'Company created from a request received from :email, to complete.',
+    'prospect_created_comment' => 'Prospect received through the API, to complete.',
+    'prospect_contact_required' => 'Give at least the contact\'s name or e-mail.',
+    'prospect_reachable_required' => 'Give an e-mail or a phone number to reach the contact.',
+    'prospect_siren_invalid' => 'Invalid SIREN: 9 digits (or a 14-digit SIRET).',
 ];

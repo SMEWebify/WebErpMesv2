@@ -21,4 +21,8 @@ return [
     'quote_created'       => 'Devis créé depuis la demande.',
     'address_to_complete' => 'Adresse à compléter',
     'created_comment'     => 'Société créée depuis une demande reçue de :email, à compléter.',
+    'prospect_created_comment' => "Prospect reçu par l'API, à compléter.",
+    'prospect_contact_required' => 'Indiquer au moins le nom ou l\'e-mail du contact.',
+    'prospect_reachable_required' => 'Indiquer un e-mail ou un téléphone pour joindre le contact.',
+    'prospect_siren_invalid' => 'SIREN invalide : 9 chiffres (ou SIRET de 14 chiffres).',
 ];

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\InboundLeadController;
+use App\Http\Controllers\Api\InboundProspectController;
 use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
 use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
@@ -70,6 +71,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('leads/inbound', [InboundLeadController::class, 'store'])
         ->middleware('throttle:60,1')
         ->name('api.leads.inbound');
+
+    // Prospects : formulaire du site, salon, CRM tiers → société / contact (et piste).
+    Route::post('prospects', [InboundProspectController::class, 'store'])
+        ->middleware('throttle:60,1')
+        ->name('api.prospects.store');
 
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');

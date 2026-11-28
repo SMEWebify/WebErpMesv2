@@ -146,12 +146,14 @@ class InboundLeadService
             'uuid'    => Str::uuid(),
             'code'    => $this->codes->generateDocumentCode('company', (int) Companies::withTrashed()->max('id')),
             'label'   => $label,
+            // statu_customer : 1 = Inactif, 2 = Actif, 3 = Prospect (la valeur par défaut 1 la masquait des sélecteurs).
+            'statu_customer' => 3,
             'user_id' => $ownerId ?? 0,
             'comment' => $comment,
         ]);
     }
 
-    private function companyOfDomain(string $domain): ?Companies
+    public function companyOfDomain(string $domain): ?Companies
     {
         if (self::isPublic($domain)) {
             return null;
@@ -242,7 +244,7 @@ class InboundLeadService
         }
     }
 
-    private static function clean(?string $value, int $max): ?string
+    public static function clean(?string $value, int $max): ?string
     {
         $value = trim(preg_replace('/\s+/u', ' ', (string) $value));
 
@@ -250,7 +252,7 @@ class InboundLeadService
     }
 
     /** Texte du message, échappé, pour le commentaire (éditeur riche) de la piste. */
-    private static function bodyAsHtml(?string $body): ?string
+    public static function bodyAsHtml(?string $body): ?string
     {
         $body = trim((string) $body);
         if ($body === '') {

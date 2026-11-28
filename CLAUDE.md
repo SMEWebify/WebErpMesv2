@@ -624,11 +624,26 @@ Un seul service, `App\Services\Crm\InboundLeadService::receive()`, pour deux por
 - **Pas de doublon** : `leads.message_id` unique (Message-ID, sinon `sha1:` expéditeur + date + objet).
 - **Rapprochement** : contact par e-mail, sinon société d'un contact du même domaine (hors
   `leads.inbound.public_domains`) puis `companies.website` ; à défaut société prospect
-  (`statu_customer` 1) + contact + adresse « à compléter ». Responsable : `owner_email`, sinon
+  (`statu_customer` 3) + contact + adresse « à compléter ». Responsable : `owner_email`, sinon
   `LEADS_INBOUND_OWNER_EMAIL`, sinon aucun ; notifié (`LeadNotification`).
 - `leads.subject`, `received_at`, `sender_email`, `message_id` (nullable) ; texte du mail échappé
   dans `comment`. E-mail d'origine (principal) et pièces jointes (hors images `Content-ID`) dans la
   GED de la piste, alias `lead`. Index : colonnes Objet / Reçue le (tri `COALESCE(received_at, created_at)`).
+- **API prospect** `POST /api/prospects` (`api.prospects.store`, Sanctum, capacité `prospects:write`,
+  60/min, JSON) : logiciel de chiffrage, formulaire du site, salon, CRM tiers ; **crée et met à jour**.
+  `App\Services\Crm\InboundProspectService` (réutilise `InboundLeadService`) : `system`, `company`
+  (`external_id`, `status` prospect | customer), `contact` (nom ou e-mail **et** e-mail ou téléphone,
+  sinon 422), `address`, `lead` facultatif (piste seulement s'il est fourni). Rapprochement
+  `company_external_refs` (`system` + `external_id`, unique, enregistré à chaque appel) → SIREN (ou
+  SIRET) → contact par e-mail → domaine ; à défaut société + contact + adresse (ou « à compléter »).
+  **Fiche connue : champs vides complétés seulement** (jamais la raison sociale ni une valeur
+  saisie ; adresse seulement si absente ou « à compléter »), listés dans `updated` ; `customer`
+  passe un prospect / inactif en client (2), jamais l'inverse. Pas de doublon de piste :
+  `leads.message_id` = `api:{lead.external_id}`, sinon `sha1:` e-mail + objet + message. 201 si
+  quelque chose est créé, 200 sinon. Tests : `tests/Feature/Crm/InboundProspectTest.php`.
+- **`statu_customer`** : 1 = inactif, 2 = client actif, 3 = prospect. `InboundLeadService::createProspect`
+  (e-mail, dictée, API) pose 3 depuis le 2026-11-27 ; avant, la société restait à 1 (défaut de la
+  colonne) et disparaissait des sélecteurs (`SelectDataService`, 2 et 3 seulement).
 - **Devis d'un clic** (`leads.store.quote`, POST) : opportunité créée (libellé = objet) ou reprise,
   puis devis — `App\Services\Crm\LeadConversion`, partagé avec `opportunities.store.quote`.
 - **Journal des échanges** : l'historique de la société (`companies.json.timeline`) liste les

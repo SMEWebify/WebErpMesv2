@@ -21,4 +21,8 @@ return [
     'quote_created'       => 'Angebot aus der Anfrage angelegt.',
     'address_to_complete' => 'Adresse zu vervollständigen',
     'created_comment'     => 'Unternehmen aus einer Anfrage von :email angelegt, zu vervollständigen.',
+    'prospect_created_comment' => 'Über die API erhaltener Interessent, zu vervollständigen.',
+    'prospect_contact_required' => 'Mindestens Name oder E-Mail des Kontakts angeben.',
+    'prospect_reachable_required' => 'E-Mail oder Telefonnummer des Kontakts angeben.',
+    'prospect_siren_invalid' => 'Ungültige SIREN: 9 Ziffern (oder 14-stellige SIRET).',
 ];

@@ -21,4 +21,8 @@ return [
     'quote_created'       => 'Preventivo creato dalla richiesta.',
     'address_to_complete' => 'Indirizzo da completare',
     'created_comment'     => 'Azienda creata da una richiesta ricevuta da :email, da completare.',
+    'prospect_created_comment' => 'Prospect ricevuto tramite API, da completare.',
+    'prospect_contact_required' => 'Indicare almeno il nome o l\'e-mail del contatto.',
+    'prospect_reachable_required' => 'Indicare un e-mail o un telefono per contattare il referente.',
+    'prospect_siren_invalid' => 'SIREN non valido: 9 cifre (o SIRET di 14 cifre).',
 ];
