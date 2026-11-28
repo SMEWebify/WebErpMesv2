@@ -103,7 +103,7 @@ au niveau de l'OF) **à chaque envoi** de l'OF, et le renverra quand le bon est 
   "data": {
     "of_code": "OF1234", "line_ref": "1234",
     "operation_code": "PLI", "seq": 20,
-    "user_email": "operateur@client.fr",
+    "user_email": "operateur@exemple.fr",
     "capture_mode": "scan | manual"
   }
 }

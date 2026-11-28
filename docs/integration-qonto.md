@@ -102,7 +102,7 @@ cache chiffré dans `qonto_connections.iban`.
 | `app/Models/Integrations/QontoSyncReview.php` | Matchs ambigus en attente de révision |
 | `app/Models/Integrations/PdpInvoiceSubmission.php` | Suivi du cycle de vie des factures déposées (toute PDP) |
 | `resources/views/integrations/qonto-settings.blade.php` | Page de surveillance clients |
-| `resources/views/integrations/partials/qonto-invoice-card.blade.php` | Bloc Factur-X sur fiche facture |
+| `resources/views/integrations/partials/pdp-invoice-card.blade.php` | Bloc de dépôt sur la fiche facture (toute PDP) |
 | `config/services.php` | Clés `qonto` + `pdp.default` |
 
 ### Base de données
@@ -162,18 +162,18 @@ File d'attente de révision manuelle pour les matchs ambigus.
 
 ```
 1. Admin clique "Connecter Qonto"
-   → GET /admin/integrations/qonto/connect
+   → GET /{langue}/admin/integrations/qonto/connect
    → Génère un state aléatoire (40 chars)
    → Stocke dans le cache : "qonto.oauth.state.{state}" → tenant_id (TTL 10 min)
    → Redirige vers https://oauth.qonto.com/oauth2/auth?...
 
 2. Qonto redirige le navigateur vers :
-   GET /integrations/qonto/callback?code=...&state=...
+   GET /{langue}/integrations/qonto/callback?code=...&state=...
    → Vérifie state dans le cache (pull = consommé une seule fois)
    → Récupère tenant_id depuis le cache
    → Échange le code contre les tokens (POST /oauth2/token)
    → Chiffre et stocke les tokens dans qonto_connections
-   → Redirige vers /admin/integrations/qonto avec message de succès
+   → Redirige vers /{langue}/admin/integrations/qonto avec message de succès
 
 3. Refresh automatique
    → Avant chaque appel API, vérifie access_token_expires_at
@@ -181,7 +181,7 @@ File d'attente de révision manuelle pour les matchs ambigus.
    → Met à jour les tokens en base
 ```
 
-> **Important** : la route callback (`/integrations/qonto/callback`) est **sans authentification** car c'est une redirection navigateur depuis Qonto. Le tenant est identifié via le paramètre `state` (stocké en cache avant la redirection).
+> **Important** : la route callback (`admin.integrations.qonto.callback`, `/{langue}/integrations/qonto/callback`) est **sans authentification** car c'est une redirection navigateur depuis Qonto. Le tenant est identifié via le paramètre `state` (stocké en cache avant la redirection).
 
 ---
 
@@ -244,7 +244,7 @@ do {
 
 ## Interface d'administration
 
-URL : `/admin/integrations/qonto`  
+URL : `/{langue}/admin/integrations/qonto`  
 Route nommée : `admin.integrations.qonto.index`
 
 ### Blocs affichés
@@ -274,7 +274,11 @@ Route nommée : `admin.integrations.qonto.index`
 ## API REST
 
 Base : `/api/integrations/qonto/`  
-Auth : `auth:api` (token bearer)
+Auth : `auth:api` (guard `token`).
+
+> ⚠️ **Inutilisables aujourd'hui** : le guard `token` lit `users.api_token`, colonne qui n'existe
+> pas ; un jeton Sanctum reçoit 401. L'écran d'administration passe par les routes de session
+> `admin.integrations.qonto.*` ci-dessus. Voir `docs/api-interne.md` § 2-3.
 
 | Endpoint | Méthode | Description |
 |---|---|---|
@@ -383,25 +387,34 @@ la facture WEM de façon silencieuse.
 > Si `QONTO_WEBHOOK_SECRET` est absent, la signature n'est pas vérifiée hors production (log
 > warning) ; en production le webhook est rejeté.
 
-### API REST — factures
+### Dépôt et suivi depuis la fiche facture
+
+La fiche facture appelle les routes de session `invoices.pdp.submit` et `invoices.pdp.poll`
+(`/{langue}/invoices/{id}/pdp/submit|poll`), qui passent par le driver PDP actif
+(`config('services.pdp.default')`, `PDP_DRIVER`, `qonto` par défaut).
+
+Doublons sous `auth:api`, inutilisables aujourd'hui (voir plus haut) :
 
 | Endpoint | Méthode | Description |
 |---|---|---|
 | `/api/integrations/qonto/invoices/{id}/submit` | POST | Crée la facture chez Qonto à partir des données structurées |
 | `/api/integrations/qonto/invoices/{id}/poll` | POST | Interroge Qonto pour mettre à jour le statut |
+| `/api/integrations/pdp/invoices/{id}/submit`, `/poll`, `/api/integrations/pdp/status` | POST / GET | Mêmes actions, quelle que soit la PDP (types 1 et 4) |
 
 ### Interface facture
 
-Le bloc **"Facturation Qonto"** apparaît sur la fiche facture uniquement si :
-- `QONTO_CLIENT_ID` et `QONTO_CLIENT_SECRET` sont configurés
-- La facture est de type 1 (Facture, pas avoir / proforma)
+Le bloc de facturation électronique (`integrations/partials/pdp-invoice-card`) apparaît sur la
+fiche facture uniquement si :
+- la PDP active est configurée (`PdpManager::isEnabled()` ; pour Qonto : `QONTO_CLIENT_ID` et
+  `QONTO_CLIENT_SECRET`)
+- la facture est de type 1 (facture) ou 4 (facture d'acompte) — ni avoir ni proforma
 
 Il affiche le statut courant, la date de dépôt, le motif d'erreur éventuel, et les boutons
 Déposer / Actualiser.
 
 ### Liste des factures
 
-La colonne **"Qonto"** apparaît dans la liste des factures uniquement si l'intégration est activée (réponse `pdp_enabled: true` de l'API, statut par facture dans `pdp_status`). Elle affiche le badge lifecycle de chaque facture.
+La colonne de statut PDP apparaît dans la liste des factures uniquement si l'intégration est activée (réponse `pdp_enabled: true` de la liste JSON, statut par facture dans `pdp_status`). Elle affiche le badge lifecycle de chaque facture.
 
 ---
 
@@ -446,3 +459,7 @@ Fichier : `tests/Feature/QontoIntegrationApiTest.php`
 > Les appels Qonto sont mockés (`Http::fake`) : ces tests valident le **format** du payload
 > face à la documentation, pas le comportement du service distant. Une validation en sandbox
 > (`https://thirdparty-sandbox.staging.qonto.co/v2`) reste nécessaire avant mise en production.
+
+---
+
+*Dernière mise à jour : 2026-11-27.*

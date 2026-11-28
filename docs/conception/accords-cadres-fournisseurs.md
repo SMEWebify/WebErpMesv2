@@ -685,8 +685,9 @@ Le détail de chaque question suit, pour mémoire.
 
 ## 6. Annexe — anomalies relevées en chemin (hors périmètre)
 
-Constatées pendant l'étude, **non corrigées**. Chacune mérite un ticket à part, et les deux
-premières touchent l'instance en production.
+Constatées pendant l'étude. A1 et A8 ont été corrigées depuis ; A2 est toujours présente
+(2026-11-27) ; les autres n'ont pas été revérifiées. Chacune mérite un ticket à part, et les
+deux premières touchent l'instance en production.
 
 | # | Constat | Effet visible | Gravité |
 |---|---|---|---|
@@ -697,6 +698,6 @@ premières touchent l'instance en production.
 | A5 | `purchase_lines.qty`, `receipt_qty` et `invoiced_qty` sont des entiers alors que `purchase_receipt_lines.receipt_qty` est décimal | Réception de 12,5 kg ⇒ `invoiced_qty` tronqué | Moyenne |
 | A6 | `updateLineJson` / `destroyLineJson` sans contrôle de statut ni de quantité reçue ou facturée | Une ligne facturée peut être modifiée ou supprimée | Moyenne |
 | A7 | Graphique mensuel des factures d'achat (`PurchaseKPIService`, ~l. 360) : somme de `order_lines.selling_price` (prix de vente client) | Graphique faux | Basse (à confirmer) |
-| A8 | `PurchasesRFQController::storePurchaseApi` : contact et adresse inversés à l'appel de `createPurchaseOrder` | Adresse/contact faux sur les commandes issues des tâches | Basse à vérifier |
+| A8 | `PurchasesRFQController::storePurchaseApi` : contact et adresse inversés à l'appel de `createPurchaseOrder` | Adresse/contact faux sur les commandes issues des tâches | **Corrigé le 29/10/2026** (reprise `wem:purchases:fix-swapped-contacts`) |
 | A9 | Relations mal clées : `ProductsPreferredSupplier::QuantityPrice()`, `ProductsQuantityPrice::supplier()` | Code mort, piège pour qui les utiliserait | Basse |
 | A10 | `PurchaseOrderService` passe `'statu' => 1` sur des lignes qui n'ont pas de colonne statut | Aucun (ignoré) | Info |

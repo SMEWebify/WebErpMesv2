@@ -68,7 +68,7 @@
 ### 2.1 Interrupteur général
 
 `CONFIGURATORS_ENABLED`, vrai par défaut, porté par `config('configurators.enabled')`. Faux :
-aucun bouton, aucune route.
+aucun bouton, et les routes `configurators.*` répondent 404.
 
 ### 2.2 Écran Intégrations → Configurateurs
 
@@ -103,7 +103,7 @@ Liste de configurateurs (table `external_configurators`). Chacun porte :
 4. L'ERP relit le résultat (§ 4.5) et montre un **aperçu** : lignes, prix, délais, fichiers.
    L'utilisateur confirme. Rien n'est écrit avant cette confirmation.
 5. Les lignes s'ajoutent en fin de document, avec une pastille « Configuré » et le nom du
-   configurateur. Le bouton **« Reconfigurer »** de la ligne rouvre la même configuration (§ 6).
+   configurateur. Le bouton **« Reconfigurer »** de la ligne rouvrira la même configuration (§ 6, lot 2 : pas encore fait).
 
 Abandon (fenêtre fermée, onglet fermé) : rien n'est écrit, la session expire.
 
@@ -144,8 +144,8 @@ Utilisé par le bouton « Tester ». Réponse 200 :
   "user": { "name": "Jean Commercial", "email": "jean@erp.exemple" },
   "configuration_ref": null,
   "return": {
-    "origin": "https://erp.client.fr",
-    "url": "https://erp.client.fr/fr/configurators/return/9f1c…"
+    "origin": "https://erp.exemple.fr",
+    "url": "https://erp.exemple.fr/fr/configurators/return/9f1c…"
   }
 }
 ```
@@ -296,12 +296,14 @@ fin de document. La correspondance avec les tables :
 | `configuration_ref`, `configuration_url` | Marque de la ligne (§ 8) |
 
 - **Prix figé.** Pas de prix calculé (`use_calculated_price` faux).
-- **Conversion devis → commande** : `QuoteLineToOrderLineConverter` recopie déjà ligne, détail
-  et fichiers. Il recopie en plus les `line_configuration_items` et la marque de configuration.
-- **Copie de ligne, duplication de devis, trame** : la marque et les éléments de configuration
-  sont recopiés. C'est la même configuration, que l'on peut rouvrir.
-- **PDF** : options et cotes imprimées sous la désignation, seulement si la ligne en a. Un
-  document sans ligne configurée s'imprime à l'identique (`SalesPdfLegacyRenderingTest`).
+- **Conversion devis → commande** (lot 2, pas encore fait) : `QuoteLineToOrderLineConverter`
+  recopie déjà ligne, détail et fichiers ; il devra recopier en plus les
+  `line_configuration_items` et la marque de configuration.
+- **Copie de ligne, duplication de devis, trame** (lot 2, pas encore fait) : la marque et les
+  éléments de configuration seront recopiés. C'est la même configuration, que l'on pourra rouvrir.
+- **PDF** (lot 2, pas encore fait) : options et cotes imprimées sous la désignation, seulement
+  si la ligne en a. Un document sans ligne configurée devra s'imprimer à l'identique
+  (`SalesPdfLegacyRenderingTest`).
 
 ---
 
@@ -356,7 +358,7 @@ configurateur ou non.
 |---|---|---|
 | 1 | Réglage (§ 2), test de liaison, bouton, session, iframe et onglet, relecture du résultat, aperçu, écriture des lignes, détails, options, fichiers ; textes fr / en ; tests (configurateur simulé par `Http::fake`) | 5 à 6 |
 | 2 | « Reconfigurer », conversion et copies, impression des options et cotes dans les PDF, webhook | 3 |
-| 3 | `routing` : opérations et composants issus du configurateur, écrits en gamme de la ligne (besoin Deltafluid) | 3 à 4, à préciser |
+| 3 | `routing` : opérations et composants issus du configurateur, écrits en gamme de la ligne | 3 à 4, à préciser |
 | 4 | Commande fournisseur en contremarque qui reprend options et référence fournisseur (B5) | selon le chantier B5 |
 
 Un **configurateur de démonstration** (petite application Laravel ou simple page statique avec

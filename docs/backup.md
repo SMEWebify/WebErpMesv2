@@ -6,7 +6,7 @@ Chaque instance client sauvegarde automatiquement sa propre base de données et 
 
 ```
 Instance Laravel
-  ├── DB dump (MySQL, gzip)     ┐
+  ├── DB dump (MySQL)           ┐
   └── storage/app (PDFs, docs)  ┘ → storage/app/backups/{APP_NAME} [DB_DATABASE]/
 ```
 
@@ -16,7 +16,7 @@ Instance Laravel
 
 | Source | Contenu |
 |--------|---------|
-| Base de données | Dump MySQL compressé gzip |
+| Base de données | Dump MySQL (`.sql`, non compressé : `database_dump_compressor` = `null`), dans l'archive ZIP |
 | `storage/app` | PDFs (devis, BL, factures), fichiers importés, documents clients |
 
 **Non inclus** (inutile — reconstituable) :
@@ -32,12 +32,13 @@ Instance Laravel
 |-------|----------|------|
 | 01h00 | `backup:clean` | Supprime les anciennes sauvegardes selon la rétention |
 | 02h00 | `backup:run` | Crée la sauvegarde du jour |
-| 09h00 | `backup:monitor` | Vérifie la santé, alerte si backup > 2 jours |
+| 09h00 | `backup:monitor` | Vérifie la santé : alerte si la dernière sauvegarde a plus d'**un jour** (`MaximumAgeInDays` = 1) ou si les sauvegardes dépassent 5 000 Mo |
 
 Le scheduler Laravel doit être activé via cron sur le serveur :
 ```bash
 * * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1
 ```
+Sous Windows : `php artisan schedule:run` chaque minute depuis le Planificateur de tâches.
 
 ---
 
@@ -56,14 +57,15 @@ Le scheduler Laravel doit être activé via cron sur le serveur :
 
 ## Notifications mail
 
-Toutes les alertes sont envoyées à **contact@nest2prod.com**.
+Les alertes sont envoyées à l'adresse `BACKUP_NOTIFICATION_EMAIL` (à renseigner pour chaque
+instance ; sinon l'adresse par défaut écrite dans `config/backup.php`).
 
 Le sujet identifie l'instance par `APP_NAME` + `DB_DATABASE` :
 
 ```
-[OK]     Sauvegarde réussie — Nest2Prod ERP [client_tolerie] (production)
-[ERREUR] Sauvegarde échouée — Nest2Prod ERP [client_usinage] (production)
-[ALERTE] Sauvegardes corrompues — Nest2Prod ERP [client_moule] (production)
+[OK]     Sauvegarde réussie — Nest2Prod ERP [erp_exemple] (production)
+[ERREUR] Sauvegarde échouée — Nest2Prod ERP [erp_exemple] (production)
+[ALERTE] Sauvegardes corrompues — Nest2Prod ERP [erp_exemple] (production)
 [OK]     Nettoyage des sauvegardes réussi — ...
 [OK]     Sauvegardes saines — ...
 ```
@@ -77,7 +79,8 @@ Les traductions sont dans `resources/lang/vendor/backup/fr/notifications.php`.
 ```env
 APP_NAME=Nest2Prod ERP        # Apparaît dans le sujet du mail
 DB_DATABASE=nom_db_client     # Identifie l'instance dans le sujet du mail
-BACKUP_ARCHIVE_PASSWORD=      # Optionnel — chiffre l'archive ZIP (AES-256)
+BACKUP_NOTIFICATION_EMAIL=    # Destinataire des alertes
+BACKUP_ARCHIVE_PASSWORD=      # Optionnel — chiffre l'archive ZIP
 ```
 
 ---
@@ -92,7 +95,7 @@ Disk Laravel : `backup` (défini dans `config/filesystems.php`)
 
 ```
 storage/app/backups/
-└── Nest2Prod ERP [client_tolerie]/
+└── Nest2Prod ERP [erp_exemple]/
     ├── 2026-05-06-02-00-00.zip
     ├── 2026-05-05-02-00-00.zip
     └── ...
@@ -100,7 +103,8 @@ storage/app/backups/
 
 ### Phase 2 — OVH Object Storage
 
-1. Créer un bucket OVH Object Storage (région GRA ou SBG — EU/RGPD)
+1. Installer le pilote S3 (absent du `composer.json`) : `composer require league/flysystem-aws-s3-v3`.
+   Créer un bucket OVH Object Storage (région GRA ou SBG — EU/RGPD)
 2. Remplir les variables dans le `.env` de l'instance :
 
 ```env
@@ -111,7 +115,7 @@ OVH_S3_BUCKET=nom-du-bucket
 OVH_S3_ENDPOINT=https://s3.gra.io.cloud.ovh.net
 ```
 
-3. Ajouter `'ovh'` dans `config/backup.php` :
+3. Le disque `ovh` est déjà déclaré dans `config/filesystems.php`. L'ajouter dans `config/backup.php` :
 
 ```php
 'destination' => [
@@ -158,8 +162,6 @@ php artisan backup:clean
 3. Restaurer la base :
 
 ```bash
-mysql -u root -p nom_db < db-dumps/mysql-nom_db.sql.gz | gunzip
-# ou si non compressé :
 mysql -u root -p nom_db < db-dumps/mysql-nom_db.sql
 ```
 
@@ -175,7 +177,10 @@ cp -r storage/app/* /var/www/html/storage/app/
 
 ## Dépendances
 
-- Package : `spatie/laravel-backup` v9.x (PHP 8.2 compatible)
-- PHP 8.3+ → migrer vers v10.x
+- Package : `spatie/laravel-backup` v10 (`^10.0`, 10.3.3 au 2026-11-27)
 - Aucune dépendance externe requise en Phase 1
 - Phase 2 OVH : `league/flysystem-aws-s3-v3` (compatible S3)
+
+---
+
+*Dernière mise à jour : 2026-11-27.*

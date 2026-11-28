@@ -109,7 +109,7 @@ Designed **by sheet metal and mechanical professionals, for professionals**, ΣE
 - **Attendance and energy consumption tracking**
 
 ### ✅ Quality, EHS & compliance
-- **Non-conformities**, inspection projects, audit planner, FMEA
+- **Non-conformities**, control plans (ballooning of drawings), in-process inspection and first article inspection reports, audit planner, FMEA
 - **Control device calibration** with automatic alerts
 - **EHS**: incidents, risks, trainings, regulatory conformities
 - **GDPR**: soft deletes, activity log, anonymization service, data export and erasure,
@@ -284,8 +284,11 @@ These commands are defined in this repository and complement the default Laravel
 | --- | --- | --- |
 | `php artisan wem:diagnostics` | Check common local setup requirements (PHP version, extensions, app key, cache/storage permissions, Redis, DB, broadcasting). | `php artisan wem:diagnostics` |
 | `php artisan wem:files:import` | One-shot migration of legacy `public/` attachments into the private file store. `--dry-run`, `--skip-move`. | `php artisan wem:files:import --dry-run` |
-| `php artisan wem:n2p:push-order {orderId} {--sync}` | Push a specific order to Nest2Prod (sync option bypasses the queue). | `php artisan wem:n2p:push-order 123 --sync` |
-| `php artisan wem:n2p:sync-sheet-stock` | Synchronize sheet stock with Nest2Prod. `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:n2p:push-order {orderId} {--sync}` | Push a specific order to Nest2Prod (sync option bypasses the queue). `--open [--dry-run] [--force]` re-sends every order already sent and not fully delivered. | `php artisan wem:n2p:push-order 123 --sync` |
+| `php artisan wem:n2p:sync-sheet-stock` | Replay raw sheet receipts to Nest2Prod (catch-up or initial setup). `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:esign:sync` | Re-read pending DocuSign envelopes (quotes, derogations): file the signed document and update the record. | `php artisan wem:esign:sync` |
+| `php artisan wem:sharepoint:sync` | Queue the SharePoint copy of GED files not copied yet. `--failed`, `--dry-run`. | `php artisan wem:sharepoint:sync --dry-run` |
+| `php artisan wem:nest2bend:refresh` | Re-read the NEST2BEND subscription state (Integrations card, "Simulate" buttons). | `php artisan wem:nest2bend:refresh` |
 | `php artisan wem:pdp:sync` | E-invoicing: sync issued invoice statuses and receive supplier invoices (required for platforms without webhooks). `--tenant=`, `--events`, `--inbound`. | `php artisan wem:pdp:sync --inbound` |
 | `php artisan wem:pdp:directory` | E-invoicing directory: list/open/close our receiving line, look up a customer's billing address by SIREN or name. `--open=`, `--date=`, `--close=`, `--lookup=`, `--search=`. | `php artisan wem:pdp:directory --lookup=123456789` |
 | `php artisan wem:pdp:seed-sandbox` | **Dev only.** Write the SUPER PDP sandbox identity (overwrites the company identity). `--force`. | `php artisan wem:pdp:seed-sandbox` |
@@ -294,6 +297,11 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan stock:recalculate-cump` | Recompute the full weighted-average-cost history for every product location. `--dry-run`. | `php artisan stock:recalculate-cump --dry-run` |
 | `php artisan stock:rebuild-reservations` | Rebuild stock reservations for purchased components. `--product=`. | `php artisan stock:rebuild-reservations` |
 | `php artisan quality:dispatch-calibration-alerts` | Notify responsible users when quality control device calibration is due or overdue. | `php artisan quality:dispatch-calibration-alerts` |
+| `php artisan gmao:generate-work-orders` | Create the preventive maintenance work orders of the plans that are due (automatic generation enabled). `--dry-run`. | `php artisan gmao:generate-work-orders --dry-run` |
+| `php artisan wem:orders:backfill-promised-dates` | **Run once after deployment.** Fill the promised delivery date of existing order lines. `--dry-run`. | `php artisan wem:orders:backfill-promised-dates --dry-run` |
+| `php artisan wem:orders:calculated-price-lines` | **Read-only.** List order lines still using the calculated price. `--all`. | `php artisan wem:orders:calculated-price-lines` |
+| `php artisan wem:purchases:backfill-line-totals` | **Run once after deployment.** Recompute the stored totals of purchase lines. `--dry-run`. | `php artisan wem:purchases:backfill-line-totals --dry-run` |
+| `php artisan wem:purchases:fix-swapped-contacts` | **Run once after deployment.** Swap back contact and address on purchase orders and quotations created with them inverted. `--dry-run`. | `php artisan wem:purchases:fix-swapped-contacts --dry-run` |
 | `php artisan emails:send-auto-reports` | Send scheduled automatic email reports based on user preferences. | `php artisan emails:send-auto-reports` |
 | `php artisan ldap:import-users` | Import LDAP users into the Laravel database. | `php artisan ldap:import-users` |
 | `php artisan rgpd:export-contact {id}` | Export every piece of data held about a contact as JSON (GDPR art. 20). | `php artisan rgpd:export-contact 42` |
@@ -306,8 +314,11 @@ These commands are defined in this repository and complement the default Laravel
 ### ⏱️ Scheduled tasks & queue
 
 The scheduler (`routes/console.php`) drives the daily backups (`backup:run`, `backup:clean`,
-`backup:monitor`), the e-invoicing sync every 15 minutes (`wem:pdp:sync`), the weekly GDPR
-purge (`rgpd:purge`) and the monthly activity-log cleanup (`wem:activitylog:clean`). Register it once on the server:
+`backup:monitor`), the e-invoicing sync and the e-signature sync every 15 minutes
+(`wem:pdp:sync`, `wem:esign:sync`), the daily preventive maintenance work orders
+(`gmao:generate-work-orders`, 06:00) and NEST2BEND subscription check
+(`wem:nest2bend:refresh`, 05:40), the weekly GDPR purge (`rgpd:purge`) and the monthly
+activity-log cleanup (`wem:activitylog:clean`). Register it once on the server:
 
 ```
 * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
@@ -489,9 +500,9 @@ Found a vulnerability? Please report it privately, see [SECURITY.md](SECURITY.md
 - ⭐ **220+** Stars
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
-- 📝 **2,200+** Commits
+- 📝 **2,600+** Commits
 - 🎉 **26** Releases (latest: v3.0.0)
-- 🧪 **85+** PHPUnit test files
+- 🧪 **240+** PHPUnit test files and **60+** Vitest test files
 - 📦 **Open Source** under the LGPL v3 License
 
 ## 📚 Documentation
@@ -511,7 +522,6 @@ Check our [roadmap](ROADMAP.md) to see what's coming next and how you can help!
 - 🧪 Test coverage improvement (backend business rules with PHPUnit, React screens with Vitest)
 - 📚 Complete API documentation ([docs/API.md](docs/API.md))
 - 📦 Stock: projected-stock curve, low-stock notifications
-- 👥 HR: absence notifications, absences taken into account in planning capacity
 - 🐳 Multi-tenant Docker deployment (one container + one database per customer)
 
 ## 💬 Support & Community

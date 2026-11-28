@@ -109,7 +109,7 @@ Conçu **par des professionnels de la tolerie et mécanique, pour des profession
 - **Suivi des présences** et de la consommation énergétique
 
 ### ✅ Qualité, QHSE & conformité
-- **Non-conformités**, projets d'inspection, planificateur d'audits, AMDEC
+- **Non-conformités**, plans de contrôle (bullage des plans), contrôle en fabrication et rapports premier article, planificateur d'audits, AMDEC
 - **Étalonnage des appareils de contrôle** avec alertes automatiques
 - **QHSE** : incidents, risques, formations, conformités réglementaires
 - **RGPD** : suppressions logiques, journal d'activité, service d'anonymisation, export et
@@ -280,8 +280,11 @@ These commands are defined in this repository and complement the default Laravel
 | --- | --- | --- |
 | `php artisan wem:diagnostics` | Vérifie les prérequis de l'environnement (version PHP, extensions, clé applicative, permissions cache/storage, Redis, base, diffusion). | `php artisan wem:diagnostics` |
 | `php artisan wem:files:import` | Migration unique des pièces jointes historiques de `public/` vers le stockage privé. `--dry-run`, `--skip-move`. | `php artisan wem:files:import --dry-run` |
-| `php artisan wem:n2p:push-order {orderId} {--sync}` | Pousse une commande vers Nest2Prod (`--sync` contourne la file d'attente). | `php artisan wem:n2p:push-order 123 --sync` |
-| `php artisan wem:n2p:sync-sheet-stock` | Synchronise le stock tôles avec Nest2Prod. `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:n2p:push-order {orderId} {--sync}` | Pousse une commande vers Nest2Prod (`--sync` contourne la file d'attente). `--open [--dry-run] [--force]` renvoie toutes les commandes déjà envoyées et non entièrement livrées. | `php artisan wem:n2p:push-order 123 --sync` |
+| `php artisan wem:n2p:sync-sheet-stock` | Rejoue les réceptions de tôles vers Nest2Prod (rattrapage ou mise en service). `--days=30`, `--sync`. | `php artisan wem:n2p:sync-sheet-stock --days=7` |
+| `php artisan wem:esign:sync` | Relit les enveloppes DocuSign en attente (devis, dérogations) : range le document signé et met la fiche à jour. | `php artisan wem:esign:sync` |
+| `php artisan wem:sharepoint:sync` | Met en file la copie SharePoint des fichiers de la GED pas encore recopiés. `--failed`, `--dry-run`. | `php artisan wem:sharepoint:sync --dry-run` |
+| `php artisan wem:nest2bend:refresh` | Relit l'état de l'abonnement NEST2BEND (carte Intégrations, boutons « Simuler »). | `php artisan wem:nest2bend:refresh` |
 | `php artisan wem:pdp:sync` | Facturation électronique : statuts des factures émises et réception des factures fournisseurs (indispensable pour les plateformes sans webhooks). `--tenant=`, `--events`, `--inbound`. | `php artisan wem:pdp:sync --inbound` |
 | `php artisan wem:pdp:directory` | Annuaire : liste/ouvre/ferme notre ligne de réception, cherche l'adresse de facturation d'un client par SIREN ou raison sociale. `--open=`, `--date=`, `--close=`, `--lookup=`, `--search=`. | `php artisan wem:pdp:directory --lookup=123456789` |
 | `php artisan wem:pdp:seed-sandbox` | **Dev uniquement.** Écrit l'identité bac à sable SUPER PDP (écrase l'identité de la société). `--force`. | `php artisan wem:pdp:seed-sandbox` |
@@ -290,6 +293,11 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan stock:recalculate-cump` | Recalcule tout l'historique du CUMP pour chaque emplacement produit. `--dry-run`. | `php artisan stock:recalculate-cump --dry-run` |
 | `php artisan stock:rebuild-reservations` | Reconstruit les réservations de stock des composants achetés. `--product=`. | `php artisan stock:rebuild-reservations` |
 | `php artisan quality:dispatch-calibration-alerts` | Notifie les responsables des appareils de contrôle à étalonner. | `php artisan quality:dispatch-calibration-alerts` |
+| `php artisan gmao:generate-work-orders` | Crée les ordres de travail préventifs des plans de maintenance arrivés à échéance (génération automatique cochée). `--dry-run`. | `php artisan gmao:generate-work-orders --dry-run` |
+| `php artisan wem:orders:backfill-promised-dates` | **Une fois après déploiement.** Renseigne la date promise des lignes de commande existantes. `--dry-run`. | `php artisan wem:orders:backfill-promised-dates --dry-run` |
+| `php artisan wem:orders:calculated-price-lines` | **Lecture seule.** Liste les lignes de commande encore en prix calculé. `--all`. | `php artisan wem:orders:calculated-price-lines` |
+| `php artisan wem:purchases:backfill-line-totals` | **Une fois après déploiement.** Recalcule les totaux enregistrés des lignes d'achat. `--dry-run`. | `php artisan wem:purchases:backfill-line-totals --dry-run` |
+| `php artisan wem:purchases:fix-swapped-contacts` | **Une fois après déploiement.** Remet contact et adresse à leur place sur les commandes d'achat et demandes de prix qui les inversaient. `--dry-run`. | `php artisan wem:purchases:fix-swapped-contacts --dry-run` |
 | `php artisan emails:send-auto-reports` | Envoie les rapports email automatiques selon les préférences utilisateur. | `php artisan emails:send-auto-reports` |
 | `php artisan ldap:import-users` | Importe les utilisateurs LDAP dans la base Laravel. | `php artisan ldap:import-users` |
 | `php artisan rgpd:export-contact {id}` | Exporte au format JSON toutes les données détenues sur un contact (art. 20 RGPD). | `php artisan rgpd:export-contact 42` |
@@ -302,9 +310,12 @@ These commands are defined in this repository and complement the default Laravel
 ### ⏱️ Tâches planifiées & file d'attente
 
 Le planificateur (`routes/console.php`) déclenche les sauvegardes quotidiennes (`backup:run`,
-`backup:clean`, `backup:monitor`), la synchronisation de facturation électronique toutes les
-15 minutes (`wem:pdp:sync`), la purge RGPD hebdomadaire (`rgpd:purge`) et le nettoyage mensuel
-du journal d'activité (`wem:activitylog:clean`, voir `docs/conservation-enregistrements.md`). À déclarer une fois sur le serveur :
+`backup:clean`, `backup:monitor`), la synchronisation de facturation électronique et celle des
+signatures électroniques toutes les 15 minutes (`wem:pdp:sync`, `wem:esign:sync`), les ordres
+de travail préventifs de la GMAO (`gmao:generate-work-orders`, 06h00) et la relecture de
+l'abonnement NEST2BEND (`wem:nest2bend:refresh`, 05h40) chaque jour, la purge RGPD
+hebdomadaire (`rgpd:purge`) et le nettoyage mensuel du journal d'activité
+(`wem:activitylog:clean`, voir `docs/conservation-enregistrements.md`). À déclarer une fois sur le serveur :
 
 ```
 * * * * * php /chemin/vers/artisan schedule:run >> /dev/null 2>&1
@@ -487,9 +498,9 @@ Vous avez trouvé une vulnérabilité ? Merci de la signaler en privé, voir [SE
 - ⭐ **220+** Stars
 - 🍴 **99** Forks
 - 👥 **8+** Active Contributors
-- 📝 **2 200+** Commits
+- 📝 **2 600+** Commits
 - 🎉 **26** Releases (dernière : v3.0.0)
-- 🧪 **85+** fichiers de tests PHPUnit
+- 🧪 **240+** fichiers de tests PHPUnit et **60+** fichiers de tests Vitest
 - 📦 **Open Source** sous licence LGPL v3
 
 ## 📚 Documentation
@@ -509,7 +520,6 @@ Consultez la [roadmap](../ROADMAP.md) pour voir ce qui arrive et comment aider !
 - 🧪 Amélioration de la couverture de tests (règles métier backend avec PHPUnit, écrans React avec Vitest)
 - 📚 Documentation complète de l'API ([docs/API.md](API.md))
 - 📦 Stock : courbe de stock projeté, notifications de stock bas
-- 👥 RH : notifications d'absence, prise en compte des congés dans la capacité du planning
 - 🐳 Déploiement Docker multi-clients (1 conteneur + 1 base par client)
 
 ## 💬 Support & Communauté

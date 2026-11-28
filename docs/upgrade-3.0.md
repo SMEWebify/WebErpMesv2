@@ -118,3 +118,18 @@ you customised it, port your changes onto the new file rather than keeping the o
 Each user can now pick a theme (sidebar and top bar colours) and a primary colour in
 **Profile → Appearance**. The default stays the current look (the Nest2Prod theme, as long as
 `WEBERP_COLOR_THEME=nest2prod`). Light / dark / pro mode is still switched from the top bar.
+
+## After v3.0.0 (next release)
+
+Changes made on the `WEM-2.0` branch after the v3.0.0 tag, to check when upgrading from
+v3.0.0 (state on 2026-11-27):
+
+- **jQuery is no longer loaded at all**: the `JQuery` and `Select2` plugins were removed from
+  `config/adminlte.php`, and `public/vendor/jquery` and `public/vendor/select2` are no longer
+  shipped. Searchable drop-down lists are `<x-adminlte-select-bs>` components, powered by
+  **Tom Select** (`TomSelect` plugin, `public/vendor/tom-select`). A customised view or script
+  that still calls `$(...)` or `.select2()` must be rewritten.
+- `<x-adminlte-text-editor>` fields use **Quill 2** (`Quill` plugin, `public/vendor/quill`),
+  enabled per view with `@section('plugins.Quill', true)`.
+- If you deploy by copying files, also delete `public/vendor/jquery` and
+  `public/vendor/select2`.

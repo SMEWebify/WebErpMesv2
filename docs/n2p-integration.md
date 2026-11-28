@@ -1,25 +1,37 @@
 # Nest2Prod (N2P) - Intégration WEM
 
-## Paramètres Settings
-- `n2p_enabled` : activer/désactiver l’envoi (bool).
-- `n2p_base_url` : URL de base N2P (ex: `https://n2p.example.com`).
-- `n2p_api_token` : token API (Bearer).
-- `n2p_send_on_order_status_from` : statut source (ex: `OPEN`).
-- `n2p_send_on_order_status_to` : statut cible (ex: `IN_PROGRESS`).
-- `n2p_job_status_on_send` : statut job envoyé (par défaut `released`).
-- `n2p_priority_default` : priorité par défaut 1..5 (par défaut `3`).
-- `n2p_send_tasks` : envoyer les tâches liées aux lignes (bool).
-- `n2p_verify_ssl` : vérifier le certificat SSL lors des appels API (bool, par défaut `true`).
+> Document interne (classes, tables, journaux cités). Dernière mise à jour : 2026-11-27.
+
+## Réglage : endpoints d'intégration
+
+Depuis le 2026-08-12, la liaison n'est plus réglée par des clés `n2p_*` de la table `settings`
+(migrées puis supprimées par `2026_08_12_120100_migrate_n2p_settings_to_endpoint_metadata`) :
+tout se règle dans **Votre société → Intégrations → Endpoints** (`admin.integrations.endpoints.*`),
+sur deux endpoints `system_code = n2p` créés par `2026_08_10_120002_seed_n2p_integration_endpoints`.
+
+**Sortant** (`direction = outbound`, envoi des OF) :
+- `url` : URL de base de N2P ; `auth_method` `bearer` (jeton chiffré) ou `hmac` ;
+  `verify_ssl` (une URL `http://` est refusée tant que la vérification est active) ;
+  `is_active` ; `retry_max` 5, `retry_backoff` `[60, 300, 900, 1800, 3600]`.
+- Règles métier dans `metadata` (carte « Règles métier N2P (push OF) » de la fiche) :
+  `status_transition_from` / `status_transition_to` (défauts `OPEN` → `IN_PROGRESS`, valeurs
+  `OPEN`, `IN_PROGRESS`, `DELIVERED`, `PARTLY_DELIVERED`, `STOPPED`, `CANCELED`),
+  `send_tasks` (vrai), `job_status_on_send` (`released`), `default_priority` (3).
+
+**Entrant** (`direction = inbound`, retour du MES) : `auth_method = hmac`, secret généré,
+en-têtes `X-N2P-Timestamp` / `X-N2P-Signature-256`, tolérance 300 s, **inactif** à la création.
+URL exposée : `POST /api/integrations/n2p/inbound`.
 
 ## Happy path (envoi automatique)
-1. Activer `n2p_enabled`, renseigner `n2p_base_url` et `n2p_api_token`.
-2. Saisir les statuts source/cible (ex: OPEN -> IN_PROGRESS).
-3. Passer une commande de `statu` 1 à `statu` 2 (OPEN -> IN_PROGRESS).
-4. Vérifier le log `storage/logs/n2p.log` et les colonnes `n2p_last_push_*` sur la commande.
+1. Activer l'endpoint sortant, renseigner son URL et son jeton.
+2. Régler la transition de statut (ex. `OPEN` → `IN_PROGRESS`).
+3. Passer une commande de `statu` 1 à `statu` 2 (`OrdersObserver` déclenche `PushOrderToN2P`).
+4. Vérifier le journal `storage/logs/n2p.log` et les colonnes `n2p_last_push_*` de la commande.
 
 ## Cas « N2P down »
-- Forcer un échec (ex: arrêter N2P ou URL invalide), relancer le changement de statut.
-- Vérifier que le job est ré-essayé (backoff progressif) et que `n2p_last_push_status = ERROR` contient le message.
+- Forcer un échec (ex. arrêter N2P ou URL invalide), relancer le changement de statut.
+- Vérifier que le job est réessayé (backoff progressif) et que `n2p_last_push_status = ERROR`
+  porte le message.
 
 ## Queue worker
 - Lancement standard : `php artisan queue:work`.
@@ -28,6 +40,11 @@
 ## Commandes utiles
 - Pousser une commande : `php artisan wem:n2p:push-order {orderId}`.
 - En synchrone (sans queue) : `php artisan wem:n2p:push-order {orderId} --sync`.
+- Renvoyer toutes les commandes déjà envoyées et non entièrement livrées :
+  `php artisan wem:n2p:push-order --open [--dry-run] [--force]` (voir `docs/pointage-scan.md`).
+- Rejouer les réceptions de tôle vers N2P : `php artisan wem:n2p:sync-sheet-stock [--days=30] [--sync]`.
+- Lecture par N2P du stock d'un lot de tôle `MV-{id}` : `GET /api/n2p/sheet-lots/{ref}/stock`
+  (jeton Sanctum, décrit dans `docs/API.md` § 7).
 
 ## Calcul de `part_type`
 Le payload pousse toujours une valeur `part_type` (jamais `null`). Règle de résolution
@@ -42,7 +59,7 @@ appliquée par `N2PPayloadBuilder::resolvePartType()` :
 
 ## Retour des imbrications réalisées (N2P → ERP)
 
-Point d'entrée existant : `POST /api/integrations/n2p/inbound`, enveloppe habituelle
+Point d'entrée : `POST /api/integrations/n2p/inbound`, enveloppe habituelle
 (`event_id` UUID, `event_type`, `occurred_at`, `source`, `data`), signature HMAC
 `X-N2P-Timestamp` / `X-N2P-Signature-256`, dédoublonnage par `event_id`.
 
@@ -114,34 +131,46 @@ Répartition du coût matière entre lignes : surface des pièces si toutes l'on
 sinon nombre de pièces.
 
 ## Exemple de payload envoyé
+Extrait (`N2PPayloadBuilder::build`, champs nuls omis dans les tâches). `of_code` = `OF` + id
+de la ligne de commande, `line_ref` = id de la ligne.
 ```json
 {
   "jobs": [
     {
-      "of_code": "ORD-1001",
+      "of_code": "OF55",
       "line_ref": "55",
-      "required_qty": 10,
       "status": "released",
-      "priority": 2,
+      "priority": 3,
       "due_date": "2026-03-01",
+      "alias_erp": "PART-001",
       "customer_code": "CLI1",
-      "customer_name": "Client One",
+      "customer_name": "Client exemple",
+      "order_ref": "CMD-1001",
+      "label": "Support plié",
+      "required_qty": 10,
       "product_ref": "PART-001",
+      "material": "S235",
+      "thickness": 3,
       "part_type": "SymbolPart",
+      "production_released": true,
       "tasks": [
         {
           "operation_code": "CUT",
           "seq": 10,
           "workcenter_code": "CNC01",
-          "required_qty": 10,
           "planned_start_at": "2026-02-21 08:00:00",
           "planned_end_at": "2026-02-21 10:00:00",
-          "planned_time_min": 90
+          "status": "planned",
+          "planned_time_min": 90,
+          "required_qty": 10
         }
       ]
     }
   ]
 }
 ```
+`production_released` n'est présent que si l'option `PRODUCTION_REQUIRE_RELEASE` est active.
+Autres champs du job : `cad_file_path`, `cam_file_path`, `picture_base64`, `bend_count`,
+`dimension_x/y/z`, `weight`, `notes`, `planned_start_at`, `planned_end_at`.
 
 Retour d'exécution des tâches (`task.*`, pointage par scan) : voir `docs/pointage-scan.md`.
