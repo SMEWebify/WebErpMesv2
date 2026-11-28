@@ -37,6 +37,13 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasRoles, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
+    /**
+     * Garde des rôles et permissions (Spatie) : toutes sont déclarées pour « web ».
+     * Sans elle, une requête par jeton d'API (garde courante « sanctum ») cherchait
+     * les permissions de « sanctum » et refusait tout (`can()` toujours faux).
+     */
+    protected $guard_name = 'web';
+
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new \App\Notifications\VerifyEmailNotification);
