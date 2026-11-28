@@ -1804,6 +1804,18 @@ Le stock reste une somme de mouvements ; une **pièce** = mouvements de même lo
   Le FIFO de la tâche reste aveugle au format (une chute peut partir comme une tôle).
 - **Nesting** : `sheet-stock` renvoie `stock_qty` sans les chutes et `remnant_qty` à part.
   NestEngine ne reçoit pas encore les chutes comme formats disponibles.
+- **API** `GET /api/remnants` (`api.remnants.index`, `RemnantController`, Sanctum, capacité
+  `remnants:read` + `stock-lot-serial-management`) : chutes en stock de tous les articles (filtres
+  `product_code`, `material`, `thickness`, `min_x` / `min_y` avec rotation, `include_sheets`),
+  par `SheetRemnants::available()` (même calcul que l'écran), valeur = CUMP × surface chute /
+  surface tôle, 500 articles au plus, dessins de chute (`drawings`, `drawingsByPieces()` : 2 requêtes
+  pour toutes les lignes). Lecture seule ; la découpe se déclare par `POST /api/nests`. Contenu d'un
+  dessin (ou de tout fichier de la GED) par jeton : `GET /api/files/json/{file}/download`
+  (`api.files.download`, même `FilePolicy::view` et journal des consultations que `files.download`).
+  Tests : `tests/Feature/Products/RemnantApiTest.php`.
+- **Droits sous jeton** : `User::$guard_name = 'web'` (Spatie). Sans lui, une requête Sanctum
+  cherchait les permissions de la garde `sanctum` et `can()` refusait tout (GED par l'API comprise).
+  Tests : `tests/Feature/Files/FileApiTokenTest.php`.
 - Tests : `tests/Feature/Products/SheetRemnantTest.php`.
 
 ## Imbrications réalisées (tôle → plusieurs lignes de commande)

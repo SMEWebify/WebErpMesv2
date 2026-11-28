@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\InboundLeadController;
 use App\Http\Controllers\Api\InboundNestController;
 use App\Http\Controllers\Api\InboundProspectController;
+use App\Http\Controllers\Api\RemnantController;
 use App\Http\Controllers\Api\Integrations\IntegrationInboundController;
 use App\Http\Controllers\Api\Integrations\PdpIntegrationController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
@@ -83,6 +84,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('throttle:60,1')
         ->name('api.nests.store');
 
+    // Chutes (et tôles) en stock, pour imbriquer dessus depuis une FAO tierce.
+    Route::get('remnants', [RemnantController::class, 'index'])->name('api.remnants.index');
+
     Route::post('quote',             [QuoteController::class,   'store'])->name('api.quote.store');
     Route::put('quote/{quote}',      [QuoteController::class,   'update'])->name('api.quote.update');
     Route::post('product',           [ProductController::class, 'store'])->name('api.product.store');
@@ -93,6 +97,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Le fichier reçu suit exactement le même flux que l'upload React (FileStorageService).
     Route::prefix('files/json')->group(function () {
         Route::get('/list',      [FileApiController::class, 'index'])->name('api.files.list');
+        // Contenu d'un fichier (plan, dessin de chute…) : même FilePolicy::view et même
+        // journal des consultations que files.download du navigateur.
+        Route::get('/{file}/download', [FileApiController::class, 'download'])
+            ->middleware('audit.access:file,file')
+            ->name('api.files.download');
         Route::post('/store',    [FileApiController::class, 'store'])->name('api.files.store');
         Route::patch('/{file}',  [FileApiController::class, 'update'])->name('api.files.update');
         Route::delete('/{file}', [FileApiController::class, 'destroy'])->name('api.files.destroy');
